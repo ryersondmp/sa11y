@@ -1,10 +1,11 @@
 import Constants from '../utils/constants';
 import { isScrollable, store } from '../utils/utils';
+import { resetAll } from '../utils/resetAll';
 
 /* ************************************** */
 /*  Initialize main toggle within panel.  */
 /* ************************************** */
-export default function mainToggle(checkAll, resetAll) {
+export default function mainToggle(checkAll) {
   // Keeps checker active when navigating between pages until it is toggled off.
   Constants.Panel.toggle.addEventListener('click', (e) => {
     if (store.getItem('sa11y-panel') === 'Opened') {

@@ -3,11 +3,12 @@ import Constants from '../utils/constants';
 import Lang from '../utils/lang';
 import { remove, resetAttributes, store } from '../utils/utils';
 import { resetColourFilters } from '../features/colour-filters';
+import { resetAll } from '../utils/resetAll';
 
 /* ************************************************************ */
 /*  Initialize all toggle switches within Settings panel.       */
 /* ************************************************************ */
-export default function settingsPanelToggles(checkAll, resetAll) {
+export default function settingsPanelToggles(checkAll) {
   /* ************************* */
   /*  Panel position toggle    */
   /* ************************* */

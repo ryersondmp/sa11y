@@ -152,6 +152,7 @@ export default {
       'consulter',
       'consulter notre',
       'site web',
+      'article',
     ],
     CLICK: ['click', 'cliquer'],
     NEW_WINDOW_PHRASES: [

@@ -155,6 +155,7 @@ export default {
       'visning',
       'se vår',
       'nettsted',
+      'artikkel',
     ],
     CLICK: ['click', 'klikk'],
     NEW_WINDOW_PHRASES: ['ekstern', 'ny fane', 'nytt vindu', 'pop-up', 'dukker opp'],

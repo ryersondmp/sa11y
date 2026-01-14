@@ -1283,258 +1283,129 @@ async function dismissDigest(pepper, message) {
   const hashArray = Array.from(new Uint8Array(hashBuffer));
   return hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
 }
-const styles = ":host{z-index:999999;background:var(--sa11y-panel-bg);border-top:5px solid var(--sa11y-panel-bg-splitter);width:100%;height:fit-content;display:block;position:fixed;bottom:0;left:0;right:0}*{font-size:var(--sa11y-normal-text);color:var(--sa11y-panel-primary);font-family:var(--sa11y-font-face)!important;-webkit-font-smoothing:auto!important;line-height:22px!important}#dialog{max-width:900px;margin:20px auto;padding:20px}h2{font-size:var(--sa11y-large-text);margin-top:0}a{color:var(--sa11y-hyperlink);cursor:pointer;text-decoration:underline}a:hover,a:focus{text-decoration:none}p{margin-top:0}.error{color:var(--sa11y-error-text);background:var(--sa11y-error);border:2px dashed #f08080;margin-bottom:0;padding:5px}";
-const sharedStyles = '.visually-hidden{clip:rect(1px,1px,1px,1px);white-space:nowrap;clip-path:inset(50%);border:0;width:1px;height:1px;padding:0;display:block;position:absolute;overflow:hidden}[hidden]{display:none!important}h2,.header-text-inline,.header-text{font-size:var(--sa11y-large-text);color:var(--sa11y-panel-primary);margin-bottom:3px;font-weight:600;display:block}.header-text-inline{display:inline-block!important}code{font-size:calc(var(--sa11y-normal-text) - 1px);font-weight:600;font-family:monospace!important}pre code{white-space:pre-wrap;overflow:auto}pre,code,kbd,.kbd{color:var(--sa11y-panel-primary);background-color:var(--sa11y-panel-badge);border-radius:3.2px;padding:1.6px 4.8px}.bold{font-weight:600}.error .colour,.red-text{font-family:var(--sa11y-font-face);color:var(--sa11y-red-text)}.warning .colour,.yellow-text{font-family:var(--sa11y-font-face);color:var(--sa11y-yellow-text)}.normal-badge,.badge{min-width:10px;color:var(--sa11y-panel-primary);text-align:center;white-space:nowrap;vertical-align:baseline;background-color:var(--sa11y-panel-badge);border-radius:10px;outline:1px solid #0000;padding:1px 5px 1.75px;font-size:14px;line-height:1;display:inline;font-weight:700!important}.error .badge{color:var(--sa11y-error-text);background:var(--sa11y-error)}.error-badge{color:var(--sa11y-error-text)!important;background:var(--sa11y-error)!important}.warning .badge{color:var(--sa11y-panel-bg);background:var(--sa11y-yellow-text)}.warning-badge{color:var(--sa11y-panel-bg)!important;background:var(--sa11y-yellow-text)!important}.good-contrast{color:var(--sa11y-good-text)!important;background:var(--sa11y-good)!important}#contrast-preview{overflow-wrap:break-word;border:2px dashed var(--sa11y-panel-bg-splitter);background-color:#e8e8e8;background-image:linear-gradient(45deg,#ccc 25%,#0000 25% 75%,#ccc 75%,#ccc),linear-gradient(45deg,#ccc 25%,#0000 25% 75%,#ccc 75%,#ccc);background-position:0 0,5px 5px;background-size:10px 10px;border-radius:3.2px;max-height:100px;margin-top:10px;padding:5px;line-height:1;overflow:clip}#contrast-preview:empty{display:none}#color-pickers{justify-content:space-between;margin-top:10px;margin-bottom:10px;display:flex}#color-pickers label{align-items:center;display:flex}#color-pickers input{cursor:pointer;margin-inline-start:7px}#fg-color-wrapper.unknown,#bg-color-wrapper.unknown{display:inline-block;position:relative}:is(#fg-color-wrapper.unknown,#bg-color-wrapper.unknown):after{z-index:2;color:#fff;pointer-events:none;content:"?";justify-content:center;align-items:center;width:44px;height:44px;margin:-46px 7px;font-size:22px;display:flex;position:absolute}input[type=color i]{background:var(--sa11y-panel-bg-secondary);border-color:var(--sa11y-button-outline);border-style:solid;border-width:1px;border-radius:50%;block-size:44px;inline-size:44px;padding:2px}input[type=color i]::-webkit-color-swatch-wrapper{padding:1px}input[type=color i]::-webkit-color-swatch{border-color:var(--sa11y-button-outline);border-radius:50%}input[type=color i]::-moz-color-swatch{border-color:var(--sa11y-button-outline);border-radius:50%}input[type=color i].unknown{box-shadow:0 0 0 3px var(--sa11y-yellow-text)}.close-btn{float:var(--sa11y-float-rtl);width:32px;height:32px;font-size:var(--sa11y-normal-text);color:var(--sa11y-panel-primary);cursor:pointer;background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-button-outline);border-radius:50%;margin:0;font-weight:400;transition:all .2s ease-in-out;position:relative}.close-btn:hover,.close-btn:focus{background-color:var(--sa11y-shortcut-hover)}.close-btn:after{content:"";background:var(--sa11y-setting-switch-bg-off);-webkit-mask:var(--sa11y-close-btn-svg)center no-repeat;mask:var(--sa11y-close-btn-svg)center no-repeat;position:absolute;inset:-7px}@media screen and (forced-colors:active){.close-btn:after{filter:invert()}}#container [tabindex="0"]:focus,#container [tabindex="-1"]:focus,#container input:focus,#container select:focus,#container button:focus,#container a:focus{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}#container .switch:focus,#container #panel-controls button:focus{box-shadow:inset 0 0 0 4px var(--sa11y-focus-color);outline:0}#container [tabindex="0"]:focus:not(:focus-visible),#container [tabindex="-1"]:focus:not(:focus-visible),#container input:focus:not(:focus-visible),#container button:focus:not(:focus-visible),#container select:focus:not(:focus-visible),#container #panel-controls button:focus:not(:focus-visible){box-shadow:none;outline:0}#container a:focus-visible,#container button:not(#panel-controls button,.switch):focus-visible,#container select:focus-visible,#container input:focus-visible,#container [tabindex="0"]:focus-visible,#container [tabindex="-1"]:focus-visible{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}#container .switch:focus-visible,#container #panel-controls button:focus-visible{box-shadow:inset 0 0 0 4px var(--sa11y-focus-color);outline:0}@media screen and (forced-colors:active){#panel-controls button:focus{border:inset 3px solid transparent}.close-btn:focus{outline:3px solid #0000!important}#container a:focus,#container [tabindex="-1"]:focus,#container [tabindex="0"]:focus,#container select:focus,#container button:focus{outline:3px solid #0000!important}}';
-class ConsoleErrors extends HTMLElement {
-  constructor(error) {
-    super();
-    this.error = error;
+const closeAnyActiveTooltips = () => {
+  const tooltip = document.querySelector("sa11y-tooltips").shadowRoot;
+  const button = tooltip.querySelector("button");
+  if (button !== null) {
+    button.click();
   }
-  connectedCallback() {
-    const shadow = this.attachShadow({ mode: "open" });
-    const style = document.createElement("style");
-    style.innerHTML = styles + sharedStyles;
-    shadow.appendChild(style);
-    const content = document.createElement("div");
-    content.setAttribute("id", "dialog");
-    content.setAttribute("tabindex", "-1");
-    const url2 = window.location;
-    const google = "https://forms.gle/sjzK9XykETaoqZv99";
-    const template = `## Error Description
-\`\`\`javascript
-${this.error.stack}
-\`\`\`
-
-## Details
-- **URL:** ${url2}
-- **Version:** ${"4.4.2"}
-
-## Comments
-`;
-    const encodedTemplate = encodeURIComponent(template);
-    const github = `https://github.com/ryersondmp/sa11y/issues/new?title=Bug%20report&body=${encodedTemplate}`;
-    content.innerHTML = `
-      <button class="close-btn" aria-label="${Lang._("ALERT_CLOSE")}"></button>
-      <h2>${Lang._("ERROR")}</h2>
-      <p>${Lang.sprintf("CONSOLE_ERROR", google, github)}</p>
-      <p class="error">${escapeHTML(this.error.stack)}<br><br>Version: ${"4.4.2"} <br> URL: ${url2}</p>
-    `;
-    shadow.appendChild(content);
-    setTimeout(() => {
-      Constants.Panel.toggle.style.display = "none";
-      const container = document.querySelector("sa11y-console-error");
-      const dialog = container.shadowRoot.getElementById("dialog");
-      dialog.focus();
-      const close = container.shadowRoot.querySelector(".close-btn");
-      close.addEventListener("click", () => {
-        container.remove();
-      });
-    }, 0);
+};
+const getHiddenParent = ($el) => {
+  const shadowHost = $el.getRootNode().host;
+  const visibleParent = findVisibleParent(shadowHost, "display", "none");
+  if (visibleParent !== null) {
+    const hiddenParent = visibleParent.previousElementSibling;
+    if (hiddenParent) {
+      addPulse(hiddenParent);
+    } else {
+      addPulse(visibleParent.parentNode);
+    }
   }
-}
-function detectPageChanges(detectSPArouting, checkAll, resetAll) {
-  if (detectSPArouting === true) {
-    let url2 = window.location.href;
-    const checkURL = debounce$2(async () => {
-      if (url2 !== window.location.href) {
-        if (store.getItem("sa11y-panel") === "Closed" || !store.getItem("sa11y-panel")) {
-          checkAll();
-        } else {
-          resetAll(false);
-          await checkAll();
-        }
-        url2 = window.location.href;
+};
+const getScrollPosition = ($el, results) => {
+  const offsetTopPosition = $el.offsetTop;
+  if (offsetTopPosition === 0) {
+    const annotationHost = $el.getRootNode().host;
+    const visiblePosition = findVisibleParent(annotationHost, "display", "none");
+    const annotationIndex = parseInt(annotationHost.getAttribute("data-sa11y-annotation"), 10);
+    const issueObject = results.find((issue) => issue.id === annotationIndex);
+    const elementPreview = generateElementPreview(issueObject);
+    getHiddenParent($el);
+    const tooltip = $el.getAttribute("data-tippy-content");
+    createAlert(`${Lang._("NOT_VISIBLE")}`, tooltip, elementPreview);
+    closeAnyActiveTooltips();
+    if (visiblePosition) {
+      const prevSibling = visiblePosition.previousElementSibling;
+      const { parentNode } = visiblePosition;
+      if (prevSibling) {
+        return offsetTop(prevSibling).top - 150;
       }
-    }, 250);
-    window.addEventListener("click", checkURL);
-    window.addEventListener("keydown", checkURL);
-  }
-}
-function dismissLogic(results, dismissTooltip) {
-  const dismissedIssues = JSON.parse(store.getItem("sa11y-dismissed-digest") || "[]");
-  const currentPath = window.location.pathname;
-  const isSoloDismissed = (issue, dismissed) => dismissed.key.includes(issue.dismissDigest) && dismissed.href === currentPath && (issue.type === "warning" || issue.type === "good");
-  const dismissAll = (issue, dismissed) => typeof dismissed.dismissAll === "string" && issue.dismissAll === dismissed.dismissAll && dismissed.href === currentPath;
-  const soloDismissed = results.filter(
-    (issue) => dismissedIssues.some((dismissed) => isSoloDismissed(issue, dismissed))
-  );
-  const allDismissed = results.filter(
-    (issue) => dismissedIssues.some((dismissed) => dismissAll(issue, dismissed))
-  );
-  const mergeDismissed = [...soloDismissed, ...allDismissed];
-  const dismissedResults = [
-    ...new Map(mergeDismissed.map((issue) => [issue.dismiss, issue])).values()
-  ];
-  const dismissCount = dismissedResults.length;
-  const updatedResults = results.filter(
-    (issue) => !dismissedResults.some(
-      (dismissed) => dismissed.dismiss === issue.dismiss && (issue.type === "warning" || issue.type === "good")
-    )
-  );
-  if (dismissCount) {
-    Constants.Panel.dismissButton.classList.add("active");
-    Constants.Panel.dismissTooltip.innerText = Lang.sprintf("PANEL_DISMISS_BUTTON", dismissCount);
-    dismissTooltip.object.setContent(Lang.sprintf("PANEL_DISMISS_BUTTON", dismissCount));
+      return offsetTop(parentNode).top - 150;
+    }
   } else {
-    Constants.Panel.dismissButton.classList.remove("active");
+    removeAlert();
+    Constants.Panel.skipButton.focus();
   }
-  return { dismissedIssues, updatedResults, dismissCount, dismissedResults };
-}
-let restoreDismissedHandler;
-let dismissHandler;
-const dismissIssueButton = async (e, results, checkAll, resetAll) => {
-  let savedDismissKeys = JSON.parse(store.getItem("sa11y-dismissed-digest"));
-  const dismissButton = e.target;
-  const dismissContainer = document.querySelector("sa11y-panel-tooltips");
-  dismissContainer.hidden = false;
-  if (dismissButton.tagName === "BUTTON" && dismissButton.hasAttribute("data-sa11y-dismiss")) {
-    const dismissItem = parseInt(dismissButton.getAttribute("data-sa11y-dismiss"), 10);
-    const issue = results.find(($el) => $el.id === dismissItem);
-    if (savedDismissKeys === null) {
-      setTimeout(() => createAlert(Lang._("DISMISS_REMINDER")), 0);
-      savedDismissKeys = [];
-    }
-    if (issue.dismissDigest) {
-      const dismissAllSelected = dismissButton.hasAttribute("data-sa11y-dismiss-all") ? issue.dismissAll : "";
-      const dismissalDetails = {
-        key: issue.dismissDigest,
-        href: window.location.pathname,
-        ...dismissAllSelected ? { dismissAll: dismissAllSelected } : {}
-      };
-      const item = find(`[data-sa11y-annotation='${issue.id}']`, "root");
-      const latestDismissed = item[0] ? item[0].getAttribute("data-sa11y-position") : 0;
-      store.setItem("sa11y-latest-dismissed", latestDismissed);
-      store.setItem("sa11y-dismiss-item", JSON.stringify(dismissalDetails));
-      savedDismissKeys.push(dismissalDetails);
-      store.setItem("sa11y-dismissed-digest", JSON.stringify(savedDismissKeys));
-      store.removeItem("sa11y-dismiss-item");
-      const tooltip = dismissButton?.closest("[data-tippy-root]");
-      if (tooltip) {
-        setTimeout(() => {
-          tooltip.remove();
-        }, 0);
-      }
-      resetAll(false);
-      await checkAll();
-    }
+  return offsetTop($el).top - 150;
+};
+let index = -1;
+const determineIndex = () => {
+  const latestDismissed = store.getItem("sa11y-latest-dismissed");
+  if (latestDismissed !== null) {
+    index = parseInt(latestDismissed, 10) - 1;
+  }
+  store.removeItem("sa11y-latest-dismissed");
+  const opened = find("[data-sa11y-opened]", "root");
+  if (opened[0]) {
+    index = parseInt(opened[0].getAttribute("data-sa11y-position"), 10);
   }
 };
-const restoreDismissButton = async (dismissed, checkAll, resetAll) => {
-  const dismissContainer = document.querySelector("sa11y-panel-tooltips");
-  dismissContainer.hidden = true;
-  const filtered = dismissed.filter((item) => item.href !== window.location.pathname);
-  store.setItem("sa11y-dismissed-digest", JSON.stringify(filtered));
-  Constants.Panel.dismissButton.classList.remove("active");
-  resetAll(false);
-  await checkAll();
+const goToNext = (results) => {
+  determineIndex();
+  const issues = Elements.Annotations.Array;
+  if (index >= issues.length - 1) {
+    index = -1;
+  }
+  const annotation = issues[index + 1];
+  const button = annotation.shadowRoot.querySelector("button");
+  const scrollPos = getScrollPosition(button, results);
+  window.scrollTo({
+    top: scrollPos,
+    behavior: `${Constants.Global.scrollBehaviour}`
+  });
+  if (button.offsetTop !== 0) {
+    button.focus();
+    button.click();
+  }
+  index += 1;
 };
-function dismissButtons(results, dismissed, checkAll, resetAll) {
-  if (Constants.Global.dismissAnnotations) {
-    dismissHandler = (e) => dismissIssueButton(e, results, checkAll, resetAll);
-    const tooltips = document.querySelector("sa11y-tooltips").shadowRoot;
-    tooltips.addEventListener("click", dismissHandler);
-    Constants.Panel.panel.addEventListener("click", dismissHandler);
+const goToPrev = (results) => {
+  determineIndex();
+  const issues = Elements.Annotations.Array;
+  if (index <= 0) {
+    index = issues.length;
   }
-  restoreDismissedHandler = () => restoreDismissButton(dismissed, checkAll, resetAll);
-  Constants.Panel.dismissButton?.addEventListener("click", restoreDismissedHandler);
-}
-function removeDismissListeners() {
-  Constants.Panel.panel?.removeEventListener("click", dismissHandler);
-  Constants.Panel.dismissButton?.removeEventListener("click", restoreDismissedHandler);
-}
-async function upgradeSa11yDismissed() {
-  const sa11yDismissed = store.getItem("sa11y-dismissed");
-  if (!sa11yDismissed) return;
-  try {
-    const parsed = JSON.parse(sa11yDismissed);
-    if (!Array.isArray(parsed) || parsed.length === 0) return;
-    const workerCode = `
-      const dismissDigest = ${dismissDigest.toString().replace(/window\./g, "self.")};
-      self.onmessage = async (e) => {
-        const items = e.data;
-        try {
-          const upgraded = await Promise.all(
-            items.map(async (pair) => ({
-              ...pair,
-              key: await dismissDigest(pair.key)
-            }))
-          );
-          self.postMessage({ success: true, data: upgraded });
-        } catch (err) {
-          self.postMessage({ success: false, error: err.message });
-        }
-      };
-    `;
-    const blob = new Blob([workerCode], { type: "application/javascript" });
-    const workerUrl = URL.createObjectURL(blob);
-    const worker = new Worker(workerUrl);
-    const upgradedIssues = await new Promise((resolve, reject) => {
-      worker.onmessage = (e) => {
-        if (e.data.success) resolve(e.data.data);
-        else reject(new Error(e.data.error));
-      };
-      worker.onerror = (err) => reject(err);
-      worker.postMessage(parsed);
-    });
-    store.setItem("sa11y-dismissed-digest", JSON.stringify(upgradedIssues));
-    store.removeItem("sa11y-dismissed");
-    worker.terminate();
-    URL.revokeObjectURL(workerUrl);
-  } catch (error) {
-    console.error("Sa11y:", error);
+  const button = Elements.Annotations.Array[index - 1].shadowRoot.querySelector("button");
+  const scrollPos = getScrollPosition(button, results);
+  window.scrollTo({
+    top: scrollPos,
+    behavior: `${Constants.Global.scrollBehaviour}`
+  });
+  if (button.offsetTop !== 0) {
+    button.focus();
+    button.click();
   }
-}
-function addColourFilters() {
-  if (Constants.Global.colourFilterPlugin) {
-    if (Constants.Global.headless === false) {
-      const svg = document.createElement("div");
-      svg.id = "sa11y-colour-filters";
-      svg.innerHTML = `
-        <!-- DaltonLens SVG filters to simulate color vision deficiencies -->
-        <svg id="sa11y-svg-filters" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
-          <filter id="sa11y-protanopia" color-interpolation-filters="linearRGB">
-            <feColorMatrix type="matrix" in="SourceGraphic" values="
-                0.10889,0.89111,-0.00000,0,0
-                0.10889,0.89111,0.00000,0,0
-                0.00447,-0.00447,1.00000,0,0
-                0,0,0,1,0"
-            />
-          </filter>
-          <filter id="sa11y-deuteranopia" color-interpolation-filters="linearRGB">
-            <feColorMatrix type="matrix" in="SourceGraphic" values="
-                0.29031,0.70969,-0.00000,0,0
-                0.29031,0.70969,-0.00000,0,0
-                -0.02197,0.02197,1.00000,0,0
-                0,0,0,1,0"
-            />
-          </filter>
-          <filter id="sa11y-tritanopia" color-interpolation-filters="linearRGB">
-            <feColorMatrix type="matrix" in="SourceGraphic" values="
-              0.950, 0.050, 0.000, 0, 0
-              0.000, 0.433, 0.567, 0, 0
-              0.000, 0.475, 0.525, 0, 0
-              0.000, 0.000, 0.000, 1, 0
-            "/>
-          </filter>
-          <filter id="sa11y-monochromacy">
-            <feColorMatrix values="0.299,0.587,0.114,0,0,0.299,0.587,0.114,0,0,0.299,0.587,0.114,0,0,0,0,0,1,0"></feColorMatrix>
-          </filter>
-        </svg>`;
-      document.body.appendChild(svg);
+  index -= 1;
+  if (index === -1) {
+    index = Elements.Annotations.Array.length - 1;
+  }
+};
+function keyboardShortcut(e, results) {
+  if (Elements.Annotations.Array.length && !Constants.Panel.skipButton.hasAttribute("disabled")) {
+    if (e.altKey && (e.code === "KeyS" || e.code === "Period")) {
+      e.preventDefault();
+      goToNext(results);
+    } else if (e.altKey && (e.code === "KeyW" || e.code === "Comma")) {
+      e.preventDefault();
+      goToPrev(results);
     }
   }
 }
-function resetColourFilters() {
-  if (Constants.Global.colourFilterPlugin) {
-    document.body.removeAttribute("data-sa11y-filter");
-    Constants.Panel.settingsContent.classList.remove("hide-settings-border");
-    Constants.Panel.colourFilterSelect.value = 0;
-    Constants.Panel.colourPanel.removeAttribute("data-colour");
-    Constants.Panel.colourPanel.classList.remove("active");
-    Constants.Panel.colourFilterSelect.classList.remove("active");
-    Constants.Panel.content.hidden = false;
-    Constants.Panel.controls.hidden = false;
-  }
+let keyboardShortcutHandler;
+let handleSkipButtonHandler;
+function skipToIssue(results) {
+  keyboardShortcutHandler = (e) => {
+    keyboardShortcut(e, results);
+  };
+  handleSkipButtonHandler = () => {
+    goToNext(results);
+  };
+  document.addEventListener("keydown", keyboardShortcutHandler);
+  Constants.Panel.skipButton.addEventListener("click", handleSkipButtonHandler);
+}
+function removeSkipBtnListeners() {
+  document.removeEventListener("keydown", keyboardShortcutHandler);
+  Constants.Panel.skipButton.removeEventListener("click", handleSkipButtonHandler);
 }
 const exportResultsStyles = `:root{--font-primary:system-ui,"Segoe UI",roboto,helvetica,arial,sans-serif;--font-secondary:consolas,monaco,"Ubuntu Mono","Liberation Mono","Courier New",courier,monospace;--body-text:#333;--bg-primary:#fff;--bg-secondary:#f6f8fa;--bg-tertiary:#d7d7d7;--link-primary:#004c9b;--red-text:#d30017;--warning-text:#966f0d;--hr:#d7d7d74d;--sa11y-link-icon-svg:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 640 512'%3E%3Cpath d='M579.8 267.7c56.5-56.5 56.5-148 0-204.5c-50-50-128.8-56.5-186.3-15.4l-1.6 1.1c-14.4 10.3-17.7 30.3-7.4 44.6s30.3 17.7 44.6 7.4l1.6-1.1c32.1-22.9 76-19.3 103.8 8.6c31.5 31.5 31.5 82.5 0 114L422.3 334.8c-31.5 31.5-82.5 31.5-114 0c-27.9-27.9-31.5-71.8-8.6-103.8l1.1-1.6c10.3-14.4 6.9-34.4-7.4-44.6s-34.4-6.9-44.6 7.4l-1.1 1.6C206.5 251.2 213 330 263 380c56.5 56.5 148 56.5 204.5 0L579.8 267.7zM60.2 244.3c-56.5 56.5-56.5 148 0 204.5c50 50 128.8 56.5 186.3 15.4l1.6-1.1c14.4-10.3 17.7-30.3 7.4-44.6s-30.3-17.7-44.6-7.4l-1.6 1.1c-32.1 22.9-76 19.3-103.8-8.6C74 372 74 321 105.5 289.5L217.7 177.2c31.5-31.5 82.5-31.5 114 0c27.9 27.9 31.5 71.8 8.6 103.9l-1.1 1.6c-10.3 14.4-6.9 34.4 7.4 44.6s34.4 6.9 44.6-7.4l1.1-1.6C433.5 260.8 427 182 377 132c-56.5-56.5-148-56.5-204.5 0L60.2 244.3z'/%3E%3C/svg%3E")}@media (prefers-color-scheme:dark){:root{--body-text:#dde8ff;--bg-primary:#0a2051;--bg-secondary:#072c7c;--bg-tertiary:#0041c9;--link-primary:#64b2ff;--red-text:#ffa2a2;--warning-text:#ffdb59;--hr:#0041c94d}}*{margin:0;padding:0}article,aside,nav,ol,p,pre,section,ul{margin-bottom:1rem}body{max-width:70ch;font-family:var(--font-primary);color:var(--body-text);word-break:break-word;overflow-wrap:break-word;background:var(--bg-primary);margin:0 auto;padding:2rem;font-size:1rem;line-height:1.5;overflow-x:hidden}h1,h2,h3{color:var(--body-text);margin-bottom:8px;padding-top:.875rem;padding-bottom:2px;line-height:1}h1{font-size:2.25rem}h2{font-size:1.85rem}h3{font-size:1.55rem}a{color:var(--link-primary)}a:hover,a:focus{text-decoration:none}header,footer{background:var(--bg-secondary);padding:2rem calc(50vw - 50%)}header{border-bottom:1px solid var(--bg-tertiary);margin:-2rem calc(-50vw + 50%) 2rem}footer{text-align:center;border-top:1px solid var(--bg-tertiary);margin:3rem calc(-50vw + 50%) -2rem}header>:first-child{margin-top:0;padding-top:0}header>:last-child{margin-bottom:0}hr{background:var(--hr);opacity:1;border:none;height:1px;margin:10px 0;padding:0}code,samp,kbd,pre{font-family:var(--font-secondary);background:var(--bg-secondary);border:1px solid var(--bg-tertiary);border-radius:4px;padding:3px 6px;font-size:.9rem}pre{max-width:100%;padding:1rem 1.4rem;display:block;overflow:auto}pre code{font-size:inherit;color:inherit;background:inherit;border:0;margin:0;padding:0}code pre{font-size:inherit;color:inherit;background:inherit;border:0;margin:0;padding:0;display:inline}details{background:var(--bg-primary);border:2px solid var(--link-primary);border-radius:4px;padding:.6rem 1rem}summary{cursor:pointer;font-weight:700}details[open]{padding-bottom:.75rem}details[open] summary{margin-bottom:6px}details[open]>:last-child{margin-bottom:0}.two-columns{display:flex}.column{flex:1;margin-inline-end:20px}.count{max-width:220px}dl{padding-top:10px}.column dl{width:100%}dt{font-weight:700}dd{padding-bottom:10px}ul ul,ol ul,ul ol,ol ol{margin-bottom:0}ul li{margin-bottom:.5rem}ol,ul{padding-left:2rem}ol li:not(li li){margin-bottom:4rem}iframe,img{background:var(--bg-tertiary);border-radius:5px;max-width:50%;padding:5px;display:block}video,audio{border:0;display:block}.red-text{color:var(--red-text)}.visually-hidden{clip:rect(1px,1px,1px,1px);white-space:nowrap;clip-path:inset(50%);border:0;width:1px;height:1px;padding:0;display:block;position:absolute;overflow:hidden}.badge{color:#fff;text-align:center;white-space:nowrap;vertical-align:baseline;border-radius:10px;outline:1px solid #0000;min-width:10px;padding:1px 5px 1.75px;font-size:14px;line-height:1;display:inline;font-weight:700!important}.error .colour{color:var(--red-text)}.error .badge{color:#fff;background:#d30017}.warning .colour{color:var(--warning-text)}.warning .badge{color:#fff;background:#966f0d}.link-icon{width:16px;height:16px;-webkit-mask:var(--sa11y-link-icon-svg)center no-repeat;mask:var(--sa11y-link-icon-svg)center no-repeat;background:#fff;margin-bottom:-3.5px;display:inline-block}li pre,li li pre,li li img,li li iframe,li li video,li li audio{margin-top:1rem}li li{margin-top:1rem;list-style:none}`;
 function generateMetaData() {
@@ -1713,7 +1584,333 @@ function removeExportListeners() {
     Constants.Panel.exportCSV.removeEventListener("click", exportCSVHandler);
   }
 }
-function mainToggle(checkAll, resetAll) {
+function dismissLogic(results, dismissTooltip) {
+  const dismissedIssues = JSON.parse(store.getItem("sa11y-dismissed-digest") || "[]");
+  const currentPath = window.location.pathname;
+  const isSoloDismissed = (issue, dismissed) => dismissed.key.includes(issue.dismissDigest) && dismissed.href === currentPath && (issue.type === "warning" || issue.type === "good");
+  const dismissAll = (issue, dismissed) => typeof dismissed.dismissAll === "string" && issue.dismissAll === dismissed.dismissAll && dismissed.href === currentPath;
+  const soloDismissed = results.filter(
+    (issue) => dismissedIssues.some((dismissed) => isSoloDismissed(issue, dismissed))
+  );
+  const allDismissed = results.filter(
+    (issue) => dismissedIssues.some((dismissed) => dismissAll(issue, dismissed))
+  );
+  const mergeDismissed = [...soloDismissed, ...allDismissed];
+  const dismissedResults = [
+    ...new Map(mergeDismissed.map((issue) => [issue.dismiss, issue])).values()
+  ];
+  const dismissCount = dismissedResults.length;
+  const updatedResults = results.filter(
+    (issue) => !dismissedResults.some(
+      (dismissed) => dismissed.dismiss === issue.dismiss && (issue.type === "warning" || issue.type === "good")
+    )
+  );
+  if (dismissCount) {
+    Constants.Panel.dismissButton.classList.add("active");
+    Constants.Panel.dismissTooltip.innerText = Lang.sprintf("PANEL_DISMISS_BUTTON", dismissCount);
+    dismissTooltip.object.setContent(Lang.sprintf("PANEL_DISMISS_BUTTON", dismissCount));
+  } else {
+    Constants.Panel.dismissButton.classList.remove("active");
+  }
+  return { dismissedIssues, updatedResults, dismissCount, dismissedResults };
+}
+let restoreDismissedHandler;
+let dismissHandler;
+const dismissIssueButton = async (e, results, checkAll) => {
+  let savedDismissKeys = JSON.parse(store.getItem("sa11y-dismissed-digest"));
+  const dismissButton = e.target;
+  const dismissContainer = document.querySelector("sa11y-panel-tooltips");
+  dismissContainer.hidden = false;
+  if (dismissButton.tagName === "BUTTON" && dismissButton.hasAttribute("data-sa11y-dismiss")) {
+    const dismissItem = parseInt(dismissButton.getAttribute("data-sa11y-dismiss"), 10);
+    const issue = results.find(($el) => $el.id === dismissItem);
+    if (savedDismissKeys === null) {
+      setTimeout(() => createAlert(Lang._("DISMISS_REMINDER")), 0);
+      savedDismissKeys = [];
+    }
+    if (issue.dismissDigest) {
+      const dismissAllSelected = dismissButton.hasAttribute("data-sa11y-dismiss-all") ? issue.dismissAll : "";
+      const dismissalDetails = {
+        key: issue.dismissDigest,
+        href: window.location.pathname,
+        ...dismissAllSelected ? { dismissAll: dismissAllSelected } : {}
+      };
+      const item = find(`[data-sa11y-annotation='${issue.id}']`, "root");
+      const latestDismissed = item[0] ? item[0].getAttribute("data-sa11y-position") : 0;
+      store.setItem("sa11y-latest-dismissed", latestDismissed);
+      store.setItem("sa11y-dismiss-item", JSON.stringify(dismissalDetails));
+      savedDismissKeys.push(dismissalDetails);
+      store.setItem("sa11y-dismissed-digest", JSON.stringify(savedDismissKeys));
+      store.removeItem("sa11y-dismiss-item");
+      const tooltip = dismissButton?.closest("[data-tippy-root]");
+      if (tooltip) {
+        setTimeout(() => {
+          tooltip.remove();
+        }, 0);
+      }
+      resetAll(false);
+      await checkAll();
+    }
+  }
+};
+const restoreDismissButton = async (dismissed, checkAll) => {
+  const dismissContainer = document.querySelector("sa11y-panel-tooltips");
+  dismissContainer.hidden = true;
+  const filtered = dismissed.filter((item) => item.href !== window.location.pathname);
+  store.setItem("sa11y-dismissed-digest", JSON.stringify(filtered));
+  Constants.Panel.dismissButton.classList.remove("active");
+  resetAll(false);
+  await checkAll();
+};
+function dismissButtons(results, dismissed, checkAll) {
+  if (Constants.Global.dismissAnnotations) {
+    dismissHandler = (e) => dismissIssueButton(e, results, checkAll);
+    const tooltips = document.querySelector("sa11y-tooltips").shadowRoot;
+    tooltips.addEventListener("click", dismissHandler);
+    Constants.Panel.panel.addEventListener("click", dismissHandler);
+  }
+  restoreDismissedHandler = () => restoreDismissButton(dismissed, checkAll);
+  Constants.Panel.dismissButton?.addEventListener("click", restoreDismissedHandler);
+}
+function removeDismissListeners() {
+  Constants.Panel.panel?.removeEventListener("click", dismissHandler);
+  Constants.Panel.dismissButton?.removeEventListener("click", restoreDismissedHandler);
+}
+async function upgradeSa11yDismissed(checkAll) {
+  const sa11yDismissed = store.getItem("sa11y-dismissed");
+  if (!sa11yDismissed) return;
+  try {
+    const parsed = JSON.parse(sa11yDismissed);
+    if (!Array.isArray(parsed) || parsed.length === 0) return;
+    const workerCode = `
+      const dismissDigest = ${dismissDigest.toString().replace(/window\./g, "self.")};
+      self.onmessage = async (e) => {
+        const items = e.data;
+        try {
+          const upgraded = await Promise.all(
+            items.map(async (pair) => ({
+              ...pair,
+              key: await dismissDigest(pair.key)
+            }))
+          );
+          self.postMessage({ success: true, data: upgraded });
+        } catch (err) {
+          self.postMessage({ success: false, error: err.message });
+        }
+      };
+    `;
+    const blob = new Blob([workerCode], { type: "application/javascript" });
+    const workerUrl = URL.createObjectURL(blob);
+    const worker = new Worker(workerUrl);
+    const upgradedIssues = await new Promise((resolve, reject) => {
+      worker.onmessage = (e) => {
+        if (e.data.success) resolve(e.data.data);
+        else reject(new Error(e.data.error));
+      };
+      worker.onerror = (err) => reject(err);
+      worker.postMessage(parsed);
+    });
+    store.setItem("sa11y-dismissed-digest", JSON.stringify(upgradedIssues));
+    store.removeItem("sa11y-dismissed");
+    worker.terminate();
+    URL.revokeObjectURL(workerUrl);
+    resetAll(false);
+    await checkAll();
+  } catch (error) {
+    console.error("Sa11y:", error);
+  }
+}
+function addColourFilters() {
+  if (Constants.Global.colourFilterPlugin) {
+    if (Constants.Global.headless === false) {
+      const svg = document.createElement("div");
+      svg.id = "sa11y-colour-filters";
+      svg.innerHTML = `
+        <!-- DaltonLens SVG filters to simulate color vision deficiencies -->
+        <svg id="sa11y-svg-filters" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+          <filter id="sa11y-protanopia" color-interpolation-filters="linearRGB">
+            <feColorMatrix type="matrix" in="SourceGraphic" values="
+                0.10889,0.89111,-0.00000,0,0
+                0.10889,0.89111,0.00000,0,0
+                0.00447,-0.00447,1.00000,0,0
+                0,0,0,1,0"
+            />
+          </filter>
+          <filter id="sa11y-deuteranopia" color-interpolation-filters="linearRGB">
+            <feColorMatrix type="matrix" in="SourceGraphic" values="
+                0.29031,0.70969,-0.00000,0,0
+                0.29031,0.70969,-0.00000,0,0
+                -0.02197,0.02197,1.00000,0,0
+                0,0,0,1,0"
+            />
+          </filter>
+          <filter id="sa11y-tritanopia" color-interpolation-filters="linearRGB">
+            <feColorMatrix type="matrix" in="SourceGraphic" values="
+              0.950, 0.050, 0.000, 0, 0
+              0.000, 0.433, 0.567, 0, 0
+              0.000, 0.475, 0.525, 0, 0
+              0.000, 0.000, 0.000, 1, 0
+            "/>
+          </filter>
+          <filter id="sa11y-monochromacy">
+            <feColorMatrix values="0.299,0.587,0.114,0,0,0.299,0.587,0.114,0,0,0.299,0.587,0.114,0,0,0,0,0,1,0"></feColorMatrix>
+          </filter>
+        </svg>`;
+      document.body.appendChild(svg);
+    }
+  }
+}
+function resetColourFilters() {
+  if (Constants.Global.colourFilterPlugin) {
+    document.body.removeAttribute("data-sa11y-filter");
+    Constants.Panel.settingsContent.classList.remove("hide-settings-border");
+    Constants.Panel.colourFilterSelect.value = 0;
+    Constants.Panel.colourPanel.removeAttribute("data-colour");
+    Constants.Panel.colourPanel.classList.remove("active");
+    Constants.Panel.colourFilterSelect.classList.remove("active");
+    Constants.Panel.content.hidden = false;
+    Constants.Panel.controls.hidden = false;
+  }
+}
+async function resetAll(restartPanel = true) {
+  Constants.Global.html.removeAttribute("data-sa11y-active");
+  remove(
+    [
+      "sa11y-annotation",
+      "sa11y-heading-label",
+      "sa11y-heading-anchor",
+      "sa11y-image-anchor",
+      "sa11y-tooltips"
+    ],
+    "document"
+  );
+  if (supportsAnchorPositioning()) {
+    find("[data-sa11y-error], [data-sa11y-warning], [data-sa11y-good]", "document").forEach(
+      ($el) => {
+        const anchor = $el;
+        const anchors = (anchor.style.anchorName || "").split(",").map((s) => s.trim()).filter((s) => s && !s.startsWith("--sa11y-anchor"));
+        if (anchors.length) {
+          anchor.style.anchorName = anchors.join(", ");
+        } else {
+          anchor.style.removeProperty("anchor-name");
+          if (!anchor.style.length) {
+            anchor.removeAttribute("style");
+          }
+        }
+      }
+    );
+  }
+  resetAttributes(
+    [
+      "data-sa11y-parent",
+      "data-sa11y-error",
+      "data-sa11y-warning",
+      "data-sa11y-good",
+      "data-sa11y-overflow",
+      "data-sa11y-image",
+      "data-sa11y-pulse-border",
+      "data-sa11y-filter",
+      "data-sa11y-has-shadow-root"
+    ],
+    "document"
+  );
+  Constants.Panel.outlineList.innerHTML = "";
+  if (Constants.Global.showImageOutline) {
+    Constants.Panel.imagesList.innerHTML = "";
+  }
+  Constants.Panel.pageIssuesList.innerHTML = "";
+  Constants.Panel.readabilityInfo.innerHTML = "";
+  Constants.Panel.readabilityDetails.innerHTML = "";
+  Constants.Panel.panel.classList.remove("has-page-issues");
+  Constants.Panel.pageIssues.classList.remove("active");
+  Constants.Panel.settingsContent.classList.remove("hide-settings-border");
+  Constants.Panel.panel.querySelector("#readability-alert")?.remove();
+  removeAlert();
+  removeSkipBtnListeners();
+  removeExportListeners();
+  removeDismissListeners();
+  resetColourFilters();
+  while (Constants.Panel.status.firstChild) {
+    Constants.Panel.status.removeChild(Constants.Panel.status.firstChild);
+  }
+  document.querySelectorAll("[data-sa11y-has-shadow-root]").forEach((el) => {
+    el.shadowRoot.querySelectorAll("style.sa11y-css-utilities").forEach((style) => {
+      style.remove();
+    });
+    el.removeAttribute("data-sa11y-has-shadow-root");
+  });
+  if (restartPanel) {
+    Constants.Panel.panel.classList.remove("active");
+  }
+}
+const styles = ":host{z-index:999999;background:var(--sa11y-panel-bg);border-top:5px solid var(--sa11y-panel-bg-splitter);width:100%;height:fit-content;display:block;position:fixed;bottom:0;left:0;right:0}*{font-size:var(--sa11y-normal-text);color:var(--sa11y-panel-primary);font-family:var(--sa11y-font-face)!important;-webkit-font-smoothing:auto!important;line-height:22px!important}#dialog{max-width:900px;margin:20px auto;padding:20px}h2{font-size:var(--sa11y-large-text);margin-top:0}a{color:var(--sa11y-hyperlink);cursor:pointer;text-decoration:underline}a:hover,a:focus{text-decoration:none}p{margin-top:0}.error{color:var(--sa11y-error-text);background:var(--sa11y-error);border:2px dashed #f08080;margin-bottom:0;padding:5px}";
+const sharedStyles = '.visually-hidden{clip:rect(1px,1px,1px,1px);white-space:nowrap;clip-path:inset(50%);border:0;width:1px;height:1px;padding:0;display:block;position:absolute;overflow:hidden}[hidden]{display:none!important}h2,.header-text-inline,.header-text{font-size:var(--sa11y-large-text);color:var(--sa11y-panel-primary);margin-bottom:3px;font-weight:600;display:block}.header-text-inline{display:inline-block!important}code{font-size:calc(var(--sa11y-normal-text) - 1px);font-weight:600;font-family:monospace!important}pre code{white-space:pre-wrap;overflow:auto}pre,code,kbd,.kbd{color:var(--sa11y-panel-primary);background-color:var(--sa11y-panel-badge);border-radius:3.2px;padding:1.6px 4.8px}.bold{font-weight:600}.error .colour,.red-text{font-family:var(--sa11y-font-face);color:var(--sa11y-red-text)}.warning .colour,.yellow-text{font-family:var(--sa11y-font-face);color:var(--sa11y-yellow-text)}.normal-badge,.badge{min-width:10px;color:var(--sa11y-panel-primary);text-align:center;white-space:nowrap;vertical-align:baseline;background-color:var(--sa11y-panel-badge);border-radius:10px;outline:1px solid #0000;padding:1px 5px 1.75px;font-size:14px;line-height:1;display:inline;font-weight:700!important}.error .badge{color:var(--sa11y-error-text);background:var(--sa11y-error)}.error-badge{color:var(--sa11y-error-text)!important;background:var(--sa11y-error)!important}.warning .badge{color:var(--sa11y-panel-bg);background:var(--sa11y-yellow-text)}.warning-badge{color:var(--sa11y-panel-bg)!important;background:var(--sa11y-yellow-text)!important}.good-contrast{color:var(--sa11y-good-text)!important;background:var(--sa11y-good)!important}#contrast-preview{overflow-wrap:break-word;border:2px dashed var(--sa11y-panel-bg-splitter);background-color:#e8e8e8;background-image:linear-gradient(45deg,#ccc 25%,#0000 25% 75%,#ccc 75%,#ccc),linear-gradient(45deg,#ccc 25%,#0000 25% 75%,#ccc 75%,#ccc);background-position:0 0,5px 5px;background-size:10px 10px;border-radius:3.2px;max-height:100px;margin-top:10px;padding:5px;line-height:1;overflow:clip}#contrast-preview:empty{display:none}#color-pickers{justify-content:space-between;margin-top:10px;margin-bottom:10px;display:flex}#color-pickers label{align-items:center;display:flex}#color-pickers input{cursor:pointer;margin-inline-start:7px}#fg-color-wrapper.unknown,#bg-color-wrapper.unknown{display:inline-block;position:relative}:is(#fg-color-wrapper.unknown,#bg-color-wrapper.unknown):after{z-index:2;color:#fff;pointer-events:none;content:"?";justify-content:center;align-items:center;width:44px;height:44px;margin:-46px 7px;font-size:22px;display:flex;position:absolute}input[type=color i]{background:var(--sa11y-panel-bg-secondary);border-color:var(--sa11y-button-outline);border-style:solid;border-width:1px;border-radius:50%;block-size:44px;inline-size:44px;padding:2px}input[type=color i]::-webkit-color-swatch-wrapper{padding:1px}input[type=color i]::-webkit-color-swatch{border-color:var(--sa11y-button-outline);border-radius:50%}input[type=color i]::-moz-color-swatch{border-color:var(--sa11y-button-outline);border-radius:50%}input[type=color i].unknown{box-shadow:0 0 0 3px var(--sa11y-yellow-text)}.close-btn{float:var(--sa11y-float-rtl);width:32px;height:32px;font-size:var(--sa11y-normal-text);color:var(--sa11y-panel-primary);cursor:pointer;background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-button-outline);border-radius:50%;margin:0;font-weight:400;transition:all .2s ease-in-out;position:relative}.close-btn:hover,.close-btn:focus{background-color:var(--sa11y-shortcut-hover)}.close-btn:after{content:"";background:var(--sa11y-setting-switch-bg-off);-webkit-mask:var(--sa11y-close-btn-svg)center no-repeat;mask:var(--sa11y-close-btn-svg)center no-repeat;position:absolute;inset:-7px}@media screen and (forced-colors:active){.close-btn:after{filter:invert()}}#container [tabindex="0"]:focus,#container [tabindex="-1"]:focus,#container input:focus,#container select:focus,#container button:focus,#container a:focus{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}#container .switch:focus,#container #panel-controls button:focus{box-shadow:inset 0 0 0 4px var(--sa11y-focus-color);outline:0}#container [tabindex="0"]:focus:not(:focus-visible),#container [tabindex="-1"]:focus:not(:focus-visible),#container input:focus:not(:focus-visible),#container button:focus:not(:focus-visible),#container select:focus:not(:focus-visible),#container #panel-controls button:focus:not(:focus-visible){box-shadow:none;outline:0}#container a:focus-visible,#container button:not(#panel-controls button,.switch):focus-visible,#container select:focus-visible,#container input:focus-visible,#container [tabindex="0"]:focus-visible,#container [tabindex="-1"]:focus-visible{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}#container .switch:focus-visible,#container #panel-controls button:focus-visible{box-shadow:inset 0 0 0 4px var(--sa11y-focus-color);outline:0}@media screen and (forced-colors:active){#panel-controls button:focus{border:inset 3px solid transparent}.close-btn:focus{outline:3px solid #0000!important}#container a:focus,#container [tabindex="-1"]:focus,#container [tabindex="0"]:focus,#container select:focus,#container button:focus{outline:3px solid #0000!important}}';
+class ConsoleErrors extends HTMLElement {
+  constructor(error) {
+    super();
+    this.error = error;
+  }
+  connectedCallback() {
+    const shadow = this.attachShadow({ mode: "open" });
+    const style = document.createElement("style");
+    style.innerHTML = styles + sharedStyles;
+    shadow.appendChild(style);
+    const content = document.createElement("div");
+    content.setAttribute("id", "dialog");
+    content.setAttribute("tabindex", "-1");
+    const url2 = window.location;
+    const google = "https://forms.gle/sjzK9XykETaoqZv99";
+    const template = `## Error Description
+\`\`\`javascript
+${this.error.stack}
+\`\`\`
+
+## Details
+- **URL:** ${url2}
+- **Version:** ${"4.4.2"}
+
+## Comments
+`;
+    const encodedTemplate = encodeURIComponent(template);
+    const github = `https://github.com/ryersondmp/sa11y/issues/new?title=Bug%20report&body=${encodedTemplate}`;
+    content.innerHTML = `
+      <button class="close-btn" aria-label="${Lang._("ALERT_CLOSE")}"></button>
+      <h2>${Lang._("ERROR")}</h2>
+      <p>${Lang.sprintf("CONSOLE_ERROR", google, github)}</p>
+      <p class="error">${escapeHTML(this.error.stack)}<br><br>Version: ${"4.4.2"} <br> URL: ${url2}</p>
+    `;
+    shadow.appendChild(content);
+    setTimeout(() => {
+      Constants.Panel.toggle.style.display = "none";
+      const container = document.querySelector("sa11y-console-error");
+      const dialog = container.shadowRoot.getElementById("dialog");
+      dialog.focus();
+      const close = container.shadowRoot.querySelector(".close-btn");
+      close.addEventListener("click", () => {
+        container.remove();
+      });
+    }, 0);
+  }
+}
+function detectPageChanges(detectSPArouting, checkAll) {
+  if (detectSPArouting === true) {
+    let url2 = window.location.href;
+    const checkURL = debounce$2(async () => {
+      if (url2 !== window.location.href) {
+        if (store.getItem("sa11y-panel") === "Closed" || !store.getItem("sa11y-panel")) {
+          checkAll();
+        } else {
+          resetAll(false);
+          await checkAll();
+        }
+        url2 = window.location.href;
+      }
+    }, 250);
+    window.addEventListener("click", checkURL);
+    window.addEventListener("keydown", checkURL);
+  }
+}
+function mainToggle(checkAll) {
   Constants.Panel.toggle.addEventListener("click", (e) => {
     if (store.getItem("sa11y-panel") === "Opened") {
       e.preventDefault();
@@ -1961,7 +2158,7 @@ class ControlPanel extends HTMLElement {
     Constants.initializePanelSelectors();
   }
 }
-function settingsPanelToggles(checkAll, resetAll) {
+function settingsPanelToggles(checkAll) {
   if (Constants.Global.showMovePanelToggle) {
     Constants.Panel.movePanelToggle.onclick = async () => {
       const panelPosition = store.getItem("sa11y-position");
@@ -6179,130 +6376,6 @@ class HeadingLabel extends HTMLElement {
     shadow.appendChild(style);
   }
 }
-const closeAnyActiveTooltips = () => {
-  const tooltip = document.querySelector("sa11y-tooltips").shadowRoot;
-  const button = tooltip.querySelector("button");
-  if (button !== null) {
-    button.click();
-  }
-};
-const getHiddenParent = ($el) => {
-  const shadowHost = $el.getRootNode().host;
-  const visibleParent = findVisibleParent(shadowHost, "display", "none");
-  if (visibleParent !== null) {
-    const hiddenParent = visibleParent.previousElementSibling;
-    if (hiddenParent) {
-      addPulse(hiddenParent);
-    } else {
-      addPulse(visibleParent.parentNode);
-    }
-  }
-};
-const getScrollPosition = ($el, results) => {
-  const offsetTopPosition = $el.offsetTop;
-  if (offsetTopPosition === 0) {
-    const annotationHost = $el.getRootNode().host;
-    const visiblePosition = findVisibleParent(annotationHost, "display", "none");
-    const annotationIndex = parseInt(annotationHost.getAttribute("data-sa11y-annotation"), 10);
-    const issueObject = results.find((issue) => issue.id === annotationIndex);
-    const elementPreview = generateElementPreview(issueObject);
-    getHiddenParent($el);
-    const tooltip = $el.getAttribute("data-tippy-content");
-    createAlert(`${Lang._("NOT_VISIBLE")}`, tooltip, elementPreview);
-    closeAnyActiveTooltips();
-    if (visiblePosition) {
-      const prevSibling = visiblePosition.previousElementSibling;
-      const { parentNode } = visiblePosition;
-      if (prevSibling) {
-        return offsetTop(prevSibling).top - 150;
-      }
-      return offsetTop(parentNode).top - 150;
-    }
-  } else {
-    removeAlert();
-    Constants.Panel.skipButton.focus();
-  }
-  return offsetTop($el).top - 150;
-};
-let index = -1;
-const determineIndex = () => {
-  const latestDismissed = store.getItem("sa11y-latest-dismissed");
-  if (latestDismissed !== null) {
-    index = parseInt(latestDismissed, 10) - 1;
-  }
-  store.removeItem("sa11y-latest-dismissed");
-  const opened = find("[data-sa11y-opened]", "root");
-  if (opened[0]) {
-    index = parseInt(opened[0].getAttribute("data-sa11y-position"), 10);
-  }
-};
-const goToNext = (results) => {
-  determineIndex();
-  const issues = Elements.Annotations.Array;
-  if (index >= issues.length - 1) {
-    index = -1;
-  }
-  const annotation = issues[index + 1];
-  const button = annotation.shadowRoot.querySelector("button");
-  const scrollPos = getScrollPosition(button, results);
-  window.scrollTo({
-    top: scrollPos,
-    behavior: `${Constants.Global.scrollBehaviour}`
-  });
-  if (button.offsetTop !== 0) {
-    button.focus();
-    button.click();
-  }
-  index += 1;
-};
-const goToPrev = (results) => {
-  determineIndex();
-  const issues = Elements.Annotations.Array;
-  if (index <= 0) {
-    index = issues.length;
-  }
-  const button = Elements.Annotations.Array[index - 1].shadowRoot.querySelector("button");
-  const scrollPos = getScrollPosition(button, results);
-  window.scrollTo({
-    top: scrollPos,
-    behavior: `${Constants.Global.scrollBehaviour}`
-  });
-  if (button.offsetTop !== 0) {
-    button.focus();
-    button.click();
-  }
-  index -= 1;
-  if (index === -1) {
-    index = Elements.Annotations.Array.length - 1;
-  }
-};
-function keyboardShortcut(e, results) {
-  if (Elements.Annotations.Array.length && !Constants.Panel.skipButton.hasAttribute("disabled")) {
-    if (e.altKey && (e.code === "KeyS" || e.code === "Period")) {
-      e.preventDefault();
-      goToNext(results);
-    } else if (e.altKey && (e.code === "KeyW" || e.code === "Comma")) {
-      e.preventDefault();
-      goToPrev(results);
-    }
-  }
-}
-let keyboardShortcutHandler;
-let handleSkipButtonHandler;
-function skipToIssue(results) {
-  keyboardShortcutHandler = (e) => {
-    keyboardShortcut(e, results);
-  };
-  handleSkipButtonHandler = () => {
-    goToNext(results);
-  };
-  document.addEventListener("keydown", keyboardShortcutHandler);
-  Constants.Panel.skipButton.addEventListener("click", handleSkipButtonHandler);
-}
-function removeSkipBtnListeners() {
-  document.removeEventListener("keydown", keyboardShortcutHandler);
-  Constants.Panel.skipButton.removeEventListener("click", handleSkipButtonHandler);
-}
 const url = [
   ".avif",
   ".png",
@@ -8618,7 +8691,7 @@ class Sa11y {
         Constants.initializeGlobal(option);
         Constants.initializeReadability(option);
         Constants.initializeExclusions(option);
-        upgradeSa11yDismissed();
+        upgradeSa11yDismissed(this.checkAll);
         if (option.developerChecksOnByDefault) {
           if (store.getItem("sa11y-developer") === null || option.checkAllHideToggles) {
             store.setItem("sa11y-developer", "On");
@@ -8637,21 +8710,21 @@ class Sa11y {
             }
             const controlPanel = new ControlPanel();
             document.body.appendChild(controlPanel);
-            settingsPanelToggles(this.checkAll, this.resetAll);
+            settingsPanelToggles(this.checkAll);
             initializePanelToggles();
             addColourFilters();
-            detectPageChanges(option.detectSPArouting, this.checkAll, this.resetAll);
+            detectPageChanges(option.detectSPArouting, this.checkAll);
             this.panelTooltips = new PanelTooltips();
             document.body.appendChild(this.panelTooltips);
             Constants.Panel.toggle.disabled = false;
             setTimeout(() => {
-              this.resetAll();
+              resetAll();
               this.checkAll();
             }, option.delayCheck);
             if (option.delayCheck >= 700) {
               Constants.Panel.toggle.disabled = true;
             }
-            mainToggle(this.checkAll, this.resetAll);
+            mainToggle(this.checkAll);
           }
         });
       }
@@ -8745,12 +8818,7 @@ class Sa11y {
             developer: match.developer
           };
         }).filter(Boolean);
-        const dismiss = dismissLogic(
-          this.results,
-          this.panelTooltips,
-          this.checkAll,
-          this.resetAll
-        );
+        const dismiss = dismissLogic(this.results, this.panelTooltips, this.checkAll);
         this.results = dismiss.updatedResults;
         this.dismissed = dismiss.dismissedIssues;
         this.dismissedPageResults = dismiss.dismissedResults;
@@ -8771,7 +8839,7 @@ class Sa11y {
           Elements.initializeAnnotations();
           const tooltipComponent = new AnnotationTooltips();
           document.body.appendChild(tooltipComponent);
-          dismissButtons(this.results, this.dismissed, this.checkAll, this.resetAll);
+          dismissButtons(this.results, this.dismissed, this.checkAll);
           generatePageOutline(this.dismissedPageResults, this.headingOutline, option);
           if (option.showImageOutline) {
             generateImageOutline(this.dismissedPageResults, this.imageResults, option);
@@ -8795,77 +8863,7 @@ class Sa11y {
       window.sa11yCheckComplete = event.detail;
       document.dispatchEvent(event);
     };
-    this.resetAll = (restartPanel = true) => {
-      Constants.Global.html.removeAttribute("data-sa11y-active");
-      remove(
-        [
-          "sa11y-annotation",
-          "sa11y-heading-label",
-          "sa11y-heading-anchor",
-          "sa11y-image-anchor",
-          "sa11y-tooltips"
-        ],
-        "document"
-      );
-      if (supportsAnchorPositioning()) {
-        find("[data-sa11y-error], [data-sa11y-warning], [data-sa11y-good]", "document").forEach(
-          ($el) => {
-            const anchor = $el;
-            const anchors = (anchor.style.anchorName || "").split(",").map((s) => s.trim()).filter((s) => s && !s.startsWith("--sa11y-anchor"));
-            if (anchors.length) {
-              anchor.style.anchorName = anchors.join(", ");
-            } else {
-              anchor.style.removeProperty("anchor-name");
-              if (!anchor.style.length) {
-                anchor.removeAttribute("style");
-              }
-            }
-          }
-        );
-      }
-      resetAttributes(
-        [
-          "data-sa11y-parent",
-          "data-sa11y-error",
-          "data-sa11y-warning",
-          "data-sa11y-good",
-          "data-sa11y-overflow",
-          "data-sa11y-image",
-          "data-sa11y-pulse-border",
-          "data-sa11y-filter",
-          "data-sa11y-has-shadow-root"
-        ],
-        "document"
-      );
-      Constants.Panel.outlineList.innerHTML = "";
-      if (option.showImageOutline) {
-        Constants.Panel.imagesList.innerHTML = "";
-      }
-      Constants.Panel.pageIssuesList.innerHTML = "";
-      Constants.Panel.readabilityInfo.innerHTML = "";
-      Constants.Panel.readabilityDetails.innerHTML = "";
-      Constants.Panel.panel.classList.remove("has-page-issues");
-      Constants.Panel.pageIssues.classList.remove("active");
-      Constants.Panel.settingsContent.classList.remove("hide-settings-border");
-      Constants.Panel.panel.querySelector("#readability-alert")?.remove();
-      removeAlert();
-      removeSkipBtnListeners();
-      removeExportListeners();
-      removeDismissListeners();
-      resetColourFilters();
-      while (Constants.Panel.status.firstChild) {
-        Constants.Panel.status.removeChild(Constants.Panel.status.firstChild);
-      }
-      document.querySelectorAll("[data-sa11y-has-shadow-root]").forEach((el) => {
-        el.shadowRoot.querySelectorAll("style.sa11y-css-utilities").forEach((style) => {
-          style.remove();
-        });
-        el.removeAttribute("data-sa11y-has-shadow-root");
-      });
-      if (restartPanel) {
-        Constants.Panel.panel.classList.remove("active");
-      }
-    };
+    this.resetAll = (restartPanel = true) => resetAll(restartPanel);
     this.disabled = () => {
       setTimeout(() => {
         if (store.getItem("sa11y-panel") === "Opened") {

@@ -147,7 +147,8 @@
         "táto webová stránka",
         "zobraziť",
         "pozrite si náš",
-        "webová stránka"
+        "webová stránka",
+        "článok"
       ],
       CLICK: ["click", "kliknutie"],
       NEW_WINDOW_PHRASES: ["externé", "nová karta", "nové okno", "pop-up", "vyskakovať"],

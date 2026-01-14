@@ -154,6 +154,7 @@ export default {
       'skatīt',
       'apskatīt mūsu',
       'tīmekļa vietne',
+      'rakstu',
     ],
     CLICK: ['click', 'klikšķis'],
     NEW_WINDOW_PHRASES: [

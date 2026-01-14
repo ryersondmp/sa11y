@@ -142,7 +142,8 @@
         "ce site web",
         "consulter",
         "consulter notre",
-        "site web"
+        "site web",
+        "article"
       ],
       CLICK: ["click", "cliquer"],
       NEW_WINDOW_PHRASES: [

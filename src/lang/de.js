@@ -182,6 +182,8 @@ export default {
       'anschauen',
       'view our',
       'website',
+      'article',
+      'artikel',
     ],
     CLICK: ['click', 'klicken'],
     NEW_WINDOW_PHRASES: [

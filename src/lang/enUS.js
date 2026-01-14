@@ -143,6 +143,7 @@ export default {
       'view',
       'view our',
       'website',
+      'article',
     ],
     CLICK: ['click'],
     NEW_WINDOW_PHRASES: [

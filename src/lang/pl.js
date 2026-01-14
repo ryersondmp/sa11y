@@ -157,6 +157,7 @@ export default {
       'zobacz naszą',
       'stronę',
       'witrynę',
+      'artykuł',
     ],
     CLICK: ['click', 'kliknięcie'],
     NEW_WINDOW_PHRASES: ['zewnętrzny', 'nowa karta', 'nowe okno', 'pop-up', 'pop up'],

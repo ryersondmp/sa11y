@@ -157,6 +157,7 @@ export default {
       '보기',
       '보기',
       '웹사이트',
+      '기사',
     ],
     CLICK: ['click', '클릭'],
     NEW_WINDOW_PHRASES: ['외부', '새 탭', '새 창', '팝업', '팝업'],

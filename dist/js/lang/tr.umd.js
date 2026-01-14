@@ -148,7 +148,8 @@
         "bu web sitesi",
         "görünüm",
         "bizi görüntüleyin",
-        "web sitesi"
+        "web sitesi",
+        "madde"
       ],
       CLICK: ["click", "tıklama"],
       NEW_WINDOW_PHRASES: ["dış", "yeni sekme", "yeni pencere", "açılır pencere"],

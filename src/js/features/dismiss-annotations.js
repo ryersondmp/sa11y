@@ -3,6 +3,7 @@ import Constants from '../utils/constants';
 import find from '../utils/find';
 import Lang from '../utils/lang';
 import { store, dismissDigest } from '../utils/utils';
+import { resetAll } from '../utils/resetAll';
 
 /* ************************************************************ */
 /*  Update results array before painting annotations to page.   */
@@ -70,7 +71,7 @@ let restoreDismissedHandler;
 let dismissHandler;
 
 /* 1. Hide annotation upon click of dismiss button. */
-const dismissIssueButton = async (e, results, checkAll, resetAll) => {
+const dismissIssueButton = async (e, results, checkAll) => {
   // Get dismissed array from localStorage.
   let savedDismissKeys = JSON.parse(store.getItem('sa11y-dismissed-digest'));
   const dismissButton = e.target;
@@ -130,7 +131,7 @@ const dismissIssueButton = async (e, results, checkAll, resetAll) => {
 };
 
 /* 2. Restore hidden alerts on the CURRENT page only. */
-const restoreDismissButton = async (dismissed, checkAll, resetAll) => {
+const restoreDismissButton = async (dismissed, checkAll) => {
   const dismissContainer = document.querySelector('sa11y-panel-tooltips');
   dismissContainer.hidden = true; // Prevent flash of tooltip.
   const filtered = dismissed.filter((item) => item.href !== window.location.pathname);
@@ -143,10 +144,10 @@ const restoreDismissButton = async (dismissed, checkAll, resetAll) => {
 };
 
 // Add event listeners.
-export function dismissButtons(results, dismissed, checkAll, resetAll) {
+export function dismissButtons(results, dismissed, checkAll) {
   if (Constants.Global.dismissAnnotations) {
     // Dismiss buttons.
-    dismissHandler = (e) => dismissIssueButton(e, results, checkAll, resetAll);
+    dismissHandler = (e) => dismissIssueButton(e, results, checkAll);
 
     // Dismiss button exists in both tooltip and control panel.
     const tooltips = document.querySelector('sa11y-tooltips').shadowRoot;
@@ -155,7 +156,7 @@ export function dismissButtons(results, dismissed, checkAll, resetAll) {
   }
 
   // Initialize restore alerts button regardless if plugin enabled or not.
-  restoreDismissedHandler = () => restoreDismissButton(dismissed, checkAll, resetAll);
+  restoreDismissedHandler = () => restoreDismissButton(dismissed, checkAll);
   Constants.Panel.dismissButton?.addEventListener('click', restoreDismissedHandler);
 }
 
@@ -171,7 +172,7 @@ export function removeDismissListeners() {
  * @deprecated To be removed in the future!
  * @returns {Promise<void>}
  */
-export async function upgradeSa11yDismissed() {
+export async function upgradeSa11yDismissed(checkAll) {
   const sa11yDismissed = store.getItem('sa11y-dismissed');
   if (!sa11yDismissed) return;
   try {
@@ -217,6 +218,8 @@ export async function upgradeSa11yDismissed() {
     store.removeItem('sa11y-dismissed');
     worker.terminate();
     URL.revokeObjectURL(workerUrl);
+    resetAll(false);
+    await checkAll();
   } catch (error) {
     console.error('Sa11y:', error);
   }

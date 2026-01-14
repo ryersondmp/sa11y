@@ -155,6 +155,7 @@ export default {
       'melihat',
       'lihat kami',
       'situs web',
+      'artikel',
     ],
     CLICK: ['click', 'klik'],
     NEW_WINDOW_PHRASES: ['eksternal', 'tab baru', 'jendela baru', 'pop-up', 'muncul'],

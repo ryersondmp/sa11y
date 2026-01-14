@@ -142,7 +142,8 @@ const et = {
       "see veebileht",
       "vaadata",
       "vaadata meie",
-      "veebileht"
+      "veebileht",
+      "artiklit"
     ],
     CLICK: ["click", "klõps"],
     NEW_WINDOW_PHRASES: ["väline", "uus vahekaart", "uus aken", "pop-up", "hüpata"],

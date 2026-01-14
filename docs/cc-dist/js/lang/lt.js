@@ -143,7 +143,8 @@ const lt = {
       "šioje svetainėje",
       "peržiūrėti",
       "peržiūrėti mūsų",
-      "svetainė"
+      "svetainė",
+      "straipsnis"
     ],
     CLICK: ["click", "spustelėkite"],
     NEW_WINDOW_PHRASES: ["išorinis", "naujas skirtukas", "naujas langas", "iššokantis", "iššokti"],

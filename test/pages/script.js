@@ -1,5 +1,5 @@
 import { Sa11y, Lang } from '../../src/js/sa11y.js';
-import Sa11yLangEn from '../../src/js/lang/en.js';
+import Sa11yLangEn from '../../src/lang/en.js';
 
 const isWarningsPage = window.location.pathname.includes('warnings.html');
 const warningsPageChecks = isWarningsPage

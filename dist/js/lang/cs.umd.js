@@ -147,7 +147,8 @@
         "na těchto webových stránkách",
         "zobrazit",
         "prohlédněte si naše",
-        "webové stránky"
+        "webové stránky",
+        "článek"
       ],
       CLICK: ["click", "kliknutí"],
       NEW_WINDOW_PHRASES: ["externí", "nová karta", "nové okno", "pop-up", "vyskakovat"],

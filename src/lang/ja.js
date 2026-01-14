@@ -168,6 +168,7 @@ export default {
       'ビュー',
       '私たちを見る',
       'ウェブサイト',
+      '記事',
     ],
     CLICK: ['click', 'クリック'],
     NEW_WINDOW_PHRASES: [

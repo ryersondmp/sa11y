@@ -144,7 +144,8 @@
         "este site",
         "visualização",
         "veja nossa",
-        "site"
+        "site",
+        "artigo"
       ],
       CLICK: ["click", "clique"],
       NEW_WINDOW_PHRASES: ["externo", "nova guia", "nova janela", "pop-up", "aparecer"],

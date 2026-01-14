@@ -157,6 +157,7 @@ export default {
       'zobrazit',
       'prohlédněte si naše',
       'webové stránky',
+      'článek',
     ],
     CLICK: ['click', 'kliknutí'],
     NEW_WINDOW_PHRASES: ['externí', 'nová karta', 'nové okno', 'pop-up', 'vyskakovat'],

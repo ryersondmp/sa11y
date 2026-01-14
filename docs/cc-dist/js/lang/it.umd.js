@@ -144,7 +144,8 @@
         "questo sito web",
         "vista",
         "vedere il nostro",
-        "sito web"
+        "sito web",
+        "articolo"
       ],
       CLICK: ["click", "clic"],
       NEW_WINDOW_PHRASES: ["esterno", "nuova scheda", "nuova finestra", "pop-up", "pop up"],

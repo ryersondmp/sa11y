@@ -144,7 +144,8 @@
         "šo tīmekļa vietni",
         "skatīt",
         "apskatīt mūsu",
-        "tīmekļa vietne"
+        "tīmekļa vietne",
+        "rakstu"
       ],
       CLICK: ["click", "klikšķis"],
       NEW_WINDOW_PHRASES: [

@@ -146,7 +146,8 @@
         "este sítio web",
         "ver",
         "ver a nossa",
-        "sítio web"
+        "sítio web",
+        "artigo"
       ],
       CLICK: ["click", "clique"],
       NEW_WINDOW_PHRASES: ["externo", "novo separador", "nova janela", "pop-up", "aparecer"],

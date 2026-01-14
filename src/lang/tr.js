@@ -158,6 +158,7 @@ export default {
       'görünüm',
       'bizi görüntüleyin',
       'web sitesi',
+      'madde',
     ],
     CLICK: ['click', 'tıklama'],
     NEW_WINDOW_PHRASES: ['dış', 'yeni sekme', 'yeni pencere', 'açılır pencere'],

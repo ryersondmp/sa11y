@@ -157,6 +157,7 @@ export default {
       'megtekintés',
       'nézze meg a',
       'weboldal',
+      'cikk',
     ],
     CLICK: ['click', 'kattintás'],
     NEW_WINDOW_PHRASES: ['külső', 'új lap', 'új ablak', 'pop-up', 'felbukkan'],

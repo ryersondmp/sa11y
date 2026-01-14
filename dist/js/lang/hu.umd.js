@@ -147,7 +147,8 @@
         "ez a weboldal",
         "megtekintés",
         "nézze meg a",
-        "weboldal"
+        "weboldal",
+        "cikk"
       ],
       CLICK: ["click", "kattintás"],
       NEW_WINDOW_PHRASES: ["külső", "új lap", "új ablak", "pop-up", "felbukkan"],

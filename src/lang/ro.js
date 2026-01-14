@@ -159,6 +159,7 @@ export default {
       'vezi',
       'vizualizați pagina noastră',
       'site',
+      'articol',
     ],
     CLICK: ['click', 'clic'],
     NEW_WINDOW_PHRASES: ['extern', 'fila nouă', 'fereastră nouă', 'pop-up'],

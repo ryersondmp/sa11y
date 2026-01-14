@@ -156,6 +156,7 @@ export default {
       'vaadata',
       'vaadata meie',
       'veebileht',
+      'artiklit',
     ],
     CLICK: ['click', 'klõps'],
     NEW_WINDOW_PHRASES: ['väline', 'uus vahekaart', 'uus aken', 'pop-up', 'hüpata'],

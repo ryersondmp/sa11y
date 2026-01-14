@@ -129,7 +129,8 @@ const en = {
       "this form",
       "view",
       "view our",
-      "website"
+      "website",
+      "article"
     ],
     CLICK: ["click"],
     NEW_WINDOW_PHRASES: [

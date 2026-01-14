@@ -156,6 +156,7 @@ export default {
       'vista',
       'ver nuestro',
       'sitio web',
+      'artículo',
     ],
     CLICK: ['click', 'clic'],
     NEW_WINDOW_PHRASES: ['externo', 'nueva página', 'nueva ventana', 'ventana emergente'],

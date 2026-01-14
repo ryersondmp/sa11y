@@ -144,7 +144,8 @@ const ro = {
       "acest site",
       "vezi",
       "vizualizați pagina noastră",
-      "site"
+      "site",
+      "articol"
     ],
     CLICK: ["click", "clic"],
     NEW_WINDOW_PHRASES: ["extern", "fila nouă", "fereastră nouă", "pop-up"],

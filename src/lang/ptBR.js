@@ -154,6 +154,7 @@ export default {
       'visualização',
       'veja nossa',
       'site',
+      'artigo',
     ],
     CLICK: ['click', 'clique'],
     NEW_WINDOW_PHRASES: ['externo', 'nova guia', 'nova janela', 'pop-up', 'aparecer'],

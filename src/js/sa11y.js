@@ -5,8 +5,8 @@ import Constants from './utils/constants';
 import Elements from './utils/elements';
 import find from './utils/find';
 import findShadowComponents from './logic/find-shadow-components';
-import { removeAlert } from './interface/alert';
 import * as Utils from './utils/utils';
+import { resetAll } from './utils/resetAll';
 
 // Extras
 import ConsoleErrors from './interface/console-error';
@@ -14,11 +14,10 @@ import detectPageChanges from './features/detect-page-changes';
 import {
   dismissLogic,
   dismissButtons,
-  removeDismissListeners,
   upgradeSa11yDismissed,
 } from './features/dismiss-annotations';
-import { addColourFilters, resetColourFilters } from './features/colour-filters';
-import { exportResults, removeExportListeners } from './features/export-results';
+import { addColourFilters } from './features/colour-filters';
+import { exportResults } from './features/export-results';
 
 // Create UI/interface elements
 import mainToggle from './logic/main-toggle-logic';
@@ -31,7 +30,7 @@ import { updatePanel, updateBadge, updateCount } from './logic/update-panel';
 import { AnnotationTooltips, PanelTooltips } from './interface/tooltips';
 import { Annotations, annotate } from './interface/annotations';
 import { HeadingAnchor, HeadingLabel } from './interface/heading-labels';
-import { skipToIssue, removeSkipBtnListeners } from './logic/skip-to-issue';
+import { skipToIssue } from './logic/skip-to-issue';
 
 // Checks/rulesets
 import checkImages from './rulesets/images';
@@ -82,7 +81,7 @@ class Sa11y {
         Constants.initializeExclusions(option);
 
         // One time upgrade of local storage values. To be removed in later version.
-        upgradeSa11yDismissed();
+        upgradeSa11yDismissed(this.checkAll);
 
         // Make "Developer checks" on by default or if toggle switch is visually hidden.
         if (option.developerChecksOnByDefault) {
@@ -114,12 +113,12 @@ class Sa11y {
             document.body.appendChild(controlPanel);
 
             // Initialize control panel.
-            settingsPanelToggles(this.checkAll, this.resetAll);
+            settingsPanelToggles(this.checkAll);
             initializePanelToggles();
             addColourFilters();
 
             // Detect page changes (for SPAs).
-            detectPageChanges(option.detectSPArouting, this.checkAll, this.resetAll);
+            detectPageChanges(option.detectSPArouting, this.checkAll);
 
             // Initialize panel tooltips.
             this.panelTooltips = new PanelTooltips();
@@ -130,7 +129,7 @@ class Sa11y {
 
             // Initial check once page is done loading.
             setTimeout(() => {
-              this.resetAll(); // Make sure there's a clean slate.
+              resetAll(); // Make sure there's a clean slate.
               this.checkAll();
             }, option.delayCheck);
 
@@ -140,7 +139,7 @@ class Sa11y {
             }
 
             // Initialize main toggle
-            mainToggle(this.checkAll, this.resetAll);
+            mainToggle(this.checkAll);
           }
         });
       }
@@ -274,12 +273,7 @@ class Sa11y {
         }).filter(Boolean);
 
         // Check for dismissed items and update results array.
-        const dismiss = dismissLogic(
-          this.results,
-          this.panelTooltips,
-          this.checkAll,
-          this.resetAll,
-        );
+        const dismiss = dismissLogic(this.results, this.panelTooltips, this.checkAll);
         this.results = dismiss.updatedResults;
         this.dismissed = dismiss.dismissedIssues;
         this.dismissedPageResults = dismiss.dismissedResults;
@@ -311,7 +305,7 @@ class Sa11y {
           const tooltipComponent = new AnnotationTooltips();
           document.body.appendChild(tooltipComponent);
 
-          dismissButtons(this.results, this.dismissed, this.checkAll, this.resetAll);
+          dismissButtons(this.results, this.dismissed, this.checkAll);
 
           generatePageOutline(this.dismissedPageResults, this.headingOutline, option);
 
@@ -350,105 +344,11 @@ class Sa11y {
     };
 
     /* *********************************************************** */
-    /*  Reset all: Clears everything and resets the panel.         */
-    /* *********************************************************** */
-    this.resetAll = (restartPanel = true) => {
-      Constants.Global.html.removeAttribute('data-sa11y-active');
-
-      // Remove from page.
-      Utils.remove(
-        [
-          'sa11y-annotation',
-          'sa11y-heading-label',
-          'sa11y-heading-anchor',
-          'sa11y-image-anchor',
-          'sa11y-tooltips',
-        ],
-        'document',
-      );
-
-      // Remove Sa11y anchor positioning markup (while preserving any existing anchors).
-      if (Utils.supportsAnchorPositioning()) {
-        find('[data-sa11y-error], [data-sa11y-warning], [data-sa11y-good]', 'document').forEach(
-          ($el) => {
-            const anchor = $el;
-            const anchors = (anchor.style.anchorName || '')
-              .split(',')
-              .map((s) => s.trim())
-              .filter((s) => s && !s.startsWith('--sa11y-anchor'));
-            if (anchors.length) {
-              anchor.style.anchorName = anchors.join(', ');
-            } else {
-              anchor.style.removeProperty('anchor-name');
-              if (!anchor.style.length) {
-                anchor.removeAttribute('style');
-              }
-            }
-          },
-        );
-      }
-
-      // Reset all data attributes.
-      Utils.resetAttributes(
-        [
-          'data-sa11y-parent',
-          'data-sa11y-error',
-          'data-sa11y-warning',
-          'data-sa11y-good',
-          'data-sa11y-overflow',
-          'data-sa11y-image',
-          'data-sa11y-pulse-border',
-          'data-sa11y-filter',
-          'data-sa11y-has-shadow-root',
-        ],
-        'document',
-      );
-
-      // Remove from panel.
-      Constants.Panel.outlineList.innerHTML = '';
-      if (option.showImageOutline) {
-        Constants.Panel.imagesList.innerHTML = '';
-      }
-      Constants.Panel.pageIssuesList.innerHTML = '';
-      Constants.Panel.readabilityInfo.innerHTML = '';
-      Constants.Panel.readabilityDetails.innerHTML = '';
-      Constants.Panel.panel.classList.remove('has-page-issues');
-      Constants.Panel.pageIssues.classList.remove('active');
-      Constants.Panel.settingsContent.classList.remove('hide-settings-border');
-      Constants.Panel.panel.querySelector('#readability-alert')?.remove();
-
-      // Remove any active alerts from panel.
-      removeAlert();
-
-      // Remove EventListeners.
-      removeSkipBtnListeners();
-      removeExportListeners();
-      removeDismissListeners();
-
-      // Reset colour filters.
-      resetColourFilters();
-
-      // Main panel warning and error count.
-      while (Constants.Panel.status.firstChild) {
-        Constants.Panel.status.removeChild(Constants.Panel.status.firstChild);
-      }
-
-      // Remove data attribute from shadow root elements.
-      document.querySelectorAll('[data-sa11y-has-shadow-root]').forEach((el) => {
-        el.shadowRoot.querySelectorAll('style.sa11y-css-utilities').forEach((style) => {
-          style.remove();
-        });
-        el.removeAttribute('data-sa11y-has-shadow-root');
-      });
-
-      if (restartPanel) {
-        Constants.Panel.panel.classList.remove('active');
-      }
-    };
-
-    /* *********************************************************** */
     /*  Methods: Useful utilities for integrations.                */
     /* *********************************************************** */
+
+    // Method: reset everything.
+    this.resetAll = (restartPanel = true) => resetAll(restartPanel);
 
     // Method: temporarily disable toggle.
     this.disabled = () => {

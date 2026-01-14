@@ -154,6 +154,7 @@ export default {
       '观点',
       '查看我们的',
       '网站',
+      '文章',
     ],
     CLICK: ['click', '点击'],
     NEW_WINDOW_PHRASES: ['外来的', '新标签', '新窗口', '弹出式', '弹出'],

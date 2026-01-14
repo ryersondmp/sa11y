@@ -169,7 +169,9 @@ const de = {
       "view",
       "anschauen",
       "view our",
-      "website"
+      "website",
+      "article",
+      "artikel"
     ],
     CLICK: ["click", "klicken"],
     NEW_WINDOW_PHRASES: [

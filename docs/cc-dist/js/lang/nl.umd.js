@@ -155,7 +155,8 @@
         "deze website",
         "bekijk",
         "bekijk onze",
-        "website"
+        "website",
+        "artikel"
       ],
       CLICK: ["click", "klik"],
       NEW_WINDOW_PHRASES: ["extern", "nieuw tabblad", "nieuw venster", "pop-up", "verschijnen"],

@@ -148,7 +148,8 @@
         "zobacz",
         "zobacz naszą",
         "stronę",
-        "witrynę"
+        "witrynę",
+        "artykuł"
       ],
       CLICK: ["click", "kliknięcie"],
       NEW_WINDOW_PHRASES: ["zewnętrzny", "nowa karta", "nowe okno", "pop-up", "pop up"],

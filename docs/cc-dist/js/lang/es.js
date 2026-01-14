@@ -143,7 +143,8 @@ const es = {
       "este sitio web",
       "vista",
       "ver nuestro",
-      "sitio web"
+      "sitio web",
+      "artículo"
     ],
     CLICK: ["click", "clic"],
     NEW_WINDOW_PHRASES: ["externo", "nueva página", "nueva ventana", "ventana emergente"],

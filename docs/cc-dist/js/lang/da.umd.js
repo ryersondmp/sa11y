@@ -147,7 +147,8 @@
         "denne hjemmeside",
         "udsigt",
         "se vores",
-        "hjemmeside"
+        "hjemmeside",
+        "artikel"
       ],
       CLICK: ["click", "klik"],
       NEW_WINDOW_PHRASES: ["ekstern", "ny fane", "nyt vindue", "pop-up", "dukker op"],

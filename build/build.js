@@ -62,7 +62,7 @@ const runBuild = async (config) => {
   console.log(`Processing ${languages.length} language files...`);
 
   for (const lang of languages) {
-    const langEntry = path.resolve(dirname, `../src/js/lang/${lang}.js`);
+    const langEntry = path.resolve(dirname, `../src/lang/${lang}.js`);
 
     // Build ESM
     await runBuild({

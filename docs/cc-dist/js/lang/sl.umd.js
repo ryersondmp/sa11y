@@ -148,7 +148,8 @@
         "to spletno mesto",
         "ogled",
         "si oglejte naš",
-        "spletna stran"
+        "spletna stran",
+        "članek"
       ],
       CLICK: ["click", "klik"],
       NEW_WINDOW_PHRASES: ["zunanji", "nov zavihek", "novo okno", "pop-up", "pojaviti se"],

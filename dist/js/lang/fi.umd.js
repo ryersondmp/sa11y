@@ -143,7 +143,8 @@
         "tämä sivusto",
         "katso",
         "katso meidän",
-        "verkkosivusto"
+        "verkkosivusto",
+        "artikla"
       ],
       CLICK: ["click", "napsauta"],
       NEW_WINDOW_PHRASES: ["ulkoinen", "uusi välilehti", "uusi ikkuna", "pop-up", "ponnahtaa esiin"],

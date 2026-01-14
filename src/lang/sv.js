@@ -158,6 +158,7 @@ export default {
       'visa',
       'visa vår',
       'webbplats',
+      'artikel',
     ],
     CLICK: ['click', 'klicka'],
     NEW_WINDOW_PHRASES: ['extern', 'ny flik', 'nytt fönster', 'pop-up', 'pop up'],

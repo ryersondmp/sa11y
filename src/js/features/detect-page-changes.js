@@ -1,9 +1,10 @@
 import { debounce, store } from '../utils/utils';
+import { resetAll } from '../utils/resetAll';
 
 /* ******************************************************** */
 /*  Feature to detect if URL changed for bookmarklet/SPAs.  */
 /* ******************************************************** */
-export default function detectPageChanges(detectSPArouting, checkAll, resetAll) {
+export default function detectPageChanges(detectSPArouting, checkAll) {
   if (detectSPArouting === true) {
     // Current URL.
     let url = window.location.href;
