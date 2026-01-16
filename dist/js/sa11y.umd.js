@@ -568,8 +568,20 @@
         "meter",
         "meter *",
         "iframe",
-        "svg title",
-        "svg desc",
+        "svg",
+        "svg *",
+        "script",
+        "style",
+        "noscript",
+        "template",
+        "head",
+        "head *",
+        "title",
+        "meta",
+        "link",
+        "base",
+        "datalist",
+        "datalist *",
         ...exclusions
       ];
       if (option.contrastIgnore) {
@@ -5543,6 +5555,74 @@ ${this.error.stack}
     }
     return rgbOut;
   }
+  const maxCacheSize = 500;
+  const colorCache = /* @__PURE__ */ new Map();
+  let sharedContext = null;
+  function getSharedContext(colorSpace = "srgb") {
+    if (!sharedContext) {
+      if (typeof OffscreenCanvas !== "undefined") {
+        const canvas = new OffscreenCanvas(1, 1);
+        sharedContext = canvas.getContext("2d", { colorSpace, willReadFrequently: true });
+      } else {
+        const canvas = document.createElement("canvas");
+        canvas.width = 1;
+        canvas.height = 1;
+        sharedContext = canvas.getContext("2d", { willReadFrequently: true });
+      }
+    }
+    return sharedContext;
+  }
+  function setCache(key, value) {
+    if (colorCache.size >= maxCacheSize) {
+      const firstKey = colorCache.keys().next().value;
+      colorCache.delete(firstKey);
+    }
+    colorCache.set(key, value);
+  }
+  function convertToRGBA(color, opacity = 1) {
+    const cacheKey = `${color}_${opacity}`;
+    if (colorCache.has(cacheKey)) {
+      return colorCache.get(cacheKey);
+    }
+    let r;
+    let g;
+    let b;
+    let a = 1;
+    if (color.startsWith("#")) {
+      const hex = color.slice(1);
+      const len = hex.length;
+      if (len === 3) {
+        r = parseInt(hex[0] + hex[0], 16);
+        g = parseInt(hex[1] + hex[1], 16);
+        b = parseInt(hex[2] + hex[2], 16);
+      } else {
+        r = parseInt(hex.substring(0, 2), 16);
+        g = parseInt(hex.substring(2, 4), 16);
+        b = parseInt(hex.substring(4, 6), 16);
+      }
+    } else if (color.startsWith("rgb")) {
+      const values = color.match(/[\d.]+/g);
+      if (values) {
+        r = parseInt(values[0], 10);
+        g = parseInt(values[1], 10);
+        b = parseInt(values[2], 10);
+        a = values[3] !== void 0 ? parseFloat(values[3]) : 1;
+      }
+    } else {
+      const colorSpace = color.startsWith("color(display-p3") ? "display-p3" : "srgb";
+      const ctx = getSharedContext(colorSpace);
+      if (!ctx || color.startsWith("color(rec2020")) return "unsupported";
+      ctx.fillStyle = color;
+      ctx.fillRect(0, 0, 1, 1);
+      const imageData = ctx.getImageData(0, 0, 1, 1);
+      [r, g, b, a] = imageData.data;
+      a = a / 255;
+    }
+    const finalAlpha = opacity < 1 ? Number((a * opacity).toFixed(2)) : a;
+    const result = [r, g, b, finalAlpha];
+    setCache(cacheKey, result);
+    return result;
+  }
   function normalizeFontWeight(weight) {
     const numericWeight = parseInt(weight, 10);
     if (!Number.isNaN(numericWeight)) {
@@ -5555,32 +5635,6 @@ ${this.error.stack}
       bolder: 900
     };
     return weightMap[weight] || 400;
-  }
-  function convertToRGBA(color, opacity) {
-    const colorString = color;
-    let r;
-    let g;
-    let b;
-    let a = 1;
-    if (!colorString.startsWith("rgb")) {
-      if (colorString.startsWith("color(rec2020") || colorString.startsWith("color(display-p3") || colorString.startsWith("url(")) {
-        return "unsupported";
-      }
-      const canvas = document.createElement("canvas");
-      const context = canvas.getContext("2d");
-      context.fillStyle = colorString;
-      context.fillRect(0, 0, 1, 1);
-      const imageData = context.getImageData(0, 0, 1, 1);
-      [r, g, b, a] = imageData.data;
-      a = (a / 255).toFixed(2);
-    } else {
-      const rgbaArray = colorString.match(/[\d.]+/g).map(Number);
-      [r, g, b, a] = rgbaArray.length === 4 ? rgbaArray : [...rgbaArray, 1];
-    }
-    if (opacity && opacity < 1) {
-      a = (a * opacity).toFixed(2);
-    }
-    return [r, g, b, Number(a)];
   }
   function getBackground($el, shadowDetection) {
     let targetEl = $el;
@@ -6343,13 +6397,17 @@ ${this.error.stack}
     }
   }
   class HeadingAnchor extends HTMLElement {
-    connectedCallback() {
+    constructor() {
+      super();
       this.attachShadow({ mode: "open" });
     }
   }
   class HeadingLabel extends HTMLElement {
+    constructor() {
+      super();
+      this.attachShadow({ mode: "open" });
+    }
     connectedCallback() {
-      const shadow = this.attachShadow({ mode: "open" });
       const style = document.createElement("style");
       style.textContent = `
       span.heading-label {
@@ -6377,7 +6435,7 @@ ${this.error.stack}
           border: 2px solid transparent;
         }
       }`;
-      shadow.appendChild(style);
+      this.shadowRoot.appendChild(style);
     }
   }
   const url = [
@@ -7241,75 +7299,83 @@ ${this.error.stack}
   }
   function checkContrast(results, option) {
     const contrastResults = [];
-    for (let i = 0; i < Elements.Found.Contrast.length; i++) {
-      const $el = Elements.Found.Contrast[i];
-      const style = getComputedStyle($el);
+    const elements = Elements.Found.Contrast;
+    const contrastAlgorithm = option.contrastAlgorithm;
+    const shadowDetection = Constants.Global.shadowDetection;
+    const inputTags = /* @__PURE__ */ new Set(["SELECT", "INPUT", "TEXTAREA"]);
+    for (let i = 0; i < elements.length; i++) {
+      const $el = elements[i];
+      const checkInputs = inputTags.has($el.tagName);
+      let text = "";
+      if (!checkInputs) {
+        const nodes = $el.childNodes;
+        for (let j = 0; j < nodes.length; j++) {
+          if (nodes[j].nodeType === 3) text += nodes[j].textContent;
+        }
+        text = text.trim();
+        if (!text) continue;
+      }
+      const style = window.getComputedStyle($el);
       const opacity = parseFloat(style.opacity);
-      const color = convertToRGBA(style.color, opacity);
       const fontSize = parseFloat(style.fontSize);
+      if (opacity === 0 || fontSize === 0 || isElementHidden($el)) continue;
+      if (isScreenReaderOnly($el)) continue;
+      const color = convertToRGBA(style.color, opacity);
       const getFontWeight = style.fontWeight;
       const fontWeight = normalizeFontWeight(getFontWeight);
-      const background = getBackground($el, Constants.Global.shadowDetection);
-      const isVisuallyHidden = isScreenReaderOnly($el);
-      const isExplicitlyHidden = isElementHidden($el);
-      const isHidden = isExplicitlyHidden || isVisuallyHidden || opacity === 0 || fontSize === 0;
-      const textString = Array.from($el.childNodes).filter((node) => node.nodeType === 3).map((node) => node.textContent).join("");
-      const text = textString.trim();
-      const checkInputs = ["SELECT", "INPUT", "TEXTAREA"].includes($el.tagName);
-      if (text.length !== 0 || checkInputs) {
-        const isLargeText = fontSize >= 24 || fontSize >= 18.67 && fontWeight >= 700;
-        if (color === "unsupported" || background === "unsupported") {
-          contrastResults.push({
-            $el,
-            type: "unsupported",
-            fontSize,
-            fontWeight,
-            isLargeText,
-            opacity,
-            ...background !== "unsupported" && { background },
-            ...color !== "unsupported" && { color }
-          });
-        } else if (background.type === "image") {
-          if (!isHidden) {
-            const extractColours = extractColorFromString(background.value);
-            const hasFailure = !extractColours || extractColours.some(
-              (gradientStop) => checkElementContrast(
-                $el,
-                color,
-                gradientStop,
-                fontSize,
-                fontWeight,
-                opacity,
-                option.contrastAlgorithm
-              )
-            );
-            if (hasFailure || background.value.includes("url(")) {
-              contrastResults.push({
-                $el,
-                type: "background-image",
-                color,
-                isLargeText,
-                background,
-                fontSize,
-                fontWeight,
-                opacity
-              });
-            }
-          }
-        } else if (!isHidden && getHex(color) !== getHex(background)) {
-          const result = checkElementContrast(
+      const background = getBackground($el, shadowDetection);
+      const isLargeText = fontSize >= 24 || fontSize >= 18.67 && fontWeight >= 700;
+      if (color === "unsupported" || background === "unsupported") {
+        contrastResults.push({
+          $el,
+          type: "unsupported",
+          fontSize,
+          fontWeight,
+          isLargeText,
+          opacity,
+          ...background !== "unsupported" && { background },
+          ...color !== "unsupported" && { color }
+        });
+        continue;
+      }
+      if (background.type === "image") {
+        const extractColours = extractColorFromString(background.value);
+        const hasFailure = !extractColours || extractColours.some(
+          (gradientStop) => checkElementContrast(
             $el,
             color,
+            gradientStop,
+            fontSize,
+            fontWeight,
+            opacity,
+            contrastAlgorithm
+          )
+        );
+        if (hasFailure || background.value.includes("url(")) {
+          contrastResults.push({
+            $el,
+            type: "background-image",
+            color,
+            isLargeText,
             background,
             fontSize,
             fontWeight,
-            opacity,
-            option.contrastAlgorithm
-          );
-          if (result) {
-            result.type = checkInputs ? "input" : "text";
-            contrastResults.push(result);
-          }
+            opacity
+          });
+        }
+      } else if (getHex(color) !== getHex(background)) {
+        const result = checkElementContrast(
+          $el,
+          color,
+          background,
+          fontSize,
+          fontWeight,
+          opacity,
+          contrastAlgorithm
+        );
+        if (result) {
+          result.type = checkInputs ? "input" : "text";
+          contrastResults.push(result);
         }
       }
     }

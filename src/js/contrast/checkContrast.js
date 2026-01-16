@@ -3,6 +3,7 @@ import Elements from '../utils/elements';
 import Lang from '../utils/lang';
 import * as Utils from '../utils/utils';
 import * as Contrast from './utils';
+import { convertToRGBA } from './convertColors';
 
 /**
  * Rulesets: Contrast
@@ -15,97 +16,102 @@ import * as Contrast from './utils';
  * @link https://github.com/Myndex/SAPC-APCA
  */
 export default function checkContrast(results, option) {
-  // Initialize contrast results array.
   const contrastResults = [];
+  const elements = Elements.Found.Contrast;
+  const contrastAlgorithm = option.contrastAlgorithm;
+  const shadowDetection = Constants.Global.shadowDetection;
+  const inputTags = new Set(['SELECT', 'INPUT', 'TEXTAREA']);
 
-  // Iterate through all elements on the page and get computed styles.
-  for (let i = 0; i < Elements.Found.Contrast.length; i++) {
-    const $el = Elements.Found.Contrast[i];
-    const style = getComputedStyle($el);
+  for (let i = 0; i < elements.length; i++) {
+    const $el = elements[i];
 
-    // Get computed styles.
+    // Fast check for inputs or text existence before expensive style calls.
+    const checkInputs = inputTags.has($el.tagName);
+    let text = '';
+    if (!checkInputs) {
+      const nodes = $el.childNodes;
+      for (let j = 0; j < nodes.length; j++) {
+        if (nodes[j].nodeType === 3) text += nodes[j].textContent;
+      }
+      text = text.trim();
+      if (!text) continue;
+    }
+
+    const style = window.getComputedStyle($el);
+
+    // Early exit for hidden elements.
     const opacity = parseFloat(style.opacity);
-    const color = Contrast.convertToRGBA(style.color, opacity);
     const fontSize = parseFloat(style.fontSize);
+    if (opacity === 0 || fontSize === 0 || Utils.isElementHidden($el)) continue;
+    if (Utils.isScreenReaderOnly($el)) continue;
+
+    // Expensive calculations only after we know the element is visible and has content.
+    const color = convertToRGBA(style.color, opacity);
     const getFontWeight = style.fontWeight;
     const fontWeight = Contrast.normalizeFontWeight(getFontWeight);
-    const background = Contrast.getBackground($el, Constants.Global.shadowDetection);
+    const background = Contrast.getBackground($el, shadowDetection);
+    const isLargeText = fontSize >= 24 || (fontSize >= 18.67 && fontWeight >= 700);
 
-    // Check if element is visually hidden to screen readers or explicitly hidden.
-    const isVisuallyHidden = Utils.isScreenReaderOnly($el);
-    const isExplicitlyHidden = Utils.isElementHidden($el);
-    const isHidden = isExplicitlyHidden || isVisuallyHidden || opacity === 0 || fontSize === 0;
+    // Handle unsupported colour spaces.
+    if (color === 'unsupported' || background === 'unsupported') {
+      contrastResults.push({
+        $el,
+        type: 'unsupported',
+        fontSize,
+        fontWeight,
+        isLargeText,
+        opacity,
+        ...(background !== 'unsupported' && { background }),
+        ...(color !== 'unsupported' && { color }),
+      });
+      continue;
+    }
 
-    // Filter only text nodes.
-    const textString = Array.from($el.childNodes)
-      .filter((node) => node.nodeType === 3)
-      .map((node) => node.textContent)
-      .join('');
-    const text = textString.trim();
+    // Process background images and gradients.
+    if (background.type === 'image') {
+      const extractColours = Contrast.extractColorFromString(background.value);
+      const hasFailure =
+        !extractColours ||
+        extractColours.some((gradientStop) =>
+          Contrast.checkElementContrast(
+            $el,
+            color,
+            gradientStop,
+            fontSize,
+            fontWeight,
+            opacity,
+            contrastAlgorithm,
+          ),
+        );
 
-    // Inputs to check
-    const checkInputs = ['SELECT', 'INPUT', 'TEXTAREA'].includes($el.tagName);
-
-    // Only check elements with text and inputs.
-    if (text.length !== 0 || checkInputs) {
-      const isLargeText = fontSize >= 24 || (fontSize >= 18.67 && fontWeight >= 700);
-      if (color === 'unsupported' || background === 'unsupported') {
+      if (hasFailure || background.value.includes('url(')) {
         contrastResults.push({
           $el,
-          type: 'unsupported',
-          fontSize,
-          fontWeight,
-          isLargeText,
-          opacity,
-          ...(background !== 'unsupported' && { background }),
-          ...(color !== 'unsupported' && { color }),
-        });
-      } else if (background.type === 'image') {
-        if (!isHidden) {
-          // Extract all colour codes from background-image value and check contrast.
-          const extractColours = Contrast.extractColorFromString(background.value);
-          const hasFailure =
-            !extractColours ||
-            extractColours.some((gradientStop) =>
-              Contrast.checkElementContrast(
-                $el,
-                color,
-                gradientStop,
-                fontSize,
-                fontWeight,
-                opacity,
-                option.contrastAlgorithm,
-              ),
-            );
-
-          // Push a warning if gradient stop fails contrast, or contains url().
-          if (hasFailure || background.value.includes('url(')) {
-            contrastResults.push({
-              $el,
-              type: 'background-image',
-              color,
-              isLargeText,
-              background,
-              fontSize,
-              fontWeight,
-              opacity,
-            });
-          }
-        }
-      } else if (!isHidden && Contrast.getHex(color) !== Contrast.getHex(background)) {
-        const result = Contrast.checkElementContrast(
-          $el,
+          type: 'background-image',
           color,
+          isLargeText,
           background,
           fontSize,
           fontWeight,
           opacity,
-          option.contrastAlgorithm,
-        );
-        if (result) {
-          result.type = checkInputs ? 'input' : 'text';
-          contrastResults.push(result);
-        }
+        });
+      }
+    }
+
+    // Compute standard text/input contrast.
+    else if (Contrast.getHex(color) !== Contrast.getHex(background)) {
+      const result = Contrast.checkElementContrast(
+        $el,
+        color,
+        background,
+        fontSize,
+        fontWeight,
+        opacity,
+        contrastAlgorithm,
+      );
+      if (result) {
+        result.type = checkInputs ? 'input' : 'text';
+        contrastResults.push(result);
       }
     }
   }
@@ -168,14 +174,14 @@ export default function checkContrast(results, option) {
       const hasFill = fill && fill !== 'none' && !fill.startsWith('url(');
       const resolvedFill =
         fill === 'currentColor'
-          ? Contrast.convertToRGBA(getComputedStyle(shapes[0]).color, opacity)
-          : Contrast.convertToRGBA(fill, opacity);
+          ? convertToRGBA(getComputedStyle(shapes[0]).color, opacity)
+          : convertToRGBA(fill, opacity);
 
       // Get resolved stroke colour.
       const resolvedStroke =
         stroke === 'currentColor'
-          ? Contrast.convertToRGBA(getComputedStyle(shapes[0]).color, opacity)
-          : Contrast.convertToRGBA(stroke, opacity);
+          ? convertToRGBA(getComputedStyle(shapes[0]).color, opacity)
+          : convertToRGBA(stroke, opacity);
 
       // If supported colours and has background, we can calculate contrast.
       const supported = ![resolvedFill, resolvedStroke].includes('unsupported');
@@ -261,7 +267,7 @@ export default function checkContrast(results, option) {
   Elements.Found.Inputs.forEach(($el) => {
     if ($el.placeholder && $el.placeholder.length !== 0) {
       const placeholder = getComputedStyle($el, '::placeholder');
-      const pColor = Contrast.convertToRGBA(placeholder.getPropertyValue('color'));
+      const pColor = convertToRGBA(placeholder.getPropertyValue('color'));
       const pSize = parseFloat(placeholder.fontSize);
       const pWeight = Contrast.normalizeFontWeight(placeholder.fontWeight);
       const pBackground = Contrast.getBackground($el, Constants.Global.shadowDetection);

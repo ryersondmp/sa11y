@@ -1,4 +1,5 @@
 import { APCAcontrast, alphaBlend, fontLookupAPCA, sRGBtoY } from './apca';
+import { convertToRGBA } from './convertColors';
 
 /**
  * Normalizes a given font weight to a numeric value. Maps keywords to their numeric equivalents.
@@ -17,50 +18,6 @@ export function normalizeFontWeight(weight) {
     bolder: 900,
   };
   return weightMap[weight] || 400;
-}
-
-/**
- * Convert colour string to RGBA format.
- * @param {string} color The colour string to convert.
- * @param {number} opacity The computed opacity of the element (0 to 1).
- * @returns Returns colour in rgba format with alpha value.
- */
-export function convertToRGBA(color, opacity) {
-  const colorString = color;
-  let r;
-  let g;
-  let b;
-  let a = 1; // Initialize alpha to 1 by default.
-
-  if (!colorString.startsWith('rgb')) {
-    // Unsupported color spaces.
-    if (
-      colorString.startsWith('color(rec2020') ||
-      colorString.startsWith('color(display-p3') ||
-      colorString.startsWith('url(')
-    ) {
-      return 'unsupported';
-    }
-
-    // Let the browser do conversion in rgb for non-supported colour spaces.
-    const canvas = document.createElement('canvas');
-    const context = canvas.getContext('2d');
-    context.fillStyle = colorString;
-    context.fillRect(0, 0, 1, 1);
-    const imageData = context.getImageData(0, 0, 1, 1);
-    [r, g, b, a] = imageData.data;
-    a = (a / 255).toFixed(2); // Convert alpha to range [0, 1]
-  } else {
-    // Parse RGB or RGBA values from the color string
-    const rgbaArray = colorString.match(/[\d.]+/g).map(Number);
-    [r, g, b, a] = rgbaArray.length === 4 ? rgbaArray : [...rgbaArray, 1];
-  }
-
-  // If element has opacity attribute, amend the foreground text color string.
-  if (opacity && opacity < 1) {
-    a = (a * opacity).toFixed(2); // Adjust alpha based on the opacity
-  }
-  return [r, g, b, Number(a)];
 }
 
 /**

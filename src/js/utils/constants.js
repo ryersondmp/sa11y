@@ -347,8 +347,21 @@ const Constants = (function myConstants() {
       'meter',
       'meter *',
       'iframe',
-      'svg title',
-      'svg desc',
+      'svg',
+      'svg *',
+      'script',
+      'style',
+      'noscript',
+      'template',
+      'head',
+      'head *',
+      'title',
+      'meta',
+      'link',
+      'base',
+      'datalist',
+      'datalist *',
+
       ...exclusions,
     ];
     if (option.contrastIgnore) {

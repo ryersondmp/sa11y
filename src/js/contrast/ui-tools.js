@@ -2,6 +2,7 @@ import Constants from '../utils/constants';
 import Lang from '../utils/lang';
 import { fontLookupAPCA } from './apca';
 import * as Contrast from './utils';
+import { convertToRGBA } from './convertColors';
 
 /**
  * Inject contrast colour pickers into tooltip.
@@ -140,8 +141,8 @@ export function initializeContrastTools(container, contrastDetails) {
     // Get contrast ratio.
     const algorithm = Constants.Global.contrastAlgorithm;
     const contrastValue = Contrast.calculateContrast(
-      Contrast.convertToRGBA(fgColor),
-      Contrast.convertToRGBA(bgColor),
+      convertToRGBA(fgColor),
+      convertToRGBA(bgColor),
       Constants.Global.contrastAlgorithm,
     );
     const elementsToToggle = [ratio, contrast];

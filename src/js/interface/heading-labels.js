@@ -2,7 +2,7 @@
 export class HeadingAnchor extends HTMLElement {
   constructor() {
     super();
-    this.attachShadow({ mode: "open" });
+    this.attachShadow({ mode: 'open' });
   }
 }
 
@@ -10,7 +10,7 @@ export class HeadingAnchor extends HTMLElement {
 export class HeadingLabel extends HTMLElement {
   constructor() {
     super();
-    this.attachShadow({ mode: "open" });
+    this.attachShadow({ mode: 'open' });
   }
   connectedCallback() {
     const style = document.createElement('style');

@@ -822,7 +822,8 @@
     Sa11y.Lang.addI18n(Sa11yLangEn.strings);
     const sa11y = new Sa11y.Sa11y({
       checkRoot: 'body',
-      contrastAlgorithm: 'APCA' // AA, AAA
+      autoDetectShadowComponents: true,
+      // contrastAlgorithm: 'APCA' // AA, AAA
     });
   </script>
   <!-- End of Sa11y-->
