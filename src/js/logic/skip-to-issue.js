@@ -9,6 +9,11 @@ import * as Utils from '../utils/utils';
 /*  Skip to Issue button logic within panel.                    */
 /* ************************************************************ */
 
+// Check element visibility based on offsetHeight and offsetWidth.
+const isElementVisible = (element) => {
+  return !!(element?.offsetWidth && element?.offsetHeight);
+}
+
 // When annotations are hidden and tooltip message is displayed in control panel, the previous visible tooltip remains. Function is called during getHiddenParent();
 const closeAnyActiveTooltips = () => {
   const tooltip = document.querySelector('sa11y-tooltips').shadowRoot;
@@ -34,8 +39,7 @@ const getHiddenParent = ($el) => {
 
 // Find scroll position.
 const getScrollPosition = ($el, results) => {
-  const offsetTopPosition = $el.offsetTop;
-  if (offsetTopPosition === 0) {
+  if (isElementVisible($el) === false) {
     const annotationHost = $el.getRootNode().host;
     const visiblePosition = Utils.findVisibleParent(annotationHost, 'display', 'none');
     const annotationIndex = parseInt(annotationHost.getAttribute('data-sa11y-annotation'), 10);
@@ -102,7 +106,7 @@ const goToNext = (results) => {
     behavior: `${Constants.Global.scrollBehaviour}`,
   });
 
-  if (button.offsetTop !== 0) {
+  if (isElementVisible(button)) {
     button.focus();
     button.click();
   }
@@ -128,7 +132,7 @@ const goToPrev = (results) => {
     behavior: `${Constants.Global.scrollBehaviour}`,
   });
 
-  if (button.offsetTop !== 0) {
+  if (isElementVisible(button)) {
     button.focus();
     button.click();
   }

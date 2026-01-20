@@ -2,7 +2,7 @@ import { createAlert } from '../interface/alert';
 import Constants from '../utils/constants';
 import find from '../utils/find';
 import Lang from '../utils/lang';
-import { store, dismissDigest } from '../utils/utils';
+import { store } from '../utils/utils';
 import { resetAll } from '../utils/resetAll';
 
 /* ************************************************************ */
@@ -164,63 +164,4 @@ export function dismissButtons(results, dismissed, checkAll) {
 export function removeDismissListeners() {
   Constants.Panel.panel?.removeEventListener('click', dismissHandler);
   Constants.Panel.dismissButton?.removeEventListener('click', restoreDismissedHandler);
-}
-
-/**
- * Migrates legacy 'sa11y-dismissed' storage keys to digested hashes. Uses an inline Web Worker to process large datasets without blocking the UI.
- * @async
- * @deprecated To be removed in the future!
- * @returns {Promise<void>}
- */
-export async function upgradeSa11yDismissed(checkAll) {
-  const sa11yDismissed = store.getItem('sa11y-dismissed');
-  if (!sa11yDismissed) return;
-  try {
-    const parsed = JSON.parse(sa11yDismissed);
-    if (!Array.isArray(parsed) || parsed.length === 0) return;
-
-    // 1. Creater worker.
-    const workerCode = `
-      const dismissDigest = ${dismissDigest.toString().replace(/window\./g, 'self.')};
-      self.onmessage = async (e) => {
-        const items = e.data;
-        try {
-          const upgraded = await Promise.all(
-            items.map(async (pair) => ({
-              ...pair,
-              key: await dismissDigest(pair.key)
-            }))
-          );
-          self.postMessage({ success: true, data: upgraded });
-        } catch (err) {
-          self.postMessage({ success: false, error: err.message });
-        }
-      };
-    `;
-
-    // 2. Create a Blob and a URL for the worker
-    const blob = new Blob([workerCode], { type: 'application/javascript' });
-    const workerUrl = URL.createObjectURL(blob);
-    const worker = new Worker(workerUrl);
-
-    // 3. Wrap the worker communication in a Promise
-    const upgradedIssues = await new Promise((resolve, reject) => {
-      worker.onmessage = (e) => {
-        if (e.data.success) resolve(e.data.data);
-        else reject(new Error(e.data.error));
-      };
-      worker.onerror = (err) => reject(err);
-      worker.postMessage(parsed);
-    });
-
-    // 4. Save upgraded results.
-    store.setItem('sa11y-dismissed-digest', JSON.stringify(upgradedIssues));
-    store.removeItem('sa11y-dismissed');
-    worker.terminate();
-    URL.revokeObjectURL(workerUrl);
-    resetAll(false);
-    await checkAll();
-  } catch (error) {
-    console.error('Sa11y:', error);
-  }
 }

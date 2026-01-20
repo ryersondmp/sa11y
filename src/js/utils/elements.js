@@ -1,5 +1,6 @@
 import Constants from './constants';
 import find from './find';
+import * as Utils from './utils';
 
 const Elements = (function myElements() {
   const Found = {};
@@ -94,8 +95,8 @@ const Elements = (function myElements() {
     const badLinkSources = option.checks.QA_BAD_LINK.sources;
     Found.CustomErrorLinks = badLinkSources.length
       ? Found.Links.filter(($el) =>
-          badLinkSources.split(',').some((selector) => $el.matches(selector.trim())),
-        )
+        badLinkSources.split(',').some((selector) => $el.matches(selector.trim())),
+      )
       : [];
 
     // Readability.
@@ -106,7 +107,7 @@ const Elements = (function myElements() {
     Found.Readability = [
       ...Found.Paragraphs.filter(readabilityExclusions),
       ...Found.Lists.filter(readabilityExclusions),
-    ];
+    ].map(($el) => Utils.getText(Utils.fnIgnore($el))).filter(Boolean);
 
     // Developer checks.
     const nestedSources = option.checks.QA_NESTED_COMPONENTS.sources || '[role="tablist"], details';
@@ -148,7 +149,7 @@ const Elements = (function myElements() {
 
     // Query select <HTML> given that the lang may change on an SPA.
     const html = document.querySelector('html');
-    Found.Language = html.getAttribute('lang');
+    Found.Language = html.getAttribute('lang')?.trim();
   }
 
   /* ************* */

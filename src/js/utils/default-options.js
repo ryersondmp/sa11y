@@ -219,6 +219,9 @@ const defaultOptions = {
     META_SCALABLE: true,
     META_MAX: true,
     META_REFRESH: true,
+    PAGE_LANG_CONFIDENCE: {
+      confidence: 0.8,
+    },
 
     // Developer checks
     DUPLICATE_ID: true,

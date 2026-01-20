@@ -11,11 +11,7 @@ import { resetAll } from './utils/resetAll';
 // Extras
 import ConsoleErrors from './interface/console-error';
 import detectPageChanges from './features/detect-page-changes';
-import {
-  dismissLogic,
-  dismissButtons,
-  upgradeSa11yDismissed,
-} from './features/dismiss-annotations';
+import { dismissLogic, dismissButtons } from './features/dismiss-annotations';
 import { addColourFilters } from './features/colour-filters';
 import { exportResults } from './features/export-results';
 
@@ -43,6 +39,7 @@ import checkEmbeddedContent from './rulesets/embedded-content';
 import checkQA from './rulesets/quality-assurance';
 import checkDeveloper from './rulesets/developer';
 import checkCustom from './sa11y-custom-checks';
+import checkPageLanguage from './rulesets/pageLanguage';
 
 class Sa11y {
   constructor(options) {
@@ -79,9 +76,6 @@ class Sa11y {
         Constants.initializeGlobal(option);
         Constants.initializeReadability(option);
         Constants.initializeExclusions(option);
-
-        // One time upgrade of local storage values. To be removed in later version.
-        upgradeSa11yDismissed(this.checkAll);
 
         // Make "Developer checks" on by default or if toggle switch is visually hidden.
         if (option.developerChecksOnByDefault) {
@@ -185,6 +179,9 @@ class Sa11y {
         if (option.readabilityPlugin && Utils.store.getItem('sa11y-readability') === 'On') {
           checkReadability(this.results);
         }
+
+        await checkPageLanguage(this.results, option);
+
 
         /* Custom checks */
         if (option.customChecks === true) {

@@ -2,16 +2,10 @@ import Constants from '../utils/constants';
 import Elements from '../utils/elements';
 import Lang from '../utils/lang';
 import computeReadability from '../utils/readability-utils';
-import * as Utils from '../utils/utils';
 
 export default function checkReadability(results) {
-  // Get text.
-  const pageText = Elements.Found.Readability.map(($el) =>
-    Utils.getText(Utils.fnIgnore($el)),
-  ).filter(Boolean);
-
   // Compute.
-  const computed = computeReadability(pageText, Constants.Readability.Lang);
+  const computed = computeReadability(Elements.Found.Readability, Constants.Readability.Lang);
 
   // Generate result object.
   let result;
