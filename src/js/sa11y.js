@@ -182,7 +182,6 @@ class Sa11y {
 
         await checkPageLanguage(this.results, option);
 
-
         /* Custom checks */
         if (option.customChecks === true) {
           // Option 1: Provide via sa11y-custom-checks.js

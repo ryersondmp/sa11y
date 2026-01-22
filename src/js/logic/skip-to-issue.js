@@ -12,7 +12,7 @@ import * as Utils from '../utils/utils';
 // Check element visibility based on offsetHeight and offsetWidth.
 const isElementVisible = (element) => {
   return !!(element?.offsetWidth && element?.offsetHeight);
-}
+};
 
 // When annotations are hidden and tooltip message is displayed in control panel, the previous visible tooltip remains. Function is called during getHiddenParent();
 const closeAnyActiveTooltips = () => {

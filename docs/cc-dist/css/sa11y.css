@@ -133,7 +133,8 @@ html, html[data-sa11y-theme="light"] {
   --sa11y-hyperlink: #00478f;
   --sa11y-shortcut-hover: #e8e8e8;
   --sa11y-button-outline: #595959;
-  --sa11y-box-shadow: 0 0 20px 4px #9aa1b126, 0 4px 80px -8px #24282f40, 0 4px 4px -2px #5b5e6926;
+  --sa11y-box-shadow: 0 0 20px 4px #9aa1b126, 0 4px 80px -8px #24282f40,
+    0 4px 4px -2px #5b5e6926;
 }
 
 html[data-sa11y-theme="dark"] {
@@ -156,7 +157,8 @@ html[data-sa11y-theme="dark"] {
   --sa11y-hyperlink: #94d3ff;
   --sa11y-shortcut-hover: #093698;
   --sa11y-button-outline: #2169ff;
-  --sa11y-box-shadow: 0 0 20px 4px #20f3, 0 4px 60px -8px #2d1ff566, 0 4px 4px -2px #0054dc4d;
+  --sa11y-box-shadow: 0 0 20px 4px #20f3, 0 4px 60px -8px #2d1ff566,
+    0 4px 4px -2px #0054dc4d;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -180,7 +182,8 @@ html[data-sa11y-theme="dark"] {
     --sa11y-hyperlink: #94d3ff;
     --sa11y-shortcut-hover: #093698;
     --sa11y-button-outline: #2169ff;
-    --sa11y-box-shadow: 0 0 20px 4px #20f3, 0 4px 60px -8px #2d1ff566, 0 4px 4px -2px #0054dc4d;
+    --sa11y-box-shadow: 0 0 20px 4px #20f3, 0 4px 60px -8px #2d1ff566,
+      0 4px 4px -2px #0054dc4d;
   }
 }
 

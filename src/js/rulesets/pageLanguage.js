@@ -16,7 +16,6 @@ const getLanguageLabel = (lang) => {
 
 const primary = (lang) => String(lang).toLowerCase().split('-')[0];
 
-
 let lastRunKey = null;
 let lastResult = null;
 export default async function checkPageLanguage(results, option) {
@@ -50,9 +49,7 @@ export default async function checkPageLanguage(results, option) {
     const item = {
       test: 'PAGE_LANG_CONFIDENCE',
       type: option.checks.PAGE_LANG_CONFIDENCE.type || 'warning',
-      content: Lang.sprintf(
-        option.checks.PAGE_LANG_CONFIDENCE.content || Lang.sprintf(message)
-      ),
+      content: Lang.sprintf(option.checks.PAGE_LANG_CONFIDENCE.content || Lang.sprintf(message)),
       dismiss: Utils.prepareDismissal(`PAGE_LANG_CONFIDENCE ${text.slice(0, 100)}`),
       developer: option.checks.PAGE_LANG_CONFIDENCE.developer ?? true,
     };
@@ -91,13 +88,13 @@ export default async function checkPageLanguage(results, option) {
     const langAttributes = find(`[lang="${secondLikelyLangCode}"]`, 'root');
     if (detected[1].confidence >= 0.4 && langAttributes.length === 0) {
       addResult(
-        `The page language was declared as ${languageLabel}, but there appears to be ${secondLikelyLanguage} content as well. Ensure the ${secondLikelyLanguage} content is tagged appropriately. Learn more about <a href="https://www.w3.org/WAI/WCAG22/Understanding/language-of-parts.html">language of parts.</a>`
+        `The page language was declared as ${languageLabel}, but there appears to be ${secondLikelyLanguage} content as well. Ensure the ${secondLikelyLanguage} content is tagged appropriately. Learn more about <a href="https://www.w3.org/WAI/WCAG22/Understanding/language-of-parts.html">language of parts.</a>`,
       );
     }
   } else {
     // Declared page language and detected language are different.
     addResult(
-      `Most of the text on this page appears to be ${likelyLanguage}, but the declared page language is ${languageLabel}. Consider updating the declared page language to match.`
+      `Most of the text on this page appears to be ${likelyLanguage}, but the declared page language is ${languageLabel}. Consider updating the declared page language to match.`,
     );
   }
 

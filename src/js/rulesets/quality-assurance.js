@@ -255,25 +255,32 @@ export default function checkQA(results, option) {
 
     // Find bolded text as headings.
     const computeBoldTextParagraphs = (p) => {
-      const startsWithBold = /^<\s*(strong|b)(\s+[^>]*)?>/i.test(p.innerHTML.trim());
+      const html = p.innerHTML.trim();
 
-      if (startsWithBold && !p.closest(ignoreParents)) {
-        const possibleHeading = p.querySelector('strong, b');
-        const possibleHeadingText = Utils.getText(possibleHeading);
+      // Quick check before doing heavier regex match.
+      if (html[0] !== '<') return;
 
-        // Conditions
-        const notASentence = possibleHeadingText.match(/[.:;?!"']/) === null;
-        const typicalHeadingLength =
-          possibleHeadingText.length >= 3 && possibleHeadingText.length <= 120;
+      // <p><strong>...</strong></p> or <p><strong>...</strong><br>...</p>
+      const likelyFakeHeading =
+        /^<\s*(?:strong|b)\b[^>]*>[\s\S]*?<\/\s*(?:strong|b)\s*>(?:<\s*\/?\s*br\s*>|$)/i.test(html);
 
-        if (typicalHeadingLength && notASentence) {
-          // Be a little forgiving if it's a small paragraph.
-          const nonHeadingTextLength = Utils.fnIgnore(p, ['strong', 'b']).textContent.trim().length;
-          if (nonHeadingTextLength !== 0 && nonHeadingTextLength <= 250) return;
-          const sanitizedText = Utils.sanitizeHTML(possibleHeadingText);
-          addResult(possibleHeading, sanitizedText);
-        }
-      }
+      // Don't proceed if no match.
+      if (!likelyFakeHeading || p.closest(ignoreParents)) return;
+
+      // Get fake heading text.
+      const possibleHeading = p.querySelector('strong, b');
+      if (!possibleHeading) return;
+      const text = Utils.getText(possibleHeading);
+
+      // Ignore if the bolded text is potentially a sentence.
+      if (text.length < 3 || text.length > 120 || /[.:;?!"']/.test(text)) return;
+
+      // Be a little forgiving if it's a small paragraph.
+      const paragraph = Utils.fnIgnore(p, ['strong', 'b']).textContent.trim();
+      if (paragraph && paragraph.length <= 250) return;
+
+      // Ok, it's most likely a fake heading.
+      addResult(possibleHeading, Utils.sanitizeHTML(text));
     };
 
     Elements.Found.Paragraphs.forEach((p) => {
