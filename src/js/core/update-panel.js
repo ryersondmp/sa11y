@@ -1,27 +1,28 @@
 import Constants from '../utils/constants';
 import Lang from '../utils/lang';
 import { store } from '../utils/utils';
+import { State } from './state';
 
 /* ************************************************************ */
 /*  Update warning and error counts on panel.                   */
 /* ************************************************************ */
-export function updatePanel(dismissCount, errorCount, warningCount) {
+export function updatePanel() {
   Constants.Panel.skipButton.disabled = false;
   Constants.Panel.panel.classList.add('active');
   Constants.Global.html.setAttribute('data-sa11y-active', 'true');
   Constants.Panel.skipButton.classList.add('active');
 
-  if (errorCount > 0 && warningCount > 0) {
+  if (State.counts.error > 0 && State.counts.warning > 0) {
     Constants.Panel.content.setAttribute('class', 'errors');
-    Constants.Panel.status.innerHTML = `${Lang._('ERRORS')} <span class="panel-count">${errorCount}</span> ${Lang._('WARNINGS')} <span class="panel-count" id="warning-count">${warningCount}</span>`;
-  } else if (errorCount > 0) {
+    Constants.Panel.status.innerHTML = `${Lang._('ERRORS')} <span class="panel-count">${State.counts.error}</span> ${Lang._('WARNINGS')} <span class="panel-count" id="warning-count">${State.counts.warning}</span>`;
+  } else if (State.counts.error > 0) {
     Constants.Panel.content.setAttribute('class', 'errors');
-    Constants.Panel.status.innerHTML = `${Lang._('ERRORS')} <span class="panel-count">${errorCount}</span>`;
-  } else if (warningCount > 0) {
+    Constants.Panel.status.innerHTML = `${Lang._('ERRORS')} <span class="panel-count">${State.counts.error}</span>`;
+  } else if (State.counts.warning > 0) {
     Constants.Panel.content.setAttribute('class', 'warnings');
-    Constants.Panel.status.innerHTML = `${Lang._('WARNINGS')} <span class="panel-count" id="warning-count">${warningCount}</span>`;
-  } else if (dismissCount > 0) {
-    Constants.Panel.status.innerHTML = `${Lang._('DISMISSED')} <span class="panel-count">${dismissCount}</span>`;
+    Constants.Panel.status.innerHTML = `${Lang._('WARNINGS')} <span class="panel-count" id="warning-count">${State.counts.warning}</span>`;
+  } else if (State.counts.dismissed > 0) {
+    Constants.Panel.status.innerHTML = `${Lang._('DISMISSED')} <span class="panel-count">${State.counts.dismissed}</span>`;
     Constants.Panel.skipButton.classList.remove('active');
   } else {
     Constants.Panel.content.setAttribute('class', 'good');
@@ -38,15 +39,15 @@ export function updatePanel(dismissCount, errorCount, warningCount) {
 /* ************************************************************ */
 /*  Update iOS style notification badge on icon.                */
 /* ************************************************************ */
-export function updateBadge(errorCount, warningCount) {
-  const totalCount = errorCount + warningCount;
+export function updateBadge() {
+  const totalCount = State.counts.error + State.counts.warning;
   if (totalCount === 0) {
     Constants.Panel.notifCount.innerText = '';
     Constants.Panel.notifText.innerText = '';
     Constants.Panel.notifBadge.style.display = 'none';
-  } else if (warningCount > 0 && errorCount === 0) {
+  } else if (State.counts.warning > 0 && State.counts.error === 0) {
     Constants.Panel.notifBadge.classList.add('notification-badge-warning');
-    Constants.Panel.notifCount.innerText = `${warningCount}`;
+    Constants.Panel.notifCount.innerText = `${State.counts.warning}`;
     Constants.Panel.notifText.innerText = `${Lang._('WARNINGS_FOUND')}`;
   } else {
     Constants.Panel.notifBadge.classList.remove('notification-badge-warning');
@@ -65,18 +66,30 @@ export function updateBadge(errorCount, warningCount) {
 /* ************************************************************ */
 /*  Count number of errors and warnings on page.                */
 /* ************************************************************ */
-export function updateCount(results, error, warning) {
-  let updatedErrorCount = error;
-  let updatedWarningCount = warning;
-
-  results.forEach((_, i) => {
-    const issue = results[i].type;
+export function updateCount() {
+  State.results.forEach((_, i) => {
+    const issue = State.results[i].type;
     if (issue === 'error') {
-      updatedErrorCount += 1;
+      State.counts.error += 1;
     } else if (issue === 'warning') {
-      updatedWarningCount += 1;
+      State.counts.warning += 1;
     }
   });
+}
 
-  return { error: updatedErrorCount, warning: updatedWarningCount };
+// Method: Disable toggle.
+export function disabled() {
+  setTimeout(() => {
+    if (store.getItem('sa11y-panel') === 'Opened') {
+      Constants.Panel.toggle?.click();
+    }
+    Constants.Panel.toggle.disabled = true;
+  }, State.option.delayCheck + 10);
+}
+
+// Method: Re-arm toggle.
+export function enabled() {
+  if (Constants.Panel.toggle) {
+    Constants.Panel.toggle.disabled = false;
+  }
 }

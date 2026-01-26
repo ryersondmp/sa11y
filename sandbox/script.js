@@ -31,7 +31,7 @@ const sa11y = new Sa11y({
   extraPlaceholderStopWords: 'untitled',
 
   // showHinPageOutline: true,
-  readabilityPlugin: true,
+  readabilityPlugin: 1,
   contrastPlugin: true,
   // contrastAlgorithm: 'APCA',
   formLabelsPlugin: true,
@@ -49,8 +49,6 @@ const sa11y = new Sa11y({
   },
 });
 
-
-
 /* Console all results */
 document.addEventListener('sa11y-check-complete', (e) => {
   console.log(e.detail);
@@ -64,6 +62,7 @@ document.addEventListener('sa11y-custom-checks', () => {
   if ($checkAnnouncement.length > 1) {
     for (let i = 1; i < $checkAnnouncement.length; i++) {
       const key = sa11y.prepareDismissal($checkAnnouncement[i].textContent);
+
       sa11y.results.push({
         element: $checkAnnouncement[i],
         type: 'warning',

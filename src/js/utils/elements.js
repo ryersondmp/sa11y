@@ -1,10 +1,11 @@
 import Constants from './constants';
 import find from './find';
 import * as Utils from './utils';
+import { State } from '../core/state';
 
 const Elements = (function myElements() {
   const Found = {};
-  function initializeElements(option) {
+  function initializeElements() {
     // Since 4.0.0: For performance, we filter elements instead of dozens of querySelectors on the DOM.
     Found.Everything = find('*', 'root', Constants.Exclusions.Sa11yElements);
 
@@ -32,22 +33,22 @@ const Elements = (function myElements() {
     // We want headings from the entire document for the Page Outline.
     Found.Headings = find(
       'h1, h2, h3, h4, h5, h6, [role="heading"][aria-level]',
-      option.ignoreContentOutsideRoots || option.fixedRoots ? 'root' : 'document',
+      State.option.ignoreContentOutsideRoots || State.option.fixedRoots ? 'root' : 'document',
       Constants.Exclusions.Headings,
     );
     Found.HeadingOne = find(
       'h1, [role="heading"][aria-level="1"]',
-      option.ignoreContentOutsideRoots || option.fixedRoots ? 'root' : 'document',
+      State.option.ignoreContentOutsideRoots || State.option.fixedRoots ? 'root' : 'document',
       Constants.Exclusions.Headings,
     );
 
     Found.HeadingOverrideStart = new WeakMap();
     Found.HeadingOverrideEnd = new WeakMap();
-    if (option.initialHeadingLevel) {
-      option.initialHeadingLevel.forEach((section) => {
+    if (State.option.initialHeadingLevel) {
+      State.option.initialHeadingLevel.forEach((section) => {
         const headingsInSection = find(
           `${section.selector} :is(h1,h2,h3,h4,h5,h6,[aria-role=heading][aria-level])`,
-          option.ignoreContentOutsideRoots || option.fixedRoots ? 'root' : 'document',
+          State.option.ignoreContentOutsideRoots || State.option.fixedRoots ? 'root' : 'document',
           Constants.Exclusions.Headings,
         );
         if (headingsInSection.length > 0) {
@@ -92,7 +93,7 @@ const Elements = (function myElements() {
 
     Found.Subscripts = Found.Everything.filter(($el) => ['SUP', 'SUB'].includes($el.tagName));
 
-    const badLinkSources = option.checks.QA_BAD_LINK.sources;
+    const badLinkSources = State.option.checks.QA_BAD_LINK.sources;
     Found.CustomErrorLinks = badLinkSources.length
       ? Found.Links.filter(($el) =>
           badLinkSources.split(',').some((selector) => $el.matches(selector.trim())),
@@ -112,7 +113,8 @@ const Elements = (function myElements() {
       .filter(Boolean);
 
     // Developer checks.
-    const nestedSources = option.checks.QA_NESTED_COMPONENTS.sources || '[role="tablist"], details';
+    const nestedSources =
+      State.option.checks.QA_NESTED_COMPONENTS.sources || '[role="tablist"], details';
     Found.NestedComponents = nestedSources
       ? Found.Everything.filter(($el) => $el.matches(nestedSources))
       : [];

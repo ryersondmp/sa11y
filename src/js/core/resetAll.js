@@ -1,11 +1,12 @@
-import Constants from './constants';
-import * as Utils from './utils';
-import find from './find';
+import Constants from '../utils/constants';
+import * as Utils from '../utils/utils';
+import find from '../utils/find';
 import { removeAlert } from '../interface/alert';
-import { removeSkipBtnListeners } from '../logic/skip-to-issue';
+import { removeSkipBtnListeners } from './skip-to-issue';
 import { removeExportListeners } from '../features/export-results';
-import { removeDismissListeners } from '../features/dismiss-annotations';
+import { removeDismissListeners } from '../features/dismissals';
 import { resetColourFilters } from '../features/colour-filters';
+import { State, resetState } from './state';
 
 /* *********************************************************** */
 /*  Reset all: Clears everything and resets the panel.         */
@@ -64,7 +65,7 @@ export async function resetAll(restartPanel = true) {
 
   // Remove from panel.
   Constants.Panel.outlineList.innerHTML = '';
-  if (Constants.Global.showImageOutline) {
+  if (State.option.showImageOutline) {
     Constants.Panel.imagesList.innerHTML = '';
   }
   Constants.Panel.pageIssuesList.innerHTML = '';
@@ -102,4 +103,7 @@ export async function resetAll(restartPanel = true) {
   if (restartPanel) {
     Constants.Panel.panel.classList.remove('active');
   }
+
+  // Reset state.
+  resetState();
 }

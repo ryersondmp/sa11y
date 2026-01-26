@@ -1,20 +1,20 @@
-/**
- * Create Page Outline.
- */
-
 import Constants from '../utils/constants';
 import find from '../utils/find';
 import Lang from '../utils/lang';
 import * as Utils from '../utils/utils';
 import { createAlert, removeAlert } from './alert';
+import { State } from '../core/state';
 
-export default function generatePageOutline(dismissed, headingOutline, option) {
+/**
+ * Create Page Outline.
+ */
+export default function generatePageOutline() {
   const outlineHandler = () => {
     const outlineArray = [];
 
     // Find all dismissed headings and update headingOutline array.
-    const findDismissedHeadings = dismissed
-      .map((e) => headingOutline.find((f) => e.dismiss === f.dismiss))
+    const findDismissedHeadings = State.dismissedResults
+      .map((e) => State.headingOutline.find((f) => e.dismiss === f.dismiss))
       .filter(Boolean);
     findDismissedHeadings.forEach(($el) => {
       $el.dismissedHeading = true;
@@ -22,7 +22,7 @@ export default function generatePageOutline(dismissed, headingOutline, option) {
 
     // Show meta page title in Page Outline.
     let outlineItem;
-    if (option.showTitleInPageOutline) {
+    if (State.option.showTitleInPageOutline) {
       const metaTitleElement = document.querySelector('head title');
       if (!metaTitleElement || metaTitleElement.textContent.trim().length === 0) {
         outlineItem = `<li><div class="badge error-badge"><span aria-hidden="true"><span class="error-icon"></span></span> ${Lang._('TITLE')}</div> <div class="badge error-badge">${Lang._('MISSING')}</div></li>`;
@@ -34,7 +34,7 @@ export default function generatePageOutline(dismissed, headingOutline, option) {
     }
 
     // Iterate through object that contains all headings (and error type).
-    headingOutline.forEach((heading, i) => {
+    State.headingOutline.forEach((heading, i) => {
       const { element, headingLevel, text, type, dismissedHeading, isWithinRoot } = heading;
 
       // Determine if heading is visually hidden or within hidden container.
@@ -46,7 +46,9 @@ export default function generatePageOutline(dismissed, headingOutline, option) {
           ? `<span class="hidden-icon"></span><span class="visually-hidden">${Lang._('HIDDEN')}</span>`
           : '';
       const badgeH =
-        option.showHinPageOutline === true || option.showHinPageOutline === 1 ? 'H' : '';
+        State.option.showHinPageOutline === true || State.option.showHinPageOutline === 1
+          ? 'H'
+          : '';
 
       let append;
       if (type === 'error' && isWithinRoot === true) {
@@ -117,7 +119,7 @@ export default function generatePageOutline(dismissed, headingOutline, option) {
 
     // Append headings to Page Outline.
     Constants.Panel.outlineList.innerHTML =
-      headingOutline.length === 0
+      State.headingOutline.length === 0
         ? `${outlineItem || ''} <li>${Lang._('PANEL_NO_HEADINGS')}</li>`
         : outlineArray.join(' ');
 

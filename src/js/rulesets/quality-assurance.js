@@ -2,22 +2,23 @@ import Constants from '../utils/constants';
 import Elements from '../utils/elements';
 import Lang from '../utils/lang';
 import * as Utils from '../utils/utils';
+import { State } from '../core/state';
 
-export default function checkQA(results, option) {
+export default function checkQA() {
   /* *********************************************************** */
   /*  Error: Find all links pointing to development environment. */
   /* *********************************************************** */
-  if (option.checks.QA_BAD_LINK) {
+  if (State.option.checks.QA_BAD_LINK) {
     Elements.Found.CustomErrorLinks.forEach(($el) => {
-      results.push({
+      State.results.push({
         test: 'QA_BAD_LINK',
         element: $el,
-        type: option.checks.QA_BAD_LINK.type || 'error',
-        content: Lang.sprintf(option.checks.QA_BAD_LINK.content || 'QA_BAD_LINK', $el),
+        type: State.option.checks.QA_BAD_LINK.type || 'error',
+        content: Lang.sprintf(State.option.checks.QA_BAD_LINK.content || 'QA_BAD_LINK', $el),
         inline: true,
         dismiss: Utils.prepareDismissal(`QA_BAD_LINK ${$el.tagName + $el.textContent}`),
-        dismissAll: option.checks.QA_BAD_LINK.dismissAll ? 'QA_BAD_LINK' : false,
-        developer: option.checks.QA_BAD_LINK.developer || false,
+        dismissAll: State.option.checks.QA_BAD_LINK.dismissAll ? 'QA_BAD_LINK' : false,
+        developer: State.option.checks.QA_BAD_LINK.developer || false,
       });
     });
   }
@@ -25,18 +26,22 @@ export default function checkQA(results, option) {
   /* *********************************************************** */
   /*  Warning: Excessive bolding or italics.                     */
   /* *********************************************************** */
-  if (option.checks.QA_STRONG_ITALICS) {
+  if (State.option.checks.QA_STRONG_ITALICS) {
     Elements.Found.StrongItalics.forEach(($el) => {
       const text = Utils.getText($el);
       if (text.length !== 0 && text.length > 400) {
-        results.push({
+        State.results.push({
           test: 'QA_STRONG_ITALICS',
           element: $el.parentNode,
-          type: option.checks.QA_STRONG_ITALICS.type || 'warning',
-          content: Lang.sprintf(option.checks.QA_STRONG_ITALICS.content || 'QA_STRONG_ITALICS'),
+          type: State.option.checks.QA_STRONG_ITALICS.type || 'warning',
+          content: Lang.sprintf(
+            State.option.checks.QA_STRONG_ITALICS.content || 'QA_STRONG_ITALICS',
+          ),
           dismiss: Utils.prepareDismissal(`QA_STRONG_ITALICS ${$el.tagName + $el.textContent}`),
-          dismissAll: option.checks.QA_STRONG_ITALICS.dismissAll ? 'QA_STRONG_ITALICS' : false,
-          developer: option.checks.QA_STRONG_ITALICS.developer || false,
+          dismissAll: State.option.checks.QA_STRONG_ITALICS.dismissAll
+            ? 'QA_STRONG_ITALICS'
+            : false,
+          developer: State.option.checks.QA_STRONG_ITALICS.developer || false,
         });
       }
     });
@@ -54,7 +59,7 @@ export default function checkQA(results, option) {
       const hasPDF = $el.matches('a[href$=".pdf"], a[href*=".pdf?"]');
 
       // Check for broken same-page links.
-      if (option.checks.QA_IN_PAGE_LINK) {
+      if (State.option.checks.QA_IN_PAGE_LINK) {
         const hasText = Utils.getText($el).length !== 0;
         const ignored = $el.ariaHidden === 'true' && $el.getAttribute('tabindex') === '-1';
         const hasAttributes =
@@ -78,42 +83,46 @@ export default function checkQA(results, option) {
 
           // If reference ID doesn't exist.
           if (!targetElement) {
-            results.push({
+            State.results.push({
               test: 'QA_IN_PAGE_LINK',
               element: $el,
-              type: option.checks.QA_IN_PAGE_LINK.type || 'error',
-              content: Lang.sprintf(option.checks.QA_IN_PAGE_LINK.content || 'QA_IN_PAGE_LINK'),
+              type: State.option.checks.QA_IN_PAGE_LINK.type || 'error',
+              content: Lang.sprintf(
+                State.option.checks.QA_IN_PAGE_LINK.content || 'QA_IN_PAGE_LINK',
+              ),
               inline: true,
               dismiss: Utils.prepareDismissal(`QA_IN_PAGE_LINK ${href}`),
-              dismissAll: option.checks.QA_IN_PAGE_LINK.dismissAll ? 'QA_IN_PAGE_LINK' : false,
-              developer: option.checks.QA_IN_PAGE_LINK.developer || false,
+              dismissAll: State.option.checks.QA_IN_PAGE_LINK.dismissAll
+                ? 'QA_IN_PAGE_LINK'
+                : false,
+              developer: State.option.checks.QA_IN_PAGE_LINK.developer || false,
             });
           }
         }
       }
 
       // Manually inspect documents & PDF for accessibility.
-      if (option.checks.QA_DOCUMENT && hasExtension) {
-        results.push({
+      if (State.option.checks.QA_DOCUMENT && hasExtension) {
+        State.results.push({
           test: 'QA_DOCUMENT',
           element: $el,
-          type: option.checks.QA_DOCUMENT.type || 'warning',
-          content: Lang.sprintf(option.checks.QA_DOCUMENT.content || 'QA_DOCUMENT'),
+          type: State.option.checks.QA_DOCUMENT.type || 'warning',
+          content: Lang.sprintf(State.option.checks.QA_DOCUMENT.content || 'QA_DOCUMENT'),
           inline: true,
           dismiss: Utils.prepareDismissal(`QA_DOCUMENT ${href}`),
-          dismissAll: option.checks.QA_DOCUMENT.dismissAll ? 'QA_DOCUMENT' : false,
-          developer: option.checks.QA_DOCUMENT.developer || false,
+          dismissAll: State.option.checks.QA_DOCUMENT.dismissAll ? 'QA_DOCUMENT' : false,
+          developer: State.option.checks.QA_DOCUMENT.developer || false,
         });
-      } else if (option.checks.QA_PDF && hasPDF) {
-        results.push({
+      } else if (State.option.checks.QA_PDF && hasPDF) {
+        State.results.push({
           test: 'QA_PDF',
           element: $el,
-          type: option.checks.QA_PDF.type || 'warning',
-          content: Lang.sprintf(option.checks.QA_PDF.content || 'QA_PDF'),
+          type: State.option.checks.QA_PDF.type || 'warning',
+          content: Lang.sprintf(State.option.checks.QA_PDF.content || 'QA_PDF'),
           inline: true,
           dismiss: Utils.prepareDismissal(`QA_PDF ${href}`),
-          dismissAll: option.checks.QA_PDF.dismissAll ? 'QA_PDF' : false,
-          developer: option.checks.QA_PDF.developer || false,
+          dismissAll: State.option.checks.QA_PDF.dismissAll ? 'QA_PDF' : false,
+          developer: State.option.checks.QA_PDF.developer || false,
         });
       }
     }
@@ -122,22 +131,22 @@ export default function checkQA(results, option) {
   /* *************************************************************** */
   /*  Warning: Find blockquotes used as headers.                     */
   /* *************************************************************** */
-  if (option.checks.QA_BLOCKQUOTE) {
+  if (State.option.checks.QA_BLOCKQUOTE) {
     Elements.Found.Blockquotes.forEach(($el) => {
       const text = Utils.getText($el);
       if (text.length !== 0 && text.length < 25) {
         const sanitizedText = Utils.sanitizeHTML(text);
-        results.push({
+        State.results.push({
           test: 'QA_BLOCKQUOTE',
           element: $el,
-          type: option.checks.QA_BLOCKQUOTE.type || 'warning',
+          type: State.option.checks.QA_BLOCKQUOTE.type || 'warning',
           content: Lang.sprintf(
-            option.checks.QA_BLOCKQUOTE.content || 'QA_BLOCKQUOTE',
+            State.option.checks.QA_BLOCKQUOTE.content || 'QA_BLOCKQUOTE',
             sanitizedText,
           ),
           dismiss: Utils.prepareDismissal(`QA_BLOCKQUOTE ${sanitizedText}`),
-          dismissAll: option.checks.QA_BLOCKQUOTE.dismissAll ? 'QA_BLOCKQUOTE' : false,
-          developer: option.checks.QA_BLOCKQUOTE.developer || false,
+          dismissAll: State.option.checks.QA_BLOCKQUOTE.dismissAll ? 'QA_BLOCKQUOTE' : false,
+          developer: State.option.checks.QA_BLOCKQUOTE.developer || false,
         });
       }
     });
@@ -152,53 +161,53 @@ export default function checkQA(results, option) {
       const semanticHeadings = $el.querySelectorAll('h1, h2, h3, h4, h5, h6');
       const firstRow = $el.querySelector('tr') ? $el.querySelector('tr').innerHTML : $el.innerHTML;
 
-      if (option.checks.TABLES_MISSING_HEADINGS && tableHeaders.length === 0) {
-        results.push({
+      if (State.option.checks.TABLES_MISSING_HEADINGS && tableHeaders.length === 0) {
+        State.results.push({
           test: 'TABLES_MISSING_HEADINGS',
           element: $el,
-          type: option.checks.TABLES_MISSING_HEADINGS.type || 'error',
+          type: State.option.checks.TABLES_MISSING_HEADINGS.type || 'error',
           content: Lang.sprintf(
-            option.checks.TABLES_MISSING_HEADINGS.content || 'TABLES_MISSING_HEADINGS',
+            State.option.checks.TABLES_MISSING_HEADINGS.content || 'TABLES_MISSING_HEADINGS',
           ),
           dismiss: Utils.prepareDismissal(`TABLES_MISSING_HEADINGS ${firstRow}`),
-          dismissAll: option.checks.TABLES_MISSING_HEADINGS.dismissAll
+          dismissAll: State.option.checks.TABLES_MISSING_HEADINGS.dismissAll
             ? 'TABLES_MISSING_HEADINGS'
             : false,
-          developer: option.checks.TABLES_MISSING_HEADINGS.developer || false,
+          developer: State.option.checks.TABLES_MISSING_HEADINGS.developer || false,
         });
       }
-      if (option.checks.TABLES_SEMANTIC_HEADING && semanticHeadings.length > 0) {
+      if (State.option.checks.TABLES_SEMANTIC_HEADING && semanticHeadings.length > 0) {
         semanticHeadings.forEach((heading) => {
-          results.push({
+          State.results.push({
             test: 'TABLES_SEMANTIC_HEADING',
             element: heading,
-            type: option.checks.TABLES_SEMANTIC_HEADING.type || 'error',
+            type: State.option.checks.TABLES_SEMANTIC_HEADING.type || 'error',
             content: Lang.sprintf(
-              option.checks.TABLES_SEMANTIC_HEADING.content || 'TABLES_SEMANTIC_HEADING',
+              State.option.checks.TABLES_SEMANTIC_HEADING.content || 'TABLES_SEMANTIC_HEADING',
             ),
             dismiss: Utils.prepareDismissal(`TABLES_SEMANTIC_HEADING ${firstRow}`),
-            dismissAll: option.checks.TABLES_SEMANTIC_HEADING.dismissAll
+            dismissAll: State.option.checks.TABLES_SEMANTIC_HEADING.dismissAll
               ? 'TABLES_SEMANTIC_HEADING'
               : false,
-            developer: option.checks.TABLES_SEMANTIC_HEADING.developer || false,
+            developer: State.option.checks.TABLES_SEMANTIC_HEADING.developer || false,
           });
         });
       }
       tableHeaders.forEach((th) => {
-        if (option.checks.TABLES_EMPTY_HEADING && th.textContent.trim().length === 0) {
-          results.push({
+        if (State.option.checks.TABLES_EMPTY_HEADING && th.textContent.trim().length === 0) {
+          State.results.push({
             test: 'TABLES_EMPTY_HEADING',
             element: th,
-            type: option.checks.TABLES_EMPTY_HEADING.type || 'error',
+            type: State.option.checks.TABLES_EMPTY_HEADING.type || 'error',
             content: Lang.sprintf(
-              option.checks.TABLES_EMPTY_HEADING.content || 'TABLES_EMPTY_HEADING',
+              State.option.checks.TABLES_EMPTY_HEADING.content || 'TABLES_EMPTY_HEADING',
             ),
             position: 'afterbegin',
             dismiss: Utils.prepareDismissal(`TABLES_EMPTY_HEADING ${firstRow}`),
-            dismissAll: option.checks.TABLES_EMPTY_HEADING.dismissAll
+            dismissAll: State.option.checks.TABLES_EMPTY_HEADING.dismissAll
               ? 'TABLES_EMPTY_HEADING'
               : false,
-            developer: option.checks.TABLES_EMPTY_HEADING.developer || false,
+            developer: State.option.checks.TABLES_EMPTY_HEADING.developer || false,
           });
         }
       });
@@ -208,20 +217,20 @@ export default function checkQA(results, option) {
   /* ****************************************************************** */
   /*  Warning: Detect fake headings                                     */
   /* ****************************************************************** */
-  if (option.checks.QA_FAKE_HEADING) {
+  if (State.option.checks.QA_FAKE_HEADING) {
     const addResult = (element, sanitizedText) => {
-      results.push({
+      State.results.push({
         test: 'QA_FAKE_HEADING',
         element,
-        type: option.checks.QA_FAKE_HEADING.type || 'warning',
+        type: State.option.checks.QA_FAKE_HEADING.type || 'warning',
         content: Lang.sprintf(
-          option.checks.QA_FAKE_HEADING.content || 'QA_FAKE_HEADING',
+          State.option.checks.QA_FAKE_HEADING.content || 'QA_FAKE_HEADING',
           sanitizedText,
         ),
         dismiss: Utils.prepareDismissal(`QA_FAKE_HEADING ${sanitizedText}`),
         inline: true,
-        dismissAll: option.checks.QA_FAKE_HEADING.dismissAll ? 'QA_FAKE_HEADING' : false,
-        developer: option.checks.QA_FAKE_HEADING.developer || false,
+        dismissAll: State.option.checks.QA_FAKE_HEADING.dismissAll ? 'QA_FAKE_HEADING' : false,
+        developer: State.option.checks.QA_FAKE_HEADING.developer || false,
       });
     };
 
@@ -293,7 +302,7 @@ export default function checkQA(results, option) {
   /*  Warning: Detect paragraphs that should be lists.               */
   /*  Thanks to John Jameson from PrincetonU for this ruleset!       */
   /* *************************************************************** */
-  if (option.checks.QA_FAKE_LIST) {
+  if (State.option.checks.QA_FAKE_LIST) {
     const numberMatch = new RegExp(/(([023456789][\d\s])|(1\d))/, ''); // All numbers but 1.
     const alphabeticMatch = new RegExp(/(^[aA1αаΑ]|[^p{Alphabetic}\s])[-\s.)]/, 'u');
     // biome-ignore lint/complexity/noUselessEscapeInRegex: Escape is indeed needed!
@@ -377,17 +386,17 @@ export default function checkQA(results, option) {
           }
         }
         if (hit) {
-          results.push({
+          State.results.push({
             test: 'QA_FAKE_LIST',
             element: p,
-            type: option.checks.QA_FAKE_LIST.type || 'warning',
+            type: State.option.checks.QA_FAKE_LIST.type || 'warning',
             content: Lang.sprintf(
-              option.checks.QA_FAKE_LIST.content || 'QA_FAKE_LIST',
+              State.option.checks.QA_FAKE_LIST.content || 'QA_FAKE_LIST',
               firstPrefix,
             ),
             dismiss: Utils.prepareDismissal(`QA_FAKE_LIST ${p.textContent}`),
-            dismissAll: option.checks.QA_FAKE_LIST.dismissAll ? 'QA_FAKE_LIST' : false,
-            developer: option.checks.QA_FAKE_LIST.developer || false,
+            dismissAll: State.option.checks.QA_FAKE_LIST.dismissAll ? 'QA_FAKE_LIST' : false,
+            developer: State.option.checks.QA_FAKE_LIST.developer || false,
           });
           activeMatch = firstPrefix;
         } else {
@@ -402,7 +411,7 @@ export default function checkQA(results, option) {
   /* **************************************** */
   /*  Warning: Detect uppercase text.         */
   /* **************************************** */
-  if (option.checks.QA_UPPERCASE) {
+  if (State.option.checks.QA_UPPERCASE) {
     const checkCaps = ($el) => {
       let thisText = '';
       if ($el.tagName === 'LI') {
@@ -421,14 +430,14 @@ export default function checkQA(results, option) {
       const detectUpperCase = thisText.match(uppercasePattern);
 
       if (detectUpperCase && detectUpperCase[0].length > 10) {
-        results.push({
+        State.results.push({
           test: 'QA_UPPERCASE',
           element: $el,
-          type: option.checks.QA_UPPERCASE.type || 'warning',
-          content: Lang.sprintf(option.checks.QA_UPPERCASE.content || 'QA_UPPERCASE'),
+          type: State.option.checks.QA_UPPERCASE.type || 'warning',
+          content: Lang.sprintf(State.option.checks.QA_UPPERCASE.content || 'QA_UPPERCASE'),
           dismiss: Utils.prepareDismissal(`QA_UPPERCASE ${thisText}`),
-          dismissAll: option.checks.QA_UPPERCASE.dismissAll ? 'QA_UPPERCASE' : false,
-          developer: option.checks.QA_UPPERCASE.developer || false,
+          dismissAll: State.option.checks.QA_UPPERCASE.dismissAll ? 'QA_UPPERCASE' : false,
+          developer: State.option.checks.QA_UPPERCASE.developer || false,
         });
       }
     };
@@ -451,39 +460,39 @@ export default function checkQA(results, option) {
   /* ************************************************************** */
   // Check underlined text. Created by Brian Teeman!
   const addUnderlineResult = ($el) => {
-    results.push({
+    State.results.push({
       test: 'QA_UNDERLINE',
       element: $el,
-      type: option.checks.QA_UNDERLINE.type || 'warning',
-      content: Lang.sprintf(option.checks.QA_UNDERLINE.content || 'QA_UNDERLINE'),
+      type: State.option.checks.QA_UNDERLINE.type || 'warning',
+      content: Lang.sprintf(State.option.checks.QA_UNDERLINE.content || 'QA_UNDERLINE'),
       inline: true,
       dismiss: Utils.prepareDismissal(`QA_UNDERLINE ${$el.textContent}`),
-      dismissAll: option.checks.QA_UNDERLINE.dismissAll ? 'QA_UNDERLINE' : false,
-      developer: option.checks.QA_UNDERLINE.developer || false,
+      dismissAll: State.option.checks.QA_UNDERLINE.dismissAll ? 'QA_UNDERLINE' : false,
+      developer: State.option.checks.QA_UNDERLINE.developer || false,
     });
   };
 
   const addJustifyResult = ($el) => {
-    results.push({
+    State.results.push({
       test: 'QA_JUSTIFY',
       element: $el,
-      type: option.checks.QA_JUSTIFY.type || 'warning',
-      content: Lang.sprintf(option.checks.QA_JUSTIFY.content || 'QA_JUSTIFY'),
+      type: State.option.checks.QA_JUSTIFY.type || 'warning',
+      content: Lang.sprintf(State.option.checks.QA_JUSTIFY.content || 'QA_JUSTIFY'),
       dismiss: Utils.prepareDismissal(`QA_JUSTIFY ${$el.textContent}`),
-      dismissAll: option.checks.QA_JUSTIFY.dismissAll ? 'QA_JUSTIFY' : false,
-      developer: option.checks.QA_JUSTIFY.developer || false,
+      dismissAll: State.option.checks.QA_JUSTIFY.dismissAll ? 'QA_JUSTIFY' : false,
+      developer: State.option.checks.QA_JUSTIFY.developer || false,
     });
   };
 
   const addSmallTextResult = ($el) => {
-    results.push({
+    State.results.push({
       test: 'QA_SMALL_TEXT',
       element: $el,
-      type: option.checks.QA_SMALL_TEXT.type || 'warning',
-      content: Lang.sprintf(option.checks.QA_SMALL_TEXT.content || 'QA_SMALL_TEXT'),
+      type: State.option.checks.QA_SMALL_TEXT.type || 'warning',
+      content: Lang.sprintf(State.option.checks.QA_SMALL_TEXT.content || 'QA_SMALL_TEXT'),
       dismiss: Utils.prepareDismissal(`QA_SMALL_TEXT ${$el.textContent}`),
-      dismissAll: option.checks.QA_SMALL_TEXT.dismissAll ? 'QA_SMALL_TEXT' : false,
-      developer: option.checks.QA_SMALL_TEXT.developer || false,
+      dismissAll: State.option.checks.QA_SMALL_TEXT.dismissAll ? 'QA_SMALL_TEXT' : false,
+      developer: State.option.checks.QA_SMALL_TEXT.developer || false,
     });
   };
 
@@ -495,7 +504,7 @@ export default function checkQA(results, option) {
     const interactive =
       'a[href], button, abbr, [role="link"], [role="button"], [tabindex="0"], [onclick]';
     if (
-      option.checks.QA_UNDERLINE &&
+      State.option.checks.QA_UNDERLINE &&
       ($el.closest('u') || textDecorationLine === 'underline') &&
       !$el.closest(interactive) &&
       !$el.matches(interactive)
@@ -504,7 +513,7 @@ export default function checkQA(results, option) {
     }
 
     /* Check: Font size is greater than 0 and less than 10. */
-    const defaultSize = option.checks.QA_SMALL_TEXT.fontSize || 10;
+    const defaultSize = State.option.checks.QA_SMALL_TEXT.fontSize || 10;
     const computedFontSize = parseFloat(fontSize);
 
     // Compare with parent element's font size.
@@ -515,20 +524,24 @@ export default function checkQA(results, option) {
 
     // Ensure the font size is specific to the element, not inherited.
     const withinRange = !isInherited && computedFontSize > 1 && computedFontSize <= defaultSize;
-    if (option.checks.QA_SMALL_TEXT && withinRange) {
+    if (State.option.checks.QA_SMALL_TEXT && withinRange) {
       addSmallTextResult($el);
     }
 
     /* Check: Check if text is justify-aligned. */
     const parentJustify = $el.parentElement ? getComputedStyle($el.parentElement).textAlign : null;
     const justifyInherited = parentJustify === textAlign;
-    if (option.checks.QA_JUSTIFY && textAlign === 'justify' && !justifyInherited) {
+    if (State.option.checks.QA_JUSTIFY && textAlign === 'justify' && !justifyInherited) {
       addJustifyResult($el);
     }
   };
 
   // Loop through all elements within the root area.
-  if (option.checks.QA_UNDERLINE || option.checks.QA_JUSTIFY || option.checks.QA_SMALL_TEXT) {
+  if (
+    State.option.checks.QA_UNDERLINE ||
+    State.option.checks.QA_JUSTIFY ||
+    State.option.checks.QA_SMALL_TEXT
+  ) {
     for (let i = 0; i < Elements.Found.Everything.length; i++) {
       const $el = Elements.Found.Everything[i];
 
@@ -549,19 +562,19 @@ export default function checkQA(results, option) {
   /* **************************************************** */
   /*  Find inappropriate use of <sup> and <sub> tags.     */
   /* **************************************************** */
-  if (option.checks.QA_SUBSCRIPT) {
+  if (State.option.checks.QA_SUBSCRIPT) {
     Elements.Found.Subscripts.forEach(($el) => {
       const text = Utils.getText($el);
       if (text.length >= 80) {
-        results.push({
+        State.results.push({
           test: 'QA_SUBSCRIPT',
           element: $el,
-          type: option.checks.QA_SUBSCRIPT.type || 'warning',
-          content: Lang.sprintf(option.checks.QA_SUBSCRIPT.content || 'QA_SUBSCRIPT'),
+          type: State.option.checks.QA_SUBSCRIPT.type || 'warning',
+          content: Lang.sprintf(State.option.checks.QA_SUBSCRIPT.content || 'QA_SUBSCRIPT'),
           inline: true,
           dismiss: Utils.prepareDismissal(`QA_SUBSCRIPT ${$el.tagName + text}`),
-          dismissAll: option.checks.QA_SUBSCRIPT.dismissAll ? 'QA_SUBSCRIPT' : false,
-          developer: option.checks.QA_SUBSCRIPT.developer || false,
+          dismissAll: State.option.checks.QA_SUBSCRIPT.dismissAll ? 'QA_SUBSCRIPT' : false,
+          developer: State.option.checks.QA_SUBSCRIPT.developer || false,
         });
       }
     });
@@ -570,27 +583,26 @@ export default function checkQA(results, option) {
   /* ****************************************** */
   /*  Find double nested layout components.     */
   /* ****************************************** */
-  if (option.checks.QA_NESTED_COMPONENTS) {
+  if (State.option.checks.QA_NESTED_COMPONENTS) {
     Elements.Found.NestedComponents.forEach(($el) => {
-      const sources = option.checks.QA_NESTED_COMPONENTS.sources || '[role="tablist"], details';
+      const sources =
+        State.option.checks.QA_NESTED_COMPONENTS.sources || '[role="tablist"], details';
       const component = $el.querySelector(sources);
       if (component) {
-        results.push({
+        State.results.push({
           test: 'QA_NESTED_COMPONENTS',
           element: $el,
-          type: option.checks.QA_NESTED_COMPONENTS.type || 'warning',
+          type: State.option.checks.QA_NESTED_COMPONENTS.type || 'warning',
           content: Lang.sprintf(
-            option.checks.QA_NESTED_COMPONENTS.content || 'QA_NESTED_COMPONENTS',
+            State.option.checks.QA_NESTED_COMPONENTS.content || 'QA_NESTED_COMPONENTS',
           ),
           dismiss: Utils.prepareDismissal(`QA_NESTED_COMPONENTS ${$el.textContent}`),
-          dismissAll: option.checks.QA_NESTED_COMPONENTS.dismissAll
+          dismissAll: State.option.checks.QA_NESTED_COMPONENTS.dismissAll
             ? 'QA_NESTED_COMPONENTS'
             : false,
-          developer: option.checks.QA_NESTED_COMPONENTS.developer || false,
+          developer: State.option.checks.QA_NESTED_COMPONENTS.developer || false,
         });
       }
     });
   }
-
-  return results;
 }

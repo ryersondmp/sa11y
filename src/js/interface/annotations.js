@@ -3,6 +3,7 @@ import sharedStyles from '../../css/shared.css?inline';
 import Constants from '../utils/constants';
 import Lang from '../utils/lang';
 import { findVisibleParent, supportsAnchorPositioning } from '../utils/utils';
+import { State } from '../core/state';
 
 export class Annotations extends HTMLElement {
   connectedCallback() {
@@ -25,9 +26,8 @@ export const annotationButtons = [];
 /**
  * Create annotation buttons.
  * @param {Object} issue The issue object.
- * @param {Object} option The options object.
  */
-export function annotate(issue, option) {
+export function annotate(issue) {
   // Get properties of issue object.
   const {
     element,
@@ -60,7 +60,7 @@ export function annotate(issue, option) {
 
   // Add dismiss button if prop enabled & has a dismiss key.
   const dismissBtn =
-    option.dismissAnnotations && (type === 'warning' || type === 'good') && dismiss
+    State.option.dismissAnnotations && (type === 'warning' || type === 'good') && dismiss
       ? `<button data-sa11y-dismiss='${id}' type='button'>${Lang._('DISMISS')}</button>`
       : '';
 
@@ -68,10 +68,10 @@ export function annotate(issue, option) {
   if (element) {
     // Don't paint page with "Good" annotations (if prop enabled).
     if (type === 'good') {
-      if (!option.showGoodImageButton && element?.tagName === 'IMG') {
+      if (!State.option.showGoodImageButton && element?.tagName === 'IMG') {
         return;
       }
-      if (!option.showGoodLinkButton && element?.tagName === 'A') {
+      if (!State.option.showGoodLinkButton && element?.tagName === 'A') {
         return;
       }
     }
@@ -108,8 +108,8 @@ export function annotate(issue, option) {
 
     // Add dismiss all button if prop enabled & has addition check key.
     const dismissAllBtn =
-      option.dismissAnnotations &&
-      option.dismissAll &&
+      State.option.dismissAnnotations &&
+      State.option.dismissAll &&
       typeof dismissAll === 'string' &&
       (type === 'warning' || type === 'good')
         ? `<button data-sa11y-dismiss='${id}' data-sa11y-dismiss-all type='button'>${Lang._('DISMISS_ALL')}</button>`
@@ -129,15 +129,17 @@ export function annotate(issue, option) {
     annotationButtons.push(button);
 
     // Make sure annotations always appended outside of SVGs and interactive elements.
-    const insertBefore = option.insertAnnotationBefore ? `, ${option.insertAnnotationBefore}` : '';
+    const insertBefore = State.option.insertAnnotationBefore
+      ? `, ${State.option.insertAnnotationBefore}`
+      : '';
     const location =
       element.closest(`a, button, [role="link"], [role="button"] ${insertBefore}`) || element;
     location.insertAdjacentElement(position, annotation);
     annotation.shadowRoot.appendChild(buttonWrapper);
 
     // Modifies the annotation's parent container with overflow: hidden, making it visible and scrollable so content authors can access it.
-    const ignoredElements = option.ignoreHiddenOverflow
-      ? option.ignoreHiddenOverflow
+    const ignoredElements = State.option.ignoreHiddenOverflow
+      ? State.option.ignoreHiddenOverflow
           .split(',')
           .flatMap((selector) => [...document.querySelectorAll(selector)])
       : [];

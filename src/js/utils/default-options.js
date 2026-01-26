@@ -222,6 +222,7 @@ const defaultOptions = {
     PAGE_LANG_CONFIDENCE: {
       confidence: 0.8,
     },
+    LANG_OF_PARTS: true,
 
     // Developer checks
     DUPLICATE_ID: true,

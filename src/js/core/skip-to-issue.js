@@ -4,6 +4,7 @@ import Elements from '../utils/elements';
 import find from '../utils/find';
 import Lang from '../utils/lang';
 import * as Utils from '../utils/utils';
+import { State } from './state';
 
 /* ************************************************************ */
 /*  Skip to Issue button logic within panel.                    */
@@ -161,12 +162,12 @@ function keyboardShortcut(e, results) {
 // Attach event listeners.
 let keyboardShortcutHandler;
 let handleSkipButtonHandler;
-export function skipToIssue(results) {
+export function skipToIssue() {
   keyboardShortcutHandler = (e) => {
-    keyboardShortcut(e, results);
+    keyboardShortcut(e, State.results);
   };
   handleSkipButtonHandler = () => {
-    goToNext(results);
+    goToNext(State.results);
   };
 
   document.addEventListener('keydown', keyboardShortcutHandler);

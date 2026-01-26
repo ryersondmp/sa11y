@@ -3,16 +3,18 @@ import Constants from '../utils/constants';
 import Lang from '../utils/lang';
 import { remove, resetAttributes, store } from '../utils/utils';
 import { resetColourFilters } from '../features/colour-filters';
-import { resetAll } from '../utils/resetAll';
+import { resetAll } from './resetAll';
+import checkAll from './checkAll';
+import { State } from './state';
 
 /* ************************************************************ */
 /*  Initialize all toggle switches within Settings panel.       */
 /* ************************************************************ */
-export default function settingsPanelToggles(checkAll) {
+export default function settingsPanelToggles() {
   /* ************************* */
   /*  Panel position toggle    */
   /* ************************* */
-  if (Constants.Global.showMovePanelToggle) {
+  if (State.option.showMovePanelToggle) {
     Constants.Panel.movePanelToggle.onclick = async () => {
       const panelPosition = store.getItem('sa11y-position');
       const [position1, position2] = panelPosition.includes('top')
@@ -37,7 +39,7 @@ export default function settingsPanelToggles(checkAll) {
   /* ************************* */
   /*  Developer checks toggle  */
   /* ************************* */
-  if (Constants.Global.developerPlugin) {
+  if (State.option.developerPlugin) {
     Constants.Panel.developerToggle.onclick = async () => {
       if (store.getItem('sa11y-developer') === 'On') {
         store.setItem('sa11y-developer', 'Off');
@@ -123,7 +125,7 @@ export default function settingsPanelToggles(checkAll) {
   /* ****************** */
   /*  Colour filters    */
   /* ****************** */
-  if (Constants.Global.colourFilterPlugin) {
+  if (State.option.colourFilterPlugin) {
     Constants.Panel.colourFilterSelect.addEventListener('change', async () => {
       const option = parseInt(Constants.Panel.colourFilterSelect.value, 10);
 

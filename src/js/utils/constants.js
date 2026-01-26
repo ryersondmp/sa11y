@@ -1,44 +1,24 @@
 import { createAlert } from '../interface/alert';
 import Lang from './lang';
+import { State } from '../core/state';
 
 const Constants = (function myConstants() {
   /* **************** */
   /* Global constants */
   /* **************** */
   const Global = {};
-  function initializeGlobal(option) {
+  function initializeGlobal() {
     Global.html = document.querySelector('html');
-    Global.headless = option.headless;
-    Global.dismissAnnotations = option.dismissAnnotations;
-    Global.aboutContent = option.aboutContent;
     Global.shadowDetection =
-      option.shadowComponents.length > 0 || option.autoDetectShadowComponents === true;
-    Global.fixedRoots = option.fixedRoots;
-    Global.ignoreAriaOnElements = option.ignoreAriaOnElements;
-    Global.ignoreTextInElements = option.ignoreTextInElements;
+      State.option.shadowComponents.length > 0 || State.option.autoDetectShadowComponents === true;
 
     // Validate panel position.
     const panelPositions = new Set(['top-left', 'top-right', 'left', 'right']);
-    const positionValue = option.panelPosition?.trim().toLowerCase();
+    const positionValue = State.option.panelPosition?.trim().toLowerCase();
     Global.panelPosition = panelPositions.has(positionValue) ? positionValue : 'right';
 
     // Contrast
-    Global.contrastSuggestions = option.contrastSuggestions;
-    Global.contrastAlgorithm = option.contrastAlgorithm.toUpperCase();
-
-    // Toggleable plugins
-    Global.developerPlugin = option.developerPlugin;
-    Global.colourFilterPlugin = option.colourFilterPlugin;
-    Global.checkAllHideToggles = option.checkAllHideToggles;
-    Global.exportResultsPlugin = option.exportResultsPlugin;
-    Global.readabilityPlugin = option.readabilityPlugin;
-    Global.showImageOutline = option.showImageOutline;
-    Global.editImageURLofCMS = option.editImageURLofCMS;
-    Global.relativePathImageSRC = option.relativePathImageSRC;
-    Global.relativePathImageID = option.relativePathImageID;
-    Global.ignoreEditImageURL = option.ignoreEditImageURL;
-    Global.ignoreEditImageClass = option.ignoreEditImageClass;
-    Global.showMovePanelToggle = option.showMovePanelToggle;
+    Global.contrastAlgorithm = State.option.contrastAlgorithm.toUpperCase();
 
     // A11y: Determine scroll behaviour
     let reducedMotion = false;
@@ -51,7 +31,7 @@ const Constants = (function myConstants() {
     Global.langDirection = Global.html.getAttribute('dir') === 'rtl' ? 'rtl' : 'ltr';
 
     // Check for document types.
-    const documentSources = option.checks.QA_DOCUMENT.sources;
+    const documentSources = State.option.checks.QA_DOCUMENT.sources;
     const defaultDocumentSources =
       'a[href$=".doc"], a[href$=".docx"], a[href*=".doc?"], a[href*=".docx?"], a[href$=".ppt"], a[href$=".pptx"], a[href*=".ppt?"], a[href*=".pptx?"], a[href^="https://drive.google.com/file"], a[href^="https://docs.google."], a[href^="https://sway."]';
     if (documentSources) {
@@ -65,7 +45,7 @@ const Constants = (function myConstants() {
     /* ********************** */
 
     // Video sources.
-    const videoSources = option.checks.EMBED_VIDEO.sources;
+    const videoSources = State.option.checks.EMBED_VIDEO.sources;
     const defaultVideoSources =
       'video, [src*="Video"], [src*="video"], [src*="watch"], [src*="youtube.com"], [src*="vimeo.com"], [src*="panopto.com"], [src*="wistia.com"], [src*="dailymotion.com"], [src*="brightcove.com"], [src*="vidyard.com"]';
     if (videoSources) {
@@ -76,7 +56,7 @@ const Constants = (function myConstants() {
     }
 
     // Audio sources.
-    const audioSources = option.checks.EMBED_AUDIO.sources;
+    const audioSources = State.option.checks.EMBED_AUDIO.sources;
     const defaultAudioSources =
       'audio, [src*="soundcloud.com"], [src*="simplecast.com"], [src*="podbean.com"], [src*="buzzsprout.com"], [src*="blubrry.com"], [src*="transistor.fm"], [src*="fusebox.fm"], [src*="libsyn.com"], [src*="spotify.com"], [src*="podcasts.apple.com"], [src*="castbox.fm"], [src*="megaphone.fm"], [src*="spreaker.com"], [src*="anchor.fm"], [src*="rss.com"], [src*="redcircle.com"]';
     if (audioSources) {
@@ -87,7 +67,7 @@ const Constants = (function myConstants() {
     }
 
     // Data viz sources.
-    const dataVizSources = option.checks.EMBED_DATA_VIZ.sources;
+    const dataVizSources = State.option.checks.EMBED_DATA_VIZ.sources;
     const defaultDataVizSources =
       '[src*="datastudio"], [src*="tableau"], [src*="lookerstudio"], [src*="powerbi"], [src*="qlik"]';
     if (dataVizSources) {
@@ -264,8 +244,8 @@ const Constants = (function myConstants() {
   /* Readability Setup */
   /* ***************** */
   const Readability = {};
-  function initializeReadability(option) {
-    if (option.readabilityPlugin) {
+  function initializeReadability() {
+    if (State.option.readabilityPlugin) {
       // Set `readabilityLang` property based on language file.
       Readability.Lang = Lang._('LANG_CODE').substring(0, 2);
 
@@ -306,7 +286,7 @@ const Constants = (function myConstants() {
   /* Exclusions Setup */
   /* **************** */
   const Exclusions = {};
-  function initializeExclusions(option) {
+  function initializeExclusions() {
     // List of Sa11y's interface components.
     Exclusions.Sa11yElements = [
       'sa11y-heading-label',
@@ -324,8 +304,8 @@ const Constants = (function myConstants() {
 
     // Main container exclusions.
     Exclusions.Container = ['#wpadminbar', '#wpadminbar *', ...exclusions];
-    if (option.containerIgnore) {
-      const containerSelectors = option.containerIgnore.split(',').map((item) => item.trim());
+    if (State.option.containerIgnore) {
+      const containerSelectors = State.option.containerIgnore.split(',').map((item) => item.trim());
       Exclusions.Container = Exclusions.Container.concat(
         containerSelectors.flatMap((item) => [`${item} *`, item]),
       );
@@ -335,7 +315,7 @@ const Constants = (function myConstants() {
     Exclusions.Contrast = [
       'link',
       'hr',
-      'option',
+      'State.option',
       'audio',
       'audio *',
       'video',
@@ -364,8 +344,8 @@ const Constants = (function myConstants() {
 
       ...exclusions,
     ];
-    if (option.contrastIgnore) {
-      Exclusions.Contrast = option.contrastIgnore
+    if (State.option.contrastIgnore) {
+      Exclusions.Contrast = State.option.contrastIgnore
         .split(',')
         .map(($el) => $el.trim())
         .flatMap(($el) => [$el, `${$el} *`])
@@ -374,8 +354,8 @@ const Constants = (function myConstants() {
 
     // Ignore specific regions for readability module.
     Exclusions.Readability = ['nav li', '[role="navigation"] li', ...exclusions];
-    if (option.readabilityIgnore) {
-      Exclusions.Readability = option.readabilityIgnore
+    if (State.option.readabilityIgnore) {
+      Exclusions.Readability = State.option.readabilityIgnore
         .split(',')
         .map(($el) => $el.trim())
         .flatMap(($el) => [$el, `${$el} *`])
@@ -383,26 +363,26 @@ const Constants = (function myConstants() {
     }
 
     // Ignore specific headings.
-    Exclusions.Headings = option.headerIgnore
-      ? option.headerIgnore.split(',').map(($el) => $el.trim())
+    Exclusions.Headings = State.option.headerIgnore
+      ? State.option.headerIgnore.split(',').map(($el) => $el.trim())
       : [];
 
     // Ignore specific classes within headings.
-    Exclusions.HeaderSpan = option.headerIgnoreSpan
-      ? option.headerIgnoreSpan.split(',').map(($el) => $el.trim())
+    Exclusions.HeaderSpan = State.option.headerIgnoreSpan
+      ? State.option.headerIgnoreSpan.split(',').map(($el) => $el.trim())
       : [];
 
     // Don't add heading label or include in panel.
-    Exclusions.Outline = option.outlineIgnore
-      ? option.outlineIgnore.split(',').map(($el) => $el.trim())
+    Exclusions.Outline = State.option.outlineIgnore
+      ? State.option.outlineIgnore.split(',').map(($el) => $el.trim())
       : [];
 
     // Ignore specific images.
     Exclusions.Images = [
       'img[role="presentation"]:not(a img[role="presentation"]), img[aria-hidden="true"]:not(a img[aria-hidden="true"])',
     ];
-    if (option.imageIgnore) {
-      Exclusions.Images = option.imageIgnore
+    if (State.option.imageIgnore) {
+      Exclusions.Images = State.option.imageIgnore
         .split(',')
         .map(($el) => $el.trim())
         .concat(Exclusions.Images);
@@ -410,16 +390,16 @@ const Constants = (function myConstants() {
 
     // Ignore specific links
     Exclusions.Links = ['.anchorjs-link'];
-    if (option.linkIgnore) {
-      Exclusions.Links = option.linkIgnore
+    if (State.option.linkIgnore) {
+      Exclusions.Links = State.option.linkIgnore
         .split(',')
         .map(($el) => $el.trim())
         .concat(Exclusions.Links);
     }
 
     // Ignore specific classes within links.
-    Exclusions.LinkSpan = option.linkIgnoreSpan
-      ? option.linkIgnoreSpan.split(',').map(($el) => $el.trim())
+    Exclusions.LinkSpan = State.option.linkIgnoreSpan
+      ? State.option.linkIgnoreSpan.split(',').map(($el) => $el.trim())
       : [];
   }
 

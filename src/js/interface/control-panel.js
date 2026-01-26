@@ -3,6 +3,7 @@ import sharedStyles from '../../css/shared.css?inline';
 import Constants from '../utils/constants';
 import Lang from '../utils/lang';
 import { store } from '../utils/utils';
+import { State } from '../core/state';
 
 export default class ControlPanel extends HTMLElement {
   connectedCallback() {
@@ -23,10 +24,10 @@ export default class ControlPanel extends HTMLElement {
     const rememberPanelPosition = store.getItem('sa11y-position');
 
     // If admin wants users to check everything, without toggleable checks.
-    const checkAll = Constants.Global.checkAllHideToggles;
+    const checkAll = State.option.checkAllHideToggles;
 
     /* TOGGLEABLE PLUGINS */
-    const developerPlugin = Constants.Global.developerPlugin
+    const developerPlugin = State.option.developerPlugin
       ? `
       <li id="developer-item" ${checkAll ? 'hidden' : ''}>
         <label id="check-developer" for="developer-toggle">
@@ -51,7 +52,7 @@ export default class ControlPanel extends HTMLElement {
       </li>`
       : '';
 
-    const colourFilterPlugin = Constants.Global.colourFilterPlugin
+    const colourFilterPlugin = State.option.colourFilterPlugin
       ? `
       <li id="colour-filter-item">
         <label id="colour-filter-mode" for="colour-filter">${Lang._('COLOUR_FILTER')}</label>
@@ -67,7 +68,7 @@ export default class ControlPanel extends HTMLElement {
       </li>`
       : '';
 
-    const colourFilterPanel = Constants.Global.colourFilterPlugin
+    const colourFilterPanel = State.option.colourFilterPlugin
       ? `
       <div id="panel-colour-filters" role="region" aria-labelledby="colour-filter-mode">
         <div id="filter-icon" class="panel-icon" role="img"></div>
@@ -75,7 +76,7 @@ export default class ControlPanel extends HTMLElement {
       </div>`
       : '';
 
-    const exportResultsPlugin = Constants.Global.exportResultsPlugin
+    const exportResultsPlugin = State.option.exportResultsPlugin
       ? `
       <li id="export-results-item">
         <span id="export-results-mode">${Lang._('EXPORT_RESULTS')}</span>
@@ -91,9 +92,9 @@ export default class ControlPanel extends HTMLElement {
       : '';
 
     /* CUSTOMIZABLE ABOUT SECTION */
-    const aboutSection = Constants.Global.aboutContent
+    const aboutSection = State.option.aboutContent
       ? `
-      <div id="about-content">${Constants.Global.aboutContent}</div>`
+      <div id="about-content">${State.option.aboutContent}</div>`
       : '';
 
     /* MAIN TOGGLE */
@@ -136,7 +137,7 @@ export default class ControlPanel extends HTMLElement {
       </div>`;
 
     /* IMAGES OUTLINE */
-    const imagesOutline = Constants.Global.showImageOutline
+    const imagesOutline = State.option.showImageOutline
       ? `
       <div id="images-panel" role="tabpanel" aria-labelledby="images-header">
         <div class="panel-header">
@@ -151,7 +152,7 @@ export default class ControlPanel extends HTMLElement {
     /* PANEL POSITION TOGGLE */
     const leftPressed = rememberPanelPosition === 'left' || rememberPanelPosition === 'top-left';
     const panelMoved = leftPressed ? 'true' : 'false';
-    const panelPositionToggle = Constants.Global.showMovePanelToggle
+    const panelPositionToggle = State.option.showMovePanelToggle
       ? `<button type="button" id="move-panel"
           aria-label="${Lang._('MOVE_PANEL')}"
           aria-pressed="${panelMoved}"
@@ -222,11 +223,11 @@ export default class ControlPanel extends HTMLElement {
     /* OUTLINE & SETTING TAB TOGGLES. */
     const imageToggleButton = `<button type="button" role="tab" aria-expanded="false" id="images-toggle" aria-controls="images-panel">${Lang._('IMAGES')}</button>`;
 
-    const imagePanelEnabled = Constants.Global.showImageOutline ? 'data-image-panel' : '';
+    const imagePanelEnabled = State.option.showImageOutline ? 'data-image-panel' : '';
     const tabToggles = `
       <div id="panel-controls" role="tablist" aria-orientation="horizontal" ${imagePanelEnabled}>
         <button type="button" role="tab" aria-expanded="false" id="outline-toggle" aria-controls="outline-panel">${Lang._('OUTLINE')}</button>
-        ${Constants.Global.showImageOutline ? imageToggleButton : ''}
+        ${State.option.showImageOutline ? imageToggleButton : ''}
         <button type="button" role="tab" aria-expanded="false" id="settings-toggle" aria-controls="settings-panel">${Lang._('SETTINGS')}</button>
       </div>`;
 

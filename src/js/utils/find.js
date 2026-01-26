@@ -1,4 +1,5 @@
 import Constants from './constants';
+import { State } from '../core/state';
 
 /**
  * Finds elements in the DOM that match the given selector, within the specified root element, and excluding any specified elements.
@@ -12,8 +13,8 @@ export default function find(selector, desiredRoot, exclude) {
   const root = [];
   if (desiredRoot === 'document') {
     root.push(document.body);
-    if (Constants.Global.fixedRoots) {
-      root.push(Constants.Global.fixedRoots);
+    if (State.option.fixedRoots) {
+      root.push(State.option.fixedRoots);
     }
   } else if (desiredRoot === 'root') {
     root.push(Constants.Root.areaToCheck);

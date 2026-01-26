@@ -357,7 +357,7 @@ export default {
     META_MAX:
       'Ensure the <code>maximum-scale</code> parameter in the <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">viewport meta tag</a> is not less than 2.',
     META_LANG:
-      'Page language not declared! Please <a href="https://www.w3.org/International/questions/qa-html-language-declarations">declare language on HTML tag.</a>',
+      'Page language not declared! Please <a href="https://www.w3.org/International/questions/qa-html-language-declarations">declare language on the HTML tag.</a>',
     META_REFRESH: 'Page should not automatically refresh using a meta tag.',
 
     // Buttons
@@ -371,6 +371,8 @@ export default {
       'Do not include the word "button" in the name of a button. Screen readers already convey the role of an element in addition to its name.',
     LABEL_IN_NAME:
       'The visible text for this element appears to be different than the accessible name, which may cause confusion for assistive technologies users. Please review: <hr> <strong {B}>Accessible Name</strong> <strong {C}>%(TEXT)</strong>',
+    PAGE_LANG_CONFIDENCE: 'The page language was declared as %(PAGE_LANG), but there appears to be %(LIKELY_LANG) content as well. Ensure the %(LIKELY_LANG) content is tagged appropriately. Learn more about <a href="https://www.w3.org/WAI/WCAG22/Understanding/language-of-parts.html">language of parts.</a>',
+    LANG_OF_PARTS: 'Most of the text on this page appears to be %(LIKELY_LANG), but the declared page language is %(PAGE_LANG). Consider updating the declared page language to match.',
 
     // Tables
     TABLES_MISSING_HEADINGS:

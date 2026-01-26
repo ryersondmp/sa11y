@@ -1,5 +1,6 @@
 import styles from '../../css/global-utilities.css?inline';
 import Constants from '../utils/constants';
+import { State } from './state';
 
 /* ************************************************************ */
 /*  Auto-detect shadow DOM or process provided web components.  */
@@ -14,13 +15,13 @@ const addStyleUtilities = (component) => {
   }
 };
 
-export default function findShadowComponents(option) {
-  if (option.autoDetectShadowComponents) {
+export default function findShadowComponents() {
+  if (State.option.autoDetectShadowComponents) {
     // Elements to ignore.
     const ignore = Constants.Exclusions.Sa11yElements;
 
     // Search all elements.
-    const root = document.querySelector(option.checkRoot);
+    const root = document.querySelector(State.option.checkRoot);
     const search = root
       ? Array.from(root.querySelectorAll(`*:not(${ignore})`))
       : Array.from(document.body.querySelectorAll(`*:not(${ignore})`));
@@ -32,8 +33,8 @@ export default function findShadowComponents(option) {
         addStyleUtilities(component);
       }
     });
-  } else if (option.shadowComponents) {
-    const providedShadow = document.querySelectorAll(option.shadowComponents);
+  } else if (State.option.shadowComponents) {
+    const providedShadow = document.querySelectorAll(State.option.shadowComponents);
     providedShadow.forEach((component) => {
       component.setAttribute('data-sa11y-has-shadow-root', '');
       addStyleUtilities(component);

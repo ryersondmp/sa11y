@@ -1,7 +1,8 @@
 import exportResultsStyles from '../../css/export-results.css?inline';
 import Constants from '../utils/constants';
 import Lang from '../utils/lang';
-import { decodeHTML, escapeHTML, generateElementPreview, stripHTMLtags } from '../utils/utils';
+import * as Utils from '../utils/utils';
+import { State } from '../core/state';
 
 /* ************************************************************ */
 /*  Export results as CSV or HTML via Blob API.                 */
@@ -26,10 +27,9 @@ function generateMetaData() {
 }
 
 // Generate HTML template for download.
-async function generateHTMLTemplate(results, dismissResults) {
-  const errors = results.filter((issue) => issue.type === 'error');
-  const warnings = results.filter((issue) => issue.type === 'warning');
-  const count = { error: errors.length, warning: warnings.length, dismiss: dismissResults.length };
+async function generateHTMLTemplate() {
+  const errors = State.results.filter((issue) => issue.type === 'error');
+  const warnings = State.results.filter((issue) => issue.type === 'warning');
 
   async function generateList(issues, type) {
     const types = {
@@ -40,16 +40,14 @@ async function generateHTMLTemplate(results, dismissResults) {
     const heading = types[type];
     const hasIssues = issues.length > 0;
 
-    if (!hasIssues) {
-      return '';
-    }
+    if (!hasIssues) return '';
 
     let list = `<h2>${heading}</h2>`;
     let listOpeningTag = `<ol class="${type}">`;
     let listClosingTag = '</ol>';
 
     if (type === 'dismissed') {
-      listOpeningTag = `<details><summary>${Lang.sprintf('PANEL_DISMISS_BUTTON', count.dismiss)}</summary><ol>`;
+      listOpeningTag = `<details><summary>${Lang.sprintf('PANEL_DISMISS_BUTTON', State.counts.dismissed)}</summary><ol>`;
       listClosingTag = '</details>';
     }
 
@@ -61,11 +59,11 @@ async function generateHTMLTemplate(results, dismissResults) {
       let elementPreview = '';
       if (issue.element) {
         const allowedTags = ['IMG', 'IFRAME', 'AUDIO', 'VIDEO'];
-        const preview = await generateElementPreview(issue, true);
+        const preview = await Utils.generateElementPreview(issue, true);
         if (allowedTags.includes(issue.element.tagName)) {
-          elementPreview = `<li><strong>${Lang._('PREVIEW')}:</strong> ${preview}</li><li><strong>${Lang._('ELEMENT')}:</strong> <pre><code>${escapeHTML(issue.htmlPath)}</code></pre></li>`;
+          elementPreview = `<li><strong>${Lang._('PREVIEW')}:</strong> ${preview}</li><li><strong>${Lang._('ELEMENT')}:</strong> <pre><code>${Utils.escapeHTML(issue.htmlPath)}</code></pre></li>`;
         } else {
-          elementPreview = `<li><strong>${Lang._('ELEMENT')}:</strong> <pre><code>${escapeHTML(issue.htmlPath)}</code></pre></li>`;
+          elementPreview = `<li><strong>${Lang._('ELEMENT')}:</strong> <pre><code>${Utils.escapeHTML(issue.htmlPath)}</code></pre></li>`;
         }
       }
       const cssPath = issue.cssPath
@@ -87,18 +85,23 @@ async function generateHTMLTemplate(results, dismissResults) {
 
   const errorsList = await generateList(errors, 'error');
   const warningList = await generateList(warnings, 'warning');
-  const dismissedList = await generateList(dismissResults, 'dismissed');
+  const dismissedList = await generateList(State.dismissedResults, 'dismissed');
 
   // Meta information
   const meta = generateMetaData();
   const metaTitle = !meta.titleCheck
     ? `<dt>${Lang._('PAGE_TITLE')}</dt><dd>${meta.metaTitle}</dd>`
     : '';
-  const metaErrors = count.error !== 0 ? `<dt>${Lang._('ERRORS')}</dt><dd>${count.error}</dd>` : '';
+  const metaErrors =
+    State.counts.error !== 0 ? `<dt>${Lang._('ERRORS')}</dt><dd>${State.counts.error}</dd>` : '';
   const metaWarnings =
-    count.warning !== 0 ? `<dt>${Lang._('WARNINGS')}</dt><dd>${count.warning}</dd>` : '';
+    State.counts.warning !== 0
+      ? `<dt>${Lang._('WARNINGS')}</dt><dd>${State.counts.warning}</dd>`
+      : '';
   const metaDismissed =
-    count.dismiss !== 0 ? `<dt>${Lang._('DISMISSED')}</dt><dd>${count.dismiss}</dd>` : '';
+    State.counts.dismissed !== 0
+      ? `<dt>${Lang._('DISMISSED')}</dt><dd>${State.counts.dismissed}</dd>`
+      : '';
   const tool = '<a href="https://sa11y.netlify.app">Sa11y</a>';
 
   const htmlTemplate = `
@@ -143,8 +146,8 @@ async function generateHTMLTemplate(results, dismissResults) {
 }
 
 /* HTML Blob */
-async function downloadHTMLTemplate(results, dismissResults) {
-  const htmlContent = await generateHTMLTemplate(results, dismissResults);
+async function downloadHTMLTemplate() {
+  const htmlContent = await generateHTMLTemplate();
   const meta = generateMetaData();
 
   // Create blob
@@ -164,10 +167,10 @@ async function downloadHTMLTemplate(results, dismissResults) {
 }
 
 /* CSV Blob */
-function downloadCSVTemplate(results) {
+function downloadCSVTemplate() {
   const meta = generateMetaData();
   // CSV header row
-  const filteredObjects = results
+  const filteredObjects = State.results
     .filter((issue) => issue.type === 'warning' || issue.type === 'error')
     .map((issue) => {
       const { type, content, htmlPath, cssPath } = issue;
@@ -177,8 +180,8 @@ function downloadCSVTemplate(results) {
         .replaceAll(/<span\s+class="visually-hidden"[^>]*>.*?<\/span>/gi, '')
         .replaceAll('<hr aria-hidden="true">', ' | ')
         .replaceAll(/"/g, '""');
-      const stripHTML = stripHTMLtags(String(prepContent));
-      const encoded = decodeHTML(stripHTML);
+      const stripHTML = Utils.stripHTMLtags(String(prepContent));
+      const encoded = Utils.decodeHTML(stripHTML);
 
       // Column headers.
       const columns = {
@@ -220,22 +223,22 @@ function downloadCSVTemplate(results) {
 // Attach event listeners.
 let exportHTMLHandler;
 let exportCSVHandler;
-export function exportResults(results, dismissResults) {
-  if (Constants.Global.exportResultsPlugin) {
-    exportHTMLHandler = async () => {
-      await downloadHTMLTemplate(results, dismissResults);
-    };
-    exportCSVHandler = () => {
-      downloadCSVTemplate(results, dismissResults);
-    };
-    Constants.Panel.exportHTML.addEventListener('click', exportHTMLHandler);
-    Constants.Panel.exportCSV.addEventListener('click', exportCSVHandler);
-  }
+export function exportResults() {
+  if (!State.option.exportResultsPlugin) return;
+
+  exportHTMLHandler = async () => {
+    await downloadHTMLTemplate();
+  };
+  exportCSVHandler = () => {
+    downloadCSVTemplate();
+  };
+  Constants.Panel.exportHTML.addEventListener('click', exportHTMLHandler);
+  Constants.Panel.exportCSV.addEventListener('click', exportCSVHandler);
 }
 
 // Imported by Reset function.
 export function removeExportListeners() {
-  if (Constants.Global.exportResultsPlugin) {
+  if (State.option.exportResultsPlugin) {
     Constants.Panel.exportHTML.removeEventListener('click', exportHTMLHandler);
     Constants.Panel.exportCSV.removeEventListener('click', exportCSVHandler);
   }

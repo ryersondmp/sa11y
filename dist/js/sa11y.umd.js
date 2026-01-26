@@ -222,6 +222,7 @@
       PAGE_LANG_CONFIDENCE: {
         confidence: 0.8
       },
+      LANG_OF_PARTS: true,
       // Developer checks
       DUPLICATE_ID: true,
       META_TITLE: true,
@@ -249,33 +250,42 @@
       }
     }
   };
-  const Lang = {
-    langStrings: {},
-    addI18n(strings) {
-      this.langStrings = strings;
+  const State = {
+    option: { ...defaultOptions },
+    results: [],
+    headingOutline: [],
+    imageResults: [],
+    counts: {
+      error: 0,
+      warning: 0,
+      dismissed: 0
     },
-    _(string) {
-      return this.translate(string);
+    customChecks: {
+      running: false,
+      finished: 0
     },
-    sprintf(string, ...args) {
-      let transString = this._(string);
-      transString = this.prepHTML(transString);
-      if (args?.length) {
-        args.forEach((arg) => {
-          transString = transString.replace(/%\([a-zA-z]+\)/, arg);
-        });
+    dismissedResults: []
+  };
+  const resetState = () => {
+    State.results = [];
+    State.headingOutline = [];
+    State.imageResults = [];
+    State.counts.error = 0;
+    State.counts.warning = 0;
+    State.counts.dismissed = 0;
+    State.customChecks.running = false;
+    State.customChecks.finished = 0;
+    State.dismissedResults = [];
+  };
+  const setState = (newOptions) => {
+    State.option = {
+      ...State.option,
+      ...newOptions,
+      checks: {
+        ...State.option.checks,
+        ...newOptions.checks || {}
       }
-      return transString;
-    },
-    translate(string) {
-      return this.langStrings[string] || string;
-    },
-    prepHTML($el) {
-      return $el.replaceAll(/<hr>/g, '<hr aria-hidden="true">').replaceAll(/<a[\s]href=/g, '<a target="_blank" rel="noopener noreferrer" href=').replaceAll(/<\/a>/g, `<span class="visually-hidden"> (${Lang._("NEW_TAB")})</span></a>`).replaceAll(/{C}/g, 'class="colour"').replaceAll(/{B}/g, 'class="badge"').replaceAll(/{ALT}/g, `<strong class="badge">${Lang._("ALT")}</strong>`).replaceAll(
-        /{L}/g,
-        `<strong class="badge"><span class="link-icon"></span><span class="visually-hidden">${Lang._("LINKED")}</span></strong>`
-      );
-    }
+    };
   };
   function removeAlert() {
     const Sa11yPanel = document.querySelector("sa11y-control-panel").shadowRoot;
@@ -320,48 +330,57 @@
       }
     };
   }
+  const Lang = {
+    langStrings: {},
+    addI18n(strings) {
+      this.langStrings = strings;
+    },
+    _(string) {
+      return this.translate(string);
+    },
+    sprintf(string, ...args) {
+      let transString = this._(string);
+      transString = this.prepHTML(transString);
+      if (args?.length) {
+        args.forEach((arg) => {
+          transString = transString.replace(/%\([a-zA-z]+\)/, arg);
+        });
+      }
+      return transString;
+    },
+    translate(string) {
+      return this.langStrings[string] || string;
+    },
+    prepHTML($el) {
+      return $el.replaceAll(/<hr>/g, '<hr aria-hidden="true">').replaceAll(/<a[\s]href=/g, '<a target="_blank" rel="noopener noreferrer" href=').replaceAll(/<\/a>/g, `<span class="visually-hidden"> (${Lang._("NEW_TAB")})</span></a>`).replaceAll(/{C}/g, 'class="colour"').replaceAll(/{B}/g, 'class="badge"').replaceAll(/{ALT}/g, `<strong class="badge">${Lang._("ALT")}</strong>`).replaceAll(
+        /{L}/g,
+        `<strong class="badge"><span class="link-icon"></span><span class="visually-hidden">${Lang._("LINKED")}</span></strong>`
+      );
+    }
+  };
   const Constants = /* @__PURE__ */ (function myConstants() {
     const Global = {};
-    function initializeGlobal(option) {
+    function initializeGlobal() {
       Global.html = document.querySelector("html");
-      Global.headless = option.headless;
-      Global.dismissAnnotations = option.dismissAnnotations;
-      Global.aboutContent = option.aboutContent;
-      Global.shadowDetection = option.shadowComponents.length > 0 || option.autoDetectShadowComponents === true;
-      Global.fixedRoots = option.fixedRoots;
-      Global.ignoreAriaOnElements = option.ignoreAriaOnElements;
-      Global.ignoreTextInElements = option.ignoreTextInElements;
+      Global.shadowDetection = State.option.shadowComponents.length > 0 || State.option.autoDetectShadowComponents === true;
       const panelPositions = /* @__PURE__ */ new Set(["top-left", "top-right", "left", "right"]);
-      const positionValue = option.panelPosition?.trim().toLowerCase();
+      const positionValue = State.option.panelPosition?.trim().toLowerCase();
       Global.panelPosition = panelPositions.has(positionValue) ? positionValue : "right";
-      Global.contrastSuggestions = option.contrastSuggestions;
-      Global.contrastAlgorithm = option.contrastAlgorithm.toUpperCase();
-      Global.developerPlugin = option.developerPlugin;
-      Global.colourFilterPlugin = option.colourFilterPlugin;
-      Global.checkAllHideToggles = option.checkAllHideToggles;
-      Global.exportResultsPlugin = option.exportResultsPlugin;
-      Global.readabilityPlugin = option.readabilityPlugin;
-      Global.showImageOutline = option.showImageOutline;
-      Global.editImageURLofCMS = option.editImageURLofCMS;
-      Global.relativePathImageSRC = option.relativePathImageSRC;
-      Global.relativePathImageID = option.relativePathImageID;
-      Global.ignoreEditImageURL = option.ignoreEditImageURL;
-      Global.ignoreEditImageClass = option.ignoreEditImageClass;
-      Global.showMovePanelToggle = option.showMovePanelToggle;
+      Global.contrastAlgorithm = State.option.contrastAlgorithm.toUpperCase();
       let reducedMotion = false;
       if (typeof window.matchMedia === "function") {
         reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
       }
       Global.scrollBehaviour = !reducedMotion || reducedMotion.matches ? "auto" : "smooth";
       Global.langDirection = Global.html.getAttribute("dir") === "rtl" ? "rtl" : "ltr";
-      const documentSources = option.checks.QA_DOCUMENT.sources;
+      const documentSources = State.option.checks.QA_DOCUMENT.sources;
       const defaultDocumentSources = 'a[href$=".doc"], a[href$=".docx"], a[href*=".doc?"], a[href*=".docx?"], a[href$=".ppt"], a[href$=".pptx"], a[href*=".ppt?"], a[href*=".pptx?"], a[href^="https://drive.google.com/file"], a[href^="https://docs.google."], a[href^="https://sway."]';
       if (documentSources) {
         Global.documentSources = `${defaultDocumentSources}, ${documentSources}`;
       } else {
         Global.documentSources = defaultDocumentSources;
       }
-      const videoSources = option.checks.EMBED_VIDEO.sources;
+      const videoSources = State.option.checks.EMBED_VIDEO.sources;
       const defaultVideoSources = 'video, [src*="Video"], [src*="video"], [src*="watch"], [src*="youtube.com"], [src*="vimeo.com"], [src*="panopto.com"], [src*="wistia.com"], [src*="dailymotion.com"], [src*="brightcove.com"], [src*="vidyard.com"]';
       if (videoSources) {
         const videos = videoSources.split(/\s*[\s,]\s*/).map(($el) => `[src*="${$el}"]`);
@@ -369,7 +388,7 @@
       } else {
         Global.VideoSources = defaultVideoSources;
       }
-      const audioSources = option.checks.EMBED_AUDIO.sources;
+      const audioSources = State.option.checks.EMBED_AUDIO.sources;
       const defaultAudioSources = 'audio, [src*="soundcloud.com"], [src*="simplecast.com"], [src*="podbean.com"], [src*="buzzsprout.com"], [src*="blubrry.com"], [src*="transistor.fm"], [src*="fusebox.fm"], [src*="libsyn.com"], [src*="spotify.com"], [src*="podcasts.apple.com"], [src*="castbox.fm"], [src*="megaphone.fm"], [src*="spreaker.com"], [src*="anchor.fm"], [src*="rss.com"], [src*="redcircle.com"]';
       if (audioSources) {
         const audio = audioSources.split(/\s*[\s,]\s*/).map(($el) => `[src*="${$el}"]`);
@@ -377,7 +396,7 @@
       } else {
         Global.AudioSources = defaultAudioSources;
       }
-      const dataVizSources = option.checks.EMBED_DATA_VIZ.sources;
+      const dataVizSources = State.option.checks.EMBED_DATA_VIZ.sources;
       const defaultDataVizSources = '[src*="datastudio"], [src*="tableau"], [src*="lookerstudio"], [src*="powerbi"], [src*="qlik"]';
       if (dataVizSources) {
         const data = dataVizSources.split(/\s*[\s,]\s*/).map(($el) => `[src*="${$el}"]`);
@@ -505,8 +524,8 @@
       Panel.readabilityDetails = Sa11yPanel.getElementById("readability-details");
     }
     const Readability = {};
-    function initializeReadability(option) {
-      if (option.readabilityPlugin) {
+    function initializeReadability() {
+      if (State.option.readabilityPlugin) {
         Readability.Lang = Lang._("LANG_CODE").substring(0, 2);
         const supported = [
           "en",
@@ -537,7 +556,7 @@
       }
     }
     const Exclusions = {};
-    function initializeExclusions(option) {
+    function initializeExclusions() {
       Exclusions.Sa11yElements = [
         "sa11y-heading-label",
         "sa11y-heading-anchor",
@@ -550,8 +569,8 @@
       ];
       const exclusions = ["style", "script", "noscript"];
       Exclusions.Container = ["#wpadminbar", "#wpadminbar *", ...exclusions];
-      if (option.containerIgnore) {
-        const containerSelectors = option.containerIgnore.split(",").map((item) => item.trim());
+      if (State.option.containerIgnore) {
+        const containerSelectors = State.option.containerIgnore.split(",").map((item) => item.trim());
         Exclusions.Container = Exclusions.Container.concat(
           containerSelectors.flatMap((item) => [`${item} *`, item])
         );
@@ -559,7 +578,7 @@
       Exclusions.Contrast = [
         "link",
         "hr",
-        "option",
+        "State.option",
         "audio",
         "audio *",
         "video",
@@ -587,27 +606,27 @@
         "datalist *",
         ...exclusions
       ];
-      if (option.contrastIgnore) {
-        Exclusions.Contrast = option.contrastIgnore.split(",").map(($el) => $el.trim()).flatMap(($el) => [$el, `${$el} *`]).concat(Exclusions.Contrast);
+      if (State.option.contrastIgnore) {
+        Exclusions.Contrast = State.option.contrastIgnore.split(",").map(($el) => $el.trim()).flatMap(($el) => [$el, `${$el} *`]).concat(Exclusions.Contrast);
       }
       Exclusions.Readability = ["nav li", '[role="navigation"] li', ...exclusions];
-      if (option.readabilityIgnore) {
-        Exclusions.Readability = option.readabilityIgnore.split(",").map(($el) => $el.trim()).flatMap(($el) => [$el, `${$el} *`]).concat(Exclusions.Readability);
+      if (State.option.readabilityIgnore) {
+        Exclusions.Readability = State.option.readabilityIgnore.split(",").map(($el) => $el.trim()).flatMap(($el) => [$el, `${$el} *`]).concat(Exclusions.Readability);
       }
-      Exclusions.Headings = option.headerIgnore ? option.headerIgnore.split(",").map(($el) => $el.trim()) : [];
-      Exclusions.HeaderSpan = option.headerIgnoreSpan ? option.headerIgnoreSpan.split(",").map(($el) => $el.trim()) : [];
-      Exclusions.Outline = option.outlineIgnore ? option.outlineIgnore.split(",").map(($el) => $el.trim()) : [];
+      Exclusions.Headings = State.option.headerIgnore ? State.option.headerIgnore.split(",").map(($el) => $el.trim()) : [];
+      Exclusions.HeaderSpan = State.option.headerIgnoreSpan ? State.option.headerIgnoreSpan.split(",").map(($el) => $el.trim()) : [];
+      Exclusions.Outline = State.option.outlineIgnore ? State.option.outlineIgnore.split(",").map(($el) => $el.trim()) : [];
       Exclusions.Images = [
         'img[role="presentation"]:not(a img[role="presentation"]), img[aria-hidden="true"]:not(a img[aria-hidden="true"])'
       ];
-      if (option.imageIgnore) {
-        Exclusions.Images = option.imageIgnore.split(",").map(($el) => $el.trim()).concat(Exclusions.Images);
+      if (State.option.imageIgnore) {
+        Exclusions.Images = State.option.imageIgnore.split(",").map(($el) => $el.trim()).concat(Exclusions.Images);
       }
       Exclusions.Links = [".anchorjs-link"];
-      if (option.linkIgnore) {
-        Exclusions.Links = option.linkIgnore.split(",").map(($el) => $el.trim()).concat(Exclusions.Links);
+      if (State.option.linkIgnore) {
+        Exclusions.Links = State.option.linkIgnore.split(",").map(($el) => $el.trim()).concat(Exclusions.Links);
       }
-      Exclusions.LinkSpan = option.linkIgnoreSpan ? option.linkIgnoreSpan.split(",").map(($el) => $el.trim()) : [];
+      Exclusions.LinkSpan = State.option.linkIgnoreSpan ? State.option.linkIgnoreSpan.split(",").map(($el) => $el.trim()) : [];
     }
     return {
       initializeRoot,
@@ -626,8 +645,8 @@
     const root = [];
     if (desiredRoot === "document") {
       root.push(document.body);
-      if (Constants.Global.fixedRoots) {
-        root.push(Constants.Global.fixedRoots);
+      if (State.option.fixedRoots) {
+        root.push(State.option.fixedRoots);
       }
     } else if (desiredRoot === "root") {
       root.push(Constants.Root.areaToCheck);
@@ -864,6 +883,19 @@
     const border = "data-sa11y-pulse-border";
     element.setAttribute(border, "");
     setTimeout(() => element.removeAttribute(border), 2500);
+  }
+  function getNextSibling(element, selector) {
+    let sibling = element.nextElementSibling;
+    if (!selector) {
+      return sibling;
+    }
+    while (sibling) {
+      if (sibling.matches(selector)) {
+        return sibling;
+      }
+      sibling = sibling.nextElementSibling;
+    }
+    return "";
   }
   function prepareDismissal(string) {
     return String(string).replace(/([^0-9a-zA-Z])/g, "").substring(0, 256);
@@ -1162,9 +1194,77 @@
     const hashArray = Array.from(new Uint8Array(hashBuffer));
     return hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
   }
+  const Utils = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+    __proto__: null,
+    addPulse,
+    blobToBase64,
+    debounce: debounce$2,
+    decodeHTML,
+    dismissDigest,
+    documentLoadingCheck,
+    escapeHTML,
+    findVisibleParent,
+    fnIgnore,
+    generateElementPreview,
+    generateRegexString,
+    generateSelectorPath,
+    getBestImageSource,
+    getNextSibling,
+    getText,
+    initRovingTabindex,
+    isElementHidden,
+    isElementVisuallyHiddenOrHidden,
+    isScreenReaderOnly,
+    isScrollable,
+    isVisibleTextInAccName,
+    offsetTop,
+    prepareDismissal,
+    remove,
+    removeWhitespace,
+    resetAttributes,
+    sanitizeHTML,
+    sanitizeHTMLBlock,
+    sanitizeURL,
+    standardizeHref,
+    store,
+    stripAllSpecialCharacters,
+    stripHTMLtags,
+    supportsAnchorPositioning,
+    trapFocus,
+    truncateString
+  }, Symbol.toStringTag, { value: "Module" }));
+  const styles$1 = "[data-sa11y-overflow]{overflow:auto!important}[data-sa11y-error]{outline-offset:2px;outline:5px solid var(--sa11y-error)!important}[data-sa11y-warning]:not([data-sa11y-error]){outline-offset:2px;outline:5px solid var(--sa11y-warning)!important}[data-sa11y-pulse-border]{box-shadow:0;animation:1s 2 pulse;outline:5px solid var(--sa11y-focus-color)!important}[data-sa11y-pulse-border]:hover,[data-sa11y-pulse-border]:focus{animation:none}@keyframes pulse{0%{box-shadow:0 0 0 5px var(--sa11y-focus-color)}50%{box-shadow:0 0 0 12px var(--sa11y-pulse-color)}to{box-shadow:0 0 0 5px var(--sa11y-pulse-color)}}img[data-sa11y-pulse-border],h1[data-sa11y-pulse-border],h2[data-sa11y-pulse-border],h3[data-sa11y-pulse-border],h4[data-sa11y-pulse-border],h5[data-sa11y-pulse-border],h6[data-sa11y-pulse-border]{animation:1s 2 pulse-scale}@keyframes pulse-scale{0%{opacity:1;transform:scale(1)}50%{opacity:.7;transform:scale(1.02)}to{opacity:1;transform:scale(1)}}@media (prefers-reduced-motion:reduce){[data-sa11y-pulse-border]{animation:none!important}}@media (forced-colors:active){[data-sa11y-error],[data-sa11y-warning],[data-sa11y-good],[data-sa11y-error-inline],[data-sa11y-warning-inline],[data-sa11y-pulse-border]{forced-color-adjust:none}}";
+  const addStyleUtilities = (component) => {
+    const CSSUtils = component.shadowRoot.querySelectorAll(".sa11y-css-utilities");
+    if (CSSUtils.length === 0) {
+      const style = document.createElement("style");
+      style.setAttribute("class", "sa11y-css-utilities");
+      style.textContent = styles$1;
+      component.shadowRoot.appendChild(style);
+    }
+  };
+  function findShadowComponents() {
+    if (State.option.autoDetectShadowComponents) {
+      const ignore = Constants.Exclusions.Sa11yElements;
+      const root = document.querySelector(State.option.checkRoot);
+      const search = root ? Array.from(root.querySelectorAll(`*:not(${ignore})`)) : Array.from(document.body.querySelectorAll(`*:not(${ignore})`));
+      search.forEach((component) => {
+        if (component.shadowRoot && component.shadowRoot.mode === "open") {
+          component.setAttribute("data-sa11y-has-shadow-root", "");
+          addStyleUtilities(component);
+        }
+      });
+    } else if (State.option.shadowComponents) {
+      const providedShadow = document.querySelectorAll(State.option.shadowComponents);
+      providedShadow.forEach((component) => {
+        component.setAttribute("data-sa11y-has-shadow-root", "");
+        addStyleUtilities(component);
+      });
+    }
+  }
   const Elements = /* @__PURE__ */ (function myElements() {
     const Found = {};
-    function initializeElements(option) {
+    function initializeElements() {
       Found.Everything = find("*", "root", Constants.Exclusions.Sa11yElements);
       Found.Contrast = Found.Everything.filter(($el) => {
         const matchesSelector = Constants.Exclusions.Contrast.some(
@@ -1181,21 +1281,21 @@
       );
       Found.Headings = find(
         'h1, h2, h3, h4, h5, h6, [role="heading"][aria-level]',
-        option.ignoreContentOutsideRoots || option.fixedRoots ? "root" : "document",
+        State.option.ignoreContentOutsideRoots || State.option.fixedRoots ? "root" : "document",
         Constants.Exclusions.Headings
       );
       Found.HeadingOne = find(
         'h1, [role="heading"][aria-level="1"]',
-        option.ignoreContentOutsideRoots || option.fixedRoots ? "root" : "document",
+        State.option.ignoreContentOutsideRoots || State.option.fixedRoots ? "root" : "document",
         Constants.Exclusions.Headings
       );
       Found.HeadingOverrideStart = /* @__PURE__ */ new WeakMap();
       Found.HeadingOverrideEnd = /* @__PURE__ */ new WeakMap();
-      if (option.initialHeadingLevel) {
-        option.initialHeadingLevel.forEach((section) => {
+      if (State.option.initialHeadingLevel) {
+        State.option.initialHeadingLevel.forEach((section) => {
           const headingsInSection = find(
             `${section.selector} :is(h1,h2,h3,h4,h5,h6,[aria-role=heading][aria-level])`,
-            option.ignoreContentOutsideRoots || option.fixedRoots ? "root" : "document",
+            State.option.ignoreContentOutsideRoots || State.option.fixedRoots ? "root" : "document",
             Constants.Exclusions.Headings
           );
           if (headingsInSection.length > 0) {
@@ -1223,7 +1323,7 @@
       );
       Found.StrongItalics = Found.Everything.filter(($el) => ["STRONG", "EM"].includes($el.tagName));
       Found.Subscripts = Found.Everything.filter(($el) => ["SUP", "SUB"].includes($el.tagName));
-      const badLinkSources = option.checks.QA_BAD_LINK.sources;
+      const badLinkSources = State.option.checks.QA_BAD_LINK.sources;
       Found.CustomErrorLinks = badLinkSources.length ? Found.Links.filter(
         ($el) => badLinkSources.split(",").some((selector) => $el.matches(selector.trim()))
       ) : [];
@@ -1232,7 +1332,7 @@
         ...Found.Paragraphs.filter(readabilityExclusions),
         ...Found.Lists.filter(readabilityExclusions)
       ].map(($el) => getText(fnIgnore($el))).filter(Boolean);
-      const nestedSources = option.checks.QA_NESTED_COMPONENTS.sources || '[role="tablist"], details';
+      const nestedSources = State.option.checks.QA_NESTED_COMPONENTS.sources || '[role="tablist"], details';
       Found.NestedComponents = Found.Everything.filter(($el) => $el.matches(nestedSources));
       Found.TabIndex = Found.Everything.filter(
         ($el) => $el.hasAttribute("tabindex") && $el.getAttribute("tabindex") !== "0" && !$el.getAttribute("tabindex").startsWith("-")
@@ -1273,33 +1373,53 @@
       Annotations: Annotations2
     };
   })();
-  const styles$1 = "[data-sa11y-overflow]{overflow:auto!important}[data-sa11y-error]{outline-offset:2px;outline:5px solid var(--sa11y-error)!important}[data-sa11y-warning]:not([data-sa11y-error]){outline-offset:2px;outline:5px solid var(--sa11y-warning)!important}[data-sa11y-pulse-border]{box-shadow:0;animation:1s 2 pulse;outline:5px solid var(--sa11y-focus-color)!important}[data-sa11y-pulse-border]:hover,[data-sa11y-pulse-border]:focus{animation:none}@keyframes pulse{0%{box-shadow:0 0 0 5px var(--sa11y-focus-color)}50%{box-shadow:0 0 0 12px var(--sa11y-pulse-color)}to{box-shadow:0 0 0 5px var(--sa11y-pulse-color)}}img[data-sa11y-pulse-border],h1[data-sa11y-pulse-border],h2[data-sa11y-pulse-border],h3[data-sa11y-pulse-border],h4[data-sa11y-pulse-border],h5[data-sa11y-pulse-border],h6[data-sa11y-pulse-border]{animation:1s 2 pulse-scale}@keyframes pulse-scale{0%{opacity:1;transform:scale(1)}50%{opacity:.7;transform:scale(1.02)}to{opacity:1;transform:scale(1)}}@media (prefers-reduced-motion:reduce){[data-sa11y-pulse-border]{animation:none!important}}@media (forced-colors:active){[data-sa11y-error],[data-sa11y-warning],[data-sa11y-good],[data-sa11y-error-inline],[data-sa11y-warning-inline],[data-sa11y-pulse-border]{forced-color-adjust:none}}";
-  const addStyleUtilities = (component) => {
-    const CSSUtils = component.shadowRoot.querySelectorAll(".sa11y-css-utilities");
-    if (CSSUtils.length === 0) {
-      const style = document.createElement("style");
-      style.setAttribute("class", "sa11y-css-utilities");
-      style.textContent = styles$1;
-      component.shadowRoot.appendChild(style);
+  const styles = ":host{z-index:999999;background:var(--sa11y-panel-bg);border-top:5px solid var(--sa11y-panel-bg-splitter);width:100%;height:fit-content;display:block;position:fixed;bottom:0;left:0;right:0}*{font-size:var(--sa11y-normal-text);color:var(--sa11y-panel-primary);font-family:var(--sa11y-font-face)!important;-webkit-font-smoothing:auto!important;line-height:22px!important}#dialog{max-width:900px;margin:20px auto;padding:20px}h2{font-size:var(--sa11y-large-text);margin-top:0}a{color:var(--sa11y-hyperlink);cursor:pointer;text-decoration:underline}a:hover,a:focus{text-decoration:none}p{margin-top:0}.error{color:var(--sa11y-error-text);background:var(--sa11y-error);border:2px dashed #f08080;margin-bottom:0;padding:5px}";
+  const sharedStyles = '.visually-hidden{clip:rect(1px, 1px, 1px, 1px);white-space:nowrap;clip-path:inset(50%);border:0;width:1px;height:1px;padding:0;display:block;position:absolute;overflow:hidden}[hidden]{display:none!important}h2,.header-text-inline,.header-text{font-size:var(--sa11y-large-text);color:var(--sa11y-panel-primary);margin-bottom:3px;font-weight:600;display:block}.header-text-inline{display:inline-block!important}code{font-size:calc(var(--sa11y-normal-text) - 1px);font-weight:600;font-family:monospace!important}pre code{white-space:pre-wrap;overflow:auto}pre,code,kbd,.kbd{color:var(--sa11y-panel-primary);background-color:var(--sa11y-panel-badge);border-radius:3.2px;padding:1.6px 4.8px}.bold{font-weight:600}.error .colour,.red-text{font-family:var(--sa11y-font-face);color:var(--sa11y-red-text)}.warning .colour,.yellow-text{font-family:var(--sa11y-font-face);color:var(--sa11y-yellow-text)}.normal-badge,.badge{min-width:10px;color:var(--sa11y-panel-primary);text-align:center;white-space:nowrap;vertical-align:baseline;background-color:var(--sa11y-panel-badge);border-radius:10px;outline:1px solid #0000;padding:1px 5px 1.75px;font-size:14px;line-height:1;display:inline;font-weight:700!important}.error .badge{color:var(--sa11y-error-text);background:var(--sa11y-error)}.error-badge{color:var(--sa11y-error-text)!important;background:var(--sa11y-error)!important}.warning .badge{color:var(--sa11y-panel-bg);background:var(--sa11y-yellow-text)}.warning-badge{color:var(--sa11y-panel-bg)!important;background:var(--sa11y-yellow-text)!important}.good-contrast{color:var(--sa11y-good-text)!important;background:var(--sa11y-good)!important}#contrast-preview{overflow-wrap:break-word;border:2px dashed var(--sa11y-panel-bg-splitter);background-color:#e8e8e8;background-image:linear-gradient(45deg,#ccc 25%,#0000 25% 75%,#ccc 75%,#ccc),linear-gradient(45deg,#ccc 25%,#0000 25% 75%,#ccc 75%,#ccc);background-position:0 0,5px 5px;background-size:10px 10px;border-radius:3.2px;max-height:100px;margin-top:10px;padding:5px;line-height:1;overflow:clip}#contrast-preview:empty{display:none}#color-pickers{justify-content:space-between;margin-top:10px;margin-bottom:10px;display:flex}#color-pickers label{align-items:center;display:flex}#color-pickers input{cursor:pointer;margin-inline-start:7px}#fg-color-wrapper.unknown,#bg-color-wrapper.unknown{display:inline-block;position:relative}:is(#fg-color-wrapper.unknown,#bg-color-wrapper.unknown):after{z-index:2;color:#fff;pointer-events:none;content:"?";justify-content:center;align-items:center;width:44px;height:44px;margin:-46px 7px;font-size:22px;display:flex;position:absolute}input[type=color i]{background:var(--sa11y-panel-bg-secondary);border-color:var(--sa11y-button-outline);border-style:solid;border-width:1px;border-radius:50%;block-size:44px;inline-size:44px;padding:2px}input[type=color i]::-webkit-color-swatch-wrapper{padding:1px}input[type=color i]::-webkit-color-swatch{border-color:var(--sa11y-button-outline);border-radius:50%}input[type=color i]::-moz-color-swatch{border-color:var(--sa11y-button-outline);border-radius:50%}input[type=color i].unknown{box-shadow:0 0 0 3px var(--sa11y-yellow-text)}.close-btn{float:var(--sa11y-float-rtl);width:32px;height:32px;font-size:var(--sa11y-normal-text);color:var(--sa11y-panel-primary);cursor:pointer;background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-button-outline);border-radius:50%;margin:0;font-weight:400;transition:all .2s ease-in-out;position:relative}.close-btn:hover,.close-btn:focus{background-color:var(--sa11y-shortcut-hover)}.close-btn:after{content:"";background:var(--sa11y-setting-switch-bg-off);-webkit-mask:var(--sa11y-close-btn-svg) center no-repeat;mask:var(--sa11y-close-btn-svg) center no-repeat;position:absolute;inset:-7px}@media screen and (forced-colors:active){.close-btn:after{filter:invert()}}#container [tabindex="0"]:focus,#container [tabindex="-1"]:focus,#container input:focus,#container select:focus,#container button:focus,#container a:focus{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}#container .switch:focus,#container #panel-controls button:focus{box-shadow:inset 0 0 0 4px var(--sa11y-focus-color);outline:0}#container [tabindex="0"]:focus:not(:focus-visible),#container [tabindex="-1"]:focus:not(:focus-visible),#container input:focus:not(:focus-visible),#container button:focus:not(:focus-visible),#container select:focus:not(:focus-visible),#container #panel-controls button:focus:not(:focus-visible){box-shadow:none;outline:0}#container a:focus-visible,#container button:not(#panel-controls button,.switch):focus-visible,#container select:focus-visible,#container input:focus-visible,#container [tabindex="0"]:focus-visible,#container [tabindex="-1"]:focus-visible{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}#container .switch:focus-visible,#container #panel-controls button:focus-visible{box-shadow:inset 0 0 0 4px var(--sa11y-focus-color);outline:0}@media screen and (forced-colors:active){#panel-controls button:focus{border:inset 3px solid transparent}.close-btn:focus{outline:3px solid #0000!important}#container a:focus,#container [tabindex="-1"]:focus,#container [tabindex="0"]:focus,#container select:focus,#container button:focus{outline:3px solid #0000!important}}';
+  class ConsoleErrors extends HTMLElement {
+    constructor(error) {
+      super();
+      this.error = error;
     }
-  };
-  function findShadowComponents(option) {
-    if (option.autoDetectShadowComponents) {
-      const ignore = Constants.Exclusions.Sa11yElements;
-      const root = document.querySelector(option.checkRoot);
-      const search = root ? Array.from(root.querySelectorAll(`*:not(${ignore})`)) : Array.from(document.body.querySelectorAll(`*:not(${ignore})`));
-      search.forEach((component) => {
-        if (component.shadowRoot && component.shadowRoot.mode === "open") {
-          component.setAttribute("data-sa11y-has-shadow-root", "");
-          addStyleUtilities(component);
-        }
-      });
-    } else if (option.shadowComponents) {
-      const providedShadow = document.querySelectorAll(option.shadowComponents);
-      providedShadow.forEach((component) => {
-        component.setAttribute("data-sa11y-has-shadow-root", "");
-        addStyleUtilities(component);
-      });
+    connectedCallback() {
+      const shadow = this.attachShadow({ mode: "open" });
+      const style = document.createElement("style");
+      style.innerHTML = styles + sharedStyles;
+      shadow.appendChild(style);
+      const content = document.createElement("div");
+      content.setAttribute("id", "dialog");
+      content.setAttribute("tabindex", "-1");
+      const url2 = window.location;
+      const google = "https://forms.gle/sjzK9XykETaoqZv99";
+      const template = `## Error Description
+\`\`\`javascript
+${this.error.stack}
+\`\`\`
+
+## Details
+- **URL:** ${url2}
+- **Version:** ${"4.4.2"}
+
+## Comments
+`;
+      const encodedTemplate = encodeURIComponent(template);
+      const github = `https://github.com/ryersondmp/sa11y/issues/new?title=Bug%20report&body=${encodedTemplate}`;
+      content.innerHTML = `
+      <button class="close-btn" aria-label="${Lang._("ALERT_CLOSE")}"></button>
+      <h2>${Lang._("ERROR")}</h2>
+      <p>${Lang.sprintf("CONSOLE_ERROR", google, github)}</p>
+      <p class="error">${escapeHTML(this.error.stack)}<br><br>Version: ${"4.4.2"} <br> URL: ${url2}</p>
+    `;
+      shadow.appendChild(content);
+      setTimeout(() => {
+        Constants.Panel.toggle.style.display = "none";
+        const container = document.querySelector("sa11y-console-error");
+        const dialog = container.shadowRoot.getElementById("dialog");
+        dialog.focus();
+        const close = container.shadowRoot.querySelector(".close-btn");
+        close.addEventListener("click", () => {
+          container.remove();
+        });
+      }, 0);
     }
   }
   const isElementVisible = (element) => {
@@ -1414,12 +1534,12 @@
   }
   let keyboardShortcutHandler;
   let handleSkipButtonHandler;
-  function skipToIssue(results) {
+  function skipToIssue() {
     keyboardShortcutHandler = (e) => {
-      keyboardShortcut(e, results);
+      keyboardShortcut(e, State.results);
     };
     handleSkipButtonHandler = () => {
-      goToNext(results);
+      goToNext(State.results);
     };
     document.addEventListener("keydown", keyboardShortcutHandler);
     Constants.Panel.skipButton.addEventListener("click", handleSkipButtonHandler);
@@ -1442,10 +1562,9 @@
     const pageURL = window.location.href;
     return { date, numericDate, titleCheck, metaTitle, pageURL };
   }
-  async function generateHTMLTemplate(results, dismissResults) {
-    const errors = results.filter((issue) => issue.type === "error");
-    const warnings = results.filter((issue) => issue.type === "warning");
-    const count = { error: errors.length, warning: warnings.length, dismiss: dismissResults.length };
+  async function generateHTMLTemplate() {
+    const errors = State.results.filter((issue) => issue.type === "error");
+    const warnings = State.results.filter((issue) => issue.type === "warning");
     async function generateList(issues, type) {
       const types = {
         error: Lang._("ERRORS"),
@@ -1454,14 +1573,12 @@
       };
       const heading = types[type];
       const hasIssues = issues.length > 0;
-      if (!hasIssues) {
-        return "";
-      }
+      if (!hasIssues) return "";
       let list = `<h2>${heading}</h2>`;
       let listOpeningTag = `<ol class="${type}">`;
       let listClosingTag = "</ol>";
       if (type === "dismissed") {
-        listOpeningTag = `<details><summary>${Lang.sprintf("PANEL_DISMISS_BUTTON", count.dismiss)}</summary><ol>`;
+        listOpeningTag = `<details><summary>${Lang.sprintf("PANEL_DISMISS_BUTTON", State.counts.dismissed)}</summary><ol>`;
         listClosingTag = "</details>";
       }
       list += listOpeningTag;
@@ -1486,12 +1603,12 @@
     }
     const errorsList = await generateList(errors, "error");
     const warningList = await generateList(warnings, "warning");
-    const dismissedList = await generateList(dismissResults, "dismissed");
+    const dismissedList = await generateList(State.dismissedResults, "dismissed");
     const meta = generateMetaData();
     const metaTitle = !meta.titleCheck ? `<dt>${Lang._("PAGE_TITLE")}</dt><dd>${meta.metaTitle}</dd>` : "";
-    const metaErrors = count.error !== 0 ? `<dt>${Lang._("ERRORS")}</dt><dd>${count.error}</dd>` : "";
-    const metaWarnings = count.warning !== 0 ? `<dt>${Lang._("WARNINGS")}</dt><dd>${count.warning}</dd>` : "";
-    const metaDismissed = count.dismiss !== 0 ? `<dt>${Lang._("DISMISSED")}</dt><dd>${count.dismiss}</dd>` : "";
+    const metaErrors = State.counts.error !== 0 ? `<dt>${Lang._("ERRORS")}</dt><dd>${State.counts.error}</dd>` : "";
+    const metaWarnings = State.counts.warning !== 0 ? `<dt>${Lang._("WARNINGS")}</dt><dd>${State.counts.warning}</dd>` : "";
+    const metaDismissed = State.counts.dismissed !== 0 ? `<dt>${Lang._("DISMISSED")}</dt><dd>${State.counts.dismissed}</dd>` : "";
     const tool = '<a href="https://sa11y.netlify.app">Sa11y</a>';
     const htmlTemplate = `
       <!DOCTYPE html>
@@ -1533,8 +1650,8 @@
     `;
     return htmlTemplate;
   }
-  async function downloadHTMLTemplate(results, dismissResults) {
-    const htmlContent = await generateHTMLTemplate(results, dismissResults);
+  async function downloadHTMLTemplate() {
+    const htmlContent = await generateHTMLTemplate();
     const meta = generateMetaData();
     const blob = new Blob([htmlContent], { type: "text/html" });
     const link = document.createElement("a");
@@ -1548,9 +1665,9 @@
       window.URL.revokeObjectURL(link.href);
     }, 100);
   }
-  function downloadCSVTemplate(results) {
+  function downloadCSVTemplate() {
     const meta = generateMetaData();
-    const filteredObjects = results.filter((issue) => issue.type === "warning" || issue.type === "error").map((issue) => {
+    const filteredObjects = State.results.filter((issue) => issue.type === "warning" || issue.type === "error").map((issue) => {
       const { type, content, htmlPath, cssPath } = issue;
       const prepContent = content.replaceAll(/<span\s+class="visually-hidden"[^>]*>.*?<\/span>/gi, "").replaceAll('<hr aria-hidden="true">', " | ").replaceAll(/"/g, '""');
       const stripHTML = stripHTMLtags(String(prepContent));
@@ -1587,119 +1704,26 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header]).join(",")).j
   }
   let exportHTMLHandler;
   let exportCSVHandler;
-  function exportResults(results, dismissResults) {
-    if (Constants.Global.exportResultsPlugin) {
-      exportHTMLHandler = async () => {
-        await downloadHTMLTemplate(results, dismissResults);
-      };
-      exportCSVHandler = () => {
-        downloadCSVTemplate(results);
-      };
-      Constants.Panel.exportHTML.addEventListener("click", exportHTMLHandler);
-      Constants.Panel.exportCSV.addEventListener("click", exportCSVHandler);
-    }
+  function exportResults() {
+    if (!State.option.exportResultsPlugin) return;
+    exportHTMLHandler = async () => {
+      await downloadHTMLTemplate();
+    };
+    exportCSVHandler = () => {
+      downloadCSVTemplate();
+    };
+    Constants.Panel.exportHTML.addEventListener("click", exportHTMLHandler);
+    Constants.Panel.exportCSV.addEventListener("click", exportCSVHandler);
   }
   function removeExportListeners() {
-    if (Constants.Global.exportResultsPlugin) {
+    if (State.option.exportResultsPlugin) {
       Constants.Panel.exportHTML.removeEventListener("click", exportHTMLHandler);
       Constants.Panel.exportCSV.removeEventListener("click", exportCSVHandler);
     }
   }
-  function dismissLogic(results, dismissTooltip) {
-    const dismissedIssues = JSON.parse(store.getItem("sa11y-dismissed-digest") || "[]");
-    const currentPath = window.location.pathname;
-    const isSoloDismissed = (issue, dismissed) => dismissed.key.includes(issue.dismissDigest) && dismissed.href === currentPath && (issue.type === "warning" || issue.type === "good");
-    const dismissAll = (issue, dismissed) => typeof dismissed.dismissAll === "string" && issue.dismissAll === dismissed.dismissAll && dismissed.href === currentPath;
-    const soloDismissed = results.filter(
-      (issue) => dismissedIssues.some((dismissed) => isSoloDismissed(issue, dismissed))
-    );
-    const allDismissed = results.filter(
-      (issue) => dismissedIssues.some((dismissed) => dismissAll(issue, dismissed))
-    );
-    const mergeDismissed = [...soloDismissed, ...allDismissed];
-    const dismissedResults = [
-      ...new Map(mergeDismissed.map((issue) => [issue.dismiss, issue])).values()
-    ];
-    const dismissCount = dismissedResults.length;
-    const updatedResults = results.filter(
-      (issue) => !dismissedResults.some(
-        (dismissed) => dismissed.dismiss === issue.dismiss && (issue.type === "warning" || issue.type === "good")
-      )
-    );
-    if (dismissCount) {
-      Constants.Panel.dismissButton.classList.add("active");
-      Constants.Panel.dismissTooltip.innerText = Lang.sprintf("PANEL_DISMISS_BUTTON", dismissCount);
-      dismissTooltip.object.setContent(Lang.sprintf("PANEL_DISMISS_BUTTON", dismissCount));
-    } else {
-      Constants.Panel.dismissButton.classList.remove("active");
-    }
-    return { dismissedIssues, updatedResults, dismissCount, dismissedResults };
-  }
-  let restoreDismissedHandler;
-  let dismissHandler;
-  const dismissIssueButton = async (e, results, checkAll) => {
-    let savedDismissKeys = JSON.parse(store.getItem("sa11y-dismissed-digest"));
-    const dismissButton = e.target;
-    const dismissContainer = document.querySelector("sa11y-panel-tooltips");
-    dismissContainer.hidden = false;
-    if (dismissButton.tagName === "BUTTON" && dismissButton.hasAttribute("data-sa11y-dismiss")) {
-      const dismissItem = parseInt(dismissButton.getAttribute("data-sa11y-dismiss"), 10);
-      const issue = results.find(($el) => $el.id === dismissItem);
-      if (savedDismissKeys === null) {
-        setTimeout(() => createAlert(Lang._("DISMISS_REMINDER")), 0);
-        savedDismissKeys = [];
-      }
-      if (issue.dismissDigest) {
-        const dismissAllSelected = dismissButton.hasAttribute("data-sa11y-dismiss-all") ? issue.dismissAll : "";
-        const dismissalDetails = {
-          key: issue.dismissDigest,
-          href: window.location.pathname,
-          ...dismissAllSelected ? { dismissAll: dismissAllSelected } : {}
-        };
-        const item = find(`[data-sa11y-annotation='${issue.id}']`, "root");
-        const latestDismissed = item[0] ? item[0].getAttribute("data-sa11y-position") : 0;
-        store.setItem("sa11y-latest-dismissed", latestDismissed);
-        store.setItem("sa11y-dismiss-item", JSON.stringify(dismissalDetails));
-        savedDismissKeys.push(dismissalDetails);
-        store.setItem("sa11y-dismissed-digest", JSON.stringify(savedDismissKeys));
-        store.removeItem("sa11y-dismiss-item");
-        const tooltip = dismissButton?.closest("[data-tippy-root]");
-        if (tooltip) {
-          setTimeout(() => {
-            tooltip.remove();
-          }, 0);
-        }
-        resetAll(false);
-        await checkAll();
-      }
-    }
-  };
-  const restoreDismissButton = async (dismissed, checkAll) => {
-    const dismissContainer = document.querySelector("sa11y-panel-tooltips");
-    dismissContainer.hidden = true;
-    const filtered = dismissed.filter((item) => item.href !== window.location.pathname);
-    store.setItem("sa11y-dismissed-digest", JSON.stringify(filtered));
-    Constants.Panel.dismissButton.classList.remove("active");
-    resetAll(false);
-    await checkAll();
-  };
-  function dismissButtons(results, dismissed, checkAll) {
-    if (Constants.Global.dismissAnnotations) {
-      dismissHandler = (e) => dismissIssueButton(e, results, checkAll);
-      const tooltips = document.querySelector("sa11y-tooltips").shadowRoot;
-      tooltips.addEventListener("click", dismissHandler);
-      Constants.Panel.panel.addEventListener("click", dismissHandler);
-    }
-    restoreDismissedHandler = () => restoreDismissButton(dismissed, checkAll);
-    Constants.Panel.dismissButton?.addEventListener("click", restoreDismissedHandler);
-  }
-  function removeDismissListeners() {
-    Constants.Panel.panel?.removeEventListener("click", dismissHandler);
-    Constants.Panel.dismissButton?.removeEventListener("click", restoreDismissedHandler);
-  }
   function addColourFilters() {
-    if (Constants.Global.colourFilterPlugin) {
-      if (Constants.Global.headless === false) {
+    if (State.option.colourFilterPlugin) {
+      if (State.option.headless === false) {
         const svg = document.createElement("div");
         svg.id = "sa11y-colour-filters";
         svg.innerHTML = `
@@ -1738,7 +1762,7 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header]).join(",")).j
     }
   }
   function resetColourFilters() {
-    if (Constants.Global.colourFilterPlugin) {
+    if (State.option.colourFilterPlugin) {
       document.body.removeAttribute("data-sa11y-filter");
       Constants.Panel.settingsContent.classList.remove("hide-settings-border");
       Constants.Panel.colourFilterSelect.value = 0;
@@ -1792,7 +1816,7 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header]).join(",")).j
       "document"
     );
     Constants.Panel.outlineList.innerHTML = "";
-    if (Constants.Global.showImageOutline) {
+    if (State.option.showImageOutline) {
       Constants.Panel.imagesList.innerHTML = "";
     }
     Constants.Panel.pageIssuesList.innerHTML = "";
@@ -1819,570 +1843,113 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header]).join(",")).j
     if (restartPanel) {
       Constants.Panel.panel.classList.remove("active");
     }
+    resetState();
   }
-  const styles = ":host{z-index:999999;background:var(--sa11y-panel-bg);border-top:5px solid var(--sa11y-panel-bg-splitter);width:100%;height:fit-content;display:block;position:fixed;bottom:0;left:0;right:0}*{font-size:var(--sa11y-normal-text);color:var(--sa11y-panel-primary);font-family:var(--sa11y-font-face)!important;-webkit-font-smoothing:auto!important;line-height:22px!important}#dialog{max-width:900px;margin:20px auto;padding:20px}h2{font-size:var(--sa11y-large-text);margin-top:0}a{color:var(--sa11y-hyperlink);cursor:pointer;text-decoration:underline}a:hover,a:focus{text-decoration:none}p{margin-top:0}.error{color:var(--sa11y-error-text);background:var(--sa11y-error);border:2px dashed #f08080;margin-bottom:0;padding:5px}";
-  const sharedStyles = '.visually-hidden{clip:rect(1px, 1px, 1px, 1px);white-space:nowrap;clip-path:inset(50%);border:0;width:1px;height:1px;padding:0;display:block;position:absolute;overflow:hidden}[hidden]{display:none!important}h2,.header-text-inline,.header-text{font-size:var(--sa11y-large-text);color:var(--sa11y-panel-primary);margin-bottom:3px;font-weight:600;display:block}.header-text-inline{display:inline-block!important}code{font-size:calc(var(--sa11y-normal-text) - 1px);font-weight:600;font-family:monospace!important}pre code{white-space:pre-wrap;overflow:auto}pre,code,kbd,.kbd{color:var(--sa11y-panel-primary);background-color:var(--sa11y-panel-badge);border-radius:3.2px;padding:1.6px 4.8px}.bold{font-weight:600}.error .colour,.red-text{font-family:var(--sa11y-font-face);color:var(--sa11y-red-text)}.warning .colour,.yellow-text{font-family:var(--sa11y-font-face);color:var(--sa11y-yellow-text)}.normal-badge,.badge{min-width:10px;color:var(--sa11y-panel-primary);text-align:center;white-space:nowrap;vertical-align:baseline;background-color:var(--sa11y-panel-badge);border-radius:10px;outline:1px solid #0000;padding:1px 5px 1.75px;font-size:14px;line-height:1;display:inline;font-weight:700!important}.error .badge{color:var(--sa11y-error-text);background:var(--sa11y-error)}.error-badge{color:var(--sa11y-error-text)!important;background:var(--sa11y-error)!important}.warning .badge{color:var(--sa11y-panel-bg);background:var(--sa11y-yellow-text)}.warning-badge{color:var(--sa11y-panel-bg)!important;background:var(--sa11y-yellow-text)!important}.good-contrast{color:var(--sa11y-good-text)!important;background:var(--sa11y-good)!important}#contrast-preview{overflow-wrap:break-word;border:2px dashed var(--sa11y-panel-bg-splitter);background-color:#e8e8e8;background-image:linear-gradient(45deg,#ccc 25%,#0000 25% 75%,#ccc 75%,#ccc),linear-gradient(45deg,#ccc 25%,#0000 25% 75%,#ccc 75%,#ccc);background-position:0 0,5px 5px;background-size:10px 10px;border-radius:3.2px;max-height:100px;margin-top:10px;padding:5px;line-height:1;overflow:clip}#contrast-preview:empty{display:none}#color-pickers{justify-content:space-between;margin-top:10px;margin-bottom:10px;display:flex}#color-pickers label{align-items:center;display:flex}#color-pickers input{cursor:pointer;margin-inline-start:7px}#fg-color-wrapper.unknown,#bg-color-wrapper.unknown{display:inline-block;position:relative}:is(#fg-color-wrapper.unknown,#bg-color-wrapper.unknown):after{z-index:2;color:#fff;pointer-events:none;content:"?";justify-content:center;align-items:center;width:44px;height:44px;margin:-46px 7px;font-size:22px;display:flex;position:absolute}input[type=color i]{background:var(--sa11y-panel-bg-secondary);border-color:var(--sa11y-button-outline);border-style:solid;border-width:1px;border-radius:50%;block-size:44px;inline-size:44px;padding:2px}input[type=color i]::-webkit-color-swatch-wrapper{padding:1px}input[type=color i]::-webkit-color-swatch{border-color:var(--sa11y-button-outline);border-radius:50%}input[type=color i]::-moz-color-swatch{border-color:var(--sa11y-button-outline);border-radius:50%}input[type=color i].unknown{box-shadow:0 0 0 3px var(--sa11y-yellow-text)}.close-btn{float:var(--sa11y-float-rtl);width:32px;height:32px;font-size:var(--sa11y-normal-text);color:var(--sa11y-panel-primary);cursor:pointer;background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-button-outline);border-radius:50%;margin:0;font-weight:400;transition:all .2s ease-in-out;position:relative}.close-btn:hover,.close-btn:focus{background-color:var(--sa11y-shortcut-hover)}.close-btn:after{content:"";background:var(--sa11y-setting-switch-bg-off);-webkit-mask:var(--sa11y-close-btn-svg) center no-repeat;mask:var(--sa11y-close-btn-svg) center no-repeat;position:absolute;inset:-7px}@media screen and (forced-colors:active){.close-btn:after{filter:invert()}}#container [tabindex="0"]:focus,#container [tabindex="-1"]:focus,#container input:focus,#container select:focus,#container button:focus,#container a:focus{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}#container .switch:focus,#container #panel-controls button:focus{box-shadow:inset 0 0 0 4px var(--sa11y-focus-color);outline:0}#container [tabindex="0"]:focus:not(:focus-visible),#container [tabindex="-1"]:focus:not(:focus-visible),#container input:focus:not(:focus-visible),#container button:focus:not(:focus-visible),#container select:focus:not(:focus-visible),#container #panel-controls button:focus:not(:focus-visible){box-shadow:none;outline:0}#container a:focus-visible,#container button:not(#panel-controls button,.switch):focus-visible,#container select:focus-visible,#container input:focus-visible,#container [tabindex="0"]:focus-visible,#container [tabindex="-1"]:focus-visible{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}#container .switch:focus-visible,#container #panel-controls button:focus-visible{box-shadow:inset 0 0 0 4px var(--sa11y-focus-color);outline:0}@media screen and (forced-colors:active){#panel-controls button:focus{border:inset 3px solid transparent}.close-btn:focus{outline:3px solid #0000!important}#container a:focus,#container [tabindex="-1"]:focus,#container [tabindex="0"]:focus,#container select:focus,#container button:focus{outline:3px solid #0000!important}}';
-  class ConsoleErrors extends HTMLElement {
-    constructor(error) {
-      super();
-      this.error = error;
-    }
-    connectedCallback() {
-      const shadow = this.attachShadow({ mode: "open" });
-      const style = document.createElement("style");
-      style.innerHTML = styles + sharedStyles;
-      shadow.appendChild(style);
-      const content = document.createElement("div");
-      content.setAttribute("id", "dialog");
-      content.setAttribute("tabindex", "-1");
-      const url2 = window.location;
-      const google = "https://forms.gle/sjzK9XykETaoqZv99";
-      const template = `## Error Description
-\`\`\`javascript
-${this.error.stack}
-\`\`\`
-
-## Details
-- **URL:** ${url2}
-- **Version:** ${"4.4.2"}
-
-## Comments
-`;
-      const encodedTemplate = encodeURIComponent(template);
-      const github = `https://github.com/ryersondmp/sa11y/issues/new?title=Bug%20report&body=${encodedTemplate}`;
-      content.innerHTML = `
-      <button class="close-btn" aria-label="${Lang._("ALERT_CLOSE")}"></button>
-      <h2>${Lang._("ERROR")}</h2>
-      <p>${Lang.sprintf("CONSOLE_ERROR", google, github)}</p>
-      <p class="error">${escapeHTML(this.error.stack)}<br><br>Version: ${"4.4.2"} <br> URL: ${url2}</p>
-    `;
-      shadow.appendChild(content);
-      setTimeout(() => {
-        Constants.Panel.toggle.style.display = "none";
-        const container = document.querySelector("sa11y-console-error");
-        const dialog = container.shadowRoot.getElementById("dialog");
-        dialog.focus();
-        const close = container.shadowRoot.querySelector(".close-btn");
-        close.addEventListener("click", () => {
-          container.remove();
-        });
-      }, 0);
-    }
-  }
-  function detectPageChanges(detectSPArouting, checkAll) {
-    if (detectSPArouting === true) {
-      let url2 = window.location.href;
-      const checkURL = debounce$2(async () => {
-        if (url2 !== window.location.href) {
-          if (store.getItem("sa11y-panel") === "Closed" || !store.getItem("sa11y-panel")) {
-            checkAll();
-          } else {
-            resetAll(false);
-            await checkAll();
-          }
-          url2 = window.location.href;
-        }
-      }, 250);
-      window.addEventListener("click", checkURL);
-      window.addEventListener("keydown", checkURL);
-    }
-  }
-  function mainToggle(checkAll) {
-    Constants.Panel.toggle.addEventListener("click", (e) => {
-      if (store.getItem("sa11y-panel") === "Opened") {
-        e.preventDefault();
-        store.setItem("sa11y-panel", "Closed");
-        Constants.Panel.toggle.classList.remove("on");
-        Constants.Panel.toggle.setAttribute("aria-expanded", "false");
-        resetAll();
-        if (Constants.Panel.notifCount.innerHTML.trim().length === 0) {
-          Constants.Panel.notifBadge.style.display = "none";
-        } else {
-          Constants.Panel.notifBadge.style.display = "flex";
-        }
-      } else {
-        e.preventDefault();
-        store.setItem("sa11y-panel", "Opened");
-        Constants.Panel.toggle.classList.add("on");
-        Constants.Panel.toggle.setAttribute("aria-expanded", "true");
-        checkAll();
-        isScrollable(Constants.Panel.outlineList, Constants.Panel.outlineContent);
-      }
-    });
-    if (store.getItem("sa11y-panel") === "Opened") {
-      Constants.Panel.toggle.classList.add("on");
-      Constants.Panel.toggle.setAttribute("aria-expanded", "true");
-      Constants.Panel.panel.style.transform = "";
-    }
-    document.onkeydown = (e) => {
-      const evt = e || window.event;
-      if (evt.altKey && evt.code === "KeyA") {
-        Constants.Panel.toggle.click();
-        Constants.Panel.toggle.focus();
-      }
-    };
-  }
-  const panelStyles = 'h1,h2,h3,div,p,span,ol,ul,li,a,label,button,svg,strong,kbd,pre,code{all:unset;box-sizing:border-box!important}:before,:after{all:unset}div{display:block}*{font-family:var(--sa11y-font-face)!important;-webkit-font-smoothing:auto!important}p,ol,ul,li,label{font-size:var(--sa11y-normal-text);text-align:start;letter-spacing:normal;word-break:break-word;font-weight:400;line-height:22px!important}.sa11y-overflow{overflow:auto}img,video,iframe{border:0;max-width:100%;height:auto;display:block}audio{max-width:100%}#toggle{bottom:var(--sa11y-toggle-y-offset);z-index:2147483644;color:#fff;cursor:pointer;background:linear-gradient(#00bcd4,#e040fb);background-color:var(--sa11y-setting-switch-bg-off);width:55px;height:55px;background-size:150% 150%;border-radius:50%;justify-content:center;align-items:center;margin:0;transition:all .2s ease-in-out;display:flex;position:fixed;inset-inline-end:var(--sa11y-toggle-x-offset);overflow:visible}#toggle.left,#toggle.top-left{inset-inline-start:var(--sa11y-toggle-x-offset)}#toggle.top-left,#toggle.top-right{top:var(--sa11y-toggle-y-offset);bottom:unset}@media screen and (forced-colors:active){#toggle{border:2px solid #0000;background:buttonface!important}}#toggle svg{width:35px;height:35px}#toggle svg path{fill:var(--sa11y-panel-bg)}#toggle:hover,#toggle:focus{animation:3s sa11y-toggle-gradient}#toggle:disabled:hover,#toggle:disabled:focus{animation:none}#toggle.on{background:linear-gradient(#e040fb,#00bcd4)}#toggle:disabled{cursor:not-allowed;background:unset;background-color:var(--sa11y-setting-switch-bg-off)}#notification-badge{color:#fff;text-wrap:nowrap;background-color:#eb0000;border:1px solid #0000;border-radius:12px;justify-content:center;align-items:center;min-width:20px;padding:2.5px;font-size:13.5px;font-weight:400;line-height:1;display:none;position:absolute;top:-5.5px;right:-3px}#notification-badge.notification-badge-warning{color:var(--sa11y-warning-text);background-color:var(--sa11y-warning-hover);border:1px solid var(--sa11y-warning)}#panel{bottom:calc(var(--sa11y-toggle-y-offset) + var(--sa11y-panel-y-gap));z-index:2147483643;visibility:hidden;background:var(--sa11y-panel-bg);opacity:0;transition:transform .2s, opacity .2s background .2s;transform-origin:100% 100%;border-radius:4px;position:fixed;inset-inline-end:calc(var(--sa11y-toggle-x-offset) + var(--sa11y-panel-x-gap));overflow:visible;transform:scale(0);box-shadow:0 0 20px 4px #9aa1b126,0 4px 80px -8px #24282f40,0 4px 4px -2px #5b5e6926}#panel.left,#panel.top-left{inset-inline-start:calc(var(--sa11y-toggle-x-offset) + var(--sa11y-panel-x-gap));inset-inline-end:unset}#panel.top-right,#panel.top-left{top:calc(var(--sa11y-toggle-y-offset) + var(--sa11y-panel-y-gap) + 10px);bottom:unset}#panel.active{visibility:visible;opacity:1;transform-origin:100% 100%;height:auto;transition:transform .2s,opacity .2s;transform:scale(1)}@media screen and (forced-colors:active){#panel{border:2px solid #0000}}#panel.active.left,[dir=rtl] #panel.active{transform-origin:0 100%}#panel.active.top-left{transform-origin:0 0}#panel.active.top-right{transform-origin:100% 0}#panel-alert{opacity:0;display:none}#panel-alert.active{opacity:1;display:block}#panel-alert-content{max-height:400px;color:var(--sa11y-panel-primary);border-bottom:1px solid var(--sa11y-panel-bg-splitter);align-items:center;padding:15px 20px 15px 15px;line-height:22px;position:relative;overflow-y:auto}:is(.top-left,.top-right) #panel-alert-content{border:0}#panel-alert-preview .close-tooltip{display:none}#panel-alert-preview,#panel-alert-text{font-family:var(--sa11y-font-face);font-size:var(--sa11y-normal-text);font-weight:400;line-height:22px}.panel-alert-preview{background:var(--sa11y-panel-bg-secondary);border:1px dashed var(--sa11y-panel-bg-splitter);border-radius:5px;margin-top:15px;padding:10px}.panel-alert-preview ul{margin:0;margin-block:0;padding:0;position:relative}.panel-alert-preview li{margin:5px 10px 0 20px;padding-bottom:5px;display:list-item}.element-preview{overflow-wrap:break-word;background-color:var(--sa11y-element-preview);border-radius:3.2px;margin-bottom:10px;padding:5px}button[data-sa11y-dismiss]{color:var(--sa11y-panel-primary);cursor:pointer;background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-button-outline);margin:10px 5px 5px 0;border-radius:5px;margin-inline-end:15px;padding:4px 8px;display:block}button[data-sa11y-dismiss]:hover,button[data-sa11y-dismiss]:focus{background:var(--sa11y-shortcut-hover)}h2{font-size:var(--sa11y-large-text);margin-bottom:3px;font-weight:700;display:block}h3{font-size:calc(var(--sa11y-large-text) - 1px);margin-bottom:3px;font-weight:600;display:block}strong{font-weight:600}a:not(#outline-list a,#images-list a){color:var(--sa11y-hyperlink);cursor:pointer;border-bottom:0;font-weight:500;text-decoration:underline}a:hover,a:focus{text-decoration:none!important}hr{background:var(--sa11y-panel-bg-splitter);opacity:1;border:none;height:1px;margin:10px 0;padding:0}#dismiss-button,#skip-button{text-align:center;cursor:pointer;background:var(--sa11y-panel-bg-secondary);border:1px solid var(--sa11y-button-outline);border-radius:50px;width:36px;height:36px;margin-inline:2px 8px;transition:all .1s ease-in-out;display:none;position:relative;overflow:visible}:is(#dismiss-button,#skip-button).active{display:block}:is(#dismiss-button,#skip-button):disabled{cursor:default;box-shadow:none;background:0 0;border:0}:is(#dismiss-button,#skip-button):before{content:"";position:absolute;inset:-5px}:is(#dismiss-button,#skip-button):hover:not(:disabled),:is(#dismiss-button,#skip-button):focus:not(:disabled){background-color:var(--sa11y-shortcut-hover)}:is(#panel.top-left,#panel.left) #dismiss-button,:is(#panel.top-left,#panel.left) #skip-button{margin-inline:8px 2px}.dismiss-icon{background:var(--sa11y-setting-switch-bg-off);width:24px;height:24px;-webkit-mask:var(--sa11y-dismiss-icon) center no-repeat;mask:var(--sa11y-dismiss-icon) center no-repeat;margin-bottom:-4px;display:inline-block}.dismiss-group{display:flex}@media screen and (forced-colors:active){.dismiss-icon{filter:invert()}}#panel-content{color:var(--sa11y-panel-primary);align-items:center;padding:6px;display:flex}#panel-content.errors .panel-icon,#panel-content.good .panel-icon,#panel-content.warnings .panel-icon{width:26px;height:26px;margin:0 auto}#panel-content.errors .panel-icon{background:var(--sa11y-panel-error);-webkit-mask:var(--sa11y-error-svg) center no-repeat;mask:var(--sa11y-error-svg) center no-repeat;margin-top:-2px}#panel-content.good .panel-icon{background:var(--sa11y-good);-webkit-mask:var(--sa11y-good-svg) center no-repeat;mask:var(--sa11y-good-svg) center no-repeat}#panel-content.warnings .panel-icon{background:var(--sa11y-yellow-text);transform:scaleX(var(--sa11y-icon-direction));-webkit-mask:var(--sa11y-warning-svg) center no-repeat;mask:var(--sa11y-warning-svg) center no-repeat}@media screen and (forced-colors:active){#panel-content.errors .panel-icon,#panel-content.good .panel-icon,#panel-content.warnings .panel-icon{filter:invert()}}#panel.top-left #panel-content,#panel.left #panel-content{flex-direction:row-reverse}#status{font-size:var(--sa11y-large-text);color:var(--sa11y-panel-primary)}.panel-count{color:var(--sa11y-panel-primary);background-color:var(--sa11y-panel-badge);border-radius:4px;margin-left:3px;margin-right:3px;padding:2px 4px;font-size:15px;font-weight:400}#page-issues,#images-panel,#settings-panel,#outline-panel{color:var(--sa11y-panel-primary);opacity:0;display:none}#page-issues.active,#images-panel.active,#settings-panel.active,#outline-panel.active{opacity:1;display:block}.panel-header{text-align:start;justify-content:space-between;padding:10px 15px 0;display:flex}#about-content{padding-top:5px}#about-content p{margin-block-end:1em;display:block}#images-content,#page-issues-content,#settings-content,#outline-content{border-bottom:1px solid var(--sa11y-panel-bg-splitter);padding:0 15px 10px}.top-right :is(#images-content,#page-issues-content,#settings-content,#outline-content),.top-left :is(#images-content,#page-issues-content,#settings-content,#outline-content){border:0}#images-content{padding-inline:5px}#page-issues-content{max-height:160px;overflow-y:auto}#settings-content{max-height:400px;overflow-y:auto}#images-content,#outline-content{max-height:250px;overflow-y:auto}#settings-panel .sa11y-red-text,#outline-panel .outline-list-item.sa11y-red-text{color:var(--sa11y-red-text)}#outline-list{margin:0;padding:0;display:block}#outline-list button{cursor:pointer;text-decoration:none;display:block}#outline-list button:hover,#outline-list button:focus{background:var(--sa11y-panel-outline-hover);box-shadow:0 0 0 2px var(--sa11y-panel-outline-hover);border-radius:5px;display:block}#outline-list li{margin-top:0;margin-bottom:4.5px;padding:0;list-style-type:none;display:block}#outline-list li:first-child{margin-top:5px}#outline-list .outline-2{margin-inline-start:15px}#outline-list .outline-3{margin-inline-start:30px}#outline-list .outline-4{margin-inline-start:45px}#outline-list .outline-5{margin-inline-start:60px}#outline-list .outline-6{margin-inline-start:75px}#images-list{margin:0;padding:0;display:block}#images-list button{cursor:pointer;min-height:44px;margin:10px 5px;text-decoration:none;display:block}#images-list button:hover,#images-list button:focus{background:var(--sa11y-panel-outline-hover);box-shadow:0 0 0 2px var(--sa11y-panel-outline-hover);border-radius:5px;display:block}#images-list li{border-bottom:1px solid var(--sa11y-panel-bg-splitter);flex-direction:column;width:100%;list-style-type:none;display:flex;overflow:hidden}#images-list li.no-images{padding-inline:10px}#images-list li:last-child{border:none;margin-bottom:0}#images-list li .alt{padding:2px 5px 10px}#images-list li .edit-block{justify-content:flex-end;margin-bottom:15px;display:flex}#images-list li .edit{color:var(--sa11y-panel-primary);cursor:pointer;background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-button-outline);border-radius:5px;margin-inline-end:5px;padding:4px 7px;text-decoration:none;position:relative}#images-list li .edit:hover,#images-list li .edit:focus{background-color:var(--sa11y-shortcut-hover)}#images-list li .edit:before{content:"";position:absolute;inset:-10px}#images-list li img{float:inline-start;border-radius:5px;max-width:110px;margin:5px}#images-list li.warning .alt{color:var(--sa11y-yellow-text)}#images-list li.warning img{background-color:var(--sa11y-yellow-text);border:5px solid var(--sa11y-yellow-text)}#images-list li.error .alt{color:var(--sa11y-error)}#images-list li.error img{background-color:var(--sa11y-error);border:5px solid var(--sa11y-error)}#images-list li.good img{background-color:var(--sa11y-panel-badge);border:5px solid var(--sa11y-panel-badge)}@media screen and (forced-colors:active){#images-list li img{background-color:buttonborder!important}}.move-panel-icon{vertical-align:middle;background:var(--sa11y-setting-switch-bg-off);width:18px;height:18px;-webkit-mask:var(--sa11y-move-panel-icon);mask:var(--sa11y-move-panel-icon)}.info-icon{vertical-align:middle;background:var(--sa11y-setting-switch-bg-off);width:20px;height:20px;-webkit-mask:var(--sa11y-info-icon);mask:var(--sa11y-info-icon);margin-top:-2px}.sun-icon{vertical-align:middle;background:var(--sa11y-setting-switch-bg-off);width:18px;height:18px;-webkit-mask:var(--sa11y-sun-icon);mask:var(--sa11y-sun-icon)}.moon-icon{vertical-align:middle;background:var(--sa11y-setting-switch-bg-off);width:18px;height:18px;-webkit-mask:var(--sa11y-moon-icon);mask:var(--sa11y-moon-icon)}.error-icon{background:var(--sa11y-error-text);width:16px;height:16px;-webkit-mask:var(--sa11y-error-svg);mask:var(--sa11y-error-svg);margin-bottom:-4px}.hidden-icon{background:var(--sa11y-panel-primary);width:16px;height:16px;-webkit-mask:var(--sa11y-hidden-icon-svg);mask:var(--sa11y-hidden-icon-svg);margin-bottom:-3px}.link-icon{background:var(--sa11y-panel-primary);width:16px;height:16px;-webkit-mask:var(--sa11y-link-icon-svg);mask:var(--sa11y-link-icon-svg);margin-bottom:-3.5px}.move-panel-icon,.info-icon,.sun-icon,.moon-icon,.error-icon,.hidden-icon,.link-icon{display:inline-block;-webkit-mask-position:50%;mask-position:50%;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat}.error-badge .link-icon,.error-badge .hidden-icon{background:var(--sa11y-error-text)!important}.warning-badge .link-icon,.warning-badge .hidden-icon{background:var(--sa11y-panel-bg)}.error .hidden-icon,.error .link-icon{background:var(--sa11y-error-text)}.warning .hidden-icon,.warning .link-icon{background:var(--sa11y-panel-bg)}@media screen and (forced-colors:active){.move-panel-icon,.sun-icon,.moon-icon,.info-icon,.error-icon,.link-icon,.hidden-icon{filter:invert()}}#panel-controls{border-bottom:1px solid var(--sa11y-panel-bg-splitter);border-radius:0 0 4px 4px;display:flex;overflow:hidden}#panel-controls button{width:100%;height:30px;font-size:var(--sa11y-normal-text);color:var(--sa11y-panel-secondary);text-align:center;cursor:pointer;background:var(--sa11y-panel-bg-secondary);background-color:var(--sa11y-panel-bg-secondary);border-top:1px solid var(--sa11y-panel-bg-splitter);border-inline-end:1px solid var(--sa11y-panel-bg-splitter);opacity:1;outline:0;margin:0;padding:0;font-weight:400;line-height:0;transition:background .2s;display:block;position:relative}#panel-controls button:hover,#panel-controls button.active{background-color:var(--sa11y-shortcut-hover)}#panel-controls button.active{font-weight:600}#export-results-mode,label{width:100%;color:var(--sa11y-panel-primary);margin:0;font-weight:400;display:inline-block}label:not(#colour-filter-mode,#export-results-mode){cursor:pointer}#panel.right #panel-controls[data-image-panel]:after{content:"";width:80px}#panel.left #panel-controls[data-image-panel]:before{content:"";width:50px}#settings-panel .export-results-group,#settings-panel .appearance-group{margin:5px 0;display:flex}:is(#settings-panel .export-results-group,#settings-panel .appearance-group) button{text-align:center;white-space:nowrap;cursor:pointer;border:2px solid var(--sa11y-setting-switch-bg-off);margin:2px 0;border-radius:5px;justify-content:center;align-items:center;min-width:44px;min-height:34px;margin-inline:8px 4px;display:flex;position:relative}:is(#settings-panel .export-results-group,#settings-panel .appearance-group) button:hover,:is(#settings-panel .export-results-group,#settings-panel .appearance-group) button:focus,:is(#settings-panel .export-results-group,#settings-panel .appearance-group) button:focus-within{background:var(--sa11y-shortcut-hover)}:is(#settings-panel .export-results-group,#settings-panel .appearance-group) button:before{content:"";position:absolute;inset:-7px}:is(#settings-panel .export-results-group,#settings-panel .appearance-group) button .text{color:var(--sa11y-setting-switch-bg-off);padding:0 6px;font-weight:600}#settings-panel .switch{width:105px;height:44px;font-size:var(--sa11y-normal-text);color:var(--sa11y-setting-switch-bg-off);text-align:end;cursor:pointer;background:0 0;border:0;border-radius:5px;margin:0;padding:7px 10px;font-weight:600;position:relative}#settings-panel .switch[aria-pressed=true]:after,#settings-panel .switch[aria-pressed=false]:after{vertical-align:middle;content:"";width:27px;height:27px;margin:0 4px 4px;display:inline-block}#settings-panel .switch[aria-pressed=true]:after{background:var(--sa11y-setting-switch-bg-on);-webkit-mask:var(--sa11y-setting-switch-on-svg) center no-repeat;mask:var(--sa11y-setting-switch-on-svg) center no-repeat}#settings-panel .switch[aria-pressed=false]:after{background:var(--sa11y-setting-switch-bg-off);-webkit-mask:var(--sa11y-setting-switch-off-svg) center no-repeat;mask:var(--sa11y-setting-switch-off-svg) center no-repeat}@media screen and (forced-colors:active){#settings-panel .switch[aria-pressed=false]:after,#settings-panel .switch[aria-pressed=true]:after{filter:invert()}}#settings-panel #settings-options li{border-bottom:1px solid var(--sa11y-panel-bg-splitter);justify-content:space-between;align-items:center;padding:1px 0;list-style-type:none;display:flex}#settings-panel #settings-options li:last-child{border:none}#page-issues{color:var(--sa11y-panel-primary);align-items:center}#page-issues-list{margin-top:4px;display:block}#page-issues-list li{margin:0 0 10px;display:block}:is(.top-left,.top-right).has-page-issues #page-issues{border-top:1px solid var(--sa11y-panel-bg-splitter);margin-top:-1px}#panel-colour-filters{font-family:var(--sa11y-font-face);font-size:var(--sa11y-normal-text);color:var(--sa11y-panel-primary);align-items:center;font-weight:400;line-height:22px;display:none}#panel-colour-filters.active{display:flex}#panel-colour-filters p{width:100%;padding:6px 20px 6px 6px}#panel-colour-filters[data-colour=protanopia],#panel-colour-filters[data-colour=deuteranopia],#panel-colour-filters[data-colour=tritanopia],#panel-colour-filters[data-colour=monochromacy]{border-bottom:6px solid #0000;border-image-slice:1}#panel-colour-filters[data-colour=protanopia]{border-image:linear-gradient(94deg,#786719 11%,#e0c600 36% 47%,#0059e3 75%,#0042aa 91%)}#panel-colour-filters[data-colour=deuteranopia]{border-image:linear-gradient(270deg,#567fdb 0%,#a4a28d 48%,#c3ad14 69%,#a79505 100%)}#panel-colour-filters[data-colour=tritanopia]{border-image:linear-gradient(270deg,#b1506f 0%,#0696c1 35%,#f3a9ba 70%,#d91c5d 87%,#fe015c 100%)}#panel-colour-filters[data-colour=monochromacy]{border-image:linear-gradient(270deg,#000 0%,#a7a7a7 50%,#000 100%)}#panel-colour-filters[data-colour=protanopia] .panel-icon{background:var(--sa11y-panel-error)}#panel-colour-filters[data-colour=deuteranopia] .panel-icon{background:var(--sa11y-good-hover)}#panel-colour-filters[data-colour=tritanopia] .panel-icon{background:var(--sa11y-blue)}#panel-colour-filters[data-colour=monochromacy] .panel-icon{background:linear-gradient(90deg,#38a459 20%,red 50%,#0077c8 80%)}#panel-colour-filters .panel-icon{width:30px;height:30px;-webkit-mask:var(--sa11y-low-vision-icon) center no-repeat;mask:var(--sa11y-low-vision-icon) center no-repeat;margin-inline:10px 5px}@media screen and (forced-colors:active){#panel-colour-filters .panel-icon{forced-color-adjust:none}}.select-dropdown{align-items:center;display:flex;position:relative}.select-dropdown:after{content:" ";border-top:5px solid var(--sa11y-setting-switch-bg-off);border-left:5px solid #0000;border-right:5px solid #0000;position:absolute;inset-inline-end:14px}#colour-filter-select{appearance:none;height:30px;font-size:var(--sa11y-normal-text);color:var(--sa11y-setting-switch-bg-off);text-align:end;vertical-align:middle;cursor:pointer;background:var(--sa11y-panel-bg);border:2px solid var(--sa11y-setting-switch-bg-off);border-radius:5px;margin-inline-end:4px;padding-inline:5px 25px;font-weight:400;position:relative}#colour-filter-select:hover,#colour-filter-select:focus{background:var(--sa11y-shortcut-hover)}#colour-filter-select.active{box-shadow:0 0 0 2px var(--sa11y-setting-switch-bg-on)}#colour-filter-item label,#colour-filter-item select{margin-top:10px;margin-bottom:9px}#readability-panel{opacity:0;display:none}#readability-panel.active{opacity:1;display:block}:is(.top-left,.top-right) #readability-content{border-top:1px solid var(--sa11y-panel-bg-splitter)}:is(.left,.right) #readability-content{border-bottom:1px solid var(--sa11y-panel-bg-splitter)}#readability-content{width:100%;color:var(--sa11y-panel-primary);padding:10px 15px}#readability-details{white-space:normal;margin:0;padding:0;list-style-type:none;display:block}#readability-details li{margin:0;padding-inline-end:10px;list-style-type:none;display:inline-block}.readability-score{color:var(--sa11y-panel-primary);background-color:var(--sa11y-panel-badge);border-radius:4px;margin-inline-start:5px;padding:2px 5px}#readability-info{margin-inline-start:10px}#skip-to-page-issues{display:none}#panel.has-page-issues #skip-to-page-issues{clip:rect(0, 0, 0, 0);white-space:nowrap;background:var(--sa11y-panel-bg);border:0;border-radius:5px;width:1px;height:1px;margin:-1px;padding:0;font-weight:600;display:block;position:absolute;overflow:hidden}#panel.has-page-issues #skip-to-page-issues:focus{z-index:1;clip:auto;white-space:normal;width:auto;height:auto;margin:0;padding:7px 10px;overflow:visible}.hide-settings-border{border-bottom:0!important;padding:0 15px!important}.hide-settings-border li:not(#colour-filter-item){display:none!important}.hide-settings-border #about-content{display:none}.hide-settings-border.scrollable:before{all:unset}#contrast-tools{display:none}::-webkit-scrollbar{width:7px;height:6px}::-webkit-scrollbar-thumb{background-color:var(--sa11y-button-outline);border-radius:6px}*{scrollbar-color:var(--sa11y-button-outline);scrollbar-width:thin}.scrollable:before{z-index:-1;content:"";background:linear-gradient(180deg, #0000 70%, var(--sa11y-panel-scrollable) 100%);background-position:bottom;width:100%;height:250px;transition:opacity 1s ease-in-out;animation:1s ease-in-out fade;position:absolute;inset:auto 0}#settings-content.scrollable:before{height:400px}.top-right .scrollable:before,.top-left .scrollable:before{border-radius:5px}#page-issues-content.scrollable:before{height:160px}#panel-alert.scrollable:before{height:200px}@keyframes sa11y-toggle-gradient{0%{background-position:50% 0}50%{background-position:50% 100%}to{background-position:50% 0}}@keyframes fade{0%{opacity:0}to{opacity:1}}@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;transform:none!important}}#panel{width:440px}#container:lang(en) #panel{width:315px}:is(#container:lang(nb),#container:lang(da),#container:lang(pl),#container:lang(de),#container:lang(sv),#container:lang(zh)) #panel{width:365px}:is(#container:lang(bg),#container:lang(es)) .switch:not(#export-results-item *){width:230px!important}#container:not(:lang(en),:lang(de)) .switch{width:205px}';
-  class ControlPanel extends HTMLElement {
-    connectedCallback() {
-      this.attachShadow({ mode: "open" });
-      const style = document.createElement("style");
-      style.textContent = panelStyles + sharedStyles;
-      this.shadowRoot.appendChild(style);
-      const MainToggleIcon = '<svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M256 48c114.953 0 208 93.029 208 208 0 114.953-93.029 208-208 208-114.953 0-208-93.029-208-208 0-114.953 93.029-208 208-208m0-40C119.033 8 8 119.033 8 256s111.033 248 248 248 248-111.033 248-248S392.967 8 256 8zm0 56C149.961 64 64 149.961 64 256s85.961 192 192 192 192-85.961 192-192S362.039 64 256 64zm0 44c19.882 0 36 16.118 36 36s-16.118 36-36 36-36-16.118-36-36 16.118-36 36-36zm117.741 98.023c-28.712 6.779-55.511 12.748-82.14 15.807.851 101.023 12.306 123.052 25.037 155.621 3.617 9.26-.957 19.698-10.217 23.315-9.261 3.617-19.699-.957-23.316-10.217-8.705-22.308-17.086-40.636-22.261-78.549h-9.686c-5.167 37.851-13.534 56.208-22.262 78.549-3.615 9.255-14.05 13.836-23.315 10.217-9.26-3.617-13.834-14.056-10.217-23.315 12.713-32.541 24.185-54.541 25.037-155.621-26.629-3.058-53.428-9.027-82.141-15.807-8.6-2.031-13.926-10.648-11.895-19.249s10.647-13.926 19.249-11.895c96.686 22.829 124.283 22.783 220.775 0 8.599-2.03 17.218 3.294 19.249 11.895 2.029 8.601-3.297 17.219-11.897 19.249z"/></svg>';
-      const rememberDeveloper = store.getItem("sa11y-developer") === "On";
-      const rememberReadability = store.getItem("sa11y-readability") === "On";
-      const rememberTheme = store.getItem("sa11y-theme");
-      const rememberPanelPosition = store.getItem("sa11y-position");
-      const checkAll = Constants.Global.checkAllHideToggles;
-      const developerPlugin = Constants.Global.developerPlugin ? `
-      <li id="developer-item" ${checkAll ? "hidden" : ""}>
-        <label id="check-developer" for="developer-toggle">
-          ${Lang._("DEVELOPER_CHECKS")} <span class="info-icon"></span>
-        </label>
-        <button type="button" id="developer-toggle" class="switch"
-          aria-labelledby="check-developer" aria-describedby="check-developer-desc"
-          aria-pressed="${rememberDeveloper ? "true" : "false"}"
-        >${rememberDeveloper ? Lang._("ON") : Lang._("OFF")}</button>
-        <div id="check-developer-desc" hidden>${Lang._("DEVELOPER_DESC")}</div>
-      </li>` : "";
-      const readabilityPlugin = Constants.Readability.Plugin ? `
-      <li id="readability-item">
-        <label id="check-readability" for="readability-toggle">${Lang._("READABILITY")} <span class="info-icon"></span></label>
-        <button type="button" id="readability-toggle" aria-labelledby="check-readability" class="switch"
-          aria-pressed="${rememberReadability ? "true" : "false"}"
-        >${rememberReadability ? Lang._("ON") : Lang._("OFF")}</button>
-        <div id="check-readability-desc" hidden>${Lang._("READABILITY_DESC")}</div>
-      </li>` : "";
-      const colourFilterPlugin = Constants.Global.colourFilterPlugin ? `
-      <li id="colour-filter-item">
-        <label id="colour-filter-mode" for="colour-filter">${Lang._("COLOUR_FILTER")}</label>
-        <div class="select-dropdown">
-          <select id="colour-filter-select">
-            <option value="0">${Lang._("OFF")}</option>
-            <option value="1">${Lang._("PROTANOPIA")}</option>
-            <option value="2">${Lang._("DEUTERANOPIA")}</option>
-            <option value="3">${Lang._("TRITANOPIA")}</option>
-            <option value="4">${Lang._("MONOCHROMACY")}</option>
-          </select>
-        </div>
-      </li>` : "";
-      const colourFilterPanel = Constants.Global.colourFilterPlugin ? `
-      <div id="panel-colour-filters" role="region" aria-labelledby="colour-filter-mode">
-        <div id="filter-icon" class="panel-icon" role="img"></div>
-        <p>${Lang._("COLOUR_FILTER_MESSAGE")}</p>
-      </div>` : "";
-      const exportResultsPlugin = Constants.Global.exportResultsPlugin ? `
-      <li id="export-results-item">
-        <span id="export-results-mode">${Lang._("EXPORT_RESULTS")}</span>
-        <div class="export-results-group">
-          <button type="button" id="export-csv" aria-describedby="export-results-mode">
-            <span class="text">CSV</span>
-          </button>
-          <button type="button" id="export-html" aria-describedby="export-results-mode">
-            <span class="text">HTML</span>
-          </button>
-        </div>
-      </li>` : "";
-      const aboutSection = Constants.Global.aboutContent ? `
-      <div id="about-content">${Constants.Global.aboutContent}</div>` : "";
-      const mainToggle2 = `
-      <button type="button" aria-expanded="false" id="toggle" part="toggle" aria-describedby="notification-badge" aria-label="${Lang._("MAIN_TOGGLE_LABEL")}" class="${rememberPanelPosition}" disabled>
-        ${MainToggleIcon}
-        <div id="notification-badge">
-          <span id="notification-count"></span>
-          <span id="notification-text" class="visually-hidden"></span>
-        </div>
-      </button>`;
-      const pageIssues = `
-      <div id="page-issues">
-        <div class="panel-header">
-          <h2 id="page-issues-header" tabindex="-1">${Lang._("PAGE_ISSUES")}</h2>
-        </div>
-        <div id="page-issues-content">
-          <ul id="page-issues-list" role="list" aria-labelledby="page-issues-header"></ul>
-        </div>
-      </div>`;
-      const pageOutline = `
-      <div id="outline-panel" role="tabpanel" aria-labelledby="outline-header">
-        <div class="panel-header">
-          <h2 id="outline-header" tabindex="-1">${Lang._("OUTLINE")}</h2>
-        </div>
-        <div id="outline-content">
-          <ul id="outline-list" tabindex="0" role="list" aria-labelledby="outline-header"></ul>
-        </div>
-        <div id="readability-panel">
-          <div id="readability-content">
-            <h2 class="header-text-inline">${Lang._("READABILITY")}</h2>
-            <p id="readability-info"></p>
-            <ul id="readability-details"></ul>
-          </div>
-        </div>
-      </div>`;
-      const imagesOutline = Constants.Global.showImageOutline ? `
-      <div id="images-panel" role="tabpanel" aria-labelledby="images-header">
-        <div class="panel-header">
-          <h2 id="images-header" tabindex="-1">${Lang._("IMAGES")}</h2>
-        </div>
-        <div id="images-content">
-          <ul id="images-list" tabindex="0" role="list" aria-labelledby="images-header"></ul>
-        </div>
-      </div>` : "";
-      const leftPressed = rememberPanelPosition === "left" || rememberPanelPosition === "top-left";
-      const panelMoved = leftPressed ? "true" : "false";
-      const panelPositionToggle = Constants.Global.showMovePanelToggle ? `<button type="button" id="move-panel"
-          aria-label="${Lang._("MOVE_PANEL")}"
-          aria-pressed="${panelMoved}"
-          ><span class="move-panel-icon"></span>
-        </button>` : "";
-      const pageSettings = `
-      <div id="settings-panel" role="tabpanel" aria-labelledby="settings-header">
-        <div class="panel-header">
-          <h2 id="settings-header" tabindex="-1">${Lang._("SETTINGS")}</h2>
-        </div>
-        <div id="settings-content">
-          <ul id="settings-options">
-            ${developerPlugin}
-            ${readabilityPlugin}
-            <li id="appearance-item">
-              <span id="appearance-mode">${Lang._("APPEARANCE")}</span>
-              <div class="appearance-group">
-                <button type="button" id="theme-toggle"
-                  aria-label="${Lang._("DARK_MODE")}"
-                  aria-pressed=${rememberTheme === "dark" ? "true" : "false"}
-                ><span class="moon-icon"></span></button>
-                ${panelPositionToggle}
-              </div>
-            </li>
-            ${exportResultsPlugin}
-            ${colourFilterPlugin}
-          </ul>
-          ${aboutSection}
-        </div>
-      </div>`;
-      const panelAlerts = `
-      <div id="panel-alert" role="alertdialog" aria-labelledby="alert-heading" aria-describedby="panel-alert-text">
-        <div id="panel-alert-content">
-          <div class="header-text">
-            <button type="button" id="close-alert" class="close-btn" aria-label="${Lang._("ALERT_CLOSE")}"></button>
-            <h2 id="alert-heading">${Lang._("ALERT_TEXT")}</h2>
-          </div>
-          <p id="panel-alert-text"></p>
-          <div id="panel-alert-preview"></div>
-        </div>
-      </div>`;
-      const panelStatus = `
-      <div id="panel-content">
-        <button type="button" id="skip-to-page-issues">
-          ${Lang._("SKIP_TO_PAGE_ISSUES")}
-        </button>
-        <button type="button" id="skip-button">
-          <div class="panel-icon"></div>
-          <span class="visually-hidden">${Lang._("SHORTCUT_SR")}</span>
-        </button>
-        <button type="button" id="dismiss-button">
-          <div class="dismiss-icon"></div>
-          <span id="dismiss-tooltip" class="visually-hidden"></span>
-        </button>
-        <div id="panel-text">
-          <h1 class="visually-hidden">${Lang._("PANEL_HEADING")}</h1>
-          <p id="status" aria-live="polite"></p>
-        </div>
-      </div>`;
-      const imageToggleButton = `<button type="button" role="tab" aria-expanded="false" id="images-toggle" aria-controls="images-panel">${Lang._("IMAGES")}</button>`;
-      const imagePanelEnabled = Constants.Global.showImageOutline ? "data-image-panel" : "";
-      const tabToggles = `
-      <div id="panel-controls" role="tablist" aria-orientation="horizontal" ${imagePanelEnabled}>
-        <button type="button" role="tab" aria-expanded="false" id="outline-toggle" aria-controls="outline-panel">${Lang._("OUTLINE")}</button>
-        ${Constants.Global.showImageOutline ? imageToggleButton : ""}
-        <button type="button" role="tab" aria-expanded="false" id="settings-toggle" aria-controls="settings-panel">${Lang._("SETTINGS")}</button>
-      </div>`;
-      const container = document.createElement("div");
-      container.setAttribute("id", "container");
-      container.setAttribute("role", "region");
-      container.setAttribute("data-sa11y-version", "4.4.2");
-      container.setAttribute("lang", Lang._("LANG_CODE"));
-      container.setAttribute("aria-label", Lang._("CONTAINER_LABEL"));
-      container.setAttribute("dir", Constants.Global.langDirection);
-      if (rememberPanelPosition === "top-left" || rememberPanelPosition === "top-right") {
-        container.innerHTML = `
-        ${mainToggle2}
-        <div id="panel" class="${rememberPanelPosition}" part="panel">
-          ${panelStatus}
-          ${colourFilterPanel}
-          ${tabToggles}
-          ${pageOutline}
-          ${imagesOutline}
-          ${pageSettings}
-          ${panelAlerts}
-          ${pageIssues}
-        </div>`;
-      } else {
-        container.innerHTML = `
-        ${mainToggle2}
-        <div id="panel" class="${rememberPanelPosition}" part="panel">
-          ${pageIssues}
-          ${pageOutline}
-          ${imagesOutline}
-          ${pageSettings}
-          ${panelAlerts}
-          ${colourFilterPanel}
-          ${panelStatus}
-          ${tabToggles}
-        </div>`;
-      }
-      this.shadowRoot.appendChild(container);
-      Constants.initializePanelSelectors();
-    }
-  }
-  function settingsPanelToggles(checkAll) {
-    if (Constants.Global.showMovePanelToggle) {
-      Constants.Panel.movePanelToggle.onclick = async () => {
-        const panelPosition = store.getItem("sa11y-position");
-        const [position1, position2] = panelPosition.includes("top") ? ["top-right", "top-left"] : ["right", "left"];
-        const newPosition = panelPosition === position1 ? position2 : position1;
-        store.setItem("sa11y-position", newPosition);
-        [position1, position2].forEach((classname) => {
-          Constants.Panel.toggle.classList.replace(classname, newPosition);
-          Constants.Panel.panel.classList.replace(classname, newPosition);
-        });
-        Constants.Panel.movePanelToggle.setAttribute(
-          "aria-pressed",
-          panelPosition === position1 ? "true" : "false"
-        );
-      };
-    }
-    if (Constants.Global.developerPlugin) {
-      Constants.Panel.developerToggle.onclick = async () => {
-        if (store.getItem("sa11y-developer") === "On") {
-          store.setItem("sa11y-developer", "Off");
-          Constants.Panel.developerToggle.textContent = `${Lang._("OFF")}`;
-          Constants.Panel.developerToggle.setAttribute("aria-pressed", "false");
-          resetAll(false);
-          await checkAll();
-        } else {
-          store.setItem("sa11y-developer", "On");
-          Constants.Panel.developerToggle.textContent = `${Lang._("ON")}`;
-          Constants.Panel.developerToggle.setAttribute("aria-pressed", "true");
-          resetAll(false);
-          await checkAll();
-        }
-      };
-    } else {
-      store.setItem("sa11y-developer", "Off");
-    }
-    if (Constants.Readability.Plugin) {
-      Constants.Panel.readabilityToggle.onclick = async () => {
-        if (store.getItem("sa11y-readability") === "On") {
-          store.setItem("sa11y-readability", "Off");
-          Constants.Panel.readabilityToggle.textContent = `${Lang._("OFF")}`;
-          Constants.Panel.readabilityToggle.setAttribute("aria-pressed", "false");
-          Constants.Panel.readability.classList.remove("active");
-          resetAll(false);
-          await checkAll();
-        } else {
-          store.setItem("sa11y-readability", "On");
-          Constants.Panel.readabilityToggle.textContent = `${Lang._("ON")}`;
-          Constants.Panel.readabilityToggle.setAttribute("aria-pressed", "true");
-          Constants.Panel.readability.classList.add("active");
-          resetAll(false);
-          await checkAll();
-        }
-      };
-      if (store.getItem("sa11y-readability") === "On") {
-        Constants.Panel.readability.classList.add("active");
-      }
-    }
-    const systemInitiatedDark = window.matchMedia("(prefers-color-scheme: dark)");
-    const { themeToggle } = Constants.Panel;
-    const { html } = Constants.Global;
-    const storeTheme = (theme) => {
-      html.setAttribute("data-sa11y-theme", theme);
-      store.setItem("sa11y-theme", theme);
-      const icon = themeToggle.querySelector("span").classList;
-      icon.toggle("moon-icon", theme === "light");
-      icon.toggle("sun-icon", theme === "dark");
-      themeToggle.setAttribute("aria-pressed", theme === "dark" ? "true" : "false");
-    };
-    const initialTheme = store.getItem("sa11y-theme") || (systemInitiatedDark.matches ? "dark" : "light");
-    storeTheme(initialTheme);
-    systemInitiatedDark.addEventListener("change", () => {
-      storeTheme(systemInitiatedDark.matches ? "dark" : "light");
-    });
-    themeToggle.onclick = () => {
-      const currentTheme = store.getItem("sa11y-theme") || (systemInitiatedDark.matches ? "dark" : "light");
-      const preferredTheme = currentTheme === "dark" ? "light" : "dark";
-      storeTheme(preferredTheme);
-    };
-    if (Constants.Global.colourFilterPlugin) {
-      Constants.Panel.colourFilterSelect.addEventListener("change", async () => {
-        const option = parseInt(Constants.Panel.colourFilterSelect.value, 10);
-        const filters = ["protanopia", "deuteranopia", "tritanopia", "monochromacy"];
-        const icons = [
-          Lang._("RED_EYE"),
-          Lang._("GREEN_EYE"),
-          Lang._("BLUE_EYE"),
-          Lang._("MONO_EYE")
-        ];
-        if (option >= 1 && option <= 4) {
-          if (window.matchMedia("(forced-colors: active)").matches) {
-            createAlert(Lang._("COLOUR_FILTER_HIGH_CONTRAST"));
-          } else {
-            document.body.setAttribute("data-sa11y-filter", filters[option - 1]);
-            Constants.Panel.colourFilterIcon.setAttribute("aria-label", icons[option - 1]);
-            resetAttributes(
-              ["data-sa11y-error", "data-sa11y-warning", "data-sa11y-good", "data-sa11y-overflow"],
-              "document"
-            );
-            remove(["sa11y-annotation", "sa11y-tooltips", "sa11y-heading-label"], "document");
-            Constants.Panel.skipButton.disabled = true;
-            Constants.Panel.pageIssues.classList.remove("active");
-            Constants.Panel.settingsContent.classList.add("hide-settings-border");
-            Constants.Panel.controls.hidden = true;
-            Constants.Panel.colourFilterSelect.classList.add("active");
-            Constants.Panel.colourPanel.classList.add("active");
-            Constants.Panel.colourPanel.setAttribute("data-colour", filters[option - 1]);
-            Constants.Panel.content.hidden = true;
-          }
-        } else {
-          resetColourFilters();
-          resetAll(false);
-          await checkAll();
-        }
-      });
-    }
-  }
-  const openOutline = () => {
-    Constants.Panel.outlineToggle.classList.add("active");
-    Constants.Panel.outline.classList.add("active");
-    Constants.Panel.outlineToggle.setAttribute("aria-expanded", "true");
-    store.setItem("sa11y-outline", "Opened");
-    isScrollable(Constants.Panel.outlineList, Constants.Panel.outlineContent);
-    const headingLabels = find("sa11y-heading-label", "document");
-    headingLabels.forEach(($el) => {
-      $el.hidden = false;
-    });
-    const event = new CustomEvent("sa11y-build-heading-outline");
-    document.dispatchEvent(event);
-  };
-  const closeOutline = () => {
-    Constants.Panel.outline.classList.remove("active");
-    Constants.Panel.outlineToggle.classList.remove("active");
-    Constants.Panel.outlineToggle.setAttribute("aria-expanded", "false");
-    store.setItem("sa11y-outline", "Closed");
-    const headingLabels = find("sa11y-heading-label", "document");
-    headingLabels.forEach(($el) => {
-      $el.hidden = true;
-    });
-  };
-  const openImages = () => {
-    Constants.Panel.imagesToggle.classList.add("active");
-    Constants.Panel.images.classList.add("active");
-    Constants.Panel.imagesToggle.setAttribute("aria-expanded", "true");
-    store.setItem("sa11y-images", "Opened");
-    isScrollable(Constants.Panel.imagesList, Constants.Panel.imagesContent);
-    const event = new CustomEvent("sa11y-build-image-outline");
-    document.dispatchEvent(event);
-  };
-  const closeImages = () => {
-    if (Constants.Global.showImageOutline) {
-      Constants.Panel.imagesToggle.classList.remove("active");
-      Constants.Panel.images.classList.remove("active");
-      Constants.Panel.imagesToggle.setAttribute("aria-expanded", "false");
-      store.setItem("sa11y-images", "Closed");
-    }
-  };
-  const openSettings = () => {
-    Constants.Panel.settingsToggle.classList.add("active");
-    Constants.Panel.settings.classList.add("active");
-    Constants.Panel.settingsToggle.setAttribute("aria-expanded", "true");
-    store.setItem("sa11y-settings", "Opened");
-    isScrollable(
-      Constants.Panel.settingsContent,
-      Constants.Panel.settingsContent,
-      Lang._("SETTINGS")
+  function initializeDismissals() {
+    State.dismissedIssues = JSON.parse(store.getItem("sa11y-dismissed-digest") || "[]");
+    const currentPath = window.location.pathname;
+    const isSoloDismissed = (issue, dismissed) => dismissed.key.includes(issue.dismissDigest) && dismissed.href === currentPath && (issue.type === "warning" || issue.type === "good");
+    const dismissAll = (issue, dismissed) => typeof dismissed.dismissAll === "string" && issue.dismissAll === dismissed.dismissAll && dismissed.href === currentPath;
+    const soloDismissed = State.results.filter(
+      (issue) => State.dismissedIssues.some((dismissed) => isSoloDismissed(issue, dismissed))
     );
-  };
-  const closeSettings = () => {
-    Constants.Panel.settings.classList.remove("active");
-    Constants.Panel.settingsToggle.classList.remove("active");
-    Constants.Panel.settingsToggle.setAttribute("aria-expanded", "false");
-    store.setItem("sa11y-settings", "Closed");
-  };
-  function initializePanelToggles() {
-    Constants.Panel.outlineToggle.addEventListener("click", () => {
-      if (Constants.Panel.outlineToggle.getAttribute("aria-expanded") === "true") {
-        closeOutline();
-      } else {
-        openOutline();
-        closeSettings();
-        closeImages();
-      }
-      Constants.Panel.outlineHeader.focus();
-    });
-    if (store.getItem("sa11y-outline") === "Opened") {
-      openOutline();
-    }
-    if (Constants.Global.showImageOutline) {
-      Constants.Panel.imagesToggle.addEventListener("click", () => {
-        if (Constants.Panel.imagesToggle.getAttribute("aria-expanded") === "true") {
-          closeImages();
-        } else {
-          openImages();
-          closeOutline();
-          closeSettings();
-        }
-        Constants.Panel.imagesHeader.focus();
-      });
-      if (store.getItem("sa11y-images") === "Opened") {
-        openImages();
-      }
-    }
-    Constants.Panel.settingsToggle.addEventListener("click", () => {
-      if (Constants.Panel.settingsToggle.getAttribute("aria-expanded") === "true") {
-        closeSettings();
-      } else {
-        openSettings();
-        closeOutline();
-        closeImages();
-      }
-      Constants.Panel.settingsHeader.focus();
-    });
-    if (store.getItem("sa11y-settings") === "Opened") {
-      openSettings();
-    }
-    Constants.Panel.skipToPageIssues.addEventListener("click", () => {
-      Constants.Panel.pageIssuesHeader.focus();
-    });
-    const tabs = Constants.Panel.panel.querySelectorAll("[role=tab]");
-    if (tabs.length !== 0) {
-      tabs.forEach((tab) => {
-        tab.addEventListener("keydown", (e) => {
-          if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") {
-            return;
-          }
-          e.preventDefault();
-          const currentIndex = Array.from(tabs).indexOf(e.currentTarget);
-          let nextIndex;
-          if (e.key === "ArrowRight") {
-            nextIndex = (currentIndex + 1) % tabs.length;
-          } else {
-            nextIndex = (currentIndex - 1 + tabs.length) % tabs.length;
-          }
-          tabs[nextIndex].focus();
-        });
-      });
+    const allDismissed = State.results.filter(
+      (issue) => State.dismissedIssues.some((dismissed) => dismissAll(issue, dismissed))
+    );
+    const mergeDismissed = [...soloDismissed, ...allDismissed];
+    State.dismissedResults = [
+      ...new Map(mergeDismissed.map((issue) => [issue.dismiss, issue])).values()
+    ];
+    State.counts.dismissed = State.dismissedResults.length;
+    State.results = State.results.filter(
+      (issue) => !State.dismissedResults.some(
+        (dismissed) => dismissed.dismiss === issue.dismiss && (issue.type === "warning" || issue.type === "good")
+      )
+    );
+    if (State.counts.dismissed) {
+      Constants.Panel.dismissButton.classList.add("active");
+      Constants.Panel.dismissTooltip.innerText = Lang.sprintf(
+        "PANEL_DISMISS_BUTTON",
+        State.counts.dismissed
+      );
+      State.panelTooltips.object.setContent(
+        Lang.sprintf("PANEL_DISMISS_BUTTON", State.counts.dismissed)
+      );
+    } else {
+      Constants.Panel.dismissButton.classList.remove("active");
     }
   }
-  function generatePageOutline(dismissed, headingOutline, option) {
+  let restoreDismissedHandler;
+  let dismissHandler;
+  const dismissIssueButton = async (e) => {
+    let savedDismissKeys = JSON.parse(store.getItem("sa11y-dismissed-digest"));
+    const dismissButton = e.target;
+    const dismissContainer = document.querySelector("sa11y-panel-tooltips");
+    dismissContainer.hidden = false;
+    if (dismissButton.tagName === "BUTTON" && dismissButton.hasAttribute("data-sa11y-dismiss")) {
+      const dismissItem = parseInt(dismissButton.getAttribute("data-sa11y-dismiss"), 10);
+      const issue = State.results.find(($el) => $el.id === dismissItem);
+      if (savedDismissKeys === null) {
+        setTimeout(() => createAlert(Lang._("DISMISS_REMINDER")), 0);
+        savedDismissKeys = [];
+      }
+      if (issue.dismissDigest) {
+        const dismissAllSelected = dismissButton.hasAttribute("data-sa11y-dismiss-all") ? issue.dismissAll : "";
+        const dismissalDetails = {
+          key: issue.dismissDigest,
+          href: window.location.pathname,
+          ...dismissAllSelected ? { dismissAll: dismissAllSelected } : {}
+        };
+        const item = find(`[data-sa11y-annotation='${issue.id}']`, "root");
+        const latestDismissed = item[0] ? item[0].getAttribute("data-sa11y-position") : 0;
+        store.setItem("sa11y-latest-dismissed", latestDismissed);
+        store.setItem("sa11y-dismiss-item", JSON.stringify(dismissalDetails));
+        savedDismissKeys.push(dismissalDetails);
+        store.setItem("sa11y-dismissed-digest", JSON.stringify(savedDismissKeys));
+        store.removeItem("sa11y-dismiss-item");
+        const tooltip = dismissButton?.closest("[data-tippy-root]");
+        if (tooltip) {
+          setTimeout(() => {
+            tooltip.remove();
+          }, 0);
+        }
+        resetAll(false);
+        await checkAll();
+      }
+    }
+  };
+  const restoreDismissButton = async () => {
+    const dismissContainer = document.querySelector("sa11y-panel-tooltips");
+    dismissContainer.hidden = true;
+    const filtered = State.dismissedIssues.filter((item) => item.href !== window.location.pathname);
+    store.setItem("sa11y-dismissed-digest", JSON.stringify(filtered));
+    Constants.Panel.dismissButton.classList.remove("active");
+    resetAll(false);
+    await checkAll();
+  };
+  function dismissButtons() {
+    if (State.option.dismissAnnotations) {
+      dismissHandler = (e) => dismissIssueButton(e);
+      const tooltips = document.querySelector("sa11y-tooltips").shadowRoot;
+      tooltips.addEventListener("click", dismissHandler);
+      Constants.Panel.panel.addEventListener("click", dismissHandler);
+    }
+    restoreDismissedHandler = () => restoreDismissButton();
+    Constants.Panel.dismissButton?.addEventListener("click", restoreDismissedHandler);
+  }
+  function removeDismissListeners() {
+    Constants.Panel.panel?.removeEventListener("click", dismissHandler);
+    Constants.Panel.dismissButton?.removeEventListener("click", restoreDismissedHandler);
+  }
+  function generatePageOutline() {
     const outlineHandler = () => {
       const outlineArray = [];
-      const findDismissedHeadings = dismissed.map((e) => headingOutline.find((f) => e.dismiss === f.dismiss)).filter(Boolean);
+      const findDismissedHeadings = State.dismissedResults.map((e) => State.headingOutline.find((f) => e.dismiss === f.dismiss)).filter(Boolean);
       findDismissedHeadings.forEach(($el) => {
         $el.dismissedHeading = true;
       });
       let outlineItem;
-      if (option.showTitleInPageOutline) {
+      if (State.option.showTitleInPageOutline) {
         const metaTitleElement = document.querySelector("head title");
         if (!metaTitleElement || metaTitleElement.textContent.trim().length === 0) {
           outlineItem = `<li><div class="badge error-badge"><span aria-hidden="true"><span class="error-icon"></span></span> ${Lang._("TITLE")}</div> <div class="badge error-badge">${Lang._("MISSING")}</div></li>`;
@@ -2392,11 +1959,11 @@ ${this.error.stack}
         }
         outlineArray.push(outlineItem);
       }
-      headingOutline.forEach((heading, i) => {
+      State.headingOutline.forEach((heading, i) => {
         const { element, headingLevel, text, type, dismissedHeading, isWithinRoot } = heading;
         const hidden = isElementVisuallyHiddenOrHidden(element);
         const visibleIcon = hidden === true ? `<span class="hidden-icon"></span><span class="visually-hidden">${Lang._("HIDDEN")}</span>` : "";
-        const badgeH = option.showHinPageOutline === true || option.showHinPageOutline === 1 ? "H" : "";
+        const badgeH = State.option.showHinPageOutline === true || State.option.showHinPageOutline === 1 ? "H" : "";
         let append;
         if (type === "error" && isWithinRoot === true) {
           append = `
@@ -2453,7 +2020,7 @@ ${this.error.stack}
           label.hidden = false;
         }
       });
-      Constants.Panel.outlineList.innerHTML = headingOutline.length === 0 ? `${outlineItem || ""} <li>${Lang._("PANEL_NO_HEADINGS")}</li>` : outlineArray.join(" ");
+      Constants.Panel.outlineList.innerHTML = State.headingOutline.length === 0 ? `${outlineItem || ""} <li>${Lang._("PANEL_NO_HEADINGS")}</li>` : outlineArray.join(" ");
       setTimeout(() => {
         const buttons = Constants.Panel.outlineList.querySelectorAll("button");
         buttons.forEach((button, i) => {
@@ -2511,10 +2078,10 @@ ${this.error.stack}
     return false;
   };
   const computeAriaLabel = (element, recursing = false) => {
-    if (Constants.Global.ignoreAriaOnElements && element.matches(Constants.Global.ignoreAriaOnElements)) {
+    if (State.option.ignoreAriaOnElements && element.matches(State.option.ignoreAriaOnElements)) {
       return "noAria";
     }
-    if (Constants.Global.ignoreTextInElements && element.matches(Constants.Global.ignoreTextInElements)) {
+    if (State.option.ignoreTextInElements && element.matches(State.option.ignoreTextInElements)) {
       return "";
     }
     const labelledBy = element.getAttribute("aria-labelledby");
@@ -2652,6 +2219,13 @@ ${this.error.stack}
           computedText += wrapPseudoContent(node, "");
           break;
         }
+        case "SPAN": {
+          computedText += wrapPseudoContent(treeWalker.currentNode, "");
+          if (treeWalker.currentNode.hasAttribute("title")) {
+            addTitleIfNoName = treeWalker.currentNode.getAttribute("title");
+          }
+          break;
+        }
         default:
           computedText += wrapPseudoContent(node, "");
           break;
@@ -2661,23 +2235,26 @@ ${this.error.stack}
       computedText += ` ${addTitleIfNoName}`;
     }
     computedText = computedText.replace(/[\uE000-\uF8FF]/gu, "");
-    if (!computedText.trim() && element.hasAttribute("title")) {
-      return element.getAttribute("title");
+    if (!computedText.trim()) {
+      computedText = wrapPseudoContent(element, "");
+      if (!computedText.trim() && element.hasAttribute("title")) {
+        return element.getAttribute("title");
+      }
     }
     return computedText;
   };
   const generateEditLink = (image) => {
     const { src } = image.element;
-    const urlExclusions = Constants.Global.ignoreEditImageURL.some((ignore) => src.includes(ignore));
-    const classExclusions = Constants.Global.ignoreEditImageClass.some(
+    const urlExclusions = State.option.ignoreEditImageURL.some((ignore) => src.includes(ignore));
+    const classExclusions = State.option.ignoreEditImageClass.some(
       (ignore) => image.element.classList.contains(ignore)
     );
     if (urlExclusions || classExclusions) {
       return "";
     }
-    const relativePath = Constants.Global.relativePathImageSRC || window.location.host;
+    const relativePath = State.option.relativePathImageSRC || window.location.host;
     const fileExtension = src.split(relativePath)[1] || "";
-    const imageID = Constants.Global.relativePathImageID;
+    const imageID = State.option.relativePathImageID;
     let imageUniqueID;
     if (imageID.length && image.element.classList.length) {
       image.element.classList.forEach((className) => {
@@ -2687,18 +2264,21 @@ ${this.error.stack}
         }
       });
     }
-    const editURL = relativePath && imageID.length ? Constants.Global.editImageURLofCMS + imageUniqueID : Constants.Global.editImageURLofCMS + fileExtension;
+    const editURL = relativePath && imageID.length ? State.option.editImageURLofCMS + imageUniqueID : State.option.editImageURLofCMS + fileExtension;
     const isRelativeLink = (imageSrc) => imageSrc.includes(window.location.host) || imageSrc.startsWith(relativePath);
     if (imageID.length && imageUniqueID !== void 0 || !imageID) {
       return isRelativeLink(src) ? `<div class="edit-block"><a href="${encodeURI(editURL)}" tabindex="-1" target="_blank" rel="noopener noreferrer" class="edit">${Lang._("EDIT")}</a></div>` : "";
     }
     return "";
   };
-  function generateImageOutline(dismissed, imageResults, option) {
+  function generateImageOutline() {
+    if (!State.option.showImageOutline) return;
     const imageOutlineHandler = () => {
       const imageArray = [];
-      imageResults.forEach((image, i) => {
-        const isDismissed = dismissed.some((key) => key.dismissDigest === image.dismissDigest);
+      State.imageResults.forEach((image, i) => {
+        const isDismissed = State.dismissedResults.some(
+          (key) => key.dismissDigest === image.dismissDigest
+        );
         if (isDismissed) {
           Object.assign(image, { dismissedImage: true });
         }
@@ -2718,12 +2298,12 @@ ${this.error.stack}
         const devChecksOff = dev === "Off" || dev === null;
         const showDeveloperChecks = devChecksOff && (type === "error" || type === "warning") && developer === true;
         const source = getBestImageSource(image.element);
-        const edit = Constants.Global.editImageURLofCMS ? generateEditLink(image) : "";
+        const edit = State.option.editImageURLofCMS ? generateEditLink(image) : "";
         const decorative = element.hasAttribute("alt") && altText === "" ? `<div class="badge">${Lang._("DECORATIVE")}</div>` : "";
-        const startsWithSpecificAlt = option.altPlaceholder?.some(
+        const startsWithSpecificAlt = State.option.altPlaceholder?.some(
           (text) => altText.toLowerCase().startsWith(text.toLowerCase())
         );
-        const anchor = option.imageWithinLightbox ? `a[href]:not(${option.imageWithinLightbox})` : "a[href]";
+        const anchor = State.option.imageWithinLightbox ? `a[href]:not(${State.option.imageWithinLightbox})` : "a[href]";
         const linked = element.closest(anchor) ? `<div class="badge"><span class="link-icon"></span><span class="visually-hidden">${Lang._("LINKED")}</span></div>` : "";
         const visibleIcon = hidden === true ? `<div class="badge"><span class="hidden-icon"></span><span class="visually-hidden">${Lang._("HIDDEN")}</span></div>` : "";
         let append;
@@ -2799,22 +2379,22 @@ ${this.error.stack}
     }
     document.addEventListener("sa11y-build-image-outline", imageOutlineHandler);
   }
-  function updatePanel(dismissCount, errorCount, warningCount) {
+  function updatePanel() {
     Constants.Panel.skipButton.disabled = false;
     Constants.Panel.panel.classList.add("active");
     Constants.Global.html.setAttribute("data-sa11y-active", "true");
     Constants.Panel.skipButton.classList.add("active");
-    if (errorCount > 0 && warningCount > 0) {
+    if (State.counts.error > 0 && State.counts.warning > 0) {
       Constants.Panel.content.setAttribute("class", "errors");
-      Constants.Panel.status.innerHTML = `${Lang._("ERRORS")} <span class="panel-count">${errorCount}</span> ${Lang._("WARNINGS")} <span class="panel-count" id="warning-count">${warningCount}</span>`;
-    } else if (errorCount > 0) {
+      Constants.Panel.status.innerHTML = `${Lang._("ERRORS")} <span class="panel-count">${State.counts.error}</span> ${Lang._("WARNINGS")} <span class="panel-count" id="warning-count">${State.counts.warning}</span>`;
+    } else if (State.counts.error > 0) {
       Constants.Panel.content.setAttribute("class", "errors");
-      Constants.Panel.status.innerHTML = `${Lang._("ERRORS")} <span class="panel-count">${errorCount}</span>`;
-    } else if (warningCount > 0) {
+      Constants.Panel.status.innerHTML = `${Lang._("ERRORS")} <span class="panel-count">${State.counts.error}</span>`;
+    } else if (State.counts.warning > 0) {
       Constants.Panel.content.setAttribute("class", "warnings");
-      Constants.Panel.status.innerHTML = `${Lang._("WARNINGS")} <span class="panel-count" id="warning-count">${warningCount}</span>`;
-    } else if (dismissCount > 0) {
-      Constants.Panel.status.innerHTML = `${Lang._("DISMISSED")} <span class="panel-count">${dismissCount}</span>`;
+      Constants.Panel.status.innerHTML = `${Lang._("WARNINGS")} <span class="panel-count" id="warning-count">${State.counts.warning}</span>`;
+    } else if (State.counts.dismissed > 0) {
+      Constants.Panel.status.innerHTML = `${Lang._("DISMISSED")} <span class="panel-count">${State.counts.dismissed}</span>`;
       Constants.Panel.skipButton.classList.remove("active");
     } else {
       Constants.Panel.content.setAttribute("class", "good");
@@ -2825,15 +2405,15 @@ ${this.error.stack}
       Constants.Panel.skipButton.disabled = true;
     }
   }
-  function updateBadge(errorCount, warningCount) {
-    const totalCount = errorCount + warningCount;
+  function updateBadge() {
+    const totalCount = State.counts.error + State.counts.warning;
     if (totalCount === 0) {
       Constants.Panel.notifCount.innerText = "";
       Constants.Panel.notifText.innerText = "";
       Constants.Panel.notifBadge.style.display = "none";
-    } else if (warningCount > 0 && errorCount === 0) {
+    } else if (State.counts.warning > 0 && State.counts.error === 0) {
       Constants.Panel.notifBadge.classList.add("notification-badge-warning");
-      Constants.Panel.notifCount.innerText = `${warningCount}`;
+      Constants.Panel.notifCount.innerText = `${State.counts.warning}`;
       Constants.Panel.notifText.innerText = `${Lang._("WARNINGS_FOUND")}`;
     } else {
       Constants.Panel.notifBadge.classList.remove("notification-badge-warning");
@@ -2846,18 +2426,28 @@ ${this.error.stack}
       Constants.Panel.notifBadge.style.display = "flex";
     }
   }
-  function updateCount(results, error, warning) {
-    let updatedErrorCount = error;
-    let updatedWarningCount = warning;
-    results.forEach((_, i) => {
-      const issue = results[i].type;
+  function updateCount() {
+    State.results.forEach((_, i) => {
+      const issue = State.results[i].type;
       if (issue === "error") {
-        updatedErrorCount += 1;
+        State.counts.error += 1;
       } else if (issue === "warning") {
-        updatedWarningCount += 1;
+        State.counts.warning += 1;
       }
     });
-    return { error: updatedErrorCount, warning: updatedWarningCount };
+  }
+  function disabled() {
+    setTimeout(() => {
+      if (store.getItem("sa11y-panel") === "Opened") {
+        Constants.Panel.toggle?.click();
+      }
+      Constants.Panel.toggle.disabled = true;
+    }, State.option.delayCheck + 10);
+  }
+  function enabled() {
+    if (Constants.Panel.toggle) {
+      Constants.Panel.toggle.disabled = false;
+    }
   }
   var top = "top";
   var bottom = "bottom";
@@ -5533,7 +5123,7 @@ ${this.error.stack}
     }
     return sharedContext;
   }
-  function setCache(key, value) {
+  function setCache$1(key, value) {
     if (colorCache.size >= maxCacheSize) {
       const firstKey = colorCache.keys().next().value;
       colorCache.delete(firstKey);
@@ -5581,7 +5171,7 @@ ${this.error.stack}
     }
     const finalAlpha = opacity < 1 ? Number((a * opacity).toFixed(2)) : a;
     const result = [r, g, b, finalAlpha];
-    setCache(cacheKey, result);
+    setCache$1(cacheKey, result);
     return result;
   }
   function normalizeFontWeight(weight) {
@@ -6117,7 +5707,7 @@ ${this.error.stack}
     }
   }
   const annotationButtons = [];
-  function annotate(issue, option) {
+  function annotate(issue) {
     const {
       element,
       type,
@@ -6142,13 +5732,13 @@ ${this.error.stack}
       [validTypes[1]]: Lang._("WARNING"),
       [validTypes[2]]: Lang._("GOOD")
     };
-    const dismissBtn = option.dismissAnnotations && (type === "warning" || type === "good") && dismiss ? `<button data-sa11y-dismiss='${id}' type='button'>${Lang._("DISMISS")}</button>` : "";
+    const dismissBtn = State.option.dismissAnnotations && (type === "warning" || type === "good") && dismiss ? `<button data-sa11y-dismiss='${id}' type='button'>${Lang._("DISMISS")}</button>` : "";
     if (element) {
       if (type === "good") {
-        if (!option.showGoodImageButton && element?.tagName === "IMG") {
+        if (!State.option.showGoodImageButton && element?.tagName === "IMG") {
           return;
         }
-        if (!option.showGoodLinkButton && element?.tagName === "A") {
+        if (!State.option.showGoodLinkButton && element?.tagName === "A") {
           return;
         }
       }
@@ -6172,7 +5762,7 @@ ${this.error.stack}
         const existing = element.style.anchorName;
         element.style.anchorName = existing ? `${existing}, --sa11y-anchor-${id}` : `--sa11y-anchor-${id}`;
       }
-      const dismissAllBtn = option.dismissAnnotations && option.dismissAll && typeof dismissAll === "string" && (type === "warning" || type === "good") ? `<button data-sa11y-dismiss='${id}' data-sa11y-dismiss-all type='button'>${Lang._("DISMISS_ALL")}</button>` : "";
+      const dismissAllBtn = State.option.dismissAnnotations && State.option.dismissAll && typeof dismissAll === "string" && (type === "warning" || type === "good") ? `<button data-sa11y-dismiss='${id}' data-sa11y-dismiss-all type='button'>${Lang._("DISMISS_ALL")}</button>` : "";
       const buttonWrapper = document.createElement("div");
       buttonWrapper.classList.add(inline ? "annotation-inline" : "annotation");
       const button = document.createElement("button");
@@ -6184,11 +5774,11 @@ ${this.error.stack}
       button.dataset.tippyContent = `<div lang='${Lang._("LANG_CODE")}' class='${type}'><button type='button' class='close-btn close-tooltip' aria-label='${Lang._("ALERT_CLOSE")}'></button><h2>${ariaLabel[type]}</h2> ${content} ${contrastDetails ? "<div data-sa11y-contrast-details></div>" : ""} <div class='dismiss-group'>${dismissBtn}${dismissAllBtn}</div></div>`;
       buttonWrapper.appendChild(button);
       annotationButtons.push(button);
-      const insertBefore = option.insertAnnotationBefore ? `, ${option.insertAnnotationBefore}` : "";
+      const insertBefore = State.option.insertAnnotationBefore ? `, ${State.option.insertAnnotationBefore}` : "";
       const location = element.closest(`a, button, [role="link"], [role="button"] ${insertBefore}`) || element;
       location.insertAdjacentElement(position, annotation);
       annotation.shadowRoot.appendChild(buttonWrapper);
-      const ignoredElements = option.ignoreHiddenOverflow ? option.ignoreHiddenOverflow.split(",").flatMap((selector) => [...document.querySelectorAll(selector)]) : [];
+      const ignoredElements = State.option.ignoreHiddenOverflow ? State.option.ignoreHiddenOverflow.split(",").flatMap((selector) => [...document.querySelectorAll(selector)]) : [];
       const parent = findVisibleParent(element, "overflow", "hidden");
       if (parent && !ignoredElements.includes(parent)) {
         parent.setAttribute("data-sa11y-overflow", "");
@@ -6331,7 +5921,7 @@ ${this.error.stack}
         maxWidth: 200,
         ...tooltipOptions(shadowRoot)
       });
-      if (Constants.Global.developerPlugin) {
+      if (State.option.developerPlugin) {
         const infoIcon = Constants.Panel.developerItem?.querySelector(".info-icon");
         if (infoIcon) {
           tippy(infoIcon, {
@@ -6343,7 +5933,7 @@ ${this.error.stack}
           });
         }
       }
-      if (Constants.Global.readabilityPlugin) {
+      if (State.option.readabilityPlugin) {
         const infoIcon = Constants.Panel.readabilityItem?.querySelector(".info-icon");
         if (infoIcon) {
           tippy(infoIcon, {
@@ -6357,47 +5947,59 @@ ${this.error.stack}
       }
     }
   }
-  class HeadingAnchor extends HTMLElement {
-    constructor() {
-      super();
-      this.attachShadow({ mode: "open" });
-    }
+  async function updateResults() {
+    const { option } = State;
+    const devChecks = store.getItem("sa11y-developer");
+    const isDevOff = !devChecks || devChecks === "Off";
+    State.results = State.results.filter(
+      (issue) => issue.isWithinRoot !== false && !((isDevOff || option.externalDeveloperChecks) && issue.developer) && !(isDevOff && issue.external)
+    );
+    await Promise.all(
+      State.results.map(async (item, id) => {
+        item.id = id;
+        item.cssPath = option.selectorPath ? generateSelectorPath(item.element) : "";
+        item.htmlPath = item.element?.outerHTML.replace(/\s{2,}/g, " ").trim() || "";
+        if (item.dismiss) item.dismissDigest = await dismissDigest(item.dismiss);
+      })
+    );
+    if (!option.headless) syncUI();
+    const detail = { results: State.results, page: window.location.pathname };
+    window.sa11yCheckComplete = detail;
+    document.dispatchEvent(new CustomEvent("sa11y-check-complete", { detail }));
   }
-  class HeadingLabel extends HTMLElement {
-    constructor() {
-      super();
-      this.attachShadow({ mode: "open" });
-    }
-    connectedCallback() {
-      const style = document.createElement("style");
-      style.textContent = `
-      span.heading-label {
-        background-color: #777678;
-        background-image: linear-gradient(to bottom right, #b629ce, #16aec2);
-        border-radius: 5px;
-        border: 1px solid #36a5c3;
-        color: white;
-        display: inline-block;
-        font-family: var(--sa11y-font-face);
-        font-weight: 500;
-        font-size: 18px;
-        line-height: normal;
-        letter-spacing: normal;
-        margin: -5px 0 0 5px;
-        padding: 3px;
-        position: absolute;
-        text-shadow: 1px 1px black;
-        -webkit-text-fill-color: white;
-        word-break: keep-all;
-        z-index: 200;
-      }
-      @media screen and (forced-colors: active) {
-        span.heading-label {
-          border: 2px solid transparent;
+  function syncUI() {
+    State.imageResults = Elements.Found.Images.map(
+      (image) => State.results.find((i) => i.element === image)
+    ).filter(Boolean).map(({ element, type, dismissDigest: dismissDigest2, developer }) => ({
+      element,
+      type,
+      dismissDigest: dismissDigest2,
+      developer
+    }));
+    initializeDismissals();
+    updateCount();
+    updateBadge();
+    if (store.getItem("sa11y-panel") === "Opened") {
+      const counts = /* @__PURE__ */ new Map();
+      State.results.forEach((issue) => {
+        if (issue.element && !issue.margin) {
+          const index2 = counts.get(issue.element) || 0;
+          counts.set(issue.element, index2 + 1);
+          issue.margin = `${index2 * 20 + (issue.inline ? 0 : 15)}px`;
         }
-      }`;
-      this.shadowRoot.appendChild(style);
+        annotate(issue);
+      });
+      Elements.initializeAnnotations();
+      document.body.appendChild(new AnnotationTooltips());
+      dismissButtons();
+      generatePageOutline();
+      generateImageOutline();
+      updatePanel();
+      skipToIssue();
+      exportResults();
+      isScrollable(Constants.Panel.pageIssuesList, Constants.Panel.pageIssuesContent);
     }
+    Constants.Panel.toggle.disabled = false;
   }
   const url = [
     ".avif",
@@ -6412,12 +6014,12 @@ ${this.error.stack}
     ".heic",
     "http"
   ];
-  function checkImages(results, option) {
-    const susAltWords = option.susAltStopWords ? option.susAltStopWords.split(",").map((word) => word.trim().toLowerCase()).filter(Boolean) : Lang._("SUS_ALT_STOPWORDS");
+  function checkImages() {
+    const susAltWords = State.option.susAltStopWords ? State.option.susAltStopWords.split(",").map((word) => word.trim().toLowerCase()).filter(Boolean) : Lang._("SUS_ALT_STOPWORDS");
     const placeholderAltSet = new Set(Lang._("PLACEHOLDER_ALT_STOPWORDS"));
-    const altPlaceholderPattern = generateRegexString(option.altPlaceholder, true);
-    const linkIgnoreStringPattern = generateRegexString(option.linkIgnoreStrings);
-    const extraPlaceholderStopWords = option.extraPlaceholderStopWords.split(",").map((word) => word.trim().toLowerCase()).filter(Boolean);
+    const altPlaceholderPattern = generateRegexString(State.option.altPlaceholder, true);
+    const linkIgnoreStringPattern = generateRegexString(State.option.linkIgnoreStrings);
+    const extraPlaceholderStopWords = State.option.extraPlaceholderStopWords.split(",").map((word) => word.trim().toLowerCase()).filter(Boolean);
     const containsAltTextStopWords = (alt) => {
       const altLowerCase = alt.toLowerCase();
       const altNoNumbers = altLowerCase.replace(/\d+/g, "").trim();
@@ -6461,7 +6063,7 @@ ${this.error.stack}
         return;
       }
       const link = $el.closest(
-        option.imageWithinLightbox ? `a[href]:not(${option.imageWithinLightbox})` : "a[href]"
+        State.option.imageWithinLightbox ? `a[href]:not(${State.option.imageWithinLightbox})` : "a[href]"
       );
       const src = $el.getAttribute("src") ? $el.getAttribute("src").split("?")[0] : $el.getAttribute("srcset");
       const linkText = link ? fnIgnore(link, Constants.Exclusions.LinkSpan).textContent.replace(
@@ -6471,15 +6073,15 @@ ${this.error.stack}
       const linkTextLength = removeWhitespace(linkText).length;
       if (link && link.getAttribute("aria-hidden") === "true") {
         const unfocusable = link.getAttribute("tabindex") === "-1";
-        if (option.checks.HIDDEN_FOCUSABLE && !unfocusable) {
-          results.push({
+        if (State.option.checks.HIDDEN_FOCUSABLE && !unfocusable) {
+          State.results.push({
             test: "HIDDEN_FOCUSABLE",
             element: $el,
-            type: option.checks.HIDDEN_FOCUSABLE.type || "error",
-            content: Lang.sprintf(option.checks.HIDDEN_FOCUSABLE.content || "HIDDEN_FOCUSABLE"),
+            type: State.option.checks.HIDDEN_FOCUSABLE.type || "error",
+            content: Lang.sprintf(State.option.checks.HIDDEN_FOCUSABLE.content || "HIDDEN_FOCUSABLE"),
             dismiss: prepareDismissal(`HIDDEN_FOCUSABLE ${src}`),
-            dismissAll: option.checks.HIDDEN_FOCUSABLE.dismissAll ? "LINK_HIDDEN_FOCUSABLE" : false,
-            developer: option.checks.HIDDEN_FOCUSABLE.developer || true
+            dismissAll: State.option.checks.HIDDEN_FOCUSABLE.dismissAll ? "LINK_HIDDEN_FOCUSABLE" : false,
+            developer: State.option.checks.HIDDEN_FOCUSABLE.developer || true
           });
         }
         return;
@@ -6488,10 +6090,10 @@ ${this.error.stack}
         if (link) {
           const hasAriaHiddenOrPresentationRole = linkTextLength > 0 && (ariaHidden || presentationRole);
           if (!hasAriaHiddenOrPresentationRole) {
-            const rule = linkTextLength === 0 ? option.checks.MISSING_ALT_LINK : option.checks.MISSING_ALT_LINK_HAS_TEXT;
+            const rule = linkTextLength === 0 ? State.option.checks.MISSING_ALT_LINK : State.option.checks.MISSING_ALT_LINK_HAS_TEXT;
             const conditional = linkTextLength === 0 ? "MISSING_ALT_LINK" : "MISSING_ALT_LINK_HAS_TEXT";
             if (rule) {
-              results.push({
+              State.results.push({
                 test: conditional,
                 element: $el,
                 type: rule.type || "error",
@@ -6502,15 +6104,15 @@ ${this.error.stack}
               });
             }
           }
-        } else if (option.checks.MISSING_ALT) {
-          results.push({
+        } else if (State.option.checks.MISSING_ALT) {
+          State.results.push({
             test: "MISSING_ALT",
             element: $el,
-            type: option.checks.MISSING_ALT.type || "error",
-            content: Lang.sprintf(option.checks.MISSING_ALT.content || "MISSING_ALT"),
+            type: State.option.checks.MISSING_ALT.type || "error",
+            content: Lang.sprintf(State.option.checks.MISSING_ALT.content || "MISSING_ALT"),
             dismiss: prepareDismissal(`MISSING_ALT ${src}`),
-            dismissAll: option.checks.MISSING_ALT.dismissAll ? "MISSING_ALT" : false,
-            developer: option.checks.MISSING_ALT.developer || false
+            dismissAll: State.option.checks.MISSING_ALT.dismissAll ? "MISSING_ALT" : false,
+            developer: State.option.checks.MISSING_ALT.developer || false
           });
         }
         return;
@@ -6518,16 +6120,16 @@ ${this.error.stack}
       const sanitizedAlt = sanitizeHTML(alt);
       const altText = removeWhitespace(sanitizedAlt);
       const hasAria = $el.getAttribute("aria-label") || $el.getAttribute("aria-labelledby");
-      if (option.checks.MISSING_ALT) {
+      if (State.option.checks.MISSING_ALT) {
         if (hasAria && altText === "") {
-          results.push({
+          State.results.push({
             test: "MISSING_ALT",
             element: $el,
-            type: option.checks.MISSING_ALT.type || "error",
-            content: Lang.sprintf(option.checks.MISSING_ALT.content || "MISSING_ALT"),
+            type: State.option.checks.MISSING_ALT.type || "error",
+            content: Lang.sprintf(State.option.checks.MISSING_ALT.content || "MISSING_ALT"),
             dismiss: prepareDismissal(`MISSING_ALT ${hasAria + src}`),
-            dismissAll: option.checks.MISSING_ALT.dismissAll ? "MISSING_ALT" : false,
-            developer: option.checks.MISSING_ALT.developer || false
+            dismissAll: State.option.checks.MISSING_ALT.dismissAll ? "MISSING_ALT" : false,
+            developer: State.option.checks.MISSING_ALT.developer || false
           });
           return;
         }
@@ -6536,18 +6138,18 @@ ${this.error.stack}
       const figure = $el.closest("figure");
       const figcaption = figure?.querySelector("figcaption");
       const figcaptionText = figcaption ? getText(figcaption) : "";
-      const maxAltCharactersLinks = option.checks.LINK_IMAGE_LONG_ALT.maxLength || 250;
-      const maxAltCharacters = option.checks.IMAGE_ALT_TOO_LONG.maxLength || 250;
+      const maxAltCharactersLinks = State.option.checks.LINK_IMAGE_LONG_ALT.maxLength || 250;
+      const maxAltCharacters = State.option.checks.IMAGE_ALT_TOO_LONG.maxLength || 250;
       const startsWithSpecificAlt = alt.match(altPlaceholderPattern)?.[0];
       if (decorative || startsWithSpecificAlt) {
-        const carouselSources = option.checks.IMAGE_DECORATIVE_CAROUSEL.sources;
+        const carouselSources = State.option.checks.IMAGE_DECORATIVE_CAROUSEL.sources;
         const carousel = carouselSources ? $el.closest(carouselSources) : "";
         if (carousel) {
           const numberOfSlides = carousel.querySelectorAll("img");
-          const rule = numberOfSlides.length === 1 ? option.checks.IMAGE_DECORATIVE : option.checks.IMAGE_DECORATIVE_CAROUSEL;
+          const rule = numberOfSlides.length === 1 ? State.option.checks.IMAGE_DECORATIVE : State.option.checks.IMAGE_DECORATIVE_CAROUSEL;
           const conditional = numberOfSlides.length === 1 ? "IMAGE_DECORATIVE" : "IMAGE_DECORATIVE_CAROUSEL";
           if (rule) {
-            results.push({
+            State.results.push({
               test: conditional,
               element: $el,
               type: rule.type || "warning",
@@ -6558,10 +6160,10 @@ ${this.error.stack}
             });
           }
         } else if (link) {
-          const rule = linkTextLength === 0 ? option.checks.LINK_IMAGE_NO_ALT_TEXT : option.checks.LINK_IMAGE_TEXT;
+          const rule = linkTextLength === 0 ? State.option.checks.LINK_IMAGE_NO_ALT_TEXT : State.option.checks.LINK_IMAGE_TEXT;
           const conditional = linkTextLength === 0 ? "LINK_IMAGE_NO_ALT_TEXT" : "LINK_IMAGE_TEXT";
           if (rule) {
-            results.push({
+            State.results.push({
               test: conditional,
               element: $el,
               type: rule.type || (linkTextLength === 0 ? "error" : "good"),
@@ -6572,10 +6174,10 @@ ${this.error.stack}
             });
           }
         } else if (figure) {
-          const rule = figcaption && figcaptionText.length ? option.checks.IMAGE_FIGURE_DECORATIVE : option.checks.IMAGE_DECORATIVE;
+          const rule = figcaption && figcaptionText.length ? State.option.checks.IMAGE_FIGURE_DECORATIVE : State.option.checks.IMAGE_DECORATIVE;
           const conditional = figcaption && figcaptionText.length ? "IMAGE_FIGURE_DECORATIVE" : "IMAGE_DECORATIVE";
           if (rule) {
-            results.push({
+            State.results.push({
               test: conditional,
               element: $el,
               type: rule.type || "warning",
@@ -6585,24 +6187,24 @@ ${this.error.stack}
               developer: rule.developer || false
             });
           }
-        } else if (option.checks.IMAGE_DECORATIVE) {
-          results.push({
+        } else if (State.option.checks.IMAGE_DECORATIVE) {
+          State.results.push({
             test: "IMAGE_DECORATIVE",
             element: $el,
-            type: option.checks.IMAGE_DECORATIVE.type || "warning",
-            content: Lang.sprintf(option.checks.IMAGE_DECORATIVE.content || "IMAGE_DECORATIVE"),
+            type: State.option.checks.IMAGE_DECORATIVE.type || "warning",
+            content: Lang.sprintf(State.option.checks.IMAGE_DECORATIVE.content || "IMAGE_DECORATIVE"),
             dismiss: prepareDismissal(`IMAGE_DECORATIVE ${src}`),
-            dismissAll: option.checks.IMAGE_DECORATIVE.dismissAll ? "IMAGE_DECORATIVE" : false,
-            developer: option.checks.IMAGE_DECORATIVE.developer || false
+            dismissAll: State.option.checks.IMAGE_DECORATIVE.dismissAll ? "IMAGE_DECORATIVE" : false,
+            developer: State.option.checks.IMAGE_DECORATIVE.developer || false
           });
         }
         return;
       }
-      const unpronounceable = link ? option.checks.LINK_ALT_UNPRONOUNCEABLE : option.checks.ALT_UNPRONOUNCEABLE;
+      const unpronounceable = link ? State.option.checks.LINK_ALT_UNPRONOUNCEABLE : State.option.checks.ALT_UNPRONOUNCEABLE;
       if (unpronounceable) {
         if (alt.replace(/"|'|\?|\.|-|\s+/g, "") === "" && linkTextLength === 0) {
           const conditional = link ? "LINK_ALT_UNPRONOUNCEABLE" : "ALT_UNPRONOUNCEABLE";
-          results.push({
+          State.results.push({
             test: conditional,
             element: $el,
             type: unpronounceable.type || "error",
@@ -6615,14 +6217,14 @@ ${this.error.stack}
         }
       }
       const error = containsAltTextStopWords(altText);
-      const maybeBadAlt = link ? option.checks.LINK_ALT_MAYBE_BAD : option.checks.ALT_MAYBE_BAD;
+      const maybeBadAlt = link ? State.option.checks.LINK_ALT_MAYBE_BAD : State.option.checks.ALT_MAYBE_BAD;
       const isTooLongSingleWord = new RegExp(`^\\S{${maybeBadAlt.minLength || 15},}$`);
       const containsNonAlphaChar = /[^\p{L}\-,.!?]/u.test(alt);
       if (error[0] !== null) {
-        const rule = link ? option.checks.LINK_ALT_FILE_EXT : option.checks.ALT_FILE_EXT;
+        const rule = link ? State.option.checks.LINK_ALT_FILE_EXT : State.option.checks.ALT_FILE_EXT;
         const conditional = link ? "LINK_ALT_FILE_EXT" : "ALT_FILE_EXT";
         if (rule) {
-          results.push({
+          State.results.push({
             test: conditional,
             element: $el,
             type: rule.type || "error",
@@ -6633,10 +6235,10 @@ ${this.error.stack}
           });
         }
       } else if (error[2] !== null) {
-        const rule = link ? option.checks.LINK_PLACEHOLDER_ALT : option.checks.ALT_PLACEHOLDER;
+        const rule = link ? State.option.checks.LINK_PLACEHOLDER_ALT : State.option.checks.ALT_PLACEHOLDER;
         const conditional = link ? "LINK_PLACEHOLDER_ALT" : "ALT_PLACEHOLDER";
         if (rule) {
-          results.push({
+          State.results.push({
             test: conditional,
             element: $el,
             type: rule.type || "error",
@@ -6647,10 +6249,10 @@ ${this.error.stack}
           });
         }
       } else if (error[1] !== null) {
-        const rule = link ? option.checks.LINK_SUS_ALT : option.checks.SUS_ALT;
+        const rule = link ? State.option.checks.LINK_SUS_ALT : State.option.checks.SUS_ALT;
         const conditional = link ? "LINK_SUS_ALT" : "SUS_ALT";
         if (rule) {
-          results.push({
+          State.results.push({
             test: conditional,
             element: $el,
             type: rule.type || "warning",
@@ -6662,7 +6264,7 @@ ${this.error.stack}
         }
       } else if (maybeBadAlt && isTooLongSingleWord.test(alt) && containsNonAlphaChar) {
         const conditional = link ? "LINK_ALT_MAYBE_BAD" : "ALT_MAYBE_BAD";
-        results.push({
+        State.results.push({
           test: conditional,
           element: $el,
           type: maybeBadAlt.type || "error",
@@ -6672,11 +6274,11 @@ ${this.error.stack}
           developer: maybeBadAlt.developer || false
         });
       } else if (link ? alt.length > maxAltCharactersLinks : alt.length > maxAltCharacters) {
-        const rule = link ? option.checks.LINK_IMAGE_LONG_ALT : option.checks.IMAGE_ALT_TOO_LONG;
+        const rule = link ? State.option.checks.LINK_IMAGE_LONG_ALT : State.option.checks.IMAGE_ALT_TOO_LONG;
         const conditional = link ? "LINK_IMAGE_LONG_ALT" : "IMAGE_ALT_TOO_LONG";
         const truncated = truncateString(altText, 600);
         if (rule) {
-          results.push({
+          State.results.push({
             test: conditional,
             element: $el,
             type: rule.type || "warning",
@@ -6687,14 +6289,14 @@ ${this.error.stack}
           });
         }
       } else if (link) {
-        const rule = linkTextLength === 0 ? option.checks.LINK_IMAGE_ALT : option.checks.LINK_IMAGE_ALT_AND_TEXT;
+        const rule = linkTextLength === 0 ? State.option.checks.LINK_IMAGE_ALT : State.option.checks.LINK_IMAGE_ALT_AND_TEXT;
         const conditional = linkTextLength === 0 ? "LINK_IMAGE_ALT" : "LINK_IMAGE_ALT_AND_TEXT";
         if (rule) {
           const linkAccName = computeAccessibleName(link);
           const removeWhitespace$1 = removeWhitespace(linkAccName);
           const sanitizedText = sanitizeHTML(removeWhitespace$1);
           const tooltip = linkTextLength === 0 ? Lang.sprintf("LINK_IMAGE_ALT", altText) : `${Lang.sprintf("LINK_IMAGE_ALT_AND_TEXT", altText, sanitizedText)} ${Lang.sprintf("ACC_NAME_TIP")}`;
-          results.push({
+          State.results.push({
             test: conditional,
             element: $el,
             type: rule.type || "warning",
@@ -6707,66 +6309,65 @@ ${this.error.stack}
       } else if (figure) {
         const duplicate = !!figcaption && figcaptionText.toLowerCase() === altText.toLowerCase();
         if (duplicate) {
-          if (option.checks.IMAGE_FIGURE_DUPLICATE_ALT) {
-            results.push({
+          if (State.option.checks.IMAGE_FIGURE_DUPLICATE_ALT) {
+            State.results.push({
               test: "IMAGE_FIGURE_DUPLICATE_ALT",
               element: $el,
-              type: option.checks.IMAGE_FIGURE_DUPLICATE_ALT.type || "warning",
+              type: State.option.checks.IMAGE_FIGURE_DUPLICATE_ALT.type || "warning",
               content: Lang.sprintf(
-                option.checks.IMAGE_FIGURE_DUPLICATE_ALT.content || "IMAGE_FIGURE_DUPLICATE_ALT",
+                State.option.checks.IMAGE_FIGURE_DUPLICATE_ALT.content || "IMAGE_FIGURE_DUPLICATE_ALT",
                 altText
               ),
               dismiss: prepareDismissal(`IMAGE_FIGURE_DUPLICATE_ALT ${src}`),
-              dismissAll: option.checks.IMAGE_FIGURE_DUPLICATE_ALT.dismissAll ? "IMAGE_FIGURE_DUPLICATE_ALT" : false,
-              developer: option.checks.IMAGE_FIGURE_DUPLICATE_ALT.developer || false
+              dismissAll: State.option.checks.IMAGE_FIGURE_DUPLICATE_ALT.dismissAll ? "IMAGE_FIGURE_DUPLICATE_ALT" : false,
+              developer: State.option.checks.IMAGE_FIGURE_DUPLICATE_ALT.developer || false
             });
           }
-        } else if (option.checks.IMAGE_PASS) {
-          results.push({
+        } else if (State.option.checks.IMAGE_PASS) {
+          State.results.push({
             test: "IMAGE_PASS",
             element: $el,
-            type: option.checks.IMAGE_PASS.type || "good",
-            content: Lang.sprintf(option.checks.IMAGE_PASS.content || "IMAGE_PASS", altText),
+            type: State.option.checks.IMAGE_PASS.type || "good",
+            content: Lang.sprintf(State.option.checks.IMAGE_PASS.content || "IMAGE_PASS", altText),
             dismiss: prepareDismissal(`IMAGE_PASS FIGURE ${src + altText}`),
-            dismissAll: option.checks.IMAGE_PASS.dismissAll ? "IMAGE_PASS" : false,
-            developer: option.checks.IMAGE_PASS.developer || false
+            dismissAll: State.option.checks.IMAGE_PASS.dismissAll ? "IMAGE_PASS" : false,
+            developer: State.option.checks.IMAGE_PASS.developer || false
           });
         }
-      } else if (option.checks.IMAGE_PASS) {
+      } else if (State.option.checks.IMAGE_PASS) {
         if (!$el.closest('button, [role="button"]')) {
-          results.push({
+          State.results.push({
             test: "IMAGE_PASS",
             element: $el,
-            type: option.checks.IMAGE_PASS.type || "good",
-            content: Lang.sprintf(option.checks.IMAGE_PASS.content || "IMAGE_PASS", altText),
+            type: State.option.checks.IMAGE_PASS.type || "good",
+            content: Lang.sprintf(State.option.checks.IMAGE_PASS.content || "IMAGE_PASS", altText),
             dismiss: prepareDismissal(`IMAGE_PASS ${src + altText}`),
-            dismissAll: option.checks.IMAGE_PASS.dismissAll ? "IMAGE_PASS" : false,
-            developer: option.checks.IMAGE_PASS.developer || false
+            dismissAll: State.option.checks.IMAGE_PASS.dismissAll ? "IMAGE_PASS" : false,
+            developer: State.option.checks.IMAGE_PASS.developer || false
           });
         }
       }
       const titleAttr = $el.getAttribute("title");
       if (titleAttr?.toLowerCase() === alt.toLowerCase()) {
-        if (option.checks.DUPLICATE_TITLE) {
-          results.push({
+        if (State.option.checks.DUPLICATE_TITLE) {
+          State.results.push({
             test: "DUPLICATE_TITLE",
             element: $el,
-            type: option.checks.DUPLICATE_TITLE.type || "warning",
-            content: Lang.sprintf(option.checks.DUPLICATE_TITLE.content || "DUPLICATE_TITLE"),
+            type: State.option.checks.DUPLICATE_TITLE.type || "warning",
+            content: Lang.sprintf(State.option.checks.DUPLICATE_TITLE.content || "DUPLICATE_TITLE"),
             inline: true,
             dismiss: prepareDismissal(`DUPLICATE_TITLE ${altText}`),
-            dismissAll: option.checks.DUPLICATE_TITLE.dismissAll ? "DUPLICATE_TITLE" : false,
-            developer: option.checks.DUPLICATE_TITLE.developer || false
+            dismissAll: State.option.checks.DUPLICATE_TITLE.dismissAll ? "DUPLICATE_TITLE" : false,
+            developer: State.option.checks.DUPLICATE_TITLE.developer || false
           });
         }
       }
     });
-    return results;
   }
-  function checkHeaders(results, option, headingOutline) {
+  function checkHeaders() {
     let prevLevel;
     let prevHeadingText = "";
-    const stringExclusionPattern = generateRegexString(option.headerIgnoreStrings);
+    const stringExclusionPattern = generateRegexString(State.option.headerIgnoreStrings);
     Elements.Found.Headings.forEach(($el, i) => {
       const accName = computeAccessibleName($el, Constants.Exclusions.HeaderSpan);
       const stringMatchExclusions = accName.replace(stringExclusionPattern, "");
@@ -6783,7 +6384,7 @@ ${this.error.stack}
       }
       const level = parseInt($el.getAttribute("aria-level") || $el.tagName.slice(1), 10);
       const headingLength = removeWhitespace$1.length;
-      const maxHeadingLength = option.checks.HEADING_LONG.maxLength || 160;
+      const maxHeadingLength = State.option.checks.HEADING_LONG.maxLength || 160;
       let test = null;
       let type = null;
       let content = null;
@@ -6795,64 +6396,64 @@ ${this.error.stack}
         if (image) {
           const alt = image?.getAttribute("alt");
           if (image && (!alt || alt.trim() === "")) {
-            if (option.checks.HEADING_EMPTY_WITH_IMAGE) {
+            if (State.option.checks.HEADING_EMPTY_WITH_IMAGE) {
               test = "HEADING_EMPTY_WITH_IMAGE";
-              type = option.checks.HEADING_EMPTY_WITH_IMAGE.type || "error";
+              type = State.option.checks.HEADING_EMPTY_WITH_IMAGE.type || "error";
               content = Lang.sprintf(
-                option.checks.HEADING_EMPTY_WITH_IMAGE.content || "HEADING_EMPTY_WITH_IMAGE",
+                State.option.checks.HEADING_EMPTY_WITH_IMAGE.content || "HEADING_EMPTY_WITH_IMAGE",
                 level
               );
-              developer = option.checks.HEADING_EMPTY_WITH_IMAGE.developer || false;
-              dismissAll = option.checks.HEADING_EMPTY_WITH_IMAGE.dismissAll ? "HEADING_EMPTY_WITH_IMAGE" : false;
+              developer = State.option.checks.HEADING_EMPTY_WITH_IMAGE.developer || false;
+              dismissAll = State.option.checks.HEADING_EMPTY_WITH_IMAGE.dismissAll ? "HEADING_EMPTY_WITH_IMAGE" : false;
               margin = "-15px 30px";
             }
           }
-        } else if (option.checks.HEADING_EMPTY) {
+        } else if (State.option.checks.HEADING_EMPTY) {
           test = "HEADING_EMPTY";
-          type = option.checks.HEADING_EMPTY.type || "error";
-          content = Lang.sprintf(option.checks.HEADING_EMPTY.content || "HEADING_EMPTY", level);
-          developer = option.checks.HEADING_EMPTY.developer || false;
-          dismissAll = option.checks.HEADING_EMPTY.dismissAll ? "HEADING_EMPTY" : false;
+          type = State.option.checks.HEADING_EMPTY.type || "error";
+          content = Lang.sprintf(State.option.checks.HEADING_EMPTY.content || "HEADING_EMPTY", level);
+          developer = State.option.checks.HEADING_EMPTY.developer || false;
+          dismissAll = State.option.checks.HEADING_EMPTY.dismissAll ? "HEADING_EMPTY" : false;
           margin = "0";
         }
       } else if (level - prevLevel > 1 && i !== 0) {
-        if (option.checks.HEADING_SKIPPED_LEVEL) {
+        if (State.option.checks.HEADING_SKIPPED_LEVEL) {
           test = "HEADING_SKIPPED_LEVEL";
-          type = option.checks.HEADING_SKIPPED_LEVEL.type || "error";
+          type = State.option.checks.HEADING_SKIPPED_LEVEL.type || "error";
           content = Lang.sprintf(
-            option.checks.HEADING_SKIPPED_LEVEL.content || "HEADING_SKIPPED_LEVEL",
+            State.option.checks.HEADING_SKIPPED_LEVEL.content || "HEADING_SKIPPED_LEVEL",
             prevLevel,
             level,
             truncateString(headingText, 60),
             truncateString(prevHeadingText, 60),
             prevLevel + 1
           );
-          developer = option.checks.HEADING_SKIPPED_LEVEL.developer || false;
-          dismissAll = option.checks.HEADING_SKIPPED_LEVEL.dismissAll ? "HEADING_SKIPPED_LEVEL" : false;
+          developer = State.option.checks.HEADING_SKIPPED_LEVEL.developer || false;
+          dismissAll = State.option.checks.HEADING_SKIPPED_LEVEL.dismissAll ? "HEADING_SKIPPED_LEVEL" : false;
         }
       } else if (i === 0 && level !== 1 && level !== 2) {
-        if (option.checks.HEADING_FIRST) {
+        if (State.option.checks.HEADING_FIRST) {
           test = "HEADING_FIRST";
-          type = option.checks.HEADING_FIRST.type || "error";
-          content = Lang.sprintf(option.checks.HEADING_FIRST.content || "HEADING_FIRST");
-          developer = option.checks.HEADING_FIRST.developer || false;
-          dismissAll = option.checks.HEADING_FIRST.dismissAll ? "HEADING_FIRST" : false;
+          type = State.option.checks.HEADING_FIRST.type || "error";
+          content = Lang.sprintf(State.option.checks.HEADING_FIRST.content || "HEADING_FIRST");
+          developer = State.option.checks.HEADING_FIRST.developer || false;
+          dismissAll = State.option.checks.HEADING_FIRST.dismissAll ? "HEADING_FIRST" : false;
         }
       } else if (headingLength > maxHeadingLength) {
-        if (option.checks.HEADING_LONG) {
+        if (State.option.checks.HEADING_LONG) {
           test = "HEADING_LONG";
-          type = option.checks.HEADING_LONG.type || "warning";
+          type = State.option.checks.HEADING_LONG.type || "warning";
           content = Lang.sprintf(
-            option.checks.HEADING_LONG.content || "HEADING_LONG",
+            State.option.checks.HEADING_LONG.content || "HEADING_LONG",
             maxHeadingLength,
             headingLength
           );
-          developer = option.checks.HEADING_LONG.developer || false;
-          dismissAll = option.checks.HEADING_LONG.dismissAll ? "HEADING_LONG" : false;
+          developer = State.option.checks.HEADING_LONG.developer || false;
+          dismissAll = State.option.checks.HEADING_LONG.dismissAll ? "HEADING_LONG" : false;
         }
       }
       if (content && type) {
-        results.push({
+        State.results.push({
           test,
           element: $el,
           type,
@@ -6867,7 +6468,7 @@ ${this.error.stack}
       prevLevel = level;
       prevHeadingText = headingText;
       if (!Elements.Found.OutlineIgnore.includes($el)) {
-        headingOutline.push({
+        State.headingOutline.push({
           element: $el,
           headingLevel: level,
           text: headingText,
@@ -6877,16 +6478,17 @@ ${this.error.stack}
         });
       }
     });
-    if (option.checks.HEADING_MISSING_ONE && Elements.Found.HeadingOne.length === 0) {
-      results.push({
+    if (State.option.checks.HEADING_MISSING_ONE && Elements.Found.HeadingOne.length === 0) {
+      State.results.push({
         test: "HEADING_MISSING_ONE",
-        type: option.checks.HEADING_MISSING_ONE.type || "warning",
-        content: Lang.sprintf(option.checks.HEADING_MISSING_ONE.content || "HEADING_MISSING_ONE"),
+        type: State.option.checks.HEADING_MISSING_ONE.type || "warning",
+        content: Lang.sprintf(
+          State.option.checks.HEADING_MISSING_ONE.content || "HEADING_MISSING_ONE"
+        ),
         dismiss: "HEADING_MISSING_ONE",
-        developer: option.checks.HEADING_MISSING_ONE.developer || false
+        developer: State.option.checks.HEADING_MISSING_ONE.developer || false
       });
     }
-    return { results, headingOutline };
   }
   const defaultFileTypes = [
     "pdf",
@@ -6921,14 +6523,16 @@ ${this.error.stack}
     if (stopWordsSet.has(stripped)) return stripped;
     return null;
   };
-  function checkLinkText(results, option) {
-    const customStopWords = option.linkStopWords ? option.linkStopWords.split(",").map((word) => word.toLowerCase().trim()) : [];
+  function checkLinkText() {
+    const customStopWords = State.option.linkStopWords ? State.option.linkStopWords.split(",").map((word) => word.toLowerCase().trim()) : [];
     const linkStopWords = /* @__PURE__ */ new Set([...Lang._("LINK_STOPWORDS"), ...customStopWords]);
-    const linkIgnoreStrings = new Set(option.linkIgnoreStrings.map((word) => word.toLowerCase()));
+    const linkIgnoreStrings = new Set(
+      State.option.linkIgnoreStrings.map((word) => word.toLowerCase())
+    );
     const clickRegex = generateRegexString(Lang._("CLICK"));
     const newWindowRegex = generateRegexString(Lang._("NEW_WINDOW_PHRASES"));
     const fileTypeRegex = generateRegexString(defaultFileTypes);
-    const ignorePattern = generateRegexString(option.linkIgnoreStrings);
+    const ignorePattern = generateRegexString(State.option.linkIgnoreStrings);
     const seen = {};
     Elements.Found.Links.forEach(($el) => {
       const href = standardizeHref($el);
@@ -6954,17 +6558,19 @@ ${this.error.stack}
       if (!$el.querySelector("img")) {
         if (ariaHidden) {
           if (!negativeTabindex) {
-            if (option.checks.HIDDEN_FOCUSABLE) {
-              results.push({
+            if (State.option.checks.HIDDEN_FOCUSABLE) {
+              State.results.push({
                 test: "HIDDEN_FOCUSABLE",
                 element: $el,
-                type: option.checks.HIDDEN_FOCUSABLE.type || "error",
-                content: Lang.sprintf(option.checks.HIDDEN_FOCUSABLE.content || "HIDDEN_FOCUSABLE"),
+                type: State.option.checks.HIDDEN_FOCUSABLE.type || "error",
+                content: Lang.sprintf(
+                  State.option.checks.HIDDEN_FOCUSABLE.content || "HIDDEN_FOCUSABLE"
+                ),
                 inline: true,
                 position: "afterend",
                 dismiss: prepareDismissal(`HIDDEN_FOCUSABLE ${strippedLinkText}`),
-                dismissAll: option.checks.HIDDEN_FOCUSABLE.dismissAll ? "LINK_HIDDEN_FOCUSABLE" : false,
-                developer: option.checks.HIDDEN_FOCUSABLE.developer || true
+                dismissAll: State.option.checks.HIDDEN_FOCUSABLE.dismissAll ? "LINK_HIDDEN_FOCUSABLE" : false,
+                developer: State.option.checks.HIDDEN_FOCUSABLE.developer || true
               });
             }
           }
@@ -6980,62 +6586,66 @@ ${this.error.stack}
             $el,
             accName,
             Constants.Exclusions.LinkSpan,
-            option.linkIgnoreStrings
+            State.option.linkIgnoreStrings
           );
-          if (option.checks.LINK_STOPWORD_ARIA && stopword !== null) {
-            results.push({
+          if (State.option.checks.LINK_STOPWORD_ARIA && stopword !== null) {
+            State.results.push({
               test: "LINK_STOPWORD_ARIA",
               element: $el,
-              type: option.checks.LINK_STOPWORD_ARIA.type || "warning",
-              content: option.checks.LINK_STOPWORD_ARIA.content ? Lang.sprintf(option.checks.LINK_STOPWORD_ARIA.content, stopword, sanitizedText) : Lang.sprintf("LINK_STOPWORD_ARIA", stopword, sanitizedText) + Lang.sprintf("LINK_TIP"),
+              type: State.option.checks.LINK_STOPWORD_ARIA.type || "warning",
+              content: State.option.checks.LINK_STOPWORD_ARIA.content ? Lang.sprintf(
+                State.option.checks.LINK_STOPWORD_ARIA.content,
+                stopword,
+                sanitizedText
+              ) : Lang.sprintf("LINK_STOPWORD_ARIA", stopword, sanitizedText) + Lang.sprintf("LINK_TIP"),
               inline: true,
               dismiss: prepareDismissal(`LINK_STOPWORD_ARIA ${strippedLinkText}`),
-              dismissAll: option.checks.LINK_STOPWORD_ARIA.dismissAll ? " LINK_STOPWORD_ARIA" : false,
-              developer: option.checks.LINK_STOPWORD_ARIA.developer || true
+              dismissAll: State.option.checks.LINK_STOPWORD_ARIA.dismissAll ? " LINK_STOPWORD_ARIA" : false,
+              developer: State.option.checks.LINK_STOPWORD_ARIA.developer || true
             });
-          } else if (option.checks.LABEL_IN_NAME && visibleTextInName && textContent.length !== 0) {
-            results.push({
+          } else if (State.option.checks.LABEL_IN_NAME && visibleTextInName && textContent.length !== 0) {
+            State.results.push({
               test: "LABEL_IN_NAME",
               element: $el,
-              type: option.checks.LABEL_IN_NAME.type || "warning",
+              type: State.option.checks.LABEL_IN_NAME.type || "warning",
               content: Lang.sprintf(
-                option.checks.LABEL_IN_NAME.content || "LABEL_IN_NAME",
+                State.option.checks.LABEL_IN_NAME.content || "LABEL_IN_NAME",
                 sanitizedText
               ),
               inline: true,
               position: "afterend",
               dismiss: prepareDismissal(`LABEL_IN_NAME ${strippedLinkText}`),
-              dismissAll: option.checks.LABEL_IN_NAME.dismissAll ? "BTN_LABEL_IN_NAME" : false,
-              developer: option.checks.LABEL_IN_NAME.developer || true
+              dismissAll: State.option.checks.LABEL_IN_NAME.dismissAll ? "BTN_LABEL_IN_NAME" : false,
+              developer: State.option.checks.LABEL_IN_NAME.developer || true
             });
-          } else if (option.checks.LINK_LABEL) {
-            results.push({
+          } else if (State.option.checks.LINK_LABEL) {
+            State.results.push({
               test: "LINK_LABEL",
               element: $el,
-              type: option.checks.LINK_LABEL.type || "good",
-              content: option.checks.LINK_LABEL.content ? Lang.sprintf(option.checks.LINK_LABEL.content, sanitizedText) : `${Lang.sprintf("ACC_NAME", sanitizedText)} ${Lang.sprintf("ACC_NAME_TIP")}`,
+              type: State.option.checks.LINK_LABEL.type || "good",
+              content: State.option.checks.LINK_LABEL.content ? Lang.sprintf(State.option.checks.LINK_LABEL.content, sanitizedText) : `${Lang.sprintf("ACC_NAME", sanitizedText)} ${Lang.sprintf("ACC_NAME_TIP")}`,
               inline: true,
               position: "afterend",
               dismiss: prepareDismissal(`LINK_LABEL ${strippedLinkText}`),
-              dismissAll: option.checks.LINK_LABEL.dismissAll ? "LINK_LABEL" : false,
-              developer: option.checks.LINK_LABEL.developer || true
+              dismissAll: State.option.checks.LINK_LABEL.dismissAll ? "LINK_LABEL" : false,
+              developer: State.option.checks.LINK_LABEL.developer || true
             });
           }
         }
         let oneStop;
         const addStopWordResult = (element, stopword) => {
-          if (option.checks.LINK_STOPWORD && !oneStop) {
+          if (State.option.checks.LINK_STOPWORD && !oneStop) {
             oneStop = true;
-            results.push({
+            State.results.push({
               test: "LINK_STOPWORD",
               element,
-              type: option.checks.LINK_STOPWORD.type || "error",
-              content: option.checks.LINK_STOPWORD.content ? Lang.sprintf(option.checks.LINK_STOPWORD.content, stopword) : Lang.sprintf("LINK_STOPWORD", stopword) + Lang.sprintf("LINK_TIP"),
+              type: State.option.checks.LINK_STOPWORD.type || "error",
+              content: State.option.checks.LINK_STOPWORD.content ? Lang.sprintf(State.option.checks.LINK_STOPWORD.content, stopword) : Lang.sprintf("LINK_STOPWORD", stopword) + Lang.sprintf("LINK_TIP"),
               inline: true,
               position: "afterend",
               dismiss: prepareDismissal(`LINK_STOPWORD ${strippedLinkText}`),
-              dismissAll: option.checks.LINK_STOPWORD.dismissAll ? "LINK_STOPWORD" : false,
-              developer: option.checks.LINK_STOPWORD.developer || false
+              dismissAll: State.option.checks.LINK_STOPWORD.dismissAll ? "LINK_STOPWORD" : false,
+              developer: State.option.checks.LINK_STOPWORD.developer || false
             });
           }
         };
@@ -7048,25 +6658,25 @@ ${this.error.stack}
         }
         if (linkText.length === 0) {
           if (hasAriaLabelledby) {
-            if (option.checks.LINK_EMPTY_LABELLEDBY) {
-              results.push({
+            if (State.option.checks.LINK_EMPTY_LABELLEDBY) {
+              State.results.push({
                 test: "LINK_EMPTY_LABELLEDBY",
                 element: $el,
-                type: option.checks.LINK_EMPTY_LABELLEDBY.type || "error",
+                type: State.option.checks.LINK_EMPTY_LABELLEDBY.type || "error",
                 content: Lang.sprintf(
-                  option.checks.LINK_EMPTY_LABELLEDBY.content || "LINK_EMPTY_LABELLEDBY"
+                  State.option.checks.LINK_EMPTY_LABELLEDBY.content || "LINK_EMPTY_LABELLEDBY"
                 ),
                 inline: true,
                 position: "afterend",
                 dismiss: prepareDismissal(`LINK_EMPTY_LABELLEDBY ${href}`),
-                dismissAll: option.checks.LINK_EMPTY_LABELLEDBY.dismissAll ? "LINK_EMPTY_LABELLEDBY" : false,
-                developer: option.checks.LINK_EMPTY_LABELLEDBY.developer || true
+                dismissAll: State.option.checks.LINK_EMPTY_LABELLEDBY.dismissAll ? "LINK_EMPTY_LABELLEDBY" : false,
+                developer: State.option.checks.LINK_EMPTY_LABELLEDBY.developer || true
               });
             }
           } else if ($el.children.length) {
             let hasStopWordWarning = false;
-            if (option.linkIgnoreSpan) {
-              const spanEl = $el.querySelector(option.linkIgnoreSpan);
+            if (State.option.linkIgnoreSpan) {
+              const spanEl = $el.querySelector(State.option.linkIgnoreSpan);
               if (spanEl) {
                 const spanText = stripAllSpecialCharacters(spanEl.textContent).trim().toLowerCase();
                 if (spanText === textContent) {
@@ -7075,32 +6685,32 @@ ${this.error.stack}
                 }
               }
             }
-            if (!hasStopWordWarning && option.checks.LINK_EMPTY_NO_LABEL) {
-              results.push({
+            if (!hasStopWordWarning && State.option.checks.LINK_EMPTY_NO_LABEL) {
+              State.results.push({
                 test: "LINK_EMPTY_NO_LABEL",
                 element: $el,
-                type: option.checks.LINK_EMPTY_NO_LABEL.type || "error",
+                type: State.option.checks.LINK_EMPTY_NO_LABEL.type || "error",
                 content: Lang.sprintf(
-                  option.checks.LINK_EMPTY_NO_LABEL.content || "LINK_EMPTY_NO_LABEL"
+                  State.option.checks.LINK_EMPTY_NO_LABEL.content || "LINK_EMPTY_NO_LABEL"
                 ),
                 inline: true,
                 position: "afterend",
                 dismiss: prepareDismissal(`LINK_EMPTY_NO_LABEL ${href}`),
-                dismissAll: option.checks.LINK_EMPTY_NO_LABEL.dismissAll ? "LINK_EMPTY_NO_LABEL" : false,
-                developer: option.checks.LINK_EMPTY_NO_LABEL.developer || false
+                dismissAll: State.option.checks.LINK_EMPTY_NO_LABEL.dismissAll ? "LINK_EMPTY_NO_LABEL" : false,
+                developer: State.option.checks.LINK_EMPTY_NO_LABEL.developer || false
               });
             }
-          } else if (!isLinkIgnoreStrings && option.checks.LINK_EMPTY) {
-            results.push({
+          } else if (!isLinkIgnoreStrings && State.option.checks.LINK_EMPTY) {
+            State.results.push({
               test: "LINK_EMPTY",
               element: $el,
-              type: option.checks.LINK_EMPTY.type || "error",
-              content: Lang.sprintf(option.checks.LINK_EMPTY.content || "LINK_EMPTY"),
+              type: State.option.checks.LINK_EMPTY.type || "error",
+              content: Lang.sprintf(State.option.checks.LINK_EMPTY.content || "LINK_EMPTY"),
               inline: true,
               position: "afterend",
               dismiss: prepareDismissal(`LINK_EMPTY ${href}`),
-              dismissAll: option.checks.LINK_EMPTY.dismissAll ? "LINK_EMPTY" : false,
-              developer: option.checks.LINK_EMPTY.developer || false
+              dismissAll: State.option.checks.LINK_EMPTY.dismissAll ? "LINK_EMPTY" : false,
+              developer: State.option.checks.LINK_EMPTY.developer || false
             });
           }
           return;
@@ -7117,91 +6727,91 @@ ${this.error.stack}
           addStopWordResult($el, isStopWord);
         } else if (isCitation) {
           if (linkText.length > 8) {
-            if (option.checks.LINK_DOI) {
-              results.push({
+            if (State.option.checks.LINK_DOI) {
+              State.results.push({
                 test: "LINK_DOI",
                 element: $el,
-                type: option.checks.LINK_DOI.type || "warning",
-                content: Lang.sprintf(option.checks.LINK_DOI.content || "LINK_DOI"),
+                type: State.option.checks.LINK_DOI.type || "warning",
+                content: Lang.sprintf(State.option.checks.LINK_DOI.content || "LINK_DOI"),
                 inline: true,
                 dismiss: prepareDismissal(`LINK_DOI ${strippedLinkText}`),
-                dismissAll: option.checks.LINK_DOI.dismissAll ? "LINK_DOI" : false,
-                developer: option.checks.LINK_DOI.developer || false
+                dismissAll: State.option.checks.LINK_DOI.dismissAll ? "LINK_DOI" : false,
+                developer: State.option.checks.LINK_DOI.developer || false
               });
             }
           }
         } else if (isUrlFragment) {
-          if (!hasAria && linkText.length > (option.checks.LINK_URL.maxLength || 40)) {
-            if (option.checks.LINK_URL) {
-              results.push({
+          if (!hasAria && linkText.length > (State.option.checks.LINK_URL.maxLength || 40)) {
+            if (State.option.checks.LINK_URL) {
+              State.results.push({
                 test: "LINK_URL",
                 element: $el,
-                type: option.checks.LINK_URL.type || "warning",
-                content: option.checks.LINK_URL.content ? Lang.sprintf(option.checks.LINK_URL.content) : Lang.sprintf("LINK_URL") + Lang.sprintf("LINK_TIP"),
+                type: State.option.checks.LINK_URL.type || "warning",
+                content: State.option.checks.LINK_URL.content ? Lang.sprintf(State.option.checks.LINK_URL.content) : Lang.sprintf("LINK_URL") + Lang.sprintf("LINK_TIP"),
                 inline: true,
                 dismiss: prepareDismissal(`LINK_URL ${strippedLinkText}`),
-                dismissAll: option.checks.LINK_URL.dismissAll ? "LINK_URL" : false,
-                developer: option.checks.LINK_URL.developer || false
+                dismissAll: State.option.checks.LINK_URL.dismissAll ? "LINK_URL" : false,
+                developer: State.option.checks.LINK_URL.developer || false
               });
             }
           }
         } else if (matchedSymbol) {
-          if (option.checks.LINK_SYMBOLS) {
-            results.push({
+          if (State.option.checks.LINK_SYMBOLS) {
+            State.results.push({
               test: "LINK_SYMBOLS",
               element: $el,
-              type: option.checks.LINK_SYMBOLS.type || "warning",
+              type: State.option.checks.LINK_SYMBOLS.type || "warning",
               content: Lang.sprintf(
-                option.checks.LINK_SYMBOLS.content || "LINK_SYMBOLS",
+                State.option.checks.LINK_SYMBOLS.content || "LINK_SYMBOLS",
                 matchedSymbol
               ),
               inline: true,
               dismiss: prepareDismissal(`LINK_SYMBOLS ${strippedLinkText}`),
-              dismissAll: option.checks.LINK_SYMBOLS.dismissAll ? "LINK_SYMBOLS" : false,
-              developer: option.checks.LINK_SYMBOLS.developer || false
+              dismissAll: State.option.checks.LINK_SYMBOLS.dismissAll ? "LINK_SYMBOLS" : false,
+              developer: State.option.checks.LINK_SYMBOLS.developer || false
             });
           }
         } else if (isSingleSpecialChar && !titleAttr) {
-          if (option.checks.LINK_EMPTY) {
-            results.push({
+          if (State.option.checks.LINK_EMPTY) {
+            State.results.push({
               test: "LINK_EMPTY",
               element: $el,
-              type: option.checks.LINK_EMPTY.type || "error",
-              content: Lang.sprintf(option.checks.LINK_EMPTY.content || "LINK_EMPTY"),
+              type: State.option.checks.LINK_EMPTY.type || "error",
+              content: Lang.sprintf(State.option.checks.LINK_EMPTY.content || "LINK_EMPTY"),
               inline: true,
               position: "afterend",
               dismiss: prepareDismissal(`LINK_EMPTY ${href}`),
-              dismissAll: option.checks.LINK_EMPTY.dismissAll ? "LINK_EMPTY" : false,
-              developer: option.checks.LINK_EMPTY.developer || false
+              dismissAll: State.option.checks.LINK_EMPTY.dismissAll ? "LINK_EMPTY" : false,
+              developer: State.option.checks.LINK_EMPTY.developer || false
             });
           }
           return;
         }
         if (hasClickWord) {
-          if (option.checks.LINK_CLICK_HERE) {
-            results.push({
+          if (State.option.checks.LINK_CLICK_HERE) {
+            State.results.push({
               test: "LINK_CLICK_HERE",
               element: $el,
-              type: option.checks.LINK_CLICK_HERE.type || "warning",
-              content: option.checks.LINK_CLICK_HERE.content ? Lang.sprintf(option.checks.LINK_CLICK_HERE.content) : Lang.sprintf("LINK_CLICK_HERE") + Lang.sprintf("LINK_TIP"),
+              type: State.option.checks.LINK_CLICK_HERE.type || "warning",
+              content: State.option.checks.LINK_CLICK_HERE.content ? Lang.sprintf(State.option.checks.LINK_CLICK_HERE.content) : Lang.sprintf("LINK_CLICK_HERE") + Lang.sprintf("LINK_TIP"),
               inline: true,
               dismiss: prepareDismissal(`LINK_CLICK_HERE ${strippedLinkText}`),
-              dismissAll: option.checks.LINK_CLICK_HERE.dismissAll ? "LINK_CLICK_HERE" : false,
-              developer: option.checks.LINK_CLICK_HERE.developer || false
+              dismissAll: State.option.checks.LINK_CLICK_HERE.dismissAll ? "LINK_CLICK_HERE" : false,
+              developer: State.option.checks.LINK_CLICK_HERE.developer || false
             });
           }
         }
         if (textContent.length !== 0 && titleAttr?.toLowerCase() === linkText.toLowerCase()) {
-          if (option.checks.DUPLICATE_TITLE) {
-            results.push({
+          if (State.option.checks.DUPLICATE_TITLE) {
+            State.results.push({
               test: "DUPLICATE_TITLE",
               element: $el,
-              type: option.checks.DUPLICATE_TITLE.type || "warning",
-              content: Lang.sprintf(option.checks.DUPLICATE_TITLE.content || "DUPLICATE_TITLE"),
+              type: State.option.checks.DUPLICATE_TITLE.type || "warning",
+              content: Lang.sprintf(State.option.checks.DUPLICATE_TITLE.content || "DUPLICATE_TITLE"),
               inline: true,
               dismiss: prepareDismissal(`DUPLICATE_TITLE ${strippedLinkText}`),
-              dismissAll: option.checks.DUPLICATE_TITLE.dismissAll ? "DUPLICATE_TITLE" : false,
-              developer: option.checks.DUPLICATE_TITLE.developer || false
+              dismissAll: State.option.checks.DUPLICATE_TITLE.dismissAll ? "DUPLICATE_TITLE" : false,
+              developer: State.option.checks.DUPLICATE_TITLE.developer || false
             });
           }
         }
@@ -7210,17 +6820,17 @@ ${this.error.stack}
         if (seen[strippedLinkText] && !seen[href]) {
           const ignored = $el.ariaHidden === "true" && $el.getAttribute("tabindex") === "-1";
           const hasAttributes = $el.hasAttribute("role") || $el.hasAttribute("disabled");
-          if (option.checks.LINK_IDENTICAL_NAME && !hasAttributes && !ignored) {
+          if (State.option.checks.LINK_IDENTICAL_NAME && !hasAttributes && !ignored) {
             const sanitizedText = sanitizeHTML(linkText);
-            results.push({
+            State.results.push({
               test: "LINK_IDENTICAL_NAME",
               element: $el,
-              type: option.checks.LINK_IDENTICAL_NAME.type || "warning",
-              content: option.checks.LINK_IDENTICAL_NAME.content ? Lang.sprintf(option.checks.LINK_IDENTICAL_NAME.content, sanitizedText) : `${Lang.sprintf("LINK_IDENTICAL_NAME", sanitizedText)} ${Lang.sprintf("ACC_NAME_TIP")}`,
+              type: State.option.checks.LINK_IDENTICAL_NAME.type || "warning",
+              content: State.option.checks.LINK_IDENTICAL_NAME.content ? Lang.sprintf(State.option.checks.LINK_IDENTICAL_NAME.content, sanitizedText) : `${Lang.sprintf("LINK_IDENTICAL_NAME", sanitizedText)} ${Lang.sprintf("ACC_NAME_TIP")}`,
               inline: true,
               dismiss: prepareDismissal(`LINK_IDENTICAL_NAME ${strippedLinkText}`),
-              dismissAll: option.checks.LINK_IDENTICAL_NAME.dismissAll ? "LINK_IDENTICAL_NAME" : false,
-              developer: option.checks.LINK_IDENTICAL_NAME.developer || false
+              dismissAll: State.option.checks.LINK_IDENTICAL_NAME.dismissAll ? "LINK_IDENTICAL_NAME" : false,
+              developer: State.option.checks.LINK_IDENTICAL_NAME.developer || false
             });
           }
         } else {
@@ -7228,41 +6838,41 @@ ${this.error.stack}
           seen[href] = true;
         }
         if (targetBlank && !fileTypeMatch && !containsNewWindowPhrases) {
-          if (option.checks.LINK_NEW_TAB) {
-            results.push({
+          if (State.option.checks.LINK_NEW_TAB) {
+            State.results.push({
               test: "LINK_NEW_TAB",
               element: $el,
-              type: option.checks.LINK_NEW_TAB.type || "warning",
-              content: Lang.sprintf(option.checks.LINK_NEW_TAB.content || "LINK_NEW_TAB"),
+              type: State.option.checks.LINK_NEW_TAB.type || "warning",
+              content: Lang.sprintf(State.option.checks.LINK_NEW_TAB.content || "LINK_NEW_TAB"),
               inline: true,
               dismiss: prepareDismissal(`LINK_NEW_TAB ${strippedLinkText}`),
-              dismissAll: option.checks.LINK_NEW_TAB.dismissAll ? "LINK_NEW_TAB" : false,
-              developer: option.checks.LINK_NEW_TAB.developer || false
+              dismissAll: State.option.checks.LINK_NEW_TAB.dismissAll ? "LINK_NEW_TAB" : false,
+              developer: State.option.checks.LINK_NEW_TAB.developer || false
             });
           }
         }
         if (fileTypeMatch && !containsFileTypePhrases) {
-          if (option.checks.LINK_FILE_EXT) {
-            results.push({
+          if (State.option.checks.LINK_FILE_EXT) {
+            State.results.push({
               test: "LINK_FILE_EXT",
               element: $el,
-              type: option.checks.LINK_FILE_EXT.type || "warning",
-              content: Lang.sprintf(option.checks.LINK_FILE_EXT.content || "LINK_FILE_EXT"),
+              type: State.option.checks.LINK_FILE_EXT.type || "warning",
+              content: Lang.sprintf(State.option.checks.LINK_FILE_EXT.content || "LINK_FILE_EXT"),
               inline: true,
               dismiss: prepareDismissal(`LINK_FILE_EXT ${strippedLinkText}`),
-              dismissAll: option.checks.LINK_FILE_EXT.dismissAll ? "LINK_FILE_EXT" : false,
-              developer: option.checks.LINK_FILE_EXT.developer || false
+              dismissAll: State.option.checks.LINK_FILE_EXT.dismissAll ? "LINK_FILE_EXT" : false,
+              developer: State.option.checks.LINK_FILE_EXT.developer || false
             });
           }
         }
       }
     });
-    return results;
   }
-  function checkContrast(results, option) {
+  function checkContrast() {
+    if (!State.option.contrastPlugin) return;
     const contrastResults = [];
     const elements = Elements.Found.Contrast;
-    const contrastAlgorithm = option.contrastAlgorithm;
+    const contrastAlgorithm = State.option.contrastAlgorithm;
     const shadowDetection = Constants.Global.shadowDetection;
     const inputTags = /* @__PURE__ */ new Set(["SELECT", "INPUT", "TEXTAREA"]);
     for (let i = 0; i < elements.length; i++) {
@@ -7383,17 +6993,17 @@ ${this.error.stack}
             contrastValue = calculateContrast(
               resolvedFill,
               background,
-              option.contrastAlgorithm
+              State.option.contrastAlgorithm
             );
-            fillPasses = option.contrastAlgorithm === "APCA" ? contrastValue.ratio >= 45 : contrastValue.ratio >= 3;
+            fillPasses = State.option.contrastAlgorithm === "APCA" ? contrastValue.ratio >= 45 : contrastValue.ratio >= 3;
           }
           if (hasStroke) {
             contrastValue = calculateContrast(
               resolvedStroke,
               background,
-              option.contrastAlgorithm
+              State.option.contrastAlgorithm
             );
-            strokePasses = option.contrastAlgorithm === "APCA" ? contrastValue.ratio >= 45 : contrastValue.ratio >= 3;
+            strokePasses = State.option.contrastAlgorithm === "APCA" ? contrastValue.ratio >= 45 : contrastValue.ratio >= 3;
           }
           const failsBoth = hasFill && hasStroke && !fillPasses && !strokePasses;
           const failsFill = hasFill && !hasStroke && !fillPasses;
@@ -7407,7 +7017,7 @@ ${this.error.stack}
             }
             contrastResults.push({
               $el,
-              ratio: ratioToDisplay(contrastValue.ratio, option.contrastAlgorithm),
+              ratio: ratioToDisplay(contrastValue.ratio, State.option.contrastAlgorithm),
               color: contrastValue.blendedColor,
               type: "svg-error",
               isLargeText: true,
@@ -7452,7 +7062,7 @@ ${this.error.stack}
             pSize,
             pWeight,
             pOpacity,
-            option.contrastAlgorithm
+            State.option.contrastAlgorithm
           );
           if (result) {
             result.type = "placeholder";
@@ -7465,7 +7075,7 @@ ${this.error.stack}
       const backgroundImages = warnings.filter((warning) => warning.type === "background-image");
       const otherWarnings = warnings.filter((warning) => warning.type !== "background-image");
       let processedBackgroundWarnings;
-      if (option.contrastAlgorithm === "APCA") {
+      if (State.option.contrastAlgorithm === "APCA") {
         processedBackgroundWarnings = backgroundImages.map((warning) => ({ ...warning }));
       } else {
         const groupedWarnings = backgroundImages.reduce((groups, warning) => {
@@ -7491,8 +7101,8 @@ ${this.error.stack}
     processedResults.forEach((item) => {
       const { $el, ratio } = item;
       const updatedItem = item;
-      const element = $el.tagName === "OPTION" ? $el.closest("datalist, select, optgroup") : $el;
-      const nodeText = fnIgnore(element, ["option:not(option:first-child)"]);
+      const element = $el.tagName === "State.option" ? $el.closest("datalist, select, optgroup") : $el;
+      const nodeText = fnIgnore(element, ["State.option:not(State.option:first-child)"]);
       const text = getText(nodeText);
       const truncatedText = truncateString(text, 80);
       const sanitizedText = sanitizeHTML(truncatedText);
@@ -7506,144 +7116,143 @@ ${this.error.stack}
       }
       updatedItem.sanitizedText = previewText;
       let ratioTip = "";
-      if (option.contrastAlgorithm === "AA" || option.contrastAlgorithm === "AAA") {
-        const normal = option.contrastAlgorithm === "AAA" ? "7:1" : "4.5:1";
-        const large = option.contrastAlgorithm === "AAA" ? "4.5:1" : "3:1";
+      if (State.option.contrastAlgorithm === "AA" || State.option.contrastAlgorithm === "AAA") {
+        const normal = State.option.contrastAlgorithm === "AAA" ? "7:1" : "4.5:1";
+        const large = State.option.contrastAlgorithm === "AAA" ? "4.5:1" : "3:1";
         const ratioToDisplay2 = item.isLargeText ? large : normal;
         const ratioRequirement = item.isLargeText ? "CONTRAST_LARGE" : "CONTRAST_NORMAL";
         ratioTip = ` ${Lang.sprintf(ratioRequirement, ratioToDisplay2)}`;
       }
-      const graphicsTip = option.contrastAlgorithm === "APCA" ? "" : ` ${Lang.sprintf("CONTRAST_TIP_GRAPHIC")}`;
+      const graphicsTip = State.option.contrastAlgorithm === "APCA" ? "" : ` ${Lang.sprintf("CONTRAST_TIP_GRAPHIC")}`;
       switch (item.type) {
         case "text":
-          if (option.checks.CONTRAST_ERROR) {
-            results.push({
+          if (State.option.checks.CONTRAST_ERROR) {
+            State.results.push({
               test: "CONTRAST_ERROR",
               element: $el,
-              type: option.checks.CONTRAST_ERROR.type || "error",
-              content: option.checks.CONTRAST_ERROR.content ? Lang.sprintf(option.checks.CONTRAST_ERROR.content) : Lang.sprintf("CONTRAST_ERROR") + ratioTip,
+              type: State.option.checks.CONTRAST_ERROR.type || "error",
+              content: State.option.checks.CONTRAST_ERROR.content ? Lang.sprintf(State.option.checks.CONTRAST_ERROR.content) : Lang.sprintf("CONTRAST_ERROR") + ratioTip,
               dismiss: prepareDismissal(`CONTRAST_ERROR ${sanitizedText}`),
-              dismissAll: option.checks.CONTRAST_ERROR.dismissAll ? "CONTRAST_ERROR" : false,
-              developer: option.checks.CONTRAST_ERROR.developer || false,
+              dismissAll: State.option.checks.CONTRAST_ERROR.dismissAll ? "CONTRAST_ERROR" : false,
+              developer: State.option.checks.CONTRAST_ERROR.developer || false,
               contrastDetails: updatedItem
             });
           }
           break;
         case "input":
-          if (option.checks.CONTRAST_INPUT) {
+          if (State.option.checks.CONTRAST_INPUT) {
             const sanitizedInput = sanitizeHTMLBlock($el.outerHTML);
-            results.push({
+            State.results.push({
               test: "CONTRAST_INPUT",
               element,
-              type: option.checks.CONTRAST_INPUT.type || "error",
-              content: option.checks.CONTRAST_INPUT.content ? Lang.sprintf(option.checks.CONTRAST_INPUT.content) : Lang.sprintf("CONTRAST_INPUT", ratio) + ratioTip,
+              type: State.option.checks.CONTRAST_INPUT.type || "error",
+              content: State.option.checks.CONTRAST_INPUT.content ? Lang.sprintf(State.option.checks.CONTRAST_INPUT.content) : Lang.sprintf("CONTRAST_INPUT", ratio) + ratioTip,
               dismiss: prepareDismissal(`CONTRAST_INPUT ${sanitizedInput}`),
-              dismissAll: option.checks.CONTRAST_INPUT.dismissAll ? "CONTRAST_INPUT" : false,
-              developer: option.checks.CONTRAST_INPUT.developer || true,
+              dismissAll: State.option.checks.CONTRAST_INPUT.dismissAll ? "CONTRAST_INPUT" : false,
+              developer: State.option.checks.CONTRAST_INPUT.developer || true,
               contrastDetails: updatedItem
             });
           }
           break;
         case "placeholder":
-          if (option.checks.CONTRAST_PLACEHOLDER) {
+          if (State.option.checks.CONTRAST_PLACEHOLDER) {
             const sanitizedPlaceholder = sanitizeHTMLBlock($el.outerHTML);
-            results.push({
+            State.results.push({
               test: "CONTRAST_PLACEHOLDER",
               element: $el,
-              type: option.checks.CONTRAST_PLACEHOLDER.type || "error",
-              content: option.checks.CONTRAST_PLACEHOLDER.content ? Lang.sprintf(option.checks.CONTRAST_PLACEHOLDER.content) : Lang.sprintf("CONTRAST_PLACEHOLDER") + ratioTip,
+              type: State.option.checks.CONTRAST_PLACEHOLDER.type || "error",
+              content: State.option.checks.CONTRAST_PLACEHOLDER.content ? Lang.sprintf(State.option.checks.CONTRAST_PLACEHOLDER.content) : Lang.sprintf("CONTRAST_PLACEHOLDER") + ratioTip,
               position: "afterend",
               dismiss: prepareDismissal(`CONTRAST_PLACEHOLDER ${sanitizedPlaceholder}`),
-              dismissAll: option.checks.CONTRAST_PLACEHOLDER.dismissAll ? "CONTRAST_PLACEHOLDER" : false,
-              developer: option.checks.CONTRAST_PLACEHOLDER.developer || true,
+              dismissAll: State.option.checks.CONTRAST_PLACEHOLDER.dismissAll ? "CONTRAST_PLACEHOLDER" : false,
+              developer: State.option.checks.CONTRAST_PLACEHOLDER.developer || true,
               contrastDetails: updatedItem
             });
           }
           break;
         case "placeholder-unsupported":
-          if (option.checks.CONTRAST_PLACEHOLDER_UNSUPPORTED) {
+          if (State.option.checks.CONTRAST_PLACEHOLDER_UNSUPPORTED) {
             const sanitizedPlaceholder = sanitizeHTMLBlock($el.outerHTML);
-            results.push({
+            State.results.push({
               test: "CONTRAST_PLACEHOLDER_UNSUPPORTED",
               element: $el,
-              type: option.checks.CONTRAST_PLACEHOLDER_UNSUPPORTED.type || "warning",
-              content: option.checks.CONTRAST_PLACEHOLDER_UNSUPPORTED.content ? Lang.sprintf(option.checks.CONTRAST_PLACEHOLDER_UNSUPPORTED.content) : Lang.sprintf("CONTRAST_PLACEHOLDER_UNSUPPORTED") + ratioTip,
+              type: State.option.checks.CONTRAST_PLACEHOLDER_UNSUPPORTED.type || "warning",
+              content: State.option.checks.CONTRAST_PLACEHOLDER_UNSUPPORTED.content ? Lang.sprintf(State.option.checks.CONTRAST_PLACEHOLDER_UNSUPPORTED.content) : Lang.sprintf("CONTRAST_PLACEHOLDER_UNSUPPORTED") + ratioTip,
               position: "afterend",
               dismiss: prepareDismissal(
                 `CONTRAST_PLACEHOLDER_UNSUPPORTED ${sanitizedPlaceholder}`
               ),
-              dismissAll: option.checks.CONTRAST_PLACEHOLDER_UNSUPPORTED.dismissAll ? "CONTRAST_PLACEHOLDER_UNSUPPORTED" : false,
-              developer: option.checks.CONTRAST_PLACEHOLDER_UNSUPPORTED.developer || true,
+              dismissAll: State.option.checks.CONTRAST_PLACEHOLDER_UNSUPPORTED.dismissAll ? "CONTRAST_PLACEHOLDER_UNSUPPORTED" : false,
+              developer: State.option.checks.CONTRAST_PLACEHOLDER_UNSUPPORTED.developer || true,
               contrastDetails: updatedItem
             });
           }
           break;
         case "svg-error":
-          if (option.checks.CONTRAST_ERROR_GRAPHIC) {
+          if (State.option.checks.CONTRAST_ERROR_GRAPHIC) {
             const sanitizedSVG = sanitizeHTMLBlock($el.outerHTML);
-            results.push({
+            State.results.push({
               test: "CONTRAST_ERROR_GRAPHIC",
               element: $el,
-              type: option.checks.CONTRAST_ERROR_GRAPHIC.type || "error",
-              content: option.checks.CONTRAST_ERROR_GRAPHIC.content ? Lang.sprintf(option.checks.CONTRAST_ERROR_GRAPHIC.content) : Lang.sprintf("CONTRAST_ERROR_GRAPHIC") + graphicsTip,
+              type: State.option.checks.CONTRAST_ERROR_GRAPHIC.type || "error",
+              content: State.option.checks.CONTRAST_ERROR_GRAPHIC.content ? Lang.sprintf(State.option.checks.CONTRAST_ERROR_GRAPHIC.content) : Lang.sprintf("CONTRAST_ERROR_GRAPHIC") + graphicsTip,
               dismiss: prepareDismissal(`CONTRAST_ERROR_GRAPHIC ${sanitizedSVG}`),
-              dismissAll: option.checks.CONTRAST_ERROR_GRAPHIC.dismissAll ? "CONTRAST_ERROR_GRAPHIC" : false,
-              developer: option.checks.CONTRAST_ERROR_GRAPHIC.developer || true,
+              dismissAll: State.option.checks.CONTRAST_ERROR_GRAPHIC.dismissAll ? "CONTRAST_ERROR_GRAPHIC" : false,
+              developer: State.option.checks.CONTRAST_ERROR_GRAPHIC.developer || true,
               contrastDetails: updatedItem,
               margin: "-25px"
             });
           }
           break;
         case "svg-warning":
-          if (option.checks.CONTRAST_WARNING_GRAPHIC) {
+          if (State.option.checks.CONTRAST_WARNING_GRAPHIC) {
             const sanitizedSVG = sanitizeHTMLBlock($el.outerHTML);
-            results.push({
+            State.results.push({
               test: "CONTRAST_WARNING_GRAPHIC",
               element: $el,
-              type: option.checks.CONTRAST_WARNING_GRAPHIC.type || "warning",
-              content: option.checks.CONTRAST_WARNING_GRAPHIC.content ? Lang.sprintf(option.checks.CONTRAST_WARNING_GRAPHIC.content) : Lang.sprintf("CONTRAST_WARNING_GRAPHIC") + graphicsTip,
+              type: State.option.checks.CONTRAST_WARNING_GRAPHIC.type || "warning",
+              content: State.option.checks.CONTRAST_WARNING_GRAPHIC.content ? Lang.sprintf(State.option.checks.CONTRAST_WARNING_GRAPHIC.content) : Lang.sprintf("CONTRAST_WARNING_GRAPHIC") + graphicsTip,
               dismiss: prepareDismissal(`CONTRAST_WARNING_GRAPHIC ${sanitizedSVG}`),
-              dismissAll: option.checks.CONTRAST_WARNING_GRAPHIC.dismissAll ? "CONTRAST_WARNING_GRAPHIC" : false,
-              developer: option.checks.CONTRAST_WARNING_GRAPHIC.developer || true,
+              dismissAll: State.option.checks.CONTRAST_WARNING_GRAPHIC.dismissAll ? "CONTRAST_WARNING_GRAPHIC" : false,
+              developer: State.option.checks.CONTRAST_WARNING_GRAPHIC.developer || true,
               contrastDetails: updatedItem,
               margin: "-25px"
             });
           }
           break;
         case "background-image":
-          if (option.checks.CONTRAST_WARNING) {
-            results.push({
+          if (State.option.checks.CONTRAST_WARNING) {
+            State.results.push({
               test: "CONTRAST_WARNING",
               element,
-              type: option.checks.CONTRAST_WARNING.type || "warning",
-              content: option.checks.CONTRAST_WARNING.content ? Lang.sprintf(option.checks.CONTRAST_WARNING.content) : Lang.sprintf("CONTRAST_WARNING") + ratioTip,
+              type: State.option.checks.CONTRAST_WARNING.type || "warning",
+              content: State.option.checks.CONTRAST_WARNING.content ? Lang.sprintf(State.option.checks.CONTRAST_WARNING.content) : Lang.sprintf("CONTRAST_WARNING") + ratioTip,
               dismiss: prepareDismissal(`CONTRAST_WARNING ${sanitizedText}`),
-              dismissAll: option.checks.CONTRAST_WARNING.dismissAll ? "CONTRAST_WARNING" : false,
-              developer: option.checks.CONTRAST_WARNING.developer || false,
+              dismissAll: State.option.checks.CONTRAST_WARNING.dismissAll ? "CONTRAST_WARNING" : false,
+              developer: State.option.checks.CONTRAST_WARNING.developer || false,
               contrastDetails: updatedItem
             });
           }
           break;
         case "unsupported":
-          if (option.checks.CONTRAST_UNSUPPORTED) {
-            results.push({
+          if (State.option.checks.CONTRAST_UNSUPPORTED) {
+            State.results.push({
               test: "CONTRAST_UNSUPPORTED",
               element,
-              type: option.checks.CONTRAST_UNSUPPORTED.type || "warning",
-              content: option.checks.CONTRAST_UNSUPPORTED.content ? Lang.sprintf(option.checks.CONTRAST_UNSUPPORTED.content) : Lang.sprintf("CONTRAST_WARNING") + ratioTip,
+              type: State.option.checks.CONTRAST_UNSUPPORTED.type || "warning",
+              content: State.option.checks.CONTRAST_UNSUPPORTED.content ? Lang.sprintf(State.option.checks.CONTRAST_UNSUPPORTED.content) : Lang.sprintf("CONTRAST_WARNING") + ratioTip,
               dismiss: prepareDismissal(`CONTRAST_UNSUPPORTED ${sanitizedText}`),
-              dismissAll: option.checks.CONTRAST_UNSUPPORTED.dismissAll ? "CONTRAST_UNSUPPORTED" : false,
-              developer: option.checks.CONTRAST_UNSUPPORTED.developer || false,
+              dismissAll: State.option.checks.CONTRAST_UNSUPPORTED.dismissAll ? "CONTRAST_UNSUPPORTED" : false,
+              developer: State.option.checks.CONTRAST_UNSUPPORTED.developer || false,
               contrastDetails: updatedItem
             });
           }
           break;
       }
     });
-    return results;
   }
-  function checkLabels(results, option) {
-    if (option.formLabelsPlugin) {
+  function checkLabels() {
+    if (State.option.formLabelsPlugin) {
       Elements.Found.Inputs.forEach(($el) => {
         const ariaHidden = $el.getAttribute("aria-hidden") === "true";
         const negativeTabindex = $el.getAttribute("tabindex") === "-1";
@@ -7662,70 +7271,74 @@ ${this.error.stack}
           return;
         }
         if (type === "image") {
-          if (option.checks.LABELS_MISSING_IMAGE_INPUT && (!alt || alt.trim() === "") && !hasAria && !hasTitle) {
-            results.push({
+          if (State.option.checks.LABELS_MISSING_IMAGE_INPUT && (!alt || alt.trim() === "") && !hasAria && !hasTitle) {
+            State.results.push({
               test: "LABELS_MISSING_IMAGE_INPUT",
               element: $el,
-              type: option.checks.LABELS_MISSING_IMAGE_INPUT.type || "error",
+              type: State.option.checks.LABELS_MISSING_IMAGE_INPUT.type || "error",
               content: Lang.sprintf(
-                option.checks.LABELS_MISSING_IMAGE_INPUT.content || "LABELS_MISSING_IMAGE_INPUT"
+                State.option.checks.LABELS_MISSING_IMAGE_INPUT.content || "LABELS_MISSING_IMAGE_INPUT"
               ),
               dismiss: prepareDismissal(`LABELS_MISSING_IMAGE_INPUT ${type + inputName}`),
-              dismissAll: option.checks.LABELS_MISSING_IMAGE_INPUT.dismissAll ? "LABELS_MISSING_IMAGE_INPUT" : false,
-              developer: option.checks.LABELS_MISSING_IMAGE_INPUT.developer || true
+              dismissAll: State.option.checks.LABELS_MISSING_IMAGE_INPUT.dismissAll ? "LABELS_MISSING_IMAGE_INPUT" : false,
+              developer: State.option.checks.LABELS_MISSING_IMAGE_INPUT.developer || true
             });
           }
           return;
         }
         if (type === "reset") {
-          if (option.checks.LABELS_INPUT_RESET) {
-            results.push({
+          if (State.option.checks.LABELS_INPUT_RESET) {
+            State.results.push({
               test: "LABELS_INPUT_RESET",
               element: $el,
-              type: option.checks.LABELS_INPUT_RESET.type || "warning",
-              content: Lang.sprintf(option.checks.LABELS_INPUT_RESET.content || "LABELS_INPUT_RESET"),
+              type: State.option.checks.LABELS_INPUT_RESET.type || "warning",
+              content: Lang.sprintf(
+                State.option.checks.LABELS_INPUT_RESET.content || "LABELS_INPUT_RESET"
+              ),
               dismiss: prepareDismissal(`LABELS_INPUT_RESET ${type + inputName}`),
-              dismissAll: option.checks.LABELS_INPUT_RESET.dismissAll ? "LABELS_INPUT_RESET" : false,
-              developer: option.checks.LABELS_INPUT_RESET.developer || false
+              dismissAll: State.option.checks.LABELS_INPUT_RESET.dismissAll ? "LABELS_INPUT_RESET" : false,
+              developer: State.option.checks.LABELS_INPUT_RESET.developer || false
             });
           }
           return;
         }
         if (hasAria || hasTitle || hasPlaceholder) {
-          if (hasPlaceholder && option.checks.LABELS_PLACEHOLDER) {
-            results.push({
+          if (hasPlaceholder && State.option.checks.LABELS_PLACEHOLDER) {
+            State.results.push({
               test: "LABELS_PLACEHOLDER",
               element: $el,
-              type: option.checks.LABELS_PLACEHOLDER.type || "warning",
-              content: Lang.sprintf(option.checks.LABELS_PLACEHOLDER.content || "LABELS_PLACEHOLDER"),
+              type: State.option.checks.LABELS_PLACEHOLDER.type || "warning",
+              content: Lang.sprintf(
+                State.option.checks.LABELS_PLACEHOLDER.content || "LABELS_PLACEHOLDER"
+              ),
               dismiss: prepareDismissal(`LABELS_PLACEHOLDER ${type + inputName}`),
-              dismissAll: option.checks.LABELS_PLACEHOLDER.dismissAll ? "LABELS_PLACEHOLDER" : false,
-              developer: option.checks.LABELS_PLACEHOLDER.developer || true
+              dismissAll: State.option.checks.LABELS_PLACEHOLDER.dismissAll ? "LABELS_PLACEHOLDER" : false,
+              developer: State.option.checks.LABELS_PLACEHOLDER.developer || true
             });
           } else if (inputName.length === 0) {
-            if (option.checks.LABELS_MISSING_LABEL) {
-              results.push({
+            if (State.option.checks.LABELS_MISSING_LABEL) {
+              State.results.push({
                 test: "LABELS_MISSING_LABEL",
                 element: $el,
-                type: option.checks.LABELS_MISSING_LABEL.type || "error",
+                type: State.option.checks.LABELS_MISSING_LABEL.type || "error",
                 content: Lang.sprintf(
-                  option.checks.LABELS_MISSING_LABEL.content || "LABELS_MISSING_LABEL"
+                  State.option.checks.LABELS_MISSING_LABEL.content || "LABELS_MISSING_LABEL"
                 ),
                 dismiss: prepareDismissal(`LABELS_MISSING_LABEL ${type + inputName}`),
-                dismissAll: option.checks.LABELS_MISSING_LABEL.dismissAll ? "LABELS_MISSING_LABEL" : false,
-                developer: option.checks.LABELS_MISSING_LABEL.developer || true
+                dismissAll: State.option.checks.LABELS_MISSING_LABEL.dismissAll ? "LABELS_MISSING_LABEL" : false,
+                developer: State.option.checks.LABELS_MISSING_LABEL.developer || true
               });
             }
-          } else if (option.checks.LABELS_ARIA_LABEL_INPUT) {
+          } else if (State.option.checks.LABELS_ARIA_LABEL_INPUT) {
             const sanitizedText = sanitizeHTML(inputName);
-            results.push({
+            State.results.push({
               test: "LABELS_ARIA_LABEL_INPUT",
               element: $el,
-              type: option.checks.LABELS_ARIA_LABEL_INPUT.type || "warning",
-              content: option.checks.LABELS_ARIA_LABEL_INPUT.content ? Lang.sprintf(option.checks.LABELS_ARIA_LABEL_INPUT.content, sanitizedText) : `${Lang.sprintf("LABELS_ARIA_LABEL_INPUT", sanitizedText)} ${Lang.sprintf("ACC_NAME_TIP")}`,
+              type: State.option.checks.LABELS_ARIA_LABEL_INPUT.type || "warning",
+              content: State.option.checks.LABELS_ARIA_LABEL_INPUT.content ? Lang.sprintf(State.option.checks.LABELS_ARIA_LABEL_INPUT.content, sanitizedText) : `${Lang.sprintf("LABELS_ARIA_LABEL_INPUT", sanitizedText)} ${Lang.sprintf("ACC_NAME_TIP")}`,
               dismiss: prepareDismissal(`LABELS_ARIA_LABEL_INPUT ${type + inputName}`),
-              dismissAll: option.checks.LABELS_ARIA_LABEL_INPUT.dismissAll ? "LABELS_ARIA_LABEL_INPUT" : false,
-              developer: option.checks.LABELS_ARIA_LABEL_INPUT.developer || true
+              dismissAll: State.option.checks.LABELS_ARIA_LABEL_INPUT.dismissAll ? "LABELS_ARIA_LABEL_INPUT" : false,
+              developer: State.option.checks.LABELS_ARIA_LABEL_INPUT.developer || true
             });
           }
           return;
@@ -7738,37 +7351,37 @@ ${this.error.stack}
         const id = $el.getAttribute("id");
         if (id) {
           if (!Elements.Found.Labels.some((label) => label.getAttribute("for") === id)) {
-            if (option.checks.LABELS_NO_FOR_ATTRIBUTE) {
-              results.push({
+            if (State.option.checks.LABELS_NO_FOR_ATTRIBUTE) {
+              State.results.push({
                 test: "LABELS_NO_FOR_ATTRIBUTE",
                 element: $el,
-                type: option.checks.LABELS_NO_FOR_ATTRIBUTE.type || "error",
+                type: State.option.checks.LABELS_NO_FOR_ATTRIBUTE.type || "error",
                 content: Lang.sprintf(
-                  option.checks.LABELS_NO_FOR_ATTRIBUTE.content || "LABELS_NO_FOR_ATTRIBUTE",
+                  State.option.checks.LABELS_NO_FOR_ATTRIBUTE.content || "LABELS_NO_FOR_ATTRIBUTE",
                   id
                 ),
                 dismiss: prepareDismissal(`LABELS_NO_FOR_ATTRIBUTE ${type + inputName}`),
-                dismissAll: option.checks.LABELS_NO_FOR_ATTRIBUTE.dismissAll ? "LABELS_NO_FOR_ATTRIBUTE" : false,
-                developer: option.checks.LABELS_NO_FOR_ATTRIBUTE.developer || true
+                dismissAll: State.option.checks.LABELS_NO_FOR_ATTRIBUTE.dismissAll ? "LABELS_NO_FOR_ATTRIBUTE" : false,
+                developer: State.option.checks.LABELS_NO_FOR_ATTRIBUTE.developer || true
               });
             }
           }
-        } else if (option.checks.LABELS_MISSING_LABEL) {
-          results.push({
+        } else if (State.option.checks.LABELS_MISSING_LABEL) {
+          State.results.push({
             test: "LABELS_MISSING_LABEL",
             element: $el,
-            type: option.checks.LABELS_MISSING_LABEL.type || "error",
+            type: State.option.checks.LABELS_MISSING_LABEL.type || "error",
             content: Lang.sprintf(
-              option.checks.LABELS_MISSING_LABEL.content || "LABELS_MISSING_LABEL"
+              State.option.checks.LABELS_MISSING_LABEL.content || "LABELS_MISSING_LABEL"
             ),
             dismiss: prepareDismissal(`LABELS_MISSING_LABEL ${type + inputName}`),
-            dismissAll: option.checks.LABELS_MISSING_LABEL.dismissAll ? "LABELS_MISSING_LABEL" : false,
-            developer: option.checks.LABELS_MISSING_LABEL.developer || true
+            dismissAll: State.option.checks.LABELS_MISSING_LABEL.dismissAll ? "LABELS_MISSING_LABEL" : false,
+            developer: State.option.checks.LABELS_MISSING_LABEL.developer || true
           });
         }
       });
     }
-    return results;
+    return State.results;
   }
   function computeReadability(textArray, lang) {
     const readabilityArray = [];
@@ -7904,7 +7517,8 @@ ${this.error.stack}
     }
     return null;
   }
-  function checkReadability(results) {
+  function checkReadability() {
+    if (!State.option.readabilityPlugin || store.getItem("sa11y-readability") !== "On") return;
     const computed = computeReadability(Elements.Found.Readability, Constants.Readability.Lang);
     let result;
     if (computed) {
@@ -7913,9 +7527,9 @@ ${this.error.stack}
         difficultyLevel: Lang._(computed.difficultyToken),
         ...computed
       };
-      results.push(result);
+      State.results.push(result);
     }
-    if (Constants.Global.headless === false) {
+    if (State.option.headless === false) {
       if (computed && result.wordCount > 30) {
         Constants.Panel.readabilityInfo.innerHTML = `${Math.ceil(result.score)} <span class="readability-score">${result.difficultyLevel}</span>`;
         Constants.Panel.readabilityDetails.innerHTML = `<li><strong>${Lang._("AVG_SENTENCE")}</strong> ${Math.ceil(result.averageWordsPerSentence)}</li><li><strong>${Lang._("COMPLEX_WORDS")}</strong> ${result.complexWords}%</li><li><strong>${Lang._("TOTAL_WORDS")}</strong> ${result.wordCount}</li>`;
@@ -7923,50 +7537,50 @@ ${this.error.stack}
         Constants.Panel.readabilityInfo.innerHTML = `<br>${Lang._("READABILITY_NOT_ENOUGH")}`;
       }
     }
-    return results;
   }
-  function checkEmbeddedContent(results, option) {
+  function checkEmbeddedContent() {
+    if (!State.option.embeddedContentPlugin) return;
     const src = ($el) => $el.getAttribute("src") || $el.querySelector("source[src]")?.getAttribute("src") || $el.querySelector("[src]")?.getAttribute("src") || null;
-    if (option.checks.EMBED_AUDIO) {
+    if (State.option.checks.EMBED_AUDIO) {
       Elements.Found.Audio.forEach(($el) => {
-        results.push({
+        State.results.push({
           test: "EMBED_AUDIO",
           element: $el,
-          type: option.checks.EMBED_AUDIO.type || "warning",
-          content: Lang.sprintf(option.checks.EMBED_AUDIO.content || "EMBED_AUDIO"),
+          type: State.option.checks.EMBED_AUDIO.type || "warning",
+          content: Lang.sprintf(State.option.checks.EMBED_AUDIO.content || "EMBED_AUDIO"),
           dismiss: prepareDismissal(`EMBED_AUDIO ${src($el)}`),
-          dismissAll: option.checks.EMBED_AUDIO.dismissAll ? "EMBED_AUDIO" : false,
-          developer: option.checks.EMBED_AUDIO.developer || false
+          dismissAll: State.option.checks.EMBED_AUDIO.dismissAll ? "EMBED_AUDIO" : false,
+          developer: State.option.checks.EMBED_AUDIO.developer || false
         });
       });
     }
-    if (option.checks.EMBED_VIDEO) {
+    if (State.option.checks.EMBED_VIDEO) {
       Elements.Found.Videos.forEach(($el) => {
         const track = $el.querySelector("track");
         const trackSrc = track?.getAttribute("src");
         if (track === null || trackSrc === null || trackSrc.trim().length === 0) {
-          results.push({
+          State.results.push({
             test: "EMBED_VIDEO",
             element: $el,
-            type: option.checks.EMBED_VIDEO.type || "warning",
-            content: Lang.sprintf(option.checks.EMBED_VIDEO.content || "EMBED_VIDEO"),
+            type: State.option.checks.EMBED_VIDEO.type || "warning",
+            content: Lang.sprintf(State.option.checks.EMBED_VIDEO.content || "EMBED_VIDEO"),
             dismiss: prepareDismissal(`EMBED_VIDEO ${src($el)}`),
-            dismissAll: option.checks.EMBED_VIDEO.dismissAll ? "EMBED_VIDEO" : false,
-            developer: option.checks.EMBED_VIDEO.developer || false
+            dismissAll: State.option.checks.EMBED_VIDEO.dismissAll ? "EMBED_VIDEO" : false,
+            developer: State.option.checks.EMBED_VIDEO.developer || false
           });
         }
       });
     }
-    if (option.checks.EMBED_DATA_VIZ) {
+    if (State.option.checks.EMBED_DATA_VIZ) {
       Elements.Found.Visualizations.forEach(($el) => {
-        results.push({
+        State.results.push({
           test: "EMBED_DATA_VIZ",
           element: $el,
-          type: option.checks.EMBED_DATA_VIZ.type || "warning",
-          content: Lang.sprintf(option.checks.EMBED_DATA_VIZ.content || "EMBED_DATA_VIZ"),
+          type: State.option.checks.EMBED_DATA_VIZ.type || "warning",
+          content: Lang.sprintf(State.option.checks.EMBED_DATA_VIZ.content || "EMBED_DATA_VIZ"),
           dismiss: prepareDismissal(`EMBED_DATA_VIZ ${src($el)}`),
-          dismissAll: option.checks.EMBED_DATA_VIZ.dismissAll ? "EMBED_DATA_VIZ" : false,
-          developer: option.checks.EMBED_DATA_VIZ.developer || false
+          dismissAll: State.option.checks.EMBED_DATA_VIZ.dismissAll ? "EMBED_DATA_VIZ" : false,
+          developer: State.option.checks.EMBED_DATA_VIZ.developer || false
         });
       });
     }
@@ -7980,37 +7594,41 @@ ${this.error.stack}
         return;
       }
       if (negativeTabindex) {
-        if (option.checks.EMBED_UNFOCUSABLE) {
-          results.push({
+        if (State.option.checks.EMBED_UNFOCUSABLE) {
+          State.results.push({
             test: "EMBED_UNFOCUSABLE",
             element: $el,
-            type: option.checks.EMBED_UNFOCUSABLE.type || "error",
-            content: Lang.sprintf(option.checks.EMBED_UNFOCUSABLE.content || "EMBED_UNFOCUSABLE"),
+            type: State.option.checks.EMBED_UNFOCUSABLE.type || "error",
+            content: Lang.sprintf(
+              State.option.checks.EMBED_UNFOCUSABLE.content || "EMBED_UNFOCUSABLE"
+            ),
             dismiss: prepareDismissal(`EMBED_UNFOCUSABLE ${src($el)}`),
-            dismissAll: option.checks.EMBED_UNFOCUSABLE.dismissAll ? "EMBED_UNFOCUSABLE" : false,
-            developer: option.checks.EMBED_UNFOCUSABLE.developer || true
+            dismissAll: State.option.checks.EMBED_UNFOCUSABLE.dismissAll ? "EMBED_UNFOCUSABLE" : false,
+            developer: State.option.checks.EMBED_UNFOCUSABLE.developer || true
           });
         }
         return;
       }
-      if (option.checks.EMBED_MISSING_TITLE) {
+      if (State.option.checks.EMBED_MISSING_TITLE) {
         const aria = computeAriaLabel($el);
         const checkTitle = aria === "noAria" ? $el.getAttribute("title") || "" : aria;
         const accessibleName = removeWhitespace(checkTitle);
         if (accessibleName.length === 0) {
-          results.push({
+          State.results.push({
             test: "EMBED_MISSING_TITLE",
             element: $el,
-            type: option.checks.EMBED_MISSING_TITLE.type || "error",
-            content: Lang.sprintf(option.checks.EMBED_MISSING_TITLE.content || "EMBED_MISSING_TITLE"),
+            type: State.option.checks.EMBED_MISSING_TITLE.type || "error",
+            content: Lang.sprintf(
+              State.option.checks.EMBED_MISSING_TITLE.content || "EMBED_MISSING_TITLE"
+            ),
             dismiss: prepareDismissal(`EMBED_MISSING_TITLE ${src($el)}`),
-            dismissAll: option.checks.EMBED_MISSING_TITLE.dismissAll ? "EMBED_MISSING_TITLE" : false,
-            developer: option.checks.EMBED_MISSING_TITLE.developer || true
+            dismissAll: State.option.checks.EMBED_MISSING_TITLE.dismissAll ? "EMBED_MISSING_TITLE" : false,
+            developer: State.option.checks.EMBED_MISSING_TITLE.developer || true
           });
         }
       }
     });
-    if (option.checks.EMBED_GENERAL) {
+    if (State.option.checks.EMBED_GENERAL) {
       Elements.Found.EmbeddedContent.forEach(($el) => {
         const presentation = ["presentation", "none"].includes($el.getAttribute("role"));
         const ariaHidden = $el.getAttribute("aria-hidden") === "true";
@@ -8022,46 +7640,48 @@ ${this.error.stack}
         if ($el.tagName === "VIDEO" || $el.tagName === "AUDIO") {
           return;
         }
-        results.push({
+        State.results.push({
           test: "EMBED_GENERAL",
           element: $el,
-          type: option.checks.EMBED_GENERAL.type || "warning",
-          content: Lang.sprintf(option.checks.EMBED_GENERAL.content || "EMBED_GENERAL"),
+          type: State.option.checks.EMBED_GENERAL.type || "warning",
+          content: Lang.sprintf(State.option.checks.EMBED_GENERAL.content || "EMBED_GENERAL"),
           dismiss: prepareDismissal(`EMBED_GENERAL ${src($el)}`),
-          dismissAll: option.checks.EMBED_GENERAL.dismissAll ? "EMBED_GENERAL" : false,
-          developer: option.checks.EMBED_GENERAL.developer || false
+          dismissAll: State.option.checks.EMBED_GENERAL.dismissAll ? "EMBED_GENERAL" : false,
+          developer: State.option.checks.EMBED_GENERAL.developer || false
         });
       });
     }
-    return results;
+    return State.results;
   }
-  function checkQA(results, option) {
-    if (option.checks.QA_BAD_LINK) {
+  function checkQA() {
+    if (State.option.checks.QA_BAD_LINK) {
       Elements.Found.CustomErrorLinks.forEach(($el) => {
-        results.push({
+        State.results.push({
           test: "QA_BAD_LINK",
           element: $el,
-          type: option.checks.QA_BAD_LINK.type || "error",
-          content: Lang.sprintf(option.checks.QA_BAD_LINK.content || "QA_BAD_LINK", $el),
+          type: State.option.checks.QA_BAD_LINK.type || "error",
+          content: Lang.sprintf(State.option.checks.QA_BAD_LINK.content || "QA_BAD_LINK", $el),
           inline: true,
           dismiss: prepareDismissal(`QA_BAD_LINK ${$el.tagName + $el.textContent}`),
-          dismissAll: option.checks.QA_BAD_LINK.dismissAll ? "QA_BAD_LINK" : false,
-          developer: option.checks.QA_BAD_LINK.developer || false
+          dismissAll: State.option.checks.QA_BAD_LINK.dismissAll ? "QA_BAD_LINK" : false,
+          developer: State.option.checks.QA_BAD_LINK.developer || false
         });
       });
     }
-    if (option.checks.QA_STRONG_ITALICS) {
+    if (State.option.checks.QA_STRONG_ITALICS) {
       Elements.Found.StrongItalics.forEach(($el) => {
         const text = getText($el);
         if (text.length !== 0 && text.length > 400) {
-          results.push({
+          State.results.push({
             test: "QA_STRONG_ITALICS",
             element: $el.parentNode,
-            type: option.checks.QA_STRONG_ITALICS.type || "warning",
-            content: Lang.sprintf(option.checks.QA_STRONG_ITALICS.content || "QA_STRONG_ITALICS"),
+            type: State.option.checks.QA_STRONG_ITALICS.type || "warning",
+            content: Lang.sprintf(
+              State.option.checks.QA_STRONG_ITALICS.content || "QA_STRONG_ITALICS"
+            ),
             dismiss: prepareDismissal(`QA_STRONG_ITALICS ${$el.tagName + $el.textContent}`),
-            dismissAll: option.checks.QA_STRONG_ITALICS.dismissAll ? "QA_STRONG_ITALICS" : false,
-            developer: option.checks.QA_STRONG_ITALICS.developer || false
+            dismissAll: State.option.checks.QA_STRONG_ITALICS.dismissAll ? "QA_STRONG_ITALICS" : false,
+            developer: State.option.checks.QA_STRONG_ITALICS.developer || false
           });
         }
       });
@@ -8071,7 +7691,7 @@ ${this.error.stack}
         const href = $el.getAttribute("href");
         const hasExtension = $el.matches(Constants.Global.documentSources);
         const hasPDF = $el.matches('a[href$=".pdf"], a[href*=".pdf?"]');
-        if (option.checks.QA_IN_PAGE_LINK) {
+        if (State.option.checks.QA_IN_PAGE_LINK) {
           const hasText = getText($el).length !== 0;
           const ignored = $el.ariaHidden === "true" && $el.getAttribute("tabindex") === "-1";
           const hasAttributes = $el.hasAttribute("role") || $el.hasAttribute("aria-haspopup") || $el.hasAttribute("aria-expanded") || $el.hasAttribute("onclick") || $el.hasAttribute("disabled") || $el.closest('nav, [role="navigation"]');
@@ -8080,60 +7700,62 @@ ${this.error.stack}
             const ariaControls = $el.getAttribute("aria-controls");
             const targetElement = targetId && (document.getElementById(targetId) || document.getElementById(decodeURIComponent(targetId)) || document.getElementById(encodeURIComponent(targetId)) || document.getElementById(ariaControls) || document.querySelector(`a[name="${targetId}"]`));
             if (!targetElement) {
-              results.push({
+              State.results.push({
                 test: "QA_IN_PAGE_LINK",
                 element: $el,
-                type: option.checks.QA_IN_PAGE_LINK.type || "error",
-                content: Lang.sprintf(option.checks.QA_IN_PAGE_LINK.content || "QA_IN_PAGE_LINK"),
+                type: State.option.checks.QA_IN_PAGE_LINK.type || "error",
+                content: Lang.sprintf(
+                  State.option.checks.QA_IN_PAGE_LINK.content || "QA_IN_PAGE_LINK"
+                ),
                 inline: true,
                 dismiss: prepareDismissal(`QA_IN_PAGE_LINK ${href}`),
-                dismissAll: option.checks.QA_IN_PAGE_LINK.dismissAll ? "QA_IN_PAGE_LINK" : false,
-                developer: option.checks.QA_IN_PAGE_LINK.developer || false
+                dismissAll: State.option.checks.QA_IN_PAGE_LINK.dismissAll ? "QA_IN_PAGE_LINK" : false,
+                developer: State.option.checks.QA_IN_PAGE_LINK.developer || false
               });
             }
           }
         }
-        if (option.checks.QA_DOCUMENT && hasExtension) {
-          results.push({
+        if (State.option.checks.QA_DOCUMENT && hasExtension) {
+          State.results.push({
             test: "QA_DOCUMENT",
             element: $el,
-            type: option.checks.QA_DOCUMENT.type || "warning",
-            content: Lang.sprintf(option.checks.QA_DOCUMENT.content || "QA_DOCUMENT"),
+            type: State.option.checks.QA_DOCUMENT.type || "warning",
+            content: Lang.sprintf(State.option.checks.QA_DOCUMENT.content || "QA_DOCUMENT"),
             inline: true,
             dismiss: prepareDismissal(`QA_DOCUMENT ${href}`),
-            dismissAll: option.checks.QA_DOCUMENT.dismissAll ? "QA_DOCUMENT" : false,
-            developer: option.checks.QA_DOCUMENT.developer || false
+            dismissAll: State.option.checks.QA_DOCUMENT.dismissAll ? "QA_DOCUMENT" : false,
+            developer: State.option.checks.QA_DOCUMENT.developer || false
           });
-        } else if (option.checks.QA_PDF && hasPDF) {
-          results.push({
+        } else if (State.option.checks.QA_PDF && hasPDF) {
+          State.results.push({
             test: "QA_PDF",
             element: $el,
-            type: option.checks.QA_PDF.type || "warning",
-            content: Lang.sprintf(option.checks.QA_PDF.content || "QA_PDF"),
+            type: State.option.checks.QA_PDF.type || "warning",
+            content: Lang.sprintf(State.option.checks.QA_PDF.content || "QA_PDF"),
             inline: true,
             dismiss: prepareDismissal(`QA_PDF ${href}`),
-            dismissAll: option.checks.QA_PDF.dismissAll ? "QA_PDF" : false,
-            developer: option.checks.QA_PDF.developer || false
+            dismissAll: State.option.checks.QA_PDF.dismissAll ? "QA_PDF" : false,
+            developer: State.option.checks.QA_PDF.developer || false
           });
         }
       }
     });
-    if (option.checks.QA_BLOCKQUOTE) {
+    if (State.option.checks.QA_BLOCKQUOTE) {
       Elements.Found.Blockquotes.forEach(($el) => {
         const text = getText($el);
         if (text.length !== 0 && text.length < 25) {
           const sanitizedText = sanitizeHTML(text);
-          results.push({
+          State.results.push({
             test: "QA_BLOCKQUOTE",
             element: $el,
-            type: option.checks.QA_BLOCKQUOTE.type || "warning",
+            type: State.option.checks.QA_BLOCKQUOTE.type || "warning",
             content: Lang.sprintf(
-              option.checks.QA_BLOCKQUOTE.content || "QA_BLOCKQUOTE",
+              State.option.checks.QA_BLOCKQUOTE.content || "QA_BLOCKQUOTE",
               sanitizedText
             ),
             dismiss: prepareDismissal(`QA_BLOCKQUOTE ${sanitizedText}`),
-            dismissAll: option.checks.QA_BLOCKQUOTE.dismissAll ? "QA_BLOCKQUOTE" : false,
-            developer: option.checks.QA_BLOCKQUOTE.developer || false
+            dismissAll: State.option.checks.QA_BLOCKQUOTE.dismissAll ? "QA_BLOCKQUOTE" : false,
+            developer: State.option.checks.QA_BLOCKQUOTE.developer || false
           });
         }
       });
@@ -8143,66 +7765,66 @@ ${this.error.stack}
         const tableHeaders = $el.querySelectorAll("th");
         const semanticHeadings = $el.querySelectorAll("h1, h2, h3, h4, h5, h6");
         const firstRow = $el.querySelector("tr") ? $el.querySelector("tr").innerHTML : $el.innerHTML;
-        if (option.checks.TABLES_MISSING_HEADINGS && tableHeaders.length === 0) {
-          results.push({
+        if (State.option.checks.TABLES_MISSING_HEADINGS && tableHeaders.length === 0) {
+          State.results.push({
             test: "TABLES_MISSING_HEADINGS",
             element: $el,
-            type: option.checks.TABLES_MISSING_HEADINGS.type || "error",
+            type: State.option.checks.TABLES_MISSING_HEADINGS.type || "error",
             content: Lang.sprintf(
-              option.checks.TABLES_MISSING_HEADINGS.content || "TABLES_MISSING_HEADINGS"
+              State.option.checks.TABLES_MISSING_HEADINGS.content || "TABLES_MISSING_HEADINGS"
             ),
             dismiss: prepareDismissal(`TABLES_MISSING_HEADINGS ${firstRow}`),
-            dismissAll: option.checks.TABLES_MISSING_HEADINGS.dismissAll ? "TABLES_MISSING_HEADINGS" : false,
-            developer: option.checks.TABLES_MISSING_HEADINGS.developer || false
+            dismissAll: State.option.checks.TABLES_MISSING_HEADINGS.dismissAll ? "TABLES_MISSING_HEADINGS" : false,
+            developer: State.option.checks.TABLES_MISSING_HEADINGS.developer || false
           });
         }
-        if (option.checks.TABLES_SEMANTIC_HEADING && semanticHeadings.length > 0) {
+        if (State.option.checks.TABLES_SEMANTIC_HEADING && semanticHeadings.length > 0) {
           semanticHeadings.forEach((heading) => {
-            results.push({
+            State.results.push({
               test: "TABLES_SEMANTIC_HEADING",
               element: heading,
-              type: option.checks.TABLES_SEMANTIC_HEADING.type || "error",
+              type: State.option.checks.TABLES_SEMANTIC_HEADING.type || "error",
               content: Lang.sprintf(
-                option.checks.TABLES_SEMANTIC_HEADING.content || "TABLES_SEMANTIC_HEADING"
+                State.option.checks.TABLES_SEMANTIC_HEADING.content || "TABLES_SEMANTIC_HEADING"
               ),
               dismiss: prepareDismissal(`TABLES_SEMANTIC_HEADING ${firstRow}`),
-              dismissAll: option.checks.TABLES_SEMANTIC_HEADING.dismissAll ? "TABLES_SEMANTIC_HEADING" : false,
-              developer: option.checks.TABLES_SEMANTIC_HEADING.developer || false
+              dismissAll: State.option.checks.TABLES_SEMANTIC_HEADING.dismissAll ? "TABLES_SEMANTIC_HEADING" : false,
+              developer: State.option.checks.TABLES_SEMANTIC_HEADING.developer || false
             });
           });
         }
         tableHeaders.forEach((th) => {
-          if (option.checks.TABLES_EMPTY_HEADING && th.textContent.trim().length === 0) {
-            results.push({
+          if (State.option.checks.TABLES_EMPTY_HEADING && th.textContent.trim().length === 0) {
+            State.results.push({
               test: "TABLES_EMPTY_HEADING",
               element: th,
-              type: option.checks.TABLES_EMPTY_HEADING.type || "error",
+              type: State.option.checks.TABLES_EMPTY_HEADING.type || "error",
               content: Lang.sprintf(
-                option.checks.TABLES_EMPTY_HEADING.content || "TABLES_EMPTY_HEADING"
+                State.option.checks.TABLES_EMPTY_HEADING.content || "TABLES_EMPTY_HEADING"
               ),
               position: "afterbegin",
               dismiss: prepareDismissal(`TABLES_EMPTY_HEADING ${firstRow}`),
-              dismissAll: option.checks.TABLES_EMPTY_HEADING.dismissAll ? "TABLES_EMPTY_HEADING" : false,
-              developer: option.checks.TABLES_EMPTY_HEADING.developer || false
+              dismissAll: State.option.checks.TABLES_EMPTY_HEADING.dismissAll ? "TABLES_EMPTY_HEADING" : false,
+              developer: State.option.checks.TABLES_EMPTY_HEADING.developer || false
             });
           }
         });
       }
     });
-    if (option.checks.QA_FAKE_HEADING) {
+    if (State.option.checks.QA_FAKE_HEADING) {
       const addResult = (element, sanitizedText) => {
-        results.push({
+        State.results.push({
           test: "QA_FAKE_HEADING",
           element,
-          type: option.checks.QA_FAKE_HEADING.type || "warning",
+          type: State.option.checks.QA_FAKE_HEADING.type || "warning",
           content: Lang.sprintf(
-            option.checks.QA_FAKE_HEADING.content || "QA_FAKE_HEADING",
+            State.option.checks.QA_FAKE_HEADING.content || "QA_FAKE_HEADING",
             sanitizedText
           ),
           dismiss: prepareDismissal(`QA_FAKE_HEADING ${sanitizedText}`),
           inline: true,
-          dismissAll: option.checks.QA_FAKE_HEADING.dismissAll ? "QA_FAKE_HEADING" : false,
-          developer: option.checks.QA_FAKE_HEADING.developer || false
+          dismissAll: State.option.checks.QA_FAKE_HEADING.dismissAll ? "QA_FAKE_HEADING" : false,
+          developer: State.option.checks.QA_FAKE_HEADING.developer || false
         });
       };
       const isPreviousElementAHeading = (p) => {
@@ -8240,7 +7862,7 @@ ${this.error.stack}
         computeBoldTextParagraphs(p);
       });
     }
-    if (option.checks.QA_FAKE_LIST) {
+    if (State.option.checks.QA_FAKE_LIST) {
       const numberMatch = new RegExp(/(([023456789][\d\s])|(1\d))/, "");
       const alphabeticMatch = new RegExp(/(^[aA1αаΑ]|[^p{Alphabetic}\s])[-\s.)]/, "u");
       const emojiMatch = new RegExp(/\p{Extended_Pictographic}/, "u");
@@ -8298,17 +7920,17 @@ ${this.error.stack}
             }
           }
           if (hit) {
-            results.push({
+            State.results.push({
               test: "QA_FAKE_LIST",
               element: p,
-              type: option.checks.QA_FAKE_LIST.type || "warning",
+              type: State.option.checks.QA_FAKE_LIST.type || "warning",
               content: Lang.sprintf(
-                option.checks.QA_FAKE_LIST.content || "QA_FAKE_LIST",
+                State.option.checks.QA_FAKE_LIST.content || "QA_FAKE_LIST",
                 firstPrefix
               ),
               dismiss: prepareDismissal(`QA_FAKE_LIST ${p.textContent}`),
-              dismissAll: option.checks.QA_FAKE_LIST.dismissAll ? "QA_FAKE_LIST" : false,
-              developer: option.checks.QA_FAKE_LIST.developer || false
+              dismissAll: State.option.checks.QA_FAKE_LIST.dismissAll ? "QA_FAKE_LIST" : false,
+              developer: State.option.checks.QA_FAKE_LIST.developer || false
             });
             activeMatch = firstPrefix;
           } else {
@@ -8318,7 +7940,7 @@ ${this.error.stack}
         firstText = secondText ? "" : secondText;
       });
     }
-    if (option.checks.QA_UPPERCASE) {
+    if (State.option.checks.QA_UPPERCASE) {
       const checkCaps = ($el) => {
         let thisText = "";
         if ($el.tagName === "LI") {
@@ -8333,14 +7955,14 @@ ${this.error.stack}
         const uppercasePattern = /([A-Z]{2,}[ ])([A-Z]{2,}[ ])([A-Z]{2,}[ ])([A-Z]{2,})/g;
         const detectUpperCase = thisText.match(uppercasePattern);
         if (detectUpperCase && detectUpperCase[0].length > 10) {
-          results.push({
+          State.results.push({
             test: "QA_UPPERCASE",
             element: $el,
-            type: option.checks.QA_UPPERCASE.type || "warning",
-            content: Lang.sprintf(option.checks.QA_UPPERCASE.content || "QA_UPPERCASE"),
+            type: State.option.checks.QA_UPPERCASE.type || "warning",
+            content: Lang.sprintf(State.option.checks.QA_UPPERCASE.content || "QA_UPPERCASE"),
             dismiss: prepareDismissal(`QA_UPPERCASE ${thisText}`),
-            dismissAll: option.checks.QA_UPPERCASE.dismissAll ? "QA_UPPERCASE" : false,
-            developer: option.checks.QA_UPPERCASE.developer || false
+            dismissAll: State.option.checks.QA_UPPERCASE.dismissAll ? "QA_UPPERCASE" : false,
+            developer: State.option.checks.QA_UPPERCASE.developer || false
           });
         }
       };
@@ -8358,61 +7980,61 @@ ${this.error.stack}
       });
     }
     const addUnderlineResult = ($el) => {
-      results.push({
+      State.results.push({
         test: "QA_UNDERLINE",
         element: $el,
-        type: option.checks.QA_UNDERLINE.type || "warning",
-        content: Lang.sprintf(option.checks.QA_UNDERLINE.content || "QA_UNDERLINE"),
+        type: State.option.checks.QA_UNDERLINE.type || "warning",
+        content: Lang.sprintf(State.option.checks.QA_UNDERLINE.content || "QA_UNDERLINE"),
         inline: true,
         dismiss: prepareDismissal(`QA_UNDERLINE ${$el.textContent}`),
-        dismissAll: option.checks.QA_UNDERLINE.dismissAll ? "QA_UNDERLINE" : false,
-        developer: option.checks.QA_UNDERLINE.developer || false
+        dismissAll: State.option.checks.QA_UNDERLINE.dismissAll ? "QA_UNDERLINE" : false,
+        developer: State.option.checks.QA_UNDERLINE.developer || false
       });
     };
     const addJustifyResult = ($el) => {
-      results.push({
+      State.results.push({
         test: "QA_JUSTIFY",
         element: $el,
-        type: option.checks.QA_JUSTIFY.type || "warning",
-        content: Lang.sprintf(option.checks.QA_JUSTIFY.content || "QA_JUSTIFY"),
+        type: State.option.checks.QA_JUSTIFY.type || "warning",
+        content: Lang.sprintf(State.option.checks.QA_JUSTIFY.content || "QA_JUSTIFY"),
         dismiss: prepareDismissal(`QA_JUSTIFY ${$el.textContent}`),
-        dismissAll: option.checks.QA_JUSTIFY.dismissAll ? "QA_JUSTIFY" : false,
-        developer: option.checks.QA_JUSTIFY.developer || false
+        dismissAll: State.option.checks.QA_JUSTIFY.dismissAll ? "QA_JUSTIFY" : false,
+        developer: State.option.checks.QA_JUSTIFY.developer || false
       });
     };
     const addSmallTextResult = ($el) => {
-      results.push({
+      State.results.push({
         test: "QA_SMALL_TEXT",
         element: $el,
-        type: option.checks.QA_SMALL_TEXT.type || "warning",
-        content: Lang.sprintf(option.checks.QA_SMALL_TEXT.content || "QA_SMALL_TEXT"),
+        type: State.option.checks.QA_SMALL_TEXT.type || "warning",
+        content: Lang.sprintf(State.option.checks.QA_SMALL_TEXT.content || "QA_SMALL_TEXT"),
         dismiss: prepareDismissal(`QA_SMALL_TEXT ${$el.textContent}`),
-        dismissAll: option.checks.QA_SMALL_TEXT.dismissAll ? "QA_SMALL_TEXT" : false,
-        developer: option.checks.QA_SMALL_TEXT.developer || false
+        dismissAll: State.option.checks.QA_SMALL_TEXT.dismissAll ? "QA_SMALL_TEXT" : false,
+        developer: State.option.checks.QA_SMALL_TEXT.developer || false
       });
     };
     const computeStyle = ($el) => {
       const style = getComputedStyle($el);
       const { textDecorationLine, textAlign, fontSize } = style;
       const interactive = 'a[href], button, abbr, [role="link"], [role="button"], [tabindex="0"], [onclick]';
-      if (option.checks.QA_UNDERLINE && ($el.closest("u") || textDecorationLine === "underline") && !$el.closest(interactive) && !$el.matches(interactive)) {
+      if (State.option.checks.QA_UNDERLINE && ($el.closest("u") || textDecorationLine === "underline") && !$el.closest(interactive) && !$el.matches(interactive)) {
         addUnderlineResult($el);
       }
-      const defaultSize = option.checks.QA_SMALL_TEXT.fontSize || 10;
+      const defaultSize = State.option.checks.QA_SMALL_TEXT.fontSize || 10;
       const computedFontSize = parseFloat(fontSize);
       const parentFontSize = $el.parentElement ? parseFloat(getComputedStyle($el.parentElement).fontSize) : null;
       const isInherited = parentFontSize === computedFontSize;
       const withinRange = !isInherited && computedFontSize > 1 && computedFontSize <= defaultSize;
-      if (option.checks.QA_SMALL_TEXT && withinRange) {
+      if (State.option.checks.QA_SMALL_TEXT && withinRange) {
         addSmallTextResult($el);
       }
       const parentJustify = $el.parentElement ? getComputedStyle($el.parentElement).textAlign : null;
       const justifyInherited = parentJustify === textAlign;
-      if (option.checks.QA_JUSTIFY && textAlign === "justify" && !justifyInherited) {
+      if (State.option.checks.QA_JUSTIFY && textAlign === "justify" && !justifyInherited) {
         addJustifyResult($el);
       }
     };
-    if (option.checks.QA_UNDERLINE || option.checks.QA_JUSTIFY || option.checks.QA_SMALL_TEXT) {
+    if (State.option.checks.QA_UNDERLINE || State.option.checks.QA_JUSTIFY || State.option.checks.QA_SMALL_TEXT) {
       for (let i = 0; i < Elements.Found.Everything.length; i++) {
         const $el = Elements.Found.Everything[i];
         const textString = Array.from($el.childNodes).filter((node) => node.nodeType === 3).map((node) => node.textContent).join("");
@@ -8422,69 +8044,68 @@ ${this.error.stack}
         }
       }
     }
-    if (option.checks.QA_SUBSCRIPT) {
+    if (State.option.checks.QA_SUBSCRIPT) {
       Elements.Found.Subscripts.forEach(($el) => {
         const text = getText($el);
         if (text.length >= 80) {
-          results.push({
+          State.results.push({
             test: "QA_SUBSCRIPT",
             element: $el,
-            type: option.checks.QA_SUBSCRIPT.type || "warning",
-            content: Lang.sprintf(option.checks.QA_SUBSCRIPT.content || "QA_SUBSCRIPT"),
+            type: State.option.checks.QA_SUBSCRIPT.type || "warning",
+            content: Lang.sprintf(State.option.checks.QA_SUBSCRIPT.content || "QA_SUBSCRIPT"),
             inline: true,
             dismiss: prepareDismissal(`QA_SUBSCRIPT ${$el.tagName + text}`),
-            dismissAll: option.checks.QA_SUBSCRIPT.dismissAll ? "QA_SUBSCRIPT" : false,
-            developer: option.checks.QA_SUBSCRIPT.developer || false
+            dismissAll: State.option.checks.QA_SUBSCRIPT.dismissAll ? "QA_SUBSCRIPT" : false,
+            developer: State.option.checks.QA_SUBSCRIPT.developer || false
           });
         }
       });
     }
-    if (option.checks.QA_NESTED_COMPONENTS) {
+    if (State.option.checks.QA_NESTED_COMPONENTS) {
       Elements.Found.NestedComponents.forEach(($el) => {
-        const sources = option.checks.QA_NESTED_COMPONENTS.sources || '[role="tablist"], details';
+        const sources = State.option.checks.QA_NESTED_COMPONENTS.sources || '[role="tablist"], details';
         const component = $el.querySelector(sources);
         if (component) {
-          results.push({
+          State.results.push({
             test: "QA_NESTED_COMPONENTS",
             element: $el,
-            type: option.checks.QA_NESTED_COMPONENTS.type || "warning",
+            type: State.option.checks.QA_NESTED_COMPONENTS.type || "warning",
             content: Lang.sprintf(
-              option.checks.QA_NESTED_COMPONENTS.content || "QA_NESTED_COMPONENTS"
+              State.option.checks.QA_NESTED_COMPONENTS.content || "QA_NESTED_COMPONENTS"
             ),
             dismiss: prepareDismissal(`QA_NESTED_COMPONENTS ${$el.textContent}`),
-            dismissAll: option.checks.QA_NESTED_COMPONENTS.dismissAll ? "QA_NESTED_COMPONENTS" : false,
-            developer: option.checks.QA_NESTED_COMPONENTS.developer || false
+            dismissAll: State.option.checks.QA_NESTED_COMPONENTS.dismissAll ? "QA_NESTED_COMPONENTS" : false,
+            developer: State.option.checks.QA_NESTED_COMPONENTS.developer || false
           });
         }
       });
     }
-    return results;
   }
-  function checkDeveloper(results, option) {
-    if (option.checks.META_LANG) {
+  function checkDeveloper() {
+    if (State.option.checks.META_LANG) {
       if (!Elements.Found.Language || Elements.Found.Language.length < 2) {
-        results.push({
+        State.results.push({
           test: "META_LANG",
-          type: option.checks.META_LANG.type || "error",
-          content: Lang.sprintf(option.checks.META_LANG.content || "META_LANG"),
+          type: State.option.checks.META_LANG.type || "error",
+          content: Lang.sprintf(State.option.checks.META_LANG.content || "META_LANG"),
           dismiss: prepareDismissal("META_LANG"),
-          developer: option.checks.META_LANG.developer || true
+          developer: State.option.checks.META_LANG.developer || true
         });
       }
     }
-    if (option.checks.META_TITLE) {
+    if (State.option.checks.META_TITLE) {
       const metaTitle = document.querySelector("title:not(svg title)");
       if (!metaTitle || metaTitle.textContent.trim().length === 0) {
-        results.push({
+        State.results.push({
           test: "META_TITLE",
-          type: option.checks.META_TITLE.type || "error",
-          content: Lang.sprintf(option.checks.META_TITLE.content || "META_TITLE"),
+          type: State.option.checks.META_TITLE.type || "error",
+          content: Lang.sprintf(State.option.checks.META_TITLE.content || "META_TITLE"),
           dismiss: prepareDismissal("META_TITLE"),
-          developer: option.checks.META_TITLE.developer || true
+          developer: State.option.checks.META_TITLE.developer || true
         });
       }
     }
-    if (option.checks.META_SCALABLE || option.checks.META_MAX) {
+    if (State.option.checks.META_SCALABLE || State.option.checks.META_MAX) {
       const metaViewport = document.querySelector('meta[name="viewport"]');
       if (metaViewport) {
         const content = metaViewport.getAttribute("content");
@@ -8494,41 +8115,41 @@ ${this.error.stack}
             acc[key] = value;
             return acc;
           }, {});
-          if (option.checks.META_SCALABLE && (params["user-scalable"] === "no" || params["user-scalable"] === "0")) {
-            results.push({
+          if (State.option.checks.META_SCALABLE && (params["user-scalable"] === "no" || params["user-scalable"] === "0")) {
+            State.results.push({
               test: "META_SCALABLE",
-              type: option.checks.META_SCALABLE.type || "error",
-              content: Lang.sprintf(option.checks.META_SCALABLE.content || "META_SCALABLE"),
+              type: State.option.checks.META_SCALABLE.type || "error",
+              content: Lang.sprintf(State.option.checks.META_SCALABLE.content || "META_SCALABLE"),
               dismiss: prepareDismissal("META_SCALABLE"),
-              developer: option.checks.META_SCALABLE.developer || true
+              developer: State.option.checks.META_SCALABLE.developer || true
             });
           }
           const maxScale = parseFloat(params["maximum-scale"]);
-          if (option.checks.META_MAX && !Number.isNaN(maxScale) && maxScale < 2) {
-            results.push({
+          if (State.option.checks.META_MAX && !Number.isNaN(maxScale) && maxScale < 2) {
+            State.results.push({
               test: "META_MAX",
-              type: option.checks.META_MAX.type || "error",
-              content: Lang.sprintf(option.checks.META_MAX.content || "META_MAX"),
+              type: State.option.checks.META_MAX.type || "error",
+              content: Lang.sprintf(State.option.checks.META_MAX.content || "META_MAX"),
               dismiss: prepareDismissal("META_MAX"),
-              developer: option.checks.META_MAX.developer || true
+              developer: State.option.checks.META_MAX.developer || true
             });
           }
         }
       }
     }
-    if (option.checks.META_REFRESH) {
+    if (State.option.checks.META_REFRESH) {
       const metaRefresh = document.querySelector('meta[http-equiv="refresh"]');
       if (metaRefresh) {
-        results.push({
+        State.results.push({
           test: "META_REFRESH",
-          type: option.checks.META_REFRESH.type || "error",
-          content: Lang.sprintf(option.checks.META_REFRESH.content || "META_REFRESH"),
+          type: State.option.checks.META_REFRESH.type || "error",
+          content: Lang.sprintf(State.option.checks.META_REFRESH.content || "META_REFRESH"),
           dismiss: prepareDismissal("META_REFRESH"),
-          developer: option.checks.META_REFRESH.developer || true
+          developer: State.option.checks.META_REFRESH.developer || true
         });
       }
     }
-    if (option.checks.DUPLICATE_ID) {
+    if (State.option.checks.DUPLICATE_ID) {
       const doms = document.querySelectorAll("body, [data-sa11y-has-shadow-root]");
       doms.forEach((dom) => {
         const allIds = /* @__PURE__ */ new Set();
@@ -8550,14 +8171,17 @@ ${this.error.stack}
                 [aria-owns*="${id}"]`)
               );
               if (ariaReference.length > 0) {
-                results.push({
+                State.results.push({
                   test: "DUPLICATE_ID",
                   element: $el,
-                  type: option.checks.DUPLICATE_ID.type || "error",
-                  content: Lang.sprintf(option.checks.DUPLICATE_ID.content || "DUPLICATE_ID", id),
+                  type: State.option.checks.DUPLICATE_ID.type || "error",
+                  content: Lang.sprintf(
+                    State.option.checks.DUPLICATE_ID.content || "DUPLICATE_ID",
+                    id
+                  ),
                   dismiss: prepareDismissal(`DUPLICATE_ID ${id}${$el.textContent}`),
-                  dismissAll: option.checks.DUPLICATE_ID.dismissAll ? "DUPLICATE_ID" : false,
-                  developer: option.checks.DUPLICATE_ID.developer || true
+                  dismissAll: State.option.checks.DUPLICATE_ID.dismissAll ? "DUPLICATE_ID" : false,
+                  developer: State.option.checks.DUPLICATE_ID.developer || true
                 });
               }
             }
@@ -8575,7 +8199,7 @@ ${this.error.stack}
         findDuplicateIds(regularIds, dom);
       });
     }
-    if (option.checks.BTN_EMPTY || option.checks.BTN_EMPTY_LABELLEDBY || option.checks.BTN_LABEL || option.checks.HIDDEN_FOCUSABLE || option.checks.LABEL_IN_NAME) {
+    if (State.option.checks.BTN_EMPTY || State.option.checks.BTN_EMPTY_LABELLEDBY || State.option.checks.BTN_LABEL || State.option.checks.HIDDEN_FOCUSABLE || State.option.checks.LABEL_IN_NAME) {
       Elements.Found.Buttons.forEach(($el) => {
         const accName = computeAccessibleName($el);
         const buttonText = accName.replace(/'|"|-|\.|\s+/g, "").toLowerCase();
@@ -8585,114 +8209,131 @@ ${this.error.stack}
         const negativeTabindex = $el.getAttribute("tabindex") === "-1";
         if (ariaHidden) {
           if (!negativeTabindex) {
-            if (option.checks.HIDDEN_FOCUSABLE) {
-              results.push({
+            if (State.option.checks.HIDDEN_FOCUSABLE) {
+              State.results.push({
                 test: "HIDDEN_FOCUSABLE",
                 element: $el,
-                type: option.checks.HIDDEN_FOCUSABLE.type || "error",
-                content: Lang.sprintf(option.checks.HIDDEN_FOCUSABLE.content || "HIDDEN_FOCUSABLE"),
+                type: State.option.checks.HIDDEN_FOCUSABLE.type || "error",
+                content: Lang.sprintf(
+                  State.option.checks.HIDDEN_FOCUSABLE.content || "HIDDEN_FOCUSABLE"
+                ),
                 dismiss: prepareDismissal(
                   `HIDDEN_FOCUSABLE ${$el.tagName + $el.id + $el.className + accName}`
                 ),
-                dismissAll: option.checks.HIDDEN_FOCUSABLE.dismissAll ? "BTN_HIDDEN_FOCUSABLE" : false,
-                developer: option.checks.HIDDEN_FOCUSABLE.developer || true
+                dismissAll: State.option.checks.HIDDEN_FOCUSABLE.dismissAll ? "BTN_HIDDEN_FOCUSABLE" : false,
+                developer: State.option.checks.HIDDEN_FOCUSABLE.developer || true
               });
             }
           }
           return;
         }
         if (buttonText.length === 0) {
-          if (option.checks.BTN_EMPTY_LABELLEDBY && hasAriaLabelledby) {
-            results.push({
+          if (State.option.checks.BTN_EMPTY_LABELLEDBY && hasAriaLabelledby) {
+            State.results.push({
               test: "BTN_EMPTY_LABELLEDBY",
               element: $el,
-              type: option.checks.BTN_EMPTY_LABELLEDBY.type || "error",
-              content: option.checks.BTN_EMPTY_LABELLEDBY.content ? Lang.sprintf(option.checks.BTN_EMPTY_LABELLEDBY.content) : `${Lang.sprintf("BTN_EMPTY_LABELLEDBY")} ${Lang.sprintf("BTN_TIP")}`,
+              type: State.option.checks.BTN_EMPTY_LABELLEDBY.type || "error",
+              content: State.option.checks.BTN_EMPTY_LABELLEDBY.content ? Lang.sprintf(State.option.checks.BTN_EMPTY_LABELLEDBY.content) : `${Lang.sprintf("BTN_EMPTY_LABELLEDBY")} ${Lang.sprintf("BTN_TIP")}`,
               dismiss: prepareDismissal(
                 `BTN_EMPTY_LABELLEDBY ${$el.tagName + $el.id + $el.className + accName}`
               ),
-              dismissAll: option.checks.BTN_EMPTY_LABELLEDBY.dismissAll ? "BTN_EMPTY_LABELLEDBY" : false,
-              developer: option.checks.BTN_EMPTY_LABELLEDBY.developer || true
+              dismissAll: State.option.checks.BTN_EMPTY_LABELLEDBY.dismissAll ? "BTN_EMPTY_LABELLEDBY" : false,
+              developer: State.option.checks.BTN_EMPTY_LABELLEDBY.developer || true
             });
-          } else if (option.checks.BTN_EMPTY) {
-            results.push({
+          } else if (State.option.checks.BTN_EMPTY) {
+            State.results.push({
               test: "BTN_EMPTY",
               element: $el,
-              type: option.checks.BTN_EMPTY.type || "error",
-              content: option.checks.BTN_EMPTY.content ? Lang.sprintf(option.checks.BTN_EMPTY.content) : `${Lang.sprintf("BTN_EMPTY")} ${Lang.sprintf("BTN_TIP")}`,
+              type: State.option.checks.BTN_EMPTY.type || "error",
+              content: State.option.checks.BTN_EMPTY.content ? Lang.sprintf(State.option.checks.BTN_EMPTY.content) : `${Lang.sprintf("BTN_EMPTY")} ${Lang.sprintf("BTN_TIP")}`,
               dismiss: prepareDismissal(
                 `BTN_EMPTY ${$el.tagName + $el.id + $el.className + accName}`
               ),
-              dismissAll: option.checks.BTN_EMPTY.dismissAll ? "BTN_EMPTY" : false,
-              developer: option.checks.BTN_EMPTY.developer || true
+              dismissAll: State.option.checks.BTN_EMPTY.dismissAll ? "BTN_EMPTY" : false,
+              developer: State.option.checks.BTN_EMPTY.developer || true
             });
           }
           return;
         }
         const isVisibleTextInAccName$1 = isVisibleTextInAccName($el, accName);
-        if (option.checks.LABEL_IN_NAME && hasAria && isVisibleTextInAccName$1) {
+        if (State.option.checks.LABEL_IN_NAME && hasAria && isVisibleTextInAccName$1) {
           const sanitizedText = sanitizeHTML(accName);
-          results.push({
+          State.results.push({
             test: "LABEL_IN_NAME",
             element: $el,
-            type: option.checks.LABEL_IN_NAME.type || "warning",
-            content: option.checks.LABEL_IN_NAME.content ? Lang.sprintf(option.checks.LABEL_IN_NAME.content, sanitizedText) : `${Lang.sprintf("LABEL_IN_NAME", sanitizedText)} ${Lang.sprintf("ACC_NAME_TIP")}`,
+            type: State.option.checks.LABEL_IN_NAME.type || "warning",
+            content: State.option.checks.LABEL_IN_NAME.content ? Lang.sprintf(State.option.checks.LABEL_IN_NAME.content, sanitizedText) : `${Lang.sprintf("LABEL_IN_NAME", sanitizedText)} ${Lang.sprintf("ACC_NAME_TIP")}`,
             dismiss: prepareDismissal(
               `LABEL_IN_NAME ${$el.tagName + $el.id + $el.className + accName}`
             ),
-            dismissAll: option.checks.LABEL_IN_NAME.dismissAll ? "BTN_LABEL_IN_NAME" : false,
-            developer: option.checks.LABEL_IN_NAME.developer || true
+            dismissAll: State.option.checks.LABEL_IN_NAME.dismissAll ? "BTN_LABEL_IN_NAME" : false,
+            developer: State.option.checks.LABEL_IN_NAME.developer || true
           });
           return;
         }
-        if (option.checks.BTN_ROLE_IN_NAME && accName.includes(Lang._("BTN"))) {
-          results.push({
+        if (State.option.checks.BTN_ROLE_IN_NAME && accName.includes(Lang._("BTN"))) {
+          State.results.push({
             test: "BTN_ROLE_IN_NAME",
             element: $el,
-            type: option.checks.BTN_ROLE_IN_NAME.type || "warning",
-            content: option.checks.BTN_ROLE_IN_NAME.content ? Lang.sprintf(option.checks.BTN_ROLE_IN_NAME.content) : `${Lang.sprintf("BTN_ROLE_IN_NAME")} ${Lang.sprintf("BTN_TIP")}`,
+            type: State.option.checks.BTN_ROLE_IN_NAME.type || "warning",
+            content: State.option.checks.BTN_ROLE_IN_NAME.content ? Lang.sprintf(State.option.checks.BTN_ROLE_IN_NAME.content) : `${Lang.sprintf("BTN_ROLE_IN_NAME")} ${Lang.sprintf("BTN_TIP")}`,
             dismiss: prepareDismissal(
               `BTN_ROLE_IN_NAME ${$el.tagName + $el.id + $el.className + accName}`
             ),
-            dismissAll: option.checks.BTN_ROLE_IN_NAME.dismissAll ? "BTN_ROLE_IN_NAME" : false,
-            developer: option.checks.BTN_ROLE_IN_NAME.developer || true
+            dismissAll: State.option.checks.BTN_ROLE_IN_NAME.dismissAll ? "BTN_ROLE_IN_NAME" : false,
+            developer: State.option.checks.BTN_ROLE_IN_NAME.developer || true
           });
         }
       });
     }
-    if (option.checks.UNCONTAINED_LI) {
+    if (State.option.checks.UNCONTAINED_LI) {
       Elements.Found.Lists.forEach(($el) => {
         if (!$el.closest("ul, ol, menu")) {
-          results.push({
+          State.results.push({
             test: "UNCONTAINED_LI",
             element: $el,
-            type: option.checks.UNCONTAINED_LI.type || "error",
-            content: Lang.sprintf(option.checks.UNCONTAINED_LI.content || "UNCONTAINED_LI"),
+            type: State.option.checks.UNCONTAINED_LI.type || "error",
+            content: Lang.sprintf(State.option.checks.UNCONTAINED_LI.content || "UNCONTAINED_LI"),
             dismiss: prepareDismissal(`UNCONTAINED_LI ${$el.textContent}`),
-            dismissAll: option.checks.UNCONTAINED_LI.dismissAll ? "UNCONTAINED_LI" : false,
-            developer: option.checks.UNCONTAINED_LI.developer || true
+            dismissAll: State.option.checks.UNCONTAINED_LI.dismissAll ? "UNCONTAINED_LI" : false,
+            developer: State.option.checks.UNCONTAINED_LI.developer || true
           });
         }
       });
     }
-    if (option.checks.TABINDEX_ATTR) {
+    if (State.option.checks.TABINDEX_ATTR) {
       Elements.Found.TabIndex.forEach(($el) => {
-        results.push({
+        State.results.push({
           test: "TABINDEX_ATTR",
           element: $el,
-          type: option.checks.TABINDEX_ATTR.type || "error",
-          content: Lang.sprintf(option.checks.TABINDEX_ATTR.content || "TABINDEX_ATTR"),
+          type: State.option.checks.TABINDEX_ATTR.type || "error",
+          content: Lang.sprintf(State.option.checks.TABINDEX_ATTR.content || "TABINDEX_ATTR"),
           dismiss: prepareDismissal(`TABINDEX_ATTR ${$el.tagName + $el.id + $el.className}`),
-          dismissAll: option.checks.TABINDEX_ATTR.dismissAll ? "TABINDEX_ATTR" : false,
-          developer: option.checks.TABINDEX_ATTR.developer || true
+          dismissAll: State.option.checks.TABINDEX_ATTR.dismissAll ? "TABINDEX_ATTR" : false,
+          developer: State.option.checks.TABINDEX_ATTR.developer || true
         });
       });
     }
-    return results;
+    return State.results;
   }
   function checkCustom(results) {
     return results;
   }
+  let languageDetectorSupported;
+  const supportsLanguageDetection = async () => {
+    if (languageDetectorSupported !== void 0) return languageDetectorSupported;
+    try {
+      if ("LanguageDetector" in globalThis) {
+        await globalThis.LanguageDetector.create();
+        languageDetectorSupported = true;
+        return true;
+      }
+    } catch {
+    }
+    languageDetectorSupported = false;
+    console.error("Sa11y: Language detection not supported in this browser.");
+    return false;
+  };
   const getLanguageLabel = (lang) => {
     try {
       return new Intl.DisplayNames(navigator.language, {
@@ -8703,274 +8344,755 @@ ${this.error.stack}
     }
   };
   const primary = (lang) => String(lang).toLowerCase().split("-")[0];
-  let lastRunKey = null;
-  let lastResult = null;
-  async function checkPageLanguage(results, option) {
-    if (!("LanguageDetector" in window)) return;
+  const STORAGE_KEY = "sa11y-lang-detection";
+  const MAX_CACHE_SIZE = 200;
+  const getCacheKey = (declared, url2, textLength) => {
+    return `${declared}|${url2}|${Math.floor(textLength / 100) * 100}`;
+  };
+  const getCache = () => {
+    try {
+      const data = store.getItem(STORAGE_KEY);
+      return data ? JSON.parse(data) : [];
+    } catch (e) {
+      console.error("Sa11y: Error loading cache", e);
+      return [];
+    }
+  };
+  const setCache = (key, testKey, data) => {
+    try {
+      const cache = getCache().filter((item) => item.key !== key);
+      cache.push({ key, testKey, data });
+      while (cache.length > MAX_CACHE_SIZE) cache.shift();
+      store.setItem(STORAGE_KEY, JSON.stringify(cache));
+    } catch (e) {
+      console.error("Sa11y: Error saving cache.", e);
+    }
+  };
+  async function checkPageLanguage() {
+    if (!State.option.checks.PAGE_LANG_CONFIDENCE || !State.option.checks.LANG_OF_PARTS) return;
+    if (!await supportsLanguageDetection()) return;
     const declared = Elements.Found.Language;
     if (!declared) return;
     const text = (Elements.Found.Readability || []).join().slice(0, 1e4);
     if (text.length < 100) return;
-    const runKey = `${primary(declared)}-${text.length}`;
-    if (runKey === lastRunKey) {
-      if (lastResult) results.push(lastResult);
-      return results;
+    const cacheKey = getCacheKey(declared, window.location.href, text.length);
+    const cached = getCache().find((item) => item.key === cacheKey);
+    if (cached) {
+      if (cached.testKey) {
+        State.results.push({
+          test: cached.testKey,
+          type: State.option.checks[cached.testKey].type || "warning",
+          content: State.option.checks[cached.testKey].content || Lang.sprintf([cached.testKey], ...cached.data),
+          dismiss: prepareDismissal(cached.testKey),
+          developer: State.option.checks[cached.testKey].developer ?? true,
+          cached: true
+        });
+      }
+      return;
     }
-    lastRunKey = runKey;
-    lastResult = null;
-    const addResult = (message) => {
-      const item = {
-        test: "PAGE_LANG_CONFIDENCE",
-        type: option.checks.PAGE_LANG_CONFIDENCE.type || "warning",
-        content: Lang.sprintf(option.checks.PAGE_LANG_CONFIDENCE.content || Lang.sprintf(message)),
-        dismiss: prepareDismissal(`PAGE_LANG_CONFIDENCE ${text.slice(0, 100)}`),
-        developer: option.checks.PAGE_LANG_CONFIDENCE.developer ?? true
-      };
-      results.push(item);
-      lastResult = item;
-      return item;
-    };
     const detector = await LanguageDetector.create();
     const detected = await detector.detect(text);
-    if (!detected?.length) return;
+    if (!detected?.length) {
+      setCache(cacheKey, null, null);
+      return;
+    }
     const detectedLang = detected[0];
     const detectedLangCode = detectedLang.detectedLanguage;
-    const confidenceTarget = option.PAGE_LANG_CONFIDENCE?.confidence || 0.8;
     const languageLabel = getLanguageLabel(declared) || declared;
     const likelyLanguage = getLanguageLabel(detectedLangCode);
+    let warning = null;
+    let testKey = null;
+    let languageData = null;
     if (primary(detectedLangCode) === primary(declared)) {
-      if (detectedLang.confidence >= confidenceTarget) return;
-      if (detected.length < 2) return;
-      const secondLikelyLangCode = detected[1].detectedLanguage;
-      const secondLikelyLanguage = getLanguageLabel(secondLikelyLangCode);
-      const langAttributes = find(`[lang="${secondLikelyLangCode}"]`, "root");
-      if (detected[1].confidence >= 0.4 && langAttributes.length === 0) {
-        addResult(
-          `The page language was declared as ${languageLabel}, but there appears to be ${secondLikelyLanguage} content as well. Ensure the ${secondLikelyLanguage} content is tagged appropriately. Learn more about <a href="https://www.w3.org/WAI/WCAG22/Understanding/language-of-parts.html">language of parts.</a>`
-        );
+      const confidenceTarget = State.option.PAGE_LANG_CONFIDENCE?.confidence || 0.8;
+      if (detectedLang.confidence >= confidenceTarget) {
+        setCache(cacheKey, null, null);
+        return;
+      }
+      if (detected.length >= 2) {
+        const secondLangCode = detected[1].detectedLanguage;
+        const secondLanguage = getLanguageLabel(secondLangCode);
+        const langAttributes = find(`[lang="${secondLangCode}"]`, "root");
+        if (detected[1].confidence >= 0.4 && langAttributes.length === 0) {
+          testKey = "PAGE_LANG_CONFIDENCE";
+          languageData = [languageLabel, secondLanguage, secondLanguage];
+          warning = State.option.checks.PAGE_LANG_CONFIDENCE.content || Lang.sprintf("PAGE_LANG_CONFIDENCE", languageLabel, secondLanguage, secondLanguage);
+        }
       }
     } else {
-      addResult(
-        `Most of the text on this page appears to be ${likelyLanguage}, but the declared page language is ${languageLabel}. Consider updating the declared page language to match.`
-      );
+      testKey = "LANG_OF_PARTS";
+      languageData = [likelyLanguage, languageLabel];
+      warning = State.option.checks.LANG_OF_PARTS.content || Lang.sprintf("LANG_OF_PARTS", likelyLanguage, languageLabel);
     }
-    return results;
+    setCache(cacheKey, testKey, languageData);
+    if (testKey) {
+      State.results.push({
+        test: testKey,
+        type: State.option.checks[testKey].type || "warning",
+        content: warning,
+        dismiss: prepareDismissal(testKey),
+        developer: State.option.checks[testKey].developer ?? true,
+        cached: false
+      });
+    }
+  }
+  async function checkAll(desiredRoot = State.option.checkRoot, desiredReadabilityRoot = State.option.readabilityRoot, fixedRoots = State.option.fixedRoots) {
+    try {
+      Constants.initializeRoot(desiredRoot, desiredReadabilityRoot, fixedRoots);
+      findShadowComponents();
+      Elements.initializeElements();
+      checkHeaders();
+      checkLinkText();
+      checkImages();
+      checkLabels();
+      checkQA();
+      checkDeveloper();
+      checkEmbeddedContent();
+      checkContrast();
+      checkReadability();
+      await checkPageLanguage();
+      if (State.option.customChecks === true) {
+        checkCustom();
+      } else if (typeof State.option.customChecks === "object") {
+        State.results.push(...State.option.customChecks);
+      } else if (State.option.customChecks === "listen") {
+        State.customChecksRunning = true;
+        State.customChecksFinished = 0;
+        document.addEventListener("sa11y-resume", () => {
+          State.customChecksFinished += 1;
+          if (State.customChecksFinished === 1) {
+            State.customChecksRunning = false;
+            updateResults();
+          }
+        });
+        window.setTimeout(() => {
+          if (State.customChecksRunning === true) {
+            State.customChecksRunning = false;
+            updateResults();
+            throw Error("Sa11y: No custom checks were returned.");
+          }
+        }, State.option.delayCustomCheck);
+        window.setTimeout(() => {
+          const customChecks = new CustomEvent("sa11y-custom-checks");
+          document.dispatchEvent(customChecks);
+        }, 0);
+      }
+      if (!State.customChecksRunning) updateResults();
+    } catch (error) {
+      const consoleErrors = new ConsoleErrors(error);
+      document.body.appendChild(consoleErrors);
+      throw Error(error);
+    }
+  }
+  function detectPageChanges(checkAll2) {
+    if (State.option.detectSPArouting === true) {
+      let url2 = window.location.href;
+      const checkURL = debounce$2(async () => {
+        if (url2 !== window.location.href) {
+          if (store.getItem("sa11y-panel") === "Closed" || !store.getItem("sa11y-panel")) {
+            checkAll2();
+          } else {
+            resetAll(false);
+            await checkAll2();
+          }
+          url2 = window.location.href;
+        }
+      }, 250);
+      window.addEventListener("click", checkURL);
+      window.addEventListener("keydown", checkURL);
+    }
+  }
+  function mainToggle() {
+    Constants.Panel.toggle.addEventListener("click", (e) => {
+      if (store.getItem("sa11y-panel") === "Opened") {
+        e.preventDefault();
+        store.setItem("sa11y-panel", "Closed");
+        Constants.Panel.toggle.classList.remove("on");
+        Constants.Panel.toggle.setAttribute("aria-expanded", "false");
+        resetAll();
+        if (Constants.Panel.notifCount.innerHTML.trim().length === 0) {
+          Constants.Panel.notifBadge.style.display = "none";
+        } else {
+          Constants.Panel.notifBadge.style.display = "flex";
+        }
+      } else {
+        e.preventDefault();
+        store.setItem("sa11y-panel", "Opened");
+        Constants.Panel.toggle.classList.add("on");
+        Constants.Panel.toggle.setAttribute("aria-expanded", "true");
+        resetAll();
+        checkAll();
+        isScrollable(Constants.Panel.outlineList, Constants.Panel.outlineContent);
+      }
+    });
+    if (store.getItem("sa11y-panel") === "Opened") {
+      Constants.Panel.toggle.classList.add("on");
+      Constants.Panel.toggle.setAttribute("aria-expanded", "true");
+      Constants.Panel.panel.style.transform = "";
+    }
+    document.onkeydown = (e) => {
+      const evt = e || window.event;
+      if (evt.altKey && evt.code === "KeyA") {
+        Constants.Panel.toggle.click();
+        Constants.Panel.toggle.focus();
+      }
+    };
+  }
+  const panelStyles = 'h1,h2,h3,div,p,span,ol,ul,li,a,label,button,svg,strong,kbd,pre,code{all:unset;box-sizing:border-box!important}:before,:after{all:unset}div{display:block}*{font-family:var(--sa11y-font-face)!important;-webkit-font-smoothing:auto!important}p,ol,ul,li,label{font-size:var(--sa11y-normal-text);text-align:start;letter-spacing:normal;word-break:break-word;font-weight:400;line-height:22px!important}.sa11y-overflow{overflow:auto}img,video,iframe{border:0;max-width:100%;height:auto;display:block}audio{max-width:100%}#toggle{bottom:var(--sa11y-toggle-y-offset);z-index:2147483644;color:#fff;cursor:pointer;background:linear-gradient(#00bcd4,#e040fb);background-color:var(--sa11y-setting-switch-bg-off);width:55px;height:55px;background-size:150% 150%;border-radius:50%;justify-content:center;align-items:center;margin:0;transition:all .2s ease-in-out;display:flex;position:fixed;inset-inline-end:var(--sa11y-toggle-x-offset);overflow:visible}#toggle.left,#toggle.top-left{inset-inline-start:var(--sa11y-toggle-x-offset)}#toggle.top-left,#toggle.top-right{top:var(--sa11y-toggle-y-offset);bottom:unset}@media screen and (forced-colors:active){#toggle{border:2px solid #0000;background:buttonface!important}}#toggle svg{width:35px;height:35px}#toggle svg path{fill:var(--sa11y-panel-bg)}#toggle:hover,#toggle:focus{animation:3s sa11y-toggle-gradient}#toggle:disabled:hover,#toggle:disabled:focus{animation:none}#toggle.on{background:linear-gradient(#e040fb,#00bcd4)}#toggle:disabled{cursor:not-allowed;background:unset;background-color:var(--sa11y-setting-switch-bg-off)}#notification-badge{color:#fff;text-wrap:nowrap;background-color:#eb0000;border:1px solid #0000;border-radius:12px;justify-content:center;align-items:center;min-width:20px;padding:2.5px;font-size:13.5px;font-weight:400;line-height:1;display:none;position:absolute;top:-5.5px;right:-3px}#notification-badge.notification-badge-warning{color:var(--sa11y-warning-text);background-color:var(--sa11y-warning-hover);border:1px solid var(--sa11y-warning)}#panel{bottom:calc(var(--sa11y-toggle-y-offset) + var(--sa11y-panel-y-gap));z-index:2147483643;visibility:hidden;background:var(--sa11y-panel-bg);opacity:0;transition:transform .2s, opacity .2s background .2s;transform-origin:100% 100%;border-radius:4px;position:fixed;inset-inline-end:calc(var(--sa11y-toggle-x-offset) + var(--sa11y-panel-x-gap));overflow:visible;transform:scale(0);box-shadow:0 0 20px 4px #9aa1b126,0 4px 80px -8px #24282f40,0 4px 4px -2px #5b5e6926}#panel.left,#panel.top-left{inset-inline-start:calc(var(--sa11y-toggle-x-offset) + var(--sa11y-panel-x-gap));inset-inline-end:unset}#panel.top-right,#panel.top-left{top:calc(var(--sa11y-toggle-y-offset) + var(--sa11y-panel-y-gap) + 10px);bottom:unset}#panel.active{visibility:visible;opacity:1;transform-origin:100% 100%;height:auto;transition:transform .2s,opacity .2s;transform:scale(1)}@media screen and (forced-colors:active){#panel{border:2px solid #0000}}#panel.active.left,[dir=rtl] #panel.active{transform-origin:0 100%}#panel.active.top-left{transform-origin:0 0}#panel.active.top-right{transform-origin:100% 0}#panel-alert{opacity:0;display:none}#panel-alert.active{opacity:1;display:block}#panel-alert-content{max-height:400px;color:var(--sa11y-panel-primary);border-bottom:1px solid var(--sa11y-panel-bg-splitter);align-items:center;padding:15px 20px 15px 15px;line-height:22px;position:relative;overflow-y:auto}:is(.top-left,.top-right) #panel-alert-content{border:0}#panel-alert-preview .close-tooltip{display:none}#panel-alert-preview,#panel-alert-text{font-family:var(--sa11y-font-face);font-size:var(--sa11y-normal-text);font-weight:400;line-height:22px}.panel-alert-preview{background:var(--sa11y-panel-bg-secondary);border:1px dashed var(--sa11y-panel-bg-splitter);border-radius:5px;margin-top:15px;padding:10px}.panel-alert-preview ul{margin:0;margin-block:0;padding:0;position:relative}.panel-alert-preview li{margin:5px 10px 0 20px;padding-bottom:5px;display:list-item}.element-preview{overflow-wrap:break-word;background-color:var(--sa11y-element-preview);border-radius:3.2px;margin-bottom:10px;padding:5px}button[data-sa11y-dismiss]{color:var(--sa11y-panel-primary);cursor:pointer;background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-button-outline);margin:10px 5px 5px 0;border-radius:5px;margin-inline-end:15px;padding:4px 8px;display:block}button[data-sa11y-dismiss]:hover,button[data-sa11y-dismiss]:focus{background:var(--sa11y-shortcut-hover)}h2{font-size:var(--sa11y-large-text);margin-bottom:3px;font-weight:700;display:block}h3{font-size:calc(var(--sa11y-large-text) - 1px);margin-bottom:3px;font-weight:600;display:block}strong{font-weight:600}a:not(#outline-list a,#images-list a){color:var(--sa11y-hyperlink);cursor:pointer;border-bottom:0;font-weight:500;text-decoration:underline}a:hover,a:focus{text-decoration:none!important}hr{background:var(--sa11y-panel-bg-splitter);opacity:1;border:none;height:1px;margin:10px 0;padding:0}#dismiss-button,#skip-button{text-align:center;cursor:pointer;background:var(--sa11y-panel-bg-secondary);border:1px solid var(--sa11y-button-outline);border-radius:50px;width:36px;height:36px;margin-inline:2px 8px;transition:all .1s ease-in-out;display:none;position:relative;overflow:visible}:is(#dismiss-button,#skip-button).active{display:block}:is(#dismiss-button,#skip-button):disabled{cursor:default;box-shadow:none;background:0 0;border:0}:is(#dismiss-button,#skip-button):before{content:"";position:absolute;inset:-5px}:is(#dismiss-button,#skip-button):hover:not(:disabled),:is(#dismiss-button,#skip-button):focus:not(:disabled){background-color:var(--sa11y-shortcut-hover)}:is(#panel.top-left,#panel.left) #dismiss-button,:is(#panel.top-left,#panel.left) #skip-button{margin-inline:8px 2px}.dismiss-icon{background:var(--sa11y-setting-switch-bg-off);width:24px;height:24px;-webkit-mask:var(--sa11y-dismiss-icon) center no-repeat;mask:var(--sa11y-dismiss-icon) center no-repeat;margin-bottom:-4px;display:inline-block}.dismiss-group{display:flex}@media screen and (forced-colors:active){.dismiss-icon{filter:invert()}}#panel-content{color:var(--sa11y-panel-primary);align-items:center;padding:6px;display:flex}#panel-content.errors .panel-icon,#panel-content.good .panel-icon,#panel-content.warnings .panel-icon{width:26px;height:26px;margin:0 auto}#panel-content.errors .panel-icon{background:var(--sa11y-panel-error);-webkit-mask:var(--sa11y-error-svg) center no-repeat;mask:var(--sa11y-error-svg) center no-repeat;margin-top:-2px}#panel-content.good .panel-icon{background:var(--sa11y-good);-webkit-mask:var(--sa11y-good-svg) center no-repeat;mask:var(--sa11y-good-svg) center no-repeat}#panel-content.warnings .panel-icon{background:var(--sa11y-yellow-text);transform:scaleX(var(--sa11y-icon-direction));-webkit-mask:var(--sa11y-warning-svg) center no-repeat;mask:var(--sa11y-warning-svg) center no-repeat}@media screen and (forced-colors:active){#panel-content.errors .panel-icon,#panel-content.good .panel-icon,#panel-content.warnings .panel-icon{filter:invert()}}#panel.top-left #panel-content,#panel.left #panel-content{flex-direction:row-reverse}#status{font-size:var(--sa11y-large-text);color:var(--sa11y-panel-primary)}.panel-count{color:var(--sa11y-panel-primary);background-color:var(--sa11y-panel-badge);border-radius:4px;margin-left:3px;margin-right:3px;padding:2px 4px;font-size:15px;font-weight:400}#page-issues,#images-panel,#settings-panel,#outline-panel{color:var(--sa11y-panel-primary);opacity:0;display:none}#page-issues.active,#images-panel.active,#settings-panel.active,#outline-panel.active{opacity:1;display:block}.panel-header{text-align:start;justify-content:space-between;padding:10px 15px 0;display:flex}#about-content{padding-top:5px}#about-content p{margin-block-end:1em;display:block}#images-content,#page-issues-content,#settings-content,#outline-content{border-bottom:1px solid var(--sa11y-panel-bg-splitter);padding:0 15px 10px}.top-right :is(#images-content,#page-issues-content,#settings-content,#outline-content),.top-left :is(#images-content,#page-issues-content,#settings-content,#outline-content){border:0}#images-content{padding-inline:5px}#page-issues-content{max-height:160px;overflow-y:auto}#settings-content{max-height:400px;overflow-y:auto}#images-content,#outline-content{max-height:250px;overflow-y:auto}#settings-panel .sa11y-red-text,#outline-panel .outline-list-item.sa11y-red-text{color:var(--sa11y-red-text)}#outline-list{margin:0;padding:0;display:block}#outline-list button{cursor:pointer;text-decoration:none;display:block}#outline-list button:hover,#outline-list button:focus{background:var(--sa11y-panel-outline-hover);box-shadow:0 0 0 2px var(--sa11y-panel-outline-hover);border-radius:5px;display:block}#outline-list li{margin-top:0;margin-bottom:4.5px;padding:0;list-style-type:none;display:block}#outline-list li:first-child{margin-top:5px}#outline-list .outline-2{margin-inline-start:15px}#outline-list .outline-3{margin-inline-start:30px}#outline-list .outline-4{margin-inline-start:45px}#outline-list .outline-5{margin-inline-start:60px}#outline-list .outline-6{margin-inline-start:75px}#images-list{margin:0;padding:0;display:block}#images-list button{cursor:pointer;min-height:44px;margin:10px 5px;text-decoration:none;display:block}#images-list button:hover,#images-list button:focus{background:var(--sa11y-panel-outline-hover);box-shadow:0 0 0 2px var(--sa11y-panel-outline-hover);border-radius:5px;display:block}#images-list li{border-bottom:1px solid var(--sa11y-panel-bg-splitter);flex-direction:column;width:100%;list-style-type:none;display:flex;overflow:hidden}#images-list li.no-images{padding-inline:10px}#images-list li:last-child{border:none;margin-bottom:0}#images-list li .alt{padding:2px 5px 10px}#images-list li .edit-block{justify-content:flex-end;margin-bottom:15px;display:flex}#images-list li .edit{color:var(--sa11y-panel-primary);cursor:pointer;background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-button-outline);border-radius:5px;margin-inline-end:5px;padding:4px 7px;text-decoration:none;position:relative}#images-list li .edit:hover,#images-list li .edit:focus{background-color:var(--sa11y-shortcut-hover)}#images-list li .edit:before{content:"";position:absolute;inset:-10px}#images-list li img{float:inline-start;border-radius:5px;max-width:110px;margin:5px}#images-list li.warning .alt{color:var(--sa11y-yellow-text)}#images-list li.warning img{background-color:var(--sa11y-yellow-text);border:5px solid var(--sa11y-yellow-text)}#images-list li.error .alt{color:var(--sa11y-error)}#images-list li.error img{background-color:var(--sa11y-error);border:5px solid var(--sa11y-error)}#images-list li.good img{background-color:var(--sa11y-panel-badge);border:5px solid var(--sa11y-panel-badge)}@media screen and (forced-colors:active){#images-list li img{background-color:buttonborder!important}}.move-panel-icon{vertical-align:middle;background:var(--sa11y-setting-switch-bg-off);width:18px;height:18px;-webkit-mask:var(--sa11y-move-panel-icon);mask:var(--sa11y-move-panel-icon)}.info-icon{vertical-align:middle;background:var(--sa11y-setting-switch-bg-off);width:20px;height:20px;-webkit-mask:var(--sa11y-info-icon);mask:var(--sa11y-info-icon);margin-top:-2px}.sun-icon{vertical-align:middle;background:var(--sa11y-setting-switch-bg-off);width:18px;height:18px;-webkit-mask:var(--sa11y-sun-icon);mask:var(--sa11y-sun-icon)}.moon-icon{vertical-align:middle;background:var(--sa11y-setting-switch-bg-off);width:18px;height:18px;-webkit-mask:var(--sa11y-moon-icon);mask:var(--sa11y-moon-icon)}.error-icon{background:var(--sa11y-error-text);width:16px;height:16px;-webkit-mask:var(--sa11y-error-svg);mask:var(--sa11y-error-svg);margin-bottom:-4px}.hidden-icon{background:var(--sa11y-panel-primary);width:16px;height:16px;-webkit-mask:var(--sa11y-hidden-icon-svg);mask:var(--sa11y-hidden-icon-svg);margin-bottom:-3px}.link-icon{background:var(--sa11y-panel-primary);width:16px;height:16px;-webkit-mask:var(--sa11y-link-icon-svg);mask:var(--sa11y-link-icon-svg);margin-bottom:-3.5px}.move-panel-icon,.info-icon,.sun-icon,.moon-icon,.error-icon,.hidden-icon,.link-icon{display:inline-block;-webkit-mask-position:50%;mask-position:50%;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat}.error-badge .link-icon,.error-badge .hidden-icon{background:var(--sa11y-error-text)!important}.warning-badge .link-icon,.warning-badge .hidden-icon{background:var(--sa11y-panel-bg)}.error .hidden-icon,.error .link-icon{background:var(--sa11y-error-text)}.warning .hidden-icon,.warning .link-icon{background:var(--sa11y-panel-bg)}@media screen and (forced-colors:active){.move-panel-icon,.sun-icon,.moon-icon,.info-icon,.error-icon,.link-icon,.hidden-icon{filter:invert()}}#panel-controls{border-bottom:1px solid var(--sa11y-panel-bg-splitter);border-radius:0 0 4px 4px;display:flex;overflow:hidden}#panel-controls button{width:100%;height:30px;font-size:var(--sa11y-normal-text);color:var(--sa11y-panel-secondary);text-align:center;cursor:pointer;background:var(--sa11y-panel-bg-secondary);background-color:var(--sa11y-panel-bg-secondary);border-top:1px solid var(--sa11y-panel-bg-splitter);border-inline-end:1px solid var(--sa11y-panel-bg-splitter);opacity:1;outline:0;margin:0;padding:0;font-weight:400;line-height:0;transition:background .2s;display:block;position:relative}#panel-controls button:hover,#panel-controls button.active{background-color:var(--sa11y-shortcut-hover)}#panel-controls button.active{font-weight:600}#export-results-mode,label{width:100%;color:var(--sa11y-panel-primary);margin:0;font-weight:400;display:inline-block}label:not(#colour-filter-mode,#export-results-mode){cursor:pointer}#panel.right #panel-controls[data-image-panel]:after{content:"";width:80px}#panel.left #panel-controls[data-image-panel]:before{content:"";width:50px}#settings-panel .export-results-group,#settings-panel .appearance-group{margin:5px 0;display:flex}:is(#settings-panel .export-results-group,#settings-panel .appearance-group) button{text-align:center;white-space:nowrap;cursor:pointer;border:2px solid var(--sa11y-setting-switch-bg-off);margin:2px 0;border-radius:5px;justify-content:center;align-items:center;min-width:44px;min-height:34px;margin-inline:8px 4px;display:flex;position:relative}:is(#settings-panel .export-results-group,#settings-panel .appearance-group) button:hover,:is(#settings-panel .export-results-group,#settings-panel .appearance-group) button:focus,:is(#settings-panel .export-results-group,#settings-panel .appearance-group) button:focus-within{background:var(--sa11y-shortcut-hover)}:is(#settings-panel .export-results-group,#settings-panel .appearance-group) button:before{content:"";position:absolute;inset:-7px}:is(#settings-panel .export-results-group,#settings-panel .appearance-group) button .text{color:var(--sa11y-setting-switch-bg-off);padding:0 6px;font-weight:600}#settings-panel .switch{width:105px;height:44px;font-size:var(--sa11y-normal-text);color:var(--sa11y-setting-switch-bg-off);text-align:end;cursor:pointer;background:0 0;border:0;border-radius:5px;margin:0;padding:7px 10px;font-weight:600;position:relative}#settings-panel .switch[aria-pressed=true]:after,#settings-panel .switch[aria-pressed=false]:after{vertical-align:middle;content:"";width:27px;height:27px;margin:0 4px 4px;display:inline-block}#settings-panel .switch[aria-pressed=true]:after{background:var(--sa11y-setting-switch-bg-on);-webkit-mask:var(--sa11y-setting-switch-on-svg) center no-repeat;mask:var(--sa11y-setting-switch-on-svg) center no-repeat}#settings-panel .switch[aria-pressed=false]:after{background:var(--sa11y-setting-switch-bg-off);-webkit-mask:var(--sa11y-setting-switch-off-svg) center no-repeat;mask:var(--sa11y-setting-switch-off-svg) center no-repeat}@media screen and (forced-colors:active){#settings-panel .switch[aria-pressed=false]:after,#settings-panel .switch[aria-pressed=true]:after{filter:invert()}}#settings-panel #settings-options li{border-bottom:1px solid var(--sa11y-panel-bg-splitter);justify-content:space-between;align-items:center;padding:1px 0;list-style-type:none;display:flex}#settings-panel #settings-options li:last-child{border:none}#page-issues{color:var(--sa11y-panel-primary);align-items:center}#page-issues-list{margin-top:4px;display:block}#page-issues-list li{margin:0 0 10px;display:block}:is(.top-left,.top-right).has-page-issues #page-issues{border-top:1px solid var(--sa11y-panel-bg-splitter);margin-top:-1px}#panel-colour-filters{font-family:var(--sa11y-font-face);font-size:var(--sa11y-normal-text);color:var(--sa11y-panel-primary);align-items:center;font-weight:400;line-height:22px;display:none}#panel-colour-filters.active{display:flex}#panel-colour-filters p{width:100%;padding:6px 20px 6px 6px}#panel-colour-filters[data-colour=protanopia],#panel-colour-filters[data-colour=deuteranopia],#panel-colour-filters[data-colour=tritanopia],#panel-colour-filters[data-colour=monochromacy]{border-bottom:6px solid #0000;border-image-slice:1}#panel-colour-filters[data-colour=protanopia]{border-image:linear-gradient(94deg,#786719 11%,#e0c600 36% 47%,#0059e3 75%,#0042aa 91%)}#panel-colour-filters[data-colour=deuteranopia]{border-image:linear-gradient(270deg,#567fdb 0%,#a4a28d 48%,#c3ad14 69%,#a79505 100%)}#panel-colour-filters[data-colour=tritanopia]{border-image:linear-gradient(270deg,#b1506f 0%,#0696c1 35%,#f3a9ba 70%,#d91c5d 87%,#fe015c 100%)}#panel-colour-filters[data-colour=monochromacy]{border-image:linear-gradient(270deg,#000 0%,#a7a7a7 50%,#000 100%)}#panel-colour-filters[data-colour=protanopia] .panel-icon{background:var(--sa11y-panel-error)}#panel-colour-filters[data-colour=deuteranopia] .panel-icon{background:var(--sa11y-good-hover)}#panel-colour-filters[data-colour=tritanopia] .panel-icon{background:var(--sa11y-blue)}#panel-colour-filters[data-colour=monochromacy] .panel-icon{background:linear-gradient(90deg,#38a459 20%,red 50%,#0077c8 80%)}#panel-colour-filters .panel-icon{width:30px;height:30px;-webkit-mask:var(--sa11y-low-vision-icon) center no-repeat;mask:var(--sa11y-low-vision-icon) center no-repeat;margin-inline:10px 5px}@media screen and (forced-colors:active){#panel-colour-filters .panel-icon{forced-color-adjust:none}}.select-dropdown{align-items:center;display:flex;position:relative}.select-dropdown:after{content:" ";border-top:5px solid var(--sa11y-setting-switch-bg-off);border-left:5px solid #0000;border-right:5px solid #0000;position:absolute;inset-inline-end:14px}#colour-filter-select{appearance:none;height:30px;font-size:var(--sa11y-normal-text);color:var(--sa11y-setting-switch-bg-off);text-align:end;vertical-align:middle;cursor:pointer;background:var(--sa11y-panel-bg);border:2px solid var(--sa11y-setting-switch-bg-off);border-radius:5px;margin-inline-end:4px;padding-inline:5px 25px;font-weight:400;position:relative}#colour-filter-select:hover,#colour-filter-select:focus{background:var(--sa11y-shortcut-hover)}#colour-filter-select.active{box-shadow:0 0 0 2px var(--sa11y-setting-switch-bg-on)}#colour-filter-item label,#colour-filter-item select{margin-top:10px;margin-bottom:9px}#readability-panel{opacity:0;display:none}#readability-panel.active{opacity:1;display:block}:is(.top-left,.top-right) #readability-content{border-top:1px solid var(--sa11y-panel-bg-splitter)}:is(.left,.right) #readability-content{border-bottom:1px solid var(--sa11y-panel-bg-splitter)}#readability-content{width:100%;color:var(--sa11y-panel-primary);padding:10px 15px}#readability-details{white-space:normal;margin:0;padding:0;list-style-type:none;display:block}#readability-details li{margin:0;padding-inline-end:10px;list-style-type:none;display:inline-block}.readability-score{color:var(--sa11y-panel-primary);background-color:var(--sa11y-panel-badge);border-radius:4px;margin-inline-start:5px;padding:2px 5px}#readability-info{margin-inline-start:10px}#skip-to-page-issues{display:none}#panel.has-page-issues #skip-to-page-issues{clip:rect(0, 0, 0, 0);white-space:nowrap;background:var(--sa11y-panel-bg);border:0;border-radius:5px;width:1px;height:1px;margin:-1px;padding:0;font-weight:600;display:block;position:absolute;overflow:hidden}#panel.has-page-issues #skip-to-page-issues:focus{z-index:1;clip:auto;white-space:normal;width:auto;height:auto;margin:0;padding:7px 10px;overflow:visible}.hide-settings-border{border-bottom:0!important;padding:0 15px!important}.hide-settings-border li:not(#colour-filter-item){display:none!important}.hide-settings-border #about-content{display:none}.hide-settings-border.scrollable:before{all:unset}#contrast-tools{display:none}::-webkit-scrollbar{width:7px;height:6px}::-webkit-scrollbar-thumb{background-color:var(--sa11y-button-outline);border-radius:6px}*{scrollbar-color:var(--sa11y-button-outline);scrollbar-width:thin}.scrollable:before{z-index:-1;content:"";background:linear-gradient(180deg, #0000 70%, var(--sa11y-panel-scrollable) 100%);background-position:bottom;width:100%;height:250px;transition:opacity 1s ease-in-out;animation:1s ease-in-out fade;position:absolute;inset:auto 0}#settings-content.scrollable:before{height:400px}.top-right .scrollable:before,.top-left .scrollable:before{border-radius:5px}#page-issues-content.scrollable:before{height:160px}#panel-alert.scrollable:before{height:200px}@keyframes sa11y-toggle-gradient{0%{background-position:50% 0}50%{background-position:50% 100%}to{background-position:50% 0}}@keyframes fade{0%{opacity:0}to{opacity:1}}@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;transform:none!important}}#panel{width:440px}#container:lang(en) #panel{width:315px}:is(#container:lang(nb),#container:lang(da),#container:lang(pl),#container:lang(de),#container:lang(sv),#container:lang(zh)) #panel{width:365px}:is(#container:lang(bg),#container:lang(es)) .switch:not(#export-results-item *){width:230px!important}#container:not(:lang(en),:lang(de)) .switch{width:205px}';
+  class ControlPanel extends HTMLElement {
+    connectedCallback() {
+      this.attachShadow({ mode: "open" });
+      const style = document.createElement("style");
+      style.textContent = panelStyles + sharedStyles;
+      this.shadowRoot.appendChild(style);
+      const MainToggleIcon = '<svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M256 48c114.953 0 208 93.029 208 208 0 114.953-93.029 208-208 208-114.953 0-208-93.029-208-208 0-114.953 93.029-208 208-208m0-40C119.033 8 8 119.033 8 256s111.033 248 248 248 248-111.033 248-248S392.967 8 256 8zm0 56C149.961 64 64 149.961 64 256s85.961 192 192 192 192-85.961 192-192S362.039 64 256 64zm0 44c19.882 0 36 16.118 36 36s-16.118 36-36 36-36-16.118-36-36 16.118-36 36-36zm117.741 98.023c-28.712 6.779-55.511 12.748-82.14 15.807.851 101.023 12.306 123.052 25.037 155.621 3.617 9.26-.957 19.698-10.217 23.315-9.261 3.617-19.699-.957-23.316-10.217-8.705-22.308-17.086-40.636-22.261-78.549h-9.686c-5.167 37.851-13.534 56.208-22.262 78.549-3.615 9.255-14.05 13.836-23.315 10.217-9.26-3.617-13.834-14.056-10.217-23.315 12.713-32.541 24.185-54.541 25.037-155.621-26.629-3.058-53.428-9.027-82.141-15.807-8.6-2.031-13.926-10.648-11.895-19.249s10.647-13.926 19.249-11.895c96.686 22.829 124.283 22.783 220.775 0 8.599-2.03 17.218 3.294 19.249 11.895 2.029 8.601-3.297 17.219-11.897 19.249z"/></svg>';
+      const rememberDeveloper = store.getItem("sa11y-developer") === "On";
+      const rememberReadability = store.getItem("sa11y-readability") === "On";
+      const rememberTheme = store.getItem("sa11y-theme");
+      const rememberPanelPosition = store.getItem("sa11y-position");
+      const checkAll2 = State.option.checkAllHideToggles;
+      const developerPlugin = State.option.developerPlugin ? `
+      <li id="developer-item" ${checkAll2 ? "hidden" : ""}>
+        <label id="check-developer" for="developer-toggle">
+          ${Lang._("DEVELOPER_CHECKS")} <span class="info-icon"></span>
+        </label>
+        <button type="button" id="developer-toggle" class="switch"
+          aria-labelledby="check-developer" aria-describedby="check-developer-desc"
+          aria-pressed="${rememberDeveloper ? "true" : "false"}"
+        >${rememberDeveloper ? Lang._("ON") : Lang._("OFF")}</button>
+        <div id="check-developer-desc" hidden>${Lang._("DEVELOPER_DESC")}</div>
+      </li>` : "";
+      const readabilityPlugin = Constants.Readability.Plugin ? `
+      <li id="readability-item">
+        <label id="check-readability" for="readability-toggle">${Lang._("READABILITY")} <span class="info-icon"></span></label>
+        <button type="button" id="readability-toggle" aria-labelledby="check-readability" class="switch"
+          aria-pressed="${rememberReadability ? "true" : "false"}"
+        >${rememberReadability ? Lang._("ON") : Lang._("OFF")}</button>
+        <div id="check-readability-desc" hidden>${Lang._("READABILITY_DESC")}</div>
+      </li>` : "";
+      const colourFilterPlugin = State.option.colourFilterPlugin ? `
+      <li id="colour-filter-item">
+        <label id="colour-filter-mode" for="colour-filter">${Lang._("COLOUR_FILTER")}</label>
+        <div class="select-dropdown">
+          <select id="colour-filter-select">
+            <option value="0">${Lang._("OFF")}</option>
+            <option value="1">${Lang._("PROTANOPIA")}</option>
+            <option value="2">${Lang._("DEUTERANOPIA")}</option>
+            <option value="3">${Lang._("TRITANOPIA")}</option>
+            <option value="4">${Lang._("MONOCHROMACY")}</option>
+          </select>
+        </div>
+      </li>` : "";
+      const colourFilterPanel = State.option.colourFilterPlugin ? `
+      <div id="panel-colour-filters" role="region" aria-labelledby="colour-filter-mode">
+        <div id="filter-icon" class="panel-icon" role="img"></div>
+        <p>${Lang._("COLOUR_FILTER_MESSAGE")}</p>
+      </div>` : "";
+      const exportResultsPlugin = State.option.exportResultsPlugin ? `
+      <li id="export-results-item">
+        <span id="export-results-mode">${Lang._("EXPORT_RESULTS")}</span>
+        <div class="export-results-group">
+          <button type="button" id="export-csv" aria-describedby="export-results-mode">
+            <span class="text">CSV</span>
+          </button>
+          <button type="button" id="export-html" aria-describedby="export-results-mode">
+            <span class="text">HTML</span>
+          </button>
+        </div>
+      </li>` : "";
+      const aboutSection = State.option.aboutContent ? `
+      <div id="about-content">${State.option.aboutContent}</div>` : "";
+      const mainToggle2 = `
+      <button type="button" aria-expanded="false" id="toggle" part="toggle" aria-describedby="notification-badge" aria-label="${Lang._("MAIN_TOGGLE_LABEL")}" class="${rememberPanelPosition}" disabled>
+        ${MainToggleIcon}
+        <div id="notification-badge">
+          <span id="notification-count"></span>
+          <span id="notification-text" class="visually-hidden"></span>
+        </div>
+      </button>`;
+      const pageIssues = `
+      <div id="page-issues">
+        <div class="panel-header">
+          <h2 id="page-issues-header" tabindex="-1">${Lang._("PAGE_ISSUES")}</h2>
+        </div>
+        <div id="page-issues-content">
+          <ul id="page-issues-list" role="list" aria-labelledby="page-issues-header"></ul>
+        </div>
+      </div>`;
+      const pageOutline = `
+      <div id="outline-panel" role="tabpanel" aria-labelledby="outline-header">
+        <div class="panel-header">
+          <h2 id="outline-header" tabindex="-1">${Lang._("OUTLINE")}</h2>
+        </div>
+        <div id="outline-content">
+          <ul id="outline-list" tabindex="0" role="list" aria-labelledby="outline-header"></ul>
+        </div>
+        <div id="readability-panel">
+          <div id="readability-content">
+            <h2 class="header-text-inline">${Lang._("READABILITY")}</h2>
+            <p id="readability-info"></p>
+            <ul id="readability-details"></ul>
+          </div>
+        </div>
+      </div>`;
+      const imagesOutline = State.option.showImageOutline ? `
+      <div id="images-panel" role="tabpanel" aria-labelledby="images-header">
+        <div class="panel-header">
+          <h2 id="images-header" tabindex="-1">${Lang._("IMAGES")}</h2>
+        </div>
+        <div id="images-content">
+          <ul id="images-list" tabindex="0" role="list" aria-labelledby="images-header"></ul>
+        </div>
+      </div>` : "";
+      const leftPressed = rememberPanelPosition === "left" || rememberPanelPosition === "top-left";
+      const panelMoved = leftPressed ? "true" : "false";
+      const panelPositionToggle = State.option.showMovePanelToggle ? `<button type="button" id="move-panel"
+          aria-label="${Lang._("MOVE_PANEL")}"
+          aria-pressed="${panelMoved}"
+          ><span class="move-panel-icon"></span>
+        </button>` : "";
+      const pageSettings = `
+      <div id="settings-panel" role="tabpanel" aria-labelledby="settings-header">
+        <div class="panel-header">
+          <h2 id="settings-header" tabindex="-1">${Lang._("SETTINGS")}</h2>
+        </div>
+        <div id="settings-content">
+          <ul id="settings-options">
+            ${developerPlugin}
+            ${readabilityPlugin}
+            <li id="appearance-item">
+              <span id="appearance-mode">${Lang._("APPEARANCE")}</span>
+              <div class="appearance-group">
+                <button type="button" id="theme-toggle"
+                  aria-label="${Lang._("DARK_MODE")}"
+                  aria-pressed=${rememberTheme === "dark" ? "true" : "false"}
+                ><span class="moon-icon"></span></button>
+                ${panelPositionToggle}
+              </div>
+            </li>
+            ${exportResultsPlugin}
+            ${colourFilterPlugin}
+          </ul>
+          ${aboutSection}
+        </div>
+      </div>`;
+      const panelAlerts = `
+      <div id="panel-alert" role="alertdialog" aria-labelledby="alert-heading" aria-describedby="panel-alert-text">
+        <div id="panel-alert-content">
+          <div class="header-text">
+            <button type="button" id="close-alert" class="close-btn" aria-label="${Lang._("ALERT_CLOSE")}"></button>
+            <h2 id="alert-heading">${Lang._("ALERT_TEXT")}</h2>
+          </div>
+          <p id="panel-alert-text"></p>
+          <div id="panel-alert-preview"></div>
+        </div>
+      </div>`;
+      const panelStatus = `
+      <div id="panel-content">
+        <button type="button" id="skip-to-page-issues">
+          ${Lang._("SKIP_TO_PAGE_ISSUES")}
+        </button>
+        <button type="button" id="skip-button">
+          <div class="panel-icon"></div>
+          <span class="visually-hidden">${Lang._("SHORTCUT_SR")}</span>
+        </button>
+        <button type="button" id="dismiss-button">
+          <div class="dismiss-icon"></div>
+          <span id="dismiss-tooltip" class="visually-hidden"></span>
+        </button>
+        <div id="panel-text">
+          <h1 class="visually-hidden">${Lang._("PANEL_HEADING")}</h1>
+          <p id="status" aria-live="polite"></p>
+        </div>
+      </div>`;
+      const imageToggleButton = `<button type="button" role="tab" aria-expanded="false" id="images-toggle" aria-controls="images-panel">${Lang._("IMAGES")}</button>`;
+      const imagePanelEnabled = State.option.showImageOutline ? "data-image-panel" : "";
+      const tabToggles = `
+      <div id="panel-controls" role="tablist" aria-orientation="horizontal" ${imagePanelEnabled}>
+        <button type="button" role="tab" aria-expanded="false" id="outline-toggle" aria-controls="outline-panel">${Lang._("OUTLINE")}</button>
+        ${State.option.showImageOutline ? imageToggleButton : ""}
+        <button type="button" role="tab" aria-expanded="false" id="settings-toggle" aria-controls="settings-panel">${Lang._("SETTINGS")}</button>
+      </div>`;
+      const container = document.createElement("div");
+      container.setAttribute("id", "container");
+      container.setAttribute("role", "region");
+      container.setAttribute("data-sa11y-version", "4.4.2");
+      container.setAttribute("lang", Lang._("LANG_CODE"));
+      container.setAttribute("aria-label", Lang._("CONTAINER_LABEL"));
+      container.setAttribute("dir", Constants.Global.langDirection);
+      if (rememberPanelPosition === "top-left" || rememberPanelPosition === "top-right") {
+        container.innerHTML = `
+        ${mainToggle2}
+        <div id="panel" class="${rememberPanelPosition}" part="panel">
+          ${panelStatus}
+          ${colourFilterPanel}
+          ${tabToggles}
+          ${pageOutline}
+          ${imagesOutline}
+          ${pageSettings}
+          ${panelAlerts}
+          ${pageIssues}
+        </div>`;
+      } else {
+        container.innerHTML = `
+        ${mainToggle2}
+        <div id="panel" class="${rememberPanelPosition}" part="panel">
+          ${pageIssues}
+          ${pageOutline}
+          ${imagesOutline}
+          ${pageSettings}
+          ${panelAlerts}
+          ${colourFilterPanel}
+          ${panelStatus}
+          ${tabToggles}
+        </div>`;
+      }
+      this.shadowRoot.appendChild(container);
+      Constants.initializePanelSelectors();
+    }
+  }
+  function settingsPanelToggles() {
+    if (State.option.showMovePanelToggle) {
+      Constants.Panel.movePanelToggle.onclick = async () => {
+        const panelPosition = store.getItem("sa11y-position");
+        const [position1, position2] = panelPosition.includes("top") ? ["top-right", "top-left"] : ["right", "left"];
+        const newPosition = panelPosition === position1 ? position2 : position1;
+        store.setItem("sa11y-position", newPosition);
+        [position1, position2].forEach((classname) => {
+          Constants.Panel.toggle.classList.replace(classname, newPosition);
+          Constants.Panel.panel.classList.replace(classname, newPosition);
+        });
+        Constants.Panel.movePanelToggle.setAttribute(
+          "aria-pressed",
+          panelPosition === position1 ? "true" : "false"
+        );
+      };
+    }
+    if (State.option.developerPlugin) {
+      Constants.Panel.developerToggle.onclick = async () => {
+        if (store.getItem("sa11y-developer") === "On") {
+          store.setItem("sa11y-developer", "Off");
+          Constants.Panel.developerToggle.textContent = `${Lang._("OFF")}`;
+          Constants.Panel.developerToggle.setAttribute("aria-pressed", "false");
+          resetAll(false);
+          await checkAll();
+        } else {
+          store.setItem("sa11y-developer", "On");
+          Constants.Panel.developerToggle.textContent = `${Lang._("ON")}`;
+          Constants.Panel.developerToggle.setAttribute("aria-pressed", "true");
+          resetAll(false);
+          await checkAll();
+        }
+      };
+    } else {
+      store.setItem("sa11y-developer", "Off");
+    }
+    if (Constants.Readability.Plugin) {
+      Constants.Panel.readabilityToggle.onclick = async () => {
+        if (store.getItem("sa11y-readability") === "On") {
+          store.setItem("sa11y-readability", "Off");
+          Constants.Panel.readabilityToggle.textContent = `${Lang._("OFF")}`;
+          Constants.Panel.readabilityToggle.setAttribute("aria-pressed", "false");
+          Constants.Panel.readability.classList.remove("active");
+          resetAll(false);
+          await checkAll();
+        } else {
+          store.setItem("sa11y-readability", "On");
+          Constants.Panel.readabilityToggle.textContent = `${Lang._("ON")}`;
+          Constants.Panel.readabilityToggle.setAttribute("aria-pressed", "true");
+          Constants.Panel.readability.classList.add("active");
+          resetAll(false);
+          await checkAll();
+        }
+      };
+      if (store.getItem("sa11y-readability") === "On") {
+        Constants.Panel.readability.classList.add("active");
+      }
+    }
+    const systemInitiatedDark = window.matchMedia("(prefers-color-scheme: dark)");
+    const { themeToggle } = Constants.Panel;
+    const { html } = Constants.Global;
+    const storeTheme = (theme) => {
+      html.setAttribute("data-sa11y-theme", theme);
+      store.setItem("sa11y-theme", theme);
+      const icon = themeToggle.querySelector("span").classList;
+      icon.toggle("moon-icon", theme === "light");
+      icon.toggle("sun-icon", theme === "dark");
+      themeToggle.setAttribute("aria-pressed", theme === "dark" ? "true" : "false");
+    };
+    const initialTheme = store.getItem("sa11y-theme") || (systemInitiatedDark.matches ? "dark" : "light");
+    storeTheme(initialTheme);
+    systemInitiatedDark.addEventListener("change", () => {
+      storeTheme(systemInitiatedDark.matches ? "dark" : "light");
+    });
+    themeToggle.onclick = () => {
+      const currentTheme = store.getItem("sa11y-theme") || (systemInitiatedDark.matches ? "dark" : "light");
+      const preferredTheme = currentTheme === "dark" ? "light" : "dark";
+      storeTheme(preferredTheme);
+    };
+    if (State.option.colourFilterPlugin) {
+      Constants.Panel.colourFilterSelect.addEventListener("change", async () => {
+        const option = parseInt(Constants.Panel.colourFilterSelect.value, 10);
+        const filters = ["protanopia", "deuteranopia", "tritanopia", "monochromacy"];
+        const icons = [
+          Lang._("RED_EYE"),
+          Lang._("GREEN_EYE"),
+          Lang._("BLUE_EYE"),
+          Lang._("MONO_EYE")
+        ];
+        if (option >= 1 && option <= 4) {
+          if (window.matchMedia("(forced-colors: active)").matches) {
+            createAlert(Lang._("COLOUR_FILTER_HIGH_CONTRAST"));
+          } else {
+            document.body.setAttribute("data-sa11y-filter", filters[option - 1]);
+            Constants.Panel.colourFilterIcon.setAttribute("aria-label", icons[option - 1]);
+            resetAttributes(
+              ["data-sa11y-error", "data-sa11y-warning", "data-sa11y-good", "data-sa11y-overflow"],
+              "document"
+            );
+            remove(["sa11y-annotation", "sa11y-tooltips", "sa11y-heading-label"], "document");
+            Constants.Panel.skipButton.disabled = true;
+            Constants.Panel.pageIssues.classList.remove("active");
+            Constants.Panel.settingsContent.classList.add("hide-settings-border");
+            Constants.Panel.controls.hidden = true;
+            Constants.Panel.colourFilterSelect.classList.add("active");
+            Constants.Panel.colourPanel.classList.add("active");
+            Constants.Panel.colourPanel.setAttribute("data-colour", filters[option - 1]);
+            Constants.Panel.content.hidden = true;
+          }
+        } else {
+          resetColourFilters();
+          resetAll(false);
+          await checkAll();
+        }
+      });
+    }
+  }
+  const openOutline = () => {
+    Constants.Panel.outlineToggle.classList.add("active");
+    Constants.Panel.outline.classList.add("active");
+    Constants.Panel.outlineToggle.setAttribute("aria-expanded", "true");
+    store.setItem("sa11y-outline", "Opened");
+    isScrollable(Constants.Panel.outlineList, Constants.Panel.outlineContent);
+    const headingLabels = find("sa11y-heading-label", "document");
+    headingLabels.forEach(($el) => {
+      $el.hidden = false;
+    });
+    const event = new CustomEvent("sa11y-build-heading-outline");
+    document.dispatchEvent(event);
+  };
+  const closeOutline = () => {
+    Constants.Panel.outline.classList.remove("active");
+    Constants.Panel.outlineToggle.classList.remove("active");
+    Constants.Panel.outlineToggle.setAttribute("aria-expanded", "false");
+    store.setItem("sa11y-outline", "Closed");
+    const headingLabels = find("sa11y-heading-label", "document");
+    headingLabels.forEach(($el) => {
+      $el.hidden = true;
+    });
+  };
+  const openImages = () => {
+    Constants.Panel.imagesToggle.classList.add("active");
+    Constants.Panel.images.classList.add("active");
+    Constants.Panel.imagesToggle.setAttribute("aria-expanded", "true");
+    store.setItem("sa11y-images", "Opened");
+    isScrollable(Constants.Panel.imagesList, Constants.Panel.imagesContent);
+    const event = new CustomEvent("sa11y-build-image-outline");
+    document.dispatchEvent(event);
+  };
+  const closeImages = () => {
+    if (State.option.showImageOutline) {
+      Constants.Panel.imagesToggle.classList.remove("active");
+      Constants.Panel.images.classList.remove("active");
+      Constants.Panel.imagesToggle.setAttribute("aria-expanded", "false");
+      store.setItem("sa11y-images", "Closed");
+    }
+  };
+  const openSettings = () => {
+    Constants.Panel.settingsToggle.classList.add("active");
+    Constants.Panel.settings.classList.add("active");
+    Constants.Panel.settingsToggle.setAttribute("aria-expanded", "true");
+    store.setItem("sa11y-settings", "Opened");
+    isScrollable(
+      Constants.Panel.settingsContent,
+      Constants.Panel.settingsContent,
+      Lang._("SETTINGS")
+    );
+  };
+  const closeSettings = () => {
+    Constants.Panel.settings.classList.remove("active");
+    Constants.Panel.settingsToggle.classList.remove("active");
+    Constants.Panel.settingsToggle.setAttribute("aria-expanded", "false");
+    store.setItem("sa11y-settings", "Closed");
+  };
+  function initializePanelToggles() {
+    Constants.Panel.outlineToggle.addEventListener("click", () => {
+      if (Constants.Panel.outlineToggle.getAttribute("aria-expanded") === "true") {
+        closeOutline();
+      } else {
+        openOutline();
+        closeSettings();
+        closeImages();
+      }
+      Constants.Panel.outlineHeader.focus();
+    });
+    if (store.getItem("sa11y-outline") === "Opened") {
+      openOutline();
+    }
+    if (State.option.showImageOutline) {
+      Constants.Panel.imagesToggle.addEventListener("click", () => {
+        if (Constants.Panel.imagesToggle.getAttribute("aria-expanded") === "true") {
+          closeImages();
+        } else {
+          openImages();
+          closeOutline();
+          closeSettings();
+        }
+        Constants.Panel.imagesHeader.focus();
+      });
+      if (store.getItem("sa11y-images") === "Opened") {
+        openImages();
+      }
+    }
+    Constants.Panel.settingsToggle.addEventListener("click", () => {
+      if (Constants.Panel.settingsToggle.getAttribute("aria-expanded") === "true") {
+        closeSettings();
+      } else {
+        openSettings();
+        closeOutline();
+        closeImages();
+      }
+      Constants.Panel.settingsHeader.focus();
+    });
+    if (store.getItem("sa11y-settings") === "Opened") {
+      openSettings();
+    }
+    Constants.Panel.skipToPageIssues.addEventListener("click", () => {
+      Constants.Panel.pageIssuesHeader.focus();
+    });
+    const tabs = Constants.Panel.panel.querySelectorAll("[role=tab]");
+    if (tabs.length !== 0) {
+      tabs.forEach((tab) => {
+        tab.addEventListener("keydown", (e) => {
+          if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") {
+            return;
+          }
+          e.preventDefault();
+          const currentIndex = Array.from(tabs).indexOf(e.currentTarget);
+          let nextIndex;
+          if (e.key === "ArrowRight") {
+            nextIndex = (currentIndex + 1) % tabs.length;
+          } else {
+            nextIndex = (currentIndex - 1 + tabs.length) % tabs.length;
+          }
+          tabs[nextIndex].focus();
+        });
+      });
+    }
+  }
+  class HeadingAnchor extends HTMLElement {
+    constructor() {
+      super();
+      this.attachShadow({ mode: "open" });
+    }
+  }
+  class HeadingLabel extends HTMLElement {
+    constructor() {
+      super();
+      this.attachShadow({ mode: "open" });
+    }
+    connectedCallback() {
+      const style = document.createElement("style");
+      style.textContent = `
+      span.heading-label {
+        background-color: #777678;
+        background-image: linear-gradient(to bottom right, #b629ce, #16aec2);
+        border-radius: 5px;
+        border: 1px solid #36a5c3;
+        color: white;
+        display: inline-block;
+        font-family: var(--sa11y-font-face);
+        font-weight: 500;
+        font-size: 18px;
+        line-height: normal;
+        letter-spacing: normal;
+        margin: -5px 0 0 5px;
+        padding: 3px;
+        position: absolute;
+        text-shadow: 1px 1px black;
+        -webkit-text-fill-color: white;
+        word-break: keep-all;
+        z-index: 200;
+      }
+      @media screen and (forced-colors: active) {
+        span.heading-label {
+          border: 2px solid transparent;
+        }
+      }`;
+      this.shadowRoot.appendChild(style);
+    }
+  }
+  function initialize() {
+    const { option } = State;
+    if (option.doNotRun?.trim() && document.querySelector(option.doNotRun)) return;
+    customElements.define("sa11y-heading-label", HeadingLabel);
+    customElements.define("sa11y-heading-anchor", HeadingAnchor);
+    customElements.define("sa11y-annotation", Annotations);
+    customElements.define("sa11y-tooltips", AnnotationTooltips);
+    customElements.define("sa11y-panel-tooltips", PanelTooltips);
+    customElements.define("sa11y-control-panel", ControlPanel);
+    customElements.define("sa11y-console-error", ConsoleErrors);
+    Constants.initializeGlobal();
+    Constants.initializeReadability();
+    Constants.initializeExclusions();
+    if (option.developerChecksOnByDefault) {
+      if (store.getItem("sa11y-developer") === null || option.checkAllHideToggles) {
+        store.setItem("sa11y-developer", "On");
+      }
+    }
+    documentLoadingCheck(() => {
+      if (option.headless) {
+        checkAll();
+        store.removeItem("sa11y-dismissed-digest");
+        return;
+      }
+      const savedPos = store.getItem("sa11y-position");
+      const position = Constants.Global.panelPosition;
+      const isTop = (position2) => position2.includes("top");
+      if (option.showMovePanelToggle && (!savedPos || isTop(savedPos) !== isTop(position))) {
+        store.setItem("sa11y-position", position);
+      }
+      const controlPanel = new ControlPanel();
+      document.body.appendChild(controlPanel);
+      settingsPanelToggles();
+      initializePanelToggles();
+      addColourFilters();
+      detectPageChanges();
+      mainToggle();
+      State.panelTooltips = new PanelTooltips();
+      document.body.appendChild(State.panelTooltips);
+      Constants.Panel.toggle.disabled = option.delayCheck >= 700;
+      setTimeout(() => {
+        resetAll();
+        checkAll();
+      }, option.delayCheck);
+    });
   }
   class Sa11y {
     constructor(options) {
-      const option = {
-        ...defaultOptions,
-        ...options,
-        checks: {
-          ...defaultOptions.checks,
-          ...options.checks
-        }
-      };
-      this.initialize = () => {
-        const checkRunPrevent = () => {
-          const { doNotRun } = option;
-          return doNotRun.trim().length > 0 ? document.querySelector(doNotRun) : false;
-        };
-        if (!checkRunPrevent()) {
-          customElements.define("sa11y-heading-label", HeadingLabel);
-          customElements.define("sa11y-heading-anchor", HeadingAnchor);
-          customElements.define("sa11y-annotation", Annotations);
-          customElements.define("sa11y-tooltips", AnnotationTooltips);
-          customElements.define("sa11y-panel-tooltips", PanelTooltips);
-          customElements.define("sa11y-control-panel", ControlPanel);
-          customElements.define("sa11y-console-error", ConsoleErrors);
-          Constants.initializeGlobal(option);
-          Constants.initializeReadability(option);
-          Constants.initializeExclusions(option);
-          if (option.developerChecksOnByDefault) {
-            if (store.getItem("sa11y-developer") === null || option.checkAllHideToggles) {
-              store.setItem("sa11y-developer", "On");
-            }
-          }
-          documentLoadingCheck(() => {
-            if (option.headless) {
-              this.checkAll();
-              store.removeItem("sa11y-dismissed-digest");
-            } else {
-              const rememberPosition = store.getItem("sa11y-position");
-              const position = Constants.Global.panelPosition;
-              const isTop = (position2) => position2.includes("top");
-              if (option.showMovePanelToggle && (!rememberPosition || isTop(rememberPosition) !== isTop(position))) {
-                store.setItem("sa11y-position", position);
-              }
-              const controlPanel = new ControlPanel();
-              document.body.appendChild(controlPanel);
-              settingsPanelToggles(this.checkAll);
-              initializePanelToggles();
-              addColourFilters();
-              detectPageChanges(option.detectSPArouting, this.checkAll);
-              this.panelTooltips = new PanelTooltips();
-              document.body.appendChild(this.panelTooltips);
-              Constants.Panel.toggle.disabled = false;
-              setTimeout(() => {
-                resetAll();
-                this.checkAll();
-              }, option.delayCheck);
-              if (option.delayCheck >= 700) {
-                Constants.Panel.toggle.disabled = true;
-              }
-              mainToggle(this.checkAll);
-            }
-          });
-        }
-      };
-      this.checkAll = async (desiredRoot = option.checkRoot, desiredReadabilityRoot = option.readabilityRoot, fixedRoots = option.fixedRoots) => {
-        try {
-          this.results = [];
-          this.headingOutline = [];
-          this.errorCount = 0;
-          this.warningCount = 0;
-          this.customChecksRunning = false;
-          Constants.initializeRoot(desiredRoot, desiredReadabilityRoot, fixedRoots);
-          findShadowComponents(option);
-          Elements.initializeElements(option);
-          checkHeaders(this.results, option, this.headingOutline);
-          checkLinkText(this.results, option);
-          checkImages(this.results, option);
-          checkLabels(this.results, option);
-          checkQA(this.results, option);
-          checkDeveloper(this.results, option);
-          if (option.embeddedContentPlugin) {
-            checkEmbeddedContent(this.results, option);
-          }
-          if (option.contrastPlugin) {
-            checkContrast(this.results, option);
-          }
-          if (option.readabilityPlugin && store.getItem("sa11y-readability") === "On") {
-            checkReadability(this.results);
-          }
-          await checkPageLanguage(this.results, option);
-          if (option.customChecks === true) {
-            checkCustom(this.results);
-          } else if (typeof option.customChecks === "object") {
-            this.results.push(...option.customChecks);
-          } else if (option.customChecks === "listen") {
-            this.customChecksRunning = true;
-            this.customChecksFinished = 0;
-            document.addEventListener("sa11y-resume", () => {
-              this.customChecksFinished += 1;
-              if (this.customChecksFinished === 1) {
-                this.customChecksRunning = false;
-                this.updateResults();
-              }
-            });
-            window.setTimeout(() => {
-              if (this.customChecksRunning === true) {
-                this.customChecksRunning = false;
-                this.updateResults();
-                throw Error("Sa11y: No custom checks were returned.");
-              }
-            }, option.delayCustomCheck);
-            window.setTimeout(() => {
-              const customChecks = new CustomEvent("sa11y-custom-checks");
-              document.dispatchEvent(customChecks);
-            }, 0);
-          }
-          if (!this.customChecksRunning) {
-            this.updateResults();
-          }
-        } catch (error) {
-          const consoleErrors = new ConsoleErrors(error);
-          document.body.appendChild(consoleErrors);
-          throw Error(error);
-        }
-      };
-      this.updateResults = async () => {
-        this.results = this.results.filter((heading) => heading.isWithinRoot !== false);
-        const devChecks = store.getItem("sa11y-developer") === "Off" || store.getItem("sa11y-developer") === null;
-        if (devChecks || option.externalDeveloperChecks === true) {
-          this.results = this.results.filter((issue) => issue.developer !== true);
-        }
-        if (devChecks) {
-          this.results = this.results.filter((issue) => issue.external !== true);
-        }
-        await Promise.all(
-          this.results.map(
-            async ($el, id) => Object.assign($el, {
-              id,
-              cssPath: option.selectorPath ? generateSelectorPath($el.element) : "",
-              htmlPath: $el.element?.outerHTML.replace(/\s{2,}/g, " ").trim() || "",
-              ...$el.dismiss && { dismissDigest: await dismissDigest($el.dismiss) }
-            })
-          )
-        );
-        if (option.headless === false) {
-          this.imageResults = Elements.Found.Images.map((image) => {
-            const match = this.results.find((i) => i.element === image);
-            return match && {
-              element: image,
-              type: match.type,
-              dismissDigest: match.dismissDigest,
-              developer: match.developer
-            };
-          }).filter(Boolean);
-          const dismiss = dismissLogic(this.results, this.panelTooltips, this.checkAll);
-          this.results = dismiss.updatedResults;
-          this.dismissed = dismiss.dismissedIssues;
-          this.dismissedPageResults = dismiss.dismissedResults;
-          const count = updateCount(this.results, this.errorCount, this.warningCount);
-          updateBadge(count.error, count.warning);
-          if (store.getItem("sa11y-panel") === "Opened") {
-            const counts = /* @__PURE__ */ new Map();
-            this.results.forEach((issue) => {
-              let updatedIssue = issue;
-              if (issue.element && !issue.margin) {
-                const index2 = counts.get(issue.element) || 0;
-                counts.set(issue.element, index2 + 1);
-                const offset2 = issue.inline ? 0 : 15;
-                updatedIssue = { ...issue, margin: `${index2 * 20 + offset2}px` };
-              }
-              annotate(updatedIssue, option);
-            });
-            Elements.initializeAnnotations();
-            const tooltipComponent = new AnnotationTooltips();
-            document.body.appendChild(tooltipComponent);
-            dismissButtons(this.results, this.dismissed, this.checkAll);
-            generatePageOutline(this.dismissedPageResults, this.headingOutline, option);
-            if (option.showImageOutline) {
-              generateImageOutline(this.dismissedPageResults, this.imageResults, option);
-            }
-            updatePanel(dismiss.dismissCount, count.error, count.warning);
-            skipToIssue(this.results);
-            if (option.exportResultsPlugin) {
-              exportResults(this.results, dismiss.dismissedResults);
-            }
-            isScrollable(Constants.Panel.pageIssuesList, Constants.Panel.pageIssuesContent);
-          }
-          Constants.Panel.toggle.disabled = false;
-        }
-        window.sa11yCheckComplete = null;
-        const event = new CustomEvent("sa11y-check-complete", {
-          detail: {
-            results: this.results,
-            page: window.location.pathname
-          }
-        });
-        window.sa11yCheckComplete = event.detail;
-        document.dispatchEvent(event);
-      };
-      this.resetAll = (restartPanel = true) => resetAll(restartPanel);
-      this.disabled = () => {
-        setTimeout(() => {
-          if (store.getItem("sa11y-panel") === "Opened") {
-            Constants.Panel.toggle.click();
-          }
-          Constants.Panel.toggle.disabled = true;
-        }, option.delayCheck + 10);
-      };
-      this.enabled = () => {
-        if (Constants.Panel.toggle) Constants.Panel.toggle.disabled = false;
-      };
-      this.find = (selector, desiredRoot, exclude) => find(selector, desiredRoot, exclude);
-      this.prepareDismissal = (string) => prepareDismissal(string);
-      this.sanitizeHTML = (string) => sanitizeHTML(string);
-      this.truncateString = (string, maxLength) => truncateString(string, maxLength);
-      this.initialize();
+      setState(options);
+      initialize();
+      Object.assign(this, Utils, {
+        checkAll,
+        resetAll,
+        find,
+        enabled,
+        disabled
+      });
+    }
+    // Get main results array.
+    get results() {
+      return State.results;
     }
   }
   exports2.Lang = Lang;

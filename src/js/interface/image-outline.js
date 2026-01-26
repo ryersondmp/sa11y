@@ -1,13 +1,10 @@
-/**
- * Create Images outline.
- */
-
 import { computeAriaLabel } from '../utils/computeAccessibleName';
 import Constants from '../utils/constants';
 import find from '../utils/find';
 import Lang from '../utils/lang';
 import * as Utils from '../utils/utils';
 import { createAlert, removeAlert } from './alert';
+import { State } from '../core/state';
 
 /**
  * Generate an "Edit" button for images in the Image outline.
@@ -19,8 +16,8 @@ const generateEditLink = (image) => {
   const { src } = image.element;
 
   // Exclusions. Don't show "Edit" button if image src contains string or has class.
-  const urlExclusions = Constants.Global.ignoreEditImageURL.some((ignore) => src.includes(ignore));
-  const classExclusions = Constants.Global.ignoreEditImageClass.some((ignore) =>
+  const urlExclusions = State.option.ignoreEditImageURL.some((ignore) => src.includes(ignore));
+  const classExclusions = State.option.ignoreEditImageClass.some((ignore) =>
     image.element.classList.contains(ignore),
   );
   if (urlExclusions || classExclusions) {
@@ -28,11 +25,11 @@ const generateEditLink = (image) => {
   }
 
   // Check if image's SRC attribute is hosted on same domain or is relative path.
-  const relativePath = Constants.Global.relativePathImageSRC || window.location.host;
+  const relativePath = State.option.relativePathImageSRC || window.location.host;
   const fileExtension = src.split(relativePath)[1] || '';
 
   // If admin specifies a unique class name for images via prop.
-  const imageID = Constants.Global.relativePathImageID;
+  const imageID = State.option.relativePathImageID;
   let imageUniqueID;
   if (imageID.length && image.element.classList.length) {
     image.element.classList.forEach((className) => {
@@ -46,8 +43,8 @@ const generateEditLink = (image) => {
   // Create the href value for the image.
   const editURL =
     relativePath && imageID.length
-      ? Constants.Global.editImageURLofCMS + imageUniqueID
-      : Constants.Global.editImageURLofCMS + fileExtension;
+      ? State.option.editImageURLofCMS + imageUniqueID
+      : State.option.editImageURLofCMS + fileExtension;
 
   // Only add edit button to relative (locally hosted) images.
   const isRelativeLink = (imageSrc) =>
@@ -67,12 +64,16 @@ const generateEditLink = (image) => {
  * @param {Object[]} dismissed - Array of dismissed objects.
  * @param {Object[]} imageResults - Array of all issues objects that is an <img> element.
  */
-export default function generateImageOutline(dismissed, imageResults, option) {
+export default function generateImageOutline() {
+  if (!State.option.showImageOutline) return;
+
   const imageOutlineHandler = () => {
     const imageArray = [];
-    imageResults.forEach((image, i) => {
+    State.imageResults.forEach((image, i) => {
       // Match dismissed images.
-      const isDismissed = dismissed.some((key) => key.dismissDigest === image.dismissDigest);
+      const isDismissed = State.dismissedResults.some(
+        (key) => key.dismissDigest === image.dismissDigest,
+      );
       if (isDismissed) {
         Object.assign(image, { dismissedImage: true });
       }
@@ -106,7 +107,7 @@ export default function generateImageOutline(dismissed, imageResults, option) {
       const source = Utils.getBestImageSource(image.element);
 
       // Generate edit link if locally hosted image and prop is enabled.
-      const edit = Constants.Global.editImageURLofCMS ? generateEditLink(image) : '';
+      const edit = State.option.editImageURLofCMS ? generateEditLink(image) : '';
 
       // Image is decorative (has null alt)
       const decorative =
@@ -115,13 +116,13 @@ export default function generateImageOutline(dismissed, imageResults, option) {
           : '';
 
       // If alt text starts with a very specific string provided via props; treat as decorative.
-      const startsWithSpecificAlt = option.altPlaceholder?.some((text) =>
+      const startsWithSpecificAlt = State.option.altPlaceholder?.some((text) =>
         altText.toLowerCase().startsWith(text.toLowerCase()),
       );
 
       // If image is linked.
-      const anchor = option.imageWithinLightbox
-        ? `a[href]:not(${option.imageWithinLightbox})`
+      const anchor = State.option.imageWithinLightbox
+        ? `a[href]:not(${State.option.imageWithinLightbox})`
         : 'a[href]';
       const linked = element.closest(anchor)
         ? `<div class="badge"><span class="link-icon"></span><span class="visually-hidden">${Lang._('LINKED')}</span></div>`

@@ -10,6 +10,7 @@ import Constants from '../utils/constants';
 import Lang from '../utils/lang';
 import * as Utils from '../utils/utils';
 import { annotationButtons } from './annotations';
+import { State } from '../core/state';
 
 /**
  * Tooltip container for all annotations.
@@ -188,7 +189,7 @@ export class PanelTooltips extends HTMLElement {
     });
 
     /* 3. Tooltip for "Developer checks" toggle. */
-    if (Constants.Global.developerPlugin) {
+    if (State.option.developerPlugin) {
       const infoIcon = Constants.Panel.developerItem?.querySelector('.info-icon');
       if (infoIcon) {
         tippy(infoIcon, {
@@ -202,7 +203,7 @@ export class PanelTooltips extends HTMLElement {
     }
 
     /* 4. Tooltip for "Readability" toggle. */
-    if (Constants.Global.readabilityPlugin) {
+    if (State.option.readabilityPlugin) {
       const infoIcon = Constants.Panel.readabilityItem?.querySelector('.info-icon');
       if (infoIcon) {
         tippy(infoIcon, {

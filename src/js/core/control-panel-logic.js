@@ -1,10 +1,8 @@
-/* eslint-disable no-return-assign */
-/* eslint-disable no-param-reassign */
-
 import Constants from '../utils/constants';
 import find from '../utils/find';
 import Lang from '../utils/lang';
 import { isScrollable, store } from '../utils/utils';
+import { State } from './state';
 
 /**
  * OUTLINE PANEL.
@@ -54,7 +52,7 @@ const openImages = () => {
 };
 
 const closeImages = () => {
-  if (Constants.Global.showImageOutline) {
+  if (State.option.showImageOutline) {
     Constants.Panel.imagesToggle.classList.remove('active');
     Constants.Panel.images.classList.remove('active');
     Constants.Panel.imagesToggle.setAttribute('aria-expanded', 'false');
@@ -112,7 +110,7 @@ export default function initializePanelToggles() {
   /* **************** */
   /*  Images panel   */
   /* **************** */
-  if (Constants.Global.showImageOutline) {
+  if (State.option.showImageOutline) {
     Constants.Panel.imagesToggle.addEventListener('click', () => {
       if (Constants.Panel.imagesToggle.getAttribute('aria-expanded') === 'true') {
         closeImages();

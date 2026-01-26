@@ -1,4 +1,4 @@
-import Constants from './constants';
+import { State } from '../core/state';
 
 /* Get text content of pseudo elements. */
 export const wrapPseudoContent = (element, string) => {
@@ -37,17 +37,11 @@ const nextTreeBranch = (tree) => {
 /* Compute ARIA attributes. */
 export const computeAriaLabel = (element, recursing = false) => {
   // Ignore ARIA on these elements.
-  if (
-    Constants.Global.ignoreAriaOnElements &&
-    element.matches(Constants.Global.ignoreAriaOnElements)
-  ) {
+  if (State.option.ignoreAriaOnElements && element.matches(State.option.ignoreAriaOnElements)) {
     return 'noAria';
   }
 
-  if (
-    Constants.Global.ignoreTextInElements &&
-    element.matches(Constants.Global.ignoreTextInElements)
-  ) {
+  if (State.option.ignoreTextInElements && element.matches(State.option.ignoreTextInElements)) {
     return '';
   }
 
@@ -86,6 +80,7 @@ export const computeAccessibleName = (element, exclusions = [], recursing = 0) =
   if (ariaLabel !== 'noAria') {
     return ariaLabel;
   }
+
   // Return immediately if there is only a text node.
   let computedText = '';
   if (!element.children.length) {
@@ -221,6 +216,13 @@ export const computeAccessibleName = (element, exclusions = [], recursing = 0) =
         computedText += wrapPseudoContent(node, '');
         break;
       }
+      case 'SPAN': {
+        computedText += wrapPseudoContent(treeWalker.currentNode, '');
+        if (treeWalker.currentNode.hasAttribute('title')) {
+          addTitleIfNoName = treeWalker.currentNode.getAttribute('title');
+        }
+        break;
+      }
       default:
         computedText += wrapPseudoContent(node, '');
         break;
@@ -235,9 +237,12 @@ export const computeAccessibleName = (element, exclusions = [], recursing = 0) =
   // https://www.unicode.org/faq/private_use.html
   computedText = computedText.replace(/[\uE000-\uF8FF]/gu, '');
 
-  // If computedText returns blank, fallback on title attribute.
-  if (!computedText.trim() && element.hasAttribute('title')) {
-    return element.getAttribute('title');
+  // If computedText returns blank, fallback on a) psuedo b) title attribute.
+  if (!computedText.trim()) {
+    computedText = wrapPseudoContent(element, '');
+    if (!computedText.trim() && element.hasAttribute('title')) {
+      return element.getAttribute('title');
+    }
   }
 
   return computedText;
