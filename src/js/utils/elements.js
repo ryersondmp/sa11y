@@ -110,6 +110,12 @@ const Elements = (function myElements() {
       ...Found.Lists.filter(readabilityExclusions),
     ].map(($el) => Utils.getText(Utils.fnIgnore($el))).filter(Boolean);
 
+    // For language detection.
+    Found.pageText = Found.Everything.map(($el) => {
+      if ($el.tagName === 'IMG' || $el instanceof HTMLImageElement) return $el.alt || "";
+      return Utils.getText(Utils.fnIgnore($el));
+    }).filter(Boolean);
+
     // Developer checks.
     const nestedSources =
       State.option.checks.QA_NESTED_COMPONENTS.sources || '[role="tablist"], details';
