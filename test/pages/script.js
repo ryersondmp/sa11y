@@ -25,6 +25,8 @@ const sa11y = new Sa11y({
   customChecks: 'listen',
   linkStopWords: 'взнати більше',
 
+  langOfPartsCache: false,
+
   // Customize checks.
   checks: {
     QA_BAD_LINK: {

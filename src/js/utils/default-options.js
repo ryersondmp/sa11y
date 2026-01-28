@@ -83,6 +83,7 @@ const defaultOptions = {
   extraPlaceholderStopWords: '',
   imageWithinLightbox: '',
   initialHeadingLevel: [],
+  langOfPartsCache: true,
 
   // All checks
   checks: {
@@ -223,6 +224,8 @@ const defaultOptions = {
       confidence: 0.8,
     },
     LANG_OF_PARTS: true,
+    LANG_MISMATCH: true,
+    LANG_OF_PARTS_ALT: true,
 
     // Developer checks
     DUPLICATE_ID: true,
