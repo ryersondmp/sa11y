@@ -58,6 +58,7 @@ test.describe('Sa11y Unit Tests', () => {
       localStorage.clear();
       sessionStorage.clear();
     });
+    // await page.pause();
     await page.close();
   });
 
@@ -79,12 +80,8 @@ test.describe('Sa11y Unit Tests', () => {
   });
 
   test('Open status panel', async () => {
-    const panelOpen = await page.evaluate(() => {
-      const panel = document.querySelector('sa11y-control-panel').shadowRoot;
-      const item = panel.getElementById('panel');
-      return item.classList.contains('active');
-    });
-    expect(panelOpen).toBe(true);
+    const panel = page.locator('sa11y-control-panel #panel');
+    await expect(panel).toHaveClass(/active/);
   });
 
   test('Open Page Outline', async () => {

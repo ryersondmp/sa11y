@@ -96,8 +96,8 @@ const Elements = (function myElements() {
     const badLinkSources = State.option.checks.QA_BAD_LINK.sources;
     Found.CustomErrorLinks = badLinkSources.length
       ? Found.Links.filter(($el) =>
-        badLinkSources.split(',').some((selector) => $el.matches(selector.trim())),
-      )
+          badLinkSources.split(',').some((selector) => $el.matches(selector.trim())),
+        )
       : [];
 
     // Readability.
@@ -108,11 +108,13 @@ const Elements = (function myElements() {
     Found.Readability = [
       ...Found.Paragraphs.filter(readabilityExclusions),
       ...Found.Lists.filter(readabilityExclusions),
-    ].map(($el) => Utils.getText(Utils.fnIgnore($el))).filter(Boolean);
+    ]
+      .map(($el) => Utils.getText(Utils.fnIgnore($el)))
+      .filter(Boolean);
 
     // For language detection.
     Found.pageText = Found.Everything.map(($el) => {
-      if ($el.tagName === 'IMG' || $el instanceof HTMLImageElement) return $el.alt || "";
+      if ($el.tagName === 'IMG' || $el instanceof HTMLImageElement) return $el.alt || '';
       return Utils.getText(Utils.fnIgnore($el));
     }).filter(Boolean);
 

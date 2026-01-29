@@ -71,6 +71,7 @@ const defaultOptions = {
   externalDeveloperChecks: false,
   colourFilterPlugin: true,
   exportResultsPlugin: false,
+  langOfPartsPlugin: false,
 
   // Options for accName computation: Ignore ARIA on these elements.
   ignoreAriaOnElements: false, // e.g. 'h1,h2,h3,h4,h5,h6'

@@ -24,12 +24,26 @@ export default async function updateResults() {
   // 1. Data filtering:
   // a) Filter out issues that are outside of the target root.
   // b) Filter out dev checks if toggled off or using externally supplied developer checks.
-  State.results = State.results.filter(
-    (issue) =>
-      issue.isWithinRoot !== false &&
-      !((isDevOff || option.externalDeveloperChecks) && issue.developer) &&
-      !(isDevOff && issue.external),
-  );
+  // c) Filter out "Good" annotations for images that have an error or warning (page language detection conflict).
+  State.results = State.results.filter((issue, _, src) => {
+    if (
+      issue.isWithinRoot === false ||
+      ((isDevOff || option.externalDeveloperChecks) && issue.developer) ||
+      (isDevOff && issue.external)
+    )
+      return false;
+
+    if (State.option.langOfPartsPlugin
+      && issue?.element?.tagName === 'IMG' && issue.type === 'good') {
+      return !src.some(
+        (i) =>
+          i.element === issue.element &&
+          (i.type === 'error' || i.type === 'warning') &&
+          i.element?.alt === issue.element?.alt,
+      );
+    }
+    return true;
+  });
 
   // 2. Data enrichment. Generate...
   // a) ID

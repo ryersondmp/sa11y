@@ -25,7 +25,8 @@ const sa11y = new Sa11y({
   customChecks: 'listen',
   linkStopWords: 'взнати більше',
 
-  langOfPartsCache: false,
+  langOfPartsCache: true,
+  langOfPartsPlugin: true,
 
   // Customize checks.
   checks: {

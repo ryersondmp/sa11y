@@ -65,8 +65,7 @@ export default {
     DISMISS: 'Dismiss',
     DISMISS_ALL: 'Dismiss all',
     DISMISSED: 'Dismissed',
-    DISMISS_REMINDER:
-      'Please note that warnings are only <strong>temporarily</strong> dismissed. Clearing your browser history and cookies will restore all previously dismissed warnings across all pages.',
+    DISMISS_REMINDER: 'Please note that warnings are only <strong>temporarily</strong> dismissed. Clearing your browser history and cookies will restore all previously dismissed warnings across all pages.',
 
     // Colour filters
     COLOUR_FILTER: 'Colour filter',
@@ -371,12 +370,14 @@ export default {
       'Do not include the word "button" in the name of a button. Screen readers already convey the role of an element in addition to its name.',
     LABEL_IN_NAME:
       'The visible text for this element appears to be different than the accessible name, which may cause confusion for assistive technologies users. Please review: <hr> <strong {B}>Accessible Name</strong> <strong {C}>%(TEXT)</strong>',
+
+    // Language of parts
     LANG_OF_PARTS: 'The page language was declared as %(PAGE_LANG), but this content appears to be %(LIKELY_LANG). Ensure the %(LIKELY_LANG) content is tagged appropriately.',
     PAGE_LANG_CONFIDENCE: 'Most of the text on this page appears to be %(LIKELY_LANG), but the declared page language is %(PAGE_LANG). Consider updating the declared page language to match.',
     LANG_MISMATCH: 'This content appears to be %(PERCENT)% %(DETECTED_LANG), however, it was tagged as %(WRONG_LANG).',
     LANG_OF_PARTS_ALT: 'This alt text appears to be %(LIKELY_LANG), but the page language was declared as %(PAGE_LANG). Ensure the alt text is in the same language as the rest of the page. <hr> {ALT} <strong {C}>%(ALT)</strong>',
-
-    LANG_TIP: '<hr><strong>Tip!</strong> Screen readers pronounce words using language tags. Pronouncing a language with a mismatched language pack produces unintelligible speech. Learn more about <a href="https://www.w3.org/WAI/WCAG22/Understanding/language-of-parts.html">language of parts.</a>.',
+    LANG_TIP: '<hr><strong>Tip!</strong> Screen readers pronounce words using language tags. Pronouncing a language with a mismatched language pack produces unintelligible speech. Learn more about <a href="https://www.w3.org/WAI/WCAG22/Understanding/language-of-parts.html">language of parts.</a>',
+    LANG_UNSUPPORTED: 'Language-related accessibility checks were skipped because automatic language detection isn’t supported in this browser.',
 
     // Tables
     TABLES_MISSING_HEADINGS:

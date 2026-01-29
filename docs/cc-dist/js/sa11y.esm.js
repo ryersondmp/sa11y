@@ -74,6 +74,7 @@ const defaultOptions = {
   externalDeveloperChecks: false,
   colourFilterPlugin: true,
   exportResultsPlugin: false,
+  langOfPartsPlugin: false,
   // Options for accName computation: Ignore ARIA on these elements.
   ignoreAriaOnElements: false,
   // e.g. 'h1,h2,h3,h4,h5,h6'
@@ -86,6 +87,7 @@ const defaultOptions = {
   extraPlaceholderStopWords: "",
   imageWithinLightbox: "",
   initialHeadingLevel: [],
+  langOfPartsCache: true,
   // All checks
   checks: {
     // Heading checks
@@ -216,9 +218,11 @@ const defaultOptions = {
     META_MAX: true,
     META_REFRESH: true,
     PAGE_LANG_CONFIDENCE: {
-      confidence: 0.8
+      confidence: 0.9
     },
     LANG_OF_PARTS: true,
+    LANG_MISMATCH: true,
+    LANG_OF_PARTS_ALT: true,
     // Developer checks
     DUPLICATE_ID: true,
     META_TITLE: true,
@@ -1328,6 +1332,10 @@ const Elements = /* @__PURE__ */ (function myElements() {
       ...Found.Paragraphs.filter(readabilityExclusions),
       ...Found.Lists.filter(readabilityExclusions)
     ].map(($el) => getText(fnIgnore($el))).filter(Boolean);
+    Found.pageText = Found.Everything.map(($el) => {
+      if ($el.tagName === "IMG" || $el instanceof HTMLImageElement) return $el.alt || "";
+      return getText(fnIgnore($el));
+    }).filter(Boolean);
     const nestedSources = State.option.checks.QA_NESTED_COMPONENTS.sources || '[role="tablist"], details';
     Found.NestedComponents = Found.Everything.filter(($el) => $el.matches(nestedSources));
     Found.TabIndex = Found.Everything.filter(
@@ -5947,9 +5955,16 @@ async function updateResults() {
   const { option } = State;
   const devChecks = store.getItem("sa11y-developer");
   const isDevOff = !devChecks || devChecks === "Off";
-  State.results = State.results.filter(
-    (issue) => issue.isWithinRoot !== false && !((isDevOff || option.externalDeveloperChecks) && issue.developer) && !(isDevOff && issue.external)
-  );
+  State.results = State.results.filter((issue, _, src) => {
+    if (issue.isWithinRoot === false || (isDevOff || option.externalDeveloperChecks) && issue.developer || isDevOff && issue.external)
+      return false;
+    if (issue?.element?.tagName === "IMG" && issue.type === "good") {
+      return !src.some(
+        (i) => i.element === issue.element && (i.type === "error" || i.type === "warning") && i.element?.alt === issue.element?.alt
+      );
+    }
+    return true;
+  });
   await Promise.all(
     State.results.map(async (item, id) => {
       item.id = id;
@@ -8315,21 +8330,23 @@ function checkDeveloper() {
 function checkCustom(results) {
   return results;
 }
-let languageDetectorSupported;
-const supportsLanguageDetection = async () => {
-  if (languageDetectorSupported !== void 0) return languageDetectorSupported;
-  try {
-    if ("LanguageDetector" in globalThis) {
-      await globalThis.LanguageDetector.create();
-      languageDetectorSupported = true;
-      return true;
+let detectorPromise = null;
+function getLanguageDetector() {
+  if (detectorPromise) return detectorPromise;
+  detectorPromise = (async () => {
+    try {
+      if (!("LanguageDetector" in globalThis)) return null;
+      return await globalThis.LanguageDetector.create();
+    } catch {
+      createAlert(
+        "4 checks were skipped because this browser does not support language detection."
+      );
+      console.error("Sa11y: Language detection not supported in this browser.");
+      return null;
     }
-  } catch {
-  }
-  languageDetectorSupported = false;
-  console.error("Sa11y: Language detection not supported in this browser.");
-  return false;
-};
+  })();
+  return detectorPromise;
+}
 const getLanguageLabel = (lang) => {
   try {
     return new Intl.DisplayNames(navigator.language, {
@@ -8341,23 +8358,24 @@ const getLanguageLabel = (lang) => {
 };
 const primary = (lang) => String(lang).toLowerCase().split("-")[0];
 const STORAGE_KEY = "sa11y-lang-detection";
+const getStorageKey = store.getItem(STORAGE_KEY);
 const MAX_CACHE_SIZE = 200;
 const getCacheKey = (declared, url2, textLength) => {
   return `${declared}|${url2}|${Math.floor(textLength / 100) * 100}`;
 };
 const getCache = () => {
   try {
-    const data = store.getItem(STORAGE_KEY);
-    return data ? JSON.parse(data) : [];
+    return getStorageKey ? JSON.parse(getStorageKey) : [];
   } catch (e) {
     console.error("Sa11y: Error loading cache", e);
     return [];
   }
 };
-const setCache = (key, testKey, data) => {
+const setCache = (key, test, data) => {
+  if (!State.option.langOfPartsCache) return;
   try {
     const cache = getCache().filter((item) => item.key !== key);
-    cache.push({ key, testKey, data });
+    cache.push({ key, test, data });
     while (cache.length > MAX_CACHE_SIZE) cache.shift();
     store.setItem(STORAGE_KEY, JSON.stringify(cache));
   } catch (e) {
@@ -8365,28 +8383,32 @@ const setCache = (key, testKey, data) => {
   }
 };
 async function checkPageLanguage() {
-  if (!State.option.checks.PAGE_LANG_CONFIDENCE || !State.option.checks.LANG_OF_PARTS) return;
-  if (!await supportsLanguageDetection()) return;
+  if (!State.option.langOfPartsPlugin) return;
+  if (!await getLanguageDetector()) return;
+  if (!State.option.langOfPartsCache && getStorageKey) store.removeItem(STORAGE_KEY);
   const declared = Elements.Found.Language;
   if (!declared) return;
-  const text = (Elements.Found.Readability || []).join().slice(0, 1e4);
+  const text = (Elements.Found.pageText || []).join().slice(0, 1e4);
   if (text.length < 100) return;
   const cacheKey = getCacheKey(declared, window.location.href, text.length);
   const cached = getCache().find((item) => item.key === cacheKey);
   if (cached) {
-    if (cached.testKey) {
+    if (cached.test) {
       State.results.push({
-        test: cached.testKey,
-        type: State.option.checks[cached.testKey].type || "warning",
-        content: State.option.checks[cached.testKey].content || Lang.sprintf([cached.testKey], ...cached.data),
-        dismiss: prepareDismissal(cached.testKey),
-        developer: State.option.checks[cached.testKey].developer ?? true,
+        test: cached.test,
+        type: State.option.checks[cached.test].type || "warning",
+        content: Lang.sprintf(
+          State.option.checks[cached.test].content || [cached.test],
+          ...cached.data
+        ),
+        dismiss: prepareDismissal(cached.test),
+        developer: State.option.checks[cached.test].developer ?? false,
         cached: true
       });
     }
     return;
   }
-  const detector = await LanguageDetector.create();
+  const detector = await getLanguageDetector();
   const detected = await detector.detect(text);
   if (!detected?.length) {
     setCache(cacheKey, null, null);
@@ -8394,41 +8416,95 @@ async function checkPageLanguage() {
   }
   const detectedLang = detected[0];
   const detectedLangCode = detectedLang.detectedLanguage;
-  const languageLabel = getLanguageLabel(declared) || declared;
+  const declaredPageLang = getLanguageLabel(declared) || declared;
   const likelyLanguage = getLanguageLabel(detectedLangCode);
-  let warning = null;
-  let testKey = null;
+  let test = null;
+  let type = null;
+  let content = null;
   let languageData = null;
+  let element = null;
+  let dismiss = null;
+  let confidence = null;
   if (primary(detectedLangCode) === primary(declared)) {
-    const confidenceTarget = State.option.PAGE_LANG_CONFIDENCE?.confidence || 0.8;
+    const confidenceTarget = State.option.PAGE_LANG_CONFIDENCE?.confidence || 0.9;
     if (detectedLang.confidence >= confidenceTarget) {
       setCache(cacheKey, null, null);
       return;
     }
-    if (detected.length >= 2) {
-      const secondLangCode = detected[1].detectedLanguage;
-      const secondLanguage = getLanguageLabel(secondLangCode);
-      const langAttributes = find(`[lang="${secondLangCode}"]`, "root");
-      if (detected[1].confidence >= 0.4 && langAttributes.length === 0) {
-        testKey = "PAGE_LANG_CONFIDENCE";
-        languageData = [languageLabel, secondLanguage, secondLanguage];
-        warning = State.option.checks.PAGE_LANG_CONFIDENCE.content || Lang.sprintf("PAGE_LANG_CONFIDENCE", languageLabel, secondLanguage, secondLanguage);
+    for (const node of Elements.Found.Everything) {
+      let textString = "";
+      if (node.nodeName === "IMG") textString = node.alt || "";
+      else {
+        textString = Array.from(node.childNodes).filter((child) => child.nodeType === 3).map((child) => child.textContent).join("").trim();
+      }
+      const text2 = removeWhitespace(textString);
+      if (text2.length <= 30) continue;
+      const detectNode = await detector.detect(text2);
+      const nodeLang = detectNode[0].detectedLanguage;
+      const nodeLangLabel = getLanguageLabel(nodeLang);
+      const nodeConfidence = Math.floor(detectNode[0].confidence * 100);
+      const langAttribute = node?.getAttribute("lang");
+      if (nodeLang !== declared && nodeConfidence >= 0.5) {
+        if (langAttribute && langAttribute === nodeLang) return;
+        element = node;
+        type = nodeConfidence >= 0.9 ? "error" : "warning";
+        dismiss = prepareDismissal(text2.slice(0, 256));
+        confidence = nodeConfidence;
+        if (langAttribute && langAttribute !== nodeLang) {
+          test = "LANG_MISMATCH";
+          content = Lang.sprintf(
+            State.option.checks.LANG_MISMATCH.content || "LANG_MISMATCH",
+            nodeConfidence,
+            nodeLangLabel,
+            getLanguageLabel(langAttribute)
+          ) + Lang.sprintf("LANG_TIP");
+          break;
+        } else if (node.nodeName === "IMG" && node?.alt?.length !== 0) {
+          const alt = sanitizeHTML(node.alt);
+          const altText = removeWhitespace(alt);
+          test = "LANG_OF_PARTS_ALT";
+          content = Lang.sprintf(
+            State.option.checks.LANG_OF_PARTS_ALT.content || "LANG_OF_PARTS_ALT",
+            nodeLangLabel,
+            declaredPageLang,
+            altText
+          ) + Lang.sprintf("LANG_TIP");
+          break;
+        } else {
+          test = "LANG_OF_PARTS";
+          content = Lang.sprintf(
+            State.option.checks.LANG_OF_PARTS.content || "LANG_OF_PARTS",
+            declaredPageLang,
+            nodeLangLabel,
+            nodeLangLabel
+          );
+          break;
+        }
       }
     }
   } else {
-    testKey = "LANG_OF_PARTS";
-    languageData = [likelyLanguage, languageLabel];
-    warning = State.option.checks.LANG_OF_PARTS.content || Lang.sprintf("LANG_OF_PARTS", likelyLanguage, languageLabel);
+    test = "PAGE_LANG_CONFIDENCE";
+    languageData = [likelyLanguage, declaredPageLang];
+    content = Lang.sprintf(
+      State.option.checks.PAGE_LANG_CONFIDENCE.content || "PAGE_LANG_CONFIDENCE",
+      likelyLanguage,
+      declaredPageLang
+    );
+    dismiss = prepareDismissal(cacheKey);
+    type = detectedLang.confidence >= 0.9 ? "error" : "warning";
+    confidence = detectedLang.confidence;
+    setCache(cacheKey, test, languageData);
   }
-  setCache(cacheKey, testKey, languageData);
-  if (testKey) {
+  if (test) {
     State.results.push({
-      test: testKey,
-      type: State.option.checks[testKey].type || "warning",
-      content: warning,
-      dismiss: prepareDismissal(testKey),
-      developer: State.option.checks[testKey].developer ?? true,
-      cached: false
+      element,
+      test,
+      type: State.option.checks[test].type || type,
+      content,
+      dismiss,
+      developer: State.option.checks[test].developer ?? false,
+      cached: false,
+      confidence
     });
   }
 }

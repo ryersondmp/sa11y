@@ -3,7 +3,13 @@ import * as Utils from '../utils/utils';
 import Lang from '../utils/lang';
 import Elements from '../utils/elements';
 import { State } from '../core/state';
+import { createAlert } from '../interface/alert';
+import find from '../utils/find';
 
+// FIFO cache for language detection.
+const STORAGE_KEY = 'sa11y-lang-detection';
+const getStorageKey = Utils.store.getItem(STORAGE_KEY);
+const MAX_CACHE_SIZE = 200;
 
 let detectorPromise = null;
 /**
@@ -16,10 +22,18 @@ export function getLanguageDetector() {
   if (detectorPromise) return detectorPromise;
   detectorPromise = (async () => {
     try {
-      if (!('LanguageDetector' in globalThis)) return null;
+      if (!('LanguageDetector' in globalThis)) {
+        if (!getStorageKey) {
+          createAlert(Lang.sprintf('LANG_UNSUPPORTED'));
+          Utils.store.setItem(STORAGE_KEY, []);
+        }
+        console.error(`Sa11y: ${Lang.sprintf('LANG_UNSUPPORTED')}`);
+        return null;
+      }
       return await globalThis.LanguageDetector.create();
     } catch {
-      console.error('Sa11y: Language detection not supported in this browser.');
+      createAlert(Lang.sprintf('LANG_UNSUPPORTED'));
+      console.error(`Sa11y: ${Lang.sprintf('LANG_UNSUPPORTED')}`);
       return null;
     }
   })();
@@ -40,11 +54,6 @@ const getLanguageLabel = (lang) => {
 // Identify primary language code.
 const primary = (lang) => String(lang).toLowerCase().split('-')[0];
 
-// FIFO cache for language detection. We cache up to 100 pages.
-const STORAGE_KEY = 'sa11y-lang-detection';
-const getStorageKey = Utils.store.getItem(STORAGE_KEY);
-const MAX_CACHE_SIZE = 200;
-
 // We're looking for significant changes for text before running this expensive check.
 const getCacheKey = (declared, url, textLength) => {
   return `${declared}|${url}|${Math.floor(textLength / 100) * 100}`;
@@ -61,11 +70,11 @@ const getCache = () => {
 };
 
 // Save minimal, but key info to cache.
-const setCache = (key, test, data) => {
+const setCache = (key, test, element, type, variables) => {
   if (!State.option.langOfPartsCache) return;
   try {
     const cache = getCache().filter((item) => item.key !== key);
-    cache.push({ key, test, data });
+    cache.push({ key, test, element, type, variables });
     while (cache.length > MAX_CACHE_SIZE) cache.shift();
     Utils.store.setItem(STORAGE_KEY, JSON.stringify(cache));
   } catch (e) {
@@ -75,7 +84,7 @@ const setCache = (key, test, data) => {
 
 export default async function checkPageLanguage() {
   // Hard return if neither page language checks are enabled or if feature not supported.
-  if (!State.option.checks.PAGE_LANG_CONFIDENCE || !State.option.checks.LANG_OF_PARTS) return;
+  if (!State.option.langOfPartsPlugin) return;
   if (!(await getLanguageDetector())) return;
 
   // Remove storage key if caching is turned off via prop.
@@ -97,10 +106,13 @@ export default async function checkPageLanguage() {
   if (cached) {
     if (cached.test) {
       State.results.push({
+        element: cached.element ? find(cached.element, 'root')[0] : null,
         test: cached.test,
-        type: State.option.checks[cached.test].type || 'warning',
-        content: Lang.sprintf(State.option.checks[cached.test].content
-          || [cached.test], ...cached.data),
+        type: State.option.checks[cached.test].type || cached.type,
+        content: Lang.sprintf(
+          State.option.checks[cached.test].content || [cached.test],
+          ...cached.variables,
+        ),
         dismiss: Utils.prepareDismissal(cached.test),
         developer: State.option.checks[cached.test].developer ?? false,
         cached: true,
@@ -115,30 +127,31 @@ export default async function checkPageLanguage() {
 
   // Nothing detected.
   if (!detected?.length) {
-    setCache(cacheKey, null, null);
+    setCache(cacheKey, null, null, null, null);
     return;
   }
 
   // Identify the primary and secondary page languages.
   const detectedLang = detected[0];
   const detectedLangCode = detectedLang.detectedLanguage;
-  const languageLabel = getLanguageLabel(declared) || declared;
+  const declaredPageLang = getLanguageLabel(declared) || declared;
   const likelyLanguage = getLanguageLabel(detectedLangCode);
 
   // Cache data.
   let test = null;
   let type = null;
   let content = null;
-  let languageData = null;
   let element = null;
   let dismiss = null;
+  let confidence = null;
+  let variables = null;
 
   // If declared page language matches most likely language.
   if (primary(detectedLangCode) === primary(declared)) {
     // Pass if we're 90% confident.
     const confidenceTarget = State.option.PAGE_LANG_CONFIDENCE?.confidence || 0.9;
     if (detectedLang.confidence >= confidenceTarget) {
-      setCache(cacheKey, null, null);
+      setCache(cacheKey, null, null, null, null);
       return;
     }
 
@@ -151,60 +164,85 @@ export default async function checkPageLanguage() {
       else {
         textString = Array.from(node.childNodes)
           .filter((child) => child.nodeType === 3)
-          .map((child) => child.textContent).join('').trim();
+          .map((child) => child.textContent)
+          .join('')
+          .trim();
       }
       const text = Utils.removeWhitespace(textString);
 
       // Skip nodes that are too short.
-      if (text.length <= 20) continue;
+      if (text.length <= 30) continue;
 
+      // Node data.
       const detectNode = await detector.detect(text);
-      const detectedLang = detectNode[0].detectedLanguage
-      const detectedLangLabel = getLanguageLabel(detectedLang);
-      const confidence = detectNode[0].confidence;
-
+      const nodeLang = detectNode[0].detectedLanguage;
+      const nodeLangLabel = getLanguageLabel(nodeLang);
+      const nodeConfidence = Math.floor(detectNode[0].confidence * 100);
       const langAttribute = node?.getAttribute('lang');
-      if (detectedLang !== declared) {
-        if (langAttribute && langAttribute === detectedLang) {
-          return;
-        } else if (langAttribute && langAttribute !== detectedLang && confidence >= 0.5) {
+
+      if (nodeLang !== declared && nodeConfidence >= 0.5) {
+        if (langAttribute && langAttribute === nodeLang) return;
+
+        // Shared data.
+        element = node;
+        type = nodeConfidence >= 0.9 ? 'error' : 'warning';
+        dismiss = Utils.prepareDismissal(text.slice(0, 256));
+        confidence = nodeConfidence;
+
+        if (langAttribute && langAttribute !== nodeLang) {
           test = 'LANG_MISMATCH';
-          element = node;
-          type = confidence >= 0.9 ? 'error' : 'warning';
-          content = Lang.sprintf(State.option.checks.LANG_MISMATCH.content
-            || 'LANG_MISMATCH', Math.floor(detectNode[0].confidence * 100), detectedLangLabel, getLanguageLabel(langAttribute)) + Lang.sprintf('LANG_TIP');
-          dismiss = Utils.prepareDismissal(text.slice(0, 256));
+          content =
+            Lang.sprintf(
+              State.option.checks.LANG_MISMATCH.content || 'LANG_MISMATCH',
+              nodeConfidence,
+              nodeLangLabel,
+              getLanguageLabel(langAttribute),
+            ) + Lang.sprintf('LANG_TIP');
+          variables = [nodeConfidence, nodeLangLabel];
+          setCache(cacheKey, test, Utils.generateSelectorPath(node), type, variables);
           break;
-        } else if (node.nodeName === 'IMG' && confidence >= 0.5) {
+        } else if (node.nodeName === 'IMG' && node?.alt?.length !== 0) {
           const alt = Utils.sanitizeHTML(node.alt);
-          const altText = Utils.removeWhitespace(alt)
+          const altText = Utils.removeWhitespace(alt);
           test = 'LANG_OF_PARTS_ALT';
-          element = node;
-          type = confidence >= 0.9 ? 'error' : 'warning';
-          content = Lang.sprintf(State.option.checks.LANG_OF_PARTS_ALT.content ||
-            'LANG_OF_PARTS_ALT', detectedLangLabel, languageLabel, altText) + Lang.sprintf('LANG_TIP');
-          dismiss = Utils.prepareDismissal(text.slice(0, 256));
+          content =
+            Lang.sprintf(
+              State.option.checks.LANG_OF_PARTS_ALT.content || 'LANG_OF_PARTS_ALT',
+              nodeLangLabel,
+              declaredPageLang,
+              altText,
+            ) + Lang.sprintf('LANG_TIP');
+          variables = [nodeLangLabel, declaredPageLang, altText];
+          setCache(cacheKey, test, Utils.generateSelectorPath(node), type, variables);
           break;
         } else {
           test = 'LANG_OF_PARTS';
-          element = node;
-          content = Lang.sprintf(State.option.checks.LANG_OF_PARTS.content ||
-            'LANG_OF_PARTS', languageLabel, detectedLangLabel, detectedLangLabel);
-          dismiss = Utils.prepareDismissal(text.slice(0, 256));
+          content = Lang.sprintf(
+            State.option.checks.LANG_OF_PARTS.content || 'LANG_OF_PARTS',
+            declaredPageLang,
+            nodeLangLabel,
+            nodeLangLabel,
+          );
+          variables = [declaredPageLang, nodeLangLabel, nodeLangLabel];
+          setCache(cacheKey, test, Utils.generateSelectorPath(node), type, variables);
           break;
         }
       }
     }
-
   } else {
     // Declared page language doesn't match the content of the page at all.
     test = 'PAGE_LANG_CONFIDENCE';
-    languageData = [likelyLanguage, languageLabel];
-    content = Lang.sprintf(State.option.checks.PAGE_LANG_CONFIDENCE.content
-      || 'PAGE_LANG_CONFIDENCE', likelyLanguage, languageLabel);
+    languageData = [likelyLanguage, declaredPageLang];
+    content = Lang.sprintf(
+      State.option.checks.PAGE_LANG_CONFIDENCE.content || 'PAGE_LANG_CONFIDENCE',
+      likelyLanguage,
+      declaredPageLang,
+    );
     dismiss = Utils.prepareDismissal(cacheKey);
-
-    setCache(cacheKey, test, languageData);
+    type = detectedLang.confidence >= 0.9 ? 'error' : 'warning';
+    confidence = detectedLang.confidence;
+    variables = [likelyLanguage, declaredPageLang];
+    setCache(cacheKey, test, null, type, variables);
   }
 
   // Non-cached result.
@@ -217,6 +255,7 @@ export default async function checkPageLanguage() {
       dismiss: dismiss,
       developer: State.option.checks[test].developer ?? false,
       cached: false,
+      confidence: confidence,
     });
   }
 }
