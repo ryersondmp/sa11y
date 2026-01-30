@@ -77,6 +77,7 @@ const onLoadScript = (lang) => {
       exportResultsPlugin: true,
       detectSPArouting: true,
       langOfPartsPlugin: true,
+      langOfPartsCache: false,
     });
   };
 
