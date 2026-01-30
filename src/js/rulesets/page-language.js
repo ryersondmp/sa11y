@@ -151,6 +151,9 @@ export default async function checkPageLanguage() {
   let confidence = null;
   let variables = null;
 
+  console.log(`Primary detected: ${primary(detectedLangCode)}`);
+  console.log(`${primary(declared)}`);
+
   // If declared page language matches most likely language.
   if (primary(detectedLangCode) === primary(declared)) {
     // Pass if we're 90% confident.
@@ -251,9 +254,6 @@ export default async function checkPageLanguage() {
     confidence = detectedLang.confidence;
     variables = [likelyLanguage, declaredPageLang];
     setCache(cacheKey, test, null, type, variables);
-    return;
-  } else {
-    return;
   }
 
   // Non-cached result.
