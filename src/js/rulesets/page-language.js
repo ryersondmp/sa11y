@@ -146,6 +146,17 @@ export default async function checkPageLanguage() {
   let confidence = null;
   let variables = null;
 
+  const detail = {
+    results: {
+      detectedLang: detectedLang,
+      declaredPageLang: declaredPageLang,
+      likelyLanguage: likelyLanguage,
+    },
+    page: window.location.pathname
+  };
+  window.sa11yPageLanguage = detail;
+  document.dispatchEvent(new CustomEvent('sa11y-page-language', { detail }));
+
   // If declared page language matches most likely language.
   if (primary(detectedLangCode) === primary(declared)) {
     // Pass if we're 90% confident.
@@ -222,7 +233,7 @@ export default async function checkPageLanguage() {
             declaredPageLang,
             nodeLangLabel,
             nodeLangLabel,
-          );
+          ) + Lang.sprintf('LANG_TIP');;
           variables = [declaredPageLang, nodeLangLabel, nodeLangLabel];
           setCache(cacheKey, test, Utils.generateSelectorPath(node), type, variables);
           break;
@@ -232,7 +243,6 @@ export default async function checkPageLanguage() {
   } else {
     // Declared page language doesn't match the content of the page at all.
     test = 'PAGE_LANG_CONFIDENCE';
-    languageData = [likelyLanguage, declaredPageLang];
     content = Lang.sprintf(
       State.option.checks.PAGE_LANG_CONFIDENCE.content || 'PAGE_LANG_CONFIDENCE',
       likelyLanguage,
