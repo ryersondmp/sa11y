@@ -95,6 +95,7 @@ export default async function checkPageLanguage() {
   const declared = Elements.Found.Language;
   if (!declared) return;
 
+  console.log(Elements.Found.pageText.join().slice(0, 10000));
   // Leverage existing DOM query for readability given it's an expensive check.
   const text = (Elements.Found.pageText || []).join().slice(0, 10000);
   if (text.length < 100) return;

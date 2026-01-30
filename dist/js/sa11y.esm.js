@@ -8394,6 +8394,7 @@ async function checkPageLanguage() {
     store.removeItem(STORAGE_KEY);
   const declared = Elements.Found.Language;
   if (!declared) return;
+  console.log(Elements.Found.pageText.join().slice(0, 1e4));
   const text = (Elements.Found.pageText || []).join().slice(0, 1e4);
   if (text.length < 100) return;
   const cacheKey = getCacheKey(declared, window.location.href, text.length);
