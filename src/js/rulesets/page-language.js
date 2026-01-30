@@ -97,11 +97,11 @@ export default async function checkPageLanguage() {
 
   console.log(Elements.Found.pageText.join().slice(0, 10000));
   // Leverage existing DOM query for readability given it's an expensive check.
-  const text = (Elements.Found.pageText || []).join().slice(0, 10000);
-  if (text.length < 100) return;
+  const pageText = (Elements.Found.pageText || []).join().slice(0, 10000);
+  if (pageText.length < 100) return;
 
   // Generate a unique cache key so we're not running this function frequently.
-  const cacheKey = getCacheKey(declared, window.location.href, text.length);
+  const cacheKey = getCacheKey(declared, window.location.href, pageText.length);
 
   // The displayed (cached) result.
   const cached = getCache().find((item) => item.key === cacheKey);
@@ -129,7 +129,7 @@ export default async function checkPageLanguage() {
 
   // Run language detection using built-in AI.
   const detector = await getLanguageDetector();
-  const detected = await detector.detect(text);
+  const detected = await detector.detect(pageText);
 
   /* Nothing detected.
   if (!detected?.length) {
@@ -168,7 +168,7 @@ export default async function checkPageLanguage() {
   }
 
   console.log(
-    `The declared page language is ${getLanguageLabel(declared)}. We are ${Math.floor(detectedLang.confidence * 100)}% confidence that the confidence of this page is ${getLanguageLabel(detectedLangCode)} based on the ${text.length} characters of text analyzed.`,
+    `The declared page language is ${getLanguageLabel(declared)}. We are ${Math.floor(detectedLang.confidence * 100)}% confidence that the confidence of this page is ${getLanguageLabel(detectedLangCode)} based on the ${pageText.length} characters of text analyzed.`,
   );
 
   // If declared page language matches most likely language.
@@ -193,13 +193,13 @@ export default async function checkPageLanguage() {
           .join('')
           .trim();
       }
-      const text = Utils.removeWhitespace(textString);
+      const nodeText = Utils.removeWhitespace(textString);
 
       // Skip nodes that are too short.
-      if (text.length <= 30) continue;
+      if (nodeText.length <= 30) continue;
 
       // Node data.
-      const detectNode = await detector.detect(text);
+      const detectNode = await detector.detect(nodeText);
       const nodeLang = detectNode[0].detectedLanguage;
       const nodeLangLabel = getLanguageLabel(nodeLang);
       const nodeConfidence = Math.floor(detectNode[0].confidence * 100);
@@ -211,7 +211,7 @@ export default async function checkPageLanguage() {
         // Shared data.
         element = node;
         type = nodeConfidence >= 0.9 ? 'error' : 'warning';
-        dismiss = Utils.prepareDismissal(text.slice(0, 256));
+        dismiss = Utils.prepareDismissal(nodeText.slice(0, 256));
         confidence = nodeConfidence;
 
         if (langAttribute && langAttribute !== nodeLang) {
