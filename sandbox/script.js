@@ -4,10 +4,10 @@ import Sa11yLangEn from '../src/lang/en.js';
 // Instantiate
 Lang.addI18n(Sa11yLangEn.strings);
 const sa11y = new Sa11y({
-  checkRoot: 'main',
+  checkRoot: 'body',
   readabilityRoot: 'main',
   customChecks: 'listen',
-  langOfPartsCache: true,
+  langOfPartsCache: 0,
   langOfPartsPlugin: true,
   // delayCheck: 500,
   videoContent: 'youtube.com, vimeo.com, yuja.com, panopto.com, torontomu.ca',

@@ -8445,9 +8445,8 @@ async function checkPageLanguage() {
     setCache(cacheKey, test, null, type, variables);
   }
   console.log(
-    `We are ${Math.floor(detectedLang.confidence * 100)}% sure this is ${primary(detectedLangCode)}`
+    `The declared page language is ${getLanguageLabel(declared)}. We are ${Math.floor(detectedLang.confidence * 100)}% confidence that the confidence of this page is ${getLanguageLabel(detectedLangCode)} based on the ${text.length} characters of text analyzed.`
   );
-  console.log(`Declared page language: ${primary(declared)}`);
   if (primary(detectedLangCode) === primary(declared)) {
     const confidenceTarget = State.option.PAGE_LANG_CONFIDENCE?.confidence || 0.9;
     if (Math.floor(detectedLang.confidence * 100) >= confidenceTarget) {
