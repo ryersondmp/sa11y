@@ -8331,7 +8331,6 @@ function checkCustom(results) {
   return results;
 }
 const STORAGE_KEY = "sa11y-lang-detection";
-const getStorageKey = store.getItem(STORAGE_KEY);
 const MAX_CACHE_SIZE = 200;
 let detectorPromise = null;
 function getLanguageDetector() {
@@ -8339,7 +8338,7 @@ function getLanguageDetector() {
   detectorPromise = (async () => {
     try {
       if (!("LanguageDetector" in globalThis)) {
-        if (!getStorageKey) {
+        if (!store.getItem(STORAGE_KEY)) {
           createAlert(Lang.sprintf("LANG_UNSUPPORTED"));
           store.setItem(STORAGE_KEY, []);
         }
@@ -8370,7 +8369,8 @@ const getCacheKey = (declared, url2, textLength) => {
 };
 const getCache = () => {
   try {
-    return getStorageKey ? JSON.parse(getStorageKey) : [];
+    const get = store.getItem(STORAGE_KEY);
+    return get ? JSON.parse(get) : [];
   } catch (e) {
     console.error("Sa11y: Error loading cache", e);
     return [];
@@ -8390,7 +8390,8 @@ const setCache = (key, test, element, type, variables) => {
 async function checkPageLanguage() {
   if (!State.option.langOfPartsPlugin) return;
   if (!await getLanguageDetector()) return;
-  if (!State.option.langOfPartsCache && getStorageKey) store.removeItem(STORAGE_KEY);
+  if (!State.option.langOfPartsCache && store.getItem(STORAGE_KEY))
+    store.removeItem(STORAGE_KEY);
   const declared = Elements.Found.Language;
   if (!declared) return;
   const text = (Elements.Found.pageText || []).join().slice(0, 1e4);
@@ -8399,16 +8400,19 @@ async function checkPageLanguage() {
   const cached = getCache().find((item) => item.key === cacheKey);
   if (cached) {
     if (cached.test) {
+      const tip = cached.element ? Lang.sprintf("LANG_TIP") : "";
+      const getElement = cached.element ? find(cached.element, "root")[0] : null;
       State.results.push({
-        element: cached.element ? find(cached.element, "root")[0] : null,
+        element: getElement || null,
         test: cached.test,
         type: State.option.checks[cached.test].type || cached.type,
         content: Lang.sprintf(
           State.option.checks[cached.test].content || [cached.test],
           ...cached.variables
-        ),
+        ) + tip,
         dismiss: prepareDismissal(cached.test),
         developer: State.option.checks[cached.test].developer ?? false,
+        confidence: cached.confidence,
         cached: true
       });
     }
@@ -8433,7 +8437,7 @@ async function checkPageLanguage() {
   let variables = null;
   if (primary(detectedLangCode) === primary(declared)) {
     const confidenceTarget = State.option.PAGE_LANG_CONFIDENCE?.confidence || 0.9;
-    if (detectedLang.confidence >= confidenceTarget) {
+    if (Math.floor(detectedLang.confidence * 100) >= confidenceTarget) {
       setCache(cacheKey, null, null, null, null);
       return;
     }
@@ -8464,8 +8468,9 @@ async function checkPageLanguage() {
             nodeLangLabel,
             getLanguageLabel(langAttribute)
           ) + Lang.sprintf("LANG_TIP");
-          variables = [nodeConfidence, nodeLangLabel];
-          setCache(cacheKey, test, generateSelectorPath(node), type, variables);
+          variables = [nodeConfidence, nodeLangLabel, getLanguageLabel(langAttribute)];
+          const selector = generateSelectorPath(node);
+          setCache(cacheKey, test, selector, type, variables);
           break;
         } else if (node.nodeName === "IMG" && node?.alt?.length !== 0) {
           const alt = sanitizeHTML(node.alt);
@@ -8478,7 +8483,8 @@ async function checkPageLanguage() {
             altText
           ) + Lang.sprintf("LANG_TIP");
           variables = [nodeLangLabel, declaredPageLang, altText];
-          setCache(cacheKey, test, generateSelectorPath(node), type, variables);
+          const selector = generateSelectorPath(node);
+          setCache(cacheKey, test, selector, type, variables);
           break;
         } else {
           test = "LANG_OF_PARTS";
@@ -8487,16 +8493,16 @@ async function checkPageLanguage() {
             declaredPageLang,
             nodeLangLabel,
             nodeLangLabel
-          );
+          ) + Lang.sprintf("LANG_TIP");
           variables = [declaredPageLang, nodeLangLabel, nodeLangLabel];
-          setCache(cacheKey, test, generateSelectorPath(node), type, variables);
+          const selector = generateSelectorPath(node);
+          setCache(cacheKey, test, selector, type, variables);
           break;
         }
       }
     }
-  } else {
+  } else if (primary(detectedLangCode) !== primary(declared)) {
     test = "PAGE_LANG_CONFIDENCE";
-    languageData = [likelyLanguage, declaredPageLang];
     content = Lang.sprintf(
       State.option.checks.PAGE_LANG_CONFIDENCE.content || "PAGE_LANG_CONFIDENCE",
       likelyLanguage,
@@ -8507,6 +8513,9 @@ async function checkPageLanguage() {
     confidence = detectedLang.confidence;
     variables = [likelyLanguage, declaredPageLang];
     setCache(cacheKey, test, null, type, variables);
+    return;
+  } else {
+    return;
   }
   if (test) {
     State.results.push({

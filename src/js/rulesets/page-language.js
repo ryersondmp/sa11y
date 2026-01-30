@@ -88,7 +88,8 @@ export default async function checkPageLanguage() {
   if (!(await getLanguageDetector())) return;
 
   // Remove storage key if caching is turned off via prop.
-  if (!State.option.langOfPartsCache && Utils.store.getItem(STORAGE_KEY)) Utils.store.removeItem(STORAGE_KEY);
+  if (!State.option.langOfPartsCache && Utils.store.getItem(STORAGE_KEY))
+    Utils.store.removeItem(STORAGE_KEY);
 
   // Get the declared page language.
   const declared = Elements.Found.Language;
@@ -111,10 +112,11 @@ export default async function checkPageLanguage() {
         element: getElement || null,
         test: cached.test,
         type: State.option.checks[cached.test].type || cached.type,
-        content: Lang.sprintf(
-          State.option.checks[cached.test].content || [cached.test],
-          ...cached.variables,
-        ) + tip,
+        content:
+          Lang.sprintf(
+            State.option.checks[cached.test].content || [cached.test],
+            ...cached.variables,
+          ) + tip,
         dismiss: Utils.prepareDismissal(cached.test),
         developer: State.option.checks[cached.test].developer ?? false,
         confidence: cached.confidence,
@@ -153,7 +155,7 @@ export default async function checkPageLanguage() {
   if (primary(detectedLangCode) === primary(declared)) {
     // Pass if we're 90% confident.
     const confidenceTarget = State.option.PAGE_LANG_CONFIDENCE?.confidence || 0.9;
-    if (detectedLang.confidence >= confidenceTarget) {
+    if (Math.floor(detectedLang.confidence * 100) >= confidenceTarget) {
       setCache(cacheKey, null, null, null, null);
       return;
     }
@@ -202,7 +204,8 @@ export default async function checkPageLanguage() {
               getLanguageLabel(langAttribute),
             ) + Lang.sprintf('LANG_TIP');
           variables = [nodeConfidence, nodeLangLabel, getLanguageLabel(langAttribute)];
-          setCache(cacheKey, test, Utils.generateSelectorPath(node), type, variables);
+          const selector = Utils.generateSelectorPath(node);
+          setCache(cacheKey, test, selector, type, variables);
           break;
         } else if (node.nodeName === 'IMG' && node?.alt?.length !== 0) {
           const alt = Utils.sanitizeHTML(node.alt);
@@ -216,23 +219,26 @@ export default async function checkPageLanguage() {
               altText,
             ) + Lang.sprintf('LANG_TIP');
           variables = [nodeLangLabel, declaredPageLang, altText];
-          setCache(cacheKey, test, Utils.generateSelectorPath(node), type, variables);
+          const selector = Utils.generateSelectorPath(node);
+          setCache(cacheKey, test, selector, type, variables);
           break;
         } else {
           test = 'LANG_OF_PARTS';
-          content = Lang.sprintf(
-            State.option.checks.LANG_OF_PARTS.content || 'LANG_OF_PARTS',
-            declaredPageLang,
-            nodeLangLabel,
-            nodeLangLabel,
-          ) + Lang.sprintf('LANG_TIP');
+          content =
+            Lang.sprintf(
+              State.option.checks.LANG_OF_PARTS.content || 'LANG_OF_PARTS',
+              declaredPageLang,
+              nodeLangLabel,
+              nodeLangLabel,
+            ) + Lang.sprintf('LANG_TIP');
           variables = [declaredPageLang, nodeLangLabel, nodeLangLabel];
-          setCache(cacheKey, test, Utils.generateSelectorPath(node), type, variables);
+          const selector = Utils.generateSelectorPath(node);
+          setCache(cacheKey, test, selector, type, variables);
           break;
         }
       }
     }
-  } else {
+  } else if (primary(detectedLangCode) !== primary(declared)) {
     // Declared page language doesn't match the content of the page at all.
     test = 'PAGE_LANG_CONFIDENCE';
     content = Lang.sprintf(
@@ -245,6 +251,9 @@ export default async function checkPageLanguage() {
     confidence = detectedLang.confidence;
     variables = [likelyLanguage, declaredPageLang];
     setCache(cacheKey, test, null, type, variables);
+    return;
+  } else {
+    return;
   }
 
   // Non-cached result.
