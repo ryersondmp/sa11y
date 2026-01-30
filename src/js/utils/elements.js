@@ -113,10 +113,31 @@ const Elements = (function myElements() {
       .filter(Boolean);
 
     // For language detection.
-    Found.pageText = Found.Everything.map(($el) => {
-      if ($el.tagName === 'IMG' || $el instanceof HTMLImageElement) return $el.alt || '';
-      return Utils.getText(Utils.fnIgnore($el));
-    }).filter(Boolean);
+    const elementSet = new Set(Found.Everything);
+    Found.pageText = Found.Everything.filter(($el) => {
+      let parent = $el.parentElement;
+      while (parent) {
+        if (elementSet.has(parent)) return false;
+        parent = parent.parentElement;
+      }
+      return true;
+    })
+      .map(($el) => {
+        let text = '';
+        if ($el instanceof HTMLImageElement) {
+          text = $el.alt || '';
+        } else if ($el.tagName === 'LI') {
+          text = [...$el.childNodes]
+            .filter((n) => n.nodeType === 3)
+            .map((n) => n.textContent)
+            .join('');
+        } else {
+          text = Utils.getText(Utils.fnIgnore($el));
+        }
+        // Strip junk icons/PUA characters.
+        return text.replace(/[^\x20-\x7E\s\u00C0-\u017F]/g, '').trim();
+      })
+      .filter(Boolean);
 
     // Developer checks.
     const nestedSources =

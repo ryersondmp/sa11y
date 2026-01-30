@@ -1336,9 +1336,24 @@
         ...Found.Paragraphs.filter(readabilityExclusions),
         ...Found.Lists.filter(readabilityExclusions)
       ].map(($el) => getText(fnIgnore($el))).filter(Boolean);
-      Found.pageText = Found.Everything.map(($el) => {
-        if ($el.tagName === "IMG" || $el instanceof HTMLImageElement) return $el.alt || "";
-        return getText(fnIgnore($el));
+      const elementSet = new Set(Found.Everything);
+      Found.pageText = Found.Everything.filter(($el) => {
+        let parent = $el.parentElement;
+        while (parent) {
+          if (elementSet.has(parent)) return false;
+          parent = parent.parentElement;
+        }
+        return true;
+      }).map(($el) => {
+        let text = "";
+        if ($el instanceof HTMLImageElement) {
+          text = $el.alt || "";
+        } else if ($el.tagName === "LI") {
+          text = [...$el.childNodes].filter((n) => n.nodeType === 3).map((n) => n.textContent).join("");
+        } else {
+          text = getText(fnIgnore($el));
+        }
+        return text.replace(/[^\x20-\x7E\s\u00C0-\u017F]/g, "").trim();
       }).filter(Boolean);
       const nestedSources = State.option.checks.QA_NESTED_COMPONENTS.sources || '[role="tablist"], details';
       Found.NestedComponents = Found.Everything.filter(($el) => $el.matches(nestedSources));
