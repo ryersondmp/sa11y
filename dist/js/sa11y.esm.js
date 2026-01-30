@@ -8435,6 +8435,20 @@ async function checkPageLanguage() {
   let dismiss = null;
   let confidence = null;
   let variables = null;
+  if (primary(detectedLangCode) !== primary(declared)) {
+    test = "PAGE_LANG_CONFIDENCE";
+    content = Lang.sprintf(
+      State.option.checks.PAGE_LANG_CONFIDENCE.content || "PAGE_LANG_CONFIDENCE",
+      likelyLanguage,
+      declaredPageLang
+    );
+    dismiss = prepareDismissal(cacheKey);
+    type = detectedLang.confidence >= 0.9 ? "error" : "warning";
+    confidence = detectedLang.confidence;
+    variables = [likelyLanguage, declaredPageLang];
+    setCache(cacheKey, test, null, type, variables);
+    return;
+  }
   if (primary(detectedLangCode) === primary(declared)) {
     const confidenceTarget = State.option.PAGE_LANG_CONFIDENCE?.confidence || 0.9;
     if (Math.floor(detectedLang.confidence * 100) >= confidenceTarget) {
@@ -8501,21 +8515,6 @@ async function checkPageLanguage() {
         }
       }
     }
-  } else if (primary(detectedLangCode) !== primary(declared)) {
-    test = "PAGE_LANG_CONFIDENCE";
-    content = Lang.sprintf(
-      State.option.checks.PAGE_LANG_CONFIDENCE.content || "PAGE_LANG_CONFIDENCE",
-      likelyLanguage,
-      declaredPageLang
-    );
-    dismiss = prepareDismissal(cacheKey);
-    type = detectedLang.confidence >= 0.9 ? "error" : "warning";
-    confidence = detectedLang.confidence;
-    variables = [likelyLanguage, declaredPageLang];
-    setCache(cacheKey, test, null, type, variables);
-    return;
-  } else {
-    return;
   }
   if (test) {
     State.results.push({
