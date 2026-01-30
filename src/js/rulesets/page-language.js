@@ -130,11 +130,11 @@ export default async function checkPageLanguage() {
   const detector = await getLanguageDetector();
   const detected = await detector.detect(text);
 
-  // Nothing detected.
+  /* Nothing detected.
   if (!detected?.length) {
     setCache(cacheKey, null, null, null, null);
     return;
-  }
+  } */
 
   // Identify the primary and secondary page languages.
   const detectedLang = detected[0];
@@ -164,7 +164,6 @@ export default async function checkPageLanguage() {
     confidence = detectedLang.confidence;
     variables = [likelyLanguage, declaredPageLang];
     setCache(cacheKey, test, null, type, variables);
-    return;
   }
 
   // If declared page language matches most likely language.
@@ -257,16 +256,14 @@ export default async function checkPageLanguage() {
   }
 
   // Non-cached result.
-  if (test) {
-    State.results.push({
-      element: element,
-      test: test,
-      type: State.option.checks[test].type || type,
-      content: content,
-      dismiss: dismiss,
-      developer: State.option.checks[test].developer ?? false,
-      cached: false,
-      confidence: confidence,
-    });
-  }
+  State.results.push({
+    element: element,
+    test: test,
+    type: State.option.checks[test].type || type,
+    content: content,
+    dismiss: dismiss,
+    developer: State.option.checks[test].developer ?? false,
+    cached: false,
+    confidence: confidence,
+  });
 }

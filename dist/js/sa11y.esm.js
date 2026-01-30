@@ -8420,10 +8420,6 @@ async function checkPageLanguage() {
   }
   const detector = await getLanguageDetector();
   const detected = await detector.detect(text);
-  if (!detected?.length) {
-    setCache(cacheKey, null, null, null, null);
-    return;
-  }
   const detectedLang = detected[0];
   const detectedLangCode = detectedLang.detectedLanguage;
   const declaredPageLang = getLanguageLabel(declared) || declared;
@@ -8447,7 +8443,6 @@ async function checkPageLanguage() {
     confidence = detectedLang.confidence;
     variables = [likelyLanguage, declaredPageLang];
     setCache(cacheKey, test, null, type, variables);
-    return;
   }
   if (primary(detectedLangCode) === primary(declared)) {
     const confidenceTarget = State.option.PAGE_LANG_CONFIDENCE?.confidence || 0.9;
@@ -8516,18 +8511,16 @@ async function checkPageLanguage() {
       }
     }
   }
-  if (test) {
-    State.results.push({
-      element,
-      test,
-      type: State.option.checks[test].type || type,
-      content,
-      dismiss,
-      developer: State.option.checks[test].developer ?? false,
-      cached: false,
-      confidence
-    });
-  }
+  State.results.push({
+    element,
+    test,
+    type: State.option.checks[test].type || type,
+    content,
+    dismiss,
+    developer: State.option.checks[test].developer ?? false,
+    cached: false,
+    confidence
+  });
 }
 async function checkAll(desiredRoot = State.option.checkRoot, desiredReadabilityRoot = State.option.readabilityRoot, fixedRoots = State.option.fixedRoots) {
   try {
