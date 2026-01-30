@@ -33,8 +33,11 @@ export default async function updateResults() {
     )
       return false;
 
-    if (State.option.langOfPartsPlugin
-      && issue?.element?.tagName === 'IMG' && issue.type === 'good') {
+    if (
+      State.option.langOfPartsPlugin &&
+      issue?.element?.tagName === 'IMG' &&
+      issue.type === 'good'
+    ) {
       return !src.some(
         (i) =>
           i.element === issue.element &&

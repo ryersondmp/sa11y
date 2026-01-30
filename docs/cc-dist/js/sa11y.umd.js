@@ -5962,7 +5962,7 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header]).join(",")).j
     State.results = State.results.filter((issue, _, src) => {
       if (issue.isWithinRoot === false || (isDevOff || option.externalDeveloperChecks) && issue.developer || isDevOff && issue.external)
         return false;
-      if (issue?.element?.tagName === "IMG" && issue.type === "good") {
+      if (State.option.langOfPartsPlugin && issue?.element?.tagName === "IMG" && issue.type === "good") {
         return !src.some(
           (i) => i.element === issue.element && (i.type === "error" || i.type === "warning") && i.element?.alt === issue.element?.alt
         );
@@ -8334,18 +8334,26 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header]).join(",")).j
   function checkCustom(results) {
     return results;
   }
+  const STORAGE_KEY = "sa11y-lang-detection";
+  const getStorageKey = store.getItem(STORAGE_KEY);
+  const MAX_CACHE_SIZE = 200;
   let detectorPromise = null;
   function getLanguageDetector() {
     if (detectorPromise) return detectorPromise;
     detectorPromise = (async () => {
       try {
-        if (!("LanguageDetector" in globalThis)) return null;
+        if (!("LanguageDetector" in globalThis)) {
+          if (!getStorageKey) {
+            createAlert(Lang.sprintf("LANG_UNSUPPORTED"));
+            store.setItem(STORAGE_KEY, []);
+          }
+          console.error(`Sa11y: ${Lang.sprintf("LANG_UNSUPPORTED")}`);
+          return null;
+        }
         return await globalThis.LanguageDetector.create();
       } catch {
-        createAlert(
-          "4 checks were skipped because this browser does not support language detection."
-        );
-        console.error("Sa11y: Language detection not supported in this browser.");
+        createAlert(Lang.sprintf("LANG_UNSUPPORTED"));
+        console.error(`Sa11y: ${Lang.sprintf("LANG_UNSUPPORTED")}`);
         return null;
       }
     })();
@@ -8361,9 +8369,6 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header]).join(",")).j
     }
   };
   const primary = (lang) => String(lang).toLowerCase().split("-")[0];
-  const STORAGE_KEY = "sa11y-lang-detection";
-  const getStorageKey = store.getItem(STORAGE_KEY);
-  const MAX_CACHE_SIZE = 200;
   const getCacheKey = (declared, url2, textLength) => {
     return `${declared}|${url2}|${Math.floor(textLength / 100) * 100}`;
   };
@@ -8375,11 +8380,11 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header]).join(",")).j
       return [];
     }
   };
-  const setCache = (key, test, data) => {
+  const setCache = (key, test, element, type, variables) => {
     if (!State.option.langOfPartsCache) return;
     try {
       const cache = getCache().filter((item) => item.key !== key);
-      cache.push({ key, test, data });
+      cache.push({ key, test, element, type, variables });
       while (cache.length > MAX_CACHE_SIZE) cache.shift();
       store.setItem(STORAGE_KEY, JSON.stringify(cache));
     } catch (e) {
@@ -8399,11 +8404,12 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header]).join(",")).j
     if (cached) {
       if (cached.test) {
         State.results.push({
+          element: cached.element ? find(cached.element, "root")[0] : null,
           test: cached.test,
-          type: State.option.checks[cached.test].type || "warning",
+          type: State.option.checks[cached.test].type || cached.type,
           content: Lang.sprintf(
             State.option.checks[cached.test].content || [cached.test],
-            ...cached.data
+            ...cached.variables
           ),
           dismiss: prepareDismissal(cached.test),
           developer: State.option.checks[cached.test].developer ?? false,
@@ -8415,7 +8421,7 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header]).join(",")).j
     const detector = await getLanguageDetector();
     const detected = await detector.detect(text);
     if (!detected?.length) {
-      setCache(cacheKey, null, null);
+      setCache(cacheKey, null, null, null, null);
       return;
     }
     const detectedLang = detected[0];
@@ -8425,14 +8431,14 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header]).join(",")).j
     let test = null;
     let type = null;
     let content = null;
-    let languageData = null;
     let element = null;
     let dismiss = null;
     let confidence = null;
+    let variables = null;
     if (primary(detectedLangCode) === primary(declared)) {
       const confidenceTarget = State.option.PAGE_LANG_CONFIDENCE?.confidence || 0.9;
       if (detectedLang.confidence >= confidenceTarget) {
-        setCache(cacheKey, null, null);
+        setCache(cacheKey, null, null, null, null);
         return;
       }
       for (const node of Elements.Found.Everything) {
@@ -8462,6 +8468,8 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header]).join(",")).j
               nodeLangLabel,
               getLanguageLabel(langAttribute)
             ) + Lang.sprintf("LANG_TIP");
+            variables = [nodeConfidence, nodeLangLabel];
+            setCache(cacheKey, test, generateSelectorPath(node), type, variables);
             break;
           } else if (node.nodeName === "IMG" && node?.alt?.length !== 0) {
             const alt = sanitizeHTML(node.alt);
@@ -8473,6 +8481,8 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header]).join(",")).j
               declaredPageLang,
               altText
             ) + Lang.sprintf("LANG_TIP");
+            variables = [nodeLangLabel, declaredPageLang, altText];
+            setCache(cacheKey, test, generateSelectorPath(node), type, variables);
             break;
           } else {
             test = "LANG_OF_PARTS";
@@ -8482,6 +8492,8 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header]).join(",")).j
               nodeLangLabel,
               nodeLangLabel
             );
+            variables = [declaredPageLang, nodeLangLabel, nodeLangLabel];
+            setCache(cacheKey, test, generateSelectorPath(node), type, variables);
             break;
           }
         }
@@ -8497,7 +8509,8 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header]).join(",")).j
       dismiss = prepareDismissal(cacheKey);
       type = detectedLang.confidence >= 0.9 ? "error" : "warning";
       confidence = detectedLang.confidence;
-      setCache(cacheKey, test, languageData);
+      variables = [likelyLanguage, declaredPageLang];
+      setCache(cacheKey, test, null, type, variables);
     }
     if (test) {
       State.results.push({
