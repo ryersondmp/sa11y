@@ -166,6 +166,11 @@ export default async function checkPageLanguage() {
     setCache(cacheKey, test, null, type, variables);
   }
 
+  console.log(
+    `We are ${Math.floor(detectedLang.confidence * 100)}% sure this is ${primary(detectedLangCode)}`,
+  );
+  console.log(`Declared page language: ${primary(declared)}`);
+
   // If declared page language matches most likely language.
   if (primary(detectedLangCode) === primary(declared)) {
     // Pass if we're 90% confident.
