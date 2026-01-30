@@ -7,7 +7,7 @@ const sa11y = new Sa11y({
   checkRoot: 'main',
   readabilityRoot: 'main',
   customChecks: 'listen',
-  langOfPartsCache: false,
+  langOfPartsCache: true,
   langOfPartsPlugin: true,
   // delayCheck: 500,
   videoContent: 'youtube.com, vimeo.com, yuja.com, panopto.com, torontomu.ca',

@@ -8,7 +8,6 @@ import find from '../utils/find';
 
 // FIFO cache for language detection.
 const STORAGE_KEY = 'sa11y-lang-detection';
-const getStorageKey = Utils.store.getItem(STORAGE_KEY);
 const MAX_CACHE_SIZE = 200;
 
 let detectorPromise = null;
@@ -23,7 +22,7 @@ export function getLanguageDetector() {
   detectorPromise = (async () => {
     try {
       if (!('LanguageDetector' in globalThis)) {
-        if (!getStorageKey) {
+        if (!Utils.store.getItem(STORAGE_KEY)) {
           createAlert(Lang.sprintf('LANG_UNSUPPORTED'));
           Utils.store.setItem(STORAGE_KEY, []);
         }
@@ -62,7 +61,8 @@ const getCacheKey = (declared, url, textLength) => {
 // Get local storage value.
 const getCache = () => {
   try {
-    return getStorageKey ? JSON.parse(getStorageKey) : [];
+    const get = Utils.store.getItem(STORAGE_KEY);
+    return get ? JSON.parse(get) : [];
   } catch (e) {
     console.error('Sa11y: Error loading cache', e);
     return [];
@@ -88,7 +88,7 @@ export default async function checkPageLanguage() {
   if (!(await getLanguageDetector())) return;
 
   // Remove storage key if caching is turned off via prop.
-  if (!State.option.langOfPartsCache && getStorageKey) Utils.store.removeItem(STORAGE_KEY);
+  if (!State.option.langOfPartsCache && Utils.store.getItem(STORAGE_KEY)) Utils.store.removeItem(STORAGE_KEY);
 
   // Get the declared page language.
   const declared = Elements.Found.Language;
@@ -200,7 +200,7 @@ export default async function checkPageLanguage() {
               nodeLangLabel,
               getLanguageLabel(langAttribute),
             ) + Lang.sprintf('LANG_TIP');
-          variables = [nodeConfidence, nodeLangLabel];
+          variables = [nodeConfidence, nodeLangLabel, getLanguageLabel(langAttribute)];
           setCache(cacheKey, test, Utils.generateSelectorPath(node), type, variables);
           break;
         } else if (node.nodeName === 'IMG' && node?.alt?.length !== 0) {
@@ -224,7 +224,7 @@ export default async function checkPageLanguage() {
             declaredPageLang,
             nodeLangLabel,
             nodeLangLabel,
-          ) + Lang.sprintf('LANG_TIP');;
+          ) + Lang.sprintf('LANG_TIP');
           variables = [declaredPageLang, nodeLangLabel, nodeLangLabel];
           setCache(cacheKey, test, Utils.generateSelectorPath(node), type, variables);
           break;
