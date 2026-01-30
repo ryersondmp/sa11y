@@ -105,6 +105,7 @@ export default async function checkPageLanguage() {
   const cached = getCache().find((item) => item.key === cacheKey);
   if (cached) {
     if (cached.test) {
+      const tip = cached.element ? Lang.sprintf('LANG_TIP') : '';
       State.results.push({
         element: cached.element ? find(cached.element, 'root')[0] : null,
         test: cached.test,
@@ -112,9 +113,10 @@ export default async function checkPageLanguage() {
         content: Lang.sprintf(
           State.option.checks[cached.test].content || [cached.test],
           ...cached.variables,
-        ),
+        ) + tip,
         dismiss: Utils.prepareDismissal(cached.test),
         developer: State.option.checks[cached.test].developer ?? false,
+        confidence: cached.confidence,
         cached: true,
       });
     }
@@ -145,17 +147,6 @@ export default async function checkPageLanguage() {
   let dismiss = null;
   let confidence = null;
   let variables = null;
-
-  const detail = {
-    results: {
-      detectedLang: detectedLang,
-      declaredPageLang: declaredPageLang,
-      likelyLanguage: likelyLanguage,
-    },
-    page: window.location.pathname
-  };
-  window.sa11yPageLanguage = detail;
-  document.dispatchEvent(new CustomEvent('sa11y-page-language', { detail }));
 
   // If declared page language matches most likely language.
   if (primary(detectedLangCode) === primary(declared)) {
