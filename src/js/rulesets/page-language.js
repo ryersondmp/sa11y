@@ -151,8 +151,21 @@ export default async function checkPageLanguage() {
   let confidence = null;
   let variables = null;
 
-  console.log(`Primary detected: ${primary(detectedLangCode)}`);
-  console.log(`${primary(declared)}`);
+  // Declared page language doesn't match the detected content.
+  if (primary(detectedLangCode) !== primary(declared)) {
+    test = 'PAGE_LANG_CONFIDENCE';
+    content = Lang.sprintf(
+      State.option.checks.PAGE_LANG_CONFIDENCE.content || 'PAGE_LANG_CONFIDENCE',
+      likelyLanguage,
+      declaredPageLang,
+    );
+    dismiss = Utils.prepareDismissal(cacheKey);
+    type = detectedLang.confidence >= 0.9 ? 'error' : 'warning';
+    confidence = detectedLang.confidence;
+    variables = [likelyLanguage, declaredPageLang];
+    setCache(cacheKey, test, null, type, variables);
+    return;
+  }
 
   // If declared page language matches most likely language.
   if (primary(detectedLangCode) === primary(declared)) {
@@ -241,19 +254,6 @@ export default async function checkPageLanguage() {
         }
       }
     }
-  } else if (primary(detectedLangCode) !== primary(declared)) {
-    // Declared page language doesn't match the content of the page at all.
-    test = 'PAGE_LANG_CONFIDENCE';
-    content = Lang.sprintf(
-      State.option.checks.PAGE_LANG_CONFIDENCE.content || 'PAGE_LANG_CONFIDENCE',
-      likelyLanguage,
-      declaredPageLang,
-    );
-    dismiss = Utils.prepareDismissal(cacheKey);
-    type = detectedLang.confidence >= 0.9 ? 'error' : 'warning';
-    confidence = detectedLang.confidence;
-    variables = [likelyLanguage, declaredPageLang];
-    setCache(cacheKey, test, null, type, variables);
   }
 
   // Non-cached result.
