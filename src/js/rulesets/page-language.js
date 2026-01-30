@@ -106,8 +106,9 @@ export default async function checkPageLanguage() {
   if (cached) {
     if (cached.test) {
       const tip = cached.element ? Lang.sprintf('LANG_TIP') : '';
+      const getElement = cached.element ? find(cached.element, 'root')[0] : null;
       State.results.push({
-        element: cached.element ? find(cached.element, 'root')[0] : null,
+        element: getElement || null,
         test: cached.test,
         type: State.option.checks[cached.test].type || cached.type,
         content: Lang.sprintf(
