@@ -8410,7 +8410,10 @@ async function checkPageLanguage() {
   const declared = Elements.Found.Language;
   if (!declared) return;
   const pageText = (Elements.Found.pageText || []).join().slice(0, 1e4);
-  if (pageText.length < 100) return;
+  if (pageText.length < 100) {
+    console.warn("Sa11y: Not enough content on this page to determine page language.");
+    return;
+  }
   const cacheKey = getCacheKey(declared, window.location.href, pageText.length);
   const cached = getCache().find((item) => item.key === cacheKey);
   if (cached) {
@@ -8479,8 +8482,8 @@ async function checkPageLanguage() {
       const nodeConfidence = Math.floor(detectNode[0].confidence * 100);
       const langAttribute = node?.getAttribute("lang");
       if (nodeLang !== declared && nodeConfidence >= 0.6) {
-        if (langAttribute === nodeLang) return;
-        if (langAttribute !== nodeLang) {
+        if (langAttribute && langAttribute === nodeLang) return;
+        if (langAttribute && langAttribute !== nodeLang) {
           test = "LANG_MISMATCH";
           content = Lang.sprintf(
             State.option.checks.LANG_MISMATCH.content || "LANG_MISMATCH",
@@ -8579,16 +8582,16 @@ async function checkAll(desiredRoot = State.option.checkRoot, desiredReadability
     throw Error(error);
   }
 }
-function detectPageChanges(checkAll2) {
+function detectPageChanges() {
   if (State.option.detectSPArouting === true) {
     let url2 = window.location.href;
     const checkURL = debounce$2(async () => {
       if (url2 !== window.location.href) {
         if (store.getItem("sa11y-panel") === "Closed" || !store.getItem("sa11y-panel")) {
-          checkAll2();
+          checkAll();
         } else {
           resetAll(false);
-          await checkAll2();
+          await checkAll();
         }
         url2 = window.location.href;
       }

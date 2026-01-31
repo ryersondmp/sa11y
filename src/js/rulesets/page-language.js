@@ -97,7 +97,10 @@ export default async function checkPageLanguage() {
 
   // Leverage existing DOM query for readability given it's an expensive check.
   const pageText = (Elements.Found.pageText || []).join().slice(0, 10000);
-  if (pageText.length < 100) return;
+  if (pageText.length < 100) {
+    console.warn('Sa11y: Not enough content on this page to determine page language.');
+    return;
+  }
 
   // Generate a unique cache key so we're not running this function frequently.
   const cacheKey = getCacheKey(declared, window.location.href, pageText.length);
@@ -202,10 +205,10 @@ export default async function checkPageLanguage() {
 
       if (nodeLang !== declared && nodeConfidence >= 0.6) {
         // Lang attribute matches detected language of node.
-        if (langAttribute === nodeLang) return;
+        if (langAttribute && langAttribute === nodeLang) return;
 
         // Language tag doesn't match.
-        if (langAttribute !== nodeLang) {
+        if (langAttribute && langAttribute !== nodeLang) {
           test = 'LANG_MISMATCH';
           content =
             Lang.sprintf(
