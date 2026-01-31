@@ -25,11 +25,9 @@ export default function computeReadability(textArray, lang) {
     readabilityArray.push(sentence);
   });
 
-  // Join and strip junk icons/PUA characters.
-  const pageText = readabilityArray.join(' ').replace(/[^\x20-\x7E\s\u00C0-\u017F]/g, '');
-  if (pageText.length === 0) {
-    return null;
-  }
+  // biome-ignore lint/suspicious/noControlCharactersInRegex: Strip junk icons/PUA characters.
+  const pageText = readabilityArray.join(' ').replace(/[\u0000-\u001F\u007F-\u009F]/g, '');
+  if (pageText.length === 0) return null;
 
   // Flesch Reading Ease: English, French, German, Dutch, Italian, Spanish, Portuguese
   if (['en', 'es', 'fr', 'de', 'nl', 'it', 'pt'].includes(lang)) {

@@ -825,6 +825,9 @@
   function removeWhitespace(string) {
     return string.replace(/[\r\n]+/g, " ").replace(/\s+/g, " ").trim();
   }
+  function normalizeString(string) {
+    return removeWhitespace(string.replace(/[\u0000-\u001F\u007F-\u009F]/g, ""));
+  }
   function truncateString(string, maxLength) {
     const truncatedString = string.substring(0, maxLength).trimEnd();
     return string.length > maxLength ? `${truncatedString}...` : string;
@@ -1221,6 +1224,7 @@
     isScreenReaderOnly,
     isScrollable,
     isVisibleTextInAccName,
+    normalizeString,
     offsetTop,
     prepareDismissal,
     remove,
@@ -1349,11 +1353,11 @@
         if ($el instanceof HTMLImageElement) {
           text = $el.alt || "";
         } else if ($el.tagName === "LI") {
-          text = Array.from($el.childNodes).filter((n) => n.nodeType === 3).map((n) => n.textContent).join("");
+          text = Array.from($el.childNodes).filter((n) => n.nodeType === 3).map((n) => n.textContent).join(" ");
         } else {
           text = getText(fnIgnore($el));
         }
-        return text.replace(/[^\x20-\x7E\s\u00C0-\u017F]/g, "").trim();
+        return normalizeString(text);
       }).filter(Boolean);
       const nestedSources = State.option.checks.QA_NESTED_COMPONENTS.sources || '[role="tablist"], details';
       Found.NestedComponents = Found.Everything.filter(($el) => $el.matches(nestedSources));
@@ -7421,10 +7425,8 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header]).join(",")).j
       const sentence = punctuation.includes(lastCharacter) ? text : `${text}.`;
       readabilityArray.push(sentence);
     });
-    const pageText = readabilityArray.join(" ").replace(/[^\x20-\x7E\s\u00C0-\u017F]/g, "");
-    if (pageText.length === 0) {
-      return null;
-    }
+    const pageText = readabilityArray.join(" ").replace(/[\u0000-\u001F\u007F-\u009F]/g, "");
+    if (pageText.length === 0) return null;
     if (["en", "es", "fr", "de", "nl", "it", "pt"].includes(lang)) {
       const numberOfSyllables = (el) => {
         let wordCheck = el;
@@ -8375,9 +8377,9 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header]).join(",")).j
   }
   const getLanguageLabel = (lang) => {
     try {
-      return new Intl.DisplayNames(navigator.language, {
+      return `<span lang="${lang}">${new Intl.DisplayNames([lang], {
         type: "language"
-      }).of(lang.split("-")[0]);
+      }).of(lang.split("-")[0])}</span>`;
     } catch {
       return lang;
     }
@@ -8395,11 +8397,11 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header]).join(",")).j
       return [];
     }
   };
-  const setCache = (key, test, element, type, variables) => {
+  const setCache = (key, test, element, type, variables, confidence) => {
     if (!State.option.langOfPartsCache) return;
     try {
       const cache = getCache().filter((item) => item.key !== key);
-      cache.push({ key, test, element, type, variables });
+      cache.push({ key, test, element, type, variables, confidence });
       while (cache.length > MAX_CACHE_SIZE) cache.shift();
       store.setItem(STORAGE_KEY, JSON.stringify(cache));
     } catch (e) {
@@ -8464,7 +8466,7 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header]).join(",")).j
       type = detectedLang.confidence >= 0.6 ? "error" : "warning";
       confidence = detectedLang.confidence;
       variables = [likelyLanguage, declaredPageLang];
-      setCache(cacheKey, test, null, type, variables);
+      setCache(cacheKey, test, null, type, variables, confidence);
     }
     if (primary(detectedLangCode) === primary(declared)) {
       const confidenceTarget = State.option.PAGE_LANG_CONFIDENCE?.confidence || 0.9;
@@ -8476,9 +8478,9 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header]).join(",")).j
         let textString = "";
         if (node.nodeName === "IMG") textString = node.alt || "";
         else {
-          textString = Array.from(node.childNodes).filter((child) => child.nodeType === 3).map((child) => child.textContent).join("").trim();
+          textString = Array.from(node.childNodes).filter((child) => child.nodeType === 3).map((child) => child.textContent).join("");
         }
-        const nodeText = removeWhitespace(textString);
+        const nodeText = normalizeString(textString);
         if (nodeText.length <= 30) continue;
         const detectNode = await detector.detect(nodeText);
         const nodeLang = detectNode[0].detectedLanguage;
@@ -8522,7 +8524,7 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header]).join(",")).j
           dismiss = prepareDismissal(nodeText.slice(0, 256));
           confidence = nodeConfidence;
           const selector = generateSelectorPath(node);
-          setCache(cacheKey, test, selector, type, variables);
+          setCache(cacheKey, test, selector, type, variables, nodeConfidence);
           break;
         }
       }

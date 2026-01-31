@@ -371,14 +371,6 @@ export default {
     LABEL_IN_NAME:
       'The visible text for this element appears to be different than the accessible name, which may cause confusion for assistive technologies users. Please review: <hr> <strong {B}>Accessible Name</strong> <strong {C}>%(TEXT)</strong>',
 
-    // Language of parts
-    PAGE_LANG_CONFIDENCE: 'More than half of the text on this page appears to be %(LIKELY_LANG), but the declared page language is %(PAGE_LANG). Consider updating the <a href="https://www.w3.org/International/questions/qa-html-language-declarations">declared page language</a> to match the content.',
-    LANG_OF_PARTS: 'The page language was declared as %(PAGE_LANG), but this content appears to be %(LIKELY_LANG). Ensure the %(LIKELY_LANG) content is tagged appropriately.',
-    LANG_MISMATCH: 'This content appears to be %(PERCENT)% %(DETECTED_LANG), however, it was tagged as %(WRONG_LANG).',
-    LANG_OF_PARTS_ALT: 'This alt text appears to be %(LIKELY_LANG), but the page language was declared as %(PAGE_LANG). Ensure the alt text is in the same language as the rest of the page. <hr> {ALT} <strong {C}>%(ALT)</strong>',
-    LANG_TIP: '<hr><strong>Tip!</strong> Screen readers pronounce words using language tags. Pronouncing a language with a mismatched language pack produces unintelligible speech. Learn more about <a href="https://www.w3.org/WAI/WCAG22/Understanding/language-of-parts.html">language of parts.</a>',
-    LANG_UNSUPPORTED: 'Language-related accessibility checks were skipped because automatic language detection isn’t supported in this browser.',
-
     // Tables
     TABLES_MISSING_HEADINGS:
       'Missing table headers! Accessible tables need HTML markup that indicates header cells and data cells which defines their relationship. This information provides context to people who use assistive technology. Tables should be used for tabular data only. <hr> Learn more about <a href="https://www.w3.org/WAI/tutorials/tables/">accessible tables.</a>',
@@ -416,5 +408,13 @@ export default {
     BG: 'Background',
     NO_SUGGESTION:
       'No accessible combination can be found by changing the text colour. Try changing the background colour.',
+
+    // Language of parts
+    PAGE_LANG_CONFIDENCE: 'More than half of the text on this page appears to be %(LIKELY_LANG), but the declared page language is %(PAGE_LANG). Consider updating the <a href="https://www.w3.org/International/questions/qa-html-language-declarations">declared page language</a> to match the content.',
+    LANG_OF_PARTS: 'The page language was declared as %(PAGE_LANG), but this content appears to be %(LIKELY_LANG). Ensure the %(LIKELY_LANG) content is tagged appropriately.',
+    LANG_MISMATCH: 'This content appears to be %(PERCENT)% %(DETECTED_LANG), however, it was tagged as %(WRONG_LANG).',
+    LANG_OF_PARTS_ALT: 'This alt text appears to be %(LIKELY_LANG), but the page language was declared as %(PAGE_LANG). Ensure the alt text is in the same language as the rest of the page. <hr> {ALT} <strong {C}>%(ALT)</strong>',
+    LANG_TIP: '<hr><strong>Tip!</strong> Screen readers pronounce words using language tags. Pronouncing a language with a mismatched language pack produces unintelligible speech. Learn more about <a href="https://www.w3.org/WAI/WCAG22/Understanding/language-of-parts.html">language of parts.</a>',
+    LANG_UNSUPPORTED: 'Language-related accessibility checks were skipped because automatic language detection isn’t supported in this browser.',
   },
 };

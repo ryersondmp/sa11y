@@ -131,12 +131,11 @@ const Elements = (function myElements() {
           text = Array.from($el.childNodes)
             .filter((n) => n.nodeType === 3)
             .map((n) => n.textContent)
-            .join('');
+            .join(' ');
         } else {
           text = Utils.getText(Utils.fnIgnore($el));
         }
-        // Strip junk icons/PUA characters.
-        return text.replace(/[^\x20-\x7E\s\u00C0-\u017F]/g, '').trim();
+        return Utils.normalizeString(text);
       })
       .filter(Boolean);
 

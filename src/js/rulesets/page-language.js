@@ -42,9 +42,9 @@ export function getLanguageDetector() {
 // Get the reader-friendly language label, e.g. "English"
 const getLanguageLabel = (lang) => {
   try {
-    return new Intl.DisplayNames(navigator.language, {
+    return `<span lang="${lang}">${new Intl.DisplayNames([lang], {
       type: 'language',
-    }).of(lang.split('-')[0]);
+    }).of(lang.split('-')[0])}</span>`;
   } catch {
     return lang;
   }
@@ -70,11 +70,11 @@ const getCache = () => {
 };
 
 // Save minimal, but key info to cache.
-const setCache = (key, test, element, type, variables) => {
+const setCache = (key, test, element, type, variables, confidence) => {
   if (!State.option.langOfPartsCache) return;
   try {
     const cache = getCache().filter((item) => item.key !== key);
-    cache.push({ key, test, element, type, variables });
+    cache.push({ key, test, element, type, variables, confidence });
     while (cache.length > MAX_CACHE_SIZE) cache.shift();
     Utils.store.setItem(STORAGE_KEY, JSON.stringify(cache));
   } catch (e) {
@@ -133,12 +133,6 @@ export default async function checkPageLanguage() {
   const detector = await getLanguageDetector();
   const detected = await detector.detect(pageText);
 
-  /* Nothing detected.
-  if (!detected?.length) {
-    setCache(cacheKey, null, null, null, null);
-    return;
-  } */
-
   // Identify the primary and secondary page languages.
   const detectedLang = detected[0];
   const detectedLangCode = detectedLang.detectedLanguage;
@@ -166,7 +160,7 @@ export default async function checkPageLanguage() {
     type = detectedLang.confidence >= 0.6 ? 'error' : 'warning';
     confidence = detectedLang.confidence;
     variables = [likelyLanguage, declaredPageLang];
-    setCache(cacheKey, test, null, type, variables);
+    setCache(cacheKey, test, null, type, variables, confidence);
   }
 
   // If declared page language matches most likely language.
@@ -188,10 +182,9 @@ export default async function checkPageLanguage() {
         textString = Array.from(node.childNodes)
           .filter((child) => child.nodeType === 3)
           .map((child) => child.textContent)
-          .join('')
-          .trim();
+          .join('');
       }
-      const nodeText = Utils.removeWhitespace(textString);
+      const nodeText = Utils.normalizeString(textString);
 
       // Skip nodes that are too short.
       if (nodeText.length <= 30) continue;
@@ -252,7 +245,7 @@ export default async function checkPageLanguage() {
         const selector = Utils.generateSelectorPath(node);
 
         // Break the loop on first match.
-        setCache(cacheKey, test, selector, type, variables);
+        setCache(cacheKey, test, selector, type, variables, nodeConfidence);
         break;
       }
     }

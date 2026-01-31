@@ -9,7 +9,7 @@ const sa11y = new Sa11y({
   customChecks: 'listen',
   langOfPartsCache: 0,
   langOfPartsPlugin: true,
-  /* delayCheck: 500,
+  delayCheck: 500,
   videoContent: 'youtube.com, vimeo.com, yuja.com, panopto.com, torontomu.ca',
   headerIgnore: '.ignore-this-heading',
   headerIgnoreStrings: /\(AnchorJS\)/gi,
@@ -48,7 +48,7 @@ const sa11y = new Sa11y({
     QA_BAD_LINK: {
       sources: "a[href^='https://www.dev.']",
     },
-  }, */
+  },
 });
 
 /* Console all results */

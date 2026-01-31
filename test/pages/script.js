@@ -24,7 +24,6 @@ const sa11y = new Sa11y({
   imageIgnore: '.logo',
   customChecks: 'listen',
   linkStopWords: 'взнати більше',
-
   langOfPartsCache: true,
   langOfPartsPlugin: true,
 

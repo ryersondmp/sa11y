@@ -269,6 +269,16 @@ export function removeWhitespace(string) {
 }
 
 /**
+ * Removes non-printable ASCII control characters and junk icons from a string, and removes extra whitespace.
+ * @param {string} string - The input string to clean.
+ * @returns {string} The string with control characters removed.
+ */
+export function normalizeString(string) {
+  // biome-ignore lint/suspicious/noControlCharactersInRegex: Strip junk icons/PUA characters.
+  return removeWhitespace(string.replace(/[\u0000-\u001F\u007F-\u009F]/g, ''));
+}
+
+/**
  * Truncate string.
  * @param {*} string The string to truncate.
  * @param {*} maxLength Desired max length of string.
