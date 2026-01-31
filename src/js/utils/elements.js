@@ -96,8 +96,8 @@ const Elements = (function myElements() {
     const badLinkSources = State.option.checks.QA_BAD_LINK.sources;
     Found.CustomErrorLinks = badLinkSources.length
       ? Found.Links.filter(($el) =>
-        badLinkSources.split(',').some((selector) => $el.matches(selector.trim())),
-      )
+          badLinkSources.split(',').some((selector) => $el.matches(selector.trim())),
+        )
       : [];
 
     // Readability.
@@ -108,7 +108,9 @@ const Elements = (function myElements() {
     Found.Readability = [
       ...Found.Paragraphs.filter(readabilityExclusions),
       ...Found.Lists.filter(readabilityExclusions),
-    ].map(($el) => Utils.getText(Utils.fnIgnore($el))).filter(Boolean);
+    ]
+      .map(($el) => Utils.getText(Utils.fnIgnore($el)))
+      .filter(Boolean);
 
     // For language detection.
     const elementSet = new Set(Found.Everything);
@@ -120,21 +122,23 @@ const Elements = (function myElements() {
         parent = parent.parentElement;
       }
       return true;
-    }).map(($el) => {
-      let text = '';
-      if ($el instanceof HTMLImageElement) {
-        text = $el.alt || '';
-      } else if ($el.tagName === 'LI') {
-        text = Array.from($el.childNodes)
-          .filter(n => n.nodeType === 3)
-          .map(n => n.textContent)
-          .join("");
-      } else {
-        text = Utils.getText(Utils.fnIgnore($el));
-      }
-      // Strip junk icons/PUA characters.
-      return text.replace(/[^\x20-\x7E\s\u00C0-\u017F]/g, '').trim();
-    }).filter(Boolean);
+    })
+      .map(($el) => {
+        let text = '';
+        if ($el instanceof HTMLImageElement) {
+          text = $el.alt || '';
+        } else if ($el.tagName === 'LI') {
+          text = Array.from($el.childNodes)
+            .filter((n) => n.nodeType === 3)
+            .map((n) => n.textContent)
+            .join('');
+        } else {
+          text = Utils.getText(Utils.fnIgnore($el));
+        }
+        // Strip junk icons/PUA characters.
+        return text.replace(/[^\x20-\x7E\s\u00C0-\u017F]/g, '').trim();
+      })
+      .filter(Boolean);
 
     // Developer checks.
     const nestedSources =

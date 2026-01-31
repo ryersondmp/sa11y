@@ -168,7 +168,6 @@ export default async function checkPageLanguage() {
 
   // If declared page language matches most likely language.
   if (primary(detectedLangCode) === primary(declared)) {
-
     // Pass if we're 90% confident.
     const confidenceTarget = State.option.PAGE_LANG_CONFIDENCE?.confidence || 0.9;
     if (detectedLang.confidence >= confidenceTarget) {
@@ -202,7 +201,6 @@ export default async function checkPageLanguage() {
       const langAttribute = node?.getAttribute('lang');
 
       if (nodeLang !== declared && nodeConfidence >= 0.6) {
-
         // Lang attribute matches detected language of node.
         if (langAttribute === nodeLang) return;
 
