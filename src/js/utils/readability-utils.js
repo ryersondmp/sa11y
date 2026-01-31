@@ -24,7 +24,9 @@ export default function computeReadability(textArray, lang) {
     const sentence = punctuation.includes(lastCharacter) ? text : `${text}.`;
     readabilityArray.push(sentence);
   });
-  const pageText = readabilityArray.join(' ');
+
+  // Join and strip junk icons/PUA characters.
+  const pageText = readabilityArray.join(' ').replace(/[^\x20-\x7E\s\u00C0-\u017F]/g, '');
   if (pageText.length === 0) {
     return null;
   }

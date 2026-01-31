@@ -95,7 +95,6 @@ export default async function checkPageLanguage() {
   const declared = Elements.Found.Language;
   if (!declared) return;
 
-  console.log(Elements.Found.pageText.join().slice(0, 10000));
   // Leverage existing DOM query for readability given it's an expensive check.
   const pageText = (Elements.Found.pageText || []).join().slice(0, 10000);
   if (pageText.length < 100) return;
@@ -161,21 +160,18 @@ export default async function checkPageLanguage() {
       declaredPageLang,
     );
     dismiss = Utils.prepareDismissal(cacheKey);
-    type = detectedLang.confidence >= 0.9 ? 'error' : 'warning';
+    type = detectedLang.confidence >= 0.6 ? 'error' : 'warning';
     confidence = detectedLang.confidence;
     variables = [likelyLanguage, declaredPageLang];
     setCache(cacheKey, test, null, type, variables);
   }
 
-  console.log(
-    `The declared page language is ${getLanguageLabel(declared)}. We are ${Math.floor(detectedLang.confidence * 100)}% confidence that the confidence of this page is ${getLanguageLabel(detectedLangCode)} based on the ${pageText.length} characters of text analyzed.`,
-  );
-
   // If declared page language matches most likely language.
   if (primary(detectedLangCode) === primary(declared)) {
+
     // Pass if we're 90% confident.
     const confidenceTarget = State.option.PAGE_LANG_CONFIDENCE?.confidence || 0.9;
-    if (Math.floor(detectedLang.confidence * 100) >= confidenceTarget) {
+    if (detectedLang.confidence >= confidenceTarget) {
       setCache(cacheKey, null, null, null, null);
       return;
     }

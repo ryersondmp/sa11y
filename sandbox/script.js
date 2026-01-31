@@ -5,11 +5,11 @@ import Sa11yLangEn from '../src/lang/en.js';
 Lang.addI18n(Sa11yLangEn.strings);
 const sa11y = new Sa11y({
   checkRoot: 'body',
-  readabilityRoot: 'main',
+  readabilityRoot: 'body',
   customChecks: 'listen',
   langOfPartsCache: 0,
   langOfPartsPlugin: true,
-  // delayCheck: 500,
+  /* delayCheck: 500,
   videoContent: 'youtube.com, vimeo.com, yuja.com, panopto.com, torontomu.ca',
   headerIgnore: '.ignore-this-heading',
   headerIgnoreStrings: /\(AnchorJS\)/gi,
@@ -48,7 +48,7 @@ const sa11y = new Sa11y({
     QA_BAD_LINK: {
       sources: "a[href^='https://www.dev.']",
     },
-  },
+  }, */
 });
 
 /* Console all results */

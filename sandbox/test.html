@@ -15779,15 +15779,116 @@
   <div id=systemAlert></div>
 
 
-  <div class=resGlobalHeader>
+  <div class=resGlobalHeader hidden>
     <div class=global-header-top>
       <div class=container>
         <div class=row>
           <div class=col-xs-12>
             <div class=res-global-header>
               <a id=skip-to-main class="btn btn-default" href=#main-content>Skip to Main Content</a>
-              <nav aria-label=global class="navbar navbar-default sf-hidden">
+              <nav aria-label="global" class="navbar navbar-default">
+                <div class="container-fluid">
+                  <div class="navbar-header">
+                    <a class="navbar-brand" href="https://www.torontomu.ca/"> <img
+                        src="/etc.clientlibs/ryecms/static/clientlib-site/resources/images/tmu_logo.svg"
+                        alt="Toronto Metropolitan University" title="Toronto Metropolitan University">
+                    </a>
+                    <button id="gh-other-btn" type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                      data-target="#gh-other-content" aria-expanded="false">
+                      <span class="sr-only">Toggle navigation</span> <span class="fa fa-bars"></span>
+                    </button>
+                    <button id="gh-info-btn" type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                      data-target="#gh-info-content" aria-expanded="false">
+                      <span class="sr-only">Toggle information</span> <span class="fa fa-info-circle"></span>
+                    </button>
+                    <button id="gh-search-btn" type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                      data-target="#gh-search-content" aria-expanded="false">
+                      <span class="sr-only">Toggle search</span> <span class="fa fa-search"></span>
+                    </button>
+                  </div>
+                  <div class="navbar-content">
+                    <form role="search" id="gh-search-content"
+                      class="resSearch nav navbar-nav collapse navbar-collapse navbar-form" method="GET"
+                      action="https://www.torontomu.ca/search/">
+                      <div class="input-group gh-search-container">
+                        <label for="search" class="sr-only">Search Site and People</label>
+                        <input id="search" name="q" type="text" class="form-control"
+                          placeholder="Search Site and People" autocomplete="off">
+                        <span class="input-group-btn">
+                          <button aria-label="Search" class="btn btn-default" type="submit">
+                            <i class="fa fa-search" title="Search Torontomu.ca"></i>
+                          </button>
+                        </span>
+                      </div>
+                    </form>
+                    <div class="navbar-right">
+                      <ul id="gh-info-content" class="nav navbar-nav collapse navbar-collapse navbar-left"
+                        role="presentation">
+                        <li class="dropdown hidden-xs"><a href="#" class="dropdown-toggle" data-toggle="dropdown"
+                            role="button" aria-haspopup="true" aria-expanded="false"> <span
+                              class="fa fa-info-circle"></span><span class="hidden-sm">
+                              Info for <span class="caret"></span>
+                            </span>
+                          </a>
+                          <ul class="dropdown-menu">
+                            <li><a href="/future-students/">Future Students</a></li>
+                            <li><a href="/current-students/">Current Students</a></li>
+                            <li><a href="/faculty-staff/">Faculty and Staff</a></li>
+                            <li><a href="/teachers-counsellors/">Teachers and
+                                Counsellors</a></li>
+                            <li><a href="/alumni/">Alumni</a></li>
+                            <li><a href="/media/">Media</a></li>
+                            <li><a href="/giving/">Donors</a></li>
+                          </ul>
+                        </li>
+                        <li class="visible-xs"><a href="/future-students/">Future
+                            Students</a></li>
+                        <li class="visible-xs"><a href="/current-students/">Current
+                            Students</a></li>
+                        <li class="visible-xs"><a href="/faculty-staff/">Faculty
+                            and Staff</a></li>
+                        <li class="visible-xs"><a href="/teachers-counsellors/">Teachers
+                            and Counsellors</a></li>
+                        <li class="visible-xs"><a href="/alumni/">Alumni</a></li>
+                        <li class="visible-xs"><a href="/media/">Media</a></li>
+                        <li class="visible-xs"><a href="/giving/">Donors</a></li>
+                      </ul>
+                      <ul id="gh-other-content" class="nav navbar-nav collapse navbar-collapse navbar-left">
+                        <li class="visible-xs"><a href="/about/">About</a></li>
+                        <li class="visible-xs"><a href="/programs/">Programs</a></li>
+                        <li class="visible-xs"><a href="/admissions/">Admissions</a></li>
+                        <li class="visible-xs"><a href="/campus-life/">Campus
+                            Life</a></li>
+                        <li class="visible-xs"><a href="/research/">Research &amp; Innovation</a></li>
+                        <li class="visible-xs"><a href="/current-students/">Current Students</a></li>
+                        <li class="divider visible-xs"></li>
+                        <li class="call-to-action"><a href="/admissions/">Apply</a></li>
+                        <li class="call-to-action"><a href="/admissions/visits-tours/">Visit</a></li>
+                        <li class="call-to-action"><a href="/giving/">Give</a></li>
+                        <li class="divider"></li>
+                        <li><a href="https://my.torontomu.ca/">my.torontomu</a></li>
+                      </ul>
 
+                      <ul class="nav navbar-nav collapse navbar-collapse navbar-left" role="presentation">
+                        <li class="dropdown hidden-xs"><a href="#" class="dropdown-toggle" data-toggle="dropdown"
+                            aria-haspopup="true" aria-expanded="false" role="button"> <span
+                              class="fa fa-bars"></span><span class="sr-only">Menu</span>
+                          </a>
+                          <ul class="dropdown-menu">
+
+                            <li><a href="/about/">About</a></li>
+                            <li><a href="/programs/">Programs</a></li>
+                            <li><a href="/admissions/">Admissions</a></li>
+                            <li><a href="/campus-life/">Campus Life</a></li>
+                            <li><a href="/research/">Research &amp; Innovation</a></li>
+                            <li><a href="/current-students/">Current Students</a></li>
+                          </ul>
+                        </li>
+                      </ul>
+
+                    </div>
+                  </div>
+                </div>
               </nav>
             </div>
           </div>
@@ -16384,9 +16485,103 @@
   </footer>
 
 
-  <div class="resGlobalFooter sf-hidden">
-  </div>
+  <div class="resGlobalFooter" hidden>
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <footer class="resGlobalFooter" aria-label="global">
+      <div class="top-middle-container"> <!-- top-middle-container starts -->
+        <div class="container">
+
+          <!-- Footer Top -->
+          <div class="row footer-top">
+            <div class="col-sm-9 col-xs-6">
+              <strong>Toronto Metropolitan University</strong><br>
+            </div>
+            <div class="col-sm-3 col-xs-6 text-right footer-toggle">
+              <a title="Expand/Hide Footer" data-toggle="collapse" href="#footer-data"
+                aria-label="expand or hide footer" aria-expanded="false" aria-controls="footer-data"
+                class="footer-toggle-button">
+              </a>
+            </div>
+          </div>
+
+          <!-- Footer Middle -->
+          <div class="row collapse in footer-middle" id="footer-data">
+            <div class="col-sm-7 col-xs-7 text-left">
+              <address>
+                350 Victoria Street<br>
+                Toronto, ON M5B 2K3<br>
+                <abbr title="Phone">P:</abbr> <a href="tel:+14169795000">416-979-5000</a>
+              </address>
+              <ol class="breadcrumb min">
+                <li><a href="/contact/">Directory</a></li>
+                <li><a href="/maps/">Maps and Directions</a></li>
+              </ol>
+            </div>
+            <div class="col-sm-5 col-xs-5 text-right">
+              <p>Follow Us</p>
+              <p>
+                <a href="https://www.facebook.com/torontomet" target="_blank"><i class="fa fa-facebook-f icon-circle"
+                    title="Facebook" aria-hidden="true"></i><span class="sr-only">Facebook, opens new window</span></a>
+                <a href="https://www.instagram.com/torontomet" target="_blank"><i class="fa fa-instagram icon-circle"
+                    title="Instagram" aria-hidden="true"></i><span class="sr-only">Instagram, opens new
+                    window</span></a>
+                <a href="https://torontomet.bsky.social" target="_blank"><i class="fa fa-bluesky icon-circle"
+                    title="Bluesky" aria-hidden="true"></i><span class="sr-only">Bluesky, opens new window</span></a>
+                <a href="https://www.youtube.com/TorontoMetropolitanUniversity" target="_blank"><i
+                    class="fa fa-youtube icon-circle" title="YouTube" aria-hidden="true"></i><span
+                    class="sr-only">YouTube, opens new window</span></a>
+                <a href="https://www.linkedin.com/company/torontometropolitanuniversity" target="_blank"><i
+                    class="fa fa-linkedin icon-circle" title="LinkedIn" aria-hidden="true"></i><span
+                    class="sr-only">LinkedIn, opens new window</span></a>
+                <a href="https://www.tiktok.com/@torontomet" target="_blank"><i class="fa fa-tiktok icon-circle"
+                    title="Tiktok" aria-hidden="true"></i><span class="sr-only">Tiktok, opens new window</span></a>
+              </p>
+              <ol class="breadcrumb min">
+                <li><a href="/jobs/">Careers</a></li>
+                <li><a href="/media/">Media Room</a></li>
+              </ol>
+            </div>
+          </div>
+
+        </div>
+      </div> <!-- top-middle-container ends -->
+
+      <div class="bottom-container"> <!-- bottom-container starts -->
+        <div class="container">
+
+          <!-- Footer Bottom -->
+          <div class="row footer-bottom">
+            <div class="col-xs-12">
+              <ol class="breadcrumb min">
+                <li><a href="/privacy/">Privacy Policy</a></li>
+                <li><a href="/accessibility/">Accessibility</a></li>
+                <li><a href="/terms-conditions/">Terms &amp; Conditions</a></li>
+              </ol>
+            </div>
+          </div>
+
+        </div>
+      </div> <!-- bottom-container ends -->
+    </footer>
+  </div>
 
 
 
