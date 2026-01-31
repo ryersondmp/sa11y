@@ -201,16 +201,13 @@ export default async function checkPageLanguage() {
       const nodeConfidence = Math.floor(detectNode[0].confidence * 100);
       const langAttribute = node?.getAttribute('lang');
 
-      if (nodeLang !== declared && nodeConfidence >= 0.5) {
-        if (langAttribute && langAttribute === nodeLang) return;
+      if (nodeLang !== declared && nodeConfidence >= 0.6) {
 
-        // Shared data.
-        element = node;
-        type = nodeConfidence >= 0.9 ? 'error' : 'warning';
-        dismiss = Utils.prepareDismissal(nodeText.slice(0, 256));
-        confidence = nodeConfidence;
+        // Lang attribute matches detected language of node.
+        if (langAttribute === nodeLang) return;
 
-        if (langAttribute && langAttribute !== nodeLang) {
+        // Language tag doesn't match.
+        if (langAttribute !== nodeLang) {
           test = 'LANG_MISMATCH';
           content =
             Lang.sprintf(
@@ -220,10 +217,8 @@ export default async function checkPageLanguage() {
               getLanguageLabel(langAttribute),
             ) + Lang.sprintf('LANG_TIP');
           variables = [nodeConfidence, nodeLangLabel, getLanguageLabel(langAttribute)];
-          const selector = Utils.generateSelectorPath(node);
-          setCache(cacheKey, test, selector, type, variables);
-          break;
         } else if (node.nodeName === 'IMG' && node?.alt?.length !== 0) {
+          // Alt text is in different language.
           const alt = Utils.sanitizeHTML(node.alt);
           const altText = Utils.removeWhitespace(alt);
           test = 'LANG_OF_PARTS_ALT';
@@ -235,10 +230,8 @@ export default async function checkPageLanguage() {
               altText,
             ) + Lang.sprintf('LANG_TIP');
           variables = [nodeLangLabel, declaredPageLang, altText];
-          const selector = Utils.generateSelectorPath(node);
-          setCache(cacheKey, test, selector, type, variables);
-          break;
         } else {
+          // Text node is in different language.
           test = 'LANG_OF_PARTS';
           content =
             Lang.sprintf(
@@ -248,10 +241,18 @@ export default async function checkPageLanguage() {
               nodeLangLabel,
             ) + Lang.sprintf('LANG_TIP');
           variables = [declaredPageLang, nodeLangLabel, nodeLangLabel];
-          const selector = Utils.generateSelectorPath(node);
-          setCache(cacheKey, test, selector, type, variables);
-          break;
         }
+
+        // Shared data.
+        element = node;
+        type = nodeConfidence >= 0.9 ? 'error' : 'warning';
+        dismiss = Utils.prepareDismissal(nodeText.slice(0, 256));
+        confidence = nodeConfidence;
+        const selector = Utils.generateSelectorPath(node);
+
+        // Break the loop on first match.
+        setCache(cacheKey, test, selector, type, variables);
+        break;
       }
     }
   }
