@@ -8470,7 +8470,7 @@ async function checkPageLanguage() {
   if (primary(detectedLangCode) === primary(declared)) {
     const confidenceTarget = State.option.PAGE_LANG_CONFIDENCE?.confidence || 0.9;
     if (detectedLang.confidence >= confidenceTarget) {
-      setCache(cacheKey, null, null, null, null, pageText.length);
+      setCache(cacheKey, null, null, null, null, null, pageText.length);
       return;
     }
     for (const node of Elements.Found.Everything) {

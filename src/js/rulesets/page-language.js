@@ -170,7 +170,7 @@ export default async function checkPageLanguage() {
     // Pass if we're 90% confident.
     const confidenceTarget = State.option.PAGE_LANG_CONFIDENCE?.confidence || 0.9;
     if (detectedLang.confidence >= confidenceTarget) {
-      setCache(cacheKey, null, null, null, null, pageText.length);
+      setCache(cacheKey, null, null, null, null, null, pageText.length);
       return;
     }
 
