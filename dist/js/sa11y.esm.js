@@ -1338,6 +1338,7 @@ const Elements = /* @__PURE__ */ (function myElements() {
     ].map(($el) => getText(fnIgnore($el))).filter(Boolean);
     const elementSet = new Set(Found.Everything);
     Found.pageText = Found.Everything.filter(($el) => {
+      if ($el instanceof HTMLImageElement) return true;
       let parent = $el.parentElement;
       while (parent) {
         if (elementSet.has(parent)) return false;
@@ -8381,8 +8382,8 @@ const getLanguageLabel = (lang) => {
   }
 };
 const primary = (lang) => String(lang).toLowerCase().split("-")[0];
-const getCacheKey = (declared, url2, textLength) => {
-  return `${declared}|${url2}|${Math.floor(textLength / 100) * 100}`;
+const getCacheKey = (url2) => {
+  return url2;
 };
 const getCache = () => {
   try {
@@ -8393,11 +8394,11 @@ const getCache = () => {
     return [];
   }
 };
-const setCache = (key, test, element, type, variables, confidence) => {
+const setCache = (key, test, element, type, variables, confidence, textLength2) => {
   if (!State.option.langOfPartsCache) return;
   try {
     const cache = getCache().filter((item) => item.key !== key);
-    cache.push({ key, test, element, type, variables, confidence });
+    cache.push({ key, test, element, type, variables, confidence, textLength: textLength2 });
     while (cache.length > MAX_CACHE_SIZE) cache.shift();
     store.setItem(STORAGE_KEY, JSON.stringify(cache));
   } catch (e) {
@@ -8411,14 +8412,15 @@ async function checkPageLanguage() {
     store.removeItem(STORAGE_KEY);
   const declared = Elements.Found.Language;
   if (!declared) return;
-  const pageText = (Elements.Found.pageText || []).join().slice(0, 1e4);
+  const pageText = (Elements.Found.pageText || []).join();
   if (pageText.length < 100) {
     console.warn("Sa11y: Not enough content on this page to determine page language.");
     return;
   }
-  const cacheKey = getCacheKey(declared, window.location.href, pageText.length);
+  const cacheKey = getCacheKey(window.location.href);
   const cached = getCache().find((item) => item.key === cacheKey);
-  if (cached) {
+  const isStale = cached && Math.abs(cached.textLength - pageText.length) > 5;
+  if (cached && !isStale) {
     if (cached.test) {
       const tip = cached.element ? Lang.sprintf("LANG_TIP") : "";
       const getElement = cached.element ? find(cached.element, "root")[0] : null;
@@ -8433,6 +8435,7 @@ async function checkPageLanguage() {
         dismiss: prepareDismissal(cached.test),
         developer: State.option.checks[cached.test].developer ?? false,
         confidence: cached.confidence,
+        textLength: cached.textLength,
         cached: true
       });
     }
@@ -8462,12 +8465,13 @@ async function checkPageLanguage() {
     type = detectedLang.confidence >= 0.6 ? "error" : "warning";
     confidence = detectedLang.confidence;
     variables = [likelyLanguage, declaredPageLang];
-    setCache(cacheKey, test, null, type, variables, confidence);
+    textLength = pageText.length;
+    setCache(cacheKey, test, null, type, variables, confidence, textLength);
   }
   if (primary(detectedLangCode) === primary(declared)) {
     const confidenceTarget = State.option.PAGE_LANG_CONFIDENCE?.confidence || 0.9;
     if (detectedLang.confidence >= confidenceTarget) {
-      setCache(cacheKey, null, null, null, null);
+      setCache(cacheKey, null, null, null, null, textLength);
       return;
     }
     for (const node of Elements.Found.Everything) {
@@ -8520,7 +8524,7 @@ async function checkPageLanguage() {
         dismiss = prepareDismissal(nodeText.slice(0, 256));
         confidence = nodeConfidence;
         const selector = generateSelectorPath(node);
-        setCache(cacheKey, test, selector, type, variables, nodeConfidence);
+        setCache(cacheKey, test, selector, type, variables, nodeConfidence, pageText.length);
         break;
       }
     }
@@ -8533,6 +8537,7 @@ async function checkPageLanguage() {
     dismiss,
     developer: State.option.checks[test].developer ?? false,
     cached: false,
+    pageText: pageText.length,
     confidence
   });
 }

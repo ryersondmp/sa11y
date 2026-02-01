@@ -54,8 +54,8 @@ const getLanguageLabel = (lang) => {
 const primary = (lang) => String(lang).toLowerCase().split('-')[0];
 
 // We're looking for significant changes for text before running this expensive check.
-const getCacheKey = (declared, url, textLength) => {
-  return `${declared}|${url}|${Math.floor(textLength / 100) * 100}`;
+const getCacheKey = (url) => {
+  return url;
 };
 
 // Get local storage value.
@@ -70,11 +70,11 @@ const getCache = () => {
 };
 
 // Save minimal, but key info to cache.
-const setCache = (key, test, element, type, variables, confidence) => {
+const setCache = (key, test, element, type, variables, confidence, textLength) => {
   if (!State.option.langOfPartsCache) return;
   try {
     const cache = getCache().filter((item) => item.key !== key);
-    cache.push({ key, test, element, type, variables, confidence });
+    cache.push({ key, test, element, type, variables, confidence, textLength });
     while (cache.length > MAX_CACHE_SIZE) cache.shift();
     Utils.store.setItem(STORAGE_KEY, JSON.stringify(cache));
   } catch (e) {
@@ -96,18 +96,19 @@ export default async function checkPageLanguage() {
   if (!declared) return;
 
   // Leverage existing DOM query for readability given it's an expensive check.
-  const pageText = (Elements.Found.pageText || []).join().slice(0, 10000);
+  const pageText = (Elements.Found.pageText || []).join();
   if (pageText.length < 100) {
     console.warn('Sa11y: Not enough content on this page to determine page language.');
     return;
   }
 
   // Generate a unique cache key so we're not running this function frequently.
-  const cacheKey = getCacheKey(declared, window.location.href, pageText.length);
+  const cacheKey = getCacheKey(window.location.href);
 
   // The displayed (cached) result.
   const cached = getCache().find((item) => item.key === cacheKey);
-  if (cached) {
+  const isStale = cached && Math.abs(cached.textLength - pageText.length) > 5;
+  if (cached && !isStale) {
     if (cached.test) {
       const tip = cached.element ? Lang.sprintf('LANG_TIP') : '';
       const getElement = cached.element ? find(cached.element, 'root')[0] : null;
@@ -123,6 +124,7 @@ export default async function checkPageLanguage() {
         dismiss: Utils.prepareDismissal(cached.test),
         developer: State.option.checks[cached.test].developer ?? false,
         confidence: cached.confidence,
+        textLength: cached.textLength,
         cached: true,
       });
     }
@@ -160,7 +162,8 @@ export default async function checkPageLanguage() {
     type = detectedLang.confidence >= 0.6 ? 'error' : 'warning';
     confidence = detectedLang.confidence;
     variables = [likelyLanguage, declaredPageLang];
-    setCache(cacheKey, test, null, type, variables, confidence);
+    textLength = pageText.length;
+    setCache(cacheKey, test, null, type, variables, confidence, textLength);
   }
 
   // If declared page language matches most likely language.
@@ -168,7 +171,7 @@ export default async function checkPageLanguage() {
     // Pass if we're 90% confident.
     const confidenceTarget = State.option.PAGE_LANG_CONFIDENCE?.confidence || 0.9;
     if (detectedLang.confidence >= confidenceTarget) {
-      setCache(cacheKey, null, null, null, null);
+      setCache(cacheKey, null, null, null, null, textLength);
       return;
     }
 
@@ -245,7 +248,7 @@ export default async function checkPageLanguage() {
         const selector = Utils.generateSelectorPath(node);
 
         // Break the loop on first match.
-        setCache(cacheKey, test, selector, type, variables, nodeConfidence);
+        setCache(cacheKey, test, selector, type, variables, nodeConfidence, pageText.length);
         break;
       }
     }
@@ -260,6 +263,7 @@ export default async function checkPageLanguage() {
     dismiss: dismiss,
     developer: State.option.checks[test].developer ?? false,
     cached: false,
+    pageText: pageText.length,
     confidence: confidence,
   });
 }

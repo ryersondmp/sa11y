@@ -115,6 +115,7 @@ const Elements = (function myElements() {
     // For language detection.
     const elementSet = new Set(Found.Everything);
     Found.pageText = Found.Everything.filter(($el) => {
+      if ($el instanceof HTMLImageElement) return true;
       // Prevent duplication
       let parent = $el.parentElement;
       while (parent) {
