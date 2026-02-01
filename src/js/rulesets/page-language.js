@@ -162,8 +162,7 @@ export default async function checkPageLanguage() {
     type = detectedLang.confidence >= 0.6 ? 'error' : 'warning';
     confidence = detectedLang.confidence;
     variables = [likelyLanguage, declaredPageLang];
-    textLength = pageText.length;
-    setCache(cacheKey, test, null, type, variables, confidence, textLength);
+    setCache(cacheKey, test, null, type, variables, confidence, pageText.length);
   }
 
   // If declared page language matches most likely language.
@@ -171,7 +170,7 @@ export default async function checkPageLanguage() {
     // Pass if we're 90% confident.
     const confidenceTarget = State.option.PAGE_LANG_CONFIDENCE?.confidence || 0.9;
     if (detectedLang.confidence >= confidenceTarget) {
-      setCache(cacheKey, null, null, null, null, textLength);
+      setCache(cacheKey, null, null, null, null, pageText.length);
       return;
     }
 

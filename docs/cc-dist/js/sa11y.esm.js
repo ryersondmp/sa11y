@@ -8394,11 +8394,11 @@ const getCache = () => {
     return [];
   }
 };
-const setCache = (key, test, element, type, variables, confidence, textLength2) => {
+const setCache = (key, test, element, type, variables, confidence, textLength) => {
   if (!State.option.langOfPartsCache) return;
   try {
     const cache = getCache().filter((item) => item.key !== key);
-    cache.push({ key, test, element, type, variables, confidence, textLength: textLength2 });
+    cache.push({ key, test, element, type, variables, confidence, textLength });
     while (cache.length > MAX_CACHE_SIZE) cache.shift();
     store.setItem(STORAGE_KEY, JSON.stringify(cache));
   } catch (e) {
@@ -8465,13 +8465,12 @@ async function checkPageLanguage() {
     type = detectedLang.confidence >= 0.6 ? "error" : "warning";
     confidence = detectedLang.confidence;
     variables = [likelyLanguage, declaredPageLang];
-    textLength = pageText.length;
-    setCache(cacheKey, test, null, type, variables, confidence, textLength);
+    setCache(cacheKey, test, null, type, variables, confidence, pageText.length);
   }
   if (primary(detectedLangCode) === primary(declared)) {
     const confidenceTarget = State.option.PAGE_LANG_CONFIDENCE?.confidence || 0.9;
     if (detectedLang.confidence >= confidenceTarget) {
-      setCache(cacheKey, null, null, null, null, textLength);
+      setCache(cacheKey, null, null, null, null, pageText.length);
       return;
     }
     for (const node of Elements.Found.Everything) {
