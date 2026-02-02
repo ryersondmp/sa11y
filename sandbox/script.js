@@ -15,7 +15,7 @@ const sa11y = new Sa11y({
   headerIgnoreStrings: /\(AnchorJS\)/gi,
   contrastIgnore: '.card-footer *, #player *',
   containerIgnore: 'footer',
-  linkIgnoreStrings: ['(External link)', '(ignore me)'],
+  // linkIgnoreStrings: ['(External link)', '(ignore me)'],
   linkIgnoreSpan: '.sr-only-example, .link-purpose',
   detectSPArouting: true,
   headless: false,

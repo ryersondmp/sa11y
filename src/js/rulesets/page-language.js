@@ -42,7 +42,7 @@ export function getLanguageDetector() {
 // Get the reader-friendly language label, e.g. "English"
 const getLanguageLabel = (lang) => {
   try {
-    return `<span lang="${lang}">${new Intl.DisplayNames([lang], {
+    return `<span lang="${navigator.language}">${new Intl.DisplayNames(navigator.language, {
       type: 'language',
     }).of(lang.split('-')[0])}</span>`;
   } catch {
