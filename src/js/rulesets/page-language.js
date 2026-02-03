@@ -168,7 +168,7 @@ export default async function checkPageLanguage() {
   // If declared page language matches most likely language.
   if (primary(detectedLangCode) === primary(declared)) {
     // Pass if we're 90% confident.
-    const confidenceTarget = State.option.PAGE_LANG_CONFIDENCE?.confidence || 0.9;
+    const confidenceTarget = State.option.PAGE_LANG_CONFIDENCE?.confidence || 0.95;
     if (detectedLang.confidence >= confidenceTarget) {
       setCache(cacheKey, null, null, null, null, null, pageText.length);
       return;
@@ -184,7 +184,7 @@ export default async function checkPageLanguage() {
         textString = Array.from(node.childNodes)
           .filter((child) => child.nodeType === 3)
           .map((child) => child.textContent)
-          .join('');
+          .join(' ');
       }
       const nodeText = Utils.normalizeString(textString);
 

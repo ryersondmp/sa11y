@@ -27,7 +27,7 @@
     linkIgnore: "",
     linkIgnoreSpan: "",
     linkIgnoreStrings: [],
-    paragraphIgnore: "",
+    paragraphIgnore: "table p",
     ignoreContentOutsideRoots: false,
     // Control panel settings
     aboutContent: "",
@@ -223,7 +223,7 @@
       META_MAX: true,
       META_REFRESH: true,
       PAGE_LANG_CONFIDENCE: {
-        confidence: 0.9
+        confidence: 0.95
       },
       LANG_OF_PARTS: true,
       LANG_MISMATCH: true,
@@ -1323,10 +1323,9 @@
       Found.OutlineIgnore = Elements.Found.ExcludedOutlineHeadings.concat(
         Elements.Found.ExcludedHeadings
       );
-      Found.Paragraphs = Found.Everything.filter(($el) => {
-        const isExcluded = Constants.Exclusions.Paragraphs.some((selector) => $el.matches(selector));
-        return $el.tagName === "P" && !$el.closest("table") && !isExcluded;
-      });
+      Found.Paragraphs = Found.Everything.filter(
+        ($el) => $el.tagName === "P" && !Constants.Exclusions.Paragraphs.some((selector) => $el.matches(selector))
+      );
       Found.Lists = Found.Everything.filter(($el) => $el.tagName === "LI");
       Found.Blockquotes = Found.Everything.filter(($el) => $el.tagName === "BLOCKQUOTE");
       Found.Tables = Found.Everything.filter(
@@ -8475,7 +8474,7 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header]).join(",")).j
       setCache(cacheKey, test, null, type, variables, confidence, pageText.length);
     }
     if (primary(detectedLangCode) === primary(declared)) {
-      const confidenceTarget = State.option.PAGE_LANG_CONFIDENCE?.confidence || 0.9;
+      const confidenceTarget = State.option.PAGE_LANG_CONFIDENCE?.confidence || 0.95;
       if (detectedLang.confidence >= confidenceTarget) {
         setCache(cacheKey, null, null, null, null, null, pageText.length);
         return;
@@ -8484,7 +8483,7 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header]).join(",")).j
         let textString = "";
         if (node.nodeName === "IMG") textString = node.alt || "";
         else {
-          textString = Array.from(node.childNodes).filter((child) => child.nodeType === 3).map((child) => child.textContent).join("");
+          textString = Array.from(node.childNodes).filter((child) => child.nodeType === 3).map((child) => child.textContent).join(" ");
         }
         const nodeText = normalizeString(textString);
         if (nodeText.length <= 30) continue;

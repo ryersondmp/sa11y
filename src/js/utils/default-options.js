@@ -14,7 +14,7 @@ const defaultOptions = {
   linkIgnore: '',
   linkIgnoreSpan: '',
   linkIgnoreStrings: [],
-  paragraphIgnore: '',
+  paragraphIgnore: 'table p',
   ignoreContentOutsideRoots: false,
 
   // Control panel settings
@@ -223,7 +223,7 @@ const defaultOptions = {
     META_MAX: true,
     META_REFRESH: true,
     PAGE_LANG_CONFIDENCE: {
-      confidence: 0.9,
+      confidence: 0.95,
     },
     LANG_OF_PARTS: true,
     LANG_MISMATCH: true,
