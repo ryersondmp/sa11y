@@ -96,7 +96,7 @@ export default async function checkPageLanguage() {
   if (!declared) return;
 
   // Leverage existing DOM query for readability given it's an expensive check.
-  const pageText = (Elements.Found.pageText || []).join();
+  const pageText = (Elements.Found.pageText || []).join(' ');
   if (pageText.length < 100) {
     console.warn('Sa11y: Not enough content on this page to determine page language.');
     return;
@@ -177,6 +177,11 @@ export default async function checkPageLanguage() {
     // Otherwise, we're going to iterate through every text node and check the language.
     // Break on the first detection of a node that doesn't match page language.
     for (const node of Elements.Found.Everything) {
+      // Cheap check before running expensive processing.
+      if (node.nodeName !== 'IMG' && (!node.textContent || node.textContent.length < 30)) {
+        continue;
+      }
+
       // Get text of the node, including image alt text.
       let textString = '';
       if (node.nodeName === 'IMG') textString = node.alt || '';
@@ -195,12 +200,12 @@ export default async function checkPageLanguage() {
       const detectNode = await detector.detect(nodeText);
       const nodeLang = detectNode[0].detectedLanguage;
       const nodeLangLabel = getLanguageLabel(nodeLang);
-      const nodeConfidence = Math.floor(detectNode[0].confidence * 100);
+      const nodeConfidence = detectNode[0].confidence;
       const langAttribute = node?.getAttribute('lang');
 
       if (nodeLang !== declared && nodeConfidence >= 0.6) {
         // Lang attribute matches detected language of node.
-        if (langAttribute && langAttribute === nodeLang) return;
+        if (langAttribute && primary(langAttribute) === primary(nodeLang)) continue;
 
         // Language tag doesn't match.
         if (langAttribute && langAttribute !== nodeLang) {
@@ -252,15 +257,17 @@ export default async function checkPageLanguage() {
   }
 
   // Non-cached result.
-  State.results.push({
-    element: element,
-    test: test,
-    type: State.option.checks[test].type || type,
-    content: content,
-    dismiss: dismiss,
-    developer: State.option.checks[test].developer ?? false,
-    cached: false,
-    pageText: pageText.length,
-    confidence: confidence,
-  });
+  if (test) {
+    State.results.push({
+      element: element,
+      test: test,
+      type: State.option.checks[test].type || type,
+      content: content,
+      dismiss: dismiss,
+      developer: State.option.checks[test].developer ?? false,
+      cached: false,
+      pageText: pageText.length,
+      confidence: confidence,
+    });
+  }
 }

@@ -19,7 +19,6 @@ const sa11y = new Sa11y({
   linkIgnoreSpan: '.sr-only-example, .link-purpose',
   detectSPArouting: true,
   headless: false,
-  // paragraphIgnore: '',
   // outlineIgnore: 'header *',
   dismissAnnotations: true,
   selectorPath: false,

@@ -8418,7 +8418,7 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header]).join(",")).j
       store.removeItem(STORAGE_KEY);
     const declared = Elements.Found.Language;
     if (!declared) return;
-    const pageText = (Elements.Found.pageText || []).join();
+    const pageText = (Elements.Found.pageText || []).join(" ");
     if (pageText.length < 100) {
       console.warn("Sa11y: Not enough content on this page to determine page language.");
       return;
@@ -8480,6 +8480,9 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header]).join(",")).j
         return;
       }
       for (const node of Elements.Found.Everything) {
+        if (node.nodeName !== "IMG" && (!node.textContent || node.textContent.length < 30)) {
+          continue;
+        }
         let textString = "";
         if (node.nodeName === "IMG") textString = node.alt || "";
         else {
@@ -8490,10 +8493,10 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header]).join(",")).j
         const detectNode = await detector.detect(nodeText);
         const nodeLang = detectNode[0].detectedLanguage;
         const nodeLangLabel = getLanguageLabel(nodeLang);
-        const nodeConfidence = Math.floor(detectNode[0].confidence * 100);
+        const nodeConfidence = detectNode[0].confidence;
         const langAttribute = node?.getAttribute("lang");
         if (nodeLang !== declared && nodeConfidence >= 0.6) {
-          if (langAttribute && langAttribute === nodeLang) return;
+          if (langAttribute && primary(langAttribute) === primary(nodeLang)) continue;
           if (langAttribute && langAttribute !== nodeLang) {
             test = "LANG_MISMATCH";
             content = Lang.sprintf(
@@ -8532,17 +8535,19 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header]).join(",")).j
         }
       }
     }
-    State.results.push({
-      element,
-      test,
-      type: State.option.checks[test].type || type,
-      content,
-      dismiss,
-      developer: State.option.checks[test].developer ?? false,
-      cached: false,
-      pageText: pageText.length,
-      confidence
-    });
+    if (test) {
+      State.results.push({
+        element,
+        test,
+        type: State.option.checks[test].type || type,
+        content,
+        dismiss,
+        developer: State.option.checks[test].developer ?? false,
+        cached: false,
+        pageText: pageText.length,
+        confidence
+      });
+    }
   }
   async function checkAll(desiredRoot = State.option.checkRoot, desiredReadabilityRoot = State.option.readabilityRoot, fixedRoots = State.option.fixedRoots) {
     try {
