@@ -27,6 +27,7 @@
     linkIgnore: "",
     linkIgnoreSpan: "",
     linkIgnoreStrings: [],
+    paragraphIgnore: "",
     ignoreContentOutsideRoots: false,
     // Control panel settings
     aboutContent: "",
@@ -631,6 +632,7 @@
         Exclusions.Links = State.option.linkIgnore.split(",").map(($el) => $el.trim()).concat(Exclusions.Links);
       }
       Exclusions.LinkSpan = State.option.linkIgnoreSpan ? State.option.linkIgnoreSpan.split(",").map(($el) => $el.trim()) : [];
+      Exclusions.Paragraphs = State.option.paragraphIgnore ? State.option.paragraphIgnore.split(",").map(($el) => $el.trim()) : [];
     }
     return {
       initializeRoot,
@@ -1321,9 +1323,10 @@
       Found.OutlineIgnore = Elements.Found.ExcludedOutlineHeadings.concat(
         Elements.Found.ExcludedHeadings
       );
-      Found.Paragraphs = Found.Everything.filter(
-        ($el) => $el.tagName === "P" && !$el.closest("table")
-      );
+      Found.Paragraphs = Found.Everything.filter(($el) => {
+        const isExcluded = Constants.Exclusions.Paragraphs.some((selector) => $el.matches(selector));
+        return $el.tagName === "P" && !$el.closest("table") && !isExcluded;
+      });
       Found.Lists = Found.Everything.filter(($el) => $el.tagName === "LI");
       Found.Blockquotes = Found.Everything.filter(($el) => $el.tagName === "BLOCKQUOTE");
       Found.Tables = Found.Everything.filter(

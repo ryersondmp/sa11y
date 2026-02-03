@@ -14,6 +14,7 @@ const defaultOptions = {
   linkIgnore: '',
   linkIgnoreSpan: '',
   linkIgnoreStrings: [],
+  paragraphIgnore: '',
   ignoreContentOutsideRoots: false,
 
   // Control panel settings

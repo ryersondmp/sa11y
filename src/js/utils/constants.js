@@ -401,6 +401,11 @@ const Constants = (function myConstants() {
     Exclusions.LinkSpan = State.option.linkIgnoreSpan
       ? State.option.linkIgnoreSpan.split(',').map(($el) => $el.trim())
       : [];
+
+    // Ignore specific paragraphs.
+    Exclusions.Paragraphs = State.option.paragraphIgnore
+      ? State.option.paragraphIgnore.split(',').map(($el) => $el.trim())
+      : [];
   }
 
   return {

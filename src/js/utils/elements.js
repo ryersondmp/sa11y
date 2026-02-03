@@ -74,9 +74,10 @@ const Elements = (function myElements() {
     );
 
     // Quality assurance module.
-    Found.Paragraphs = Found.Everything.filter(
-      ($el) => $el.tagName === 'P' && !$el.closest('table'),
-    );
+    Found.Paragraphs = Found.Everything.filter(($el) => {
+      const isExcluded = Constants.Exclusions.Paragraphs.some((selector) => $el.matches(selector));
+      return $el.tagName === 'P' && !$el.closest('table') && !isExcluded;
+    });
 
     Found.Lists = Found.Everything.filter(($el) => $el.tagName === 'LI');
 
