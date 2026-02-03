@@ -294,7 +294,14 @@ const cs = {
     UNKNOWN: "Neznámý",
     FG: "Popředí",
     BG: "Pozadí",
-    NO_SUGGESTION: "Nelze najít dostupnou kombinaci pouze změnou barvy textu. Zkuste změnit barvu pozadí."
+    NO_SUGGESTION: "Nelze najít dostupnou kombinaci pouze změnou barvy textu. Zkuste změnit barvu pozadí.",
+    // Page language
+    PAGE_LANG_CONFIDENCE: 'Zdá se, že více než polovina textu na této stránce je v jazyce %(LIKELY_LANG), ale deklarovaný jazyk stránky je %(PAGE_LANG). Zvažte aktualizaci <a href="https://www.w3.org/International/questions/qa-html-language-declarations">deklarovaného jazyka stránky</a>, aby odpovídal obsahu.',
+    LANG_OF_PARTS: "Jazyk stránky byl deklarován jako %(PAGE_LANG), ale tento obsah se zdá být v jazyce %(LIKELY_LANG). Ujistěte se, že je obsah správně označen.",
+    LANG_MISMATCH: "Tento obsah se zdá být v jazyce %(DETECTED_LANG), ale byl označen jako %(WRONG_LANG).",
+    LANG_OF_PARTS_ALT: "Tento alternativní text se zdá být v jazyce %(LIKELY_LANG), ale jazyk stránky byl deklarován jako %(PAGE_LANG). Ujistěte se, že je alternativní text ve stejném jazyce jako zbytek stránky. <hr> {ALT} <strong {C}>%(ALT)</strong>",
+    LANG_TIP: "<hr><strong>Tip!</strong> Čtečky obrazovky vyslovují slova pomocí jazykových značek. Výslovnost jazyka s neodpovídajícím jazykovým balíčkem vytváří nesrozumitelnou řeč.",
+    LANG_UNSUPPORTED: "Kontroly přístupnosti týkající se jazyka byly přeskočeny, protože tento prohlížeč nepodporuje automatickou detekci jazyka."
   }
 };
 export {

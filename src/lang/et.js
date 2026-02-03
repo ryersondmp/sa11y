@@ -411,5 +411,13 @@ export default {
     BG: 'Taust',
     NO_SUGGESTION:
       'Ainult teksti värvi muutmisega ei leia ligipääsetavat kombinatsiooni. Proovige muuta taustavärvi.',
+
+    // Page language
+    PAGE_LANG_CONFIDENCE: 'Rohkem kui pool selle lehe tekstist näib olevat %(LIKELY_LANG) keeles, kuid lehe deklareeritud keel on %(PAGE_LANG). Kaaluge <a href="https://www.w3.org/International/questions/qa-html-language-declarations">deklareeritud lehe keele</a> värskendamist, et see vastaks sisule.',
+    LANG_OF_PARTS: 'Lehe keeleks deklareeriti %(PAGE_LANG), kuid see sisu näib olevat %(LIKELY_LANG) keeles. Veenduge, že sisu on asjakohaselt märgistatud.',
+    LANG_MISMATCH: 'See sisu näib olevat %(DETECTED_LANG) keeles, kuid see on märgistatud kui %(WRONG_LANG).',
+    LANG_OF_PARTS_ALT: 'See alt-tekst näib olevat %(LIKELY_LANG) keeles, kuid lehe keeleks deklareeriti %(PAGE_LANG). Veenduge, et alt-tekst oleks samas keeles kui ülejäänud leht. <hr> {ALT} <strong {C}>%(ALT)</strong>',
+    LANG_TIP: '<hr><strong>Nõuanne!</strong> Ekraanilugejad hääldavad sõnu keelemärgendite abil. Sobimatu keelepaketiga keele hääldamine tekitab arusaamatut kõnet.',
+    LANG_UNSUPPORTED: 'Keelega seotud juurdepääsetavuse kontrollid jäeti vahele, kuna see brauser ei toeta automaatset keeletuvastust.',
   },
 };

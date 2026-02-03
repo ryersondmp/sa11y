@@ -294,7 +294,14 @@ const sl = {
     UNKNOWN: "Neznano",
     FG: "Sprednji načrt",
     BG: "Ozadje",
-    NO_SUGGESTION: "Ni mogoče najti dostopne kombinacije samo s spremembo barve besedila. Poskusite spremeniti barvo ozadja."
+    NO_SUGGESTION: "Ni mogoče najti dostopne kombinacije samo s spremembo barve besedila. Poskusite spremeniti barvo ozadja.",
+    // Page language
+    PAGE_LANG_CONFIDENCE: 'Zdi se, da je več kot polovica besedila na tej strani v jeziku %(LIKELY_LANG), vendar je deklarirani jezik strani %(PAGE_LANG). Razmislite o posodobitvi <a href="https://www.w3.org/International/questions/qa-html-language-declarations">deklariranega jezika strani</a>, da bo ustrezal vsebini.',
+    LANG_OF_PARTS: "Jezik strani je bil deklariran kot %(PAGE_LANG), vendar se zdi, da je ta vsebina v jeziku %(LIKELY_LANG). Poskrbite, da je vsebina ustrezno označena.",
+    LANG_MISMATCH: "Zdi se, da je ta vsebina v jeziku %(DETECTED_LANG), vendar je bila označena kot %(WRONG_LANG).",
+    LANG_OF_PARTS_ALT: "Zdi se, da je to nadomestno besedilo v jeziku %(LIKELY_LANG), vendar je bil jezik strani deklariran kot %(PAGE_LANG). Poskrbite, da je nadomestno besedilo v istem jeziku kot preostali del strani. <hr> {ALT} <strong {C}>%(ALT)</strong>",
+    LANG_TIP: "<hr><strong>Nasvet!</strong> Bralniki zaslona izgovarjajo besede s pomočjo jezikovnih oznak. Izgovarjanje jezika z neujemajočim se jezikovnim paketom povzroči nerazumljiv govor.",
+    LANG_UNSUPPORTED: "Preverjanja dostopnosti, povezana z jezikom, so bila preskočena, ker ta brskalnik ne podpira samodejnega zaznavanja jezika."
   }
 };
 export {

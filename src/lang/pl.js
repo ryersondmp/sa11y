@@ -414,5 +414,13 @@ export default {
     BG: 'Tło',
     NO_SUGGESTION:
       'Nie znaleziono dostępnej kombinacji, zmieniając tylko kolor tekstu. Spróbuj zmienić kolor tła.',
+
+    // Page language
+    PAGE_LANG_CONFIDENCE: 'Ponad połowa tekstu na tej stronie wydaje się być w języku %(LIKELY_LANG), ale zadeklarowany język strony to %(PAGE_LANG). Rozważ aktualizację <a href="https://www.w3.org/International/questions/qa-html-language-declarations">zadeklarowanego języka strony</a>, aby był zgodny z treścią.',
+    LANG_OF_PARTS: 'Język strony został zadeklarowany jako %(PAGE_LANG), ale ta treść wydaje się być w języku %(LIKELY_LANG). Upewnij się, że treść jest odpowiednio oznaczona.',
+    LANG_MISMATCH: 'Ta treść wydaje się być w języku %(DETECTED_LANG), jednak została oznaczona jako %(WRONG_LANG).',
+    LANG_OF_PARTS_ALT: 'Ten tekst alternatywny wydaje się być w języku %(LIKELY_LANG), ale język strony został zadeklarowany jako %(PAGE_LANG). Upewnij się, że tekst alternatywny jest w tym samym języku co reszta strony. <hr> {ALT} <strong {C}>%(ALT)</strong>',
+    LANG_TIP: '<hr><strong>Wskazówka!</strong> Czytniki ekranu wypowiadają słowa, używając tagów językowych. Wypowiadanie języka z niedopasowanym pakietem językowym powoduje niezrozumiałą mowę.',
+    LANG_UNSUPPORTED: 'Kontrole dostępności związane z językiem zostały pominięte, ponieważ ta przeglądarka nie obsługuje automatycznego wykrywania języka.',
   },
 };

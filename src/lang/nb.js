@@ -410,5 +410,13 @@ export default {
     BG: 'Bakgrunn',
     NO_SUGGESTION:
       'Ingen tilgjengelig kombinasjon kan finnes ved kun å endre tekstfargen. Prøv å endre bakgrunnsfargen.',
+
+    // Page language
+    PAGE_LANG_CONFIDENCE: 'Mer enn halvparten av teksten på denne siden ser ut til å være på %(LIKELY_LANG), men det deklarerte sidespråket er %(PAGE_LANG). Vurder å oppdatere det <a href="https://www.w3.org/International/questions/qa-html-language-declarations">deklarerte sidespråket</a> slik at det samsvarer med innholdet.',
+    LANG_OF_PARTS: 'Sidespråket ble deklarert som %(PAGE_LANG), men dette innholdet ser ut til å være på %(LIKELY_LANG). Sørg for at innholdet er tagget riktig.',
+    LANG_MISMATCH: 'Dette innholdet ser ut til å være på %(DETECTED_LANG), men det ble tagget som %(WRONG_LANG).',
+    LANG_OF_PARTS_ALT: 'Denne alt-teksten ser ut til å være på %(LIKELY_LANG), men sidespråket ble deklarert som %(PAGE_LANG). Sørg for at alt-teksten er på samme språk som resten av siden. <hr> {ALT} <strong {C}>%(ALT)</strong>',
+    LANG_TIP: '<hr><strong>Tips!</strong> Skjermlesere uttaler ord ved hjelp av språkkoder. Å uttale et språk med en feil språkpakke gir uforståelig tale.',
+    LANG_UNSUPPORTED: 'Språkrelaterte tilgjengelighetskontroller ble hoppet over fordi automatisk språkregistrering ikke støttes i denne nettleseren.',
   },
 };

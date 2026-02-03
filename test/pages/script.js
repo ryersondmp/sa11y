@@ -26,6 +26,7 @@ const sa11y = new Sa11y({
   linkStopWords: 'взнати більше',
   langOfPartsCache: true,
   langOfPartsPlugin: true,
+  exportResultsPlugin: 1,
 
   // Customize checks.
   checks: {

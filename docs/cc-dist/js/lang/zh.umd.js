@@ -299,7 +299,14 @@
       UNKNOWN: "未知",
       FG: "前景",
       BG: "背景",
-      NO_SUGGESTION: "仅更改文本颜色无法找到可访问的组合。请尝试更改背景颜色。"
+      NO_SUGGESTION: "仅更改文本颜色无法找到可访问的组合。请尝试更改背景颜色。",
+      // Page language
+      PAGE_LANG_CONFIDENCE: '此页面超过一半的文本似乎是 %(LIKELY_LANG)，但声明的页面语言为 %(PAGE_LANG)。请考虑更新 <a href="https://www.w3.org/International/questions/qa-html-language-declarations">声明的页面语言</a> 以匹配内容。',
+      LANG_OF_PARTS: "页面语言声明为 %(PAGE_LANG)，但此内容似乎是 %(LIKELY_LANG)。请确保内容已正确标记。",
+      LANG_MISMATCH: "此内容似乎是 %(DETECTED_LANG)，但被标记为 %(WRONG_LANG)。",
+      LANG_OF_PARTS_ALT: "此替代文本似乎是 %(LIKELY_LANG)，但页面语言声明为 %(PAGE_LANG)。请确保替代文本与页面其他部分的语言一致。<hr> {ALT} <strong {C}>%(ALT)</strong>",
+      LANG_TIP: "<hr><strong>提示！</strong> 屏幕阅读器使用语言标签来发音。使用不匹配的语言包发音会导致无法理解的语音。",
+      LANG_UNSUPPORTED: "由于此浏览器不支持自动语言检测，已跳过与语言相关的无障碍检查。"
     }
   };
   return zh;

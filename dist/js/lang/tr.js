@@ -294,7 +294,14 @@ const tr = {
     UNKNOWN: "Bilinmiyor",
     FG: "Ön plan",
     BG: "Arka plan",
-    NO_SUGGESTION: "Yalnızca metin rengini değiştirerek erişilebilir bir kombinasyon bulunamıyor. Arka plan rengini değiştirmeyi deneyin."
+    NO_SUGGESTION: "Yalnızca metin rengini değiştirerek erişilebilir bir kombinasyon bulunamıyor. Arka plan rengini değiştirmeyi deneyin.",
+    // Page language
+    PAGE_LANG_CONFIDENCE: 'Bu sayfadaki metnin yarısından fazlası %(LIKELY_LANG) gibi görünüyor, ancak beyan edilen sayfa dili %(PAGE_LANG). <a href="https://www.w3.org/International/questions/qa-html-language-declarations">Beyan edilen sayfa dilini</a> içerikle eşleşecek şekilde güncellemeyi düşünün.',
+    LANG_OF_PARTS: "Sayfa dili %(PAGE_LANG) olarak beyan edildi, ancak bu içerik %(LIKELY_LANG) gibi görünüyor. İçeriğin uygun şekilde etiketlendiğinden emin olun.",
+    LANG_MISMATCH: "Bu içerik %(DETECTED_LANG) gibi görünüyor, ancak %(WRONG_LANG) olarak etiketlenmiş.",
+    LANG_OF_PARTS_ALT: "Bu alternatif metin %(LIKELY_LANG) gibi görünüyor, ancak sayfa dili %(PAGE_LANG) olarak beyan edildi. Alternatif metnin sayfanın geri kalanıyla aynı dilde olduğundan emin olun. <hr> {ALT} <strong {C}>%(ALT)</strong>",
+    LANG_TIP: "<hr><strong>İpucu!</strong> Ekran okuyucular kelimeleri dil etiketlerini kullanarak telaffuz eder. Uyumsuz bir dil paketiyle bir dilin telaffuz edilmesi anlaşılmaz bir konuşma oluşturur.",
+    LANG_UNSUPPORTED: "Bu tarayıcıda otomatik dil algılama desteklenmediğinden dille ilgili erişilebilirlik kontrolleri atlandı."
   }
 };
 export {

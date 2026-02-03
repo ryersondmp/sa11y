@@ -289,7 +289,14 @@ const fi = {
     UNKNOWN: "Tuntematon",
     FG: "Etualalla",
     BG: "Tausta",
-    NO_SUGGESTION: "Ei löydy käyttökelpoista yhdistelmää pelkästään tekstin värin muuttamalla. Kokeile taustavärin vaihtamista."
+    NO_SUGGESTION: "Ei löydy käyttökelpoista yhdistelmää pelkästään tekstin värin muuttamalla. Kokeile taustavärin vaihtamista.",
+    // Page language
+    PAGE_LANG_CONFIDENCE: 'Yli puolet tämän sivun tekstistä näyttää olevan kielellä %(LIKELY_LANG), mutta sivun ilmoitettu kieli on %(PAGE_LANG). Harkitse <a href="https://www.w3.org/International/questions/qa-html-language-declarations">ilmoitetun sivun kielen</a> päivittämistä vastaamaan sisältöä.',
+    LANG_OF_PARTS: "Sivun kieleksi ilmoitettiin %(PAGE_LANG), mutta tämä sisältö näyttää olevan kielellä %(LIKELY_LANG). Varmista, että sisältö on merkitty asianmukaisesti.",
+    LANG_MISMATCH: "Tämä sisältö näyttää olevan kielellä %(DETECTED_LANG), mutta se on merkitty kieleksi %(WRONG_LANG).",
+    LANG_OF_PARTS_ALT: "Tämä vaihtoehtoinen teksti näyttää olevan kielellä %(LIKELY_LANG), mutta sivun kieleksi ilmoitettiin %(PAGE_LANG). Varmista, että vaihtoehtoinen teksti on samalla kielellä kuin muu sivu. <hr> {ALT} <strong {C}>%(ALT)</strong>",
+    LANG_TIP: "<hr><strong>Vinkki!</strong> Ruudunlukuohjelmat lausuvat sanat kielitunnisteiden avulla. Kielen lausuminen yhteensopimattomalla kielipaketilla tuottaa käsittämätöntä puhetta.",
+    LANG_UNSUPPORTED: "Kieleen liittyvät saavutettavuustarkistukset ohitettiin, koska automaattista kielen tunnistusta ei tueta tässä selaimessa."
   }
 };
 export {

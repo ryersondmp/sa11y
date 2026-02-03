@@ -296,7 +296,14 @@
       UNKNOWN: "Tidak diketahui",
       FG: "Latar depan",
       BG: "Latar belakang",
-      NO_SUGGESTION: "Tidak ada kombinasi aksesibel yang dapat ditemukan dengan hanya mengubah warna teks. Coba ubah warna latar belakang."
+      NO_SUGGESTION: "Tidak ada kombinasi aksesibel yang dapat ditemukan dengan hanya mengubah warna teks. Coba ubah warna latar belakang.",
+      // Page language
+      PAGE_LANG_CONFIDENCE: 'Lebih dari separuh teks di halaman ini tampaknya menggunakan %(LIKELY_LANG), tetapi bahasa halaman yang dideklarasikan adalah %(PAGE_LANG). Pertimbangkan untuk memperbarui <a href="https://www.w3.org/International/questions/qa-html-language-declarations">bahasa halaman yang dideklarasikan</a> agar sesuai dengan konten.',
+      LANG_OF_PARTS: "Bahasa halaman dideklarasikan sebagai %(PAGE_LANG), tetapi konten ini tampaknya menggunakan %(LIKELY_LANG). Pastikan konten ditandai dengan tepat.",
+      LANG_MISMATCH: "Konten ini tampaknya menggunakan %(DETECTED_LANG), namun ditandai sebagai %(WRONG_LANG).",
+      LANG_OF_PARTS_ALT: "Teks alt ini tampaknya menggunakan %(LIKELY_LANG), tetapi bahasa halaman dideklarasikan sebagai %(PAGE_LANG). Pastikan teks alt menggunakan bahasa yang sama dengan bagian halaman lainnya. <hr> {ALT} <strong {C}>%(ALT)</strong>",
+      LANG_TIP: "<hr><strong>Tips!</strong> Pembaca layar mengucapkan kata-kata menggunakan tag bahasa. Mengucapkan bahasa dengan paket bahasa yang tidak cocok akan menghasilkan ucapan yang tidak dapat dimengerti.",
+      LANG_UNSUPPORTED: "Pemeriksaan aksesibilitas terkait bahasa dilewati karena deteksi bahasa otomatis tidak didukung di browser ini."
     }
   };
   return id;

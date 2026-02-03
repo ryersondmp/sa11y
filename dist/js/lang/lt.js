@@ -293,7 +293,14 @@ const lt = {
     UNKNOWN: "Nežinomas",
     FG: "Priekinis planas",
     BG: "Fonas",
-    NO_SUGGESTION: "Nėra prieinamos kombinacijos, keičiant tik teksto spalvą. Pabandykite pakeisti fono spalvą."
+    NO_SUGGESTION: "Nėra prieinamos kombinacijos, keičiant tik teksto spalvą. Pabandykite pakeisti fono spalvą.",
+    // Page language
+    PAGE_LANG_CONFIDENCE: 'Daugiau nei pusė šio puslapio teksto atrodo esanti %(LIKELY_LANG) kalba, tačiau deklaruota puslapio kalba yra %(PAGE_LANG). Apsvarstykite galimybę atnaujinti <a href="https://www.w3.org/International/questions/qa-html-language-declarations">deklaruotą puslapio kalbą</a>, kad ji atitiktų turinį.',
+    LANG_OF_PARTS: "Puslapio kalba deklaruota kaip %(PAGE_LANG), tačiau šis turinys atrodo esantis %(LIKELY_LANG) kalba. Įsitikinkite, kad turinys tinkamai pažymėtas.",
+    LANG_MISMATCH: "Šis turinys atrodo esantis %(DETECTED_LANG) kalba, tačiau jis buvo pažymėtas kaip %(WRONG_LANG).",
+    LANG_OF_PARTS_ALT: "Šis alternatyvusis tekstas atrodo esantis %(LIKELY_LANG) kalba, tačiau puslapio kalba deklaruota kaip %(PAGE_LANG). Įsitikinkite, kad alternatyvusis tekstas yra ta pačia kalba kaip ir likusi puslapio dalis. <hr> {ALT} <strong {C}>%(ALT)</strong>",
+    LANG_TIP: "<hr><strong>Patarimas!</strong> Ekrano skaitytuvai ištaria žodžius naudodami kalbos žymas. Tariant kalbą su neatitinkančiu kalbos paketu, gaunama nesuprantama kalba.",
+    LANG_UNSUPPORTED: "Su kalba susiję prieinamumo patikrinimai buvo praleisti, nes ši naršyklė nepalaiko automatinio kalbos aptikimo."
   }
 };
 export {

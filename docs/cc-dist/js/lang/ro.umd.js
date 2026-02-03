@@ -298,7 +298,14 @@
       UNKNOWN: "Necunoscut",
       FG: "Prim-plan",
       BG: "Fundal",
-      NO_SUGGESTION: "Nu există nicio combinație accesibilă ce poate fi găsită schimbând doar culoarea textului. Încercați să schimbați culoarea fundalului."
+      NO_SUGGESTION: "Nu există nicio combinație accesibilă ce poate fi găsită schimbând doar culoarea textului. Încercați să schimbați culoarea fundalului.",
+      // Page language
+      PAGE_LANG_CONFIDENCE: 'Mai mult de jumătate din textul de pe această pagină pare a fi în %(LIKELY_LANG), dar limba declarată a paginii este %(PAGE_LANG). Luați în considerare actualizarea <a href="https://www.w3.org/International/questions/qa-html-language-declarations">limbii declarate a paginii</a> pentru a corespunde conținutului.',
+      LANG_OF_PARTS: "Limba paginii a fost declarată ca %(PAGE_LANG), dar acest conținut pare a fi în %(LIKELY_LANG). Asigurați-vă că conținutul este etichetat corespunzător.",
+      LANG_MISMATCH: "Acest conținut pare a fi în %(DETECTED_LANG), totuși, a fost etichetat ca %(WRONG_LANG).",
+      LANG_OF_PARTS_ALT: "Acest text alternativ pare a fi în %(LIKELY_LANG), dar limba paginii a fost declarată ca %(PAGE_LANG). Asigurați-vă că textul alternativ este în aceeași limbă cu restul paginii. <hr> {ALT} <strong {C}>%(ALT)</strong>",
+      LANG_TIP: "<hr><strong>Sfat!</strong> Cititoarele de ecran pronunță cuvintele folosind etichete de limbă. Pronunțarea unei limbi cu un pachet de limbă nepotrivit produce o vorbire neinteligibilă.",
+      LANG_UNSUPPORTED: "Verificările de accesibilitate legate de limbă au fost omise deoarece detectarea automată a limbii nu este acceptată în acest browser."
     }
   };
   return ro;

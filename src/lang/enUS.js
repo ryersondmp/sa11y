@@ -410,9 +410,9 @@ export default {
       'No accessible combination can be found by changing the text color. Try changing the background color.',
 
     // Language of parts
-    LANG_OF_PARTS: 'The page language was declared as %(PAGE_LANG), but this content appears to be %(LIKELY_LANG). Ensure the %(LIKELY_LANG) content is tagged appropriately.',
-    PAGE_LANG_CONFIDENCE: 'Most of the text on this page appears to be %(LIKELY_LANG), but the declared page language is %(PAGE_LANG). Consider updating the declared page language to match.',
-    LANG_MISMATCH: 'This content appears to be %(PERCENT)% %(DETECTED_LANG), however, it was tagged as %(WRONG_LANG).',
+    PAGE_LANG_CONFIDENCE: 'More than half of the text on this page appears to be %(LIKELY_LANG), but the declared page language is %(PAGE_LANG). Consider updating the <a href="https://www.w3.org/International/questions/qa-html-language-declarations">declared page language</a> to match the content.',
+    LANG_OF_PARTS: 'The page language was declared as %(PAGE_LANG), but this content appears to be %(LIKELY_LANG). Ensure the content is tagged appropriately.',
+    LANG_MISMATCH: 'This content appears to be %(DETECTED_LANG), however, it was tagged as %(WRONG_LANG).',
     LANG_OF_PARTS_ALT: 'This alt text appears to be %(LIKELY_LANG), but the page language was declared as %(PAGE_LANG). Ensure the alt text is in the same language as the rest of the page. <hr> {ALT} <strong {C}>%(ALT)</strong>',
     LANG_TIP: '<hr><strong>Tip!</strong> Screen readers pronounce words using language tags. Pronouncing a language with a mismatched language pack produces unintelligible speech. Learn more about <a href="https://www.w3.org/WAI/WCAG22/Understanding/language-of-parts.html">language of parts.</a>',
     LANG_UNSUPPORTED: 'Language-related accessibility checks were skipped because automatic language detection isn’t supported in this browser.',

@@ -429,5 +429,13 @@ export default {
     BG: 'Bakgrund',
     NO_SUGGESTION:
       'Ingen tillgänglig kombination kan hittas genom att endast ändra textfärgen. Försök att ändra bakgrundsfärgen.',
+
+    // Page language
+    PAGE_LANG_CONFIDENCE: 'Mer än hälften av texten på den här sidan verkar vara på %(LIKELY_LANG), men det deklarerade sidoproget är %(PAGE_LANG). Överväg att uppdatera det <a href="https://www.w3.org/International/questions/qa-html-language-declarations">deklarerade sidoproget</a> så att det matchar innehållet.',
+    LANG_OF_PARTS: 'Sidsproget deklarerades som %(PAGE_LANG), men det här innehållet verkar vara på %(LIKELY_LANG). Se till att innehållet är korrekt taggat.',
+    LANG_MISMATCH: 'Det här innehållet verkar vara på %(DETECTED_LANG), men det taggades som %(WRONG_LANG).',
+    LANG_OF_PARTS_ALT: 'Den här alt-texten verkar vara på %(LIKELY_LANG), men sidsproget deklarerades som %(PAGE_LANG). Se till att alt-texten är på samma språk som resten av sidan. <hr> {ALT} <strong {C}>%(ALT)</strong>',
+    LANG_TIP: '<hr><strong>Tips!</strong> Skärmläsare uttalar ord med hjälp av språktaggar. Att uttala ett språk med ett språkpaket som inte matchar ger obegripligt tal.',
+    LANG_UNSUPPORTED: 'Språkrelaterade tillgänglighetskontroller hoppades över eftersom automatisk språkidentifiering inte stöds i den här webbläsaren.',
   },
 };

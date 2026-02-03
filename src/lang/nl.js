@@ -424,5 +424,13 @@ export default {
     BG: 'Achtergrond',
     NO_SUGGESTION:
       'Er kan geen toegankelijke combinatie worden gevonden door alleen de tekstkleur te wijzigen. Probeer de achtergrondkleur te wijzigen.',
+
+    // Page language
+    PAGE_LANG_CONFIDENCE: 'Meer dan de helft van de tekst op deze pagina lijkt %(LIKELY_LANG) te zijn, maar de opgegeven paginataal is %(PAGE_LANG). Overweeg de <a href="https://www.w3.org/International/questions/qa-html-language-declarations">opgegeven paginataal</a> bij te werken zodat deze overeenkomt met de inhoud.',
+    LANG_OF_PARTS: 'De paginataal is opgegeven als %(PAGE_LANG), maar deze inhoud lijkt %(LIKELY_LANG) te zijn. Zorg ervoor dat de inhoud correct is getagd.',
+    LANG_MISMATCH: 'Deze inhoud lijkt %(DETECTED_LANG) te zijn, maar is getagd als %(WRONG_LANG).',
+    LANG_OF_PARTS_ALT: 'Deze alt-tekst lijkt %(LIKELY_LANG) te zijn, maar de paginataal is opgegeven als %(PAGE_LANG). Zorg ervoor dat de alt-tekst in dezelfde taal is als de rest van de pagina. <hr> {ALT} <strong {C}>%(ALT)</strong>',
+    LANG_TIP: '<hr><strong>Tip!</strong> Schermlezers spreken woorden uit met behulp van taaltags. Het uitspreken van een taal met een niet-overeenkomend taalpakket levert onverstaanbare spraak op.',
+    LANG_UNSUPPORTED: 'Taalgerelateerde toegankelijkheidscontroles zijn overgeslagen omdat automatische taaldetectie niet wordt ondersteund in deze browser.',
   },
 };

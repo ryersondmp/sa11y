@@ -8492,11 +8492,10 @@ async function checkPageLanguage() {
           test = "LANG_MISMATCH";
           content = Lang.sprintf(
             State.option.checks.LANG_MISMATCH.content || "LANG_MISMATCH",
-            nodeConfidence,
             nodeLangLabel,
             getLanguageLabel(langAttribute)
           ) + Lang.sprintf("LANG_TIP");
-          variables = [nodeConfidence, nodeLangLabel, getLanguageLabel(langAttribute)];
+          variables = [nodeLangLabel, getLanguageLabel(langAttribute)];
         } else if (node.nodeName === "IMG" && node?.alt?.length !== 0) {
           const alt = sanitizeHTML(node.alt);
           const altText = removeWhitespace(alt);
@@ -8513,10 +8512,9 @@ async function checkPageLanguage() {
           content = Lang.sprintf(
             State.option.checks.LANG_OF_PARTS.content || "LANG_OF_PARTS",
             declaredPageLang,
-            nodeLangLabel,
             nodeLangLabel
           ) + Lang.sprintf("LANG_TIP");
-          variables = [declaredPageLang, nodeLangLabel, nodeLangLabel];
+          variables = [declaredPageLang, nodeLangLabel];
         }
         element = node;
         type = nodeConfidence >= 0.9 ? "error" : "warning";

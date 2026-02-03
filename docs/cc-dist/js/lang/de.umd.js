@@ -344,7 +344,14 @@
       UNKNOWN: "Unbekannt",
       FG: "Vordergrund",
       BG: "Hintergrund",
-      NO_SUGGESTION: "Es kann keine barrierefreie Kombination durch Ändern der Textfarbe gefunden werden. Versuchen Sie, die Hintergrundfarbe zu ändern."
+      NO_SUGGESTION: "Es kann keine barrierefreie Kombination durch Ändern der Textfarbe gefunden werden. Versuchen Sie, die Hintergrundfarbe zu ändern.",
+      // Page language
+      PAGE_LANG_CONFIDENCE: 'Mehr als die Hälfte des Textes auf dieser Seite scheint in %(LIKELY_LANG) zu sein, aber die deklarierte Seitensprache ist %(PAGE_LANG). Erwägen Sie, die <a href="https://www.w3.org/International/questions/qa-html-language-declarations">deklarierte Seitensprache</a> so zu aktualisieren, dass sie dem Inhalt entspricht.',
+      LANG_OF_PARTS: "Die Seitensprache wurde als %(PAGE_LANG) deklariert, aber dieser Inhalt scheint in %(LIKELY_LANG) zu sein. Stellen Sie sicher, dass der Inhalt entsprechend gekennzeichnet ist.",
+      LANG_MISMATCH: "Dieser Inhalt scheint in %(DETECTED_LANG) zu sein, wurde jedoch als %(WRONG_LANG) gekennzeichnet.",
+      LANG_OF_PARTS_ALT: "Dieser Alternativtext scheint in %(LIKELY_LANG) zu sein, aber die Seitensprache wurde als %(PAGE_LANG) deklariert. Stellen Sie sicher, dass der Alternativtext in derselben Sprache wie der Rest der Seite verfasst ist. <hr> {ALT} <strong {C}>%(ALT)</strong>",
+      LANG_TIP: "<hr><strong>Tipp!</strong> Screenreader sprechen Wörter mithilfe von Sprach-Tags aus. Die Aussprache einer Sprache mit einem nicht passenden Sprachpaket führt zu unverständlicher Sprache.",
+      LANG_UNSUPPORTED: "Sprachbezogene Barrierefreiheitsprüfungen wurden übersprungen, da die automatische Spracherkennung in diesem Browser nicht unterstützt wird."
     }
   };
   return de;

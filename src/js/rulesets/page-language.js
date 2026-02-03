@@ -208,11 +208,10 @@ export default async function checkPageLanguage() {
           content =
             Lang.sprintf(
               State.option.checks.LANG_MISMATCH.content || 'LANG_MISMATCH',
-              nodeConfidence,
               nodeLangLabel,
               getLanguageLabel(langAttribute),
             ) + Lang.sprintf('LANG_TIP');
-          variables = [nodeConfidence, nodeLangLabel, getLanguageLabel(langAttribute)];
+          variables = [nodeLangLabel, getLanguageLabel(langAttribute)];
         } else if (node.nodeName === 'IMG' && node?.alt?.length !== 0) {
           // Alt text is in different language.
           const alt = Utils.sanitizeHTML(node.alt);
@@ -234,9 +233,8 @@ export default async function checkPageLanguage() {
               State.option.checks.LANG_OF_PARTS.content || 'LANG_OF_PARTS',
               declaredPageLang,
               nodeLangLabel,
-              nodeLangLabel,
             ) + Lang.sprintf('LANG_TIP');
-          variables = [declaredPageLang, nodeLangLabel, nodeLangLabel];
+          variables = [declaredPageLang, nodeLangLabel];
         }
 
         // Shared data.

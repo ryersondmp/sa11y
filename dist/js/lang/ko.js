@@ -294,7 +294,14 @@ const ko = {
     UNKNOWN: "알 수 없음",
     FG: "전경",
     BG: "배경",
-    NO_SUGGESTION: "텍스트 색상만 변경하여는 접근 가능한 조합을 찾을 수 없습니다. 배경 색상을 변경해 보세요."
+    NO_SUGGESTION: "텍스트 색상만 변경하여는 접근 가능한 조합을 찾을 수 없습니다. 배경 색상을 변경해 보세요.",
+    // Page language
+    PAGE_LANG_CONFIDENCE: '이 페이지 텍스트의 절반 이상이 %(LIKELY_LANG)인 것으로 보이지만 선언된 페이지 언어는 %(PAGE_LANG)입니다. 콘텐츠와 일치하도록 <a href="https://www.w3.org/International/questions/qa-html-language-declarations">선언된 페이지 언어</a>를 업데이트하는 것이 좋습니다.',
+    LANG_OF_PARTS: "페이지 언어는 %(PAGE_LANG)로 선언되었으나 이 콘텐츠는 %(LIKELY_LANG)인 것으로 보입니다. 콘텐츠에 적절한 태그가 지정되었는지 확인하세요.",
+    LANG_MISMATCH: "이 콘텐츠는 %(DETECTED_LANG)인 것으로 보이지만 %(WRONG_LANG)로 태그가 지정되었습니다.",
+    LANG_OF_PARTS_ALT: "이 대체 텍스트는 %(LIKELY_LANG)인 것으로 보이지만 페이지 언어는 %(PAGE_LANG)로 선언되었습니다. 대체 텍스트가 페이지의 나머지 부분과 동일한 언어인지 확인하세요. <hr> {ALT} <strong {C}>%(ALT)</strong>",
+    LANG_TIP: "<hr><strong>팁!</strong> 스크린 리더는 언어 태그를 사용하여 단어를 발음합니다. 일치하지 않는 언어 팩으로 언어를 발음하면 알아들을 수 없는 음성이 생성됩니다.",
+    LANG_UNSUPPORTED: "이 브라우저에서 자동 언어 감지 기능이 지원되지 않아 언어 관련 접근성 검사를 건너뛰었습니다."
   }
 };
 export {

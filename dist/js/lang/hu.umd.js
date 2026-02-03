@@ -297,7 +297,14 @@
       UNKNOWN: "Ismeretlen",
       FG: "Előtér",
       BG: "Háttér",
-      NO_SUGGESTION: "A szöveg színének módosításával nem található hozzáférhető kombináció. Próbálja meg módosítani a háttér színét."
+      NO_SUGGESTION: "A szöveg színének módosításával nem található hozzáférhető kombináció. Próbálja meg módosítani a háttér színét.",
+      // Page language
+      PAGE_LANG_CONFIDENCE: 'Az oldal szövegének több mint fele %(LIKELY_LANG) nyelvűnek tűnik, de a megadott oldalnyelv %(PAGE_LANG). Fontolja meg a <a href="https://www.w3.org/International/questions/qa-html-language-declarations">megadott oldalnyelv</a> frissítését a tartalomnak megfelelően.',
+      LANG_OF_PARTS: "Az oldal nyelve %(PAGE_LANG) ként lett megadva, de ez a tartalom %(LIKELY_LANG) nyelvűnek tűnik. Győződjön meg arról, hogy a tartalom megfelelően van megjelölve.",
+      LANG_MISMATCH: "Ez a tartalom %(DETECTED_LANG) nyelvűnek tűnik, azonban %(WRONG_LANG) nyelvűként lett megjelölve.",
+      LANG_OF_PARTS_ALT: "Ez az alternatív szöveg %(LIKELY_LANG) nyelvűnek tűnik, de az oldal nyelve %(PAGE_LANG) ként lett megadva. Győződjön meg arról, hogy az alternatív szöveg az oldal többi részével azonos nyelvű. <hr> {ALT} <strong {C}>%(ALT)</strong>",
+      LANG_TIP: "<hr><strong>Tipp!</strong> Képernyőolvasók nyelvi címkék alapján ejtik ki a szavakat. Egy nyelv nem megfelelő nyelvcsomaggal történő kiejtése érthetetlen beszédet eredményez.",
+      LANG_UNSUPPORTED: "A nyelvvel kapcsolatos akadálymentességi ellenőrzések kimaradtak, mert ez a böngésző nem támogatja az automatikus nyelvfelismerést."
     }
   };
   return hu;

@@ -296,7 +296,14 @@ const lv = {
     UNKNOWN: "Nezināms",
     FG: "Priekšplāns",
     BG: "Fons",
-    NO_SUGGESTION: "Nekādas pieejamās kombinācijas nevar atrast, mainot tikai teksta krāsu. Pamēģiniet mainīt fona krāsu."
+    NO_SUGGESTION: "Nekādas pieejamās kombinācijas nevar atrast, mainot tikai teksta krāsu. Pamēģiniet mainīt fona krāsu.",
+    // Page language
+    PAGE_LANG_CONFIDENCE: 'Vairāk nekā puse teksta šajā lapā šķiet %(LIKELY_LANG) valodā, bet deklarētā lapas valoda ir %(PAGE_LANG). Apsveriet iespēju atjaunināt <a href="https://www.w3.org/International/questions/qa-html-language-declarations">deklarēto lapas valodu</a>, lai tā atbilstu saturam.',
+    LANG_OF_PARTS: "Lapas valoda tika deklarēta kā %(PAGE_LANG), bet šis saturs šķiet %(LIKELY_LANG) valodā. Pārliecinieties, vai saturs ir atbilstoši marķēts.",
+    LANG_MISMATCH: "Šis saturs šķiet %(DETECTED_LANG) valodā, tomēr tas tika marķēts kā %(WRONG_LANG).",
+    LANG_OF_PARTS_ALT: "Šis alternatīvais teksts šķiet %(LIKELY_LANG) valodā, bet lapas valoda tika deklarēta kā %(PAGE_LANG). Pārliecinieties, vai alternatīvais teksts ir tajā pašā valodā, kurā pārējā lapa. <hr> {ALT} <strong {C}>%(ALT)</strong>",
+    LANG_TIP: "<hr><strong>Padoms!</strong> Ekrāna lasītāji izrunā vārdus, izmantojot valodas tagus. Izrunājot valodu ar neatbilstošu valodas pakotni, veidojas nesaprotama runa.",
+    LANG_UNSUPPORTED: "Ar valodu saistītās pieejamības pārbaudes tika izlaistas, jo šis pārlūks neatbalsta automātisko valodas noteikšanu."
   }
 };
 export {

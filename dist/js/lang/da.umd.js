@@ -298,7 +298,14 @@
       UNKNOWN: "Ukendt",
       FG: "Forgrund",
       BG: "Baggrund",
-      NO_SUGGESTION: "Ingen tilgængelig kombination kan findes ved at ændre tekstfarven. Prøv at ændre baggrundsfarven."
+      NO_SUGGESTION: "Ingen tilgængelig kombination kan findes ved at ændre tekstfarven. Prøv at ændre baggrundsfarven.",
+      // Page language
+      PAGE_LANG_CONFIDENCE: 'Mere end halvdelen af teksten på denne side ser ud til at være på %(LIKELY_LANG), men det erklærede sidesprog er %(PAGE_LANG). Overvej at opdatere det <a href="https://www.w3.org/International/questions/qa-html-language-declarations">erklærede sidesprog</a>, så det matcher indholdet.',
+      LANG_OF_PARTS: "Sidesproget blev erklæret som %(PAGE_LANG), men dette indhold ser ud til at være på %(LIKELY_LANG). Sørg for, at indholdet er tagget korrekt.",
+      LANG_MISMATCH: "Dette indhold ser ud til at være på %(DETECTED_LANG), men det blev tagget som %(WRONG_LANG).",
+      LANG_OF_PARTS_ALT: "Denne alt-tekst ser ud til at være på %(LIKELY_LANG), men sidesproget blev erklæret som %(PAGE_LANG). Sørg for, at alt-teksten er på samme sprog som resten af siden. <hr> {ALT} <strong {C}>%(ALT)</strong>",
+      LANG_TIP: "<hr><strong>Tip!</strong> Skærmlæsere udtaler ord ved hjælp af sprog-tags. Udtale af et sprog med en ikke-matchende sprogpakke giver uforståelig tale.",
+      LANG_UNSUPPORTED: "Sprogrelaterede tilgængelighedstjek blev springet over, da automatisk sprogregistrering ikke understøttes i denne browser."
     }
   };
   return da;

@@ -294,7 +294,14 @@
       UNKNOWN: "Sconosciuto",
       FG: "Primo piano",
       BG: "Sfondo",
-      NO_SUGGESTION: "Non è possibile trovare una combinazione accessibile solo cambiando il colore del testo. Prova a cambiare il colore di sfondo."
+      NO_SUGGESTION: "Non è possibile trovare una combinazione accessibile solo cambiando il colore del testo. Prova a cambiare il colore di sfondo.",
+      // Page language
+      PAGE_LANG_CONFIDENCE: 'Più della metà del testo in questa pagina sembra essere in %(LIKELY_LANG), ma la lingua della pagina dichiarata è %(PAGE_LANG). Considera di aggiornare la <a href="https://www.w3.org/International/questions/qa-html-language-declarations">lingua della pagina dichiarata</a> per farla corrispondere al contenuto.',
+      LANG_OF_PARTS: "La lingua della pagina è stata dichiarata come %(PAGE_LANG), ma questo contenuto sembra essere in %(LIKELY_LANG). Assicurati che il contenuto sia contrassegnato in modo appropriato.",
+      LANG_MISMATCH: "Questo contenuto sembra essere in %(DETECTED_LANG), tuttavia è stato contrassegnato come %(WRONG_LANG).",
+      LANG_OF_PARTS_ALT: "Questo testo alternativo sembra essere in %(LIKELY_LANG), ma la lingua della pagina è stata dichiarata come %(PAGE_LANG). Assicurati che il testo alternativo sia nella stessa lingua del resto della pagina. <hr> {ALT} <strong {C}>%(ALT)</strong>",
+      LANG_TIP: "<hr><strong>Suggerimento!</strong> Gli screen reader pronunciano le parole utilizzando i tag di lingua. Pronunciare una lingua con un pacchetto lingua non corrispondente produce un parlato inintelligibile.",
+      LANG_UNSUPPORTED: "I controlli di accessibilità relativi alla lingua sono stati saltati perché il rilevamento automatico della lingua non è supportato in questo browser."
     }
   };
   return it;

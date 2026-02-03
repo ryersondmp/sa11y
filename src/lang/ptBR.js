@@ -412,5 +412,13 @@ export default {
     BG: 'Fundo',
     NO_SUGGESTION:
       'Nenhuma combinação acessível pode ser encontrada apenas alterando a cor do texto. Tente alterar a cor do fundo.',
+
+    // Page language
+    PAGE_LANG_CONFIDENCE: 'Mais da metade do texto nesta página parece estar em %(LIKELY_LANG), mas o idioma declarado da página é %(PAGE_LANG). Considere atualizar o <a href="https://www.w3.org/International/questions/qa-html-language-declarations">idioma declarado da página</a> para corresponder ao conteúdo.',
+    LANG_OF_PARTS: 'O idioma da página foi declarado como %(PAGE_LANG), mas este conteúdo parece estar em %(LIKELY_LANG). Certifique-se de que o conteúdo esteja marcado adequadamente.',
+    LANG_MISMATCH: 'Este conteúdo parece estar em %(DETECTED_LANG), no entanto, foi marcado como %(WRONG_LANG).',
+    LANG_OF_PARTS_ALT: 'Este texto alternativo parece estar em %(LIKELY_LANG), mas o idioma da página foi declarado como %(PAGE_LANG). Certifique-se de que o texto alternativo esteja no mesmo idioma que o restante da página. <hr> {ALT} <strong {C}>%(ALT)</strong>',
+    LANG_TIP: '<hr><strong>Dica!</strong> Os leitores de tela pronunciam as palavras usando tags de idioma. Pronunciar um idioma com um pacote de idiomas incompatível produz uma fala ininteligível.',
+    LANG_UNSUPPORTED: 'As verificações de acessibilidade relacionadas ao idioma foram ignoradas porque a detecção automática de idioma não é suportada neste navegador.',
   },
 };

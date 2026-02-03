@@ -411,5 +411,13 @@ export default {
     BG: 'Pozadie',
     NO_SUGGESTION:
       'Nie je možné nájsť dostupnú kombináciu iba zmenou farby textu. Skúste zmeniť farbu pozadia.',
+
+    // Page language
+    PAGE_LANG_CONFIDENCE: 'Zdá sa, že viac ako polovica textu na tejto stránke je v jazyku %(LIKELY_LANG), ale deklarovaný jazyk stránky je %(PAGE_LANG). Zvážte aktualizáciu <a href="https://www.w3.org/International/questions/qa-html-language-declarations">deklarovaného jazyka stránky</a>, aby zodpovedal obsahu.',
+    LANG_OF_PARTS: 'Jazyk stránky bol deklarovaný ako %(PAGE_LANG), ale tento obsah sa zdá byť v jazyku %(LIKELY_LANG). Uistite sa, že je obsah správne označený.',
+    LANG_MISMATCH: 'Tento obsah sa zdá byť v jazyku %(DETECTED_LANG), ale bol označený ako %(WRONG_LANG).',
+    LANG_OF_PARTS_ALT: 'Tento alternatívny text sa zdá byť v jazyku %(LIKELY_LANG), ale jazyk stránky bol deklarovaný ako %(PAGE_LANG). Uistite sa, že je alternatívny text v rovnakom jazyku ako zvyšok stránky. <hr> {ALT} <strong {C}>%(ALT)</strong>',
+    LANG_TIP: '<hr><strong>Tip!</strong> Čítačky obrazovky vyslovujú slová pomocou jazykových značiek. Výslovnosť jazyka s nezodpovedajúcim jazykovým balíkom vytvára nezrozumiteľnú reč.',
+    LANG_UNSUPPORTED: 'Kontroly prístupnosti týkajúce sa jazyka boli vynechané, pretože tento prehliadač nepodporuje automatickú detekciu jazyka.'
   },
 };

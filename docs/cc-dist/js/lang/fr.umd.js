@@ -299,7 +299,14 @@
       UNKNOWN: "Inconnu",
       FG: "Premier plan",
       BG: "Arrière-plan",
-      NO_SUGGESTION: "Aucune combinaison accessible ne peut être trouvée en modifiant uniquement la couleur du texte. Essayez de modifier la couleur de l'arrière-plan."
+      NO_SUGGESTION: "Aucune combinaison accessible ne peut être trouvée en modifiant uniquement la couleur du texte. Essayez de modifier la couleur de l'arrière-plan.",
+      // Page language
+      PAGE_LANG_CONFIDENCE: `Plus de la moitié du texte de cette page semble être en %(LIKELY_LANG), mais la langue déclarée de la page est %(PAGE_LANG). Envisagez de mettre à jour la <a href="https://www.w3.org/International/questions/qa-html-language-declarations">langue déclarée de la page</a> pour qu'elle corresponde au contenu.`,
+      LANG_OF_PARTS: "La langue de la page a été déclarée comme %(PAGE_LANG), mais ce contenu semble être en %(LIKELY_LANG). Assurez-vous que le contenu est balisé de manière appropriée.",
+      LANG_MISMATCH: "Ce contenu semble être en %(DETECTED_LANG), cependant, il a été balisé comme %(WRONG_LANG).",
+      LANG_OF_PARTS_ALT: "Ce texte alternatif semble être en %(LIKELY_LANG), mais la langue de la page a été déclarée comme %(PAGE_LANG). Assurez-vous que le texte alternatif est dans la même langue que le reste de la page. <hr> {ALT} <strong {C}>%(ALT)</strong>",
+      LANG_TIP: "<hr><strong>Astuce !</strong> Les lecteurs d'écran prononcent les mots à l'aide de balises de langue. La prononciation d'une langue avec un pack de langue non correspondant produit un discours inintelligible.",
+      LANG_UNSUPPORTED: "Les vérifications d'accessibilité liées à la langue ont été ignorées car la détection automatique de la langue n'est pas prise en charge par ce navigateur."
     }
   };
   return fr;

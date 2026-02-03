@@ -331,7 +331,14 @@ const ja = {
     UNKNOWN: "不明",
     FG: "前景",
     BG: "背景",
-    NO_SUGGESTION: "テキストの色だけを変更してもアクセス可能な組み合わせは見つかりません。背景色を変更してみてください。"
+    NO_SUGGESTION: "テキストの色だけを変更してもアクセス可能な組み合わせは見つかりません。背景色を変更してみてください。",
+    // Page language
+    PAGE_LANG_CONFIDENCE: 'このページのテキストの半分以上が %(LIKELY_LANG) であるように見えますが、宣言されたページ言語は %(PAGE_LANG) です。コンテンツに合わせて <a href="https://www.w3.org/International/questions/qa-html-language-declarations">宣言されたページ言語</a> を更新することを検討してください。',
+    LANG_OF_PARTS: "ページ言語は %(PAGE_LANG) と宣言されていますが、このコンテンツは %(LIKELY_LANG) であるように見えます。コンテンツに適切なタグが付けられていることを確認してください。",
+    LANG_MISMATCH: "このコンテンツは %(DETECTED_LANG) であるように見えますが、%(WRONG_LANG) としてタグ付けされています。",
+    LANG_OF_PARTS_ALT: "この代替テキストは %(LIKELY_LANG) であるように見えますが、ページ言語は %(PAGE_LANG) と宣言されています。代替テキストがページの他の部分と同じ言語であることを確認してください。 <hr> {ALT} <strong {C}>%(ALT)</strong>",
+    LANG_TIP: "<hr><strong>ヒント！</strong> スクリーンリーダーは言語タグを使用して単語を発音します。一致しない言語パックで言語を発音すると、理解できない音声が生成されます。",
+    LANG_UNSUPPORTED: "このブラウザでは自動言語検出がサポートされていないため、言語関連のアクセシビリティチェックはスキップされました。"
   }
 };
 export {
