@@ -797,18 +797,27 @@ function sanitizeHTMLBlock(html, allowStyles = false) {
   });
   return tempDiv.innerHTML;
 }
-function fnIgnore(element, selectors) {
-  let ignoreQuery = "noscript,script,style,audio,video,form,iframe";
-  if (selectors && selectors.length > 0) {
-    ignoreQuery = `${ignoreQuery},${selectors.join(",")}`;
+function fnIgnore(element, selectors = []) {
+  const baseIgnores = "noscript,script,style,audio,video,form,iframe";
+  const ignoreQuery = selectors.length ? `${baseIgnores},${selectors.join(",")}` : baseIgnores;
+  if (element.matches(ignoreQuery)) return null;
+  function cloneTree(node) {
+    const type = node.nodeType;
+    if (type === Node.ELEMENT_NODE) {
+      if (node.matches(ignoreQuery)) return null;
+      const clone = node.cloneNode(false);
+      let child = node.firstChild;
+      while (child) {
+        const clonedChild = cloneTree(child);
+        if (clonedChild) clone.appendChild(clonedChild);
+        child = child.nextSibling;
+      }
+      return clone;
+    }
+    if (type === Node.TEXT_NODE) return node.cloneNode(true);
+    return null;
   }
-  const clone = element.cloneNode(true);
-  const toRemove = clone.querySelectorAll(ignoreQuery);
-  let i = toRemove.length;
-  while (i--) {
-    toRemove[i].remove();
-  }
-  return clone;
+  return cloneTree(element);
 }
 const gotText = /* @__PURE__ */ new WeakMap();
 function getText(element) {
@@ -7549,7 +7558,6 @@ function computeReadability(textArray, lang) {
   return null;
 }
 function checkReadability() {
-  if (!State.option.readabilityPlugin || store.getItem("sa11y-readability") !== "On") return;
   const computed = computeReadability(Elements.Found.Readability, Constants.Readability.Lang);
   let result;
   if (computed) {
@@ -8376,11 +8384,14 @@ function getLanguageDetector() {
 }
 const getLanguageLabel = (lang) => {
   try {
-    return `<span lang="${navigator.language}">${new Intl.DisplayNames(navigator.language, {
+    const canonicalLang = Intl.getCanonicalLocales(lang)[0];
+    const baseLang = new Intl.Locale(canonicalLang).language;
+    const displayName = new Intl.DisplayNames(navigator.language, {
       type: "language"
-    }).of(lang.split("-")[0])}</span>`;
+    }).of(baseLang);
+    return `<span lang="${navigator.language}">${displayName}</span>`;
   } catch {
-    return lang;
+    return Lang.sprintf(`<strong {C}>${lang}</strong>`);
   }
 };
 const primary = (lang) => String(lang).toLowerCase().split("-")[0];
@@ -8393,11 +8404,14 @@ const getCache = () => {
     return [];
   }
 };
-const setCache = (key, test, element, type, variables, confidence, textLength, declared) => {
-  if (!State.option.langOfPartsCache) return;
+const setCache = (data) => {
+  if (!State.option.langOfPartsCache) {
+    store.removeItem(STORAGE_KEY);
+    return;
+  }
   try {
-    const cache = getCache().filter((item) => item.key !== key);
-    cache.push({ key, test, element, type, variables, confidence, textLength, declared });
+    const cache = getCache().filter((item) => item.key !== data.key);
+    cache.push(data);
     while (cache.length > MAX_CACHE_SIZE) cache.shift();
     store.setItem(STORAGE_KEY, JSON.stringify(cache));
   } catch (e) {
@@ -8407,8 +8421,6 @@ const setCache = (key, test, element, type, variables, confidence, textLength, d
 async function checkPageLanguage() {
   if (!State.option.langOfPartsPlugin) return;
   if (!await getLanguageDetector()) return;
-  if (!State.option.langOfPartsCache && store.getItem(STORAGE_KEY))
-    store.removeItem(STORAGE_KEY);
   const declared = Elements.Found.Language;
   if (!declared) return;
   const pageText = (Elements.Found.pageText || []).join(" ");
@@ -8452,8 +8464,7 @@ async function checkPageLanguage() {
   }
   const detector = await getLanguageDetector();
   const detected = await detector.detect(pageText);
-  const detectedLang = detected[0];
-  const detectedLangCode = detectedLang.detectedLanguage;
+  const detectedLangCode = detected[0].detectedLanguage;
   let test = null;
   let type = null;
   let content = null;
@@ -8469,15 +8480,27 @@ async function checkPageLanguage() {
       getLanguageLabel(declared)
     );
     dismiss = prepareDismissal(cacheKey);
-    type = detectedLang.confidence >= 0.6 ? "error" : "warning";
-    confidence = detectedLang.confidence;
+    type = detected[0].confidence >= 0.6 ? "error" : "warning";
+    confidence = detected[0].confidence;
     variables = [detectedLangCode, declared];
-    setCache(cacheKey, test, null, type, variables, confidence, pageText.length, declared);
+    setCache({
+      key: cacheKey,
+      test,
+      type,
+      variables,
+      confidence,
+      textLength: pageText.length,
+      declared
+    });
   }
   if (primary(detectedLangCode) === primary(declared)) {
     const confidenceTarget = State.option.PAGE_LANG_CONFIDENCE?.confidence || 0.95;
-    if (detectedLang.confidence >= confidenceTarget) {
-      setCache(cacheKey, null, null, null, null, null, pageText.length, declared);
+    if (detected[0].confidence >= confidenceTarget) {
+      setCache({
+        key: cacheKey,
+        textLength: pageText.length,
+        declared
+      });
       return;
     }
     for (const node of Elements.Found.Everything) {
@@ -8530,16 +8553,16 @@ async function checkPageLanguage() {
         dismiss = prepareDismissal(nodeText.slice(0, 256));
         confidence = nodeConfidence;
         const selector = generateSelectorPath(node);
-        setCache(
-          cacheKey,
+        setCache({
+          key: cacheKey,
           test,
-          selector,
+          element: selector,
           type,
           variables,
-          nodeConfidence,
-          pageText.length,
+          confidence: nodeConfidence,
+          textLength: pageText.length,
           declared
-        );
+        });
         break;
       }
     }
@@ -8571,7 +8594,9 @@ async function checkAll(desiredRoot = State.option.checkRoot, desiredReadability
     checkDeveloper();
     checkEmbeddedContent();
     checkContrast();
-    checkReadability();
+    if (State.option.readabilityPlugin || store.getItem("sa11y-readability") === "On") {
+      checkReadability();
+    }
     await checkPageLanguage();
     if (State.option.customChecks === true) {
       checkCustom();

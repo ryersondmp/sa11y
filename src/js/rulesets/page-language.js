@@ -42,11 +42,19 @@ export function getLanguageDetector() {
 // Get the reader-friendly language label, e.g. "English"
 const getLanguageLabel = (lang) => {
   try {
-    return `<span lang="${navigator.language}">${new Intl.DisplayNames(navigator.language, {
+    // 1. Validate and standardise the code first (e.g. cleans up 'EN-us' to 'en-US').
+    const canonicalLang = Intl.getCanonicalLocales(lang)[0];
+
+    // 2. Extract just the base language (e.g. 'en' from 'en-US').
+    const baseLang = new Intl.Locale(canonicalLang).language;
+
+    // 3. Get the human readable name.
+    const displayName = new Intl.DisplayNames(navigator.language, {
       type: 'language',
-    }).of(lang.split('-')[0])}</span>`;
+    }).of(baseLang);
+    return `<span lang="${navigator.language}">${displayName}</span>`;
   } catch {
-    return lang;
+    return Lang.sprintf(`<strong {C}>${lang}</strong>`);
   }
 };
 
@@ -65,11 +73,16 @@ const getCache = () => {
 };
 
 // Save minimal, but key info to cache.
-const setCache = (key, test, element, type, variables, confidence, textLength, declared) => {
-  if (!State.option.langOfPartsCache) return;
+const setCache = (data) => {
+  // Cache featured turned off.
+  if (!State.option.langOfPartsCache) {
+    Utils.store.removeItem(STORAGE_KEY);
+    return;
+  }
+
   try {
-    const cache = getCache().filter((item) => item.key !== key);
-    cache.push({ key, test, element, type, variables, confidence, textLength, declared });
+    const cache = getCache().filter((item) => item.key !== data.key);
+    cache.push(data);
     while (cache.length > MAX_CACHE_SIZE) cache.shift();
     Utils.store.setItem(STORAGE_KEY, JSON.stringify(cache));
   } catch (e) {
@@ -81,10 +94,6 @@ export default async function checkPageLanguage() {
   // Hard return if neither page language checks are enabled or if feature not supported.
   if (!State.option.langOfPartsPlugin) return;
   if (!(await getLanguageDetector())) return;
-
-  // Remove storage key if caching is turned off via prop.
-  if (!State.option.langOfPartsCache && Utils.store.getItem(STORAGE_KEY))
-    Utils.store.removeItem(STORAGE_KEY);
 
   // Get the declared page language.
   const declared = Elements.Found.Language;
@@ -147,8 +156,7 @@ export default async function checkPageLanguage() {
   const detected = await detector.detect(pageText);
 
   // Identify the primary and secondary page languages.
-  const detectedLang = detected[0];
-  const detectedLangCode = detectedLang.detectedLanguage;
+  const detectedLangCode = detected[0].detectedLanguage;
 
   // Cache data.
   let test = null;
@@ -168,18 +176,30 @@ export default async function checkPageLanguage() {
       getLanguageLabel(declared),
     );
     dismiss = Utils.prepareDismissal(cacheKey);
-    type = detectedLang.confidence >= 0.6 ? 'error' : 'warning';
-    confidence = detectedLang.confidence;
+    type = detected[0].confidence >= 0.6 ? 'error' : 'warning';
+    confidence = detected[0].confidence;
     variables = [detectedLangCode, declared];
-    setCache(cacheKey, test, null, type, variables, confidence, pageText.length, declared);
+    setCache({
+      key: cacheKey,
+      test: test,
+      type: type,
+      variables: variables,
+      confidence: confidence,
+      textLength: pageText.length,
+      declared: declared,
+    });
   }
 
   // If declared page language matches most likely language.
   if (primary(detectedLangCode) === primary(declared)) {
     // Pass if we're 90% confident.
     const confidenceTarget = State.option.PAGE_LANG_CONFIDENCE?.confidence || 0.95;
-    if (detectedLang.confidence >= confidenceTarget) {
-      setCache(cacheKey, null, null, null, null, null, pageText.length, declared);
+    if (detected[0].confidence >= confidenceTarget) {
+      setCache({
+        key: cacheKey,
+        textLength: pageText.length,
+        declared: declared,
+      });
       return;
     }
 
@@ -258,16 +278,16 @@ export default async function checkPageLanguage() {
         const selector = Utils.generateSelectorPath(node);
 
         // Break the loop on first match.
-        setCache(
-          cacheKey,
-          test,
-          selector,
-          type,
-          variables,
-          nodeConfidence,
-          pageText.length,
-          declared,
-        );
+        setCache({
+          key: cacheKey,
+          test: test,
+          element: selector,
+          type: type,
+          variables: variables,
+          confidence: nodeConfidence,
+          textLength: pageText.length,
+          declared: declared,
+        });
         break;
       }
     }

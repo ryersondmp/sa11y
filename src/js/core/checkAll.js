@@ -1,5 +1,6 @@
 import findShadowComponents from './find-shadow-components';
 import { State } from './state';
+import { store } from '../utils/utils';
 import Constants from '../utils/constants';
 import Elements from '../utils/elements';
 import ConsoleErrors from '../interface/console-error';
@@ -45,7 +46,9 @@ export default async function checkAll(
     checkDeveloper();
     checkEmbeddedContent();
     checkContrast();
-    checkReadability();
+    if (State.option.readabilityPlugin || store.getItem('sa11y-readability') === 'On') {
+      checkReadability();
+    }
     await checkPageLanguage();
 
     /* Custom checks */

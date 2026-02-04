@@ -218,23 +218,41 @@ export function sanitizeHTMLBlock(html, allowStyles = false) {
 
 /**
  * Creates a clone of an element while ignoring specified elements or elements matching a selector.
- * Ignored by default: ['noscript', 'script', 'style', 'audio', 'video', 'form', 'iframe']
  * @param {Element} element The element to clone.
- * @param {Array[]} selectors The selector to match elements to be excluded from the clone. Optional.
- * @returns {Element} The cloned element with excluded elements removed.
+ * @param {string[]} [selectors=[]] Optional array of selectors to exclude.
+ * @returns {Element|null} The cloned element or null if the root itself is ignored.
  */
-export function fnIgnore(element, selectors) {
-  let ignoreQuery = 'noscript,script,style,audio,video,form,iframe';
-  if (selectors && selectors.length > 0) {
-    ignoreQuery = `${ignoreQuery},${selectors.join(',')}`;
+export function fnIgnore(element, selectors = []) {
+  const baseIgnores = 'noscript,script,style,audio,video,form,iframe';
+  const ignoreQuery = selectors.length ? `${baseIgnores},${selectors.join(',')}` : baseIgnores;
+
+  // 2. If the root matches, return null immediately.
+  if (element.matches(ignoreQuery)) return null;
+
+  function cloneTree(node) {
+    const type = node.nodeType;
+    if (type === Node.ELEMENT_NODE) {
+      // Check ignore list BEFORE cloning.
+      if (node.matches(ignoreQuery)) return null;
+      const clone = node.cloneNode(false);
+
+      // Recursively clone children and append them to the NEW parent.
+      let child = node.firstChild;
+      while (child) {
+        const clonedChild = cloneTree(child);
+        if (clonedChild) clone.appendChild(clonedChild);
+        child = child.nextSibling;
+      }
+      return clone;
+    }
+
+    // Handle text nodes.
+    if (type === Node.TEXT_NODE) return node.cloneNode(true);
+    return null;
   }
-  const clone = element.cloneNode(true);
-  const toRemove = clone.querySelectorAll(ignoreQuery);
-  let i = toRemove.length;
-  while (i--) {
-    toRemove[i].remove();
-  }
-  return clone;
+
+  // 3. Start the clone process
+  return cloneTree(element);
 }
 
 /**

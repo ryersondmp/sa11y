@@ -2,12 +2,9 @@ import Constants from '../utils/constants';
 import Elements from '../utils/elements';
 import Lang from '../utils/lang';
 import computeReadability from '../utils/readability-utils';
-import { store } from '../utils/utils';
 import { State } from '../core/state';
 
 export default function checkReadability() {
-  if (!State.option.readabilityPlugin || store.getItem('sa11y-readability') !== 'On') return;
-
   // Compute.
   const computed = computeReadability(Elements.Found.Readability, Constants.Readability.Lang);
 
