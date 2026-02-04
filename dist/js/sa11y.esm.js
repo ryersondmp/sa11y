@@ -8384,9 +8384,6 @@ const getLanguageLabel = (lang) => {
   }
 };
 const primary = (lang) => String(lang).toLowerCase().split("-")[0];
-const getCacheKey = (url2) => {
-  return url2;
-};
 const getCache = () => {
   try {
     const get = store.getItem(STORAGE_KEY);
@@ -8396,11 +8393,11 @@ const getCache = () => {
     return [];
   }
 };
-const setCache = (key, test, element, type, variables, confidence, textLength) => {
+const setCache = (key, test, element, type, variables, confidence, textLength, declared) => {
   if (!State.option.langOfPartsCache) return;
   try {
     const cache = getCache().filter((item) => item.key !== key);
-    cache.push({ key, test, element, type, variables, confidence, textLength });
+    cache.push({ key, test, element, type, variables, confidence, textLength, declared });
     while (cache.length > MAX_CACHE_SIZE) cache.shift();
     store.setItem(STORAGE_KEY, JSON.stringify(cache));
   } catch (e) {
@@ -8419,20 +8416,30 @@ async function checkPageLanguage() {
     console.warn("Sa11y: Not enough content on this page to determine page language.");
     return;
   }
-  const cacheKey = getCacheKey(window.location.href);
+  const cacheKey = window.location.href;
   const cached = getCache().find((item) => item.key === cacheKey);
-  const isStale = cached && Math.abs(cached.textLength - pageText.length) > 5;
+  const langChanged = cached?.declared && cached.declared !== declared;
+  let isStale = cached && (Math.abs(cached.textLength - pageText.length) > 5 || langChanged);
+  if (cached && !isStale && cached.element) {
+    const currentElement = find(cached.element, "root")[0];
+    if (!currentElement) {
+      isStale = true;
+    } else if (currentElement.hasAttribute("lang")) {
+      isStale = true;
+    }
+  }
   if (cached && !isStale) {
     if (cached.test) {
       const tip = cached.element ? Lang.sprintf("LANG_TIP") : "";
       const getElement = cached.element ? find(cached.element, "root")[0] : null;
+      const processVariables = cached.variables.map((variable) => getLanguageLabel(variable));
       State.results.push({
         element: getElement || null,
         test: cached.test,
         type: State.option.checks[cached.test].type || cached.type,
         content: Lang.sprintf(
           State.option.checks[cached.test].content || [cached.test],
-          ...cached.variables
+          ...processVariables
         ) + tip,
         dismiss: prepareDismissal(cached.test),
         developer: State.option.checks[cached.test].developer ?? false,
@@ -8447,8 +8454,6 @@ async function checkPageLanguage() {
   const detected = await detector.detect(pageText);
   const detectedLang = detected[0];
   const detectedLangCode = detectedLang.detectedLanguage;
-  const declaredPageLang = getLanguageLabel(declared) || declared;
-  const likelyLanguage = getLanguageLabel(detectedLangCode);
   let test = null;
   let type = null;
   let content = null;
@@ -8460,19 +8465,19 @@ async function checkPageLanguage() {
     test = "PAGE_LANG_CONFIDENCE";
     content = Lang.sprintf(
       State.option.checks.PAGE_LANG_CONFIDENCE.content || "PAGE_LANG_CONFIDENCE",
-      likelyLanguage,
-      declaredPageLang
+      getLanguageLabel(detectedLangCode),
+      getLanguageLabel(declared)
     );
     dismiss = prepareDismissal(cacheKey);
     type = detectedLang.confidence >= 0.6 ? "error" : "warning";
     confidence = detectedLang.confidence;
-    variables = [likelyLanguage, declaredPageLang];
-    setCache(cacheKey, test, null, type, variables, confidence, pageText.length);
+    variables = [detectedLangCode, declared];
+    setCache(cacheKey, test, null, type, variables, confidence, pageText.length, declared);
   }
   if (primary(detectedLangCode) === primary(declared)) {
     const confidenceTarget = State.option.PAGE_LANG_CONFIDENCE?.confidence || 0.95;
     if (detectedLang.confidence >= confidenceTarget) {
-      setCache(cacheKey, null, null, null, null, null, pageText.length);
+      setCache(cacheKey, null, null, null, null, null, pageText.length, declared);
       return;
     }
     for (const node of Elements.Found.Everything) {
@@ -8488,7 +8493,6 @@ async function checkPageLanguage() {
       if (nodeText.length <= 30) continue;
       const detectNode = await detector.detect(nodeText);
       const nodeLang = detectNode[0].detectedLanguage;
-      const nodeLangLabel = getLanguageLabel(nodeLang);
       const nodeConfidence = detectNode[0].confidence;
       const langAttribute = node?.getAttribute("lang");
       if (nodeLang !== declared && nodeConfidence >= 0.6) {
@@ -8497,36 +8501,45 @@ async function checkPageLanguage() {
           test = "LANG_MISMATCH";
           content = Lang.sprintf(
             State.option.checks.LANG_MISMATCH.content || "LANG_MISMATCH",
-            nodeLangLabel,
+            getLanguageLabel(nodeLang),
             getLanguageLabel(langAttribute)
           ) + Lang.sprintf("LANG_TIP");
-          variables = [nodeLangLabel, getLanguageLabel(langAttribute)];
+          variables = [nodeLang, langAttribute];
         } else if (node.nodeName === "IMG" && node?.alt?.length !== 0) {
           const alt = sanitizeHTML(node.alt);
           const altText = removeWhitespace(alt);
           test = "LANG_OF_PARTS_ALT";
           content = Lang.sprintf(
             State.option.checks.LANG_OF_PARTS_ALT.content || "LANG_OF_PARTS_ALT",
-            nodeLangLabel,
-            declaredPageLang,
+            getLanguageLabel(nodeLang),
+            getLanguageLabel(declared),
             altText
           ) + Lang.sprintf("LANG_TIP");
-          variables = [nodeLangLabel, declaredPageLang, altText];
+          variables = [nodeLang, declared, altText];
         } else {
           test = "LANG_OF_PARTS";
           content = Lang.sprintf(
             State.option.checks.LANG_OF_PARTS.content || "LANG_OF_PARTS",
-            declaredPageLang,
-            nodeLangLabel
+            getLanguageLabel(declared),
+            getLanguageLabel(nodeLang)
           ) + Lang.sprintf("LANG_TIP");
-          variables = [declaredPageLang, nodeLangLabel];
+          variables = [declared, nodeLang];
         }
         element = node;
         type = nodeConfidence >= 0.9 ? "error" : "warning";
         dismiss = prepareDismissal(nodeText.slice(0, 256));
         confidence = nodeConfidence;
         const selector = generateSelectorPath(node);
-        setCache(cacheKey, test, selector, type, variables, nodeConfidence, pageText.length);
+        setCache(
+          cacheKey,
+          test,
+          selector,
+          type,
+          variables,
+          nodeConfidence,
+          pageText.length,
+          declared
+        );
         break;
       }
     }
