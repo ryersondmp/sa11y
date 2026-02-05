@@ -266,6 +266,8 @@
       META_SCALABLE: 'Eemaldage parameeter <code>user-scalable="no"</code> <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">meta sildi vaatest</a>, et lubada suumimist.',
       META_MAX: 'Veenduge, et parameeter <code>maximum-scale</code> <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">meta sildi vaatest</a> ei oleks väiksem kui 2.',
       META_REFRESH: "Lehte ei tohiks automaatselt värskendada, kasutades meta-silti.",
+      META_LANG_SUGGEST: "Järgmine keelekood <code>%(CODE)</code> ei ole kehtiv. Kas mõtlesite <code>%(CODE)</code>?",
+      META_LANG_VALID: 'Lehe keelekood <code>%(CODE)</code> ei ole kehtiv. Palun <a href="https://www.w3.org/International/questions/qa-html-language-declarations">deklareerige HTML-märgendis kehtiv keel.</a>',
       // Buttons
       BTN_EMPTY: "Nupul puudub ligipääsetav nimi, mis kirjeldaks selle eesmärki.",
       BTN_EMPTY_LABELLEDBY: "Nupul on <code>aria-labelledby</code> väärtus, mis on tühi või ei vasta teise lehe elemendi <code>id</code> väärtusele.",

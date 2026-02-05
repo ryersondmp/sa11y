@@ -273,6 +273,8 @@
       META_SCALABLE: 'Видаліть параметр <code>user-scalable="no"</code> у <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">мета-тезі перегляду</a>, щоб дозволити масштабування.',
       META_MAX: 'Переконайтеся, що параметр <code>maximum-scale</code> у <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">мета-тезі перегляду</a> не менший за 2.',
       META_REFRESH: "Сторінка не повинна автоматично оновлюватися за допомогою мета-тегу.",
+      META_LANG_SUGGEST: "Наступний код мови <code>%(CODE)</code> не є дійсним. Ви мали на увазі <code>%(CODE)</code>?",
+      META_LANG_VALID: 'Код мови сторінки <code>%(CODE)</code> не є дійсним. Будь ласка, <a href="https://www.w3.org/International/questions/qa-html-language-declarations">вкажіть дійсний код мови в тегу HTML.</a>',
       // Buttons
       BTN_EMPTY: "Кнопка не має доступного імені, яке описує її призначення.",
       BTN_EMPTY_LABELLEDBY: "Кнопка має значення <code>aria-labelledby</code>, яке є порожнім або не відповідає значенню <code>id</code> іншого елемента на сторінці.",

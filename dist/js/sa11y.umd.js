@@ -219,6 +219,8 @@
       QA_SMALL_TEXT: true,
       // Meta checks
       META_LANG: true,
+      META_LANG_VALID: true,
+      META_LANG_SUGGEST: true,
       META_SCALABLE: true,
       META_MAX: true,
       META_REFRESH: true,
@@ -1212,6 +1214,30 @@
     const hashArray = Array.from(new Uint8Array(hashBuffer));
     return hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
   }
+  let langCache;
+  function validateLang(code, displayLangCode) {
+    if (typeof code !== "string") return { valid: false };
+    const norm = code.trim().replace(/_/g, "-");
+    if (!langCache && typeof Intl !== "undefined") {
+      try {
+        langCache = new Intl.DisplayNames([displayLangCode], { type: "language", fallback: "none" });
+      } catch {
+      }
+    }
+    if (langCache) {
+      const check = (val) => {
+        try {
+          return langCache.of(val);
+        } catch {
+          return false;
+        }
+      };
+      if (check(code)) return { valid: true };
+      if (check(norm)) return { valid: false, suggest: norm };
+      return { valid: false };
+    }
+    return { valid: /^[a-z]{2,3}(-[a-z]{4})?(-[a-z]{2,4})?$/i.test(norm) };
+  }
   const Utils = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
     __proto__: null,
     addPulse,
@@ -1250,7 +1276,8 @@
     stripHTMLtags,
     supportsAnchorPositioning,
     trapFocus,
-    truncateString
+    truncateString,
+    validateLang
   }, Symbol.toStringTag, { value: "Module" }));
   const styles$1 = "[data-sa11y-overflow]{overflow:auto!important}[data-sa11y-error]{outline-offset:2px;outline:5px solid var(--sa11y-error)!important}[data-sa11y-warning]:not([data-sa11y-error]){outline-offset:2px;outline:5px solid var(--sa11y-warning)!important}[data-sa11y-pulse-border]{box-shadow:0;animation:1s 2 pulse;outline:5px solid var(--sa11y-focus-color)!important}[data-sa11y-pulse-border]:hover,[data-sa11y-pulse-border]:focus{animation:none}@keyframes pulse{0%{box-shadow:0 0 0 5px var(--sa11y-focus-color)}50%{box-shadow:0 0 0 12px var(--sa11y-pulse-color)}to{box-shadow:0 0 0 5px var(--sa11y-pulse-color)}}img[data-sa11y-pulse-border],h1[data-sa11y-pulse-border],h2[data-sa11y-pulse-border],h3[data-sa11y-pulse-border],h4[data-sa11y-pulse-border],h5[data-sa11y-pulse-border],h6[data-sa11y-pulse-border]{animation:1s 2 pulse-scale}@keyframes pulse-scale{0%{opacity:1;transform:scale(1)}50%{opacity:.7;transform:scale(1.02)}to{opacity:1;transform:scale(1)}}@media (prefers-reduced-motion:reduce){[data-sa11y-pulse-border]{animation:none!important}}@media (forced-colors:active){[data-sa11y-error],[data-sa11y-warning],[data-sa11y-good],[data-sa11y-error-inline],[data-sa11y-warning-inline],[data-sa11y-pulse-border]{forced-color-adjust:none}}";
   const addStyleUtilities = (component) => {
@@ -5998,6 +6025,11 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header]).join(",")).j
           (i) => i.element === issue.element && (i.type === "error" || i.type === "warning") && i.element?.alt === issue.element?.alt
         );
       }
+      if (State.option.langOfPartsPlugin && issue.test === "PAGE_LANG_CONFIDENCE") {
+        return !src.some(
+          (i) => i.test === "META_LANG" || i.test === "META_LANG_SUGGEST" || i.test === "META_LANG_VALID"
+        );
+      }
       return true;
     });
     await Promise.all(
@@ -8125,15 +8157,27 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header]).join(",")).j
     }
   }
   function checkDeveloper() {
-    if (State.option.checks.META_LANG) {
-      if (!Elements.Found.Language || Elements.Found.Language.length < 2) {
-        State.results.push({
-          test: "META_LANG",
-          type: State.option.checks.META_LANG.type || "error",
-          content: Lang.sprintf(State.option.checks.META_LANG.content || "META_LANG"),
-          dismiss: prepareDismissal("META_LANG"),
-          developer: State.option.checks.META_LANG.developer || true
-        });
+    const report = (key, ...args) => {
+      const rule = State.option.checks[key];
+      if (!rule) return;
+      State.results.push({
+        test: key,
+        type: rule.type || "error",
+        content: Lang.sprintf(rule.content || key, ...args),
+        dismiss: prepareDismissal(key),
+        developer: rule.developer || true
+      });
+    };
+    if (!Elements.Found.Language) {
+      report("META_LANG");
+    } else {
+      const { valid, suggest } = validateLang(Elements.Found.Language, Lang._("LANG_CODE"));
+      if (!valid) {
+        if (suggest) {
+          report("META_LANG_SUGGEST", Elements.Found.Language, suggest);
+        } else {
+          report("META_LANG_VALID", Elements.Found.Language);
+        }
       }
     }
     if (State.option.checks.META_TITLE) {

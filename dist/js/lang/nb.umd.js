@@ -265,6 +265,8 @@
       META_SCALABLE: 'Fjern parameteren <code>user-scalable="no"</code> i <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">meta-taggen for visningsområde</a> for å tillate zooming.',
       META_MAX: 'Sørg for at parameteren <code>maximum-scale</code> i <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">meta-taggen for visningsområde</a> ikke er mindre enn 2.',
       META_REFRESH: "Siden bør ikke automatisk oppdateres ved hjelp av en meta-tag.",
+      META_LANG_SUGGEST: "Følgende språkkode <code>%(CODE)</code> er ikke gyldig. Mente du <code>%(CODE)</code>?",
+      META_LANG_VALID: 'Sidens språkkode <code>%(CODE)</code> er ikke gyldig. Vennligst <a href="https://www.w3.org/International/questions/qa-html-language-declarations">deklarer et gyldig språk i HTML-taggen.</a>',
       // Buttons
       BTN_EMPTY: "Knappen mangler et tilgjengelig navn som beskriver dens formål.",
       BTN_EMPTY_LABELLEDBY: "Knappen har en <code>aria-labelledby</code> verdi som er tom eller ikke samsvarer med <code>id</code> verdien til et annet element på siden.",

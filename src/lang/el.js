@@ -364,6 +364,8 @@ export default {
     META_MAX:
       'Βεβαιωθείτε ότι η παράμετρος <code>maximum-scale</code> στην <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">ετικέτα meta του viewport</a> δεν είναι μικρότερη από 2.',
     META_REFRESH: 'Η σελίδα δεν πρέπει να ανανεώνεται αυτόματα χρησιμοποιώντας μια ετικέτα meta.',
+    META_LANG_SUGGEST: 'Ο ακόλουθος κωδικός γλώσσας <code>%(CODE)</code> δεν είναι έγκυρος. Μήπως εννοούσατε <code>%(CODE)</code>;',
+    META_LANG_VALID: 'Ο κωδικός γλώσσας της σελίδας <code>%(CODE)</code> δεν είναι έγκυρος. Παρακαλούμε <a href="https://www.w3.org/International/questions/qa-html-language-declarations">δηλώστε μια έγκυρη γλώσσα στην ετικέτα HTML.</a>',
 
     // Buttons
     BTN_EMPTY: 'Το κουμπί δεν έχει ένα προσβάσιμο όνομα που να περιγράφει τον σκοπό του.',

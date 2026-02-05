@@ -372,6 +372,8 @@ export default {
     META_MAX:
       'Zorg ervoor dat de parameter <code>maximum-scale</code> in de <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">meta-tag van het viewport</a> niet kleiner is dan 2.',
     META_REFRESH: 'De pagina mag niet automatisch verversen met behulp van een meta-tag.',
+    META_LANG_SUGGEST: 'De volgende taalcode <code>%(CODE)</code> is niet geldig. Bedoelde u <code>%(CODE)</code>?',
+    META_LANG_VALID: 'De taalcode van de pagina <code>%(CODE)</code> is niet geldig. <a href="https://www.w3.org/International/questions/qa-html-language-declarations">Declareer een geldige taal in de HTML-tag.</a>',
 
     // Buttons
     BTN_EMPTY: 'De knop mist een toegankelijke naam die het doel beschrijft.',

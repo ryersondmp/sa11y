@@ -219,6 +219,8 @@ const defaultOptions = {
 
     // Meta checks
     META_LANG: true,
+    META_LANG_VALID: true,
+    META_LANG_SUGGEST: true,
     META_SCALABLE: true,
     META_MAX: true,
     META_REFRESH: true,

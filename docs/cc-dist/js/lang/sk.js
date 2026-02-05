@@ -263,6 +263,8 @@ const sk = {
     META_SCALABLE: 'Odstráňte parameter <code>user-scalable="no"</code> v <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">meta značke zobrazenia</a>, aby ste umožnili priblíženie.',
     META_MAX: 'Uistite sa, že parameter <code>maximum-scale</code> v <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">meta značke zobrazenia</a> nie je menší ako 2.',
     META_REFRESH: "Stránka by sa nemala automaticky obnovovať pomocou meta značky.",
+    META_LANG_SUGGEST: "Nasledujúci kód jazyka <code>%(CODE)</code> nie je platný. Mysleli ste <code>%(CODE)</code>?",
+    META_LANG_VALID: 'Kód jazyka stránky <code>%(CODE)</code> nie je platný. Prosím <a href="https://www.w3.org/International/questions/qa-html-language-declarations">deklarujte platný jazyk v HTML tagu.</a>',
     // Buttons
     BTN_EMPTY: "Tlačidlu chýba prístupné meno, ktoré popisuje jeho účel.",
     BTN_EMPTY_LABELLEDBY: "Tlačidlo má hodnotu <code>aria-labelledby</code>, ktorá je prázdna alebo nezodpovedá hodnote <code>id</code> iného prvku na stránke.",

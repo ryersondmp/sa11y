@@ -7,17 +7,33 @@ import { State } from '../core/state';
 
 export default function checkDeveloper() {
   /* *************************************************************** */
-  /*  Error: Missing language tag. Lang should be at least 2 chars.  */
+  /*  Error: Missing or invalid language tag.                        */
   /* *************************************************************** */
-  if (State.option.checks.META_LANG) {
-    if (!Elements.Found.Language || Elements.Found.Language.length < 2) {
-      State.results.push({
-        test: 'META_LANG',
-        type: State.option.checks.META_LANG.type || 'error',
-        content: Lang.sprintf(State.option.checks.META_LANG.content || 'META_LANG'),
-        dismiss: Utils.prepareDismissal('META_LANG'),
-        developer: State.option.checks.META_LANG.developer || true,
-      });
+  const report = (key, ...args) => {
+    const rule = State.option.checks[key];
+    if (!rule) return;
+    State.results.push({
+      test: key,
+      type: rule.type || 'error',
+      content: Lang.sprintf(rule.content || key, ...args),
+      dismiss: Utils.prepareDismissal(key),
+      developer: rule.developer || true,
+    });
+  };
+
+  // 1. Check if missing.
+  if (!Elements.Found.Language) {
+    report('META_LANG');
+  } else {
+    const { valid, suggest } = Utils.validateLang(Elements.Found.Language, Lang._('LANG_CODE'));
+    if (!valid) {
+      // 2. Suggest valid (en_us to en-us).
+      if (suggest) {
+        report('META_LANG_SUGGEST', Elements.Found.Language, suggest);
+      } else {
+        // 3. Not valid at all.
+        report('META_LANG_VALID', Elements.Found.Language);
+      }
     }
   }
 

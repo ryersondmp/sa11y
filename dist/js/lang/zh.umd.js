@@ -269,6 +269,8 @@
       META_SCALABLE: '删除<a href="https://developer.mozilla.org/zh-CN/docs/Web/HTML/Viewport_meta_tag">视口元标签</a>中的 <code>user-scalable="no"</code> 参数，以允许缩放。',
       META_MAX: '确保<a href="https://developer.mozilla.org/zh-CN/docs/Web/HTML/Viewport_meta_tag">视口元标签</a>中的 <code>maximum-scale</code> 参数不少于 2。',
       META_REFRESH: "页面不应使用 meta 标签自动刷新。",
+      META_LANG_SUGGEST: "以下语言代码 <code>%(CODE)</code> 无效。您是指 <code>%(CODE)</code> 吗？",
+      META_LANG_VALID: '页面语言代码 <code>%(CODE)</code> 无效。请在 <a href="https://www.w3.org/International/questions/qa-html-language-declarations">HTML 标签中声明有效的语言。</a>',
       // Buttons
       BTN_EMPTY: "按钮缺少一个描述其用途的可访问名称。",
       BTN_EMPTY_LABELLEDBY: "按钮的<code>aria-labelledby</code>值为空或不匹配页面上其他元素的<code>id</code>值。",

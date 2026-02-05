@@ -361,6 +361,8 @@ export default {
     META_MAX:
       'Уверете се, че параметърът <code>maximum-scale</code> в <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">meta таг на изгледа</a> не е по-малък от 2.',
     META_REFRESH: 'Страницата не трябва да се обновява автоматично с помощта на meta таг.',
+    META_LANG_SUGGEST: 'Следният езиков код <code>%(CODE)</code> не е валиден. Имахте предвид <code>%(CODE)</code>?',
+    META_LANG_VALID: 'Езиковият код на страницата <code>%(CODE)</code> не е валиден. Моля, <a href="https://www.w3.org/International/questions/qa-html-language-declarations">обявете валиден език в HTML тага.</a>',
 
     // Buttons
     BTN_EMPTY: 'Бутонът няма достъпно име, което да описва неговата цел.',

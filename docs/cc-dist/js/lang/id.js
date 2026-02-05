@@ -262,6 +262,8 @@ const id = {
     META_SCALABLE: 'Hapus parameter <code>user-scalable="no"</code> dalam <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">tag meta viewport</a> untuk memungkinkan zoom.',
     META_MAX: 'Pastikan parameter <code>maximum-scale</code> dalam <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">tag meta viewport</a> tidak kurang dari 2.',
     META_REFRESH: "Halaman seharusnya tidak menyegarkan secara otomatis menggunakan tag meta.",
+    META_LANG_SUGGEST: "Kode bahasa berikut <code>%(CODE)</code> tidak valid. Apakah maksud Anda <code>%(CODE)</code>?",
+    META_LANG_VALID: 'Kode bahasa halaman <code>%(CODE)</code> tidak valid. Silakan <a href="https://www.w3.org/International/questions/qa-html-language-declarations">deklarasikan bahasa yang valid pada tag HTML.</a>',
     // Buttons
     BTN_EMPTY: "Tombol tidak memiliki nama aksesibel yang menjelaskan tujuannya.",
     BTN_EMPTY_LABELLEDBY: "Tombol memiliki nilai <code>aria-labelledby</code> yang kosong atau tidak sesuai dengan nilai <code>id</code> dari elemen lain di halaman.",

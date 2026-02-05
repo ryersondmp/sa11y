@@ -399,6 +399,8 @@ export default {
     META_MAX:
       '<a href="https://developer.mozilla.org/ja/docs/Web/HTML/Viewport_meta_tag">ビューポートのメタタグ</a>の <code>maximum-scale</code> パラメータが 2 未満でないことを確認してください。',
     META_REFRESH: 'ページはメタタグを使用して自動的に更新されるべきではありません。',
+    META_LANG_SUGGEST: '次の言語コード <code>%(CODE)</code> は無効です。もしかして <code>%(CODE)</code> ですか？',
+    META_LANG_VALID: 'ページの言語コード <code>%(CODE)</code> は無効です。<a href="https://www.w3.org/International/questions/qa-html-language-declarations">HTMLタグで有効な言語を宣言してください。</a>',
 
     // Buttons
     BTN_EMPTY: 'ボタンにはその目的を説明するアクセシブルな名前がありません。',

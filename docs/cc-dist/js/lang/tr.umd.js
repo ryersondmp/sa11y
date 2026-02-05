@@ -268,6 +268,8 @@
       META_SCALABLE: '<a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">Görünüm meta etiketi</a> içindeki <code>user-scalable="no"</code> parametresini kaldırarak büyütmeye izin verin.',
       META_MAX: `<a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">Görünüm meta etiketi</a> içindeki <code>maximum-scale</code> parametresinin 2'den küçük olmadığından emin olun.`,
       META_REFRESH: "Sayfa bir meta etiketi kullanılarak otomatik olarak yenilenmemelidir.",
+      META_LANG_SUGGEST: "Aşağıdaki dil kodu <code>%(CODE)</code> geçerli değil. Bunu mu demek istediniz: <code>%(CODE)</code>?",
+      META_LANG_VALID: 'Sayfa dil kodu <code>%(CODE)</code> geçerli değil. Lütfen <a href="https://www.w3.org/International/questions/qa-html-language-declarations">HTML etiketinde geçerli bir dil belirtin.</a>',
       // Buttons
       BTN_EMPTY: "Düğme, amacını açıklayan erişilebilir bir ada sahip değil.",
       BTN_EMPTY_LABELLEDBY: "Düğmenin boş bir <code>aria-labelledby</code> değeri var veya sayfadaki başka bir öğenin <code>id</code> değeri ile eşleşmiyor.",

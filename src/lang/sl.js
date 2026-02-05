@@ -362,6 +362,8 @@ export default {
     META_MAX:
       'Poskrbite, da parameter <code>maximum-scale</code> v <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">meta oznaki pogleda</a> ni manjši od 2.',
     META_REFRESH: 'Stran se ne sme samodejno osveževati z uporabo meta oznake.',
+    META_LANG_SUGGEST: 'Naslednja jezikovna koda <code>%(CODE)</code> ni veljavna. Ali ste mislili <code>%(CODE)</code>?',
+    META_LANG_VALID: 'Jezikovna koda strani <code>%(CODE)</code> ni veljavna. Prosimo, <a href="https://www.w3.org/International/questions/qa-html-language-declarations">deklarirajte veljaven jezik v oznaki HTML.</a>',
 
     // Buttons
     BTN_EMPTY: 'Gumb nima dostopnega imena, ki bi opisovalo njegov namen.',

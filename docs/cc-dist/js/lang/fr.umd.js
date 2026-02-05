@@ -269,6 +269,8 @@
       META_SCALABLE: 'Supprimez le paramètre <code>user-scalable="no"</code> dans la <a href="https://developer.mozilla.org/fr/docs/Web/HTML/Viewport_meta_tag">balise meta viewport</a> pour permettre le zoom.',
       META_MAX: `Assurez-vous que le paramètre <code>maximum-scale</code> dans la <a href="https://developer.mozilla.org/fr/docs/Web/HTML/Viewport_meta_tag">balise meta viewport</a> n'est pas inférieur à 2.`,
       META_REFRESH: "La page ne doit pas se rafraîchir automatiquement en utilisant une balise meta.",
+      META_LANG_SUGGEST: "Le code de langue suivant <code>%(CODE)</code> n'est pas valide. Vouliez-vous dire <code>%(CODE)</code>?",
+      META_LANG_VALID: `Le code de langue de la page <code>%(CODE)</code> n'est pas valide. Veuillez <a href="https://www.w3.org/International/questions/qa-html-language-declarations">déclarer une langue valide sur la balise HTML.</a>`,
       // Buttons
       BTN_EMPTY: "Le bouton manque d’un nom accessible qui décrit son objectif.",
       BTN_EMPTY_LABELLEDBY: "Le bouton a une valeur <code>aria-labelledby</code> qui est vide ou ne correspond pas à la valeur <code>id</code> d’un autre élément sur la page.",

@@ -268,6 +268,8 @@
       META_SCALABLE: 'Eliminați parametrul <code>user-scalable="no"</code> din <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">meta tag-ul viewport</a> pentru a permite mărirea.',
       META_MAX: 'Asigurați-vă că parametrul <code>maximum-scale</code> din <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">meta tag-ul viewport</a> nu este mai mic de 2.',
       META_REFRESH: "Pagina nu ar trebui să se reîmprospăteze automat folosind o etichetă meta.",
+      META_LANG_SUGGEST: "Următorul cod de limbă <code>%(CODE)</code> nu este valid. Ați vrut să spuneți <code>%(CODE)</code>?",
+      META_LANG_VALID: 'Codul de limbă al paginii <code>%(CODE)</code> nu este valid. Vă rugăm să <a href="https://www.w3.org/International/questions/qa-html-language-declarations">declarați o limbă validă în eticheta HTML.</a>',
       // Button
       BTN_EMPTY: "Butonul nu are un nume accesibil care să descrie scopul său.",
       BTN_EMPTY_LABELLEDBY: "Butonul are o valoare <code>aria-labelledby</code> care este goală sau nu se potrivește cu valoarea <code>id</code> a altui element din pagină.",

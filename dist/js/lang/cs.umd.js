@@ -268,6 +268,8 @@
       META_SCALABLE: 'Odstraňte parametr <code>user-scalable="no"</code> v <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">meta tagu pro viewport</a>, abyste umožnili přibližování.',
       META_MAX: 'Ujistěte se, že parametr <code>maximum-scale</code> v <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">meta tagu pro viewport</a> není menší než 2.',
       META_REFRESH: "Stránka by se neměla automaticky obnovovat pomocí meta tagu.",
+      META_LANG_SUGGEST: "Následující kód jazyka <code>%(CODE)</code> není platný. Mysleli jste <code>%(CODE)</code>?",
+      META_LANG_VALID: 'Kód jazyka stránky <code>%(CODE)</code> není platný. Prosím <a href="https://www.w3.org/International/questions/qa-html-language-declarations">deklarujte platný jazyk v tagu HTML.</a>',
       // Buttons
       BTN_EMPTY: "Tlačítku chybí přístupné jméno, které popisuje jeho účel.",
       BTN_EMPTY_LABELLEDBY: "Tlačítko má hodnotu <code>aria-labelledby</code>, která je prázdná nebo neodpovídá hodnotě <code>id</code> jiného prvku na stránce.",

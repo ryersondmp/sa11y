@@ -899,3 +899,36 @@ export async function dismissDigest(pepper, message) {
   const hashArray = Array.from(new Uint8Array(hashBuffer));
   return hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
 }
+
+let langCache;
+/**
+ * Validates BCP 47 language code using Intl API with safe handling.
+ * @param {string} code
+ * @returns {{valid: boolean, suggest?: string}}
+ */
+export function validateLang(code, displayLangCode) {
+  if (typeof code !== 'string') return { valid: false };
+  const norm = code.trim().replace(/_/g, '-');
+  if (!langCache && typeof Intl !== 'undefined') {
+    try {
+      langCache = new Intl.DisplayNames([displayLangCode], { type: 'language', fallback: 'none' });
+    } catch {}
+  }
+
+  if (langCache) {
+    // Safe helper to catch RangeErrors from invalid structures (e.g., "123")
+    const check = (val) => {
+      try {
+        return langCache.of(val);
+      } catch {
+        return false;
+      }
+    };
+    if (check(code)) return { valid: true };
+    if (check(norm)) return { valid: false, suggest: norm };
+    return { valid: false };
+  }
+
+  // Regex fallback for pre-2021 browsers.
+  return { valid: /^[a-z]{2,3}(-[a-z]{4})?(-[a-z]{2,4})?$/i.test(norm) };
+}

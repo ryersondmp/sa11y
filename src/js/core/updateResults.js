@@ -22,10 +22,9 @@ export default async function updateResults() {
   const isDevOff = !devChecks || devChecks === 'Off';
 
   // 1. Data filtering:
-  // a) Filter out issues that are outside of the target root.
-  // b) Filter out dev checks if toggled off or using externally supplied developer checks.
-  // c) Filter out "Good" annotations for images that have an error or warning (page language detection conflict).
   State.results = State.results.filter((issue, _, src) => {
+    // a) Filter out issues that are outside of the target root.
+    // b) Filter out dev checks if toggled off or using externally supplied developer checks.
     if (
       issue.isWithinRoot === false ||
       ((isDevOff || option.externalDeveloperChecks) && issue.developer) ||
@@ -33,6 +32,7 @@ export default async function updateResults() {
     )
       return false;
 
+    // c) Filter out "Good" annotations for images that have an error or warning (page language detection conflict).
     if (
       State.option.langOfPartsPlugin &&
       issue?.element?.tagName === 'IMG' &&
@@ -45,6 +45,15 @@ export default async function updateResults() {
           i.element?.alt === issue.element?.alt,
       );
     }
+
+    // d) Filter out page language confidence check if page lang isn't valid or missing.
+    if (State.option.langOfPartsPlugin && issue.test === 'PAGE_LANG_CONFIDENCE') {
+      return !src.some(
+        (i) =>
+          i.test === 'META_LANG' || i.test === 'META_LANG_SUGGEST' || i.test === 'META_LANG_VALID',
+      );
+    }
+
     return true;
   });
 

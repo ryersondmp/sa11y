@@ -362,6 +362,8 @@ export default {
     META_MAX:
       'Győződjön meg arról, hogy a <code>maximum-scale</code> paraméter a <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">nézet meta tagjében</a> nem kisebb, mint 2.',
     META_REFRESH: 'Az oldalnak nem szabad automatikusan frissülnie meta címke segítségével.',
+    META_LANG_SUGGEST: 'A következő nyelvkód <code>%(CODE)</code> nem érvényes. Erre gondolt: <code>%(CODE)</code>?',
+    META_LANG_VALID: 'Az oldal nyelvkódja <code>%(CODE)</code> nem érvényes. Kérjük, <a href="https://www.w3.org/International/questions/qa-html-language-declarations">adjon meg egy érvényes nyelvet a HTML tag-ben.</a>',
 
     // Buttons
     BTN_EMPTY: 'A gomb hiányzik egy akadálymentes névvel, amely leírja annak célját.',

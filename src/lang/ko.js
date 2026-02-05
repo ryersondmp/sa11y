@@ -362,6 +362,8 @@ export default {
     META_MAX:
       '<a href="https://developer.mozilla.org/ko/docs/Web/HTML/Viewport_meta_tag">뷰포트 메타 태그</a>에서 <code>maximum-scale</code> 매개변수가 2보다 작지 않도록 하십시오.',
     META_REFRESH: '페이지는 메타 태그를 사용하여 자동으로 새로고침되지 않아야 합니다.',
+    META_LANG_SUGGEST: '다음 언어 코드 <code>%(CODE)</code>가 유효하지 않습니다. <code>%(CODE)</code>를 의미하셨나요?',
+    META_LANG_VALID: '페이지 언어 코드 <code>%(CODE)</code>가 유효하지 않습니다. <a href="https://www.w3.org/International/questions/qa-html-language-declarations">HTML 태그에 유효한 언어를 선언해 주세요.</a>',
 
     // Buttons
     BTN_EMPTY: '버튼에 그 목적을 설명하는 접근 가능한 이름이 없습니다.',

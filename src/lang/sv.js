@@ -379,6 +379,8 @@ export default {
     META_MAX:
       'Se till att parametern <code>maximum-scale</code> i <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">meta-taggen för vyport</a> inte är mindre än 2.',
     META_REFRESH: 'Sidan ska inte automatiskt uppdateras med hjälp av en meta-tagg.',
+    META_LANG_SUGGEST: 'Följande språkkod <code>%(CODE)</code> är inte giltig. Menade du <code>%(CODE)</code>?',
+    META_LANG_VALID: 'Sidans språkkod <code>%(CODE)</code> är inte giltig. <a href="https://www.w3.org/International/questions/qa-html-language-declarations">Deklarera ett giltigt språk i HTML-taggen.</a>',
 
     // Buttons
     BTN_EMPTY: 'Knappen saknar ett tillgängligt namn som beskriver dess syfte.',

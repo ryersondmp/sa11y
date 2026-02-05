@@ -358,6 +358,8 @@ export default {
     META_MAX:
       'Varmista, että <code>maximum-scale</code>-parametri <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">meta tagissa</a> ei ole alle 2.',
     META_REFRESH: 'Sivua ei tule päivittää automaattisesti meta-tagin avulla.',
+    META_LANG_SUGGEST: 'Seuraava kielikoodi <code>%(CODE)</code> ei ole kelvollinen. Tarkoititko <code>%(CODE)</code>?',
+    META_LANG_VALID: 'Sivun kielikoodi <code>%(CODE)</code> ei ole kelvollinen. Ole hyvä ja <a href="https://www.w3.org/International/questions/qa-html-language-declarations">ilmoita kelvollinen kieli HTML-tagissa.</a>',
 
     // Buttons
     BTN_EMPTY: 'Painikkeesta puuttuu saavutettava nimi, joka kuvaisi sen tarkoitusta.',
