@@ -295,6 +295,7 @@
     };
   };
   function removeAlert() {
+    if (State.option.headless) return;
     const Sa11yPanel = document.querySelector("sa11y-control-panel").shadowRoot;
     const alert = Sa11yPanel.getElementById("panel-alert");
     const alertText = Sa11yPanel.getElementById("panel-alert-text");
@@ -309,6 +310,7 @@
     }
   }
   function createAlert(alertMessage, errorPreview, extendedPreview) {
+    if (State.option.headless) return;
     removeAlert();
     const Sa11yPanel = document.querySelector("sa11y-control-panel").shadowRoot;
     const alert = Sa11yPanel.getElementById("panel-alert");
@@ -806,12 +808,19 @@
   function fnIgnore(element, selectors = []) {
     const baseIgnores = "noscript,script,style,audio,video,form,iframe";
     const ignoreQuery = selectors.length ? `${baseIgnores},${selectors.join(",")}` : baseIgnores;
-    if (element.matches(ignoreQuery)) return null;
-    function cloneTree(node) {
+    if (!element || element.nodeType !== Node.ELEMENT_NODE) {
+      return element ? element.cloneNode(true) : null;
+    }
+    function cloneTree(node, isRoot = false) {
       const type = node.nodeType;
       if (type === Node.ELEMENT_NODE) {
-        if (node.matches(ignoreQuery)) return null;
+        if (node.matches(ignoreQuery) && !isRoot) {
+          return null;
+        }
         const clone = node.cloneNode(false);
+        if (node.matches(ignoreQuery) && isRoot) {
+          return clone;
+        }
         let child = node.firstChild;
         while (child) {
           const clonedChild = cloneTree(child);
@@ -823,7 +832,7 @@
       if (type === Node.TEXT_NODE) return node.cloneNode(true);
       return null;
     }
-    return cloneTree(element);
+    return cloneTree(element, true);
   }
   const gotText = /* @__PURE__ */ new WeakMap();
   function getText(element) {

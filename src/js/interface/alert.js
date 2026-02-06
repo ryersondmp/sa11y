@@ -1,9 +1,13 @@
+import { State } from '../core/state';
+
 /**
  * Removes the alert from the Sa11y control panel by clearing its content and removing CSS classes.
  * This function clears the content of the alert element and removes CSS classes 'active' from the main alert element, and 'panel-alert-preview' from the alert preview element.
  * @returns {void}
  */
 export function removeAlert() {
+  if (State.option.headless) return;
+
   const Sa11yPanel = document.querySelector('sa11y-control-panel').shadowRoot;
   const alert = Sa11yPanel.getElementById('panel-alert');
   const alertText = Sa11yPanel.getElementById('panel-alert-text');
@@ -27,6 +31,8 @@ export function removeAlert() {
  * @returns {void}
  */
 export function createAlert(alertMessage, errorPreview, extendedPreview) {
+  if (State.option.headless) return;
+
   // Clear alert first before creating new one.
   removeAlert();
 

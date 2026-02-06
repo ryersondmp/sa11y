@@ -226,17 +226,27 @@ export function fnIgnore(element, selectors = []) {
   const baseIgnores = 'noscript,script,style,audio,video,form,iframe';
   const ignoreQuery = selectors.length ? `${baseIgnores},${selectors.join(',')}` : baseIgnores;
 
-  // 2. If the root matches, return null immediately.
-  if (element.matches(ignoreQuery)) return null;
+  // Safety check: if it's not an element, return a clone or null.
+  if (!element || element.nodeType !== Node.ELEMENT_NODE) {
+    return element ? element.cloneNode(true) : null;
+  }
 
-  function cloneTree(node) {
+  function cloneTree(node, isRoot = false) {
     const type = node.nodeType;
+
     if (type === Node.ELEMENT_NODE) {
-      // Check ignore list BEFORE cloning.
-      if (node.matches(ignoreQuery)) return null;
+      // If a CHILD matches, skip it.
+      if (node.matches(ignoreQuery) && !isRoot) {
+        return null;
+      }
+
       const clone = node.cloneNode(false);
 
-      // Recursively clone children and append them to the NEW parent.
+      // If the root was an ignored tag, we return the empty shell.
+      if (node.matches(ignoreQuery) && isRoot) {
+        return clone;
+      }
+
       let child = node.firstChild;
       while (child) {
         const clonedChild = cloneTree(child);
@@ -246,13 +256,11 @@ export function fnIgnore(element, selectors = []) {
       return clone;
     }
 
-    // Handle text nodes.
     if (type === Node.TEXT_NODE) return node.cloneNode(true);
     return null;
   }
 
-  // 3. Start the clone process
-  return cloneTree(element);
+  return cloneTree(element, true);
 }
 
 /**
