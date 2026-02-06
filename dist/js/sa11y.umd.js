@@ -6212,14 +6212,16 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header]).join(",")).j
           return;
         }
       }
-      const decorative = alt === "";
+      let decorative = alt === "";
       const figure = $el.closest("figure");
       const figcaption = figure?.querySelector("figcaption");
       const figcaptionText = figcaption ? getText(figcaption) : "";
       const maxAltCharactersLinks = State.option.checks.LINK_IMAGE_LONG_ALT.maxLength || 250;
       const maxAltCharacters = State.option.checks.IMAGE_ALT_TOO_LONG.maxLength || 250;
-      const startsWithSpecificAlt = alt.match(altPlaceholderPattern)?.[0];
-      if (decorative || startsWithSpecificAlt) {
+      if (!decorative && State.option.altPlaceholder.length) {
+        decorative = alt.match(altPlaceholderPattern)?.[0];
+      }
+      if (decorative) {
         const carouselSources = State.option.checks.IMAGE_DECORATIVE_CAROUSEL.sources;
         const carousel = carouselSources ? $el.closest(carouselSources) : "";
         if (carousel) {
