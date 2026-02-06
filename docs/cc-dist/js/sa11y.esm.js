@@ -8473,7 +8473,8 @@ const setCache = (data) => {
 async function checkPageLanguage() {
   if (!State.option.langOfPartsPlugin) return;
   if (!await getLanguageDetector()) return;
-  const declared = Elements.Found.Language;
+  if (!State.option.langOfPartsCache) store.removeItem(STORAGE_KEY);
+  const declared = Elements.Found.Language ? primary(Elements.Found.Language) : null;
   if (!declared) return;
   const pageText = (Elements.Found.pageText || []).join(" ");
   if (pageText.length < 100) {
@@ -8516,7 +8517,7 @@ async function checkPageLanguage() {
   }
   const detector = await getLanguageDetector();
   const detected = await detector.detect(pageText);
-  const detectedLangCode = detected[0].detectedLanguage;
+  const detectedLangCode = primary(detected[0].detectedLanguage);
   let test = null;
   let type = null;
   let content = null;
@@ -8524,7 +8525,7 @@ async function checkPageLanguage() {
   let dismiss = null;
   let confidence = null;
   let variables = null;
-  if (primary(detectedLangCode) !== primary(declared)) {
+  if (detectedLangCode !== declared) {
     test = "PAGE_LANG_CONFIDENCE";
     content = Lang.sprintf(
       State.option.checks.PAGE_LANG_CONFIDENCE.content || "PAGE_LANG_CONFIDENCE",
@@ -8545,7 +8546,7 @@ async function checkPageLanguage() {
       declared
     });
   }
-  if (primary(detectedLangCode) === primary(declared)) {
+  if (detectedLangCode === declared) {
     const confidenceTarget = State.option.PAGE_LANG_CONFIDENCE?.confidence || 0.95;
     if (detected[0].confidence >= confidenceTarget) {
       setCache({
@@ -8567,11 +8568,12 @@ async function checkPageLanguage() {
       const nodeText = normalizeString(textString);
       if (nodeText.length <= 30) continue;
       const detectNode = await detector.detect(nodeText);
-      const nodeLang = detectNode[0].detectedLanguage;
+      const nodeLang = primary(detectNode[0].detectedLanguage);
       const nodeConfidence = detectNode[0].confidence;
-      const langAttribute = node?.getAttribute("lang");
+      const langAttribute = node?.getAttribute("lang") ? primary(node.getAttribute("lang")) : null;
       if (nodeLang !== declared && nodeConfidence >= 0.6) {
-        if (langAttribute && primary(langAttribute) === primary(nodeLang)) continue;
+        if (nodeLang === declared) continue;
+        if (langAttribute && langAttribute === nodeLang) continue;
         if (langAttribute && langAttribute !== nodeLang) {
           test = "LANG_MISMATCH";
           content = Lang.sprintf(

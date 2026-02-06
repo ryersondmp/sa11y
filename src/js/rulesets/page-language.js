@@ -94,9 +94,10 @@ export default async function checkPageLanguage() {
   // Hard return if neither page language checks are enabled or if feature not supported.
   if (!State.option.langOfPartsPlugin) return;
   if (!(await getLanguageDetector())) return;
+  if (!State.option.langOfPartsCache) Utils.store.removeItem(STORAGE_KEY);
 
   // Get the declared page language.
-  const declared = Elements.Found.Language;
+  const declared = Elements.Found.Language ? primary(Elements.Found.Language) : null;
   if (!declared) return;
 
   // Leverage existing DOM query for readability given it's an expensive check.
@@ -156,7 +157,7 @@ export default async function checkPageLanguage() {
   const detected = await detector.detect(pageText);
 
   // Identify the primary and secondary page languages.
-  const detectedLangCode = detected[0].detectedLanguage;
+  const detectedLangCode = primary(detected[0].detectedLanguage);
 
   // Cache data.
   let test = null;
@@ -168,7 +169,7 @@ export default async function checkPageLanguage() {
   let variables = null;
 
   // Declared page language doesn't match the detected content.
-  if (primary(detectedLangCode) !== primary(declared)) {
+  if (detectedLangCode !== declared) {
     test = 'PAGE_LANG_CONFIDENCE';
     content = Lang.sprintf(
       State.option.checks.PAGE_LANG_CONFIDENCE.content || 'PAGE_LANG_CONFIDENCE',
@@ -191,7 +192,7 @@ export default async function checkPageLanguage() {
   }
 
   // If declared page language matches most likely language.
-  if (primary(detectedLangCode) === primary(declared)) {
+  if (detectedLangCode === declared) {
     // Pass if we're 90% confident.
     const confidenceTarget = State.option.PAGE_LANG_CONFIDENCE?.confidence || 0.95;
     if (detected[0].confidence >= confidenceTarget) {
@@ -227,13 +228,14 @@ export default async function checkPageLanguage() {
 
       // Node data.
       const detectNode = await detector.detect(nodeText);
-      const nodeLang = detectNode[0].detectedLanguage;
+      const nodeLang = primary(detectNode[0].detectedLanguage);
       const nodeConfidence = detectNode[0].confidence;
-      const langAttribute = node?.getAttribute('lang');
+      const langAttribute = node?.getAttribute('lang') ? primary(node.getAttribute('lang')) : null;
 
       if (nodeLang !== declared && nodeConfidence >= 0.6) {
         // Lang attribute matches detected language of node.
-        if (langAttribute && primary(langAttribute) === primary(nodeLang)) continue;
+        if (nodeLang === declared) continue;
+        if (langAttribute && langAttribute === nodeLang) continue;
 
         // Language tag doesn't match.
         if (langAttribute && langAttribute !== nodeLang) {
