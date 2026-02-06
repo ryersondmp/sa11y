@@ -8573,7 +8573,7 @@ async function checkPageLanguage() {
       const langAttribute = node?.getAttribute("lang") ? primary(node.getAttribute("lang")) : null;
       if (nodeLang !== declared && nodeConfidence >= 0.6) {
         if (nodeLang === declared || langAttribute === nodeLang) continue;
-        if (langAttribute !== nodeLang) {
+        if (langAttribute && langAttribute !== nodeLang) {
           test = "LANG_MISMATCH";
           content = Lang.sprintf(
             State.option.checks.LANG_MISMATCH.content || "LANG_MISMATCH",
