@@ -211,8 +211,12 @@ const defaultOptions = {
     QA_NESTED_COMPONENTS: {
       sources: ""
     },
-    QA_JUSTIFY: true,
-    QA_SMALL_TEXT: true,
+    QA_JUSTIFY: {
+      dismissAll: true
+    },
+    QA_SMALL_TEXT: {
+      dismissAll: true
+    },
     // Meta checks
     META_LANG: true,
     META_LANG_VALID: true,
@@ -8073,7 +8077,7 @@ function checkQA() {
       type: State.option.checks.QA_JUSTIFY.type || "warning",
       content: Lang.sprintf(State.option.checks.QA_JUSTIFY.content || "QA_JUSTIFY"),
       dismiss: prepareDismissal(`QA_JUSTIFY ${$el.textContent}`),
-      dismissAll: State.option.checks.QA_JUSTIFY.dismissAll ? "QA_JUSTIFY" : false,
+      dismissAll: State.option.checks.QA_JUSTIFY.dismissAll ? "QA_JUSTIFY" : true,
       developer: State.option.checks.QA_JUSTIFY.developer || false
     });
   };
@@ -8084,7 +8088,7 @@ function checkQA() {
       type: State.option.checks.QA_SMALL_TEXT.type || "warning",
       content: Lang.sprintf(State.option.checks.QA_SMALL_TEXT.content || "QA_SMALL_TEXT"),
       dismiss: prepareDismissal(`QA_SMALL_TEXT ${$el.textContent}`),
-      dismissAll: State.option.checks.QA_SMALL_TEXT.dismissAll ? "QA_SMALL_TEXT" : false,
+      dismissAll: State.option.checks.QA_SMALL_TEXT.dismissAll ? "QA_SMALL_TEXT" : true,
       developer: State.option.checks.QA_SMALL_TEXT.developer || false
     });
   };

@@ -479,7 +479,7 @@ export default function checkQA() {
       type: State.option.checks.QA_JUSTIFY.type || 'warning',
       content: Lang.sprintf(State.option.checks.QA_JUSTIFY.content || 'QA_JUSTIFY'),
       dismiss: Utils.prepareDismissal(`QA_JUSTIFY ${$el.textContent}`),
-      dismissAll: State.option.checks.QA_JUSTIFY.dismissAll ? 'QA_JUSTIFY' : false,
+      dismissAll: State.option.checks.QA_JUSTIFY.dismissAll ? 'QA_JUSTIFY' : true,
       developer: State.option.checks.QA_JUSTIFY.developer || false,
     });
   };
@@ -491,7 +491,7 @@ export default function checkQA() {
       type: State.option.checks.QA_SMALL_TEXT.type || 'warning',
       content: Lang.sprintf(State.option.checks.QA_SMALL_TEXT.content || 'QA_SMALL_TEXT'),
       dismiss: Utils.prepareDismissal(`QA_SMALL_TEXT ${$el.textContent}`),
-      dismissAll: State.option.checks.QA_SMALL_TEXT.dismissAll ? 'QA_SMALL_TEXT' : false,
+      dismissAll: State.option.checks.QA_SMALL_TEXT.dismissAll ? 'QA_SMALL_TEXT' : true,
       developer: State.option.checks.QA_SMALL_TEXT.developer || false,
     });
   };

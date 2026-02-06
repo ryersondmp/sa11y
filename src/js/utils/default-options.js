@@ -214,8 +214,12 @@ const defaultOptions = {
     QA_NESTED_COMPONENTS: {
       sources: '',
     },
-    QA_JUSTIFY: true,
-    QA_SMALL_TEXT: true,
+    QA_JUSTIFY: {
+      dismissAll: true,
+    },
+    QA_SMALL_TEXT: {
+      dismissAll: true,
+    },
 
     // Meta checks
     META_LANG: true,
