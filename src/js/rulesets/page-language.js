@@ -237,7 +237,7 @@ export default async function checkPageLanguage() {
         if (nodeLang === declared || langAttribute === nodeLang) continue;
 
         // Language tag doesn't match.
-        if (langAttribute !== nodeLang) {
+        if (langAttribute && langAttribute !== nodeLang) {
           test = 'LANG_MISMATCH';
           content =
             Lang.sprintf(
