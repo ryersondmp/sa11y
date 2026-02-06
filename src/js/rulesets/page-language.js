@@ -233,12 +233,11 @@ export default async function checkPageLanguage() {
       const langAttribute = node?.getAttribute('lang') ? primary(node.getAttribute('lang')) : null;
 
       if (nodeLang !== declared && nodeConfidence >= 0.6) {
-        // Lang attribute matches detected language of node.
-        if (nodeLang === declared) continue;
-        if (langAttribute && langAttribute === nodeLang) continue;
+        // Node or lang attribute matches detected language of node.
+        if (nodeLang === declared || langAttribute === nodeLang) continue;
 
         // Language tag doesn't match.
-        if (langAttribute && langAttribute !== nodeLang) {
+        if (langAttribute !== nodeLang) {
           test = 'LANG_MISMATCH';
           content =
             Lang.sprintf(

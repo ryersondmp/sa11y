@@ -8576,9 +8576,8 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header]).join(",")).j
         const nodeConfidence = detectNode[0].confidence;
         const langAttribute = node?.getAttribute("lang") ? primary(node.getAttribute("lang")) : null;
         if (nodeLang !== declared && nodeConfidence >= 0.6) {
-          if (nodeLang === declared) continue;
-          if (langAttribute && langAttribute === nodeLang) continue;
-          if (langAttribute && langAttribute !== nodeLang) {
+          if (nodeLang === declared || langAttribute === nodeLang) continue;
+          if (langAttribute !== nodeLang) {
             test = "LANG_MISMATCH";
             content = Lang.sprintf(
               State.option.checks.LANG_MISMATCH.content || "LANG_MISMATCH",
