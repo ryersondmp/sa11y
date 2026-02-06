@@ -246,10 +246,6 @@ const Constants = (function myConstants() {
   const Readability = {};
   function initializeReadability() {
     if (State.option.readabilityPlugin) {
-      // Set `readabilityLang` property based on language file.
-      Readability.Lang = Lang._('LANG_CODE').substring(0, 2);
-
-      // Supported readability languages.
       const supported = [
         'en',
         'fr',
@@ -265,20 +261,16 @@ const Constants = (function myConstants() {
         'nn',
         'pt',
       ];
+      const langCode = Lang._('LANG_CODE').substring(0, 2);
+      const pageLang = Constants.Global.html.getAttribute('lang')?.toLowerCase().substring(0, 2);
 
-      // Turn off readability if page language is not defined.
-      const pageLang = Constants.Global.html.getAttribute('lang');
-      if (!pageLang) {
-        Readability.Plugin = false;
-      } else {
-        // Turn off readability if page language is not supported.
-        const pageLangLowerCase = pageLang.toLowerCase().substring(0, 2);
-        if (!supported.includes(pageLangLowerCase) || !supported.includes(Readability.Lang)) {
-          Readability.Plugin = false;
-        } else {
-          Readability.Plugin = true;
-        }
-      }
+      // Set the language property.
+      Readability.Lang = langCode;
+
+      // Validate: Must have a page language AND both must be in the supported list.
+      const isSupported = pageLang && supported.includes(pageLang) && supported.includes(langCode);
+
+      Readability.Plugin = Boolean(isSupported);
     }
   }
 

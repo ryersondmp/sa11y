@@ -531,7 +531,6 @@ const Constants = /* @__PURE__ */ (function myConstants() {
   const Readability = {};
   function initializeReadability() {
     if (State.option.readabilityPlugin) {
-      Readability.Lang = Lang._("LANG_CODE").substring(0, 2);
       const supported = [
         "en",
         "fr",
@@ -547,17 +546,11 @@ const Constants = /* @__PURE__ */ (function myConstants() {
         "nn",
         "pt"
       ];
-      const pageLang = Constants.Global.html.getAttribute("lang");
-      if (!pageLang) {
-        Readability.Plugin = false;
-      } else {
-        const pageLangLowerCase = pageLang.toLowerCase().substring(0, 2);
-        if (!supported.includes(pageLangLowerCase) || !supported.includes(Readability.Lang)) {
-          Readability.Plugin = false;
-        } else {
-          Readability.Plugin = true;
-        }
-      }
+      const langCode = Lang._("LANG_CODE").substring(0, 2);
+      const pageLang = Constants.Global.html.getAttribute("lang")?.toLowerCase().substring(0, 2);
+      Readability.Lang = langCode;
+      const isSupported = pageLang && supported.includes(pageLang) && supported.includes(langCode);
+      Readability.Plugin = Boolean(isSupported);
     }
   }
   const Exclusions = {};
