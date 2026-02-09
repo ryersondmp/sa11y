@@ -6993,6 +6993,7 @@ function checkContrast() {
       });
       continue;
     }
+    if (color && color[3] === 0) continue;
     if (background.type === "image") {
       const extractColours = extractColorFromString(background.value);
       const hasFailure = !extractColours || extractColours.some(

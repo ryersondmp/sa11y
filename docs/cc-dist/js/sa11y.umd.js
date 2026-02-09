@@ -6997,6 +6997,7 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header]).join(",")).j
         });
         continue;
       }
+      if (color && color[3] === 0) continue;
       if (background.type === "image") {
         const extractColours = extractColorFromString(background.value);
         const hasFailure = !extractColours || extractColours.some(

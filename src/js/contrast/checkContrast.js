@@ -68,6 +68,9 @@ export default function checkContrast() {
       continue;
     }
 
+    // Skip if foreground text is transparent.
+    if (color && color[3] === 0) continue;
+
     // Process background images and gradients.
     if (background.type === 'image') {
       const extractColours = Contrast.extractColorFromString(background.value);
