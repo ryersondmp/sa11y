@@ -200,6 +200,7 @@ export default async function checkPageLanguage() {
         key: cacheKey,
         textLength: pageText.length,
         declared: declared,
+        confidence: detected[0].confidence,
       });
       return;
     }
@@ -249,7 +250,7 @@ export default async function checkPageLanguage() {
         } else if (node.nodeName === 'IMG' && node?.alt?.length !== 0) {
           // Alt text is in different language.
           const alt = Utils.sanitizeHTML(node.alt);
-          const altText = Utils.removeWhitespace(alt);
+          const altText = Utils.truncateString(alt, 600);
           test = 'LANG_OF_PARTS_ALT';
           content =
             Lang.sprintf(
@@ -289,7 +290,6 @@ export default async function checkPageLanguage() {
           textLength: pageText.length,
           declared: declared,
         });
-        break;
       }
     }
   }

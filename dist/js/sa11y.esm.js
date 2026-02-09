@@ -75,7 +75,6 @@ const defaultOptions = {
   externalDeveloperChecks: false,
   colourFilterPlugin: true,
   exportResultsPlugin: false,
-  langOfPartsPlugin: false,
   // Options for accName computation: Ignore ARIA on these elements.
   ignoreAriaOnElements: false,
   // e.g. 'h1,h2,h3,h4,h5,h6'
@@ -88,6 +87,8 @@ const defaultOptions = {
   extraPlaceholderStopWords: "",
   imageWithinLightbox: "",
   initialHeadingLevel: [],
+  // Shared properties for page language detection
+  langOfPartsPlugin: false,
   langOfPartsCache: true,
   // All checks
   checks: {
@@ -8552,7 +8553,8 @@ async function checkPageLanguage() {
       setCache({
         key: cacheKey,
         textLength: pageText.length,
-        declared
+        declared,
+        confidence: detected[0].confidence
       });
       return;
     }
@@ -8583,7 +8585,7 @@ async function checkPageLanguage() {
           variables = [nodeLang, langAttribute];
         } else if (node.nodeName === "IMG" && node?.alt?.length !== 0) {
           const alt = sanitizeHTML(node.alt);
-          const altText = removeWhitespace(alt);
+          const altText = truncateString(alt, 600);
           test = "LANG_OF_PARTS_ALT";
           content = Lang.sprintf(
             State.option.checks.LANG_OF_PARTS_ALT.content || "LANG_OF_PARTS_ALT",
@@ -8616,7 +8618,6 @@ async function checkPageLanguage() {
           textLength: pageText.length,
           declared
         });
-        break;
       }
     }
   }

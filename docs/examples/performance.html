@@ -17664,7 +17664,10 @@
   <script src="../cc-dist/js/lang/en.umd.js"></script>
   <script>
     Sa11y.Lang.addI18n(Sa11yLangEn.strings);
-    const sa11y = new Sa11y.Sa11y({});
+    const sa11y = new Sa11y.Sa11y({
+      langOfPartsCache: 1,
+      langOfPartsPlugin: true,
+    });
   </script>
   <!-- End of Sa11y-->
 </body>

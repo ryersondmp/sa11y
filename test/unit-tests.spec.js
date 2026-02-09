@@ -65,7 +65,6 @@ test.describe('Sa11y Unit Tests', () => {
   test('Navigate to unit test page and toggle Sa11y', async () => {
     // Navigate to unit tests page.
     await page.goto('http://localhost:8080/test/pages/unit-tests.html');
-
     // Toggle main toggle.
     await page.evaluate(async () => {
       await new Promise((resolve) => {
