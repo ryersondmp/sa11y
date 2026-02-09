@@ -8479,8 +8479,9 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header]).join(",")).j
     if (!State.option.langOfPartsPlugin) return;
     if (!await getLanguageDetector()) return;
     if (!State.option.langOfPartsCache) store.removeItem(STORAGE_KEY);
-    const declared = Elements.Found.Language ? primary(Elements.Found.Language) : null;
-    if (!declared) return;
+    const isDeclaredValid = Elements.Found.Language ? validateLang(Elements.Found.Language) : null;
+    if (!isDeclaredValid) return;
+    const declared = primary(Elements.Found.Language);
     const pageText = (Elements.Found.pageText || []).join(" ");
     if (pageText.length < 100) {
       console.warn("Sa11y: Not enough content on this page to determine page language.");

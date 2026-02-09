@@ -96,9 +96,14 @@ export default async function checkPageLanguage() {
   if (!(await getLanguageDetector())) return;
   if (!State.option.langOfPartsCache) Utils.store.removeItem(STORAGE_KEY);
 
-  // Get the declared page language.
-  const declared = Elements.Found.Language ? primary(Elements.Found.Language) : null;
-  if (!declared) return;
+  // Check validity of declared page language.
+  const isDeclaredValid = Elements.Found.Language
+    ? Utils.validateLang(Elements.Found.Language)
+    : null;
+  if (!isDeclaredValid) return;
+
+  // Get primary lang code.
+  const declared = primary(Elements.Found.Language);
 
   // Leverage existing DOM query for readability given it's an expensive check.
   const pageText = (Elements.Found.pageText || []).join(' ');
