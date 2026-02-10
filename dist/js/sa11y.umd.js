@@ -7418,6 +7418,14 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header]).join(",")).j
               });
             }
           } else if (State.option.checks.LABELS_ARIA_LABEL_INPUT) {
+            const ariaLabelledBy = $el.getAttribute("aria-labelledby");
+            if (ariaLabelledBy) {
+              const ids = ariaLabelledBy.trim().split(/\s+/);
+              if (ids.length === 1) {
+                const target = find(`#${ids[0]}`, "root")?.[0];
+                if (target && !isElementHidden(target)) return;
+              }
+            }
             const sanitizedText = sanitizeHTML(inputName);
             State.results.push({
               test: "LABELS_ARIA_LABEL_INPUT",
@@ -7433,9 +7441,7 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header]).join(",")).j
         }
         const closestLabel = $el.closest("label");
         const labelName = closestLabel ? removeWhitespace(computeAccessibleName(closestLabel)) : "";
-        if (closestLabel && labelName.length) {
-          return;
-        }
+        if (closestLabel && labelName.length) return;
         const id = $el.getAttribute("id");
         if (id) {
           if (!Elements.Found.Labels.some((label) => label.getAttribute("for") === id)) {
@@ -8484,10 +8490,7 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header]).join(",")).j
     if (!isDeclaredValid) return;
     const declared = primary(Elements.Found.Language);
     const pageText = (Elements.Found.pageText || []).join(" ");
-    if (pageText.length < 100) {
-      console.warn("Sa11y: Not enough content on this page to determine page language.");
-      return;
-    }
+    if (pageText.length < 100) return;
     const cacheKey = window.location.href;
     const cached = getCache().find((item) => item.key === cacheKey);
     const langChanged = cached?.declared && cached.declared !== declared;

@@ -26,6 +26,27 @@
   </header>
   <main>
 
+    <h2>aria-labelledby on inputs shouldn't flag warning for invisible labels</h2>
+    <div id="lorem" hidden>Lorem</div>
+    <div id="ipsum">Ipsum</div>
+    <div class="filter-contents keyword-wrapper details-wrapper"><label for="cs-keyword"
+        id="filter-keywords-label">Keyword
+        Search</label> <input id="cs-keyword" class="form-control" name="keyword"
+        aria-labelledby="filter-keywords-label lorem ipsum" value="">
+      <p><small>Search title, description, instructor, or subject &amp; catalog number (e.g.
+          COS126).</small></p>
+    </div>
+
+    <label for="cs-keyword2" id="filter-keywords-label2">Keyword
+      Search</label> <input id="cs-keyword2" class="form-control" name="keyword"
+      aria-labelledby="filter-keywords-label2" value="">
+    <p><small>Search title, description, instructor, or subject &amp; catalog number (e.g.
+        COS126).</small></p>
+    </div>
+
+    <hr>
+
+    <h2>Remove false positive for fake heading detection</h2>
     <p><strong>New College West and Yeh College</strong><br> named for a gift from Jaimie and James Yeh '87,
       opened
       in

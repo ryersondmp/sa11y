@@ -3,6 +3,7 @@ import Elements from '../utils/elements';
 import Lang from '../utils/lang';
 import * as Utils from '../utils/utils';
 import { State } from '../core/state';
+import find from '../utils/find';
 
 export default function checkLabels() {
   if (State.option.formLabelsPlugin) {
@@ -111,6 +112,17 @@ export default function checkLabels() {
             });
           }
         } else if (State.option.checks.LABELS_ARIA_LABEL_INPUT) {
+          // Deal with aria-labelledby attributes. More complex (multi value) will throw a warning.
+          const ariaLabelledBy = $el.getAttribute('aria-labelledby');
+          if (ariaLabelledBy) {
+            const ids = ariaLabelledBy.trim().split(/\s+/);
+            if (ids.length === 1) {
+              const target = find(`#${ids[0]}`, 'root')?.[0];
+              if (target && !Utils.isElementHidden(target)) return;
+            }
+          }
+
+          // Everything else that is not visible (aria-label, title, placeholder).
           const sanitizedText = Utils.sanitizeHTML(inputName);
           State.results.push({
             test: 'LABELS_ARIA_LABEL_INPUT',
@@ -134,9 +146,7 @@ export default function checkLabels() {
       const labelName = closestLabel
         ? Utils.removeWhitespace(computeAccessibleName(closestLabel))
         : '';
-      if (closestLabel && labelName.length) {
-        return;
-      }
+      if (closestLabel && labelName.length) return;
 
       // Check to see if each label has a matching for and it attribute.
       const id = $el.getAttribute('id');

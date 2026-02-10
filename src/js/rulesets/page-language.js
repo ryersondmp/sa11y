@@ -105,12 +105,9 @@ export default async function checkPageLanguage() {
   // Get primary lang code.
   const declared = primary(Elements.Found.Language);
 
-  // Leverage existing DOM query for readability given it's an expensive check.
+  // Only run analysis on page if more than 100 characters.
   const pageText = (Elements.Found.pageText || []).join(' ');
-  if (pageText.length < 100) {
-    console.warn('Sa11y: Not enough content on this page to determine page language.');
-    return;
-  }
+  if (pageText.length < 100) return;
 
   // Generate a unique cache key so we're not running this function frequently.
   const cacheKey = window.location.href;
