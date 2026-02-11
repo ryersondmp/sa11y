@@ -1,6 +1,6 @@
 /*!
       * Sa11y, the accessibility quality assurance assistant.
-      * @version 4.4.2
+      * @version 4.5.0
       * @author Adam Chaboryk
       * @license GPL-2.0-or-later
       * @copyright © 2020 - 2026 Toronto Metropolitan University.
@@ -25,6 +25,7 @@ const defaultOptions = {
   linkIgnoreStrings: [],
   paragraphIgnore: "table p",
   ignoreContentOutsideRoots: false,
+  ignoreByTest: {},
   // Control panel settings
   aboutContent: "",
   panelPosition: "right",
@@ -828,7 +829,7 @@ function fnIgnore(element, selectors = []) {
   }
   return cloneTree(element, true);
 }
-const gotText = /* @__PURE__ */ new WeakMap();
+let gotText = /* @__PURE__ */ new WeakMap();
 function getText(element) {
   if (gotText.has(element)) {
     return gotText.get(element);
@@ -837,6 +838,9 @@ function getText(element) {
   const text = ignore.textContent.replace(/[\r\n]+/g, "").replace(/\s+/g, " ").trim();
   gotText.set(element, text);
   return text;
+}
+function resetGetText() {
+  gotText = /* @__PURE__ */ new WeakMap();
 }
 function removeWhitespace(string) {
   return string.replace(/[\r\n]+/g, " ").replace(/\s+/g, " ").trim();
@@ -1270,6 +1274,7 @@ const Utils = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.definePropert
   remove,
   removeWhitespace,
   resetAttributes,
+  resetGetText,
   sanitizeHTML,
   sanitizeHTMLBlock,
   sanitizeURL,
@@ -1466,7 +1471,7 @@ ${this.error.stack}
 
 ## Details
 - **URL:** ${url2}
-- **Version:** ${"4.4.2"}
+- **Version:** ${"4.5.0"}
 
 ## Comments
 `;
@@ -1476,7 +1481,7 @@ ${this.error.stack}
       <button class="close-btn" aria-label="${Lang._("ALERT_CLOSE")}"></button>
       <h2>${Lang._("ERROR")}</h2>
       <p>${Lang.sprintf("CONSOLE_ERROR", google, github)}</p>
-      <p class="error">${escapeHTML(this.error.stack)}<br><br>Version: ${"4.4.2"} <br> URL: ${url2}</p>
+      <p class="error">${escapeHTML(this.error.stack)}<br><br>Version: ${"4.5.0"} <br> URL: ${url2}</p>
     `;
     shadow.appendChild(content);
     setTimeout(() => {
@@ -1912,6 +1917,7 @@ async function resetAll(restartPanel = true) {
   if (restartPanel) {
     Constants.Panel.panel.classList.remove("active");
   }
+  resetGetText();
   resetState();
 }
 function initializeDismissals() {
@@ -6018,6 +6024,7 @@ class PanelTooltips extends HTMLElement {
 }
 async function updateResults() {
   const { option } = State;
+  const ignoreByTest = option.ignoreByTest || {};
   const devChecks = store.getItem("sa11y-developer");
   const isDevOff = !devChecks || devChecks === "Off";
   State.results = State.results.filter((issue, _, src) => {
@@ -6032,6 +6039,13 @@ async function updateResults() {
       return !src.some(
         (i) => i.test === "META_LANG" || i.test === "META_LANG_SUGGEST" || i.test === "META_LANG_VALID"
       );
+    }
+    if (ignoreByTest[issue.test] && issue.element) {
+      try {
+        if (issue.element.matches(ignoreByTest[issue.test])) return false;
+      } catch (e) {
+        console.error(`Sa11y: Invalid CSS selector for ignoreByTest prop "${issue.test}"`, e);
+      }
     }
     return true;
   });
@@ -6499,7 +6513,7 @@ function checkHeaders() {
         dismissAll = State.option.checks.HEADING_EMPTY.dismissAll ? "HEADING_EMPTY" : false;
         margin = "0";
       }
-    } else if (level - prevLevel > 1 && i !== 0) {
+    } else if (level - prevLevel > 1 && (i !== 0 || headingStartsOverride)) {
       if (State.option.checks.HEADING_SKIPPED_LEVEL) {
         test = "HEADING_SKIPPED_LEVEL";
         type = State.option.checks.HEADING_SKIPPED_LEVEL.type || "error";
@@ -8922,7 +8936,7 @@ class ControlPanel extends HTMLElement {
     const container = document.createElement("div");
     container.setAttribute("id", "container");
     container.setAttribute("role", "region");
-    container.setAttribute("data-sa11y-version", "4.4.2");
+    container.setAttribute("data-sa11y-version", "4.5.0");
     container.setAttribute("lang", Lang._("LANG_CODE"));
     container.setAttribute("aria-label", Lang._("CONTAINER_LABEL"));
     container.setAttribute("dir", Constants.Global.langDirection);

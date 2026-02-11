@@ -1308,6 +1308,7 @@ test.describe('Sa11y Unit Tests', () => {
       'nothing-input-4',
       'nothing-input-5',
       'nothing-input-6',
+      'nothing-input-7'
     ];
     ids.forEach(async (id) => {
       const issue = await noAnnotation(page, id);

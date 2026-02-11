@@ -17,6 +17,9 @@ import Constants from '../utils/constants';
 export default async function updateResults() {
   const { option } = State;
 
+  // Ignore by test key
+  const ignoreByTest = option.ignoreByTest || {};
+
   // Get developer checks.
   const devChecks = Utils.store.getItem('sa11y-developer');
   const isDevOff = !devChecks || devChecks === 'Off';
@@ -52,6 +55,15 @@ export default async function updateResults() {
         (i) =>
           i.test === 'META_LANG' || i.test === 'META_LANG_SUGGEST' || i.test === 'META_LANG_VALID',
       );
+    }
+
+    // e) Ignore by test key
+    if (ignoreByTest[issue.test] && issue.element) {
+      try {
+        if (issue.element.matches(ignoreByTest[issue.test])) return false;
+      } catch (e) {
+        console.error(`Sa11y: Invalid CSS selector for ignoreByTest prop "${issue.test}"`, e);
+      }
     }
 
     return true;

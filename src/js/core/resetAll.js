@@ -104,6 +104,9 @@ export async function resetAll(restartPanel = true) {
     Constants.Panel.panel.classList.remove('active');
   }
 
+  // Reset cached getText();
+  Utils.resetGetText();
+
   // Reset state.
   resetState();
 }

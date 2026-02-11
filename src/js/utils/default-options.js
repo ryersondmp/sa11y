@@ -16,6 +16,7 @@ const defaultOptions = {
   linkIgnoreStrings: [],
   paragraphIgnore: 'table p',
   ignoreContentOutsideRoots: false,
+  ignoreByTest: {},
 
   // Control panel settings
   aboutContent: '',

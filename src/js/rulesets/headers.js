@@ -72,7 +72,7 @@ export default function checkHeaders() {
         dismissAll = State.option.checks.HEADING_EMPTY.dismissAll ? 'HEADING_EMPTY' : false;
         margin = '0';
       }
-    } else if (level - prevLevel > 1 && i !== 0) {
+    } else if (level - prevLevel > 1 && (i !== 0 || headingStartsOverride)) {
       if (State.option.checks.HEADING_SKIPPED_LEVEL) {
         test = 'HEADING_SKIPPED_LEVEL';
         type = State.option.checks.HEADING_SKIPPED_LEVEL.type || 'error';
