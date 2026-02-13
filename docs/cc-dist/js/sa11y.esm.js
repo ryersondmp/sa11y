@@ -7567,11 +7567,11 @@ function computeReadability(textArray, lang) {
     const avgWordsPerSentence = Number((words / sentences).toFixed(1));
     const complexWords = Math.round(100 * ((words - (syllables1 + syllables2)) / words));
     let difficultyToken;
-    if (fleschScore >= 0 && fleschScore < 30) {
+    if (fleschScore <= 30) {
       difficultyToken = "VERY_DIFFICULT";
-    } else if (fleschScore > 31 && fleschScore < 49) {
+    } else if (fleschScore <= 50) {
       difficultyToken = "DIFFICULT";
-    } else if (fleschScore > 50 && fleschScore < 60) {
+    } else if (fleschScore <= 60) {
       difficultyToken = "FAIRLY_DIFFICULT";
     } else {
       difficultyToken = "GOOD";
@@ -7599,11 +7599,11 @@ function computeReadability(textArray, lang) {
     const avgWordsPerSentence = Number((wordCount / sentenceCount).toFixed(1));
     const complexWords = Math.round(100 * (longWordsCount / wordCount));
     let difficultyToken;
-    if (score >= 0 && score < 39) {
+    if (score <= 40) {
       difficultyToken = "GOOD";
-    } else if (score > 40 && score < 50) {
+    } else if (score <= 50) {
       difficultyToken = "FAIRLY_DIFFICULT";
-    } else if (score > 51 && score < 61) {
+    } else if (score <= 60) {
       difficultyToken = "DIFFICULT";
     } else {
       difficultyToken = "VERY_DIFFICULT";
