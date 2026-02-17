@@ -153,7 +153,7 @@ export default function checkLinkText() {
        */
       if (hasAria && linkText.length !== 0) {
         // Computed accessible name,
-        const sanitizedText = Utils.sanitizeHTML(linkText);
+        const escapedText = Utils.escapeHTML(linkText);
 
         // General warning for visible non-descript link text, regardless of ARIA label.
         const excludeSpan = Utils.fnIgnore($el, Constants.Exclusions.LinkSpan);
@@ -176,12 +176,8 @@ export default function checkLinkText() {
             element: $el,
             type: State.option.checks.LINK_STOPWORD_ARIA.type || 'warning',
             content: State.option.checks.LINK_STOPWORD_ARIA.content
-              ? Lang.sprintf(
-                  State.option.checks.LINK_STOPWORD_ARIA.content,
-                  stopword,
-                  sanitizedText,
-                )
-              : Lang.sprintf('LINK_STOPWORD_ARIA', stopword, sanitizedText) +
+              ? Lang.sprintf(State.option.checks.LINK_STOPWORD_ARIA.content, stopword, escapedText)
+              : Lang.sprintf('LINK_STOPWORD_ARIA', stopword, escapedText) +
                 Lang.sprintf('LINK_TIP'),
             inline: true,
             dismiss: Utils.prepareDismissal(`LINK_STOPWORD_ARIA ${strippedLinkText}`),
@@ -202,7 +198,7 @@ export default function checkLinkText() {
             type: State.option.checks.LABEL_IN_NAME.type || 'warning',
             content: Lang.sprintf(
               State.option.checks.LABEL_IN_NAME.content || 'LABEL_IN_NAME',
-              sanitizedText,
+              escapedText,
             ),
             inline: true,
             position: 'afterend',
@@ -217,8 +213,8 @@ export default function checkLinkText() {
             element: $el,
             type: State.option.checks.LINK_LABEL.type || 'good',
             content: State.option.checks.LINK_LABEL.content
-              ? Lang.sprintf(State.option.checks.LINK_LABEL.content, sanitizedText)
-              : `${Lang.sprintf('ACC_NAME', sanitizedText)} ${Lang.sprintf('ACC_NAME_TIP')}`,
+              ? Lang.sprintf(State.option.checks.LINK_LABEL.content, escapedText)
+              : `${Lang.sprintf('ACC_NAME', escapedText)} ${Lang.sprintf('ACC_NAME_TIP')}`,
             inline: true,
             position: 'afterend',
             dismiss: Utils.prepareDismissal(`LINK_LABEL ${strippedLinkText}`),
@@ -485,14 +481,14 @@ export default function checkLinkText() {
         const ignored = $el.ariaHidden === 'true' && $el.getAttribute('tabindex') === '-1';
         const hasAttributes = $el.hasAttribute('role') || $el.hasAttribute('disabled');
         if (State.option.checks.LINK_IDENTICAL_NAME && !hasAttributes && !ignored) {
-          const sanitizedText = Utils.sanitizeHTML(linkText);
+          const escapedText = Utils.escapeHTML(linkText);
           State.results.push({
             test: 'LINK_IDENTICAL_NAME',
             element: $el,
             type: State.option.checks.LINK_IDENTICAL_NAME.type || 'warning',
             content: State.option.checks.LINK_IDENTICAL_NAME.content
-              ? Lang.sprintf(State.option.checks.LINK_IDENTICAL_NAME.content, sanitizedText)
-              : `${Lang.sprintf('LINK_IDENTICAL_NAME', sanitizedText)} ${Lang.sprintf('ACC_NAME_TIP')}`,
+              ? Lang.sprintf(State.option.checks.LINK_IDENTICAL_NAME.content, escapedText)
+              : `${Lang.sprintf('LINK_IDENTICAL_NAME', escapedText)} ${Lang.sprintf('ACC_NAME_TIP')}`,
             inline: true,
             dismiss: Utils.prepareDismissal(`LINK_IDENTICAL_NAME ${strippedLinkText}`),
             dismissAll: State.option.checks.LINK_IDENTICAL_NAME.dismissAll

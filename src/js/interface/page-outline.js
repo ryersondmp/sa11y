@@ -28,7 +28,7 @@ export default function generatePageOutline() {
         outlineItem = `<li><div class="badge error-badge"><span aria-hidden="true"><span class="error-icon"></span></span> ${Lang._('TITLE')}</div> <div class="badge error-badge">${Lang._('MISSING')}</div></li>`;
       } else {
         const titleText = Utils.getText(metaTitleElement);
-        outlineItem = `<li><span class="badge">${Lang._('TITLE')}</span> ${Utils.sanitizeHTML(titleText)}</li>`;
+        outlineItem = `<li><span class="badge">${Lang._('TITLE')}</span> ${Utils.escapeHTML(titleText)}</li>`;
       }
       outlineArray.push(outlineItem);
     }

@@ -135,16 +135,16 @@ export default function checkQA() {
     Elements.Found.Blockquotes.forEach(($el) => {
       const text = Utils.getText($el);
       if (text.length !== 0 && text.length < 25) {
-        const sanitizedText = Utils.sanitizeHTML(text);
+        const escapedText = Utils.escapeHTML(text);
         State.results.push({
           test: 'QA_BLOCKQUOTE',
           element: $el,
           type: State.option.checks.QA_BLOCKQUOTE.type || 'warning',
           content: Lang.sprintf(
             State.option.checks.QA_BLOCKQUOTE.content || 'QA_BLOCKQUOTE',
-            sanitizedText,
+            escapedText,
           ),
-          dismiss: Utils.prepareDismissal(`QA_BLOCKQUOTE ${sanitizedText}`),
+          dismiss: Utils.prepareDismissal(`QA_BLOCKQUOTE ${escapedText}`),
           dismissAll: State.option.checks.QA_BLOCKQUOTE.dismissAll ? 'QA_BLOCKQUOTE' : false,
           developer: State.option.checks.QA_BLOCKQUOTE.developer || false,
         });
@@ -218,16 +218,16 @@ export default function checkQA() {
   /*  Warning: Detect fake headings                                     */
   /* ****************************************************************** */
   if (State.option.checks.QA_FAKE_HEADING) {
-    const addResult = (element, sanitizedText) => {
+    const addResult = (element, escapedText) => {
       State.results.push({
         test: 'QA_FAKE_HEADING',
         element,
         type: State.option.checks.QA_FAKE_HEADING.type || 'warning',
         content: Lang.sprintf(
           State.option.checks.QA_FAKE_HEADING.content || 'QA_FAKE_HEADING',
-          sanitizedText,
+          escapedText,
         ),
-        dismiss: Utils.prepareDismissal(`QA_FAKE_HEADING ${sanitizedText}`),
+        dismiss: Utils.prepareDismissal(`QA_FAKE_HEADING ${escapedText}`),
         inline: true,
         dismissAll: State.option.checks.QA_FAKE_HEADING.dismissAll ? 'QA_FAKE_HEADING' : false,
         developer: State.option.checks.QA_FAKE_HEADING.developer || false,
@@ -257,8 +257,8 @@ export default function checkQA() {
         maybeSentence &&
         !isPreviousElementAHeading(p)
       ) {
-        const sanitizedText = Utils.sanitizeHTML(getText);
-        addResult(p, sanitizedText);
+        const escapedText = Utils.escapeHTML(getText);
+        addResult(p, escapedText);
       }
     };
 
@@ -289,7 +289,7 @@ export default function checkQA() {
       if (paragraph && paragraph.length <= 250) return;
 
       // Ok, it's most likely a fake heading.
-      addResult(possibleHeading, Utils.sanitizeHTML(text));
+      addResult(possibleHeading, Utils.escapeHTML(text));
     };
 
     Elements.Found.Paragraphs.forEach((p) => {

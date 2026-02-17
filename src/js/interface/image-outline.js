@@ -80,10 +80,10 @@ export default function generateImageOutline() {
 
       // Get image object's properties.
       const { element, type, developer, dismissedImage } = image;
-      const altText =
-        computeAriaLabel(element) === 'noAria'
-          ? Utils.escapeHTML(element.getAttribute('alt'))
-          : computeAriaLabel(element);
+      const ariaLabel = computeAriaLabel(element);
+      const rawAlt =
+        ariaLabel === 'noAria' ? (element.getAttribute('alt') ?? '') : (ariaLabel ?? '');
+      const altText = Utils.escapeHTML(rawAlt);
 
       // Check visibility of image.
       const hidden = Utils.isElementVisuallyHiddenOrHidden(element);
@@ -109,16 +109,16 @@ export default function generateImageOutline() {
       // Generate edit link if locally hosted image and prop is enabled.
       const edit = State.option.editImageURLofCMS ? generateEditLink(image) : '';
 
-      // Image is decorative (has null alt)
-      const decorative =
-        element.hasAttribute('alt') && altText === ''
-          ? `<div class="badge">${Lang._('DECORATIVE')}</div>`
-          : '';
+      // Decorative.
+      let decorative = rawAlt === '';
 
       // If alt text starts with a very specific string provided via props; treat as decorative.
-      const startsWithSpecificAlt = State.option.altPlaceholder?.some((text) =>
-        altText.toLowerCase().startsWith(text.toLowerCase()),
-      );
+      if (!decorative && State.option.altPlaceholder.length) {
+        const altPlaceholderPattern = Utils.generateRegexString(State.option.altPlaceholder, true);
+        decorative = rawAlt.match(altPlaceholderPattern)?.[0];
+      }
+
+      const isDecorative = decorative ? `<div class="badge">${Lang._('DECORATIVE')}</div>` : '';
 
       // If image is linked.
       const anchor = State.option.imageWithinLightbox
@@ -140,7 +140,7 @@ export default function generateImageOutline() {
           <button type="button" tabindex="-1">
             <img src="${source}" alt/>
             <div class="alt"> ${visibleIcon} ${linked} ${missing}
-              <div class="badge"><span class="error-icon"></span><span class="visually-hidden">${Lang._('ERROR')}</span> ${Lang._('ALT')}</div> <strong class="red-text">${startsWithSpecificAlt ? '' : altText}</strong>
+              <div class="badge"><span class="error-icon"></span><span class="visually-hidden">${Lang._('ERROR')}</span> ${Lang._('ALT')}</div> <strong class="red-text">${decorative ? '' : altText}</strong>
             </div>
           </button>
           ${edit}
@@ -151,8 +151,8 @@ export default function generateImageOutline() {
         <li class="warning">
           <button type="button" tabindex="-1">
             <img src="${source}" alt/>
-            <div class="alt"> ${visibleIcon} ${linked} ${decorative}
-              <div class="badge"><span aria-hidden="true">&#63;</span> <span class="visually-hidden">${Lang._('WARNING')}</span> ${Lang._('ALT')}</div> <strong class="yellow-text">${startsWithSpecificAlt ? '' : altText}</strong>
+            <div class="alt"> ${visibleIcon} ${linked} ${isDecorative}
+              <div class="badge"><span aria-hidden="true">&#63;</span> <span class="visually-hidden">${Lang._('WARNING')}</span> ${Lang._('ALT')}</div> <strong class="yellow-text">${decorative ? '' : altText}</strong>
             </div>
           </button>
           ${edit}
@@ -163,8 +163,8 @@ export default function generateImageOutline() {
         <li class="good">
           <button type="button" tabindex="-1">
             <img src="${source}" alt/>
-            <div class="alt"> ${visibleIcon} ${linked} ${decorative}
-              <div class="badge">${Lang._('ALT')}</div> ${startsWithSpecificAlt ? '' : altText}
+            <div class="alt"> ${visibleIcon} ${linked} ${isDecorative}
+              <div class="badge">${Lang._('ALT')}</div> ${decorative ? '' : altText}
             </div>
           </button>
           ${edit}

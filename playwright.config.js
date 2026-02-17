@@ -23,6 +23,9 @@ export default defineConfig({
     // headless: false,
   },
 
+  // Stop highlighting errors in /src/
+  testIgnore: '**/src/**',
+
   /* Configure projects for major browsers */
   projects: [
     {

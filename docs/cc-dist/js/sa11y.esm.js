@@ -725,12 +725,8 @@ function isElementVisuallyHiddenOrHidden(element) {
   }
   return isElementHidden(element);
 }
-function escapeHTML(string) {
-  const div2 = document.createElement("div");
-  div2.textContent = string;
-  return div2.innerHTML.replaceAll('"', "&quot;").replaceAll("'", "&#039;").replaceAll("`", "&#x60;");
-}
 function decodeHTML(string) {
+  if (!string) return "";
   return string.replace(/&(#?[a-zA-Z0-9]+);/g, (match, entity) => {
     switch (entity) {
       case "amp":
@@ -755,50 +751,101 @@ function decodeHTML(string) {
   });
 }
 function stripHTMLtags(string) {
+  if (!string) return "";
   return string.replace(/<[^>]*>/g, "");
 }
 function stripAllSpecialCharacters(string) {
+  if (!string) return "";
   return string.replace(/[^\p{L}\p{N}\s]/gu, "").replace(/\s+/g, " ").trim();
 }
-function sanitizeHTML(string) {
+function escapeHTML(string) {
+  if (!string) return "";
   return string.replace(/[^\w. ]/gi, (c) => `&#${c.charCodeAt(0)};`);
 }
-function sanitizeURL(string) {
-  if (!string) return "#";
-  const sanitizedInput = String(string).trim();
-  if (/^javascript:/i.test(sanitizedInput)) return "#";
-  if (/^data:/i.test(sanitizedInput)) return "#";
-  const protocols = ["http:", "https:", "mailto:", "tel:", "ftp:"];
-  const hasValidProtocol = protocols.some(
-    (protocol) => sanitizedInput.toLowerCase().startsWith(protocol)
-  );
-  if (!hasValidProtocol && !sanitizedInput.startsWith("/") && !sanitizedInput.startsWith("#")) {
-    return `./${sanitizedInput}`;
-  }
-  const cleanedString = sanitizedInput.replace(/<[^>]*>/g, "");
-  return encodeURI(cleanedString);
+const invalidProtocolRegex = /^([^\w]*)(javascript|data|vbscript)/im;
+const htmlEntitiesRegex = /&#(\w+)(^\w|;)?/g;
+const htmlCtrlEntityRegex = /&(newline|tab);/gi;
+const ctrlCharactersRegex = (
+  // biome-ignore lint/suspicious/noControlCharactersInRegex: original lib.
+  /[\u0000-\u001F\u007F-\u009F\u2000-\u200D\uFEFF]/gim
+);
+const urlSchemeRegex = /^.+(:|&colon;)/gim;
+const whitespaceEscapeCharsRegex = /(\\|%5[cC])((%(6[eE]|72|74))|[nrt])/g;
+const relativeFirstCharacters = [".", "/"];
+const BLANK_URL = "about:blank";
+function isRelativeUrlWithoutProtocol(url2) {
+  return relativeFirstCharacters.indexOf(url2[0]) > -1;
 }
-function sanitizeHTMLBlock(html, allowStyles = false) {
-  const tempDiv = document.createElement("div");
-  tempDiv.innerHTML = html;
-  ["script", "style", "noscript", "iframe", "form"].forEach((tag) => {
-    const elements = tempDiv.getElementsByTagName(tag);
-    while (elements.length > 0) {
-      elements[0].parentNode.removeChild(elements[0]);
-    }
+function decodeHtmlCharacters(str) {
+  const removedNullByte = str.replace(ctrlCharactersRegex, "");
+  return removedNullByte.replace(htmlEntitiesRegex, (match, dec) => {
+    return String.fromCharCode(dec);
   });
-  const allElements = Array.from(tempDiv.getElementsByTagName("*"));
-  allElements.forEach((element) => {
-    Array.from(element.attributes).forEach((attr) => {
-      if (attr.name.startsWith("on")) {
-        element.removeAttribute(attr.name);
+}
+function isValidUrl(url2) {
+  if (typeof URL.canParse === "function") {
+    return URL.canParse(url2);
+  }
+  try {
+    const parsedUrl = new URL(url2);
+    return Boolean(parsedUrl);
+  } catch {
+    return false;
+  }
+}
+const decodeURIs = (uri) => {
+  try {
+    return decodeURIComponent(uri);
+  } catch {
+    return uri;
+  }
+};
+function sanitizeURL(url2) {
+  if (!url2) return BLANK_URL;
+  let charsToDecode;
+  let decodedUrl = decodeURIs(url2.trim());
+  do {
+    decodedUrl = decodeHtmlCharacters(decodedUrl).replace(htmlCtrlEntityRegex, "").replace(ctrlCharactersRegex, "").replace(whitespaceEscapeCharsRegex, "").trim();
+    decodedUrl = decodeURIs(decodedUrl);
+    charsToDecode = decodedUrl.match(ctrlCharactersRegex) || decodedUrl.match(htmlEntitiesRegex) || decodedUrl.match(htmlCtrlEntityRegex) || decodedUrl.match(whitespaceEscapeCharsRegex);
+  } while (charsToDecode && charsToDecode.length > 0);
+  const sanitizedUrl = decodedUrl;
+  if (!sanitizedUrl) return BLANK_URL;
+  if (isRelativeUrlWithoutProtocol(sanitizedUrl)) return sanitizedUrl;
+  const trimmedUrl = sanitizedUrl.trimStart();
+  const urlSchemeParseResults = trimmedUrl.match(urlSchemeRegex);
+  if (!urlSchemeParseResults) return sanitizedUrl;
+  const urlScheme = urlSchemeParseResults[0].toLowerCase().trim();
+  if (invalidProtocolRegex.test(urlScheme)) return BLANK_URL;
+  const backSanitized = trimmedUrl.replace(/\\/g, "/");
+  if (urlScheme === "mailto:" || urlScheme.includes("://")) return backSanitized;
+  if (urlScheme === "http:" || urlScheme === "https:") {
+    if (!isValidUrl(backSanitized)) return BLANK_URL;
+    const url3 = new URL(backSanitized);
+    url3.protocol = url3.protocol.toLowerCase();
+    url3.hostname = url3.hostname.toLowerCase();
+    return url3.toString();
+  }
+  return backSanitized;
+}
+function sanitizeHTML(string) {
+  const doc = new DOMParser().parseFromString(string, "text/html");
+  const dangerousTags = "script, iframe, object, embed, applet, style";
+  doc.body.querySelectorAll(dangerousTags).forEach((node) => {
+    node.remove();
+  });
+  doc.body.querySelectorAll("*").forEach((node) => {
+    [...node.attributes].forEach(({ name, value }) => {
+      const val = value.replace(/\s+/g, "").toLowerCase();
+      const isEvent = name.startsWith("on");
+      const isUrl = ["src", "href", "xlink:href"].includes(name);
+      const isPhishy = val.includes("javascript:") || val.includes("data:text/html") || val.includes("vbscript:");
+      if (isEvent || isUrl && isPhishy) {
+        node.removeAttribute(name);
       }
     });
-    if (!allowStyles) {
-      element.removeAttribute("style");
-    }
   });
-  return tempDiv.innerHTML;
+  return doc.body.innerHTML;
 }
 function fnIgnore(element, selectors = []) {
   const baseIgnores = "noscript,script,style,audio,video,form,iframe";
@@ -1015,14 +1062,10 @@ function getBestImageSource(element) {
   const getLastSrc = (src) => src?.split(/,\s+/).pop()?.trim()?.split(/\s+/)[0];
   const resolveUrl = (src) => src ? new URL(src, window.location.href).href : null;
   const dataSrc = getLastSrc(element.getAttribute("data-src") || element.getAttribute("srcset"));
-  if (dataSrc) {
-    return resolveUrl(dataSrc);
-  }
-  const picture = element.closest("picture")?.querySelector("source[srcset]")?.getAttribute("srcset");
-  const pictureSrc = getLastSrc(picture);
-  if (pictureSrc) {
-    return resolveUrl(pictureSrc);
-  }
+  if (dataSrc) return resolveUrl(dataSrc);
+  const pictureSrcset = element.closest("picture")?.querySelector("source[srcset]")?.getAttribute("srcset");
+  const pictureSrc = getLastSrc(pictureSrcset);
+  if (pictureSrc) return resolveUrl(pictureSrc);
   return resolveUrl(element.getAttribute("src"));
 }
 const blobToBase64 = (blob) => new Promise((resolve, reject) => {
@@ -1040,13 +1083,36 @@ const blobToBase64 = (blob) => new Promise((resolve, reject) => {
 });
 function generateElementPreview(issueObject, convertBase64 = false) {
   const issueElement = issueObject.element;
-  const cleanHTML = sanitizeHTMLBlock(issueObject.htmlPath);
-  const truncatedHTML = truncateString(cleanHTML, 600);
-  const htmlPath = `<pre><code>${escapeHTML(truncatedHTML)}</code></pre>`;
+  const cleanHTML = sanitizeHTML(issueObject.htmlPath);
+  const truncatedHTML = truncateString(cleanHTML, 400);
+  const escapedHTML = escapeHTML(truncatedHTML);
+  const htmlPath = `<pre><code>${escapedHTML}</code></pre>`;
   const simple = (element) => {
     const text = getText(element);
     const truncatedText = truncateString(text, 100);
-    return text.length ? sanitizeHTML(truncatedText) : htmlPath;
+    return text.length ? escapeHTML(truncatedText) : htmlPath;
+  };
+  const reconstructMedia = (type, element) => {
+    const rawSrc = element.getAttribute("src");
+    const safeMainSrc = rawSrc ? sanitizeURL(rawSrc) : null;
+    const controls = element.hasAttribute("controls") ? "controls" : "";
+    const muted = element.hasAttribute("muted") ? "muted" : "";
+    const poster = type === "video" ? element.getAttribute("poster") : null;
+    const safePoster = poster ? sanitizeURL(poster) : null;
+    let innerHTML3 = "";
+    if (!safeMainSrc) {
+      const sources = element.querySelectorAll("source");
+      sources.forEach((source) => {
+        const s = source.getAttribute("src");
+        const t = source.getAttribute("type");
+        if (s) {
+          innerHTML3 += `<source src="${sanitizeURL(s)}" ${t ? `type="${escapeHTML(t)}"` : ""}>`;
+        }
+      });
+    }
+    const srcPart = safeMainSrc ? `src="${safeMainSrc}"` : "";
+    const posterPart = safePoster ? `poster="${safePoster}"` : "";
+    return `<${type} ${srcPart} ${posterPart} ${controls} ${muted}>${innerHTML3}</${type}>`;
   };
   const tag = {
     SPAN: simple,
@@ -1055,42 +1121,30 @@ function generateElementPreview(issueObject, convertBase64 = false) {
       const text = getText(element);
       const truncatedText = truncateString(text, 100);
       if (text.length > 1 && element.href && !element.hasAttribute("role")) {
-        return `<a href="${sanitizeURL(element.href)}">${sanitizeHTML(truncatedText)}</a>`;
+        return `<a href="${sanitizeURL(element.href)}">${escapeHTML(truncatedText)}</a>`;
       }
       return htmlPath;
     },
     IMG: (element) => {
+      const src = getBestImageSource(element);
+      if (!src) return htmlPath;
       const anchor = element.closest("a[href]");
       const alt = element.alt ? `alt="${sanitizeHTML(element.alt)}"` : "alt";
-      const source = getBestImageSource(element);
-      function createImageElement(src) {
-        return anchor ? `<a href="${sanitizeURL(anchor.href)}" rel="noopener noreferrer"><img src="${src}" ${alt}/></a>` : `<img src="${src}" ${alt}/>`;
-      }
-      if (convertBase64) {
-        return new Promise((resolve) => {
-          if (source) {
-            const isSameDomain = new URL(source, window.location.origin).origin === window.location.origin;
-            if (isSameDomain) {
-              fetch(source).then((response) => response.blob()).then((blob) => blobToBase64(blob)).then((base64Source) => {
-                const imageSource = base64Source.startsWith("data:image/") ? base64Source : sanitizeURL(base64Source);
-                resolve(createImageElement(imageSource));
-              }).catch(() => {
-                resolve(createImageElement(source));
-              });
-            } else {
-              const imageSource = source.startsWith("data:image/") ? source : sanitizeURL(source);
-              resolve(createImageElement(imageSource));
-            }
-          } else {
-            resolve(htmlPath);
-          }
-        });
-      }
-      const sanitized = source.startsWith("data:image/") ? source : sanitizeURL(source);
-      if (source) {
-        return createImageElement(sanitized);
-      }
-      return htmlPath;
+      const toHTML = (url2) => {
+        const safeSrc = url2.startsWith("data:image/") ? url2 : sanitizeURL(url2);
+        const img = `<img src="${safeSrc}" ${alt}/>`;
+        return anchor ? `<a href="${sanitizeURL(anchor.href)}" rel="noopener noreferrer">${img}</a>` : img;
+      };
+      if (!convertBase64) return toHTML(src);
+      return (async () => {
+        try {
+          if (new URL(src, location.origin).origin !== location.origin) throw 0;
+          const blob = await fetch(src).then((res) => res.blob());
+          return toHTML(await blobToBase64(blob));
+        } catch {
+          return toHTML(src);
+        }
+      })();
     },
     IFRAME: (element) => {
       const source = element.src;
@@ -1099,12 +1153,12 @@ function generateElementPreview(issueObject, convertBase64 = false) {
       const ariaLabel = ariaLabelAttr || "";
       if (source) {
         const iframeTitle = ariaLabel || title;
-        return `<iframe src="${sanitizeURL(source)}" aria-label="${sanitizeHTML(iframeTitle)}"></iframe>`;
+        return `<iframe src="${sanitizeURL(source)}" aria-label="${escapeHTML(iframeTitle)}"></iframe>`;
       }
       return htmlPath;
     },
-    AUDIO: () => sanitizeHTMLBlock(issueObject.htmlPath),
-    VIDEO: () => sanitizeHTMLBlock(issueObject.htmlPath)
+    VIDEO: (element) => reconstructMedia("video", element),
+    AUDIO: (element) => reconstructMedia("audio", element)
   };
   const tagHandler = tag[issueElement.tagName];
   const elementPreview = tagHandler ? tagHandler(issueElement) : htmlPath;
@@ -1276,7 +1330,6 @@ const Utils = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.definePropert
   resetAttributes,
   resetGetText,
   sanitizeHTML,
-  sanitizeHTMLBlock,
   sanitizeURL,
   standardizeHref,
   store,
@@ -1462,7 +1515,7 @@ class ConsoleErrors extends HTMLElement {
     const content = document.createElement("div");
     content.setAttribute("id", "dialog");
     content.setAttribute("tabindex", "-1");
-    const url2 = window.location;
+    const url2 = sanitizeURL(window.location);
     const google = "https://forms.gle/sjzK9XykETaoqZv99";
     const template = `## Error Description
 \`\`\`javascript
@@ -2030,7 +2083,7 @@ function generatePageOutline() {
         outlineItem = `<li><div class="badge error-badge"><span aria-hidden="true"><span class="error-icon"></span></span> ${Lang._("TITLE")}</div> <div class="badge error-badge">${Lang._("MISSING")}</div></li>`;
       } else {
         const titleText = getText(metaTitleElement);
-        outlineItem = `<li><span class="badge">${Lang._("TITLE")}</span> ${sanitizeHTML(titleText)}</li>`;
+        outlineItem = `<li><span class="badge">${Lang._("TITLE")}</span> ${escapeHTML(titleText)}</li>`;
       }
       outlineArray.push(outlineItem);
     }
@@ -2358,7 +2411,9 @@ function generateImageOutline() {
         Object.assign(image, { dismissedImage: true });
       }
       const { element, type, developer, dismissedImage } = image;
-      const altText = computeAriaLabel(element) === "noAria" ? escapeHTML(element.getAttribute("alt")) : computeAriaLabel(element);
+      const ariaLabel = computeAriaLabel(element);
+      const rawAlt = ariaLabel === "noAria" ? element.getAttribute("alt") ?? "" : ariaLabel ?? "";
+      const altText = escapeHTML(rawAlt);
       const hidden = isElementVisuallyHiddenOrHidden(element);
       if (hidden) {
         const parent = findVisibleParent(element, "display", "none");
@@ -2374,10 +2429,12 @@ function generateImageOutline() {
       const showDeveloperChecks = devChecksOff && (type === "error" || type === "warning") && developer === true;
       const source = getBestImageSource(image.element);
       const edit = State.option.editImageURLofCMS ? generateEditLink(image) : "";
-      const decorative = element.hasAttribute("alt") && altText === "" ? `<div class="badge">${Lang._("DECORATIVE")}</div>` : "";
-      const startsWithSpecificAlt = State.option.altPlaceholder?.some(
-        (text) => altText.toLowerCase().startsWith(text.toLowerCase())
-      );
+      let decorative = rawAlt === "";
+      if (!decorative && State.option.altPlaceholder.length) {
+        const altPlaceholderPattern = generateRegexString(State.option.altPlaceholder, true);
+        decorative = rawAlt.match(altPlaceholderPattern)?.[0];
+      }
+      const isDecorative = decorative ? `<div class="badge">${Lang._("DECORATIVE")}</div>` : "";
       const anchor = State.option.imageWithinLightbox ? `a[href]:not(${State.option.imageWithinLightbox})` : "a[href]";
       const linked = element.closest(anchor) ? `<div class="badge"><span class="link-icon"></span><span class="visually-hidden">${Lang._("LINKED")}</span></div>` : "";
       const visibleIcon = hidden === true ? `<div class="badge"><span class="hidden-icon"></span><span class="visually-hidden">${Lang._("HIDDEN")}</span></div>` : "";
@@ -2389,7 +2446,7 @@ function generateImageOutline() {
           <button type="button" tabindex="-1">
             <img src="${source}" alt/>
             <div class="alt"> ${visibleIcon} ${linked} ${missing}
-              <div class="badge"><span class="error-icon"></span><span class="visually-hidden">${Lang._("ERROR")}</span> ${Lang._("ALT")}</div> <strong class="red-text">${startsWithSpecificAlt ? "" : altText}</strong>
+              <div class="badge"><span class="error-icon"></span><span class="visually-hidden">${Lang._("ERROR")}</span> ${Lang._("ALT")}</div> <strong class="red-text">${decorative ? "" : altText}</strong>
             </div>
           </button>
           ${edit}
@@ -2400,8 +2457,8 @@ function generateImageOutline() {
         <li class="warning">
           <button type="button" tabindex="-1">
             <img src="${source}" alt/>
-            <div class="alt"> ${visibleIcon} ${linked} ${decorative}
-              <div class="badge"><span aria-hidden="true">&#63;</span> <span class="visually-hidden">${Lang._("WARNING")}</span> ${Lang._("ALT")}</div> <strong class="yellow-text">${startsWithSpecificAlt ? "" : altText}</strong>
+            <div class="alt"> ${visibleIcon} ${linked} ${isDecorative}
+              <div class="badge"><span aria-hidden="true">&#63;</span> <span class="visually-hidden">${Lang._("WARNING")}</span> ${Lang._("ALT")}</div> <strong class="yellow-text">${decorative ? "" : altText}</strong>
             </div>
           </button>
           ${edit}
@@ -2412,8 +2469,8 @@ function generateImageOutline() {
         <li class="good">
           <button type="button" tabindex="-1">
             <img src="${source}" alt/>
-            <div class="alt"> ${visibleIcon} ${linked} ${decorative}
-              <div class="badge">${Lang._("ALT")}</div> ${startsWithSpecificAlt ? "" : altText}
+            <div class="alt"> ${visibleIcon} ${linked} ${isDecorative}
+              <div class="badge">${Lang._("ALT")}</div> ${decorative ? "" : altText}
             </div>
           </button>
           ${edit}
@@ -5850,8 +5907,8 @@ function annotate(issue) {
     buttonWrapper.appendChild(button);
     annotationButtons.push(button);
     const insertBefore = State.option.insertAnnotationBefore ? `, ${State.option.insertAnnotationBefore}` : "";
-    const location = element.closest(`a, button, [role="link"], [role="button"] ${insertBefore}`) || element;
-    location.insertAdjacentElement(position, annotation);
+    const location2 = element.closest(`a, button, [role="link"], [role="button"] ${insertBefore}`) || element;
+    location2.insertAdjacentElement(position, annotation);
     annotation.shadowRoot.appendChild(buttonWrapper);
     const ignoredElements = State.option.ignoreHiddenOverflow ? State.option.ignoreHiddenOverflow.split(",").flatMap((selector) => [...document.querySelectorAll(selector)]) : [];
     const parent = findVisibleParent(element, "overflow", "hidden");
@@ -6151,10 +6208,10 @@ function checkImages() {
     return hit;
   };
   Elements.Found.Images.forEach(($el) => {
-    const alt = computeAriaLabel($el) === "noAria" ? $el.getAttribute("alt") : computeAriaLabel($el);
+    const rawAlt = computeAriaLabel($el) === "noAria" ? $el.getAttribute("alt") : computeAriaLabel($el);
     const ariaHidden = $el?.getAttribute("aria-hidden") === "true";
     const presentationRole = $el?.getAttribute("role") === "presentation";
-    if ($el.height < 2 && $el.width < 2 && (isElementHidden($el) || alt === "")) {
+    if ($el.height < 2 && $el.width < 2 && (isElementHidden($el) || rawAlt === "")) {
       return;
     }
     const link = $el.closest(
@@ -6181,7 +6238,7 @@ function checkImages() {
       }
       return;
     }
-    if (alt === null) {
+    if (rawAlt === null) {
       if (link) {
         const hasAriaHiddenOrPresentationRole = linkTextLength > 0 && (ariaHidden || presentationRole);
         if (!hasAriaHiddenOrPresentationRole) {
@@ -6212,11 +6269,11 @@ function checkImages() {
       }
       return;
     }
-    const sanitizedAlt = sanitizeHTML(alt);
-    const altText = removeWhitespace(sanitizedAlt);
+    const escapedAlt = escapeHTML(rawAlt);
+    const altText = removeWhitespace(escapedAlt);
     const hasAria = $el.getAttribute("aria-label") || $el.getAttribute("aria-labelledby");
     if (State.option.checks.MISSING_ALT) {
-      if (hasAria && altText === "") {
+      if (hasAria && rawAlt === "") {
         State.results.push({
           test: "MISSING_ALT",
           element: $el,
@@ -6229,14 +6286,14 @@ function checkImages() {
         return;
       }
     }
-    let decorative = alt === "";
+    let decorative = rawAlt === "";
     const figure = $el.closest("figure");
     const figcaption = figure?.querySelector("figcaption");
     const figcaptionText = figcaption ? getText(figcaption) : "";
     const maxAltCharactersLinks = State.option.checks.LINK_IMAGE_LONG_ALT.maxLength || 250;
     const maxAltCharacters = State.option.checks.IMAGE_ALT_TOO_LONG.maxLength || 250;
     if (!decorative && State.option.altPlaceholder.length) {
-      decorative = alt.match(altPlaceholderPattern)?.[0];
+      decorative = rawAlt.match(altPlaceholderPattern)?.[0];
     }
     if (decorative) {
       const carouselSources = State.option.checks.IMAGE_DECORATIVE_CAROUSEL.sources;
@@ -6299,7 +6356,7 @@ function checkImages() {
     }
     const unpronounceable = link ? State.option.checks.LINK_ALT_UNPRONOUNCEABLE : State.option.checks.ALT_UNPRONOUNCEABLE;
     if (unpronounceable) {
-      if (alt.replace(/"|'|\?|\.|-|\s+/g, "") === "" && linkTextLength === 0) {
+      if (rawAlt.replace(/"|'|\?|\.|-|\s+/g, "") === "" && linkTextLength === 0) {
         const conditional = link ? "LINK_ALT_UNPRONOUNCEABLE" : "ALT_UNPRONOUNCEABLE";
         State.results.push({
           test: conditional,
@@ -6313,10 +6370,10 @@ function checkImages() {
         return;
       }
     }
-    const error = containsAltTextStopWords(altText);
+    const error = containsAltTextStopWords(rawAlt);
     const maybeBadAlt = link ? State.option.checks.LINK_ALT_MAYBE_BAD : State.option.checks.ALT_MAYBE_BAD;
     const isTooLongSingleWord = new RegExp(`^\\S{${maybeBadAlt.minLength || 15},}$`);
-    const containsNonAlphaChar = /[^\p{L}\-,.!?]/u.test(alt);
+    const containsNonAlphaChar = /[^\p{L}\-,.!?]/u.test(rawAlt);
     if (error[0] !== null) {
       const rule = link ? State.option.checks.LINK_ALT_FILE_EXT : State.option.checks.ALT_FILE_EXT;
       const conditional = link ? "LINK_ALT_FILE_EXT" : "ALT_FILE_EXT";
@@ -6326,7 +6383,7 @@ function checkImages() {
           element: $el,
           type: rule.type || "error",
           content: Lang.sprintf(rule.content || conditional, error[0], altText),
-          dismiss: prepareDismissal(`${conditional + src + altText}`),
+          dismiss: prepareDismissal(`${conditional + src + rawAlt}`),
           dismissAll: rule.dismissAll ? conditional : false,
           developer: rule.developer || false
         });
@@ -6340,7 +6397,7 @@ function checkImages() {
           element: $el,
           type: rule.type || "error",
           content: Lang.sprintf(rule.content || conditional, altText),
-          dismiss: prepareDismissal(`${conditional + src + altText}`),
+          dismiss: prepareDismissal(`${conditional + src + rawAlt}`),
           dismissAll: rule.dismissAll ? conditional : false,
           developer: rule.developer || false
         });
@@ -6354,23 +6411,23 @@ function checkImages() {
           element: $el,
           type: rule.type || "warning",
           content: Lang.sprintf(rule.content || conditional, error[1], altText),
-          dismiss: prepareDismissal(`${conditional + src + altText}`),
+          dismiss: prepareDismissal(`${conditional + src + rawAlt}`),
           dismissAll: rule.dismissAll ? conditional : false,
           developer: rule.developer || false
         });
       }
-    } else if (maybeBadAlt && isTooLongSingleWord.test(alt) && containsNonAlphaChar) {
+    } else if (maybeBadAlt && isTooLongSingleWord.test(rawAlt) && containsNonAlphaChar) {
       const conditional = link ? "LINK_ALT_MAYBE_BAD" : "ALT_MAYBE_BAD";
       State.results.push({
         test: conditional,
         element: $el,
         type: maybeBadAlt.type || "error",
         content: Lang.sprintf(maybeBadAlt.content || conditional, altText),
-        dismiss: prepareDismissal(`${conditional + src + altText}`),
+        dismiss: prepareDismissal(`${conditional + src + rawAlt}`),
         dismissAll: maybeBadAlt.dismissAll ? conditional : false,
         developer: maybeBadAlt.developer || false
       });
-    } else if (link ? alt.length > maxAltCharactersLinks : alt.length > maxAltCharacters) {
+    } else if (link ? rawAlt.length > maxAltCharactersLinks : rawAlt.length > maxAltCharacters) {
       const rule = link ? State.option.checks.LINK_IMAGE_LONG_ALT : State.option.checks.IMAGE_ALT_TOO_LONG;
       const conditional = link ? "LINK_IMAGE_LONG_ALT" : "IMAGE_ALT_TOO_LONG";
       const truncated = truncateString(altText, 600);
@@ -6379,8 +6436,8 @@ function checkImages() {
           test: conditional,
           element: $el,
           type: rule.type || "warning",
-          content: Lang.sprintf(rule.content || conditional, alt.length, truncated),
-          dismiss: prepareDismissal(`${conditional + src + altText}`),
+          content: Lang.sprintf(rule.content || conditional, rawAlt.length, truncated),
+          dismiss: prepareDismissal(`${conditional + src + rawAlt}`),
           dismissAll: rule.dismissAll ? conditional : false,
           developer: rule.developer || false
         });
@@ -6391,20 +6448,20 @@ function checkImages() {
       if (rule) {
         const linkAccName = computeAccessibleName(link);
         const removeWhitespace$1 = removeWhitespace(linkAccName);
-        const sanitizedText = sanitizeHTML(removeWhitespace$1);
+        const sanitizedText = escapeHTML(removeWhitespace$1);
         const tooltip = linkTextLength === 0 ? Lang.sprintf("LINK_IMAGE_ALT", altText) : `${Lang.sprintf("LINK_IMAGE_ALT_AND_TEXT", altText, sanitizedText)} ${Lang.sprintf("ACC_NAME_TIP")}`;
         State.results.push({
           test: conditional,
           element: $el,
           type: rule.type || "warning",
           content: rule.content ? Lang.sprintf(rule.content, altText, sanitizedText) : tooltip,
-          dismiss: prepareDismissal(`${conditional + src + altText}`),
+          dismiss: prepareDismissal(`${conditional + src + rawAlt}`),
           dismissAll: rule.dismissAll ? conditional : false,
           developer: rule.developer || false
         });
       }
     } else if (figure) {
-      const duplicate = !!figcaption && figcaptionText.toLowerCase() === altText.toLowerCase();
+      const duplicate = !!figcaption && figcaptionText.toLowerCase() === rawAlt.toLowerCase();
       if (duplicate) {
         if (State.option.checks.IMAGE_FIGURE_DUPLICATE_ALT) {
           State.results.push({
@@ -6426,7 +6483,7 @@ function checkImages() {
           element: $el,
           type: State.option.checks.IMAGE_PASS.type || "good",
           content: Lang.sprintf(State.option.checks.IMAGE_PASS.content || "IMAGE_PASS", altText),
-          dismiss: prepareDismissal(`IMAGE_PASS FIGURE ${src + altText}`),
+          dismiss: prepareDismissal(`IMAGE_PASS FIGURE ${src + rawAlt}`),
           dismissAll: State.option.checks.IMAGE_PASS.dismissAll ? "IMAGE_PASS" : false,
           developer: State.option.checks.IMAGE_PASS.developer || false
         });
@@ -6438,14 +6495,14 @@ function checkImages() {
           element: $el,
           type: State.option.checks.IMAGE_PASS.type || "good",
           content: Lang.sprintf(State.option.checks.IMAGE_PASS.content || "IMAGE_PASS", altText),
-          dismiss: prepareDismissal(`IMAGE_PASS ${src + altText}`),
+          dismiss: prepareDismissal(`IMAGE_PASS ${src + rawAlt}`),
           dismissAll: State.option.checks.IMAGE_PASS.dismissAll ? "IMAGE_PASS" : false,
           developer: State.option.checks.IMAGE_PASS.developer || false
         });
       }
     }
     const titleAttr = $el.getAttribute("title");
-    if (titleAttr?.toLowerCase() === alt.toLowerCase()) {
+    if (titleAttr?.toLowerCase() === rawAlt.toLowerCase()) {
       if (State.option.checks.DUPLICATE_TITLE) {
         State.results.push({
           test: "DUPLICATE_TITLE",
@@ -6453,7 +6510,7 @@ function checkImages() {
           type: State.option.checks.DUPLICATE_TITLE.type || "warning",
           content: Lang.sprintf(State.option.checks.DUPLICATE_TITLE.content || "DUPLICATE_TITLE"),
           inline: true,
-          dismiss: prepareDismissal(`DUPLICATE_TITLE ${altText}`),
+          dismiss: prepareDismissal(`DUPLICATE_TITLE ${rawAlt}`),
           dismissAll: State.option.checks.DUPLICATE_TITLE.dismissAll ? "DUPLICATE_TITLE" : false,
           developer: State.option.checks.DUPLICATE_TITLE.developer || false
         });
@@ -6469,7 +6526,7 @@ function checkHeaders() {
     const accName = computeAccessibleName($el, Constants.Exclusions.HeaderSpan);
     const stringMatchExclusions = accName.replace(stringExclusionPattern, "");
     const removeWhitespace$1 = removeWhitespace(stringMatchExclusions);
-    const headingText = sanitizeHTML(removeWhitespace$1);
+    const headingText = escapeHTML(removeWhitespace$1);
     const rootContainsHeading = Constants.Root.areaToCheck.some((root) => root.contains($el));
     const rootContainsShadowHeading = Constants.Root.areaToCheck.some(
       (root) => root.contains($el.getRootNode().host)
@@ -6674,7 +6731,7 @@ function checkLinkText() {
         return;
       }
       if (hasAria && linkText.length !== 0) {
-        const sanitizedText = sanitizeHTML(linkText);
+        const escapedText = escapeHTML(linkText);
         const excludeSpan = fnIgnore($el, Constants.Exclusions.LinkSpan);
         const visibleLinkText = getText(excludeSpan).replace(ignorePattern, "");
         const cleanedString = stripAllSpecialCharacters(visibleLinkText);
@@ -6690,11 +6747,7 @@ function checkLinkText() {
             test: "LINK_STOPWORD_ARIA",
             element: $el,
             type: State.option.checks.LINK_STOPWORD_ARIA.type || "warning",
-            content: State.option.checks.LINK_STOPWORD_ARIA.content ? Lang.sprintf(
-              State.option.checks.LINK_STOPWORD_ARIA.content,
-              stopword,
-              sanitizedText
-            ) : Lang.sprintf("LINK_STOPWORD_ARIA", stopword, sanitizedText) + Lang.sprintf("LINK_TIP"),
+            content: State.option.checks.LINK_STOPWORD_ARIA.content ? Lang.sprintf(State.option.checks.LINK_STOPWORD_ARIA.content, stopword, escapedText) : Lang.sprintf("LINK_STOPWORD_ARIA", stopword, escapedText) + Lang.sprintf("LINK_TIP"),
             inline: true,
             dismiss: prepareDismissal(`LINK_STOPWORD_ARIA ${strippedLinkText}`),
             dismissAll: State.option.checks.LINK_STOPWORD_ARIA.dismissAll ? " LINK_STOPWORD_ARIA" : false,
@@ -6707,7 +6760,7 @@ function checkLinkText() {
             type: State.option.checks.LABEL_IN_NAME.type || "warning",
             content: Lang.sprintf(
               State.option.checks.LABEL_IN_NAME.content || "LABEL_IN_NAME",
-              sanitizedText
+              escapedText
             ),
             inline: true,
             position: "afterend",
@@ -6720,7 +6773,7 @@ function checkLinkText() {
             test: "LINK_LABEL",
             element: $el,
             type: State.option.checks.LINK_LABEL.type || "good",
-            content: State.option.checks.LINK_LABEL.content ? Lang.sprintf(State.option.checks.LINK_LABEL.content, sanitizedText) : `${Lang.sprintf("ACC_NAME", sanitizedText)} ${Lang.sprintf("ACC_NAME_TIP")}`,
+            content: State.option.checks.LINK_LABEL.content ? Lang.sprintf(State.option.checks.LINK_LABEL.content, escapedText) : `${Lang.sprintf("ACC_NAME", escapedText)} ${Lang.sprintf("ACC_NAME_TIP")}`,
             inline: true,
             position: "afterend",
             dismiss: prepareDismissal(`LINK_LABEL ${strippedLinkText}`),
@@ -6918,12 +6971,12 @@ function checkLinkText() {
         const ignored = $el.ariaHidden === "true" && $el.getAttribute("tabindex") === "-1";
         const hasAttributes = $el.hasAttribute("role") || $el.hasAttribute("disabled");
         if (State.option.checks.LINK_IDENTICAL_NAME && !hasAttributes && !ignored) {
-          const sanitizedText = sanitizeHTML(linkText);
+          const escapedText = escapeHTML(linkText);
           State.results.push({
             test: "LINK_IDENTICAL_NAME",
             element: $el,
             type: State.option.checks.LINK_IDENTICAL_NAME.type || "warning",
-            content: State.option.checks.LINK_IDENTICAL_NAME.content ? Lang.sprintf(State.option.checks.LINK_IDENTICAL_NAME.content, sanitizedText) : `${Lang.sprintf("LINK_IDENTICAL_NAME", sanitizedText)} ${Lang.sprintf("ACC_NAME_TIP")}`,
+            content: State.option.checks.LINK_IDENTICAL_NAME.content ? Lang.sprintf(State.option.checks.LINK_IDENTICAL_NAME.content, escapedText) : `${Lang.sprintf("LINK_IDENTICAL_NAME", escapedText)} ${Lang.sprintf("ACC_NAME_TIP")}`,
             inline: true,
             dismiss: prepareDismissal(`LINK_IDENTICAL_NAME ${strippedLinkText}`),
             dismissAll: State.option.checks.LINK_IDENTICAL_NAME.dismissAll ? "LINK_IDENTICAL_NAME" : false,
@@ -7203,10 +7256,10 @@ function checkContrast() {
     const nodeText = fnIgnore(element, ["State.option:not(State.option:first-child)"]);
     const text = getText(nodeText);
     const truncatedText = truncateString(text, 80);
-    const sanitizedText = sanitizeHTML(truncatedText);
+    const sanitizedText = escapeHTML(truncatedText);
     let previewText;
     if (item.type === "placeholder" || item.type === "placeholder-unsupported") {
-      previewText = sanitizeHTML($el.placeholder);
+      previewText = escapeHTML($el.placeholder);
     } else if (item.type === "svg-error" || item.type === "svg-warning") {
       previewText = "";
     } else {
@@ -7239,7 +7292,7 @@ function checkContrast() {
         break;
       case "input":
         if (State.option.checks.CONTRAST_INPUT) {
-          const sanitizedInput = sanitizeHTMLBlock($el.outerHTML);
+          const sanitizedInput = sanitizeHTML($el.outerHTML);
           State.results.push({
             test: "CONTRAST_INPUT",
             element,
@@ -7254,7 +7307,7 @@ function checkContrast() {
         break;
       case "placeholder":
         if (State.option.checks.CONTRAST_PLACEHOLDER) {
-          const sanitizedPlaceholder = sanitizeHTMLBlock($el.outerHTML);
+          const sanitizedPlaceholder = sanitizeHTML($el.outerHTML);
           State.results.push({
             test: "CONTRAST_PLACEHOLDER",
             element: $el,
@@ -7270,7 +7323,7 @@ function checkContrast() {
         break;
       case "placeholder-unsupported":
         if (State.option.checks.CONTRAST_PLACEHOLDER_UNSUPPORTED) {
-          const sanitizedPlaceholder = sanitizeHTMLBlock($el.outerHTML);
+          const sanitizedPlaceholder = sanitizeHTML($el.outerHTML);
           State.results.push({
             test: "CONTRAST_PLACEHOLDER_UNSUPPORTED",
             element: $el,
@@ -7288,7 +7341,7 @@ function checkContrast() {
         break;
       case "svg-error":
         if (State.option.checks.CONTRAST_ERROR_GRAPHIC) {
-          const sanitizedSVG = sanitizeHTMLBlock($el.outerHTML);
+          const sanitizedSVG = sanitizeHTML($el.outerHTML);
           State.results.push({
             test: "CONTRAST_ERROR_GRAPHIC",
             element: $el,
@@ -7304,7 +7357,7 @@ function checkContrast() {
         break;
       case "svg-warning":
         if (State.option.checks.CONTRAST_WARNING_GRAPHIC) {
-          const sanitizedSVG = sanitizeHTMLBlock($el.outerHTML);
+          const sanitizedSVG = sanitizeHTML($el.outerHTML);
           State.results.push({
             test: "CONTRAST_WARNING_GRAPHIC",
             element: $el,
@@ -7436,12 +7489,12 @@ function checkLabels() {
               if (target && !isElementHidden(target)) return;
             }
           }
-          const sanitizedText = sanitizeHTML(inputName);
+          const escapedText = escapeHTML(inputName);
           State.results.push({
             test: "LABELS_ARIA_LABEL_INPUT",
             element: $el,
             type: State.option.checks.LABELS_ARIA_LABEL_INPUT.type || "warning",
-            content: State.option.checks.LABELS_ARIA_LABEL_INPUT.content ? Lang.sprintf(State.option.checks.LABELS_ARIA_LABEL_INPUT.content, sanitizedText) : `${Lang.sprintf("LABELS_ARIA_LABEL_INPUT", sanitizedText)} ${Lang.sprintf("ACC_NAME_TIP")}`,
+            content: State.option.checks.LABELS_ARIA_LABEL_INPUT.content ? Lang.sprintf(State.option.checks.LABELS_ARIA_LABEL_INPUT.content, escapedText) : `${Lang.sprintf("LABELS_ARIA_LABEL_INPUT", escapedText)} ${Lang.sprintf("ACC_NAME_TIP")}`,
             dismiss: prepareDismissal(`LABELS_ARIA_LABEL_INPUT ${type + inputName}`),
             dismissAll: State.option.checks.LABELS_ARIA_LABEL_INPUT.dismissAll ? "LABELS_ARIA_LABEL_INPUT" : false,
             developer: State.option.checks.LABELS_ARIA_LABEL_INPUT.developer || true
@@ -7845,16 +7898,16 @@ function checkQA() {
     Elements.Found.Blockquotes.forEach(($el) => {
       const text = getText($el);
       if (text.length !== 0 && text.length < 25) {
-        const sanitizedText = sanitizeHTML(text);
+        const escapedText = escapeHTML(text);
         State.results.push({
           test: "QA_BLOCKQUOTE",
           element: $el,
           type: State.option.checks.QA_BLOCKQUOTE.type || "warning",
           content: Lang.sprintf(
             State.option.checks.QA_BLOCKQUOTE.content || "QA_BLOCKQUOTE",
-            sanitizedText
+            escapedText
           ),
-          dismiss: prepareDismissal(`QA_BLOCKQUOTE ${sanitizedText}`),
+          dismiss: prepareDismissal(`QA_BLOCKQUOTE ${escapedText}`),
           dismissAll: State.option.checks.QA_BLOCKQUOTE.dismissAll ? "QA_BLOCKQUOTE" : false,
           developer: State.option.checks.QA_BLOCKQUOTE.developer || false
         });
@@ -7913,16 +7966,16 @@ function checkQA() {
     }
   });
   if (State.option.checks.QA_FAKE_HEADING) {
-    const addResult = (element, sanitizedText) => {
+    const addResult = (element, escapedText) => {
       State.results.push({
         test: "QA_FAKE_HEADING",
         element,
         type: State.option.checks.QA_FAKE_HEADING.type || "warning",
         content: Lang.sprintf(
           State.option.checks.QA_FAKE_HEADING.content || "QA_FAKE_HEADING",
-          sanitizedText
+          escapedText
         ),
-        dismiss: prepareDismissal(`QA_FAKE_HEADING ${sanitizedText}`),
+        dismiss: prepareDismissal(`QA_FAKE_HEADING ${escapedText}`),
         inline: true,
         dismissAll: State.option.checks.QA_FAKE_HEADING.dismissAll ? "QA_FAKE_HEADING" : false,
         developer: State.option.checks.QA_FAKE_HEADING.developer || false
@@ -7941,8 +7994,8 @@ function checkQA() {
       const maybeSentence = getText$1.match(/[.;?!"]/) === null;
       const typicalHeadingLength = getText$1.length >= 4 && getText$1.length <= 120;
       if (size >= 24 && !p.closest(ignoreParents) && typicalHeadingLength && maybeSentence && !isPreviousElementAHeading(p)) {
-        const sanitizedText = sanitizeHTML(getText$1);
-        addResult(p, sanitizedText);
+        const escapedText = escapeHTML(getText$1);
+        addResult(p, escapedText);
       }
     };
     const computeBoldTextParagraphs = (p) => {
@@ -7956,7 +8009,7 @@ function checkQA() {
       if (text.length < 3 || text.length > 120 || /[.:;?!"']/.test(text)) return;
       const paragraph = fnIgnore(p, ["strong", "b"]).textContent.trim();
       if (paragraph && paragraph.length <= 250) return;
-      addResult(possibleHeading, sanitizeHTML(text));
+      addResult(possibleHeading, escapeHTML(text));
     };
     Elements.Found.Paragraphs.forEach((p) => {
       computeLargeParagraphs(p);
@@ -8370,12 +8423,12 @@ function checkDeveloper() {
       }
       const isVisibleTextInAccName$1 = isVisibleTextInAccName($el, accName);
       if (State.option.checks.LABEL_IN_NAME && hasAria && isVisibleTextInAccName$1) {
-        const sanitizedText = sanitizeHTML(accName);
+        const escapedText = escapeHTML(accName);
         State.results.push({
           test: "LABEL_IN_NAME",
           element: $el,
           type: State.option.checks.LABEL_IN_NAME.type || "warning",
-          content: State.option.checks.LABEL_IN_NAME.content ? Lang.sprintf(State.option.checks.LABEL_IN_NAME.content, sanitizedText) : `${Lang.sprintf("LABEL_IN_NAME", sanitizedText)} ${Lang.sprintf("ACC_NAME_TIP")}`,
+          content: State.option.checks.LABEL_IN_NAME.content ? Lang.sprintf(State.option.checks.LABEL_IN_NAME.content, escapedText) : `${Lang.sprintf("LABEL_IN_NAME", escapedText)} ${Lang.sprintf("ACC_NAME_TIP")}`,
           dismiss: prepareDismissal(
             `LABEL_IN_NAME ${$el.tagName + $el.id + $el.className + accName}`
           ),
@@ -8603,7 +8656,7 @@ async function checkPageLanguage() {
           ) + Lang.sprintf("LANG_TIP");
           variables = [nodeLang, langAttribute];
         } else if (node.nodeName === "IMG" && node?.alt?.length !== 0) {
-          const alt = sanitizeHTML(node.alt);
+          const alt = escapeHTML(node.alt);
           const altText = truncateString(alt, 600);
           test = "LANG_OF_PARTS_ALT";
           content = Lang.sprintf(

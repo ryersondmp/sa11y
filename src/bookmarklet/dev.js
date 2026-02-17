@@ -83,22 +83,18 @@ const onLoadScript = (lang) => {
 
   // Vendor specific work-arounds...
   const url = window.location.href;
-  if (url.includes('https://360.articulate.com/review/content')) {
-    const iframe = document.querySelector('iframe.player');
-    const src = iframe.getAttribute('src');
-    if (iframe && src) {
-      document.getElementById('sa11y-loading').remove();
-      if (window.confirm('Press OK to be redirected to a page where you can check the accessibility of the content. The page will open in a new tab.')) {
-        window.open(src, '_blank');
-      }
-    } else {
-      instantiate();
+  const loadingEl = document.getElementById('sa11y-loading');
+  const iframe = document.querySelector('iframe.player');
+  const src = iframe?.getAttribute('src') || '';
+  const isSafe = src.startsWith('https://360.articulate.com') || src.startsWith('https://articulate.com');
+  if (url.includes('https://360.articulate.com/review/content') && isSafe) {
+    loadingEl?.remove();
+    if (confirm('Redirect to check accessibility in a new tab?')) {
+      window.open(src, '_blank', 'noopener,noreferrer');
     }
   } else {
     instantiate();
-
-    // Remove loading spinner once Sa11y is instantiated.
-    document.getElementById('sa11y-loading').remove();
+    loadingEl?.remove();
   }
 };
 

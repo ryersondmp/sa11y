@@ -16,7 +16,7 @@ export default function checkHeaders() {
     const accName = computeAccessibleName($el, Constants.Exclusions.HeaderSpan);
     const stringMatchExclusions = accName.replace(stringExclusionPattern, '');
     const removeWhitespace = Utils.removeWhitespace(stringMatchExclusions);
-    const headingText = Utils.sanitizeHTML(removeWhitespace);
+    const headingText = Utils.escapeHTML(removeWhitespace);
 
     // Check if heading is within root target area.
     const rootContainsHeading = Constants.Root.areaToCheck.some((root) => root.contains($el));

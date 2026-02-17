@@ -251,7 +251,7 @@ export default async function checkPageLanguage() {
           variables = [nodeLang, langAttribute];
         } else if (node.nodeName === 'IMG' && node?.alt?.length !== 0) {
           // Alt text is in different language.
-          const alt = Utils.sanitizeHTML(node.alt);
+          const alt = Utils.escapeHTML(node.alt);
           const altText = Utils.truncateString(alt, 600);
           test = 'LANG_OF_PARTS_ALT';
           content =

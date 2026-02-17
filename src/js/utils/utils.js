@@ -78,25 +78,12 @@ export function isElementVisuallyHiddenOrHidden(element) {
 }
 
 /**
- * Escapes HTML special characters in a string.
- * @param {string} string The string to escape.
- * @returns {string} The escaped string with HTML special characters replaced by their corresponding entities.
- */
-export function escapeHTML(string) {
-  const div = document.createElement('div');
-  div.textContent = string;
-  return div.innerHTML
-    .replaceAll('"', '&quot;')
-    .replaceAll("'", '&#039;')
-    .replaceAll('`', '&#x60;');
-}
-
-/**
  * Decodes/unescapes HTML entities back to their corresponding character.
  * @param {string} string The string.
  * @returns {string} Decoded string.
  */
 export function decodeHTML(string) {
+  if (!string) return '';
   return string.replace(/&(#?[a-zA-Z0-9]+);/g, (match, entity) => {
     switch (entity) {
       case 'amp':
@@ -129,6 +116,7 @@ export function decodeHTML(string) {
  * @returns {string} String without any HTML tags.
  */
 export function stripHTMLtags(string) {
+  if (!string) return '';
   return string.replace(/<[^>]*>/g, '');
 }
 
@@ -138,6 +126,7 @@ export function stripHTMLtags(string) {
  * @returns {string} The sanitized and trimmed string.
  */
 export function stripAllSpecialCharacters(string) {
+  if (!string) return '';
   return string
     .replace(/[^\p{L}\p{N}\s]/gu, '')
     .replace(/\s+/g, ' ')
@@ -145,75 +134,141 @@ export function stripAllSpecialCharacters(string) {
 }
 
 /**
- * Sanitizes an HTML string by replacing special characters with their corresponding HTML entities.
- * @param {string} string The HTML string to sanitize.
- * @returns {string} The sanitized HTML string with special characters replaced by their corresponding entities.
+ * Encodes special characters with their corresponding HTML entities for safe escape.
+ * @param {string} string The HTML string to encode.
+ * @returns {string} The encoded HTML string with special characters replaced by their corresponding entities.
  * @link https://portswigger.net/web-security/cross-site-scripting/preventing
  */
-export function sanitizeHTML(string) {
+export function escapeHTML(string) {
+  if (!string) return '';
   return string.replace(/[^\w. ]/gi, (c) => `&#${c.charCodeAt(0)};`);
 }
 
 /**
- * Sanitize links (e.g. href and src values).
- * @param {string} string The URL string to sanitize.
- * @returns {string} The sanitized URL if valid, or an empty string if invalid.
+ * Sanitize URLs.
  */
-export function sanitizeURL(string) {
-  if (!string) return '#';
-  const sanitizedInput = String(string).trim();
+const invalidProtocolRegex = /^([^\w]*)(javascript|data|vbscript)/im;
+const htmlEntitiesRegex = /&#(\w+)(^\w|;)?/g;
+const htmlCtrlEntityRegex = /&(newline|tab);/gi;
+const ctrlCharactersRegex =
+  // biome-ignore lint/suspicious/noControlCharactersInRegex: original lib.
+  /[\u0000-\u001F\u007F-\u009F\u2000-\u200D\uFEFF]/gim;
+const urlSchemeRegex = /^.+(:|&colon;)/gim;
+const whitespaceEscapeCharsRegex = /(\\|%5[cC])((%(6[eE]|72|74))|[nrt])/g;
+const relativeFirstCharacters = ['.', '/'];
+const BLANK_URL = 'about:blank';
 
-  // Remove protocols.
-  if (/^javascript:/i.test(sanitizedInput)) return '#';
-  if (/^data:/i.test(sanitizedInput)) return '#';
+function isRelativeUrlWithoutProtocol(url) {
+  return relativeFirstCharacters.indexOf(url[0]) > -1;
+}
 
-  // Ensure valid protocol.
-  const protocols = ['http:', 'https:', 'mailto:', 'tel:', 'ftp:'];
-  const hasValidProtocol = protocols.some((protocol) =>
-    sanitizedInput.toLowerCase().startsWith(protocol),
-  );
+function decodeHtmlCharacters(str) {
+  const removedNullByte = str.replace(ctrlCharactersRegex, '');
+  // biome-ignore lint/correctness/noUnusedFunctionParameters: original lib
+  return removedNullByte.replace(htmlEntitiesRegex, (match, dec) => {
+    return String.fromCharCode(dec);
+  });
+}
 
-  // Assume relative URLs.
-  if (!hasValidProtocol && !sanitizedInput.startsWith('/') && !sanitizedInput.startsWith('#')) {
-    return `./${sanitizedInput}`;
+function isValidUrl(url) {
+  if (typeof URL.canParse === 'function') {
+    return URL.canParse(url);
   }
 
-  // Remove any HTML tags.
-  const cleanedString = sanitizedInput.replace(/<[^>]*>/g, '');
-  return encodeURI(cleanedString);
+  // Fallback for environments without URL.canParse support.
+  try {
+    const parsedUrl = new URL(url);
+    return Boolean(parsedUrl);
+  } catch {
+    return false;
+  }
+}
+
+const decodeURIs = (uri) => {
+  try {
+    return decodeURIComponent(uri);
+  } catch {
+    return uri;
+  }
+};
+
+/**
+ * Sanitizes a URL to prevent XSS and ensure valid formatting.
+ * MIT License: Copyright (c) 2017 Braintree
+ * @link https://github.com/braintree/sanitize-url
+ * @param {string} url The URL to sanitize.
+ * @returns {string} The safe URL, or about:blank if invalid.
+ */
+export function sanitizeURL(url) {
+  if (!url) return BLANK_URL;
+  let charsToDecode;
+  let decodedUrl = decodeURIs(url.trim());
+
+  do {
+    decodedUrl = decodeHtmlCharacters(decodedUrl)
+      .replace(htmlCtrlEntityRegex, '')
+      .replace(ctrlCharactersRegex, '')
+      .replace(whitespaceEscapeCharsRegex, '')
+      .trim();
+    decodedUrl = decodeURIs(decodedUrl);
+    charsToDecode =
+      decodedUrl.match(ctrlCharactersRegex) ||
+      decodedUrl.match(htmlEntitiesRegex) ||
+      decodedUrl.match(htmlCtrlEntityRegex) ||
+      decodedUrl.match(whitespaceEscapeCharsRegex);
+  } while (charsToDecode && charsToDecode.length > 0);
+
+  const sanitizedUrl = decodedUrl;
+  if (!sanitizedUrl) return BLANK_URL;
+  if (isRelativeUrlWithoutProtocol(sanitizedUrl)) return sanitizedUrl;
+
+  // Remove any leading whitespace before checking the URL scheme.
+  const trimmedUrl = sanitizedUrl.trimStart();
+  const urlSchemeParseResults = trimmedUrl.match(urlSchemeRegex);
+  if (!urlSchemeParseResults) return sanitizedUrl;
+  const urlScheme = urlSchemeParseResults[0].toLowerCase().trim();
+  if (invalidProtocolRegex.test(urlScheme)) return BLANK_URL;
+  const backSanitized = trimmedUrl.replace(/\\/g, '/');
+
+  // Handle special cases for mailto: and custom deep-link protocols.
+  if (urlScheme === 'mailto:' || urlScheme.includes('://')) return backSanitized;
+
+  // For http and https URLs, perform additional validation.
+  if (urlScheme === 'http:' || urlScheme === 'https:') {
+    if (!isValidUrl(backSanitized)) return BLANK_URL;
+    const url = new URL(backSanitized);
+    url.protocol = url.protocol.toLowerCase();
+    url.hostname = url.hostname.toLowerCase();
+    return url.toString();
+  }
+  return backSanitized;
 }
 
 /**
- * Sanitizes HTML by removing script tags, inline event handlers and any dangerous attributes. It returns a clean version of the HTML string.
- * @param {string} html The HTML string to sanitize.
- * @param {Boolean} allowStyles Preserve inline style attributes.
+ * A lightweight method for sanitizes HTML strings.
+ * @param {string} string - The raw HTML string to sanitize.
  * @returns {string} The sanitized HTML string.
+ * Adapted from gomakethings.com/how-to-sanitize-html-strings-with-vanilla-js-to-reduce-your-risk-of-xss-attacks/
  */
-export function sanitizeHTMLBlock(html, allowStyles = false) {
-  const tempDiv = document.createElement('div');
-  tempDiv.innerHTML = html;
-
-  // Remove blocks.
-  ['script', 'style', 'noscript', 'iframe', 'form'].forEach((tag) => {
-    const elements = tempDiv.getElementsByTagName(tag);
-    while (elements.length > 0) {
-      elements[0].parentNode.removeChild(elements[0]);
-    }
+export function sanitizeHTML(string) {
+  const doc = new DOMParser().parseFromString(string, 'text/html');
+  const dangerousTags = 'script, iframe, object, embed, applet, style';
+  doc.body.querySelectorAll(dangerousTags).forEach((node) => {
+    node.remove();
   });
-
-  // Remove inline event handlers and dangerous attributes.
-  const allElements = Array.from(tempDiv.getElementsByTagName('*'));
-  allElements.forEach((element) => {
-    Array.from(element.attributes).forEach((attr) => {
-      if (attr.name.startsWith('on')) {
-        element.removeAttribute(attr.name);
+  doc.body.querySelectorAll('*').forEach((node) => {
+    [...node.attributes].forEach(({ name, value }) => {
+      const val = value.replace(/\s+/g, '').toLowerCase();
+      const isEvent = name.startsWith('on');
+      const isUrl = ['src', 'href', 'xlink:href'].includes(name);
+      const isPhishy =
+        val.includes('javascript:') || val.includes('data:text/html') || val.includes('vbscript:');
+      if (isEvent || (isUrl && isPhishy)) {
+        node.removeAttribute(name);
       }
     });
-    if (!allowStyles) {
-      element.removeAttribute('style');
-    }
   });
-  return tempDiv.innerHTML;
+  return doc.body.innerHTML;
 }
 
 /**
@@ -579,20 +634,18 @@ export function getBestImageSource(element) {
   // Return absolute URLs. Necessary for HTML export.
   const resolveUrl = (src) => (src ? new URL(src, window.location.href).href : null);
 
+  // Check data-src or srcset.
   const dataSrc = getLastSrc(element.getAttribute('data-src') || element.getAttribute('srcset'));
-  if (dataSrc) {
-    return resolveUrl(dataSrc);
-  }
+  if (dataSrc) return resolveUrl(dataSrc);
 
-  const picture = element
+  // Check <picture> sources.
+  const pictureSrcset = element
     .closest('picture')
     ?.querySelector('source[srcset]')
     ?.getAttribute('srcset');
-  const pictureSrc = getLastSrc(picture);
+  const pictureSrc = getLastSrc(pictureSrcset);
+  if (pictureSrc) return resolveUrl(pictureSrc);
 
-  if (pictureSrc) {
-    return resolveUrl(pictureSrc);
-  }
   return resolveUrl(element.getAttribute('src'));
 }
 
@@ -626,15 +679,40 @@ export const blobToBase64 = (blob) =>
  */
 export function generateElementPreview(issueObject, convertBase64 = false) {
   const issueElement = issueObject.element;
-  const cleanHTML = sanitizeHTMLBlock(issueObject.htmlPath);
-  const truncatedHTML = truncateString(cleanHTML, 600);
-  const htmlPath = `<pre><code>${escapeHTML(truncatedHTML)}</code></pre>`;
+  const cleanHTML = sanitizeHTML(issueObject.htmlPath);
+  const truncatedHTML = truncateString(cleanHTML, 400);
+  const escapedHTML = escapeHTML(truncatedHTML);
+  const htmlPath = `<pre><code>${escapedHTML}</code></pre>`;
 
   // Simple output for basic text elements.
   const simple = (element) => {
     const text = getText(element);
     const truncatedText = truncateString(text, 100);
-    return text.length ? sanitizeHTML(truncatedText) : htmlPath;
+    return text.length ? escapeHTML(truncatedText) : htmlPath;
+  };
+
+  // Since @4.5.0. Instead of duplicating and sanitizing HTML, we reconstruct for VIDEO & AUDIO.
+  const reconstructMedia = (type, element) => {
+    const rawSrc = element.getAttribute('src');
+    const safeMainSrc = rawSrc ? sanitizeURL(rawSrc) : null;
+    const controls = element.hasAttribute('controls') ? 'controls' : '';
+    const muted = element.hasAttribute('muted') ? 'muted' : '';
+    const poster = type === 'video' ? element.getAttribute('poster') : null;
+    const safePoster = poster ? sanitizeURL(poster) : null;
+    let innerHTML = '';
+    if (!safeMainSrc) {
+      const sources = element.querySelectorAll('source');
+      sources.forEach((source) => {
+        const s = source.getAttribute('src');
+        const t = source.getAttribute('type');
+        if (s) {
+          innerHTML += `<source src="${sanitizeURL(s)}" ${t ? `type="${escapeHTML(t)}"` : ''}>`;
+        }
+      });
+    }
+    const srcPart = safeMainSrc ? `src="${safeMainSrc}"` : '';
+    const posterPart = safePoster ? `poster="${safePoster}"` : '';
+    return `<${type} ${srcPart} ${posterPart} ${controls} ${muted}>${innerHTML}</${type}>`;
   };
 
   const tag = {
@@ -644,57 +722,39 @@ export function generateElementPreview(issueObject, convertBase64 = false) {
       const text = getText(element);
       const truncatedText = truncateString(text, 100);
       if (text.length > 1 && element.href && !element.hasAttribute('role')) {
-        return `<a href="${sanitizeURL(element.href)}">${sanitizeHTML(truncatedText)}</a>`;
+        return `<a href="${sanitizeURL(element.href)}">${escapeHTML(truncatedText)}</a>`;
       }
       return htmlPath;
     },
     IMG: (element) => {
+      const src = getBestImageSource(element);
+      if (!src) return htmlPath;
+
       const anchor = element.closest('a[href]');
       const alt = element.alt ? `alt="${sanitizeHTML(element.alt)}"` : 'alt';
-      const source = getBestImageSource(element);
 
-      function createImageElement(src) {
+      // Helper to generate the final HTML string.
+      const toHTML = (url) => {
+        const safeSrc = url.startsWith('data:image/') ? url : sanitizeURL(url);
+        const img = `<img src="${safeSrc}" ${alt}/>`;
         return anchor
-          ? `<a href="${sanitizeURL(anchor.href)}" rel="noopener noreferrer"><img src="${src}" ${alt}/></a>`
-          : `<img src="${src}" ${alt}/>`;
-      }
+          ? `<a href="${sanitizeURL(anchor.href)}" rel="noopener noreferrer">${img}</a>`
+          : img;
+      };
 
-      // Async handling if converting images to Base64 (for HTML export).
-      if (convertBase64) {
-        return new Promise((resolve) => {
-          if (source) {
-            // Make sure we're only converting images from the same domain.
-            const isSameDomain =
-              new URL(source, window.location.origin).origin === window.location.origin;
-            if (isSameDomain) {
-              fetch(source)
-                .then((response) => response.blob())
-                .then((blob) => blobToBase64(blob))
-                .then((base64Source) => {
-                  const imageSource = base64Source.startsWith('data:image/')
-                    ? base64Source
-                    : sanitizeURL(base64Source);
-                  resolve(createImageElement(imageSource));
-                })
-                .catch(() => {
-                  resolve(createImageElement(source));
-                });
-            } else {
-              const imageSource = source.startsWith('data:image/') ? source : sanitizeURL(source);
-              resolve(createImageElement(imageSource));
-            }
-          } else {
-            resolve(htmlPath);
-          }
-        });
-      }
+      // Synchronous: Return string immediately.
+      if (!convertBase64) return toHTML(src);
 
-      // Synchronous handling for skip-to-issue.
-      const sanitized = source.startsWith('data:image/') ? source : sanitizeURL(source);
-      if (source) {
-        return createImageElement(sanitized);
-      }
-      return htmlPath;
+      // Generate base64 image.
+      return (async () => {
+        try {
+          if (new URL(src, location.origin).origin !== location.origin) throw 0;
+          const blob = await fetch(src).then((res) => res.blob());
+          return toHTML(await blobToBase64(blob));
+        } catch {
+          return toHTML(src);
+        }
+      })();
     },
     IFRAME: (element) => {
       const source = element.src;
@@ -703,12 +763,12 @@ export function generateElementPreview(issueObject, convertBase64 = false) {
       const ariaLabel = ariaLabelAttr || '';
       if (source) {
         const iframeTitle = ariaLabel || title;
-        return `<iframe src="${sanitizeURL(source)}" aria-label="${sanitizeHTML(iframeTitle)}"></iframe>`;
+        return `<iframe src="${sanitizeURL(source)}" aria-label="${escapeHTML(iframeTitle)}"></iframe>`;
       }
       return htmlPath;
     },
-    AUDIO: () => sanitizeHTMLBlock(issueObject.htmlPath),
-    VIDEO: () => sanitizeHTMLBlock(issueObject.htmlPath),
+    VIDEO: (element) => reconstructMedia('video', element),
+    AUDIO: (element) => reconstructMedia('audio', element),
   };
 
   const tagHandler = tag[issueElement.tagName];

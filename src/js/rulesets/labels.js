@@ -123,14 +123,14 @@ export default function checkLabels() {
           }
 
           // Everything else that is not visible (aria-label, title, placeholder).
-          const sanitizedText = Utils.sanitizeHTML(inputName);
+          const escapedText = Utils.escapeHTML(inputName);
           State.results.push({
             test: 'LABELS_ARIA_LABEL_INPUT',
             element: $el,
             type: State.option.checks.LABELS_ARIA_LABEL_INPUT.type || 'warning',
             content: State.option.checks.LABELS_ARIA_LABEL_INPUT.content
-              ? Lang.sprintf(State.option.checks.LABELS_ARIA_LABEL_INPUT.content, sanitizedText)
-              : `${Lang.sprintf('LABELS_ARIA_LABEL_INPUT', sanitizedText)} ${Lang.sprintf('ACC_NAME_TIP')}`,
+              ? Lang.sprintf(State.option.checks.LABELS_ARIA_LABEL_INPUT.content, escapedText)
+              : `${Lang.sprintf('LABELS_ARIA_LABEL_INPUT', escapedText)} ${Lang.sprintf('ACC_NAME_TIP')}`,
             dismiss: Utils.prepareDismissal(`LABELS_ARIA_LABEL_INPUT ${type + inputName}`),
             dismissAll: State.option.checks.LABELS_ARIA_LABEL_INPUT.dismissAll
               ? 'LABELS_ARIA_LABEL_INPUT'

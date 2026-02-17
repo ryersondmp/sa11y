@@ -356,12 +356,12 @@ export default function checkContrast() {
 
     // Content for tooltip.
     const truncatedText = Utils.truncateString(text, 80);
-    const sanitizedText = Utils.sanitizeHTML(truncatedText);
+    const sanitizedText = Utils.escapeHTML(truncatedText);
 
     // Preview text
     let previewText;
     if (item.type === 'placeholder' || item.type === 'placeholder-unsupported') {
-      previewText = Utils.sanitizeHTML($el.placeholder);
+      previewText = Utils.escapeHTML($el.placeholder);
     } else if (item.type === 'svg-error' || item.type === 'svg-warning') {
       previewText = '';
     } else {
@@ -401,7 +401,7 @@ export default function checkContrast() {
         break;
       case 'input':
         if (State.option.checks.CONTRAST_INPUT) {
-          const sanitizedInput = Utils.sanitizeHTMLBlock($el.outerHTML);
+          const sanitizedInput = Utils.sanitizeHTML($el.outerHTML);
           State.results.push({
             test: 'CONTRAST_INPUT',
             element,
@@ -418,7 +418,7 @@ export default function checkContrast() {
         break;
       case 'placeholder':
         if (State.option.checks.CONTRAST_PLACEHOLDER) {
-          const sanitizedPlaceholder = Utils.sanitizeHTMLBlock($el.outerHTML);
+          const sanitizedPlaceholder = Utils.sanitizeHTML($el.outerHTML);
           State.results.push({
             test: 'CONTRAST_PLACEHOLDER',
             element: $el,
@@ -438,7 +438,7 @@ export default function checkContrast() {
         break;
       case 'placeholder-unsupported':
         if (State.option.checks.CONTRAST_PLACEHOLDER_UNSUPPORTED) {
-          const sanitizedPlaceholder = Utils.sanitizeHTMLBlock($el.outerHTML);
+          const sanitizedPlaceholder = Utils.sanitizeHTML($el.outerHTML);
           State.results.push({
             test: 'CONTRAST_PLACEHOLDER_UNSUPPORTED',
             element: $el,
@@ -460,7 +460,7 @@ export default function checkContrast() {
         break;
       case 'svg-error':
         if (State.option.checks.CONTRAST_ERROR_GRAPHIC) {
-          const sanitizedSVG = Utils.sanitizeHTMLBlock($el.outerHTML);
+          const sanitizedSVG = Utils.sanitizeHTML($el.outerHTML);
           State.results.push({
             test: 'CONTRAST_ERROR_GRAPHIC',
             element: $el,
@@ -480,7 +480,7 @@ export default function checkContrast() {
         break;
       case 'svg-warning':
         if (State.option.checks.CONTRAST_WARNING_GRAPHIC) {
-          const sanitizedSVG = Utils.sanitizeHTMLBlock($el.outerHTML);
+          const sanitizedSVG = Utils.sanitizeHTML($el.outerHTML);
           State.results.push({
             test: 'CONTRAST_WARNING_GRAPHIC',
             element: $el,
