@@ -10,13 +10,24 @@ const Lang = {
   sprintf(string, ...args) {
     let transString = this._(string);
     transString = this.prepHTML(transString);
+    const el = document.createElement('div');
+    el.innerHTML = transString;
 
+    // Replace placeholders with span markers.
     if (args?.length) {
-      args.forEach((arg) => {
-        transString = transString.replace(/%\([a-zA-z]+\)/, arg);
+      args.forEach((_arg, index) => {
+        el.innerHTML = el.innerHTML.replace(/%\([a-zA-z]+\)/, `<span data-arg='${index}'></span>`);
+      });
+
+      // Inject the actual values as textContent.
+      args.forEach((arg, index) => {
+        const replacement = el.querySelector(`[data-arg="${index}"]`);
+        if (replacement && arg !== null) {
+          replacement.textContent = arg;
+        }
       });
     }
-    return transString;
+    return el;
   },
   translate(string) {
     return this.langStrings[string] || string;

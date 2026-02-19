@@ -67,7 +67,6 @@ document.addEventListener('sa11y-custom-checks', () => {
   if ($checkAnnouncement.length > 1) {
     for (let i = 1; i < $checkAnnouncement.length; i++) {
       const key = sa11y.prepareDismissal($checkAnnouncement[i].textContent);
-
       sa11y.results.push({
         element: $checkAnnouncement[i],
         type: 'warning',

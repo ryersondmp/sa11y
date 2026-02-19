@@ -691,30 +691,6 @@ export function generateElementPreview(issueObject, convertBase64 = false) {
     return text.length ? escapeHTML(truncatedText) : htmlPath;
   };
 
-  // Since @4.5.0. Instead of duplicating and sanitizing HTML, we reconstruct for VIDEO & AUDIO.
-  const reconstructMedia = (type, element) => {
-    const rawSrc = element.getAttribute('src');
-    const safeMainSrc = rawSrc ? sanitizeURL(rawSrc) : null;
-    const controls = element.hasAttribute('controls') ? 'controls' : '';
-    const muted = element.hasAttribute('muted') ? 'muted' : '';
-    const poster = type === 'video' ? element.getAttribute('poster') : null;
-    const safePoster = poster ? sanitizeURL(poster) : null;
-    let innerHTML = '';
-    if (!safeMainSrc) {
-      const sources = element.querySelectorAll('source');
-      sources.forEach((source) => {
-        const s = source.getAttribute('src');
-        const t = source.getAttribute('type');
-        if (s) {
-          innerHTML += `<source src="${sanitizeURL(s)}" ${t ? `type="${escapeHTML(t)}"` : ''}>`;
-        }
-      });
-    }
-    const srcPart = safeMainSrc ? `src="${safeMainSrc}"` : '';
-    const posterPart = safePoster ? `poster="${safePoster}"` : '';
-    return `<${type} ${srcPart} ${posterPart} ${controls} ${muted}>${innerHTML}</${type}>`;
-  };
-
   const tag = {
     SPAN: simple,
     P: simple,
@@ -756,19 +732,6 @@ export function generateElementPreview(issueObject, convertBase64 = false) {
         }
       })();
     },
-    IFRAME: (element) => {
-      const source = element.src;
-      const title = element.title ? element.title : '';
-      const ariaLabelAttr = element.getAttribute('aria-label');
-      const ariaLabel = ariaLabelAttr || '';
-      if (source) {
-        const iframeTitle = ariaLabel || title;
-        return `<iframe src="${sanitizeURL(source)}" aria-label="${escapeHTML(iframeTitle)}"></iframe>`;
-      }
-      return htmlPath;
-    },
-    VIDEO: (element) => reconstructMedia('video', element),
-    AUDIO: (element) => reconstructMedia('audio', element),
   };
 
   const tagHandler = tag[issueElement.tagName];
@@ -983,7 +946,7 @@ export function validateLang(code, displayLangCode) {
   if (!langCache && typeof Intl !== 'undefined') {
     try {
       langCache = new Intl.DisplayNames([displayLangCode], { type: 'language', fallback: 'none' });
-    } catch {}
+    } catch { }
   }
 
   if (langCache) {

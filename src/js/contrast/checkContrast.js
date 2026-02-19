@@ -370,16 +370,11 @@ export default function checkContrast() {
     updatedItem.sanitizedText = previewText;
 
     // Reference necessary ratios for compliance.
-    let ratioTip = '';
-    if (State.option.contrastAlgorithm === 'AA' || State.option.contrastAlgorithm === 'AAA') {
-      const normal = State.option.contrastAlgorithm === 'AAA' ? '7:1' : '4.5:1';
-      const large = State.option.contrastAlgorithm === 'AAA' ? '4.5:1' : '3:1';
-      const ratioToDisplay = item.isLargeText ? large : normal;
-      const ratioRequirement = item.isLargeText ? 'CONTRAST_LARGE' : 'CONTRAST_NORMAL';
-      ratioTip = ` ${Lang.sprintf(ratioRequirement, ratioToDisplay)}`;
-    }
-    const graphicsTip =
-      State.option.contrastAlgorithm === 'APCA' ? '' : ` ${Lang.sprintf('CONTRAST_TIP_GRAPHIC')}`;
+    const isWcag = State.option.contrastAlgorithm === 'AA' || State.option.contrastAlgorithm === 'AAA';
+    const normal = State.option.contrastAlgorithm === 'AAA' ? '7:1' : '4.5:1';
+    const large = State.option.contrastAlgorithm === 'AAA' ? '4.5:1' : '3:1';
+    const ratioToDisplay = item.isLargeText ? large : normal;
+    const ratioRequirementKey = item.isLargeText ? 'CONTRAST_LARGE' : 'CONTRAST_NORMAL';
 
     // Iterate through contrast results based on type.
     switch (item.type) {
@@ -389,9 +384,13 @@ export default function checkContrast() {
             test: 'CONTRAST_ERROR',
             element: $el,
             type: State.option.checks.CONTRAST_ERROR.type || 'error',
-            content: State.option.checks.CONTRAST_ERROR.content
-              ? Lang.sprintf(State.option.checks.CONTRAST_ERROR.content)
-              : Lang.sprintf('CONTRAST_ERROR') + ratioTip,
+            content: Lang.sprintf(
+              State.option.checks.CONTRAST_ERROR.content ||
+              (isWcag
+                ? `${Lang._('CONTRAST_ERROR')} ${Lang._(ratioRequirementKey)}`
+                : Lang._('CONTRAST_ERROR')),
+              ratioToDisplay
+            ),
             dismiss: Utils.prepareDismissal(`CONTRAST_ERROR ${sanitizedText}`),
             dismissAll: State.option.checks.CONTRAST_ERROR.dismissAll ? 'CONTRAST_ERROR' : false,
             developer: State.option.checks.CONTRAST_ERROR.developer || false,
@@ -406,9 +405,14 @@ export default function checkContrast() {
             test: 'CONTRAST_INPUT',
             element,
             type: State.option.checks.CONTRAST_INPUT.type || 'error',
-            content: State.option.checks.CONTRAST_INPUT.content
-              ? Lang.sprintf(State.option.checks.CONTRAST_INPUT.content)
-              : Lang.sprintf('CONTRAST_INPUT', ratio) + ratioTip,
+            content: Lang.sprintf(
+              State.option.checks.CONTRAST_INPUT.content ||
+              (isWcag
+                ? `${Lang._('CONTRAST_INPUT')} ${Lang._(ratioRequirementKey)}`
+                : Lang._('CONTRAST_INPUT')),
+              ratio,
+              ratioToDisplay
+            ),
             dismiss: Utils.prepareDismissal(`CONTRAST_INPUT ${sanitizedInput}`),
             dismissAll: State.option.checks.CONTRAST_INPUT.dismissAll ? 'CONTRAST_INPUT' : false,
             developer: State.option.checks.CONTRAST_INPUT.developer || true,
@@ -423,19 +427,22 @@ export default function checkContrast() {
             test: 'CONTRAST_PLACEHOLDER',
             element: $el,
             type: State.option.checks.CONTRAST_PLACEHOLDER.type || 'error',
-            content: State.option.checks.CONTRAST_PLACEHOLDER.content
-              ? Lang.sprintf(State.option.checks.CONTRAST_PLACEHOLDER.content)
-              : Lang.sprintf('CONTRAST_PLACEHOLDER') + ratioTip,
+            content: Lang.sprintf(
+              State.option.checks.CONTRAST_PLACEHOLDER.content ||
+              (isWcag
+                ? `${Lang._('CONTRAST_PLACEHOLDER')} ${Lang._(ratioRequirementKey)}`
+                : Lang._('CONTRAST_PLACEHOLDER')),
+              ratioToDisplay
+            ),
             position: 'afterend',
             dismiss: Utils.prepareDismissal(`CONTRAST_PLACEHOLDER ${sanitizedPlaceholder}`),
-            dismissAll: State.option.checks.CONTRAST_PLACEHOLDER.dismissAll
-              ? 'CONTRAST_PLACEHOLDER'
-              : false,
+            dismissAll: State.option.checks.CONTRAST_PLACEHOLDER.dismissAll ? 'CONTRAST_PLACEHOLDER' : false,
             developer: State.option.checks.CONTRAST_PLACEHOLDER.developer || true,
             contrastDetails: updatedItem,
           });
         }
         break;
+
       case 'placeholder-unsupported':
         if (State.option.checks.CONTRAST_PLACEHOLDER_UNSUPPORTED) {
           const sanitizedPlaceholder = Utils.sanitizeHTML($el.outerHTML);
@@ -443,21 +450,22 @@ export default function checkContrast() {
             test: 'CONTRAST_PLACEHOLDER_UNSUPPORTED',
             element: $el,
             type: State.option.checks.CONTRAST_PLACEHOLDER_UNSUPPORTED.type || 'warning',
-            content: State.option.checks.CONTRAST_PLACEHOLDER_UNSUPPORTED.content
-              ? Lang.sprintf(State.option.checks.CONTRAST_PLACEHOLDER_UNSUPPORTED.content)
-              : Lang.sprintf('CONTRAST_PLACEHOLDER_UNSUPPORTED') + ratioTip,
-            position: 'afterend',
-            dismiss: Utils.prepareDismissal(
-              `CONTRAST_PLACEHOLDER_UNSUPPORTED ${sanitizedPlaceholder}`,
+            content: Lang.sprintf(
+              State.option.checks.CONTRAST_PLACEHOLDER_UNSUPPORTED.content ||
+              (isWcag
+                ? `${Lang._('CONTRAST_PLACEHOLDER_UNSUPPORTED')} ${Lang._(ratioRequirementKey)}`
+                : Lang._('CONTRAST_PLACEHOLDER_UNSUPPORTED')),
+              ratioToDisplay
             ),
-            dismissAll: State.option.checks.CONTRAST_PLACEHOLDER_UNSUPPORTED.dismissAll
-              ? 'CONTRAST_PLACEHOLDER_UNSUPPORTED'
-              : false,
+            position: 'afterend',
+            dismiss: Utils.prepareDismissal(`CONTRAST_PLACEHOLDER_UNSUPPORTED ${sanitizedPlaceholder}`),
+            dismissAll: State.option.checks.CONTRAST_PLACEHOLDER_UNSUPPORTED.dismissAll ? 'CONTRAST_PLACEHOLDER_UNSUPPORTED' : false,
             developer: State.option.checks.CONTRAST_PLACEHOLDER_UNSUPPORTED.developer || true,
             contrastDetails: updatedItem,
           });
         }
         break;
+
       case 'svg-error':
         if (State.option.checks.CONTRAST_ERROR_GRAPHIC) {
           const sanitizedSVG = Utils.sanitizeHTML($el.outerHTML);
@@ -465,19 +473,22 @@ export default function checkContrast() {
             test: 'CONTRAST_ERROR_GRAPHIC',
             element: $el,
             type: State.option.checks.CONTRAST_ERROR_GRAPHIC.type || 'error',
-            content: State.option.checks.CONTRAST_ERROR_GRAPHIC.content
-              ? Lang.sprintf(State.option.checks.CONTRAST_ERROR_GRAPHIC.content)
-              : Lang.sprintf('CONTRAST_ERROR_GRAPHIC') + graphicsTip,
+            // No trailing variable needed since the graphic tip is just static text
+            content: Lang.sprintf(
+              State.option.checks.CONTRAST_ERROR_GRAPHIC.content ||
+              (State.option.contrastAlgorithm !== 'APCA'
+                ? `${Lang._('CONTRAST_ERROR_GRAPHIC')} ${Lang._('CONTRAST_TIP_GRAPHIC')}`
+                : Lang._('CONTRAST_ERROR_GRAPHIC'))
+            ),
             dismiss: Utils.prepareDismissal(`CONTRAST_ERROR_GRAPHIC ${sanitizedSVG}`),
-            dismissAll: State.option.checks.CONTRAST_ERROR_GRAPHIC.dismissAll
-              ? 'CONTRAST_ERROR_GRAPHIC'
-              : false,
+            dismissAll: State.option.checks.CONTRAST_ERROR_GRAPHIC.dismissAll ? 'CONTRAST_ERROR_GRAPHIC' : false,
             developer: State.option.checks.CONTRAST_ERROR_GRAPHIC.developer || true,
             contrastDetails: updatedItem,
             margin: '-25px',
           });
         }
         break;
+
       case 'svg-warning':
         if (State.option.checks.CONTRAST_WARNING_GRAPHIC) {
           const sanitizedSVG = Utils.sanitizeHTML($el.outerHTML);
@@ -485,55 +496,63 @@ export default function checkContrast() {
             test: 'CONTRAST_WARNING_GRAPHIC',
             element: $el,
             type: State.option.checks.CONTRAST_WARNING_GRAPHIC.type || 'warning',
-            content: State.option.checks.CONTRAST_WARNING_GRAPHIC.content
-              ? Lang.sprintf(State.option.checks.CONTRAST_WARNING_GRAPHIC.content)
-              : Lang.sprintf('CONTRAST_WARNING_GRAPHIC') + graphicsTip,
+            content: Lang.sprintf(
+              State.option.checks.CONTRAST_WARNING_GRAPHIC.content ||
+              (State.option.contrastAlgorithm !== 'APCA'
+                ? `${Lang._('CONTRAST_WARNING_GRAPHIC')} ${Lang._('CONTRAST_TIP_GRAPHIC')}`
+                : Lang._('CONTRAST_WARNING_GRAPHIC'))
+            ),
             dismiss: Utils.prepareDismissal(`CONTRAST_WARNING_GRAPHIC ${sanitizedSVG}`),
-            dismissAll: State.option.checks.CONTRAST_WARNING_GRAPHIC.dismissAll
-              ? 'CONTRAST_WARNING_GRAPHIC'
-              : false,
+            dismissAll: State.option.checks.CONTRAST_WARNING_GRAPHIC.dismissAll ? 'CONTRAST_WARNING_GRAPHIC' : false,
             developer: State.option.checks.CONTRAST_WARNING_GRAPHIC.developer || true,
             contrastDetails: updatedItem,
             margin: '-25px',
           });
         }
         break;
+
       case 'background-image':
         if (State.option.checks.CONTRAST_WARNING) {
           State.results.push({
             test: 'CONTRAST_WARNING',
             element,
             type: State.option.checks.CONTRAST_WARNING.type || 'warning',
-            content: State.option.checks.CONTRAST_WARNING.content
-              ? Lang.sprintf(State.option.checks.CONTRAST_WARNING.content)
-              : Lang.sprintf('CONTRAST_WARNING') + ratioTip,
+            content: Lang.sprintf(
+              State.option.checks.CONTRAST_WARNING.content ||
+              (isWcag
+                ? `${Lang._('CONTRAST_WARNING')} ${Lang._(ratioRequirementKey)}`
+                : Lang._('CONTRAST_WARNING')),
+              ratioToDisplay
+            ),
             dismiss: Utils.prepareDismissal(`CONTRAST_WARNING ${sanitizedText}`),
-            dismissAll: State.option.checks.CONTRAST_WARNING.dismissAll
-              ? 'CONTRAST_WARNING'
-              : false,
+            dismissAll: State.option.checks.CONTRAST_WARNING.dismissAll ? 'CONTRAST_WARNING' : false,
             developer: State.option.checks.CONTRAST_WARNING.developer || false,
             contrastDetails: updatedItem,
           });
         }
         break;
+
       case 'unsupported':
         if (State.option.checks.CONTRAST_UNSUPPORTED) {
           State.results.push({
             test: 'CONTRAST_UNSUPPORTED',
             element,
             type: State.option.checks.CONTRAST_UNSUPPORTED.type || 'warning',
-            content: State.option.checks.CONTRAST_UNSUPPORTED.content
-              ? Lang.sprintf(State.option.checks.CONTRAST_UNSUPPORTED.content)
-              : Lang.sprintf('CONTRAST_WARNING') + ratioTip,
+            content: Lang.sprintf(
+              State.option.checks.CONTRAST_UNSUPPORTED.content ||
+              (isWcag
+                ? `${Lang._('CONTRAST_WARNING')} ${Lang._(ratioRequirementKey)}`
+                : Lang._('CONTRAST_WARNING')),
+              ratioToDisplay
+            ),
             dismiss: Utils.prepareDismissal(`CONTRAST_UNSUPPORTED ${sanitizedText}`),
-            dismissAll: State.option.checks.CONTRAST_UNSUPPORTED.dismissAll
-              ? 'CONTRAST_UNSUPPORTED'
-              : false,
+            dismissAll: State.option.checks.CONTRAST_UNSUPPORTED.dismissAll ? 'CONTRAST_UNSUPPORTED' : false,
             developer: State.option.checks.CONTRAST_UNSUPPORTED.developer || false,
             contrastDetails: updatedItem,
           });
         }
         break;
+
       default:
         break;
     }

@@ -8,9 +8,9 @@ import {
 } from '../contrast/ui-tools';
 import Constants from '../utils/constants';
 import Lang from '../utils/lang';
-import * as Utils from '../utils/utils';
 import { annotationButtons } from './annotations';
 import { State } from '../core/state';
+import * as Utils from '../utils/utils';
 
 /**
  * Tooltip container for all annotations.
@@ -24,6 +24,8 @@ export class AnnotationTooltips extends HTMLElement {
     style.innerHTML = tooltipStyles + sharedStyles;
     shadowRoot.appendChild(style);
 
+    const template = State.results;
+
     // Instantiate tippy.js
     const annotations = tippy(annotationButtons, {
       interactive: true,
@@ -35,6 +37,61 @@ export class AnnotationTooltips extends HTMLElement {
       maxWidth: 375,
       theme: 'sa11y-theme',
       placement: 'auto-start',
+      content(reference) {
+        const id = reference.getRootNode().host.getAttribute('data-sa11y-annotation');
+        const result = template.find(item => String(item.id) === String(id));
+        if (!result) return null;
+
+        const { element, type, content, dismiss, dismissAll, contrastDetails } = result;
+        if (!element) return;
+
+        // 1. Create the top-level container
+        const wrapper = document.createElement('div');
+        wrapper.setAttribute('lang', Lang._('LANG_CODE'));
+        wrapper.className = type;
+
+        // 2. Build the HTML for the buttons/header (XSS-safe internal strings)
+        const dismissAllBtn =
+          State.option.dismissAnnotations &&
+            State.option.dismissAll &&
+            typeof dismissAll === 'string' &&
+            (type === 'warning' || type === 'good')
+            ? `<button data-sa11y-dismiss='${id}' data-sa11y-dismiss-all type='button'>${Lang._('DISMISS_ALL')}</button>`
+            : '';
+
+        const dismissBtn =
+          State.option.dismissAnnotations && (type === 'warning' || type === 'good') && dismiss
+            ? `<button data-sa11y-dismiss='${id}' type='button'>${Lang._('DISMISS')}</button>`
+            : '';
+
+        const validTypes = ['error', 'warning', 'good'];
+        if (validTypes.indexOf(type) === -1) {
+          throw Error(`Invalid type [${type}] for annotation`);
+        }
+        const ariaLabel = {
+          [validTypes[0]]: Lang._('ERROR'),
+          [validTypes[1]]: Lang._('WARNING'),
+          [validTypes[2]]: Lang._('GOOD'),
+        };
+        // 3. Set the innerHTML with a specific placeholder div for the content
+        wrapper.innerHTML = `
+          <button type='button' class='close-btn close-tooltip' aria-label='${Lang._('ALERT_CLOSE')}'></button>
+          <h2>${ariaLabel[type]}</h2>
+          <div class="sa11y-content-body"></div>
+          ${contrastDetails ? '<div data-sa11y-contrast-details></div>' : ''}
+          <div class='dismiss-group'>
+            ${dismissBtn || ''}
+            ${dismissAllBtn}
+          </div>
+        `;
+        const body = wrapper.querySelector('.sa11y-content-body');
+        if (content instanceof HTMLElement || content instanceof DocumentFragment) {
+          body.appendChild(content);
+        } else if (typeof content === 'string') {
+          body.textContent += content;
+        }
+        return wrapper;
+      },
       allowHTML: true,
       role: 'dialog',
       aria: {
@@ -44,26 +101,32 @@ export class AnnotationTooltips extends HTMLElement {
       appendTo: shadowRoot,
       zIndex: 2147483645,
       onShow(instance) {
-        // Hide previously opened tooltip.
-        annotations.forEach((popper) => {
-          if (popper !== instance.popper) {
-            popper.hide();
-          }
-        });
+        // 1. Safety Guard: Ensure instance and popper exist.
+        if (!instance || !instance.popper) return;
 
-        // Last opened tooltip.
-        const annotation = instance.reference.getRootNode().host;
-        annotation.setAttribute('data-sa11y-opened', '');
+        // Hide other tooltips (Accessing the tippy collection safely)
+        // Note: Ensure 'annotations' is defined in the outer scope
+        if (Array.isArray(annotations)) {
+          annotations.forEach((popper) => {
+            if (popper !== instance) popper.hide();
+          });
+        }
 
-        // Close button for tooltip.
+        const host = instance.reference.getRootNode().host;
+        if (host) {
+          host.setAttribute('data-sa11y-opened', '');
+        }
+
         const closeButton = instance.popper.querySelector('.close-btn');
         const closeButtonHandler = () => {
           instance.hide();
           instance.reference.focus();
         };
-        closeButton.addEventListener('click', closeButtonHandler);
 
-        // Event listener for the escape key.
+        if (closeButton) {
+          closeButton.addEventListener('click', closeButtonHandler);
+        }
+
         const escapeListener = (event) => {
           if (event.key === 'Escape') {
             instance.hide();
@@ -72,68 +135,63 @@ export class AnnotationTooltips extends HTMLElement {
         };
         instance.popper.addEventListener('keydown', escapeListener);
 
-        // Generate preview, colour pickers, and suggestions for contrast tooltips.
-        // Imported from rulesets/contrast.js
+        // Contrast Tools Initialization
         if (!instance.popper.hasAttribute('contrast-tools-initialized')) {
-          const issueID = parseInt(annotation.getAttribute('data-sa11y-annotation'), 10);
-          const issueObject = window.sa11yCheckComplete.results.find(
-            (issue) => issue.id === issueID,
-          );
-          const { contrastDetails } = issueObject || {};
+          const rawId = host?.getAttribute('data-sa11y-annotation');
+          const results = window.sa11yCheckComplete?.results || [];
+          const issueObject = results.find(issue => String(issue.id) === String(rawId));
 
+          const contrastDetails = issueObject?.contrastDetails;
           if (contrastDetails) {
             const container = instance.popper.querySelector('[data-sa11y-contrast-details]');
+            if (container) {
+              const tools = generateContrastTools(contrastDetails);
+              container.appendChild(tools);
+              initializeContrastTools(instance.popper, contrastDetails);
 
-            // Append color pickers and suggested color.
-            const tools = generateContrastTools(contrastDetails);
-            container.appendChild(tools);
-            initializeContrastTools(instance.popper, contrastDetails);
-
-            // Append suggested color.
-            const suggestion = generateColorSuggestion(contrastDetails);
-            if (suggestion) {
-              container.appendChild(suggestion);
+              const suggestion = generateColorSuggestion(contrastDetails);
+              if (suggestion) {
+                container.appendChild(suggestion);
+              }
+              instance.popper.setAttribute('contrast-tools-initialized', 'true');
             }
-
-            // Contrast tools has been initialized.
-            instance.popper.setAttribute('contrast-tools-initialized', true);
           }
         }
-
-        // Make tooltip stay open if colour picker is used. Use 'mousedown' event, because upon click of trigger, it sets focus on close button, which immediately closes colour input on safari.
-        let firstClick = true;
-        function handleMouseDown(event) {
-          if (firstClick && event.target.matches('input[type="color"]')) {
+        const handleMouseDown = (event) => {
+          if (event.target.matches('input[type="color"]')) {
             instance.reference.click();
-            firstClick = false;
             instance.popper.removeEventListener('mousedown', handleMouseDown);
           }
-        }
+        };
         instance.popper.addEventListener('mousedown', handleMouseDown);
 
-        // Remove all event listeners.
-        const onHiddenTooltip = () => {
-          closeButton.removeEventListener('click', closeButtonHandler);
-          instance.popper.removeEventListener('keydown', escapeListener);
-          instance.popper.removeEventListener('hidden', onHiddenTooltip);
-        };
-        instance.popper.addEventListener('hidden', onHiddenTooltip);
+        // Cleanup
+        instance.setProps({
+          onHidden() {
+            if (closeButton) closeButton.removeEventListener('click', closeButtonHandler);
+            instance.popper.removeEventListener('keydown', escapeListener);
+            instance.popper.removeEventListener('mousedown', handleMouseDown);
+            if (host) host.removeAttribute('data-sa11y-opened');
+          }
+        });
       },
       onTrigger(instance, event) {
         if (event.type === 'click') {
-          // Set focus to close button 'click' event.
-          setTimeout(() => {
-            instance.popper.querySelector('.close-btn').focus();
-            Utils.trapFocus(instance.popper);
-          }, 0);
+          // Wrap in a check to ensure the popper content is actually there
+          requestAnimationFrame(() => {
+            const closeBtn = instance.popper.querySelector('.close-btn');
+            if (closeBtn) {
+              closeBtn.focus();
+              Utils.trapFocus(instance.popper);
+            }
+          });
         }
       },
       onHide(instance) {
-        instance.popper.querySelector('.close-btn').removeEventListener('click', () => {
-          instance.hide();
-        });
-        const annotation = instance.reference.getRootNode().host;
-        annotation.removeAttribute('data-sa11y-opened');
+        const host = instance.reference.getRootNode().host;
+        if (host) {
+          host.removeAttribute('data-sa11y-opened');
+        }
       },
     });
   }

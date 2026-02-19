@@ -232,9 +232,10 @@ export default function checkDeveloper() {
             test: 'BTN_EMPTY_LABELLEDBY',
             element: $el,
             type: State.option.checks.BTN_EMPTY_LABELLEDBY.type || 'error',
-            content: State.option.checks.BTN_EMPTY_LABELLEDBY.content
-              ? Lang.sprintf(State.option.checks.BTN_EMPTY_LABELLEDBY.content)
-              : `${Lang.sprintf('BTN_EMPTY_LABELLEDBY')} ${Lang.sprintf('BTN_TIP')}`,
+            content: Lang.sprintf(
+              State.option.checks.BTN_EMPTY_LABELLEDBY.content ||
+              Lang._('BTN_EMPTY_LABELLEDBY') + Lang._('BTN_TIP'),
+            ),
             dismiss: Utils.prepareDismissal(
               `BTN_EMPTY_LABELLEDBY ${$el.tagName + $el.id + $el.className + accName}`,
             ),
@@ -248,9 +249,8 @@ export default function checkDeveloper() {
             test: 'BTN_EMPTY',
             element: $el,
             type: State.option.checks.BTN_EMPTY.type || 'error',
-            content: State.option.checks.BTN_EMPTY.content
-              ? Lang.sprintf(State.option.checks.BTN_EMPTY.content)
-              : `${Lang.sprintf('BTN_EMPTY')} ${Lang.sprintf('BTN_TIP')}`,
+            content: Lang.sprintf(State.option.checks.BTN_EMPTY.content
+              || Lang._('BTN_EMPTY') + Lang._('BTN_TIP')),
             dismiss: Utils.prepareDismissal(
               `BTN_EMPTY ${$el.tagName + $el.id + $el.className + accName}`,
             ),
@@ -271,7 +271,9 @@ export default function checkDeveloper() {
           type: State.option.checks.LABEL_IN_NAME.type || 'warning',
           content: State.option.checks.LABEL_IN_NAME.content
             ? Lang.sprintf(State.option.checks.LABEL_IN_NAME.content, escapedText)
-            : `${Lang.sprintf('LABEL_IN_NAME', escapedText)} ${Lang.sprintf('ACC_NAME_TIP')}`,
+            : Lang.sprintf(
+              Lang._('LABEL_IN_NAME') + Lang._('ACC_NAME_TIP'), escapedText
+            ),
           dismiss: Utils.prepareDismissal(
             `LABEL_IN_NAME ${$el.tagName + $el.id + $el.className + accName}`,
           ),
@@ -287,9 +289,10 @@ export default function checkDeveloper() {
           test: 'BTN_ROLE_IN_NAME',
           element: $el,
           type: State.option.checks.BTN_ROLE_IN_NAME.type || 'warning',
-          content: State.option.checks.BTN_ROLE_IN_NAME.content
-            ? Lang.sprintf(State.option.checks.BTN_ROLE_IN_NAME.content)
-            : `${Lang.sprintf('BTN_ROLE_IN_NAME')} ${Lang.sprintf('BTN_TIP')}`,
+          content: Lang.sprintf(
+            State.option.checks.BTN_ROLE_IN_NAME.content ||
+            Lang._('BTN_ROLE_IN_NAME') + Lang._('BTN_TIP'),
+          ),
           dismiss: Utils.prepareDismissal(
             `BTN_ROLE_IN_NAME ${$el.tagName + $el.id + $el.className + accName}`,
           ),
