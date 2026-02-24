@@ -264,15 +264,14 @@ export default function checkDeveloper() {
       /* Button must have visible label as part of their accessible name. */
       const isVisibleTextInAccName = Utils.isVisibleTextInAccName($el, accName);
       if (State.option.checks.LABEL_IN_NAME && hasAria && isVisibleTextInAccName) {
-        const escapedText = Utils.escapeHTML(accName);
         State.results.push({
           test: 'LABEL_IN_NAME',
           element: $el,
           type: State.option.checks.LABEL_IN_NAME.type || 'warning',
           content: State.option.checks.LABEL_IN_NAME.content
-            ? Lang.sprintf(State.option.checks.LABEL_IN_NAME.content, escapedText)
+            ? Lang.sprintf(State.option.checks.LABEL_IN_NAME.content, accName)
             : Lang.sprintf(
-              Lang._('LABEL_IN_NAME') + Lang._('ACC_NAME_TIP'), escapedText
+              Lang._('LABEL_IN_NAME') + Lang._('ACC_NAME_TIP'), accName
             ),
           dismiss: Utils.prepareDismissal(
             `LABEL_IN_NAME ${$el.tagName + $el.id + $el.className + accName}`,

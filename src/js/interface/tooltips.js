@@ -45,12 +45,12 @@ export class AnnotationTooltips extends HTMLElement {
         const { element, type, content, dismiss, dismissAll, contrastDetails } = result;
         if (!element) return;
 
-        // 1. Create the top-level container
+        // 1. Create the tooltip container.
         const wrapper = document.createElement('div');
         wrapper.setAttribute('lang', Lang._('LANG_CODE'));
         wrapper.className = type;
 
-        // 2. Build the HTML for the buttons/header (XSS-safe internal strings)
+        // 2. Build the HTML for the buttons/header.
         const dismissAllBtn =
           State.option.dismissAnnotations &&
             State.option.dismissAll &&
@@ -64,6 +64,7 @@ export class AnnotationTooltips extends HTMLElement {
             ? `<button data-sa11y-dismiss='${id}' type='button'>${Lang._('DISMISS')}</button>`
             : '';
 
+        // Quick type check.
         const validTypes = ['error', 'warning', 'good'];
         if (validTypes.indexOf(type) === -1) {
           throw Error(`Invalid type [${type}] for annotation`);
@@ -73,7 +74,8 @@ export class AnnotationTooltips extends HTMLElement {
           [validTypes[1]]: Lang._('WARNING'),
           [validTypes[2]]: Lang._('GOOD'),
         };
-        // 3. Set the innerHTML with a specific placeholder div for the content
+
+        // 3. Full tooltip structure.
         wrapper.innerHTML = `
           <button type='button' class='close-btn close-tooltip' aria-label='${Lang._('ALERT_CLOSE')}'></button>
           <h2>${ariaLabel[type]}</h2>
@@ -84,6 +86,8 @@ export class AnnotationTooltips extends HTMLElement {
             ${dismissAllBtn}
           </div>
         `;
+
+        // Replace user supplied content via textContent instead of .innerHTML
         const body = wrapper.querySelector('.sa11y-content-body');
         if (content instanceof HTMLElement || content instanceof DocumentFragment) {
           body.appendChild(content);
@@ -101,11 +105,10 @@ export class AnnotationTooltips extends HTMLElement {
       appendTo: shadowRoot,
       zIndex: 2147483645,
       onShow(instance) {
-        // 1. Safety Guard: Ensure instance and popper exist.
+        // Ensure instance and popper exist.
         if (!instance || !instance.popper) return;
 
-        // Hide other tooltips (Accessing the tippy collection safely)
-        // Note: Ensure 'annotations' is defined in the outer scope
+        // Hide other tooltips.
         if (Array.isArray(annotations)) {
           annotations.forEach((popper) => {
             if (popper !== instance) popper.hide();
@@ -135,7 +138,7 @@ export class AnnotationTooltips extends HTMLElement {
         };
         instance.popper.addEventListener('keydown', escapeListener);
 
-        // Contrast Tools Initialization
+        // Contrast tools initialization.
         if (!instance.popper.hasAttribute('contrast-tools-initialized')) {
           const rawId = host?.getAttribute('data-sa11y-annotation');
           const results = window.sa11yCheckComplete?.results || [];

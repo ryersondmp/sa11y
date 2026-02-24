@@ -677,66 +677,89 @@ export const blobToBase64 = (blob) =>
  * @param {boolean} convertBase64 Optional. Convert image to Base64.
  * @returns {html} Returns HTML.
  */
+/**
+ * Generate a DOM node preview for an issue.
+ * @param {Object} issueObject The issue object.
+ * @param {boolean} convertBase64 Optional. Convert image to Base64.
+ * @returns {HTMLElement|Promise<HTMLElement>} Returns a DOM Node or a Promise resolving to one.
+ */
 export function generateElementPreview(issueObject, convertBase64 = false) {
   const issueElement = issueObject.element;
-  const cleanHTML = sanitizeHTML(issueObject.htmlPath);
-  const truncatedHTML = truncateString(cleanHTML, 400);
-  const escapedHTML = escapeHTML(truncatedHTML);
-  const htmlPath = `<pre><code>${escapedHTML}</code></pre>`;
 
-  // Simple output for basic text elements.
-  const simple = (element) => {
-    const text = getText(element);
-    const truncatedText = truncateString(text, 100);
-    return text.length ? escapeHTML(truncatedText) : htmlPath;
+  // Default fallback helper: <pre><code>...</code></pre>
+  const createCodeFallback = () => {
+    const pre = document.createElement('pre');
+    const code = document.createElement('code');
+    // .textContent is automatically XSS-safe
+    code.textContent = truncateString(issueObject.htmlPath, 400);
+    pre.appendChild(code);
+    return pre;
   };
 
-  const tag = {
+  const simple = (element) => {
+    const text = getText(element);
+    if (text.length > 0) {
+      const span = document.createElement('span');
+      span.textContent = truncateString(text, 100);
+      return span;
+    }
+    return createCodeFallback();
+  };
+
+  const tagHandlers = {
     SPAN: simple,
     P: simple,
     A: (element) => {
       const text = getText(element);
-      const truncatedText = truncateString(text, 100);
       if (text.length > 1 && element.href && !element.hasAttribute('role')) {
-        return `<a href="${sanitizeURL(element.href)}">${escapeHTML(truncatedText)}</a>`;
+        const anchor = document.createElement('a');
+        anchor.href = sanitizeURL(element.href); // Still sanitize URLs for safety
+        anchor.textContent = truncateString(text, 100);
+        return anchor;
       }
-      return htmlPath;
+      return createCodeFallback();
     },
     IMG: (element) => {
       const src = getBestImageSource(element);
-      if (!src) return htmlPath;
+      if (!src) return createCodeFallback();
 
-      const anchor = element.closest('a[href]');
-      const alt = element.alt ? `alt="${sanitizeHTML(element.alt)}"` : 'alt';
+      const containerAnchor = element.closest('a[href]');
 
-      // Helper to generate the final HTML string.
-      const toHTML = (url) => {
-        const safeSrc = url.startsWith('data:image/') ? url : sanitizeURL(url);
-        const img = `<img src="${safeSrc}" ${alt}/>`;
-        return anchor
-          ? `<a href="${sanitizeURL(anchor.href)}" rel="noopener noreferrer">${img}</a>`
-          : img;
+      // Helper to build the DOM structure
+      const buildImgElement = (url) => {
+        const img = document.createElement('img');
+        img.src = url.startsWith('data:image/') ? url : sanitizeURL(url);
+        if (element.alt) img.alt = element.alt;
+
+        if (containerAnchor) {
+          const a = document.createElement('a');
+          a.href = sanitizeURL(containerAnchor.href);
+          a.rel = "noopener noreferrer";
+          a.appendChild(img);
+          return a;
+        }
+        return img;
       };
 
-      // Synchronous: Return string immediately.
-      if (!convertBase64) return toHTML(src);
+      if (!convertBase64) return buildImgElement(src);
 
-      // Generate base64 image.
+      // Async path: returns a Promise
       return (async () => {
         try {
-          if (new URL(src, location.origin).origin !== location.origin) throw 0;
-          const blob = await fetch(src).then((res) => res.blob());
-          return toHTML(await blobToBase64(blob));
+          if (new URL(src, window.location.origin).origin !== window.location.origin) throw new Error();
+          const response = await fetch(src);
+          const blob = await response.blob();
+          const b64 = await blobToBase64(blob);
+          return buildImgElement(b64);
         } catch {
-          return toHTML(src);
+          return buildImgElement(src);
         }
       })();
     },
   };
 
-  const tagHandler = tag[issueElement.tagName];
-  const elementPreview = tagHandler ? tagHandler(issueElement) : htmlPath;
-  return elementPreview;
+  const handler = tagHandlers[issueElement.tagName];
+  return handler ? handler(issueElement) : createCodeFallback();
 }
 
 /**

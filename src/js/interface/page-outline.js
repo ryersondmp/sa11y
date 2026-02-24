@@ -6,11 +6,28 @@ import { createAlert, removeAlert } from './alert';
 import { State } from '../core/state';
 
 /**
+ * Define the base template ONCE outside the function.
+ * The browser's C++ parser reads this HTML string immediately,
+ * making it extremely fast to clone later.
+ */
+const outlineTemplate = document.createElement('template');
+outlineTemplate.innerHTML = `
+  <li>
+    <button type="button" tabindex="-1">
+      <span class="badge"></span>
+      <span class="outline-list-item"></span>
+    </button>
+  </li>
+`;
+
+/**
  * Create Page Outline.
  */
 export default function generatePageOutline() {
   const outlineHandler = () => {
-    const outlineArray = [];
+    // Clear the container safely and prepare a fragment for batch DOM insertion
+    Constants.Panel.outlineList.textContent = '';
+    const fragment = document.createDocumentFragment();
 
     // Find all dismissed headings and update headingOutline array.
     const findDismissedHeadings = State.dismissedResults
@@ -21,16 +38,23 @@ export default function generatePageOutline() {
     });
 
     // Show meta page title in Page Outline.
-    let outlineItem;
     if (State.option.showTitleInPageOutline) {
       const metaTitleElement = document.querySelector('head title');
+      const li = document.createElement('li');
+
       if (!metaTitleElement || metaTitleElement.textContent.trim().length === 0) {
-        outlineItem = `<li><div class="badge error-badge"><span aria-hidden="true"><span class="error-icon"></span></span> ${Lang._('TITLE')}</div> <div class="badge error-badge">${Lang._('MISSING')}</div></li>`;
+        li.innerHTML = `
+          <div class="badge error-badge"><span aria-hidden="true"><span class="error-icon"></span></span> ${Lang._('TITLE')}</div>
+          <div class="badge error-badge">${Lang._('MISSING')}</div>
+        `;
       } else {
-        const titleText = Utils.getText(metaTitleElement);
-        outlineItem = `<li><span class="badge">${Lang._('TITLE')}</span> ${Utils.escapeHTML(titleText)}</li>`;
+        const titleBadge = document.createElement('span');
+        titleBadge.className = 'badge';
+        titleBadge.textContent = Lang._('TITLE');
+        li.appendChild(titleBadge);
+        li.appendChild(document.createTextNode(` ${Utils.getText(metaTitleElement)}`));
       }
-      outlineArray.push(outlineItem);
+      fragment.appendChild(li);
     }
 
     // Iterate through object that contains all headings (and error type).
@@ -41,53 +65,49 @@ export default function generatePageOutline() {
       const hidden = Utils.isElementVisuallyHiddenOrHidden(element);
 
       // Indicate if heading is totally hidden or visually hidden.
-      const visibleIcon =
-        hidden === true
-          ? `<span class="hidden-icon"></span><span class="visually-hidden">${Lang._('HIDDEN')}</span>`
-          : '';
-      const badgeH =
-        State.option.showHinPageOutline === true || State.option.showHinPageOutline === 1
-          ? 'H'
-          : '';
+      const visibleIcon = hidden
+        ? `<span class="hidden-icon"></span><span class="visually-hidden">${Lang._('HIDDEN')}</span>`
+        : '';
+      const badgeH = State.option.showHinPageOutline === true || State.option.showHinPageOutline === 1 ? 'H' : '';
 
-      let append;
+      // Clone the pre-parsed DOM structure rapidly
+      const clone = outlineTemplate.content.cloneNode(true);
+      const li = clone.querySelector('li');
+      const badge = clone.querySelector('.badge');
+      const listItemText = clone.querySelector('.outline-list-item');
+      li.className = `outline-${headingLevel}`;
+
+      // User supplied content via textContent.
+      listItemText.textContent = text;
+
+      // Apply Error/Warning specific styling using innerHTML ONLY for safe, hardcoded UI elements
       if (type === 'error' && isWithinRoot === true) {
-        append = `
-            <li class="outline-${headingLevel}">
-              <button type="button" tabindex="-1">
-                <span class="badge error-badge">
-                <span aria-hidden="true">${visibleIcon}
-                  <span class="error-icon"></span>
-                </span>
-                <span class="visually-hidden">${Lang._('ERROR')}</span> ${badgeH + headingLevel}</span>
-                <strong class="outline-list-item red-text">${text}</strong>
-              </button>
-            </li>`;
-        outlineArray.push(append);
+        badge.className = 'badge error-badge';
+        badge.innerHTML = `<span aria-hidden="true">${visibleIcon}<span class="error-icon"></span></span><span class="visually-hidden">${Lang._('ERROR')}</span>${badgeH}${headingLevel}`;
+
+        // User supplied content.
+        const strongText = document.createElement('strong');
+        strongText.className = 'outline-list-item red-text';
+        strongText.textContent = text;
+        listItemText.replaceWith(strongText);
+
       } else if (type === 'warning' && !dismissedHeading && isWithinRoot === true) {
-        append = `
-            <li class="outline-${headingLevel}">
-              <button type="button" tabindex="-1">
-                <span class="badge warning-badge">
-                <span aria-hidden="true">${visibleIcon} &#x3f;</span>
-                <span class="visually-hidden">${Lang._('WARNING')}</span> ${badgeH + headingLevel}</span>
-                <strong class="outline-list-item yellow-text">${text}</strong>
-              </button>
-            </li>`;
-        outlineArray.push(append);
+        badge.className = 'badge warning-badge';
+        badge.innerHTML = `<span aria-hidden="true">${visibleIcon} &#x3f;</span><span class="visually-hidden">${Lang._('WARNING')}</span> ${badgeH}${headingLevel}`;
+
+        // User supplied content.
+        const strongText = document.createElement('strong');
+        strongText.className = 'outline-list-item yellow-text';
+        strongText.textContent = text;
+        listItemText.replaceWith(strongText);
       } else {
-        append = `
-            <li class="outline-${headingLevel}">
-              <button type="button" tabindex="-1">
-                <span class="badge">${visibleIcon} ${badgeH + headingLevel}</span>
-                <span class="outline-list-item">${text}</span>
-              </button>
-            </li>`;
-        outlineArray.push(append);
+        badge.innerHTML = `${visibleIcon}${badgeH}${headingLevel}`;
       }
 
+      fragment.appendChild(clone);
+
       /**
-       * Append heading labels.
+       * Append heading labels to the actual DOM.
        */
       const label = document.createElement('sa11y-heading-label');
       label.hidden = true;
@@ -105,10 +125,10 @@ export default function generatePageOutline() {
         label?.insertAdjacentElement('beforebegin', anchor);
       }
 
-      // Populate heading label.
+      // Populate heading label safely.
       const content = document.createElement('span');
       content.classList.add('heading-label');
-      content.innerHTML = `H${headingLevel}`;
+      content.textContent = `H${headingLevel}`;
       label.shadowRoot.appendChild(content);
 
       // Make heading labels visible when panel is open.
@@ -117,11 +137,15 @@ export default function generatePageOutline() {
       }
     });
 
-    // Append headings to Page Outline.
-    Constants.Panel.outlineList.innerHTML =
-      State.headingOutline.length === 0
-        ? `${outlineItem || ''} <li>${Lang._('PANEL_NO_HEADINGS')}</li>`
-        : outlineArray.join(' ');
+    // Handle Empty State
+    if (State.headingOutline.length === 0) {
+      const emptyLi = document.createElement('li');
+      emptyLi.textContent = Lang._('PANEL_NO_HEADINGS');
+      fragment.appendChild(emptyLi);
+    }
+
+    // Append the fully built fragment to the DOM all at once
+    Constants.Panel.outlineList.appendChild(fragment);
 
     // Make clickable!
     setTimeout(() => {

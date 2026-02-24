@@ -51,8 +51,8 @@ const getScrollPosition = ($el, results) => {
 
     // Alert if tooltip is hidden.
     getHiddenParent($el);
-    const tooltip = $el.getAttribute('data-tippy-content');
-    createAlert(`${Lang._('NOT_VISIBLE')}`, tooltip, elementPreview);
+    const result = State.results.find(item => String(item.id) === String(annotationIndex));
+    createAlert(`${Lang._('NOT_VISIBLE')}`, result.content, elementPreview);
 
     closeAnyActiveTooltips();
 

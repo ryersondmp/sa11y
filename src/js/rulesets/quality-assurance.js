@@ -135,16 +135,15 @@ export default function checkQA() {
     Elements.Found.Blockquotes.forEach(($el) => {
       const text = Utils.getText($el);
       if (text.length !== 0 && text.length < 25) {
-        const escapedText = Utils.escapeHTML(text);
         State.results.push({
           test: 'QA_BLOCKQUOTE',
           element: $el,
           type: State.option.checks.QA_BLOCKQUOTE.type || 'warning',
           content: Lang.sprintf(
             State.option.checks.QA_BLOCKQUOTE.content || 'QA_BLOCKQUOTE',
-            escapedText,
+            text,
           ),
-          dismiss: Utils.prepareDismissal(`QA_BLOCKQUOTE ${escapedText}`),
+          dismiss: Utils.prepareDismissal(`QA_BLOCKQUOTE ${text}`),
           dismissAll: State.option.checks.QA_BLOCKQUOTE.dismissAll ? 'QA_BLOCKQUOTE' : false,
           developer: State.option.checks.QA_BLOCKQUOTE.developer || false,
         });
@@ -257,8 +256,7 @@ export default function checkQA() {
         maybeSentence &&
         !isPreviousElementAHeading(p)
       ) {
-        const escapedText = Utils.escapeHTML(getText);
-        addResult(p, escapedText);
+        addResult(p, getText);
       }
     };
 

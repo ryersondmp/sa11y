@@ -15,8 +15,7 @@ export default function checkHeaders() {
     // Get accessible name of heading.
     const accName = computeAccessibleName($el, Constants.Exclusions.HeaderSpan);
     const stringMatchExclusions = accName.replace(stringExclusionPattern, '');
-    const removeWhitespace = Utils.removeWhitespace(stringMatchExclusions);
-    const headingText = Utils.escapeHTML(removeWhitespace);
+    const headingText = Utils.removeWhitespace(stringMatchExclusions);
 
     // Check if heading is within root target area.
     const rootContainsHeading = Constants.Root.areaToCheck.some((root) => root.contains($el));
@@ -33,7 +32,7 @@ export default function checkHeaders() {
 
     // Determine heading level.
     const level = parseInt($el.getAttribute('aria-level') || $el.tagName.slice(1), 10);
-    const headingLength = removeWhitespace.length;
+    const headingLength = headingText.length;
     const maxHeadingLength = State.option.checks.HEADING_LONG.maxLength || 160;
 
     // Default.

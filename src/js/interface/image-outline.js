@@ -6,29 +6,38 @@ import * as Utils from '../utils/utils';
 import { createAlert, removeAlert } from './alert';
 import { State } from '../core/state';
 
+const imageOutlineTemplate = document.createElement('template');
+imageOutlineTemplate.innerHTML = `
+  <li>
+    <button type="button" tabindex="-1">
+      <img alt="" />
+      <div class="alt">
+        <span class="badges-container"></span>
+        <span class="alt-text-container"></span>
+      </div>
+    </button>
+  </li>
+`;
+
 /**
- * Generate an "Edit" button for images in the Image outline.
+ * Generate an "Edit" button element for images in the Image outline.
  * @param {Object} image - Image object.
- * @returns {String} - HTML of edit button if hosted on the same domain.
+ * @returns {HTMLElement|null} - DOM element of edit button if hosted on the same domain.
  */
-const generateEditLink = (image) => {
-  // Image's src attribute.
+const generateEditLinkElement = (image) => {
   const { src } = image.element;
 
-  // Exclusions. Don't show "Edit" button if image src contains string or has class.
   const urlExclusions = State.option.ignoreEditImageURL.some((ignore) => src.includes(ignore));
   const classExclusions = State.option.ignoreEditImageClass.some((ignore) =>
     image.element.classList.contains(ignore),
   );
   if (urlExclusions || classExclusions) {
-    return '';
+    return null;
   }
 
-  // Check if image's SRC attribute is hosted on same domain or is relative path.
   const relativePath = State.option.relativePathImageSRC || window.location.host;
   const fileExtension = src.split(relativePath)[1] || '';
 
-  // If admin specifies a unique class name for images via prop.
   const imageID = State.option.relativePathImageID;
   let imageUniqueID;
   if (imageID.length && image.element.classList.length) {
@@ -40,37 +49,46 @@ const generateEditLink = (image) => {
     });
   }
 
-  // Create the href value for the image.
   const editURL =
     relativePath && imageID.length
       ? State.option.editImageURLofCMS + imageUniqueID
       : State.option.editImageURLofCMS + fileExtension;
 
-  // Only add edit button to relative (locally hosted) images.
   const isRelativeLink = (imageSrc) =>
     imageSrc.includes(window.location.host) || imageSrc.startsWith(relativePath);
 
-  // Generate final HTML of edit button.
   if ((imageID.length && imageUniqueID !== undefined) || !imageID) {
-    return isRelativeLink(src)
-      ? `<div class="edit-block"><a href="${encodeURI(editURL)}" tabindex="-1" target="_blank" rel="noopener noreferrer" class="edit">${Lang._('EDIT')}</a></div>`
-      : '';
+    if (isRelativeLink(src)) {
+      const wrapper = document.createElement('div');
+      wrapper.className = 'edit-block';
+      const anchor = document.createElement('a');
+      anchor.href = editURL;
+      anchor.tabIndex = -1;
+      anchor.target = '_blank';
+      anchor.rel = 'noopener noreferrer';
+      anchor.className = 'edit';
+      anchor.textContent = Lang._('EDIT');
+      wrapper.appendChild(anchor);
+      return wrapper;
+    }
   }
-  return '';
+  return null;
 };
 
 /**
  * Generate Image outline.
- * @param {Object[]} dismissed - Array of dismissed objects.
- * @param {Object[]} imageResults - Array of all issues objects that is an <img> element.
  */
 export default function generateImageOutline() {
   if (!State.option.showImageOutline) return;
 
   const imageOutlineHandler = () => {
-    const imageArray = [];
+    // Clear container and setup fragment.
+    Constants.Panel.imagesList.textContent = '';
+    const fragment = document.createDocumentFragment();
+    let hasImages = false;
+
     State.imageResults.forEach((image, i) => {
-      // Match dismissed images.
+      hasImages = true;
       const isDismissed = State.dismissedResults.some(
         (key) => key.dismissDigest === image.dismissDigest,
       );
@@ -78,14 +96,12 @@ export default function generateImageOutline() {
         Object.assign(image, { dismissedImage: true });
       }
 
-      // Get image object's properties.
       const { element, type, developer, dismissedImage } = image;
       const ariaLabel = computeAriaLabel(element);
-      const rawAlt =
-        ariaLabel === 'noAria' ? (element.getAttribute('alt') ?? '') : (ariaLabel ?? '');
-      const altText = Utils.escapeHTML(rawAlt);
 
-      // Check visibility of image.
+      // Removed Utils.escapeHTML because textContent inherently protects against XSS
+      const altText = ariaLabel === 'noAria' ? (element.getAttribute('alt') ?? '') : (ariaLabel ?? '');
+
       const hidden = Utils.isElementVisuallyHiddenOrHidden(element);
       if (hidden) {
         const parent = Utils.findVisibleParent(element, 'display', 'none');
@@ -97,101 +113,108 @@ export default function generateImageOutline() {
         element.setAttribute('data-sa11y-image', i);
       }
 
-      // Make developer checks don't show images as error if Developer checks are off!
       const dev = Utils.store.getItem('sa11y-developer');
       const devChecksOff = dev === 'Off' || dev === null;
-      const showDeveloperChecks =
-        devChecksOff && (type === 'error' || type === 'warning') && developer === true;
+      const showDeveloperChecks = devChecksOff && (type === 'error' || type === 'warning') && developer === true;
 
-      // Account for lazy loading libraries.
-      const source = Utils.getBestImageSource(image.element);
+      const source = Utils.getBestImageSource(element);
 
-      // Generate edit link if locally hosted image and prop is enabled.
-      const edit = State.option.editImageURLofCMS ? generateEditLink(image) : '';
-
-      // Decorative.
-      let decorative = rawAlt === '';
-
-      // If alt text starts with a very specific string provided via props; treat as decorative.
+      let decorative = altText === '';
       if (!decorative && State.option.altPlaceholder.length) {
         const altPlaceholderPattern = Utils.generateRegexString(State.option.altPlaceholder, true);
-        decorative = rawAlt.match(altPlaceholderPattern)?.[0];
+        decorative = altText.match(altPlaceholderPattern)?.[0];
       }
 
-      const isDecorative = decorative ? `<div class="badge">${Lang._('DECORATIVE')}</div>` : '';
+      const clone = imageOutlineTemplate.content.cloneNode(true);
+      const li = clone.querySelector('li');
+      const img = clone.querySelector('img');
+      const badgesContainer = clone.querySelector('.badges-container');
+      const altTextContainer = clone.querySelector('.alt-text-container');
 
-      // If image is linked.
-      const anchor = State.option.imageWithinLightbox
-        ? `a[href]:not(${State.option.imageWithinLightbox})`
-        : 'a[href]';
-      const linked = element.closest(anchor)
-        ? `<div class="badge"><span class="link-icon"></span><span class="visually-hidden">${Lang._('LINKED')}</span></div>`
-        : '';
-      const visibleIcon =
-        hidden === true
-          ? `<div class="badge"><span class="hidden-icon"></span><span class="visually-hidden">${Lang._('HIDDEN')}</span></div>`
-          : '';
+      // Set image source.
+      img.src = source;
 
-      let append;
+      // Build badges.
+      let badgesHTML = '';
+      if (hidden) {
+        badgesHTML += `<div class="badge"><span class="hidden-icon"></span><span class="visually-hidden">${Lang._('HIDDEN')}</span></div> `;
+      }
+
+      const anchorSelector = State.option.imageWithinLightbox ? `a[href]:not(${State.option.imageWithinLightbox})` : 'a[href]';
+      if (element.closest(anchorSelector)) {
+        badgesHTML += `<div class="badge"><span class="link-icon"></span><span class="visually-hidden">${Lang._('LINKED')}</span></div> `;
+      }
+
+      // Apply specific state logic (Error, Warning, Good)
       if (type === 'error' && !showDeveloperChecks) {
-        const missing = altText.length === 0 ? `<div class="badge">${Lang._('MISSING')}</div>` : '';
-        append = `
-        <li class="error">
-          <button type="button" tabindex="-1">
-            <img src="${source}" alt/>
-            <div class="alt"> ${visibleIcon} ${linked} ${missing}
-              <div class="badge"><span class="error-icon"></span><span class="visually-hidden">${Lang._('ERROR')}</span> ${Lang._('ALT')}</div> <strong class="red-text">${decorative ? '' : altText}</strong>
-            </div>
-          </button>
-          ${edit}
-        </li>`;
-        imageArray.push(append);
+        li.className = 'error';
+        if (altText.length === 0) badgesHTML += `<div class="badge">${Lang._('MISSING')}</div> `;
+        badgesHTML += `<div class="badge"><span class="error-icon"></span><span class="visually-hidden">${Lang._('ERROR')}</span> ${Lang._('ALT')}</div> `;
+
+        // User supplied content.
+        if (!decorative) {
+          const strong = document.createElement('strong');
+          strong.className = 'red-text';
+          strong.textContent = altText;
+          altTextContainer.replaceWith(strong);
+        }
       } else if (type === 'warning' && !dismissedImage && !showDeveloperChecks) {
-        append = `
-        <li class="warning">
-          <button type="button" tabindex="-1">
-            <img src="${source}" alt/>
-            <div class="alt"> ${visibleIcon} ${linked} ${isDecorative}
-              <div class="badge"><span aria-hidden="true">&#63;</span> <span class="visually-hidden">${Lang._('WARNING')}</span> ${Lang._('ALT')}</div> <strong class="yellow-text">${decorative ? '' : altText}</strong>
-            </div>
-          </button>
-          ${edit}
-        </li>`;
-        imageArray.push(append);
+        li.className = 'warning';
+        if (decorative) badgesHTML += `<div class="badge">${Lang._('DECORATIVE')}</div> `;
+        badgesHTML += `<div class="badge"><span aria-hidden="true">&#63;</span> <span class="visually-hidden">${Lang._('WARNING')}</span> ${Lang._('ALT')}</div> `;
+
+        // User supplied content.
+        if (!decorative) {
+          const strong = document.createElement('strong');
+          strong.className = 'yellow-text';
+          strong.textContent = altText;
+          altTextContainer.replaceWith(strong);
+        }
       } else {
-        append = `
-        <li class="good">
-          <button type="button" tabindex="-1">
-            <img src="${source}" alt/>
-            <div class="alt"> ${visibleIcon} ${linked} ${isDecorative}
-              <div class="badge">${Lang._('ALT')}</div> ${decorative ? '' : altText}
-            </div>
-          </button>
-          ${edit}
-        </li>`;
-        imageArray.push(append);
+        li.className = 'good';
+        if (decorative) badgesHTML += `<div class="badge">${Lang._('DECORATIVE')}</div> `;
+        badgesHTML += `<div class="badge">${Lang._('ALT')}</div> `;
+
+        // User supplied content.
+        if (!decorative) {
+          altTextContainer.textContent = ` ${altText}`; // XSS Safe
+        }
       }
+
+      // Inject compiled badges.
+      badgesContainer.innerHTML = badgesHTML;
+
+      // Append edit button if applicable.
+      if (State.option.editImageURLofCMS) {
+        const editEl = generateEditLinkElement(image);
+        if (editEl) li.appendChild(editEl);
+      }
+
+      fragment.appendChild(clone);
     });
 
-    // Append headings to Page Outline.
-    Constants.Panel.imagesList.innerHTML =
-      imageArray.length === 0
-        ? `<li class="no-images">${Lang._('NO_IMAGES')}</li>`
-        : imageArray.join(' ');
+    // Handle empty state.
+    if (!hasImages) {
+      const emptyLi = document.createElement('li');
+      emptyLi.className = 'no-images';
+      emptyLi.textContent = Lang._('NO_IMAGES');
+      fragment.appendChild(emptyLi);
+    }
+
+    // Append to DOM.
+    Constants.Panel.imagesList.appendChild(fragment);
 
     // Make clickable!
     setTimeout(() => {
       const buttons = Constants.Panel.imagesList.querySelectorAll('button');
       buttons.forEach(($el, i) => {
         $el.addEventListener('click', () => {
-          // Query DOM for target elements.
           const image = find(
             `[data-sa11y-image='${i}'], [data-sa11y-parent='image${i}']`,
             'document',
             Constants.Exclusions.Container,
           )[0];
 
-          // Scroll to and pulse.
           if (image) {
             image.scrollIntoView({
               behavior: `${Constants.Global.scrollBehaviour}`,
@@ -200,7 +223,6 @@ export default function generateImageOutline() {
             Utils.addPulse(image);
           }
 
-          // Alert if hidden or doesn't exist.
           removeAlert();
           if (!image || image.hasAttribute('data-sa11y-parent')) {
             createAlert(Lang._('NOT_VISIBLE'));
@@ -212,11 +234,9 @@ export default function generateImageOutline() {
       Utils.initRovingTabindex(Constants.Panel.imagesList, tabbable);
     }, 0);
 
-    // Remove event listener.
     document.removeEventListener('sa11y-build-image-outline', imageOutlineHandler);
   };
 
-  /* Generate image outline based on local storage or if "Image" button is selected. */
   if (Utils.store.getItem('sa11y-images') === 'Opened') {
     imageOutlineHandler();
   }

@@ -32,7 +32,7 @@ const sa11y = new Sa11y({
     'Esta imagen tiene un atributo alt vacío; its file name is'
   ],
   extraPlaceholderStopWords: 'untitled',
-
+  editImageURLofCMS: '../docs/examples/assets/',
   // showHinPageOutline: true,
   readabilityPlugin: 1,
   contrastPlugin: true,
