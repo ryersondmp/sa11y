@@ -54,7 +54,7 @@ const fi = {
     PAGE_TITLE: "Sivun otsikko",
     RESULTS: "Tulokset",
     EXPORT_RESULTS: "Vie tulokset",
-    GENERATED: "Tulokset luotu %(tool)-työkalulla.",
+    GENERATED: 'Tulokset luotu <a href="https://sa11y.netlify.app">Sa11y</a>-työkalulla.',
     PREVIEW: "Esikatselu",
     ELEMENT: "Elementti",
     PATH: "Polku",

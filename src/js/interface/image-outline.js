@@ -100,7 +100,8 @@ export default function generateImageOutline() {
       const ariaLabel = computeAriaLabel(element);
 
       // Removed Utils.escapeHTML because textContent inherently protects against XSS
-      const altText = ariaLabel === 'noAria' ? (element.getAttribute('alt') ?? '') : (ariaLabel ?? '');
+      const altText =
+        ariaLabel === 'noAria' ? (element.getAttribute('alt') ?? '') : (ariaLabel ?? '');
 
       const hidden = Utils.isElementVisuallyHiddenOrHidden(element);
       if (hidden) {
@@ -115,7 +116,8 @@ export default function generateImageOutline() {
 
       const dev = Utils.store.getItem('sa11y-developer');
       const devChecksOff = dev === 'Off' || dev === null;
-      const showDeveloperChecks = devChecksOff && (type === 'error' || type === 'warning') && developer === true;
+      const showDeveloperChecks =
+        devChecksOff && (type === 'error' || type === 'warning') && developer === true;
 
       const source = Utils.getBestImageSource(element);
 
@@ -140,7 +142,9 @@ export default function generateImageOutline() {
         badgesHTML += `<div class="badge"><span class="hidden-icon"></span><span class="visually-hidden">${Lang._('HIDDEN')}</span></div> `;
       }
 
-      const anchorSelector = State.option.imageWithinLightbox ? `a[href]:not(${State.option.imageWithinLightbox})` : 'a[href]';
+      const anchorSelector = State.option.imageWithinLightbox
+        ? `a[href]:not(${State.option.imageWithinLightbox})`
+        : 'a[href]';
       if (element.closest(anchorSelector)) {
         badgesHTML += `<div class="badge"><span class="link-icon"></span><span class="visually-hidden">${Lang._('LINKED')}</span></div> `;
       }

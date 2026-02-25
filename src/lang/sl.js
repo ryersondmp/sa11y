@@ -64,7 +64,7 @@ export default {
     PAGE_TITLE: 'Naslov strani',
     RESULTS: 'Rezultati',
     EXPORT_RESULTS: 'Izvozi rezultate',
-    GENERATED: 'Rezultati, ustvarjeni s %(tool).',
+    GENERATED: 'Rezultati, ustvarjeni s <a href="https://sa11y.netlify.app">Sa11y.</a>',
     PREVIEW: 'Predogled',
     ELEMENT: 'Element',
     PATH: 'Pot',

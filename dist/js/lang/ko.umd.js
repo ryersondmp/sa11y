@@ -52,7 +52,7 @@
       PAGE_TITLE: "페이지 제목",
       RESULTS: "결과",
       EXPORT_RESULTS: "결과 내보내기",
-      GENERATED: "%(TOOL)로 생성된 결과입니다.",
+      GENERATED: '<a href="https://sa11y.netlify.app">Sa11y</a> 로 생성된 결과입니다.',
       PREVIEW: "미리 보기",
       ELEMENT: "요소",
       PATH: "경로",

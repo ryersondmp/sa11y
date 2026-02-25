@@ -48,7 +48,7 @@ const es = {
     PAGE_TITLE: "Título de la página",
     RESULTS: "Resultados",
     EXPORT_RESULTS: "Exportar resultados",
-    GENERATED: "Resultados generados con %(tool).",
+    GENERATED: 'Resultados generados con <a href="https://sa11y.netlify.app">Sa11y.</a>',
     PREVIEW: "Vista previa",
     ELEMENT: "Elemento",
     PATH: "Ruta",

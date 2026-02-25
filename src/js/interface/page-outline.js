@@ -68,7 +68,10 @@ export default function generatePageOutline() {
       const visibleIcon = hidden
         ? `<span class="hidden-icon"></span><span class="visually-hidden">${Lang._('HIDDEN')}</span>`
         : '';
-      const badgeH = State.option.showHinPageOutline === true || State.option.showHinPageOutline === 1 ? 'H' : '';
+      const badgeH =
+        State.option.showHinPageOutline === true || State.option.showHinPageOutline === 1
+          ? 'H'
+          : '';
 
       // Clone the pre-parsed DOM structure rapidly
       const clone = outlineTemplate.content.cloneNode(true);
@@ -90,7 +93,6 @@ export default function generatePageOutline() {
         strongText.className = 'outline-list-item red-text';
         strongText.textContent = text;
         listItemText.replaceWith(strongText);
-
       } else if (type === 'warning' && !dismissedHeading && isWithinRoot === true) {
         badge.className = 'badge warning-badge';
         badge.innerHTML = `<span aria-hidden="true">${visibleIcon} &#x3f;</span><span class="visually-hidden">${Lang._('WARNING')}</span> ${badgeH}${headingLevel}`;

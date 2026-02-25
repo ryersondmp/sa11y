@@ -58,7 +58,7 @@
       PAGE_TITLE: "页面标题",
       RESULTS: "结果",
       EXPORT_RESULTS: "导出结果",
-      GENERATED: "使用 %(tool) 生成的结果。",
+      GENERATED: '使用 <a href="https://sa11y.netlify.app">Sa11y</a> 生成的结果。',
       PREVIEW: "预览",
       ELEMENT: "元素",
       PATH: "路径",

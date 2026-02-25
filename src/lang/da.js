@@ -64,7 +64,7 @@ export default {
     PAGE_TITLE: 'Sidetitel',
     RESULTS: 'Resultater',
     EXPORT_RESULTS: 'Eksportér resultater',
-    GENERATED: 'Resultater genereret med %(tool).',
+    GENERATED: 'Resultater genereret med <a href="https://sa11y.netlify.app">Sa11y.</a>',
     PREVIEW: 'Forhåndsvisning',
     ELEMENT: 'Element',
     PATH: 'Sti',

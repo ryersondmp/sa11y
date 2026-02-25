@@ -64,7 +64,7 @@ export default {
     PAGE_TITLE: 'Lehe pealkiri',
     RESULTS: 'Tulemused',
     EXPORT_RESULTS: 'Ekspordi tulemused',
-    GENERATED: 'Tulemused genereeritud %(tool) abil.',
+    GENERATED: 'Tulemused genereeritud <a href="https://sa11y.netlify.app">Sa11y</a> abil.',
     PREVIEW: 'Eelvaade',
     ELEMENT: 'Element',
     PATH: 'Rada',

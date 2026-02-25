@@ -46,7 +46,7 @@ export default function checkLabels() {
             type: State.option.checks.LABELS_MISSING_IMAGE_INPUT.type || 'error',
             content: Lang.sprintf(
               State.option.checks.LABELS_MISSING_IMAGE_INPUT.content ||
-              'LABELS_MISSING_IMAGE_INPUT',
+                'LABELS_MISSING_IMAGE_INPUT',
             ),
             dismiss: Utils.prepareDismissal(`LABELS_MISSING_IMAGE_INPUT ${type + inputName}`),
             dismissAll: State.option.checks.LABELS_MISSING_IMAGE_INPUT.dismissAll

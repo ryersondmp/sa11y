@@ -58,7 +58,7 @@
       PAGE_TITLE: "Sayfa başlığı",
       RESULTS: "Sonuçlar",
       EXPORT_RESULTS: "Sonuçları dışa aktar",
-      GENERATED: "%(tool) ile oluşturulan sonuçlar.",
+      GENERATED: '<a href="https://sa11y.netlify.app">Sa11y</a> ile oluşturulan sonuçlar.',
       PREVIEW: "Önizleme",
       ELEMENT: "Öğe",
       PATH: "Yol",

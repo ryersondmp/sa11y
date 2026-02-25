@@ -58,7 +58,7 @@
       PAGE_TITLE: "Titolo della pagina",
       RESULTS: "Risultati",
       EXPORT_RESULTS: "Esporta risultati",
-      GENERATED: "Risultati generati con %(tool).",
+      GENERATED: 'Risultati generati con <a href="https://sa11y.netlify.app">Sa11y.</a>',
       PREVIEW: "Anteprima",
       ELEMENT: "Elemento",
       PATH: "Percorso",

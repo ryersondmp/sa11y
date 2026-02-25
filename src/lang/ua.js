@@ -63,7 +63,7 @@ export default {
     PAGE_TITLE: 'Заголовок сторінки',
     RESULTS: 'Результати',
     EXPORT_RESULTS: 'Експорт результатів',
-    GENERATED: 'Результати згенеровані за допомогою %(tool).',
+    GENERATED: 'Результати згенеровані за допомогою <a href="https://sa11y.netlify.app">Sa11y.</a>',
     PREVIEW: 'Перегляд',
     ELEMENT: 'Елемент',
     PATH: 'Шлях',

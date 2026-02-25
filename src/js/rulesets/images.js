@@ -23,9 +23,9 @@ export default function checkImages() {
   // Generate suspicious alt stop words list.
   const susAltWords = State.option.susAltStopWords
     ? State.option.susAltStopWords
-      .split(',')
-      .map((word) => word.trim().toLowerCase())
-      .filter(Boolean)
+        .split(',')
+        .map((word) => word.trim().toLowerCase())
+        .filter(Boolean)
     : Lang._('SUS_ALT_STOPWORDS');
 
   // Generate placeholder stop words set.
@@ -117,9 +117,9 @@ export default function checkImages() {
     // Process link text exclusions.
     const linkText = link
       ? Utils.fnIgnore(link, Constants.Exclusions.LinkSpan).textContent.replace(
-        linkIgnoreStringPattern,
-        '',
-      )
+          linkIgnoreStringPattern,
+          '',
+        )
       : '';
     const linkTextLength = Utils.removeWhitespace(linkText).length;
 
@@ -427,7 +427,7 @@ export default function checkImages() {
             ? Lang._('LINK_IMAGE_ALT')
             : Lang._('LINK_IMAGE_ALT_AND_TEXT') + Lang._('ACC_NAME_TIP'),
           altText,
-          accName
+          accName,
         );
 
         State.results.push({
@@ -451,7 +451,7 @@ export default function checkImages() {
             type: State.option.checks.IMAGE_FIGURE_DUPLICATE_ALT.type || 'warning',
             content: Lang.sprintf(
               State.option.checks.IMAGE_FIGURE_DUPLICATE_ALT.content ||
-              'IMAGE_FIGURE_DUPLICATE_ALT',
+                'IMAGE_FIGURE_DUPLICATE_ALT',
               altText,
             ),
             dismiss: Utils.prepareDismissal(`IMAGE_FIGURE_DUPLICATE_ALT ${src}`),

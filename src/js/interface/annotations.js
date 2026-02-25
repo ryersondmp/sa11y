@@ -128,8 +128,8 @@ export function annotate(issue) {
     // Modifies the annotation's parent container with overflow: hidden, making it visible and scrollable so content authors can access it.
     const ignoredElements = State.option.ignoreHiddenOverflow
       ? State.option.ignoreHiddenOverflow
-        .split(',')
-        .flatMap((selector) => [...document.querySelectorAll(selector)])
+          .split(',')
+          .flatMap((selector) => [...document.querySelectorAll(selector)])
       : [];
     const parent = findVisibleParent(element, 'overflow', 'hidden');
     if (parent && !ignoredElements.includes(parent)) {

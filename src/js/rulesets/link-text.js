@@ -173,9 +173,10 @@ export default function checkLinkText() {
             element: $el,
             type: State.option.checks.LINK_STOPWORD_ARIA.type || 'warning',
             content: Lang.sprintf(
-              State.option.checks.LINK_STOPWORD_ARIA.content || (Lang._('LINK_STOPWORD_ARIA') + Lang._('LINK_TIP')),
+              State.option.checks.LINK_STOPWORD_ARIA.content ||
+                Lang._('LINK_STOPWORD_ARIA') + Lang._('LINK_TIP'),
               stopword,
-              linkText
+              linkText,
             ),
             inline: true,
             dismiss: Utils.prepareDismissal(`LINK_STOPWORD_ARIA ${strippedLinkText}`),
@@ -212,7 +213,7 @@ export default function checkLinkText() {
             type: State.option.checks.LINK_LABEL.type || 'good',
             content: Lang.sprintf(
               State.option.checks.LINK_LABEL.content || Lang._('ACC_NAME') + Lang._('ACC_NAME_TIP'),
-              linkText
+              linkText,
             ),
             inline: true,
             position: 'afterend',
@@ -235,8 +236,9 @@ export default function checkLinkText() {
             element,
             type: State.option.checks.LINK_STOPWORD.type || 'error',
             content: Lang.sprintf(
-              State.option.checks.LINK_STOPWORD.content || Lang._('LINK_STOPWORD') + Lang._('LINK_TIP'),
-              stopword
+              State.option.checks.LINK_STOPWORD.content ||
+                Lang._('LINK_STOPWORD') + Lang._('LINK_TIP'),
+              stopword,
             ),
             inline: true,
             position: 'afterend',
@@ -392,7 +394,7 @@ export default function checkLinkText() {
               element: $el,
               type: State.option.checks.LINK_URL.type || 'warning',
               content: Lang.sprintf(
-                State.option.checks.LINK_URL.content || Lang._('LINK_URL') + Lang._('LINK_TIP')
+                State.option.checks.LINK_URL.content || Lang._('LINK_URL') + Lang._('LINK_TIP'),
               ),
               inline: true,
               dismiss: Utils.prepareDismissal(`LINK_URL ${strippedLinkText}`),
@@ -446,7 +448,8 @@ export default function checkLinkText() {
             element: $el,
             type: State.option.checks.LINK_CLICK_HERE.type || 'warning',
             content: Lang.sprintf(
-              State.option.checks.LINK_CLICK_HERE.content || Lang._('LINK_CLICK_HERE') + Lang._('LINK_TIP')
+              State.option.checks.LINK_CLICK_HERE.content ||
+                Lang._('LINK_CLICK_HERE') + Lang._('LINK_TIP'),
             ),
             inline: true,
             dismiss: Utils.prepareDismissal(`LINK_CLICK_HERE ${strippedLinkText}`),
@@ -486,9 +489,9 @@ export default function checkLinkText() {
             element: $el,
             type: State.option.checks.LINK_IDENTICAL_NAME.type || 'warning',
             content: Lang.sprintf(
-              State.option.checks.LINK_IDENTICAL_NAME.content
-              || Lang._('LINK_IDENTICAL_NAME') + Lang._('ACC_NAME_TIP'),
-              linkText
+              State.option.checks.LINK_IDENTICAL_NAME.content ||
+                Lang._('LINK_IDENTICAL_NAME') + Lang._('ACC_NAME_TIP'),
+              linkText,
             ),
             inline: true,
             dismiss: Utils.prepareDismissal(`LINK_IDENTICAL_NAME ${strippedLinkText}`),

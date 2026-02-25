@@ -671,13 +671,6 @@ export const blobToBase64 = (blob) =>
   });
 
 /**
- * Generate an HTML preview for an issue if it's an image, iframe, audio, or video element.
- * Otherwise, return escaped HTML within <code> tags. Used for Skip to Issue panel alerts and HTML page export.
- * @param {Object} issueObject The issue object.
- * @param {boolean} convertBase64 Optional. Convert image to Base64.
- * @returns {html} Returns HTML.
- */
-/**
  * Generate a DOM node preview for an issue.
  * @param {Object} issueObject The issue object.
  * @param {boolean} convertBase64 Optional. Convert image to Base64.
@@ -686,11 +679,9 @@ export const blobToBase64 = (blob) =>
 export function generateElementPreview(issueObject, convertBase64 = false) {
   const issueElement = issueObject.element;
 
-  // Default fallback helper: <pre><code>...</code></pre>
   const createCodeFallback = () => {
     const pre = document.createElement('pre');
     const code = document.createElement('code');
-    // .textContent is automatically XSS-safe
     code.textContent = truncateString(issueObject.htmlPath, 400);
     pre.appendChild(code);
     return pre;
@@ -713,7 +704,7 @@ export function generateElementPreview(issueObject, convertBase64 = false) {
       const text = getText(element);
       if (text.length > 1 && element.href && !element.hasAttribute('role')) {
         const anchor = document.createElement('a');
-        anchor.href = sanitizeURL(element.href); // Still sanitize URLs for safety
+        anchor.href = sanitizeURL(element.href);
         anchor.textContent = truncateString(text, 100);
         return anchor;
       }
@@ -725,7 +716,6 @@ export function generateElementPreview(issueObject, convertBase64 = false) {
 
       const containerAnchor = element.closest('a[href]');
 
-      // Helper to build the DOM structure
       const buildImgElement = (url) => {
         const img = document.createElement('img');
         img.src = url.startsWith('data:image/') ? url : sanitizeURL(url);
@@ -734,7 +724,7 @@ export function generateElementPreview(issueObject, convertBase64 = false) {
         if (containerAnchor) {
           const a = document.createElement('a');
           a.href = sanitizeURL(containerAnchor.href);
-          a.rel = "noopener noreferrer";
+          a.rel = 'noopener noreferrer';
           a.appendChild(img);
           return a;
         }
@@ -743,10 +733,10 @@ export function generateElementPreview(issueObject, convertBase64 = false) {
 
       if (!convertBase64) return buildImgElement(src);
 
-      // Async path: returns a Promise
       return (async () => {
         try {
-          if (new URL(src, window.location.origin).origin !== window.location.origin) throw new Error();
+          if (new URL(src, window.location.origin).origin !== window.location.origin)
+            throw new Error();
           const response = await fetch(src);
           const blob = await response.blob();
           const b64 = await blobToBase64(blob);
@@ -969,7 +959,7 @@ export function validateLang(code, displayLangCode) {
   if (!langCache && typeof Intl !== 'undefined') {
     try {
       langCache = new Intl.DisplayNames([displayLangCode], { type: 'language', fallback: 'none' });
-    } catch { }
+    } catch {}
   }
 
   if (langCache) {

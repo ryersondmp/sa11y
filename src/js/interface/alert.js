@@ -26,8 +26,8 @@ export function removeAlert() {
 /**
  * Creates an alert in the Sa11y control panel with the given alert message and error preview.
  * @param {string} alertMessage The alert message.
- * @param {string} errorPreview The issue's tooltip message (optional).
- * @param {Node|HTMLElement} extendedPreview The issue's DOM node to be previewed (optional).
+ * @param {string|Node} errorPreview The issue's tooltip message (optional).
+ * @param {string|Node|HTMLElement} extendedPreview The issue's DOM node to be previewed (optional).
  * @returns {void}
  */
 export function createAlert(alertMessage, errorPreview, extendedPreview) {
@@ -45,27 +45,41 @@ export function createAlert(alertMessage, errorPreview, extendedPreview) {
   const skipButton = Sa11yPanel.getElementById('skip-button');
 
   alert.classList.add('active');
-  alertText.innerHTML = alertMessage;
+  alertText.textContent = alertMessage;
 
-  // Clear any existing preview content
+  // Clear any existing preview content.
   alertPreview.innerHTML = '';
 
   // Alert message or tooltip's message.
   if (errorPreview) {
     alertPreview.classList.add('panel-alert-preview');
 
-    // If the issue's element is being previewed as a DOM node
+    // If the issue's element is being previewed as a DOM node or string
     if (extendedPreview) {
       const elementPreview = document.createElement('div');
       elementPreview.className = 'element-preview';
-      elementPreview.appendChild(extendedPreview);
+
+      // Check if extendedPreview is a string or a Node
+      if (typeof extendedPreview === 'string') {
+        elementPreview.textContent = extendedPreview;
+      } else {
+        elementPreview.appendChild(extendedPreview);
+      }
+
       alertPreview.appendChild(elementPreview);
     }
 
     // Append the error preview message
     const previewMessage = document.createElement('div');
     previewMessage.className = 'preview-message';
-    previewMessage.appendChild(errorPreview);
+
+    // Check if errorPreview is a string or a Node.
+    if (typeof errorPreview === 'string') {
+      previewMessage.textContent = errorPreview;
+    } else {
+      previewMessage.appendChild(errorPreview);
+    }
+
     alertPreview.appendChild(previewMessage);
   }
 

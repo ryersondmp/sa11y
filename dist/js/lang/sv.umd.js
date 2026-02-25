@@ -52,7 +52,7 @@
       PAGE_TITLE: "Sidtitel",
       RESULTS: "Resultat",
       EXPORT_RESULTS: "Exportera resultat",
-      GENERATED: "Resultat genererat med %(tool).",
+      GENERATED: 'Resultat genererat med <a href="https://sa11y.netlify.app">Sa11y.</a>',
       PREVIEW: "Förhandsvisning",
       ELEMENT: "Element",
       PATH: "Sökväg",

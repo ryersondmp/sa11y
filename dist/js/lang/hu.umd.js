@@ -58,7 +58,7 @@
       PAGE_TITLE: "Oldalcím",
       RESULTS: "Eredmények",
       EXPORT_RESULTS: "Eredmények exportálása",
-      GENERATED: "Eredmények generálva %(tool)-vel.",
+      GENERATED: 'Eredmények generálva <a href="https://sa11y.netlify.app">Sa11y</a>-vel.',
       PREVIEW: "Előnézet",
       ELEMENT: "Elem",
       PATH: "Útvonal",

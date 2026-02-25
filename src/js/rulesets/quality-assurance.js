@@ -139,10 +139,7 @@ export default function checkQA() {
           test: 'QA_BLOCKQUOTE',
           element: $el,
           type: State.option.checks.QA_BLOCKQUOTE.type || 'warning',
-          content: Lang.sprintf(
-            State.option.checks.QA_BLOCKQUOTE.content || 'QA_BLOCKQUOTE',
-            text,
-          ),
+          content: Lang.sprintf(State.option.checks.QA_BLOCKQUOTE.content || 'QA_BLOCKQUOTE', text),
           dismiss: Utils.prepareDismissal(`QA_BLOCKQUOTE ${text}`),
           dismissAll: State.option.checks.QA_BLOCKQUOTE.dismissAll ? 'QA_BLOCKQUOTE' : false,
           developer: State.option.checks.QA_BLOCKQUOTE.developer || false,

@@ -39,7 +39,7 @@ export class AnnotationTooltips extends HTMLElement {
       placement: 'auto-start',
       content(reference) {
         const id = reference.getRootNode().host.getAttribute('data-sa11y-annotation');
-        const result = template.find(item => String(item.id) === String(id));
+        const result = template.find((item) => String(item.id) === String(id));
         if (!result) return null;
 
         const { element, type, content, dismiss, dismissAll, contrastDetails } = result;
@@ -53,9 +53,9 @@ export class AnnotationTooltips extends HTMLElement {
         // 2. Build the HTML for the buttons/header.
         const dismissAllBtn =
           State.option.dismissAnnotations &&
-            State.option.dismissAll &&
-            typeof dismissAll === 'string' &&
-            (type === 'warning' || type === 'good')
+          State.option.dismissAll &&
+          typeof dismissAll === 'string' &&
+          (type === 'warning' || type === 'good')
             ? `<button data-sa11y-dismiss='${id}' data-sa11y-dismiss-all type='button'>${Lang._('DISMISS_ALL')}</button>`
             : '';
 
@@ -142,7 +142,7 @@ export class AnnotationTooltips extends HTMLElement {
         if (!instance.popper.hasAttribute('contrast-tools-initialized')) {
           const rawId = host?.getAttribute('data-sa11y-annotation');
           const results = window.sa11yCheckComplete?.results || [];
-          const issueObject = results.find(issue => String(issue.id) === String(rawId));
+          const issueObject = results.find((issue) => String(issue.id) === String(rawId));
 
           const contrastDetails = issueObject?.contrastDetails;
           if (contrastDetails) {
@@ -175,7 +175,7 @@ export class AnnotationTooltips extends HTMLElement {
             instance.popper.removeEventListener('keydown', escapeListener);
             instance.popper.removeEventListener('mousedown', handleMouseDown);
             if (host) host.removeAttribute('data-sa11y-opened');
-          }
+          },
         });
       },
       onTrigger(instance, event) {

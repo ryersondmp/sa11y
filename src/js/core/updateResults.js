@@ -10,7 +10,6 @@ import * as Utils from '../utils/utils';
 import { State } from './state';
 import Elements from '../utils/elements';
 import Constants from '../utils/constants';
-import Lang from '../utils/lang';
 
 /* *********************************************************** */
 /*  Update results array.                                      */
@@ -68,24 +67,22 @@ export default async function updateResults() {
     }
 
     return true;
-  });
-
-  // 2. Data enrichment. Generate...
+  }); // 2. Data enrichment. Generate...
   // a) ID
   // b) (Optional) CSS selector path,
   // c) HTML path of element.
   // d) Encrypted dismiss keys.
+  // e) Ensure content property is always a DOM node.
   await Promise.all(
     State.results.map(async (item, id) => {
       item.id = id;
       item.cssPath = option.selectorPath ? Utils.generateSelectorPath(item.element) : '';
       item.htmlPath = item.element?.outerHTML.replace(/\s{2,}/g, ' ').trim() || '';
       if (item.dismiss) item.dismissDigest = await Utils.dismissDigest(item.dismiss);
-
-      // Update tooltip content wrapper.
-      if (item.content instanceof Element) {
-        item.content.setAttribute('lang', Lang._('LANG_CODE'));
-        item.content.className = item.type;
+      if (typeof item.content === 'string') {
+        const wrapper = document.createElement('div');
+        wrapper.innerHTML = Utils.sanitizeHTML(item.content);
+        item.content = wrapper;
       }
     }),
   );

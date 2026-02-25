@@ -321,11 +321,28 @@ function createAlert(alertMessage, errorPreview, extendedPreview) {
   const alertClose = Sa11yPanel.getElementById("close-alert");
   const skipButton = Sa11yPanel.getElementById("skip-button");
   alert.classList.add("active");
-  alertText.innerHTML = alertMessage;
-  const elementPreview = extendedPreview ? `<div class="element-preview">${extendedPreview}</div>` : "";
+  alertText.textContent = alertMessage;
+  alertPreview.innerHTML = "";
   if (errorPreview) {
     alertPreview.classList.add("panel-alert-preview");
-    alertPreview.innerHTML = `${elementPreview}<div class="preview-message">${errorPreview}</div>`;
+    if (extendedPreview) {
+      const elementPreview = document.createElement("div");
+      elementPreview.className = "element-preview";
+      if (typeof extendedPreview === "string") {
+        elementPreview.textContent = extendedPreview;
+      } else {
+        elementPreview.appendChild(extendedPreview);
+      }
+      alertPreview.appendChild(elementPreview);
+    }
+    const previewMessage = document.createElement("div");
+    previewMessage.className = "preview-message";
+    if (typeof errorPreview === "string") {
+      previewMessage.textContent = errorPreview;
+    } else {
+      previewMessage.appendChild(errorPreview);
+    }
+    alertPreview.appendChild(previewMessage);
   }
   setTimeout(() => alertClose.focus(), 300);
   function closeAlert() {
@@ -352,12 +369,20 @@ const Lang = {
   sprintf(string, ...args) {
     let transString = this._(string);
     transString = this.prepHTML(transString);
+    const el2 = document.createElement("div");
+    el2.innerHTML = transString;
     if (args?.length) {
-      args.forEach((arg) => {
-        transString = transString.replace(/%\([a-zA-z]+\)/, arg);
+      args.forEach((_arg, index2) => {
+        el2.innerHTML = el2.innerHTML.replace(/%\([a-zA-z]+\)/, `<span data-arg='${index2}'></span>`);
+      });
+      args.forEach((arg, index2) => {
+        const replacement = el2.querySelector(`[data-arg="${index2}"]`);
+        if (replacement && arg !== null) {
+          replacement.textContent = arg;
+        }
       });
     }
-    return transString;
+    return el2;
   },
   translate(string) {
     return this.langStrings[string] || string;
@@ -466,10 +491,10 @@ const Constants = /* @__PURE__ */ (function myConstants() {
           const readabilityOn = readabilityToggle?.getAttribute("aria-pressed") === "true";
           const alert = Constants.Panel.readability.querySelector("#readability-alert");
           if (readabilityDetails && readabilityOn && !alert) {
-            const roots = Root.areaToCheck.map((el) => {
-              if (el.id) return `#${el.id}`;
-              if (el.className) return `.${el.className.split(/\s+/).filter(Boolean).join(".")}`;
-              return el.tagName.toLowerCase();
+            const roots = Root.areaToCheck.map((el2) => {
+              if (el2.id) return `#${el2.id}`;
+              if (el2.className) return `.${el2.className.split(/\s+/).filter(Boolean).join(".")}`;
+              return el2.tagName.toLowerCase();
             }).join(", ");
             const note = document.createElement("div");
             note.id = "readability-alert";
@@ -670,9 +695,9 @@ function find(selector, desiredRoot, exclude) {
     );
     if (shadowComponents.length) {
       const shadowFind = [];
-      elements.forEach((el, i) => {
-        if (el?.matches?.("[data-sa11y-has-shadow-root]") && el?.shadowRoot) {
-          shadowFind[i] = el.shadowRoot.querySelectorAll(
+      elements.forEach((el2, i) => {
+        if (el2?.matches?.("[data-sa11y-has-shadow-root]") && el2?.shadowRoot) {
+          shadowFind[i] = el2.shadowRoot.querySelectorAll(
             `:is(${selector}):not(${exclusions}${additional})`
           );
         }
@@ -1083,86 +1108,69 @@ const blobToBase64 = (blob) => new Promise((resolve, reject) => {
 });
 function generateElementPreview(issueObject, convertBase64 = false) {
   const issueElement = issueObject.element;
-  const cleanHTML = sanitizeHTML(issueObject.htmlPath);
-  const truncatedHTML = truncateString(cleanHTML, 400);
-  const escapedHTML = escapeHTML(truncatedHTML);
-  const htmlPath = `<pre><code>${escapedHTML}</code></pre>`;
+  const createCodeFallback = () => {
+    const pre = document.createElement("pre");
+    const code = document.createElement("code");
+    code.textContent = truncateString(issueObject.htmlPath, 400);
+    pre.appendChild(code);
+    return pre;
+  };
   const simple = (element) => {
     const text = getText(element);
-    const truncatedText = truncateString(text, 100);
-    return text.length ? escapeHTML(truncatedText) : htmlPath;
-  };
-  const reconstructMedia = (type, element) => {
-    const rawSrc = element.getAttribute("src");
-    const safeMainSrc = rawSrc ? sanitizeURL(rawSrc) : null;
-    const controls = element.hasAttribute("controls") ? "controls" : "";
-    const muted = element.hasAttribute("muted") ? "muted" : "";
-    const poster = type === "video" ? element.getAttribute("poster") : null;
-    const safePoster = poster ? sanitizeURL(poster) : null;
-    let innerHTML3 = "";
-    if (!safeMainSrc) {
-      const sources = element.querySelectorAll("source");
-      sources.forEach((source) => {
-        const s = source.getAttribute("src");
-        const t = source.getAttribute("type");
-        if (s) {
-          innerHTML3 += `<source src="${sanitizeURL(s)}" ${t ? `type="${escapeHTML(t)}"` : ""}>`;
-        }
-      });
+    if (text.length > 0) {
+      const span = document.createElement("span");
+      span.textContent = truncateString(text, 100);
+      return span;
     }
-    const srcPart = safeMainSrc ? `src="${safeMainSrc}"` : "";
-    const posterPart = safePoster ? `poster="${safePoster}"` : "";
-    return `<${type} ${srcPart} ${posterPart} ${controls} ${muted}>${innerHTML3}</${type}>`;
+    return createCodeFallback();
   };
-  const tag = {
+  const tagHandlers = {
     SPAN: simple,
     P: simple,
     A: (element) => {
       const text = getText(element);
-      const truncatedText = truncateString(text, 100);
       if (text.length > 1 && element.href && !element.hasAttribute("role")) {
-        return `<a href="${sanitizeURL(element.href)}">${escapeHTML(truncatedText)}</a>`;
+        const anchor = document.createElement("a");
+        anchor.href = sanitizeURL(element.href);
+        anchor.textContent = truncateString(text, 100);
+        return anchor;
       }
-      return htmlPath;
+      return createCodeFallback();
     },
     IMG: (element) => {
       const src = getBestImageSource(element);
-      if (!src) return htmlPath;
-      const anchor = element.closest("a[href]");
-      const alt = element.alt ? `alt="${sanitizeHTML(element.alt)}"` : "alt";
-      const toHTML = (url2) => {
-        const safeSrc = url2.startsWith("data:image/") ? url2 : sanitizeURL(url2);
-        const img = `<img src="${safeSrc}" ${alt}/>`;
-        return anchor ? `<a href="${sanitizeURL(anchor.href)}" rel="noopener noreferrer">${img}</a>` : img;
+      if (!src) return createCodeFallback();
+      const containerAnchor = element.closest("a[href]");
+      const buildImgElement = (url2) => {
+        const img = document.createElement("img");
+        img.src = url2.startsWith("data:image/") ? url2 : sanitizeURL(url2);
+        if (element.alt) img.alt = element.alt;
+        if (containerAnchor) {
+          const a = document.createElement("a");
+          a.href = sanitizeURL(containerAnchor.href);
+          a.rel = "noopener noreferrer";
+          a.appendChild(img);
+          return a;
+        }
+        return img;
       };
-      if (!convertBase64) return toHTML(src);
+      if (!convertBase64) return buildImgElement(src);
       return (async () => {
         try {
-          if (new URL(src, location.origin).origin !== location.origin) throw 0;
-          const blob = await fetch(src).then((res) => res.blob());
-          return toHTML(await blobToBase64(blob));
+          if (new URL(src, window.location.origin).origin !== window.location.origin)
+            throw new Error();
+          const response = await fetch(src);
+          const blob = await response.blob();
+          const b64 = await blobToBase64(blob);
+          return buildImgElement(b64);
         } catch {
-          return toHTML(src);
+          return buildImgElement(src);
         }
       })();
-    },
-    IFRAME: (element) => {
-      const source = element.src;
-      const title = element.title ? element.title : "";
-      const ariaLabelAttr = element.getAttribute("aria-label");
-      const ariaLabel = ariaLabelAttr || "";
-      if (source) {
-        const iframeTitle = ariaLabel || title;
-        return `<iframe src="${sanitizeURL(source)}" aria-label="${escapeHTML(iframeTitle)}"></iframe>`;
-      }
-      return htmlPath;
-    },
-    VIDEO: (element) => reconstructMedia("video", element),
-    AUDIO: (element) => reconstructMedia("audio", element)
+    }
   };
-  const tagHandler = tag[issueElement.tagName];
-  const elementPreview = tagHandler ? tagHandler(issueElement) : htmlPath;
-  return elementPreview;
+  const handler = tagHandlers[issueElement.tagName];
+  return handler ? handler(issueElement) : createCodeFallback();
 }
 function isVisibleTextInAccName($el, accName, exclusions = [], linkIgnoreStrings) {
   let text = "";
@@ -1579,8 +1587,12 @@ const getScrollPosition = ($el, results) => {
     const issueObject = results.find((issue) => issue.id === annotationIndex);
     const elementPreview = generateElementPreview(issueObject);
     getHiddenParent($el);
-    const tooltip = $el.getAttribute("data-tippy-content");
-    createAlert(`${Lang._("NOT_VISIBLE")}`, tooltip, elementPreview);
+    const result = State.results.find((item) => String(item.id) === String(annotationIndex));
+    if (result.content instanceof Element) {
+      result.content.setAttribute("lang", Lang._("LANG_CODE"));
+      result.content.className = result.type;
+    }
+    createAlert(`${Lang._("NOT_VISIBLE")}`, result.content, elementPreview);
     closeAnyActiveTooltips();
     if (visiblePosition) {
       const prevSibling = visiblePosition.previousElementSibling;
@@ -1676,6 +1688,45 @@ function removeSkipBtnListeners() {
   Constants.Panel.skipButton.removeEventListener("click", handleSkipButtonHandler);
 }
 const exportResultsStyles = `:root{--font-primary:system-ui, "Segoe UI", roboto, helvetica, arial, sans-serif;--font-secondary:consolas, monaco, "Ubuntu Mono", "Liberation Mono", "Courier New", courier, monospace;--body-text:#333;--bg-primary:#fff;--bg-secondary:#f6f8fa;--bg-tertiary:#d7d7d7;--link-primary:#004c9b;--red-text:#d30017;--warning-text:#966f0d;--hr:#d7d7d74d;--sa11y-link-icon-svg:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 640 512'%3E%3Cpath d='M579.8 267.7c56.5-56.5 56.5-148 0-204.5c-50-50-128.8-56.5-186.3-15.4l-1.6 1.1c-14.4 10.3-17.7 30.3-7.4 44.6s30.3 17.7 44.6 7.4l1.6-1.1c32.1-22.9 76-19.3 103.8 8.6c31.5 31.5 31.5 82.5 0 114L422.3 334.8c-31.5 31.5-82.5 31.5-114 0c-27.9-27.9-31.5-71.8-8.6-103.8l1.1-1.6c10.3-14.4 6.9-34.4-7.4-44.6s-34.4-6.9-44.6 7.4l-1.1 1.6C206.5 251.2 213 330 263 380c56.5 56.5 148 56.5 204.5 0L579.8 267.7zM60.2 244.3c-56.5 56.5-56.5 148 0 204.5c50 50 128.8 56.5 186.3 15.4l1.6-1.1c14.4-10.3 17.7-30.3 7.4-44.6s-30.3-17.7-44.6-7.4l-1.6 1.1c-32.1 22.9-76 19.3-103.8-8.6C74 372 74 321 105.5 289.5L217.7 177.2c31.5-31.5 82.5-31.5 114 0c27.9 27.9 31.5 71.8 8.6 103.9l-1.1 1.6c-10.3 14.4-6.9 34.4 7.4 44.6s34.4 6.9 44.6-7.4l1.1-1.6C433.5 260.8 427 182 377 132c-56.5-56.5-148-56.5-204.5 0L60.2 244.3z'/%3E%3C/svg%3E")}@media (prefers-color-scheme:dark){:root{--body-text:#dde8ff;--bg-primary:#0a2051;--bg-secondary:#072c7c;--bg-tertiary:#0041c9;--link-primary:#64b2ff;--red-text:#ffa2a2;--warning-text:#ffdb59;--hr:#0041c94d}}*{margin:0;padding:0}article,aside,nav,ol,p,pre,section,ul{margin-bottom:1rem}body{max-width:70ch;font-family:var(--font-primary);color:var(--body-text);word-break:break-word;overflow-wrap:break-word;background:var(--bg-primary);margin:0 auto;padding:2rem;font-size:1rem;line-height:1.5;overflow-x:hidden}h1,h2,h3{color:var(--body-text);margin-bottom:8px;padding-top:.875rem;padding-bottom:2px;line-height:1}h1{font-size:2.25rem}h2{font-size:1.85rem}h3{font-size:1.55rem}a{color:var(--link-primary)}a:hover,a:focus{text-decoration:none}header,footer{background:var(--bg-secondary);padding:2rem calc(50vw - 50%)}header{border-bottom:1px solid var(--bg-tertiary);margin:-2rem calc(-50vw + 50%) 2rem}footer{text-align:center;border-top:1px solid var(--bg-tertiary);margin:3rem calc(-50vw + 50%) -2rem}header>:first-child{margin-top:0;padding-top:0}header>:last-child{margin-bottom:0}hr{background:var(--hr);opacity:1;border:none;height:1px;margin:10px 0;padding:0}code,samp,kbd,pre{font-family:var(--font-secondary);background:var(--bg-secondary);border:1px solid var(--bg-tertiary);border-radius:4px;padding:3px 6px;font-size:.9rem}pre{max-width:100%;padding:1rem 1.4rem;display:block;overflow:auto}pre code{font-size:inherit;color:inherit;background:inherit;border:0;margin:0;padding:0}code pre{font-size:inherit;color:inherit;background:inherit;border:0;margin:0;padding:0;display:inline}details{background:var(--bg-primary);border:2px solid var(--link-primary);border-radius:4px;padding:.6rem 1rem}summary{cursor:pointer;font-weight:700}details[open]{padding-bottom:.75rem}details[open] summary{margin-bottom:6px}details[open]>:last-child{margin-bottom:0}.two-columns{display:flex}.column{flex:1;margin-inline-end:20px}.count{max-width:220px}dl{padding-top:10px}.column dl{width:100%}dt{font-weight:700}dd{padding-bottom:10px}ul ul,ol ul,ul ol,ol ol{margin-bottom:0}ul li{margin-bottom:.5rem}ol,ul{padding-left:2rem}ol li:not(li li){margin-bottom:4rem}iframe,img{background:var(--bg-tertiary);border-radius:5px;max-width:50%;padding:5px;display:block}video,audio{border:0;display:block}.red-text{color:var(--red-text)}.visually-hidden{clip:rect(1px, 1px, 1px, 1px);white-space:nowrap;clip-path:inset(50%);border:0;width:1px;height:1px;padding:0;display:block;position:absolute;overflow:hidden}.badge{color:#fff;text-align:center;white-space:nowrap;vertical-align:baseline;border-radius:10px;outline:1px solid #0000;min-width:10px;padding:1px 5px 1.75px;font-size:14px;line-height:1;display:inline;font-weight:700!important}.error .colour{color:var(--red-text)}.error .badge{color:#fff;background:#d30017}.warning .colour{color:var(--warning-text)}.warning .badge{color:#fff;background:#966f0d}.link-icon{width:16px;height:16px;-webkit-mask:var(--sa11y-link-icon-svg) center no-repeat;mask:var(--sa11y-link-icon-svg) center no-repeat;background:#fff;margin-bottom:-3.5px;display:inline-block}li pre,li li pre,li li img,li li iframe,li li video,li li audio{margin-top:1rem}li li{margin-top:1rem;list-style:none}`;
+function el(tag, props = {}, ...children) {
+  const node = document.createElement(tag);
+  for (const [key, val] of Object.entries(props)) {
+    if (key === "textContent") {
+      node.textContent = val;
+    } else if (key === "className") {
+      node.className = val;
+    } else {
+      node.setAttribute(key, val);
+    }
+  }
+  for (const child of children) {
+    if (child == null) continue;
+    if (typeof child === "string") {
+      node.appendChild(document.createTextNode(child));
+    } else {
+      node.appendChild(child);
+    }
+  }
+  return node;
+}
+async function sanitizeToFragment(node) {
+  const wrapper = document.createElement("div");
+  wrapper.appendChild(node.cloneNode(true));
+  const raw = wrapper.innerHTML;
+  const fragment = document.createDocumentFragment();
+  if (typeof window.Sanitizer === "function") {
+    const sanitizer = new Sanitizer();
+    const target = document.createElement("div");
+    target.setHTML(raw, { sanitizer });
+    while (target.firstChild) fragment.appendChild(target.firstChild);
+    return fragment;
+  }
+  const safeHTML = sanitizeHTML(raw);
+  const parsed = new DOMParser().parseFromString(safeHTML, "text/html");
+  const imported = document.importNode(parsed.body, true);
+  while (imported.firstChild) fragment.appendChild(imported.firstChild);
+  return fragment;
+}
 function generateMetaData() {
   const today = /* @__PURE__ */ new Date();
   const day = String(today.getDate()).padStart(2, "0");
@@ -1686,96 +1737,147 @@ function generateMetaData() {
   const title = document.querySelector("head title");
   const titleCheck = !title || title.textContent.trim().length === 0;
   const metaTitle = !titleCheck ? title.textContent : "";
-  const pageURL = window.location.href;
+  const pageURL = sanitizeURL(window.location.href);
   return { date, numericDate, titleCheck, metaTitle, pageURL };
+}
+function sanitizeCSVCell(value) {
+  const strValue = String(value ?? "");
+  const escaped = strValue.replaceAll('"', '""');
+  if (/^[=+\-@\t\r]/.test(escaped)) {
+    return `'${escaped}`;
+  }
+  return escaped;
+}
+async function generateList(issues, type) {
+  if (!issues.length) return null;
+  const typeLabels = {
+    error: Lang._("ERRORS"),
+    warning: Lang._("WARNINGS"),
+    dismissed: Lang._("DISMISSED")
+  };
+  const fragment = document.createDocumentFragment();
+  fragment.appendChild(el("h2", { textContent: typeLabels[type] }));
+  const ol = el("ol", { className: type });
+  for (const issue of issues) {
+    const li = document.createElement("li");
+    const msgContainer = document.createElement("div");
+    const msgFragment = await sanitizeToFragment(issue.content);
+    msgContainer.appendChild(msgFragment);
+    li.appendChild(msgContainer);
+    const ul = document.createElement("ul");
+    if (issue.element) {
+      const allowedTags = ["IMG"];
+      if (allowedTags.includes(issue.element.tagName)) {
+        const previewLi = document.createElement("li");
+        const strong = el("strong", { textContent: `${Lang._("PREVIEW")}: ` });
+        previewLi.appendChild(strong);
+        const previewNode = await generateElementPreview(issue, true);
+        const previewFragment = await sanitizeToFragment(previewNode);
+        const previewContainer = document.createElement("span");
+        previewContainer.appendChild(previewFragment);
+        previewLi.appendChild(previewContainer);
+        ul.appendChild(previewLi);
+      }
+      const elemLi = document.createElement("li");
+      elemLi.appendChild(el("strong", { textContent: `${Lang._("ELEMENT")}: ` }));
+      const elemPre = document.createElement("pre");
+      elemPre.appendChild(el("code", { textContent: issue.htmlPath }));
+      elemLi.appendChild(elemPre);
+      ul.appendChild(elemLi);
+    }
+    if (issue.cssPath) {
+      const pathLi = document.createElement("li");
+      pathLi.appendChild(el("strong", { textContent: `${Lang._("PATH")}: ` }));
+      const pathPre = document.createElement("pre");
+      pathPre.appendChild(el("code", { textContent: issue.cssPath }));
+      pathLi.appendChild(pathPre);
+      ul.appendChild(pathLi);
+    }
+    li.appendChild(ul);
+    ol.appendChild(li);
+  }
+  if (type === "dismissed") {
+    const details = document.createElement("details");
+    details.appendChild(
+      el("summary", {
+        textContent: Lang.sprintf("PANEL_DISMISS_BUTTON", State.counts.dismissed)
+      })
+    );
+    details.appendChild(ol);
+    fragment.appendChild(details);
+  } else {
+    fragment.appendChild(ol);
+  }
+  return fragment;
 }
 async function generateHTMLTemplate() {
   const errors = State.results.filter((issue) => issue.type === "error");
   const warnings = State.results.filter((issue) => issue.type === "warning");
-  async function generateList(issues, type) {
-    const types = {
-      error: Lang._("ERRORS"),
-      warning: Lang._("WARNINGS"),
-      dismissed: Lang._("DISMISSED")
-    };
-    const heading = types[type];
-    const hasIssues = issues.length > 0;
-    if (!hasIssues) return "";
-    let list = `<h2>${heading}</h2>`;
-    let listOpeningTag = `<ol class="${type}">`;
-    let listClosingTag = "</ol>";
-    if (type === "dismissed") {
-      listOpeningTag = `<details><summary>${Lang.sprintf("PANEL_DISMISS_BUTTON", State.counts.dismissed)}</summary><ol>`;
-      listClosingTag = "</details>";
-    }
-    list += listOpeningTag;
-    const issuePromises = issues.map(async (issue) => {
-      let elementPreview = "";
-      if (issue.element) {
-        const allowedTags = ["IMG", "IFRAME", "AUDIO", "VIDEO"];
-        const preview = await generateElementPreview(issue, true);
-        if (allowedTags.includes(issue.element.tagName)) {
-          elementPreview = `<li><strong>${Lang._("PREVIEW")}:</strong> ${preview}</li><li><strong>${Lang._("ELEMENT")}:</strong> <pre><code>${escapeHTML(issue.htmlPath)}</code></pre></li>`;
-        } else {
-          elementPreview = `<li><strong>${Lang._("ELEMENT")}:</strong> <pre><code>${escapeHTML(issue.htmlPath)}</code></pre></li>`;
-        }
-      }
-      const cssPath = issue.cssPath ? `<li><strong>${Lang._("PATH")}:</strong> <pre><code>${issue.cssPath}</code></pre></li>` : "";
-      return `<li>${issue.content} <ul>${elementPreview}${cssPath}</ul></li>`;
-    });
-    const resolvedIssues = await Promise.all(issuePromises);
-    list += resolvedIssues.join("");
-    list += listClosingTag;
-    return list;
-  }
-  const errorsList = await generateList(errors, "error");
-  const warningList = await generateList(warnings, "warning");
-  const dismissedList = await generateList(State.dismissedResults, "dismissed");
   const meta = generateMetaData();
-  const metaTitle = !meta.titleCheck ? `<dt>${Lang._("PAGE_TITLE")}</dt><dd>${meta.metaTitle}</dd>` : "";
-  const metaErrors = State.counts.error !== 0 ? `<dt>${Lang._("ERRORS")}</dt><dd>${State.counts.error}</dd>` : "";
-  const metaWarnings = State.counts.warning !== 0 ? `<dt>${Lang._("WARNINGS")}</dt><dd>${State.counts.warning}</dd>` : "";
-  const metaDismissed = State.counts.dismissed !== 0 ? `<dt>${Lang._("DISMISSED")}</dt><dd>${State.counts.dismissed}</dd>` : "";
-  const tool = '<a href="https://sa11y.netlify.app">Sa11y</a>';
-  const htmlTemplate = `
-      <!DOCTYPE html>
-      <html lang="${Lang._("LANG_CODE")}">
-      <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>${Lang._("RESULTS")}: ${meta.metaTitle}</title>
-        <style>${exportResultsStyles}</style>
-      </head>
-      <body>
-        <header>
-          <h1>${Lang._("RESULTS")}</h1>
-          <dl class="two-columns">
-            <div class="column">
-              ${metaTitle}
-              <dt>URL</dt>
-              <dd><a href="${meta.pageURL}">${meta.pageURL}</a></dd>
-              <dt>${Lang._("DATE")}</dt>
-              <dd>${meta.date}</dd>
-            </div>
-            <div class="column count">
-              ${metaErrors}
-              ${metaWarnings}
-              ${metaDismissed}
-            </div>
-        </dl>
-        </header>
-        <main>
-          ${errorsList}
-          ${warningList}
-          ${dismissedList}
-        </main>
-        <footer>
-          <p>${Lang.sprintf("GENERATED", tool)}</p>
-        </footer>
-      </body>
-      </html>
-    `;
-  return htmlTemplate;
+  const doc = document.implementation.createHTMLDocument("");
+  doc.documentElement.setAttribute("lang", Lang._("LANG_CODE"));
+  el("meta", { charset: "UTF-8" });
+  const existingMeta = doc.querySelector("meta[charset]");
+  if (existingMeta) {
+    existingMeta.setAttribute("charset", "UTF-8");
+  } else {
+    doc.head.insertBefore(el("meta", { charset: "UTF-8" }), doc.head.firstChild);
+  }
+  doc.head.appendChild(
+    el("meta", { name: "viewport", content: "width=device-width, initial-scale=1.0" })
+  );
+  const titleEl = doc.createElement("title");
+  titleEl.textContent = `${Lang._("RESULTS")}: ${meta.metaTitle}`;
+  doc.head.appendChild(titleEl);
+  const styleEl = doc.createElement("style");
+  styleEl.textContent = exportResultsStyles;
+  doc.head.appendChild(styleEl);
+  const header = doc.createElement("header");
+  header.appendChild(el("h1", { textContent: Lang._("RESULTS") }));
+  const dl = el("dl", { className: "two-columns" });
+  const leftCol = el("div", { className: "column" });
+  if (!meta.titleCheck) {
+    leftCol.appendChild(el("dt", { textContent: Lang._("PAGE_TITLE") }));
+    leftCol.appendChild(el("dd", { textContent: meta.metaTitle }));
+  }
+  leftCol.appendChild(el("dt", { textContent: "URL" }));
+  const urlAnchor = el("a", { href: meta.pageURL, textContent: meta.pageURL });
+  leftCol.appendChild(el("dd", {}, urlAnchor));
+  leftCol.appendChild(el("dt", { textContent: Lang._("DATE") }));
+  leftCol.appendChild(el("dd", { textContent: meta.date }));
+  dl.appendChild(leftCol);
+  const rightCol = el("div", { className: "column count" });
+  if (State.counts.error !== 0) {
+    rightCol.appendChild(el("dt", { textContent: Lang._("ERRORS") }));
+    rightCol.appendChild(el("dd", { textContent: String(State.counts.error) }));
+  }
+  if (State.counts.warning !== 0) {
+    rightCol.appendChild(el("dt", { textContent: Lang._("WARNINGS") }));
+    rightCol.appendChild(el("dd", { textContent: String(State.counts.warning) }));
+  }
+  if (State.counts.dismissed !== 0) {
+    rightCol.appendChild(el("dt", { textContent: Lang._("DISMISSED") }));
+    rightCol.appendChild(el("dd", { textContent: String(State.counts.dismissed) }));
+  }
+  dl.appendChild(rightCol);
+  header.appendChild(dl);
+  const main2 = doc.createElement("main");
+  const listEntries = [
+    [errors, "error"],
+    [warnings, "warning"],
+    [State.dismissedResults, "dismissed"]
+  ];
+  for (const [issues, type] of listEntries) {
+    const fragment = await generateList(issues, type);
+    if (fragment) main2.appendChild(fragment);
+  }
+  const footer = document.createElement("footer");
+  const generatedBy = Lang.sprintf("GENERATED");
+  footer.appendChild(generatedBy);
+  doc.body.appendChild(header);
+  doc.body.appendChild(main2);
+  doc.body.appendChild(footer);
+  return new XMLSerializer().serializeToString(doc);
 }
 async function downloadHTMLTemplate() {
   const htmlContent = await generateHTMLTemplate();
@@ -1796,30 +1898,34 @@ function downloadCSVTemplate() {
   const meta = generateMetaData();
   const filteredObjects = State.results.filter((issue) => issue.type === "warning" || issue.type === "error").map((issue) => {
     const { type, content, htmlPath, cssPath } = issue;
-    const prepContent = content.replaceAll(/<span\s+class="visually-hidden"[^>]*>.*?<\/span>/gi, "").replaceAll('<hr aria-hidden="true">', " | ").replaceAll(/"/g, '""');
-    const stripHTML = stripHTMLtags(String(prepContent));
-    const encoded = decodeHTML(stripHTML);
+    const clone = content.cloneNode(true);
+    clone.querySelectorAll(".visually-hidden").forEach((n) => {
+      n.remove();
+    });
+    clone.querySelectorAll("hr").forEach((hr) => {
+      hr.replaceWith(" | ");
+    });
+    const encoded = clone.textContent.replaceAll('"', '""');
     const columns = {
-      Title: `"${meta.metaTitle}"`,
-      URL: `"${meta.pageURL}"`,
-      Type: `"${String(type)}"`,
-      Issue: `"${encoded}"`,
-      Element: `"${htmlPath}"`
+      Title: `"${sanitizeCSVCell(meta.metaTitle)}"`,
+      URL: `"${sanitizeCSVCell(meta.pageURL)}"`,
+      Type: `"${sanitizeCSVCell(String(type))}"`,
+      Issue: `"${sanitizeCSVCell(encoded)}"`,
+      Element: `"${sanitizeCSVCell(htmlPath)}"`
     };
     if (cssPath) {
-      columns.Path = `"${cssPath}"`;
+      columns.Path = `"${sanitizeCSVCell(cssPath)}"`;
     }
     return columns;
   });
   const headers = Object.keys(filteredObjects[0]);
   const csvContent = `${headers.join(",")}
-${filteredObjects.map((obj) => headers.map((header) => obj[header]).join(",")).join("\n")}`;
+${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join(",")).join("\n")}`;
   const bom = new Uint8Array([239, 187, 191]);
   const blob = new Blob([bom, csvContent], { type: "text/csv;charset=utf-8;" });
   const url2 = window.URL.createObjectURL(blob);
   const link = document.createElement("a");
   link.href = url2;
-  link.href = window.URL.createObjectURL(blob);
   const fileNameTitle = !meta.titleCheck ? `_${meta.metaTitle.trim().replace(/ /g, "")}` : "";
   link.setAttribute("download", `Sa11y_${meta.numericDate + fileNameTitle}.csv`);
   document.body.appendChild(link);
@@ -1961,11 +2067,11 @@ async function resetAll(restartPanel = true) {
   while (Constants.Panel.status.firstChild) {
     Constants.Panel.status.removeChild(Constants.Panel.status.firstChild);
   }
-  document.querySelectorAll("[data-sa11y-has-shadow-root]").forEach((el) => {
-    el.shadowRoot.querySelectorAll("style.sa11y-css-utilities").forEach((style) => {
+  document.querySelectorAll("[data-sa11y-has-shadow-root]").forEach((el2) => {
+    el2.shadowRoot.querySelectorAll("style.sa11y-css-utilities").forEach((style) => {
       style.remove();
     });
-    el.removeAttribute("data-sa11y-has-shadow-root");
+    el2.removeAttribute("data-sa11y-has-shadow-root");
   });
   if (restartPanel) {
     Constants.Panel.panel.classList.remove("active");
@@ -2069,64 +2175,69 @@ function removeDismissListeners() {
   Constants.Panel.panel?.removeEventListener("click", dismissHandler);
   Constants.Panel.dismissButton?.removeEventListener("click", restoreDismissedHandler);
 }
+const outlineTemplate = document.createElement("template");
+outlineTemplate.innerHTML = `
+  <li>
+    <button type="button" tabindex="-1">
+      <span class="badge"></span>
+      <span class="outline-list-item"></span>
+    </button>
+  </li>
+`;
 function generatePageOutline() {
   const outlineHandler = () => {
-    const outlineArray = [];
+    Constants.Panel.outlineList.textContent = "";
+    const fragment = document.createDocumentFragment();
     const findDismissedHeadings = State.dismissedResults.map((e) => State.headingOutline.find((f) => e.dismiss === f.dismiss)).filter(Boolean);
     findDismissedHeadings.forEach(($el) => {
       $el.dismissedHeading = true;
     });
-    let outlineItem;
     if (State.option.showTitleInPageOutline) {
       const metaTitleElement = document.querySelector("head title");
+      const li = document.createElement("li");
       if (!metaTitleElement || metaTitleElement.textContent.trim().length === 0) {
-        outlineItem = `<li><div class="badge error-badge"><span aria-hidden="true"><span class="error-icon"></span></span> ${Lang._("TITLE")}</div> <div class="badge error-badge">${Lang._("MISSING")}</div></li>`;
+        li.innerHTML = `
+          <div class="badge error-badge"><span aria-hidden="true"><span class="error-icon"></span></span> ${Lang._("TITLE")}</div>
+          <div class="badge error-badge">${Lang._("MISSING")}</div>
+        `;
       } else {
-        const titleText = getText(metaTitleElement);
-        outlineItem = `<li><span class="badge">${Lang._("TITLE")}</span> ${escapeHTML(titleText)}</li>`;
+        const titleBadge = document.createElement("span");
+        titleBadge.className = "badge";
+        titleBadge.textContent = Lang._("TITLE");
+        li.appendChild(titleBadge);
+        li.appendChild(document.createTextNode(` ${getText(metaTitleElement)}`));
       }
-      outlineArray.push(outlineItem);
+      fragment.appendChild(li);
     }
     State.headingOutline.forEach((heading, i) => {
       const { element, headingLevel, text, type, dismissedHeading, isWithinRoot } = heading;
       const hidden = isElementVisuallyHiddenOrHidden(element);
-      const visibleIcon = hidden === true ? `<span class="hidden-icon"></span><span class="visually-hidden">${Lang._("HIDDEN")}</span>` : "";
+      const visibleIcon = hidden ? `<span class="hidden-icon"></span><span class="visually-hidden">${Lang._("HIDDEN")}</span>` : "";
       const badgeH = State.option.showHinPageOutline === true || State.option.showHinPageOutline === 1 ? "H" : "";
-      let append;
+      const clone = outlineTemplate.content.cloneNode(true);
+      const li = clone.querySelector("li");
+      const badge = clone.querySelector(".badge");
+      const listItemText = clone.querySelector(".outline-list-item");
+      li.className = `outline-${headingLevel}`;
+      listItemText.textContent = text;
       if (type === "error" && isWithinRoot === true) {
-        append = `
-            <li class="outline-${headingLevel}">
-              <button type="button" tabindex="-1">
-                <span class="badge error-badge">
-                <span aria-hidden="true">${visibleIcon}
-                  <span class="error-icon"></span>
-                </span>
-                <span class="visually-hidden">${Lang._("ERROR")}</span> ${badgeH + headingLevel}</span>
-                <strong class="outline-list-item red-text">${text}</strong>
-              </button>
-            </li>`;
-        outlineArray.push(append);
+        badge.className = "badge error-badge";
+        badge.innerHTML = `<span aria-hidden="true">${visibleIcon}<span class="error-icon"></span></span><span class="visually-hidden">${Lang._("ERROR")}</span>${badgeH}${headingLevel}`;
+        const strongText = document.createElement("strong");
+        strongText.className = "outline-list-item red-text";
+        strongText.textContent = text;
+        listItemText.replaceWith(strongText);
       } else if (type === "warning" && !dismissedHeading && isWithinRoot === true) {
-        append = `
-            <li class="outline-${headingLevel}">
-              <button type="button" tabindex="-1">
-                <span class="badge warning-badge">
-                <span aria-hidden="true">${visibleIcon} &#x3f;</span>
-                <span class="visually-hidden">${Lang._("WARNING")}</span> ${badgeH + headingLevel}</span>
-                <strong class="outline-list-item yellow-text">${text}</strong>
-              </button>
-            </li>`;
-        outlineArray.push(append);
+        badge.className = "badge warning-badge";
+        badge.innerHTML = `<span aria-hidden="true">${visibleIcon} &#x3f;</span><span class="visually-hidden">${Lang._("WARNING")}</span> ${badgeH}${headingLevel}`;
+        const strongText = document.createElement("strong");
+        strongText.className = "outline-list-item yellow-text";
+        strongText.textContent = text;
+        listItemText.replaceWith(strongText);
       } else {
-        append = `
-            <li class="outline-${headingLevel}">
-              <button type="button" tabindex="-1">
-                <span class="badge">${visibleIcon} ${badgeH + headingLevel}</span>
-                <span class="outline-list-item">${text}</span>
-              </button>
-            </li>`;
-        outlineArray.push(append);
+        badge.innerHTML = `${visibleIcon}${badgeH}${headingLevel}`;
       }
+      fragment.appendChild(clone);
       const label = document.createElement("sa11y-heading-label");
       label.hidden = true;
       element?.insertAdjacentElement("beforeend", label);
@@ -2142,13 +2253,18 @@ function generatePageOutline() {
       }
       const content = document.createElement("span");
       content.classList.add("heading-label");
-      content.innerHTML = `H${headingLevel}`;
+      content.textContent = `H${headingLevel}`;
       label.shadowRoot.appendChild(content);
       if (store.getItem("sa11y-outline") === "Opened") {
         label.hidden = false;
       }
     });
-    Constants.Panel.outlineList.innerHTML = State.headingOutline.length === 0 ? `${outlineItem || ""} <li>${Lang._("PANEL_NO_HEADINGS")}</li>` : outlineArray.join(" ");
+    if (State.headingOutline.length === 0) {
+      const emptyLi = document.createElement("li");
+      emptyLi.textContent = Lang._("PANEL_NO_HEADINGS");
+      fragment.appendChild(emptyLi);
+    }
+    Constants.Panel.outlineList.appendChild(fragment);
     setTimeout(() => {
       const buttons = Constants.Panel.outlineList.querySelectorAll("button");
       buttons.forEach((button, i) => {
@@ -2371,14 +2487,26 @@ const computeAccessibleName = (element, exclusions = [], recursing = 0) => {
   }
   return computedText;
 };
-const generateEditLink = (image) => {
+const imageOutlineTemplate = document.createElement("template");
+imageOutlineTemplate.innerHTML = `
+  <li>
+    <button type="button" tabindex="-1">
+      <img alt="" />
+      <div class="alt">
+        <span class="badges-container"></span>
+        <span class="alt-text-container"></span>
+      </div>
+    </button>
+  </li>
+`;
+const generateEditLinkElement = (image) => {
   const { src } = image.element;
   const urlExclusions = State.option.ignoreEditImageURL.some((ignore) => src.includes(ignore));
   const classExclusions = State.option.ignoreEditImageClass.some(
     (ignore) => image.element.classList.contains(ignore)
   );
   if (urlExclusions || classExclusions) {
-    return "";
+    return null;
   }
   const relativePath = State.option.relativePathImageSRC || window.location.host;
   const fileExtension = src.split(relativePath)[1] || "";
@@ -2395,15 +2523,30 @@ const generateEditLink = (image) => {
   const editURL = relativePath && imageID.length ? State.option.editImageURLofCMS + imageUniqueID : State.option.editImageURLofCMS + fileExtension;
   const isRelativeLink = (imageSrc) => imageSrc.includes(window.location.host) || imageSrc.startsWith(relativePath);
   if (imageID.length && imageUniqueID !== void 0 || !imageID) {
-    return isRelativeLink(src) ? `<div class="edit-block"><a href="${encodeURI(editURL)}" tabindex="-1" target="_blank" rel="noopener noreferrer" class="edit">${Lang._("EDIT")}</a></div>` : "";
+    if (isRelativeLink(src)) {
+      const wrapper = document.createElement("div");
+      wrapper.className = "edit-block";
+      const anchor = document.createElement("a");
+      anchor.href = editURL;
+      anchor.tabIndex = -1;
+      anchor.target = "_blank";
+      anchor.rel = "noopener noreferrer";
+      anchor.className = "edit";
+      anchor.textContent = Lang._("EDIT");
+      wrapper.appendChild(anchor);
+      return wrapper;
+    }
   }
-  return "";
+  return null;
 };
 function generateImageOutline() {
   if (!State.option.showImageOutline) return;
   const imageOutlineHandler = () => {
-    const imageArray = [];
+    Constants.Panel.imagesList.textContent = "";
+    const fragment = document.createDocumentFragment();
+    let hasImages = false;
     State.imageResults.forEach((image, i) => {
+      hasImages = true;
       const isDismissed = State.dismissedResults.some(
         (key) => key.dismissDigest === image.dismissDigest
       );
@@ -2412,73 +2555,82 @@ function generateImageOutline() {
       }
       const { element, type, developer, dismissedImage } = image;
       const ariaLabel = computeAriaLabel(element);
-      const rawAlt = ariaLabel === "noAria" ? element.getAttribute("alt") ?? "" : ariaLabel ?? "";
-      const altText = escapeHTML(rawAlt);
+      const altText = ariaLabel === "noAria" ? element.getAttribute("alt") ?? "" : ariaLabel ?? "";
       const hidden = isElementVisuallyHiddenOrHidden(element);
       if (hidden) {
         const parent = findVisibleParent(element, "display", "none");
-        const anchor2 = document.createElement("sa11y-image-anchor");
-        anchor2.setAttribute("data-sa11y-parent", `image${i}`);
+        const anchor = document.createElement("sa11y-image-anchor");
+        anchor.setAttribute("data-sa11y-parent", `image${i}`);
         const target = parent?.previousElementSibling || parent?.parentNode;
-        target?.insertAdjacentElement("beforebegin", anchor2);
+        target?.insertAdjacentElement("beforebegin", anchor);
       } else {
         element.setAttribute("data-sa11y-image", i);
       }
       const dev = store.getItem("sa11y-developer");
       const devChecksOff = dev === "Off" || dev === null;
       const showDeveloperChecks = devChecksOff && (type === "error" || type === "warning") && developer === true;
-      const source = getBestImageSource(image.element);
-      const edit = State.option.editImageURLofCMS ? generateEditLink(image) : "";
-      let decorative = rawAlt === "";
+      const source = getBestImageSource(element);
+      let decorative = altText === "";
       if (!decorative && State.option.altPlaceholder.length) {
         const altPlaceholderPattern = generateRegexString(State.option.altPlaceholder, true);
-        decorative = rawAlt.match(altPlaceholderPattern)?.[0];
+        decorative = altText.match(altPlaceholderPattern)?.[0];
       }
-      const isDecorative = decorative ? `<div class="badge">${Lang._("DECORATIVE")}</div>` : "";
-      const anchor = State.option.imageWithinLightbox ? `a[href]:not(${State.option.imageWithinLightbox})` : "a[href]";
-      const linked = element.closest(anchor) ? `<div class="badge"><span class="link-icon"></span><span class="visually-hidden">${Lang._("LINKED")}</span></div>` : "";
-      const visibleIcon = hidden === true ? `<div class="badge"><span class="hidden-icon"></span><span class="visually-hidden">${Lang._("HIDDEN")}</span></div>` : "";
-      let append;
+      const clone = imageOutlineTemplate.content.cloneNode(true);
+      const li = clone.querySelector("li");
+      const img = clone.querySelector("img");
+      const badgesContainer = clone.querySelector(".badges-container");
+      const altTextContainer = clone.querySelector(".alt-text-container");
+      img.src = source;
+      let badgesHTML = "";
+      if (hidden) {
+        badgesHTML += `<div class="badge"><span class="hidden-icon"></span><span class="visually-hidden">${Lang._("HIDDEN")}</span></div> `;
+      }
+      const anchorSelector = State.option.imageWithinLightbox ? `a[href]:not(${State.option.imageWithinLightbox})` : "a[href]";
+      if (element.closest(anchorSelector)) {
+        badgesHTML += `<div class="badge"><span class="link-icon"></span><span class="visually-hidden">${Lang._("LINKED")}</span></div> `;
+      }
       if (type === "error" && !showDeveloperChecks) {
-        const missing = altText.length === 0 ? `<div class="badge">${Lang._("MISSING")}</div>` : "";
-        append = `
-        <li class="error">
-          <button type="button" tabindex="-1">
-            <img src="${source}" alt/>
-            <div class="alt"> ${visibleIcon} ${linked} ${missing}
-              <div class="badge"><span class="error-icon"></span><span class="visually-hidden">${Lang._("ERROR")}</span> ${Lang._("ALT")}</div> <strong class="red-text">${decorative ? "" : altText}</strong>
-            </div>
-          </button>
-          ${edit}
-        </li>`;
-        imageArray.push(append);
+        li.className = "error";
+        if (altText.length === 0) badgesHTML += `<div class="badge">${Lang._("MISSING")}</div> `;
+        badgesHTML += `<div class="badge"><span class="error-icon"></span><span class="visually-hidden">${Lang._("ERROR")}</span> ${Lang._("ALT")}</div> `;
+        if (!decorative) {
+          const strong = document.createElement("strong");
+          strong.className = "red-text";
+          strong.textContent = altText;
+          altTextContainer.replaceWith(strong);
+        }
       } else if (type === "warning" && !dismissedImage && !showDeveloperChecks) {
-        append = `
-        <li class="warning">
-          <button type="button" tabindex="-1">
-            <img src="${source}" alt/>
-            <div class="alt"> ${visibleIcon} ${linked} ${isDecorative}
-              <div class="badge"><span aria-hidden="true">&#63;</span> <span class="visually-hidden">${Lang._("WARNING")}</span> ${Lang._("ALT")}</div> <strong class="yellow-text">${decorative ? "" : altText}</strong>
-            </div>
-          </button>
-          ${edit}
-        </li>`;
-        imageArray.push(append);
+        li.className = "warning";
+        if (decorative) badgesHTML += `<div class="badge">${Lang._("DECORATIVE")}</div> `;
+        badgesHTML += `<div class="badge"><span aria-hidden="true">&#63;</span> <span class="visually-hidden">${Lang._("WARNING")}</span> ${Lang._("ALT")}</div> `;
+        if (!decorative) {
+          const strong = document.createElement("strong");
+          strong.className = "yellow-text";
+          strong.textContent = altText;
+          altTextContainer.replaceWith(strong);
+        }
       } else {
-        append = `
-        <li class="good">
-          <button type="button" tabindex="-1">
-            <img src="${source}" alt/>
-            <div class="alt"> ${visibleIcon} ${linked} ${isDecorative}
-              <div class="badge">${Lang._("ALT")}</div> ${decorative ? "" : altText}
-            </div>
-          </button>
-          ${edit}
-        </li>`;
-        imageArray.push(append);
+        li.className = "good";
+        if (decorative) badgesHTML += `<div class="badge">${Lang._("DECORATIVE")}</div> `;
+        badgesHTML += `<div class="badge">${Lang._("ALT")}</div> `;
+        if (!decorative) {
+          altTextContainer.textContent = ` ${altText}`;
+        }
       }
+      badgesContainer.innerHTML = badgesHTML;
+      if (State.option.editImageURLofCMS) {
+        const editEl = generateEditLinkElement(image);
+        if (editEl) li.appendChild(editEl);
+      }
+      fragment.appendChild(clone);
     });
-    Constants.Panel.imagesList.innerHTML = imageArray.length === 0 ? `<li class="no-images">${Lang._("NO_IMAGES")}</li>` : imageArray.join(" ");
+    if (!hasImages) {
+      const emptyLi = document.createElement("li");
+      emptyLi.className = "no-images";
+      emptyLi.textContent = Lang._("NO_IMAGES");
+      fragment.appendChild(emptyLi);
+    }
+    Constants.Panel.imagesList.appendChild(fragment);
     setTimeout(() => {
       const buttons = Constants.Panel.imagesList.querySelectorAll("button");
       buttons.forEach(($el, i) => {
@@ -4025,16 +4177,16 @@ function getArrayOfElements(value) {
   return arrayFrom(document.querySelectorAll(value));
 }
 function setTransitionDuration(els, value) {
-  els.forEach(function(el) {
-    if (el) {
-      el.style.transitionDuration = value + "ms";
+  els.forEach(function(el2) {
+    if (el2) {
+      el2.style.transitionDuration = value + "ms";
     }
   });
 }
 function setVisibilityState(els, state) {
-  els.forEach(function(el) {
-    if (el) {
-      el.setAttribute("data-state", state);
+  els.forEach(function(el2) {
+    if (el2) {
+      el2.setAttribute("data-state", state);
     }
   });
 }
@@ -4526,8 +4678,8 @@ function createTippy(reference2, passedProps) {
     if (instance.props.interactive && actualContains(popper2, actualTarget)) {
       return;
     }
-    if (normalizeToArray(instance.props.triggerTarget || reference2).some(function(el) {
-      return actualContains(el, actualTarget);
+    if (normalizeToArray(instance.props.triggerTarget || reference2).some(function(el2) {
+      return actualContains(el2, actualTarget);
     })) {
       if (currentInput.isTouch) {
         return;
@@ -5773,12 +5925,12 @@ function initializeContrastTools(container, contrastDetails) {
   bgInput.addEventListener("input", updatePreview);
   setTimeout(() => {
     const bindSuggest = (id, action) => {
-      const el = container.querySelector(id);
-      if (!el) return;
-      el.addEventListener("click", () => {
-        action(el.textContent);
+      const el2 = container.querySelector(id);
+      if (!el2) return;
+      el2.addEventListener("click", () => {
+        action(el2.textContent);
         updatePreview();
-        navigator.clipboard.writeText(el.textContent).catch(() => {
+        navigator.clipboard.writeText(el2.textContent).catch(() => {
         });
       });
     };
@@ -5848,8 +6000,6 @@ function annotate(issue) {
     position = "beforebegin",
     id,
     dismiss,
-    dismissAll,
-    contrastDetails,
     margin
   } = issue;
   const validTypes = ["error", "warning", "good"];
@@ -5894,7 +6044,6 @@ function annotate(issue) {
       const existing = element.style.anchorName;
       element.style.anchorName = existing ? `${existing}, --sa11y-anchor-${id}` : `--sa11y-anchor-${id}`;
     }
-    const dismissAllBtn = State.option.dismissAnnotations && State.option.dismissAll && typeof dismissAll === "string" && (type === "warning" || type === "good") ? `<button data-sa11y-dismiss='${id}' data-sa11y-dismiss-all type='button'>${Lang._("DISMISS_ALL")}</button>` : "";
     const buttonWrapper = document.createElement("div");
     buttonWrapper.classList.add(inline ? "annotation-inline" : "annotation");
     const button = document.createElement("button");
@@ -5903,12 +6052,11 @@ function annotate(issue) {
     button.setAttribute("aria-label", ariaLabel[type]);
     button.setAttribute("aria-haspopup", "dialog");
     button.style.margin = `${inline ? "-10px" : ""} ${margin}`;
-    button.dataset.tippyContent = `<div lang='${Lang._("LANG_CODE")}' class='${type}'><button type='button' class='close-btn close-tooltip' aria-label='${Lang._("ALERT_CLOSE")}'></button><h2>${ariaLabel[type]}</h2> ${content} ${contrastDetails ? "<div data-sa11y-contrast-details></div>" : ""} <div class='dismiss-group'>${dismissBtn}${dismissAllBtn}</div></div>`;
     buttonWrapper.appendChild(button);
     annotationButtons.push(button);
     const insertBefore = State.option.insertAnnotationBefore ? `, ${State.option.insertAnnotationBefore}` : "";
-    const location2 = element.closest(`a, button, [role="link"], [role="button"] ${insertBefore}`) || element;
-    location2.insertAdjacentElement(position, annotation);
+    const location = element.closest(`a, button, [role="link"], [role="button"] ${insertBefore}`) || element;
+    location.insertAdjacentElement(position, annotation);
     annotation.shadowRoot.appendChild(buttonWrapper);
     const ignoredElements = State.option.ignoreHiddenOverflow ? State.option.ignoreHiddenOverflow.split(",").flatMap((selector) => [...document.querySelectorAll(selector)]) : [];
     const parent = findVisibleParent(element, "overflow", "hidden");
@@ -5917,7 +6065,8 @@ function annotate(issue) {
     }
   } else {
     const listItem = document.createElement("li");
-    listItem.innerHTML = `<h3>${ariaLabel[type]}</h3> ${content}${dismissBtn}`;
+    listItem.innerHTML = `<h3>${ariaLabel[type]}</h3>`;
+    listItem.append(content, dismissBtn);
     Constants.Panel.pageIssuesList.insertAdjacentElement("afterbegin", listItem);
     Constants.Panel.pageIssues.classList.add("active");
     Constants.Panel.panel.classList.add("has-page-issues");
@@ -5929,6 +6078,7 @@ class AnnotationTooltips extends HTMLElement {
     const style = document.createElement("style");
     style.innerHTML = tooltipStyles + sharedStyles;
     shadowRoot.appendChild(style);
+    const template = State.results;
     const annotations = tippy(annotationButtons, {
       interactive: true,
       trigger: "mouseenter click",
@@ -5939,6 +6089,44 @@ class AnnotationTooltips extends HTMLElement {
       maxWidth: 375,
       theme: "sa11y-theme",
       placement: "auto-start",
+      content(reference2) {
+        const id = reference2.getRootNode().host.getAttribute("data-sa11y-annotation");
+        const result = template.find((item) => String(item.id) === String(id));
+        if (!result) return null;
+        const { element, type, content, dismiss, dismissAll, contrastDetails } = result;
+        if (!element) return;
+        const wrapper = document.createElement("div");
+        wrapper.setAttribute("lang", Lang._("LANG_CODE"));
+        wrapper.className = type;
+        const dismissAllBtn = State.option.dismissAnnotations && State.option.dismissAll && typeof dismissAll === "string" && (type === "warning" || type === "good") ? `<button data-sa11y-dismiss='${id}' data-sa11y-dismiss-all type='button'>${Lang._("DISMISS_ALL")}</button>` : "";
+        const dismissBtn = State.option.dismissAnnotations && (type === "warning" || type === "good") && dismiss ? `<button data-sa11y-dismiss='${id}' type='button'>${Lang._("DISMISS")}</button>` : "";
+        const validTypes = ["error", "warning", "good"];
+        if (validTypes.indexOf(type) === -1) {
+          throw Error(`Invalid type [${type}] for annotation`);
+        }
+        const ariaLabel = {
+          [validTypes[0]]: Lang._("ERROR"),
+          [validTypes[1]]: Lang._("WARNING"),
+          [validTypes[2]]: Lang._("GOOD")
+        };
+        wrapper.innerHTML = `
+          <button type='button' class='close-btn close-tooltip' aria-label='${Lang._("ALERT_CLOSE")}'></button>
+          <h2>${ariaLabel[type]}</h2>
+          <div class="sa11y-content-body"></div>
+          ${contrastDetails ? "<div data-sa11y-contrast-details></div>" : ""}
+          <div class='dismiss-group'>
+            ${dismissBtn || ""}
+            ${dismissAllBtn}
+          </div>
+        `;
+        const body = wrapper.querySelector(".sa11y-content-body");
+        if (content instanceof HTMLElement || content instanceof DocumentFragment) {
+          body.appendChild(content);
+        } else if (typeof content === "string") {
+          body.textContent += content;
+        }
+        return wrapper;
+      },
       allowHTML: true,
       role: "dialog",
       aria: {
@@ -5948,19 +6136,24 @@ class AnnotationTooltips extends HTMLElement {
       appendTo: shadowRoot,
       zIndex: 2147483645,
       onShow(instance) {
-        annotations.forEach((popper2) => {
-          if (popper2 !== instance.popper) {
-            popper2.hide();
-          }
-        });
-        const annotation = instance.reference.getRootNode().host;
-        annotation.setAttribute("data-sa11y-opened", "");
+        if (!instance || !instance.popper) return;
+        if (Array.isArray(annotations)) {
+          annotations.forEach((popper2) => {
+            if (popper2 !== instance) popper2.hide();
+          });
+        }
+        const host = instance.reference.getRootNode().host;
+        if (host) {
+          host.setAttribute("data-sa11y-opened", "");
+        }
         const closeButton = instance.popper.querySelector(".close-btn");
         const closeButtonHandler = () => {
           instance.hide();
           instance.reference.focus();
         };
-        closeButton.addEventListener("click", closeButtonHandler);
+        if (closeButton) {
+          closeButton.addEventListener("click", closeButtonHandler);
+        }
         const escapeListener = (event) => {
           if (event.key === "Escape") {
             instance.hide();
@@ -5969,53 +6162,56 @@ class AnnotationTooltips extends HTMLElement {
         };
         instance.popper.addEventListener("keydown", escapeListener);
         if (!instance.popper.hasAttribute("contrast-tools-initialized")) {
-          const issueID = parseInt(annotation.getAttribute("data-sa11y-annotation"), 10);
-          const issueObject = window.sa11yCheckComplete.results.find(
-            (issue) => issue.id === issueID
-          );
-          const { contrastDetails } = issueObject || {};
+          const rawId = host?.getAttribute("data-sa11y-annotation");
+          const results = window.sa11yCheckComplete?.results || [];
+          const issueObject = results.find((issue) => String(issue.id) === String(rawId));
+          const contrastDetails = issueObject?.contrastDetails;
           if (contrastDetails) {
             const container = instance.popper.querySelector("[data-sa11y-contrast-details]");
-            const tools = generateContrastTools(contrastDetails);
-            container.appendChild(tools);
-            initializeContrastTools(instance.popper, contrastDetails);
-            const suggestion = generateColorSuggestion(contrastDetails);
-            if (suggestion) {
-              container.appendChild(suggestion);
+            if (container) {
+              const tools = generateContrastTools(contrastDetails);
+              container.appendChild(tools);
+              initializeContrastTools(instance.popper, contrastDetails);
+              const suggestion = generateColorSuggestion(contrastDetails);
+              if (suggestion) {
+                container.appendChild(suggestion);
+              }
+              instance.popper.setAttribute("contrast-tools-initialized", "true");
             }
-            instance.popper.setAttribute("contrast-tools-initialized", true);
           }
         }
-        let firstClick = true;
-        function handleMouseDown(event) {
-          if (firstClick && event.target.matches('input[type="color"]')) {
+        const handleMouseDown = (event) => {
+          if (event.target.matches('input[type="color"]')) {
             instance.reference.click();
-            firstClick = false;
             instance.popper.removeEventListener("mousedown", handleMouseDown);
           }
-        }
-        instance.popper.addEventListener("mousedown", handleMouseDown);
-        const onHiddenTooltip = () => {
-          closeButton.removeEventListener("click", closeButtonHandler);
-          instance.popper.removeEventListener("keydown", escapeListener);
-          instance.popper.removeEventListener("hidden", onHiddenTooltip);
         };
-        instance.popper.addEventListener("hidden", onHiddenTooltip);
+        instance.popper.addEventListener("mousedown", handleMouseDown);
+        instance.setProps({
+          onHidden() {
+            if (closeButton) closeButton.removeEventListener("click", closeButtonHandler);
+            instance.popper.removeEventListener("keydown", escapeListener);
+            instance.popper.removeEventListener("mousedown", handleMouseDown);
+            if (host) host.removeAttribute("data-sa11y-opened");
+          }
+        });
       },
       onTrigger(instance, event) {
         if (event.type === "click") {
-          setTimeout(() => {
-            instance.popper.querySelector(".close-btn").focus();
-            trapFocus(instance.popper);
-          }, 0);
+          requestAnimationFrame(() => {
+            const closeBtn = instance.popper.querySelector(".close-btn");
+            if (closeBtn) {
+              closeBtn.focus();
+              trapFocus(instance.popper);
+            }
+          });
         }
       },
       onHide(instance) {
-        instance.popper.querySelector(".close-btn").removeEventListener("click", () => {
-          instance.hide();
-        });
-        const annotation = instance.reference.getRootNode().host;
-        annotation.removeAttribute("data-sa11y-opened");
+        const host = instance.reference.getRootNode().host;
+        if (host) {
+          host.removeAttribute("data-sa11y-opened");
+        }
       }
     });
   }
@@ -6112,6 +6308,11 @@ async function updateResults() {
       item.cssPath = option.selectorPath ? generateSelectorPath(item.element) : "";
       item.htmlPath = item.element?.outerHTML.replace(/\s{2,}/g, " ").trim() || "";
       if (item.dismiss) item.dismissDigest = await dismissDigest(item.dismiss);
+      if (typeof item.content === "string") {
+        const wrapper = document.createElement("div");
+        wrapper.innerHTML = sanitizeHTML(item.content);
+        item.content = wrapper;
+      }
     })
   );
   if (!option.headless) syncUI();
@@ -6269,8 +6470,7 @@ function checkImages() {
       }
       return;
     }
-    const escapedAlt = escapeHTML(rawAlt);
-    const altText = removeWhitespace(escapedAlt);
+    const altText = removeWhitespace(rawAlt);
     const hasAria = $el.getAttribute("aria-label") || $el.getAttribute("aria-labelledby");
     if (State.option.checks.MISSING_ALT) {
       if (hasAria && rawAlt === "") {
@@ -6447,14 +6647,17 @@ function checkImages() {
       const conditional = linkTextLength === 0 ? "LINK_IMAGE_ALT" : "LINK_IMAGE_ALT_AND_TEXT";
       if (rule) {
         const linkAccName = computeAccessibleName(link);
-        const removeWhitespace$1 = removeWhitespace(linkAccName);
-        const sanitizedText = escapeHTML(removeWhitespace$1);
-        const tooltip = linkTextLength === 0 ? Lang.sprintf("LINK_IMAGE_ALT", altText) : `${Lang.sprintf("LINK_IMAGE_ALT_AND_TEXT", altText, sanitizedText)} ${Lang.sprintf("ACC_NAME_TIP")}`;
+        const accName = removeWhitespace(linkAccName);
+        const tooltip = Lang.sprintf(
+          linkTextLength === 0 ? Lang._("LINK_IMAGE_ALT") : Lang._("LINK_IMAGE_ALT_AND_TEXT") + Lang._("ACC_NAME_TIP"),
+          altText,
+          accName
+        );
         State.results.push({
           test: conditional,
           element: $el,
           type: rule.type || "warning",
-          content: rule.content ? Lang.sprintf(rule.content, altText, sanitizedText) : tooltip,
+          content: rule.content ? Lang.sprintf(rule.content, altText, accName) : tooltip,
           dismiss: prepareDismissal(`${conditional + src + rawAlt}`),
           dismissAll: rule.dismissAll ? conditional : false,
           developer: rule.developer || false
@@ -6525,8 +6728,7 @@ function checkHeaders() {
   Elements.Found.Headings.forEach(($el, i) => {
     const accName = computeAccessibleName($el, Constants.Exclusions.HeaderSpan);
     const stringMatchExclusions = accName.replace(stringExclusionPattern, "");
-    const removeWhitespace$1 = removeWhitespace(stringMatchExclusions);
-    const headingText = escapeHTML(removeWhitespace$1);
+    const headingText = removeWhitespace(stringMatchExclusions);
     const rootContainsHeading = Constants.Root.areaToCheck.some((root) => root.contains($el));
     const rootContainsShadowHeading = Constants.Root.areaToCheck.some(
       (root) => root.contains($el.getRootNode().host)
@@ -6537,7 +6739,7 @@ function checkHeaders() {
       prevLevel = headingStartsOverride;
     }
     const level = parseInt($el.getAttribute("aria-level") || $el.tagName.slice(1), 10);
-    const headingLength = removeWhitespace$1.length;
+    const headingLength = headingText.length;
     const maxHeadingLength = State.option.checks.HEADING_LONG.maxLength || 160;
     let test = null;
     let type = null;
@@ -6731,7 +6933,6 @@ function checkLinkText() {
         return;
       }
       if (hasAria && linkText.length !== 0) {
-        const escapedText = escapeHTML(linkText);
         const excludeSpan = fnIgnore($el, Constants.Exclusions.LinkSpan);
         const visibleLinkText = getText(excludeSpan).replace(ignorePattern, "");
         const cleanedString = stripAllSpecialCharacters(visibleLinkText);
@@ -6747,7 +6948,11 @@ function checkLinkText() {
             test: "LINK_STOPWORD_ARIA",
             element: $el,
             type: State.option.checks.LINK_STOPWORD_ARIA.type || "warning",
-            content: State.option.checks.LINK_STOPWORD_ARIA.content ? Lang.sprintf(State.option.checks.LINK_STOPWORD_ARIA.content, stopword, escapedText) : Lang.sprintf("LINK_STOPWORD_ARIA", stopword, escapedText) + Lang.sprintf("LINK_TIP"),
+            content: Lang.sprintf(
+              State.option.checks.LINK_STOPWORD_ARIA.content || Lang._("LINK_STOPWORD_ARIA") + Lang._("LINK_TIP"),
+              stopword,
+              linkText
+            ),
             inline: true,
             dismiss: prepareDismissal(`LINK_STOPWORD_ARIA ${strippedLinkText}`),
             dismissAll: State.option.checks.LINK_STOPWORD_ARIA.dismissAll ? " LINK_STOPWORD_ARIA" : false,
@@ -6760,7 +6965,7 @@ function checkLinkText() {
             type: State.option.checks.LABEL_IN_NAME.type || "warning",
             content: Lang.sprintf(
               State.option.checks.LABEL_IN_NAME.content || "LABEL_IN_NAME",
-              escapedText
+              linkText
             ),
             inline: true,
             position: "afterend",
@@ -6773,7 +6978,10 @@ function checkLinkText() {
             test: "LINK_LABEL",
             element: $el,
             type: State.option.checks.LINK_LABEL.type || "good",
-            content: State.option.checks.LINK_LABEL.content ? Lang.sprintf(State.option.checks.LINK_LABEL.content, escapedText) : `${Lang.sprintf("ACC_NAME", escapedText)} ${Lang.sprintf("ACC_NAME_TIP")}`,
+            content: Lang.sprintf(
+              State.option.checks.LINK_LABEL.content || Lang._("ACC_NAME") + Lang._("ACC_NAME_TIP"),
+              linkText
+            ),
             inline: true,
             position: "afterend",
             dismiss: prepareDismissal(`LINK_LABEL ${strippedLinkText}`),
@@ -6790,7 +6998,10 @@ function checkLinkText() {
             test: "LINK_STOPWORD",
             element,
             type: State.option.checks.LINK_STOPWORD.type || "error",
-            content: State.option.checks.LINK_STOPWORD.content ? Lang.sprintf(State.option.checks.LINK_STOPWORD.content, stopword) : Lang.sprintf("LINK_STOPWORD", stopword) + Lang.sprintf("LINK_TIP"),
+            content: Lang.sprintf(
+              State.option.checks.LINK_STOPWORD.content || Lang._("LINK_STOPWORD") + Lang._("LINK_TIP"),
+              stopword
+            ),
             inline: true,
             position: "afterend",
             dismiss: prepareDismissal(`LINK_STOPWORD ${strippedLinkText}`),
@@ -6897,7 +7108,9 @@ function checkLinkText() {
               test: "LINK_URL",
               element: $el,
               type: State.option.checks.LINK_URL.type || "warning",
-              content: State.option.checks.LINK_URL.content ? Lang.sprintf(State.option.checks.LINK_URL.content) : Lang.sprintf("LINK_URL") + Lang.sprintf("LINK_TIP"),
+              content: Lang.sprintf(
+                State.option.checks.LINK_URL.content || Lang._("LINK_URL") + Lang._("LINK_TIP")
+              ),
               inline: true,
               dismiss: prepareDismissal(`LINK_URL ${strippedLinkText}`),
               dismissAll: State.option.checks.LINK_URL.dismissAll ? "LINK_URL" : false,
@@ -6943,7 +7156,9 @@ function checkLinkText() {
             test: "LINK_CLICK_HERE",
             element: $el,
             type: State.option.checks.LINK_CLICK_HERE.type || "warning",
-            content: State.option.checks.LINK_CLICK_HERE.content ? Lang.sprintf(State.option.checks.LINK_CLICK_HERE.content) : Lang.sprintf("LINK_CLICK_HERE") + Lang.sprintf("LINK_TIP"),
+            content: Lang.sprintf(
+              State.option.checks.LINK_CLICK_HERE.content || Lang._("LINK_CLICK_HERE") + Lang._("LINK_TIP")
+            ),
             inline: true,
             dismiss: prepareDismissal(`LINK_CLICK_HERE ${strippedLinkText}`),
             dismissAll: State.option.checks.LINK_CLICK_HERE.dismissAll ? "LINK_CLICK_HERE" : false,
@@ -6971,12 +7186,14 @@ function checkLinkText() {
         const ignored = $el.ariaHidden === "true" && $el.getAttribute("tabindex") === "-1";
         const hasAttributes = $el.hasAttribute("role") || $el.hasAttribute("disabled");
         if (State.option.checks.LINK_IDENTICAL_NAME && !hasAttributes && !ignored) {
-          const escapedText = escapeHTML(linkText);
           State.results.push({
             test: "LINK_IDENTICAL_NAME",
             element: $el,
             type: State.option.checks.LINK_IDENTICAL_NAME.type || "warning",
-            content: State.option.checks.LINK_IDENTICAL_NAME.content ? Lang.sprintf(State.option.checks.LINK_IDENTICAL_NAME.content, escapedText) : `${Lang.sprintf("LINK_IDENTICAL_NAME", escapedText)} ${Lang.sprintf("ACC_NAME_TIP")}`,
+            content: Lang.sprintf(
+              State.option.checks.LINK_IDENTICAL_NAME.content || Lang._("LINK_IDENTICAL_NAME") + Lang._("ACC_NAME_TIP"),
+              linkText
+            ),
             inline: true,
             dismiss: prepareDismissal(`LINK_IDENTICAL_NAME ${strippedLinkText}`),
             dismissAll: State.option.checks.LINK_IDENTICAL_NAME.dismissAll ? "LINK_IDENTICAL_NAME" : false,
@@ -7266,15 +7483,11 @@ function checkContrast() {
       previewText = sanitizedText;
     }
     updatedItem.sanitizedText = previewText;
-    let ratioTip = "";
-    if (State.option.contrastAlgorithm === "AA" || State.option.contrastAlgorithm === "AAA") {
-      const normal = State.option.contrastAlgorithm === "AAA" ? "7:1" : "4.5:1";
-      const large = State.option.contrastAlgorithm === "AAA" ? "4.5:1" : "3:1";
-      const ratioToDisplay2 = item.isLargeText ? large : normal;
-      const ratioRequirement = item.isLargeText ? "CONTRAST_LARGE" : "CONTRAST_NORMAL";
-      ratioTip = ` ${Lang.sprintf(ratioRequirement, ratioToDisplay2)}`;
-    }
-    const graphicsTip = State.option.contrastAlgorithm === "APCA" ? "" : ` ${Lang.sprintf("CONTRAST_TIP_GRAPHIC")}`;
+    const isWcag = State.option.contrastAlgorithm === "AA" || State.option.contrastAlgorithm === "AAA";
+    const normal = State.option.contrastAlgorithm === "AAA" ? "7:1" : "4.5:1";
+    const large = State.option.contrastAlgorithm === "AAA" ? "4.5:1" : "3:1";
+    const ratioToDisplay2 = item.isLargeText ? large : normal;
+    const ratioRequirementKey = item.isLargeText ? "CONTRAST_LARGE" : "CONTRAST_NORMAL";
     switch (item.type) {
       case "text":
         if (State.option.checks.CONTRAST_ERROR) {
@@ -7282,7 +7495,10 @@ function checkContrast() {
             test: "CONTRAST_ERROR",
             element: $el,
             type: State.option.checks.CONTRAST_ERROR.type || "error",
-            content: State.option.checks.CONTRAST_ERROR.content ? Lang.sprintf(State.option.checks.CONTRAST_ERROR.content) : Lang.sprintf("CONTRAST_ERROR") + ratioTip,
+            content: Lang.sprintf(
+              State.option.checks.CONTRAST_ERROR.content || (isWcag ? `${Lang._("CONTRAST_ERROR")} ${Lang._(ratioRequirementKey)}` : Lang._("CONTRAST_ERROR")),
+              ratioToDisplay2
+            ),
             dismiss: prepareDismissal(`CONTRAST_ERROR ${sanitizedText}`),
             dismissAll: State.option.checks.CONTRAST_ERROR.dismissAll ? "CONTRAST_ERROR" : false,
             developer: State.option.checks.CONTRAST_ERROR.developer || false,
@@ -7297,7 +7513,11 @@ function checkContrast() {
             test: "CONTRAST_INPUT",
             element,
             type: State.option.checks.CONTRAST_INPUT.type || "error",
-            content: State.option.checks.CONTRAST_INPUT.content ? Lang.sprintf(State.option.checks.CONTRAST_INPUT.content) : Lang.sprintf("CONTRAST_INPUT", ratio) + ratioTip,
+            content: Lang.sprintf(
+              State.option.checks.CONTRAST_INPUT.content || (isWcag ? `${Lang._("CONTRAST_INPUT")} ${Lang._(ratioRequirementKey)}` : Lang._("CONTRAST_INPUT")),
+              ratio,
+              ratioToDisplay2
+            ),
             dismiss: prepareDismissal(`CONTRAST_INPUT ${sanitizedInput}`),
             dismissAll: State.option.checks.CONTRAST_INPUT.dismissAll ? "CONTRAST_INPUT" : false,
             developer: State.option.checks.CONTRAST_INPUT.developer || true,
@@ -7312,7 +7532,10 @@ function checkContrast() {
             test: "CONTRAST_PLACEHOLDER",
             element: $el,
             type: State.option.checks.CONTRAST_PLACEHOLDER.type || "error",
-            content: State.option.checks.CONTRAST_PLACEHOLDER.content ? Lang.sprintf(State.option.checks.CONTRAST_PLACEHOLDER.content) : Lang.sprintf("CONTRAST_PLACEHOLDER") + ratioTip,
+            content: Lang.sprintf(
+              State.option.checks.CONTRAST_PLACEHOLDER.content || (isWcag ? `${Lang._("CONTRAST_PLACEHOLDER")} ${Lang._(ratioRequirementKey)}` : Lang._("CONTRAST_PLACEHOLDER")),
+              ratioToDisplay2
+            ),
             position: "afterend",
             dismiss: prepareDismissal(`CONTRAST_PLACEHOLDER ${sanitizedPlaceholder}`),
             dismissAll: State.option.checks.CONTRAST_PLACEHOLDER.dismissAll ? "CONTRAST_PLACEHOLDER" : false,
@@ -7328,7 +7551,10 @@ function checkContrast() {
             test: "CONTRAST_PLACEHOLDER_UNSUPPORTED",
             element: $el,
             type: State.option.checks.CONTRAST_PLACEHOLDER_UNSUPPORTED.type || "warning",
-            content: State.option.checks.CONTRAST_PLACEHOLDER_UNSUPPORTED.content ? Lang.sprintf(State.option.checks.CONTRAST_PLACEHOLDER_UNSUPPORTED.content) : Lang.sprintf("CONTRAST_PLACEHOLDER_UNSUPPORTED") + ratioTip,
+            content: Lang.sprintf(
+              State.option.checks.CONTRAST_PLACEHOLDER_UNSUPPORTED.content || (isWcag ? `${Lang._("CONTRAST_PLACEHOLDER_UNSUPPORTED")} ${Lang._(ratioRequirementKey)}` : Lang._("CONTRAST_PLACEHOLDER_UNSUPPORTED")),
+              ratioToDisplay2
+            ),
             position: "afterend",
             dismiss: prepareDismissal(
               `CONTRAST_PLACEHOLDER_UNSUPPORTED ${sanitizedPlaceholder}`
@@ -7346,7 +7572,10 @@ function checkContrast() {
             test: "CONTRAST_ERROR_GRAPHIC",
             element: $el,
             type: State.option.checks.CONTRAST_ERROR_GRAPHIC.type || "error",
-            content: State.option.checks.CONTRAST_ERROR_GRAPHIC.content ? Lang.sprintf(State.option.checks.CONTRAST_ERROR_GRAPHIC.content) : Lang.sprintf("CONTRAST_ERROR_GRAPHIC") + graphicsTip,
+            // No trailing variable needed since the graphic tip is just static text
+            content: Lang.sprintf(
+              State.option.checks.CONTRAST_ERROR_GRAPHIC.content || (State.option.contrastAlgorithm !== "APCA" ? `${Lang._("CONTRAST_ERROR_GRAPHIC")} ${Lang._("CONTRAST_TIP_GRAPHIC")}` : Lang._("CONTRAST_ERROR_GRAPHIC"))
+            ),
             dismiss: prepareDismissal(`CONTRAST_ERROR_GRAPHIC ${sanitizedSVG}`),
             dismissAll: State.option.checks.CONTRAST_ERROR_GRAPHIC.dismissAll ? "CONTRAST_ERROR_GRAPHIC" : false,
             developer: State.option.checks.CONTRAST_ERROR_GRAPHIC.developer || true,
@@ -7362,7 +7591,9 @@ function checkContrast() {
             test: "CONTRAST_WARNING_GRAPHIC",
             element: $el,
             type: State.option.checks.CONTRAST_WARNING_GRAPHIC.type || "warning",
-            content: State.option.checks.CONTRAST_WARNING_GRAPHIC.content ? Lang.sprintf(State.option.checks.CONTRAST_WARNING_GRAPHIC.content) : Lang.sprintf("CONTRAST_WARNING_GRAPHIC") + graphicsTip,
+            content: Lang.sprintf(
+              State.option.checks.CONTRAST_WARNING_GRAPHIC.content || (State.option.contrastAlgorithm !== "APCA" ? `${Lang._("CONTRAST_WARNING_GRAPHIC")} ${Lang._("CONTRAST_TIP_GRAPHIC")}` : Lang._("CONTRAST_WARNING_GRAPHIC"))
+            ),
             dismiss: prepareDismissal(`CONTRAST_WARNING_GRAPHIC ${sanitizedSVG}`),
             dismissAll: State.option.checks.CONTRAST_WARNING_GRAPHIC.dismissAll ? "CONTRAST_WARNING_GRAPHIC" : false,
             developer: State.option.checks.CONTRAST_WARNING_GRAPHIC.developer || true,
@@ -7377,7 +7608,10 @@ function checkContrast() {
             test: "CONTRAST_WARNING",
             element,
             type: State.option.checks.CONTRAST_WARNING.type || "warning",
-            content: State.option.checks.CONTRAST_WARNING.content ? Lang.sprintf(State.option.checks.CONTRAST_WARNING.content) : Lang.sprintf("CONTRAST_WARNING") + ratioTip,
+            content: Lang.sprintf(
+              State.option.checks.CONTRAST_WARNING.content || (isWcag ? `${Lang._("CONTRAST_WARNING")} ${Lang._(ratioRequirementKey)}` : Lang._("CONTRAST_WARNING")),
+              ratioToDisplay2
+            ),
             dismiss: prepareDismissal(`CONTRAST_WARNING ${sanitizedText}`),
             dismissAll: State.option.checks.CONTRAST_WARNING.dismissAll ? "CONTRAST_WARNING" : false,
             developer: State.option.checks.CONTRAST_WARNING.developer || false,
@@ -7391,7 +7625,10 @@ function checkContrast() {
             test: "CONTRAST_UNSUPPORTED",
             element,
             type: State.option.checks.CONTRAST_UNSUPPORTED.type || "warning",
-            content: State.option.checks.CONTRAST_UNSUPPORTED.content ? Lang.sprintf(State.option.checks.CONTRAST_UNSUPPORTED.content) : Lang.sprintf("CONTRAST_WARNING") + ratioTip,
+            content: Lang.sprintf(
+              State.option.checks.CONTRAST_UNSUPPORTED.content || (isWcag ? `${Lang._("CONTRAST_WARNING")} ${Lang._(ratioRequirementKey)}` : Lang._("CONTRAST_WARNING")),
+              ratioToDisplay2
+            ),
             dismiss: prepareDismissal(`CONTRAST_UNSUPPORTED ${sanitizedText}`),
             dismissAll: State.option.checks.CONTRAST_UNSUPPORTED.dismissAll ? "CONTRAST_UNSUPPORTED" : false,
             developer: State.option.checks.CONTRAST_UNSUPPORTED.developer || false,
@@ -7489,12 +7726,11 @@ function checkLabels() {
               if (target && !isElementHidden(target)) return;
             }
           }
-          const escapedText = escapeHTML(inputName);
           State.results.push({
             test: "LABELS_ARIA_LABEL_INPUT",
             element: $el,
             type: State.option.checks.LABELS_ARIA_LABEL_INPUT.type || "warning",
-            content: State.option.checks.LABELS_ARIA_LABEL_INPUT.content ? Lang.sprintf(State.option.checks.LABELS_ARIA_LABEL_INPUT.content, escapedText) : `${Lang.sprintf("LABELS_ARIA_LABEL_INPUT", escapedText)} ${Lang.sprintf("ACC_NAME_TIP")}`,
+            content: State.option.checks.LABELS_ARIA_LABEL_INPUT.content ? Lang.sprintf(State.option.checks.LABELS_ARIA_LABEL_INPUT.content, inputName) : Lang.sprintf(Lang._("LABELS_ARIA_LABEL_INPUT") + Lang._("ACC_NAME_TIP"), inputName),
             dismiss: prepareDismissal(`LABELS_ARIA_LABEL_INPUT ${type + inputName}`),
             dismissAll: State.option.checks.LABELS_ARIA_LABEL_INPUT.dismissAll ? "LABELS_ARIA_LABEL_INPUT" : false,
             developer: State.option.checks.LABELS_ARIA_LABEL_INPUT.developer || true
@@ -7551,8 +7787,8 @@ function computeReadability(textArray, lang) {
   const pageText = readabilityArray.join(" ").replace(/[\u0000-\u001F\u007F-\u009F]/g, "");
   if (pageText.length === 0) return null;
   if (["en", "es", "fr", "de", "nl", "it", "pt"].includes(lang)) {
-    const numberOfSyllables = (el) => {
-      let wordCheck = el;
+    const numberOfSyllables = (el2) => {
+      let wordCheck = el2;
       wordCheck = wordCheck.toLowerCase().replace(".", "").replace("\n", "");
       if (wordCheck.length <= 3) {
         return 1;
@@ -7898,16 +8134,12 @@ function checkQA() {
     Elements.Found.Blockquotes.forEach(($el) => {
       const text = getText($el);
       if (text.length !== 0 && text.length < 25) {
-        const escapedText = escapeHTML(text);
         State.results.push({
           test: "QA_BLOCKQUOTE",
           element: $el,
           type: State.option.checks.QA_BLOCKQUOTE.type || "warning",
-          content: Lang.sprintf(
-            State.option.checks.QA_BLOCKQUOTE.content || "QA_BLOCKQUOTE",
-            escapedText
-          ),
-          dismiss: prepareDismissal(`QA_BLOCKQUOTE ${escapedText}`),
+          content: Lang.sprintf(State.option.checks.QA_BLOCKQUOTE.content || "QA_BLOCKQUOTE", text),
+          dismiss: prepareDismissal(`QA_BLOCKQUOTE ${text}`),
           dismissAll: State.option.checks.QA_BLOCKQUOTE.dismissAll ? "QA_BLOCKQUOTE" : false,
           developer: State.option.checks.QA_BLOCKQUOTE.developer || false
         });
@@ -7994,8 +8226,7 @@ function checkQA() {
       const maybeSentence = getText$1.match(/[.;?!"]/) === null;
       const typicalHeadingLength = getText$1.length >= 4 && getText$1.length <= 120;
       if (size >= 24 && !p.closest(ignoreParents) && typicalHeadingLength && maybeSentence && !isPreviousElementAHeading(p)) {
-        const escapedText = escapeHTML(getText$1);
-        addResult(p, escapedText);
+        addResult(p, getText$1);
       }
     };
     const computeBoldTextParagraphs = (p) => {
@@ -8399,7 +8630,9 @@ function checkDeveloper() {
             test: "BTN_EMPTY_LABELLEDBY",
             element: $el,
             type: State.option.checks.BTN_EMPTY_LABELLEDBY.type || "error",
-            content: State.option.checks.BTN_EMPTY_LABELLEDBY.content ? Lang.sprintf(State.option.checks.BTN_EMPTY_LABELLEDBY.content) : `${Lang.sprintf("BTN_EMPTY_LABELLEDBY")} ${Lang.sprintf("BTN_TIP")}`,
+            content: Lang.sprintf(
+              State.option.checks.BTN_EMPTY_LABELLEDBY.content || Lang._("BTN_EMPTY_LABELLEDBY") + Lang._("BTN_TIP")
+            ),
             dismiss: prepareDismissal(
               `BTN_EMPTY_LABELLEDBY ${$el.tagName + $el.id + $el.className + accName}`
             ),
@@ -8411,7 +8644,9 @@ function checkDeveloper() {
             test: "BTN_EMPTY",
             element: $el,
             type: State.option.checks.BTN_EMPTY.type || "error",
-            content: State.option.checks.BTN_EMPTY.content ? Lang.sprintf(State.option.checks.BTN_EMPTY.content) : `${Lang.sprintf("BTN_EMPTY")} ${Lang.sprintf("BTN_TIP")}`,
+            content: Lang.sprintf(
+              State.option.checks.BTN_EMPTY.content || Lang._("BTN_EMPTY") + Lang._("BTN_TIP")
+            ),
             dismiss: prepareDismissal(
               `BTN_EMPTY ${$el.tagName + $el.id + $el.className + accName}`
             ),
@@ -8423,12 +8658,11 @@ function checkDeveloper() {
       }
       const isVisibleTextInAccName$1 = isVisibleTextInAccName($el, accName);
       if (State.option.checks.LABEL_IN_NAME && hasAria && isVisibleTextInAccName$1) {
-        const escapedText = escapeHTML(accName);
         State.results.push({
           test: "LABEL_IN_NAME",
           element: $el,
           type: State.option.checks.LABEL_IN_NAME.type || "warning",
-          content: State.option.checks.LABEL_IN_NAME.content ? Lang.sprintf(State.option.checks.LABEL_IN_NAME.content, escapedText) : `${Lang.sprintf("LABEL_IN_NAME", escapedText)} ${Lang.sprintf("ACC_NAME_TIP")}`,
+          content: State.option.checks.LABEL_IN_NAME.content ? Lang.sprintf(State.option.checks.LABEL_IN_NAME.content, accName) : Lang.sprintf(Lang._("LABEL_IN_NAME") + Lang._("ACC_NAME_TIP"), accName),
           dismiss: prepareDismissal(
             `LABEL_IN_NAME ${$el.tagName + $el.id + $el.className + accName}`
           ),
@@ -8442,7 +8676,9 @@ function checkDeveloper() {
           test: "BTN_ROLE_IN_NAME",
           element: $el,
           type: State.option.checks.BTN_ROLE_IN_NAME.type || "warning",
-          content: State.option.checks.BTN_ROLE_IN_NAME.content ? Lang.sprintf(State.option.checks.BTN_ROLE_IN_NAME.content) : `${Lang.sprintf("BTN_ROLE_IN_NAME")} ${Lang.sprintf("BTN_TIP")}`,
+          content: Lang.sprintf(
+            State.option.checks.BTN_ROLE_IN_NAME.content || Lang._("BTN_ROLE_IN_NAME") + Lang._("BTN_TIP")
+          ),
           dismiss: prepareDismissal(
             `BTN_ROLE_IN_NAME ${$el.tagName + $el.id + $el.className + accName}`
           ),
@@ -8656,7 +8892,7 @@ async function checkPageLanguage() {
           ) + Lang.sprintf("LANG_TIP");
           variables = [nodeLang, langAttribute];
         } else if (node.nodeName === "IMG" && node?.alt?.length !== 0) {
-          const alt = escapeHTML(node.alt);
+          const alt = node.alt;
           const altText = truncateString(alt, 600);
           test = "LANG_OF_PARTS_ALT";
           content = Lang.sprintf(
@@ -8811,7 +9047,7 @@ function mainToggle() {
     }
   };
 }
-const panelStyles = 'h1,h2,h3,div,p,span,ol,ul,li,a,label,button,svg,strong,kbd,pre,code{all:unset;box-sizing:border-box!important}:before,:after{all:unset}div{display:block}*{font-family:var(--sa11y-font-face)!important;-webkit-font-smoothing:auto!important}p,ol,ul,li,label{font-size:var(--sa11y-normal-text);text-align:start;letter-spacing:normal;word-break:break-word;font-weight:400;line-height:22px!important}.sa11y-overflow{overflow:auto}img,video,iframe{border:0;max-width:100%;height:auto;display:block}audio{max-width:100%}#toggle{bottom:var(--sa11y-toggle-y-offset);z-index:2147483644;color:#fff;cursor:pointer;background:linear-gradient(#00bcd4,#e040fb);background-color:var(--sa11y-setting-switch-bg-off);width:55px;height:55px;background-size:150% 150%;border-radius:50%;justify-content:center;align-items:center;margin:0;transition:all .2s ease-in-out;display:flex;position:fixed;inset-inline-end:var(--sa11y-toggle-x-offset);overflow:visible}#toggle.left,#toggle.top-left{inset-inline-start:var(--sa11y-toggle-x-offset)}#toggle.top-left,#toggle.top-right{top:var(--sa11y-toggle-y-offset);bottom:unset}@media screen and (forced-colors:active){#toggle{border:2px solid #0000;background:buttonface!important}}#toggle svg{width:35px;height:35px}#toggle svg path{fill:var(--sa11y-panel-bg)}#toggle:hover,#toggle:focus{animation:3s sa11y-toggle-gradient}#toggle:disabled:hover,#toggle:disabled:focus{animation:none}#toggle.on{background:linear-gradient(#e040fb,#00bcd4)}#toggle:disabled{cursor:not-allowed;background:unset;background-color:var(--sa11y-setting-switch-bg-off)}#notification-badge{color:#fff;text-wrap:nowrap;background-color:#eb0000;border:1px solid #0000;border-radius:12px;justify-content:center;align-items:center;min-width:20px;padding:2.5px;font-size:13.5px;font-weight:400;line-height:1;display:none;position:absolute;top:-5.5px;right:-3px}#notification-badge.notification-badge-warning{color:var(--sa11y-warning-text);background-color:var(--sa11y-warning-hover);border:1px solid var(--sa11y-warning)}#panel{bottom:calc(var(--sa11y-toggle-y-offset) + var(--sa11y-panel-y-gap));z-index:2147483643;visibility:hidden;background:var(--sa11y-panel-bg);opacity:0;transition:transform .2s, opacity .2s background .2s;transform-origin:100% 100%;border-radius:4px;position:fixed;inset-inline-end:calc(var(--sa11y-toggle-x-offset) + var(--sa11y-panel-x-gap));overflow:visible;transform:scale(0);box-shadow:0 0 20px 4px #9aa1b126,0 4px 80px -8px #24282f40,0 4px 4px -2px #5b5e6926}#panel.left,#panel.top-left{inset-inline-start:calc(var(--sa11y-toggle-x-offset) + var(--sa11y-panel-x-gap));inset-inline-end:unset}#panel.top-right,#panel.top-left{top:calc(var(--sa11y-toggle-y-offset) + var(--sa11y-panel-y-gap) + 10px);bottom:unset}#panel.active{visibility:visible;opacity:1;transform-origin:100% 100%;height:auto;transition:transform .2s,opacity .2s;transform:scale(1)}@media screen and (forced-colors:active){#panel{border:2px solid #0000}}#panel.active.left,[dir=rtl] #panel.active{transform-origin:0 100%}#panel.active.top-left{transform-origin:0 0}#panel.active.top-right{transform-origin:100% 0}#panel-alert{opacity:0;display:none}#panel-alert.active{opacity:1;display:block}#panel-alert-content{max-height:400px;color:var(--sa11y-panel-primary);border-bottom:1px solid var(--sa11y-panel-bg-splitter);align-items:center;padding:15px 20px 15px 15px;line-height:22px;position:relative;overflow-y:auto}:is(.top-left,.top-right) #panel-alert-content{border:0}#panel-alert-preview .close-tooltip{display:none}#panel-alert-preview,#panel-alert-text{font-family:var(--sa11y-font-face);font-size:var(--sa11y-normal-text);font-weight:400;line-height:22px}.panel-alert-preview{background:var(--sa11y-panel-bg-secondary);border:1px dashed var(--sa11y-panel-bg-splitter);border-radius:5px;margin-top:15px;padding:10px}.panel-alert-preview ul{margin:0;margin-block:0;padding:0;position:relative}.panel-alert-preview li{margin:5px 10px 0 20px;padding-bottom:5px;display:list-item}.element-preview{overflow-wrap:break-word;background-color:var(--sa11y-element-preview);border-radius:3.2px;margin-bottom:10px;padding:5px}button[data-sa11y-dismiss]{color:var(--sa11y-panel-primary);cursor:pointer;background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-button-outline);margin:10px 5px 5px 0;border-radius:5px;margin-inline-end:15px;padding:4px 8px;display:block}button[data-sa11y-dismiss]:hover,button[data-sa11y-dismiss]:focus{background:var(--sa11y-shortcut-hover)}h2{font-size:var(--sa11y-large-text);margin-bottom:3px;font-weight:700;display:block}h3{font-size:calc(var(--sa11y-large-text) - 1px);margin-bottom:3px;font-weight:600;display:block}strong{font-weight:600}a:not(#outline-list a,#images-list a){color:var(--sa11y-hyperlink);cursor:pointer;border-bottom:0;font-weight:500;text-decoration:underline}a:hover,a:focus{text-decoration:none!important}hr{background:var(--sa11y-panel-bg-splitter);opacity:1;border:none;height:1px;margin:10px 0;padding:0}#dismiss-button,#skip-button{text-align:center;cursor:pointer;background:var(--sa11y-panel-bg-secondary);border:1px solid var(--sa11y-button-outline);border-radius:50px;width:36px;height:36px;margin-inline:2px 8px;transition:all .1s ease-in-out;display:none;position:relative;overflow:visible}:is(#dismiss-button,#skip-button).active{display:block}:is(#dismiss-button,#skip-button):disabled{cursor:default;box-shadow:none;background:0 0;border:0}:is(#dismiss-button,#skip-button):before{content:"";position:absolute;inset:-5px}:is(#dismiss-button,#skip-button):hover:not(:disabled),:is(#dismiss-button,#skip-button):focus:not(:disabled){background-color:var(--sa11y-shortcut-hover)}:is(#panel.top-left,#panel.left) #dismiss-button,:is(#panel.top-left,#panel.left) #skip-button{margin-inline:8px 2px}.dismiss-icon{background:var(--sa11y-setting-switch-bg-off);width:24px;height:24px;-webkit-mask:var(--sa11y-dismiss-icon) center no-repeat;mask:var(--sa11y-dismiss-icon) center no-repeat;margin-bottom:-4px;display:inline-block}.dismiss-group{display:flex}@media screen and (forced-colors:active){.dismiss-icon{filter:invert()}}#panel-content{color:var(--sa11y-panel-primary);align-items:center;padding:6px;display:flex}#panel-content.errors .panel-icon,#panel-content.good .panel-icon,#panel-content.warnings .panel-icon{width:26px;height:26px;margin:0 auto}#panel-content.errors .panel-icon{background:var(--sa11y-panel-error);-webkit-mask:var(--sa11y-error-svg) center no-repeat;mask:var(--sa11y-error-svg) center no-repeat;margin-top:-2px}#panel-content.good .panel-icon{background:var(--sa11y-good);-webkit-mask:var(--sa11y-good-svg) center no-repeat;mask:var(--sa11y-good-svg) center no-repeat}#panel-content.warnings .panel-icon{background:var(--sa11y-yellow-text);transform:scaleX(var(--sa11y-icon-direction));-webkit-mask:var(--sa11y-warning-svg) center no-repeat;mask:var(--sa11y-warning-svg) center no-repeat}@media screen and (forced-colors:active){#panel-content.errors .panel-icon,#panel-content.good .panel-icon,#panel-content.warnings .panel-icon{filter:invert()}}#panel.top-left #panel-content,#panel.left #panel-content{flex-direction:row-reverse}#status{font-size:var(--sa11y-large-text);color:var(--sa11y-panel-primary)}.panel-count{color:var(--sa11y-panel-primary);background-color:var(--sa11y-panel-badge);border-radius:4px;margin-left:3px;margin-right:3px;padding:2px 4px;font-size:15px;font-weight:400}#page-issues,#images-panel,#settings-panel,#outline-panel{color:var(--sa11y-panel-primary);opacity:0;display:none}#page-issues.active,#images-panel.active,#settings-panel.active,#outline-panel.active{opacity:1;display:block}.panel-header{text-align:start;justify-content:space-between;padding:10px 15px 0;display:flex}#about-content{padding-top:5px}#about-content p{margin-block-end:1em;display:block}#images-content,#page-issues-content,#settings-content,#outline-content{border-bottom:1px solid var(--sa11y-panel-bg-splitter);padding:0 15px 10px}.top-right :is(#images-content,#page-issues-content,#settings-content,#outline-content),.top-left :is(#images-content,#page-issues-content,#settings-content,#outline-content){border:0}#images-content{padding-inline:5px}#page-issues-content{max-height:160px;overflow-y:auto}#settings-content{max-height:400px;overflow-y:auto}#images-content,#outline-content{max-height:250px;overflow-y:auto}#settings-panel .sa11y-red-text,#outline-panel .outline-list-item.sa11y-red-text{color:var(--sa11y-red-text)}#outline-list{margin:0;padding:0;display:block}#outline-list button{cursor:pointer;text-decoration:none;display:block}#outline-list button:hover,#outline-list button:focus{background:var(--sa11y-panel-outline-hover);box-shadow:0 0 0 2px var(--sa11y-panel-outline-hover);border-radius:5px;display:block}#outline-list li{margin-top:0;margin-bottom:4.5px;padding:0;list-style-type:none;display:block}#outline-list li:first-child{margin-top:5px}#outline-list .outline-2{margin-inline-start:15px}#outline-list .outline-3{margin-inline-start:30px}#outline-list .outline-4{margin-inline-start:45px}#outline-list .outline-5{margin-inline-start:60px}#outline-list .outline-6{margin-inline-start:75px}#images-list{margin:0;padding:0;display:block}#images-list button{cursor:pointer;min-height:44px;margin:10px 5px;text-decoration:none;display:block}#images-list button:hover,#images-list button:focus{background:var(--sa11y-panel-outline-hover);box-shadow:0 0 0 2px var(--sa11y-panel-outline-hover);border-radius:5px;display:block}#images-list li{border-bottom:1px solid var(--sa11y-panel-bg-splitter);flex-direction:column;width:100%;list-style-type:none;display:flex;overflow:hidden}#images-list li.no-images{padding-inline:10px}#images-list li:last-child{border:none;margin-bottom:0}#images-list li .alt{padding:2px 5px 10px}#images-list li .edit-block{justify-content:flex-end;margin-bottom:15px;display:flex}#images-list li .edit{color:var(--sa11y-panel-primary);cursor:pointer;background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-button-outline);border-radius:5px;margin-inline-end:5px;padding:4px 7px;text-decoration:none;position:relative}#images-list li .edit:hover,#images-list li .edit:focus{background-color:var(--sa11y-shortcut-hover)}#images-list li .edit:before{content:"";position:absolute;inset:-10px}#images-list li img{float:inline-start;border-radius:5px;max-width:110px;margin:5px}#images-list li.warning .alt{color:var(--sa11y-yellow-text)}#images-list li.warning img{background-color:var(--sa11y-yellow-text);border:5px solid var(--sa11y-yellow-text)}#images-list li.error .alt{color:var(--sa11y-error)}#images-list li.error img{background-color:var(--sa11y-error);border:5px solid var(--sa11y-error)}#images-list li.good img{background-color:var(--sa11y-panel-badge);border:5px solid var(--sa11y-panel-badge)}@media screen and (forced-colors:active){#images-list li img{background-color:buttonborder!important}}.move-panel-icon{vertical-align:middle;background:var(--sa11y-setting-switch-bg-off);width:18px;height:18px;-webkit-mask:var(--sa11y-move-panel-icon);mask:var(--sa11y-move-panel-icon)}.info-icon{vertical-align:middle;background:var(--sa11y-setting-switch-bg-off);width:20px;height:20px;-webkit-mask:var(--sa11y-info-icon);mask:var(--sa11y-info-icon);margin-top:-2px}.sun-icon{vertical-align:middle;background:var(--sa11y-setting-switch-bg-off);width:18px;height:18px;-webkit-mask:var(--sa11y-sun-icon);mask:var(--sa11y-sun-icon)}.moon-icon{vertical-align:middle;background:var(--sa11y-setting-switch-bg-off);width:18px;height:18px;-webkit-mask:var(--sa11y-moon-icon);mask:var(--sa11y-moon-icon)}.error-icon{background:var(--sa11y-error-text);width:16px;height:16px;-webkit-mask:var(--sa11y-error-svg);mask:var(--sa11y-error-svg);margin-bottom:-4px}.hidden-icon{background:var(--sa11y-panel-primary);width:16px;height:16px;-webkit-mask:var(--sa11y-hidden-icon-svg);mask:var(--sa11y-hidden-icon-svg);margin-bottom:-3px}.link-icon{background:var(--sa11y-panel-primary);width:16px;height:16px;-webkit-mask:var(--sa11y-link-icon-svg);mask:var(--sa11y-link-icon-svg);margin-bottom:-3.5px}.move-panel-icon,.info-icon,.sun-icon,.moon-icon,.error-icon,.hidden-icon,.link-icon{display:inline-block;-webkit-mask-position:50%;mask-position:50%;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat}.error-badge .link-icon,.error-badge .hidden-icon{background:var(--sa11y-error-text)!important}.warning-badge .link-icon,.warning-badge .hidden-icon{background:var(--sa11y-panel-bg)}.error .hidden-icon,.error .link-icon{background:var(--sa11y-error-text)}.warning .hidden-icon,.warning .link-icon{background:var(--sa11y-panel-bg)}@media screen and (forced-colors:active){.move-panel-icon,.sun-icon,.moon-icon,.info-icon,.error-icon,.link-icon,.hidden-icon{filter:invert()}}#panel-controls{border-bottom:1px solid var(--sa11y-panel-bg-splitter);border-radius:0 0 4px 4px;display:flex;overflow:hidden}#panel-controls button{width:100%;height:30px;font-size:var(--sa11y-normal-text);color:var(--sa11y-panel-secondary);text-align:center;cursor:pointer;background:var(--sa11y-panel-bg-secondary);background-color:var(--sa11y-panel-bg-secondary);border-top:1px solid var(--sa11y-panel-bg-splitter);border-inline-end:1px solid var(--sa11y-panel-bg-splitter);opacity:1;outline:0;margin:0;padding:0;font-weight:400;line-height:0;transition:background .2s;display:block;position:relative}#panel-controls button:hover,#panel-controls button.active{background-color:var(--sa11y-shortcut-hover)}#panel-controls button.active{font-weight:600}#export-results-mode,label{width:100%;color:var(--sa11y-panel-primary);margin:0;font-weight:400;display:inline-block}label:not(#colour-filter-mode,#export-results-mode){cursor:pointer}#panel.right #panel-controls[data-image-panel]:after{content:"";width:80px}#panel.left #panel-controls[data-image-panel]:before{content:"";width:50px}#settings-panel .export-results-group,#settings-panel .appearance-group{margin:5px 0;display:flex}:is(#settings-panel .export-results-group,#settings-panel .appearance-group) button{text-align:center;white-space:nowrap;cursor:pointer;border:2px solid var(--sa11y-setting-switch-bg-off);margin:2px 0;border-radius:5px;justify-content:center;align-items:center;min-width:44px;min-height:34px;margin-inline:8px 4px;display:flex;position:relative}:is(#settings-panel .export-results-group,#settings-panel .appearance-group) button:hover,:is(#settings-panel .export-results-group,#settings-panel .appearance-group) button:focus,:is(#settings-panel .export-results-group,#settings-panel .appearance-group) button:focus-within{background:var(--sa11y-shortcut-hover)}:is(#settings-panel .export-results-group,#settings-panel .appearance-group) button:before{content:"";position:absolute;inset:-7px}:is(#settings-panel .export-results-group,#settings-panel .appearance-group) button .text{color:var(--sa11y-setting-switch-bg-off);padding:0 6px;font-weight:600}#settings-panel .switch{width:105px;height:44px;font-size:var(--sa11y-normal-text);color:var(--sa11y-setting-switch-bg-off);text-align:end;cursor:pointer;background:0 0;border:0;border-radius:5px;margin:0;padding:7px 10px;font-weight:600;position:relative}#settings-panel .switch[aria-pressed=true]:after,#settings-panel .switch[aria-pressed=false]:after{vertical-align:middle;content:"";width:27px;height:27px;margin:0 4px 4px;display:inline-block}#settings-panel .switch[aria-pressed=true]:after{background:var(--sa11y-setting-switch-bg-on);-webkit-mask:var(--sa11y-setting-switch-on-svg) center no-repeat;mask:var(--sa11y-setting-switch-on-svg) center no-repeat}#settings-panel .switch[aria-pressed=false]:after{background:var(--sa11y-setting-switch-bg-off);-webkit-mask:var(--sa11y-setting-switch-off-svg) center no-repeat;mask:var(--sa11y-setting-switch-off-svg) center no-repeat}@media screen and (forced-colors:active){#settings-panel .switch[aria-pressed=false]:after,#settings-panel .switch[aria-pressed=true]:after{filter:invert()}}#settings-panel #settings-options li{border-bottom:1px solid var(--sa11y-panel-bg-splitter);justify-content:space-between;align-items:center;padding:1px 0;list-style-type:none;display:flex}#settings-panel #settings-options li:last-child{border:none}#page-issues{color:var(--sa11y-panel-primary);align-items:center}#page-issues-list{margin-top:4px;display:block}#page-issues-list li{margin:0 0 10px;display:block}:is(.top-left,.top-right).has-page-issues #page-issues{border-top:1px solid var(--sa11y-panel-bg-splitter);margin-top:-1px}#panel-colour-filters{font-family:var(--sa11y-font-face);font-size:var(--sa11y-normal-text);color:var(--sa11y-panel-primary);align-items:center;font-weight:400;line-height:22px;display:none}#panel-colour-filters.active{display:flex}#panel-colour-filters p{width:100%;padding:6px 20px 6px 6px}#panel-colour-filters[data-colour=protanopia],#panel-colour-filters[data-colour=deuteranopia],#panel-colour-filters[data-colour=tritanopia],#panel-colour-filters[data-colour=monochromacy]{border-bottom:6px solid #0000;border-image-slice:1}#panel-colour-filters[data-colour=protanopia]{border-image:linear-gradient(94deg,#786719 11%,#e0c600 36% 47%,#0059e3 75%,#0042aa 91%)}#panel-colour-filters[data-colour=deuteranopia]{border-image:linear-gradient(270deg,#567fdb 0%,#a4a28d 48%,#c3ad14 69%,#a79505 100%)}#panel-colour-filters[data-colour=tritanopia]{border-image:linear-gradient(270deg,#b1506f 0%,#0696c1 35%,#f3a9ba 70%,#d91c5d 87%,#fe015c 100%)}#panel-colour-filters[data-colour=monochromacy]{border-image:linear-gradient(270deg,#000 0%,#a7a7a7 50%,#000 100%)}#panel-colour-filters[data-colour=protanopia] .panel-icon{background:var(--sa11y-panel-error)}#panel-colour-filters[data-colour=deuteranopia] .panel-icon{background:var(--sa11y-good-hover)}#panel-colour-filters[data-colour=tritanopia] .panel-icon{background:var(--sa11y-blue)}#panel-colour-filters[data-colour=monochromacy] .panel-icon{background:linear-gradient(90deg,#38a459 20%,red 50%,#0077c8 80%)}#panel-colour-filters .panel-icon{width:30px;height:30px;-webkit-mask:var(--sa11y-low-vision-icon) center no-repeat;mask:var(--sa11y-low-vision-icon) center no-repeat;margin-inline:10px 5px}@media screen and (forced-colors:active){#panel-colour-filters .panel-icon{forced-color-adjust:none}}.select-dropdown{align-items:center;display:flex;position:relative}.select-dropdown:after{content:" ";border-top:5px solid var(--sa11y-setting-switch-bg-off);border-left:5px solid #0000;border-right:5px solid #0000;position:absolute;inset-inline-end:14px}#colour-filter-select{appearance:none;height:30px;font-size:var(--sa11y-normal-text);color:var(--sa11y-setting-switch-bg-off);text-align:end;vertical-align:middle;cursor:pointer;background:var(--sa11y-panel-bg);border:2px solid var(--sa11y-setting-switch-bg-off);border-radius:5px;margin-inline-end:4px;padding-inline:5px 25px;font-weight:400;position:relative}#colour-filter-select:hover,#colour-filter-select:focus{background:var(--sa11y-shortcut-hover)}#colour-filter-select.active{box-shadow:0 0 0 2px var(--sa11y-setting-switch-bg-on)}#colour-filter-item label,#colour-filter-item select{margin-top:10px;margin-bottom:9px}#readability-panel{opacity:0;display:none}#readability-panel.active{opacity:1;display:block}:is(.top-left,.top-right) #readability-content{border-top:1px solid var(--sa11y-panel-bg-splitter)}:is(.left,.right) #readability-content{border-bottom:1px solid var(--sa11y-panel-bg-splitter)}#readability-content{width:100%;color:var(--sa11y-panel-primary);padding:10px 15px}#readability-details{white-space:normal;margin:0;padding:0;list-style-type:none;display:block}#readability-details li{margin:0;padding-inline-end:10px;list-style-type:none;display:inline-block}.readability-score{color:var(--sa11y-panel-primary);background-color:var(--sa11y-panel-badge);border-radius:4px;margin-inline-start:5px;padding:2px 5px}#readability-info{margin-inline-start:10px}#skip-to-page-issues{display:none}#panel.has-page-issues #skip-to-page-issues{clip:rect(0, 0, 0, 0);white-space:nowrap;background:var(--sa11y-panel-bg);border:0;border-radius:5px;width:1px;height:1px;margin:-1px;padding:0;font-weight:600;display:block;position:absolute;overflow:hidden}#panel.has-page-issues #skip-to-page-issues:focus{z-index:1;clip:auto;white-space:normal;width:auto;height:auto;margin:0;padding:7px 10px;overflow:visible}.hide-settings-border{border-bottom:0!important;padding:0 15px!important}.hide-settings-border li:not(#colour-filter-item){display:none!important}.hide-settings-border #about-content{display:none}.hide-settings-border.scrollable:before{all:unset}#contrast-tools{display:none}::-webkit-scrollbar{width:7px;height:6px}::-webkit-scrollbar-thumb{background-color:var(--sa11y-button-outline);border-radius:6px}*{scrollbar-color:var(--sa11y-button-outline);scrollbar-width:thin}.scrollable:before{z-index:-1;content:"";background:linear-gradient(180deg, #0000 70%, var(--sa11y-panel-scrollable) 100%);background-position:bottom;width:100%;height:250px;transition:opacity 1s ease-in-out;animation:1s ease-in-out fade;position:absolute;inset:auto 0}#settings-content.scrollable:before{height:400px}.top-right .scrollable:before,.top-left .scrollable:before{border-radius:5px}#page-issues-content.scrollable:before{height:160px}#panel-alert.scrollable:before{height:200px}@keyframes sa11y-toggle-gradient{0%{background-position:50% 0}50%{background-position:50% 100%}to{background-position:50% 0}}@keyframes fade{0%{opacity:0}to{opacity:1}}@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;transform:none!important}}#panel{width:440px}#container:lang(en) #panel{width:315px}:is(#container:lang(nb),#container:lang(da),#container:lang(pl),#container:lang(de),#container:lang(sv),#container:lang(zh)) #panel{width:365px}:is(#container:lang(bg),#container:lang(es)) .switch:not(#export-results-item *){width:230px!important}#container:not(:lang(en),:lang(de)) .switch{width:205px}';
+const panelStyles = 'h1,h2,h3,div,p,span,ol,ul,li,a,label,button,svg,strong,kbd,pre,code{all:unset;box-sizing:border-box!important}:before,:after{all:unset}div{display:block}*{font-family:var(--sa11y-font-face)!important;-webkit-font-smoothing:auto!important}p,ol,ul,li,label{font-size:var(--sa11y-normal-text);text-align:start;letter-spacing:normal;word-break:break-word;font-weight:400;line-height:22px!important}.sa11y-overflow{overflow:auto}img,video,iframe{border:0;max-width:100%;height:auto;display:block}audio{max-width:100%}#toggle{bottom:var(--sa11y-toggle-y-offset);z-index:2147483644;color:#fff;cursor:pointer;background:linear-gradient(#00bcd4,#e040fb);background-color:var(--sa11y-setting-switch-bg-off);width:55px;height:55px;background-size:150% 150%;border-radius:50%;justify-content:center;align-items:center;margin:0;transition:all .2s ease-in-out;display:flex;position:fixed;inset-inline-end:var(--sa11y-toggle-x-offset);overflow:visible}#toggle.left,#toggle.top-left{inset-inline-start:var(--sa11y-toggle-x-offset)}#toggle.top-left,#toggle.top-right{top:var(--sa11y-toggle-y-offset);bottom:unset}@media screen and (forced-colors:active){#toggle{border:2px solid #0000;background:buttonface!important}}#toggle svg{width:35px;height:35px}#toggle svg path{fill:var(--sa11y-panel-bg)}#toggle:hover,#toggle:focus{animation:3s sa11y-toggle-gradient}#toggle:disabled:hover,#toggle:disabled:focus{animation:none}#toggle.on{background:linear-gradient(#e040fb,#00bcd4)}#toggle:disabled{cursor:not-allowed;background:unset;background-color:var(--sa11y-setting-switch-bg-off)}#notification-badge{color:#fff;text-wrap:nowrap;background-color:#eb0000;border:1px solid #0000;border-radius:12px;justify-content:center;align-items:center;min-width:20px;padding:2.5px;font-size:13.5px;font-weight:400;line-height:1;display:none;position:absolute;top:-5.5px;right:-3px}#notification-badge.notification-badge-warning{color:var(--sa11y-warning-text);background-color:var(--sa11y-warning-hover);border:1px solid var(--sa11y-warning)}#panel{bottom:calc(var(--sa11y-toggle-y-offset) + var(--sa11y-panel-y-gap));z-index:2147483643;visibility:hidden;background:var(--sa11y-panel-bg);opacity:0;transition:transform .2s, opacity .2s background .2s;transform-origin:100% 100%;border-radius:4px;position:fixed;inset-inline-end:calc(var(--sa11y-toggle-x-offset) + var(--sa11y-panel-x-gap));overflow:visible;transform:scale(0);box-shadow:0 0 20px 4px #9aa1b126,0 4px 80px -8px #24282f40,0 4px 4px -2px #5b5e6926}#panel.left,#panel.top-left{inset-inline-start:calc(var(--sa11y-toggle-x-offset) + var(--sa11y-panel-x-gap));inset-inline-end:unset}#panel.top-right,#panel.top-left{top:calc(var(--sa11y-toggle-y-offset) + var(--sa11y-panel-y-gap) + 10px);bottom:unset}#panel.active{visibility:visible;opacity:1;transform-origin:100% 100%;height:auto;transition:transform .2s,opacity .2s;transform:scale(1)}@media screen and (forced-colors:active){#panel{border:2px solid #0000}}#panel.active.left,[dir=rtl] #panel.active{transform-origin:0 100%}#panel.active.top-left{transform-origin:0 0}#panel.active.top-right{transform-origin:100% 0}#panel-alert{opacity:0;display:none}#panel-alert.active{opacity:1;display:block}#panel-alert-content{max-height:400px;color:var(--sa11y-panel-primary);border-bottom:1px solid var(--sa11y-panel-bg-splitter);align-items:center;padding:15px 20px 15px 15px;line-height:22px;position:relative;overflow-y:auto}:is(.top-left,.top-right) #panel-alert-content{border:0}#panel-alert-preview .close-tooltip{display:none}#panel-alert-preview,#panel-alert-text{font-family:var(--sa11y-font-face);font-size:var(--sa11y-normal-text);font-weight:400;line-height:22px}.panel-alert-preview{background:var(--sa11y-panel-bg-secondary);border:1px dashed var(--sa11y-panel-bg-splitter);border-radius:5px;margin-top:15px;padding:10px}.panel-alert-preview ul{margin:0;margin-block:0;padding:0;position:relative}.panel-alert-preview li{margin:5px 10px 0 20px;padding-bottom:5px;display:list-item}.element-preview{overflow-wrap:break-word;background-color:var(--sa11y-element-preview);border-radius:3.2px;margin-bottom:10px;padding:5px}button[data-sa11y-dismiss]{color:var(--sa11y-panel-primary);cursor:pointer;background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-button-outline);margin:10px 5px 5px 0;border-radius:5px;margin-inline-end:15px;padding:4px 8px;display:block}button[data-sa11y-dismiss]:hover,button[data-sa11y-dismiss]:focus{background:var(--sa11y-shortcut-hover)}h2{font-size:var(--sa11y-large-text);margin-bottom:3px;font-weight:700;display:block}h3{font-size:calc(var(--sa11y-large-text) - 1px);margin-bottom:3px;font-weight:600;display:block}strong{font-weight:600}a:not(#outline-list a,#images-list a){color:var(--sa11y-hyperlink);cursor:pointer;border-bottom:0;font-weight:500;text-decoration:underline}a:hover,a:focus{text-decoration:none!important}hr{background:var(--sa11y-panel-bg-splitter);opacity:1;border:none;height:1px;margin:10px 0;padding:0}#dismiss-button,#skip-button{text-align:center;cursor:pointer;background:var(--sa11y-panel-bg-secondary);border:1px solid var(--sa11y-button-outline);border-radius:50px;width:36px;height:36px;margin-inline:2px 8px;transition:all .1s ease-in-out;display:none;position:relative;overflow:visible}:is(#dismiss-button,#skip-button).active{display:block}:is(#dismiss-button,#skip-button):disabled{cursor:default;box-shadow:none;background:0 0;border:0}:is(#dismiss-button,#skip-button):before{content:"";position:absolute;inset:-5px}:is(#dismiss-button,#skip-button):hover:not(:disabled),:is(#dismiss-button,#skip-button):focus:not(:disabled){background-color:var(--sa11y-shortcut-hover)}:is(#panel.top-left,#panel.left) #dismiss-button,:is(#panel.top-left,#panel.left) #skip-button{margin-inline:8px 2px}.dismiss-icon{background:var(--sa11y-setting-switch-bg-off);width:24px;height:24px;-webkit-mask:var(--sa11y-dismiss-icon) center no-repeat;mask:var(--sa11y-dismiss-icon) center no-repeat;margin-bottom:-4px;display:inline-block}.dismiss-group{display:flex}@media screen and (forced-colors:active){.dismiss-icon{filter:invert()}}#panel-content{color:var(--sa11y-panel-primary);align-items:center;padding:6px;display:flex}#panel-content.errors .panel-icon,#panel-content.good .panel-icon,#panel-content.warnings .panel-icon{width:26px;height:26px;margin:0 auto}#panel-content.errors .panel-icon{background:var(--sa11y-panel-error);-webkit-mask:var(--sa11y-error-svg) center no-repeat;mask:var(--sa11y-error-svg) center no-repeat;margin-top:-2px}#panel-content.good .panel-icon{background:var(--sa11y-good);-webkit-mask:var(--sa11y-good-svg) center no-repeat;mask:var(--sa11y-good-svg) center no-repeat}#panel-content.warnings .panel-icon{background:var(--sa11y-yellow-text);transform:scaleX(var(--sa11y-icon-direction));-webkit-mask:var(--sa11y-warning-svg) center no-repeat;mask:var(--sa11y-warning-svg) center no-repeat}@media screen and (forced-colors:active){#panel-content.errors .panel-icon,#panel-content.good .panel-icon,#panel-content.warnings .panel-icon{filter:invert()}}#panel.top-left #panel-content,#panel.left #panel-content{flex-direction:row-reverse}#status{font-size:var(--sa11y-large-text);color:var(--sa11y-panel-primary)}.panel-count{color:var(--sa11y-panel-primary);background-color:var(--sa11y-panel-badge);border-radius:4px;margin-left:3px;margin-right:3px;padding:2px 4px;font-size:15px;font-weight:400}#page-issues,#images-panel,#settings-panel,#outline-panel{color:var(--sa11y-panel-primary);opacity:0;display:none}#page-issues.active,#images-panel.active,#settings-panel.active,#outline-panel.active{opacity:1;display:block}.panel-header{text-align:start;justify-content:space-between;padding:10px 15px 0;display:flex}#about-content{padding-top:5px}#about-content p{margin-block-end:1em;display:block}#images-content,#page-issues-content,#settings-content,#outline-content{border-bottom:1px solid var(--sa11y-panel-bg-splitter);padding:0 15px 10px}.top-right :is(#images-content,#page-issues-content,#settings-content,#outline-content),.top-left :is(#images-content,#page-issues-content,#settings-content,#outline-content){border:0}#images-content{padding-inline:5px}#page-issues-content{max-height:160px;overflow-y:auto}#settings-content{max-height:400px;overflow-y:auto}#images-content,#outline-content{max-height:250px;overflow-y:auto}#settings-panel .sa11y-red-text,#outline-panel .outline-list-item.sa11y-red-text{color:var(--sa11y-red-text)}#outline-list{margin:0;padding:0;display:block}#outline-list button{cursor:pointer;text-decoration:none;display:block}#outline-list button:hover,#outline-list button:focus{background:var(--sa11y-panel-outline-hover);box-shadow:0 0 0 2px var(--sa11y-panel-outline-hover);border-radius:5px;display:block}#outline-list li{margin-top:0;margin-bottom:4.5px;padding:0;list-style-type:none;display:block}#outline-list li:first-child{margin-top:5px}#outline-list .outline-2{margin-inline-start:15px}#outline-list .outline-3{margin-inline-start:30px}#outline-list .outline-4{margin-inline-start:45px}#outline-list .outline-5{margin-inline-start:60px}#outline-list .outline-6{margin-inline-start:75px}#images-list{margin:0;padding:0;display:block}#images-list button{cursor:pointer;min-height:44px;margin:10px 5px;text-decoration:none;display:block}#images-list button:hover,#images-list button:focus{background:var(--sa11y-panel-outline-hover);box-shadow:0 0 0 2px var(--sa11y-panel-outline-hover);border-radius:5px;display:block}#images-list li{border-bottom:1px solid var(--sa11y-panel-bg-splitter);flex-direction:column;width:100%;list-style-type:none;display:flex;overflow:hidden}#images-list li.no-images{padding-inline:10px}#images-list li:last-child{border:none;margin-bottom:0}#images-list li .alt{padding:2px 5px 10px}#images-list li .edit-block{justify-content:flex-end;margin-bottom:15px;display:flex}#images-list li .edit{color:var(--sa11y-panel-primary);cursor:pointer;background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-button-outline);border-radius:5px;margin-inline-end:5px;padding:4px 7px;text-decoration:none;position:relative}#images-list li .edit:hover,#images-list li .edit:focus{background-color:var(--sa11y-shortcut-hover)}#images-list li .edit:before{content:"";position:absolute;inset:-10px}#images-list li img{float:inline-start;border-radius:5px;max-width:110px;margin:5px}#images-list li.warning .alt{color:var(--sa11y-yellow-text)}#images-list li.warning img{background-color:var(--sa11y-yellow-text);border:5px solid var(--sa11y-yellow-text)}#images-list li.error .alt{color:var(--sa11y-error)}#images-list li.error img{background-color:var(--sa11y-error);border:5px solid var(--sa11y-error)}#images-list li.good img{background-color:var(--sa11y-panel-badge);border:5px solid var(--sa11y-panel-badge)}@media screen and (forced-colors:active){#images-list li img{background-color:buttonborder!important}}.move-panel-icon{vertical-align:middle;background:var(--sa11y-setting-switch-bg-off);width:18px;height:18px;-webkit-mask:var(--sa11y-move-panel-icon);mask:var(--sa11y-move-panel-icon)}.info-icon{vertical-align:middle;background:var(--sa11y-setting-switch-bg-off);width:20px;height:20px;-webkit-mask:var(--sa11y-info-icon);mask:var(--sa11y-info-icon);margin-top:-2px}.sun-icon{vertical-align:middle;background:var(--sa11y-setting-switch-bg-off);width:18px;height:18px;-webkit-mask:var(--sa11y-sun-icon);mask:var(--sa11y-sun-icon)}.moon-icon{vertical-align:middle;background:var(--sa11y-setting-switch-bg-off);width:18px;height:18px;-webkit-mask:var(--sa11y-moon-icon);mask:var(--sa11y-moon-icon)}.error-icon{background:var(--sa11y-error-text);width:16px;height:16px;-webkit-mask:var(--sa11y-error-svg);mask:var(--sa11y-error-svg);margin-bottom:-4px}.hidden-icon{background:var(--sa11y-panel-primary);width:16px;height:16px;-webkit-mask:var(--sa11y-hidden-icon-svg);mask:var(--sa11y-hidden-icon-svg);margin-bottom:-3px}.link-icon{background:var(--sa11y-panel-primary);width:16px;height:16px;-webkit-mask:var(--sa11y-link-icon-svg);mask:var(--sa11y-link-icon-svg);margin-bottom:-3.5px}.move-panel-icon,.info-icon,.sun-icon,.moon-icon,.error-icon,.hidden-icon,.link-icon{display:inline-block;-webkit-mask-position:50%;mask-position:50%;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat}.error-badge .link-icon,.error-badge .hidden-icon{background:var(--sa11y-error-text)!important}.warning-badge .link-icon,.warning-badge .hidden-icon{background:var(--sa11y-panel-bg)}.error .hidden-icon,.error .link-icon{background:var(--sa11y-error-text)}.warning .hidden-icon,.warning .link-icon{background:var(--sa11y-panel-bg)}@media screen and (forced-colors:active){.move-panel-icon,.sun-icon,.moon-icon,.info-icon,.error-icon,.link-icon,.hidden-icon{filter:invert()}}#outline-list [class$=-icon]{margin-inline-end:3px}#panel-controls{border-bottom:1px solid var(--sa11y-panel-bg-splitter);border-radius:0 0 4px 4px;display:flex;overflow:hidden}#panel-controls button{width:100%;height:30px;font-size:var(--sa11y-normal-text);color:var(--sa11y-panel-secondary);text-align:center;cursor:pointer;background:var(--sa11y-panel-bg-secondary);background-color:var(--sa11y-panel-bg-secondary);border-top:1px solid var(--sa11y-panel-bg-splitter);border-inline-end:1px solid var(--sa11y-panel-bg-splitter);opacity:1;outline:0;margin:0;padding:0;font-weight:400;line-height:0;transition:background .2s;display:block;position:relative}#panel-controls button:hover,#panel-controls button.active{background-color:var(--sa11y-shortcut-hover)}#panel-controls button.active{font-weight:600}#export-results-mode,label{width:100%;color:var(--sa11y-panel-primary);margin:0;font-weight:400;display:inline-block}label:not(#colour-filter-mode,#export-results-mode){cursor:pointer}#panel.right #panel-controls[data-image-panel]:after{content:"";width:80px}#panel.left #panel-controls[data-image-panel]:before{content:"";width:50px}#settings-panel .export-results-group,#settings-panel .appearance-group{margin:5px 0;display:flex}:is(#settings-panel .export-results-group,#settings-panel .appearance-group) button{text-align:center;white-space:nowrap;cursor:pointer;border:2px solid var(--sa11y-setting-switch-bg-off);border-radius:5px;justify-content:center;align-items:center;min-width:44px;min-height:34px;margin:2px 0;margin-inline:8px 4px;display:flex;position:relative}:is(#settings-panel .export-results-group,#settings-panel .appearance-group) button:hover,:is(#settings-panel .export-results-group,#settings-panel .appearance-group) button:focus,:is(#settings-panel .export-results-group,#settings-panel .appearance-group) button:focus-within{background:var(--sa11y-shortcut-hover)}:is(#settings-panel .export-results-group,#settings-panel .appearance-group) button:before{content:"";position:absolute;inset:-7px}:is(#settings-panel .export-results-group,#settings-panel .appearance-group) button .text{color:var(--sa11y-setting-switch-bg-off);padding:0 6px;font-weight:600}#settings-panel .switch{width:105px;height:44px;font-size:var(--sa11y-normal-text);color:var(--sa11y-setting-switch-bg-off);text-align:end;cursor:pointer;background:0 0;border:0;border-radius:5px;margin:0;padding:7px 10px;font-weight:600;position:relative}#settings-panel .switch[aria-pressed=true]:after,#settings-panel .switch[aria-pressed=false]:after{vertical-align:middle;content:"";width:27px;height:27px;margin:0 4px 4px;display:inline-block}#settings-panel .switch[aria-pressed=true]:after{background:var(--sa11y-setting-switch-bg-on);-webkit-mask:var(--sa11y-setting-switch-on-svg) center no-repeat;mask:var(--sa11y-setting-switch-on-svg) center no-repeat}#settings-panel .switch[aria-pressed=false]:after{background:var(--sa11y-setting-switch-bg-off);-webkit-mask:var(--sa11y-setting-switch-off-svg) center no-repeat;mask:var(--sa11y-setting-switch-off-svg) center no-repeat}@media screen and (forced-colors:active){#settings-panel .switch[aria-pressed=false]:after,#settings-panel .switch[aria-pressed=true]:after{filter:invert()}}#settings-panel #settings-options li{border-bottom:1px solid var(--sa11y-panel-bg-splitter);justify-content:space-between;align-items:center;padding:1px 0;list-style-type:none;display:flex}#settings-panel #settings-options li:last-child{border:none}#page-issues{color:var(--sa11y-panel-primary);align-items:center}#page-issues-list{margin-top:4px;display:block}#page-issues-list li{margin:0 0 10px;display:block}:is(.top-left,.top-right).has-page-issues #page-issues{border-top:1px solid var(--sa11y-panel-bg-splitter);margin-top:-1px}#panel-colour-filters{font-family:var(--sa11y-font-face);font-size:var(--sa11y-normal-text);color:var(--sa11y-panel-primary);align-items:center;font-weight:400;line-height:22px;display:none}#panel-colour-filters.active{display:flex}#panel-colour-filters p{width:100%;padding:6px 20px 6px 6px}#panel-colour-filters[data-colour=protanopia],#panel-colour-filters[data-colour=deuteranopia],#panel-colour-filters[data-colour=tritanopia],#panel-colour-filters[data-colour=monochromacy]{border-bottom:6px solid #0000;border-image-slice:1}#panel-colour-filters[data-colour=protanopia]{border-image:linear-gradient(94deg,#786719 11%,#e0c600 36% 47%,#0059e3 75%,#0042aa 91%)}#panel-colour-filters[data-colour=deuteranopia]{border-image:linear-gradient(270deg,#567fdb 0%,#a4a28d 48%,#c3ad14 69%,#a79505 100%)}#panel-colour-filters[data-colour=tritanopia]{border-image:linear-gradient(270deg,#b1506f 0%,#0696c1 35%,#f3a9ba 70%,#d91c5d 87%,#fe015c 100%)}#panel-colour-filters[data-colour=monochromacy]{border-image:linear-gradient(270deg,#000 0%,#a7a7a7 50%,#000 100%)}#panel-colour-filters[data-colour=protanopia] .panel-icon{background:var(--sa11y-panel-error)}#panel-colour-filters[data-colour=deuteranopia] .panel-icon{background:var(--sa11y-good-hover)}#panel-colour-filters[data-colour=tritanopia] .panel-icon{background:var(--sa11y-blue)}#panel-colour-filters[data-colour=monochromacy] .panel-icon{background:linear-gradient(90deg,#38a459 20%,red 50%,#0077c8 80%)}#panel-colour-filters .panel-icon{width:30px;height:30px;-webkit-mask:var(--sa11y-low-vision-icon) center no-repeat;mask:var(--sa11y-low-vision-icon) center no-repeat;margin-inline:10px 5px}@media screen and (forced-colors:active){#panel-colour-filters .panel-icon{forced-color-adjust:none}}.select-dropdown{align-items:center;display:flex;position:relative}.select-dropdown:after{content:" ";border-top:5px solid var(--sa11y-setting-switch-bg-off);border-left:5px solid #0000;border-right:5px solid #0000;position:absolute;inset-inline-end:14px}#colour-filter-select{appearance:none;height:30px;font-size:var(--sa11y-normal-text);color:var(--sa11y-setting-switch-bg-off);text-align:end;vertical-align:middle;cursor:pointer;background:var(--sa11y-panel-bg);border:2px solid var(--sa11y-setting-switch-bg-off);border-radius:5px;margin-inline-end:4px;padding-inline:5px 25px;font-weight:400;position:relative}#colour-filter-select:hover,#colour-filter-select:focus{background:var(--sa11y-shortcut-hover)}#colour-filter-select.active{box-shadow:0 0 0 2px var(--sa11y-setting-switch-bg-on)}#colour-filter-item label,#colour-filter-item select{margin-top:10px;margin-bottom:9px}#readability-panel{opacity:0;display:none}#readability-panel.active{opacity:1;display:block}:is(.top-left,.top-right) #readability-content{border-top:1px solid var(--sa11y-panel-bg-splitter)}:is(.left,.right) #readability-content{border-bottom:1px solid var(--sa11y-panel-bg-splitter)}#readability-content{width:100%;color:var(--sa11y-panel-primary);padding:10px 15px}#readability-details{white-space:normal;margin:0;padding:0;list-style-type:none;display:block}#readability-details li{margin:0;padding-inline-end:10px;list-style-type:none;display:inline-block}.readability-score{color:var(--sa11y-panel-primary);background-color:var(--sa11y-panel-badge);border-radius:4px;margin-inline-start:5px;padding:2px 5px}#readability-info{margin-inline-start:10px}#skip-to-page-issues{display:none}#panel.has-page-issues #skip-to-page-issues{clip:rect(0, 0, 0, 0);white-space:nowrap;background:var(--sa11y-panel-bg);border:0;border-radius:5px;width:1px;height:1px;margin:-1px;padding:0;font-weight:600;display:block;position:absolute;overflow:hidden}#panel.has-page-issues #skip-to-page-issues:focus{z-index:1;clip:auto;white-space:normal;width:auto;height:auto;margin:0;padding:7px 10px;overflow:visible}.hide-settings-border{border-bottom:0!important;padding:0 15px!important}.hide-settings-border li:not(#colour-filter-item){display:none!important}.hide-settings-border #about-content{display:none}.hide-settings-border.scrollable:before{all:unset}#contrast-tools{display:none}::-webkit-scrollbar{width:7px;height:6px}::-webkit-scrollbar-thumb{background-color:var(--sa11y-button-outline);border-radius:6px}*{scrollbar-color:var(--sa11y-button-outline);scrollbar-width:thin}.scrollable:before{z-index:-1;content:"";background:linear-gradient(180deg, #0000 70%, var(--sa11y-panel-scrollable) 100%);background-position:bottom;width:100%;height:250px;transition:opacity 1s ease-in-out;animation:1s ease-in-out fade;position:absolute;inset:auto 0}#settings-content.scrollable:before{height:400px}.top-right .scrollable:before,.top-left .scrollable:before{border-radius:5px}#page-issues-content.scrollable:before{height:160px}#panel-alert.scrollable:before{height:200px}@keyframes sa11y-toggle-gradient{0%{background-position:50% 0}50%{background-position:50% 100%}to{background-position:50% 0}}@keyframes fade{0%{opacity:0}to{opacity:1}}@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;transform:none!important}}#panel{width:440px}#container:lang(en) #panel{width:315px}:is(#container:lang(nb),#container:lang(da),#container:lang(pl),#container:lang(de),#container:lang(sv),#container:lang(zh)) #panel{width:365px}:is(#container:lang(bg),#container:lang(es)) .switch:not(#export-results-item *){width:230px!important}#container:not(:lang(en),:lang(de)) .switch{width:205px}';
 class ControlPanel extends HTMLElement {
   connectedCallback() {
     this.attachShadow({ mode: "open" });

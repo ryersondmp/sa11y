@@ -64,7 +64,7 @@ export default {
     PAGE_TITLE: 'Judul Halaman',
     RESULTS: 'Hasil',
     EXPORT_RESULTS: 'Ekspor hasil',
-    GENERATED: 'Hasil dihasilkan dengan %(tool).',
+    GENERATED: 'Hasil dihasilkan dengan <a href="https://sa11y.netlify.app">Sa11y.</a>',
     PREVIEW: 'Pratinjau',
     ELEMENT: 'Elemen',
     PATH: 'Jalur',

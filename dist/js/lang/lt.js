@@ -54,7 +54,7 @@ const lt = {
     PAGE_TITLE: "Puslapio pavadinimas",
     RESULTS: "Rezultatai",
     EXPORT_RESULTS: "Eksportuoti rezultatus",
-    GENERATED: "Rezultatai sugeneruoti su %(tool).",
+    GENERATED: 'Rezultatai sugeneruoti su <a href="https://sa11y.netlify.app">Sa11y.</a>',
     PREVIEW: "Peržiūra",
     ELEMENT: "Elementas",
     PATH: "Kelias",

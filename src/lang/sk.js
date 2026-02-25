@@ -64,7 +64,7 @@ export default {
     PAGE_TITLE: 'Názov stránky',
     RESULTS: 'Výsledky',
     EXPORT_RESULTS: 'Exportovať výsledky',
-    GENERATED: 'Výsledky vygenerované s %(tool).',
+    GENERATED: 'Výsledky vygenerované s <a href="https://sa11y.netlify.app">Sa11y.</a>',
     PREVIEW: 'Náhľad',
     ELEMENT: 'Prvok',
     PATH: 'Cesta',

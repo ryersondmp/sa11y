@@ -54,7 +54,7 @@ const cs = {
     PAGE_TITLE: "Název stránky",
     RESULTS: "Výsledky",
     EXPORT_RESULTS: "Exportovat výsledky",
-    GENERATED: "Výsledky generovány s %(tool).",
+    GENERATED: 'Výsledky generovány s <a href="https://sa11y.netlify.app">Sa11y.</a>',
     PREVIEW: "Náhled",
     ELEMENT: "Prvek",
     PATH: "Cesta",

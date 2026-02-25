@@ -64,7 +64,7 @@ export default {
     PAGE_TITLE: 'ページタイトル',
     RESULTS: '結果',
     EXPORT_RESULTS: '結果のエクスポート',
-    GENERATED: '%(tool) で生成された結果。',
+    GENERATED: '<a href="https://sa11y.netlify.app">Sa11y</a> で生成された結果。',
     PREVIEW: 'プレビュー',
     ELEMENT: '要素',
     PATH: 'パス',

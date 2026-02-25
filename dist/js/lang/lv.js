@@ -54,7 +54,7 @@ const lv = {
     PAGE_TITLE: "Lapas nosaukums",
     RESULTS: "Rezultāti",
     EXPORT_RESULTS: "Eksportēt rezultātus",
-    GENERATED: "Rezultāti ģenerēti ar %(tool).",
+    GENERATED: 'Rezultāti ģenerēti ar <a href="https://sa11y.netlify.app">Sa11y.</a>',
     PREVIEW: "Priekšskatījums",
     ELEMENT: "Elements",
     PATH: "Ceļš",

@@ -54,7 +54,7 @@ const nb = {
     PAGE_TITLE: "Sidetittel",
     RESULTS: "Resultater",
     EXPORT_RESULTS: "Eksporter resultater",
-    GENERATED: "Resultater generert med %(tool).",
+    GENERATED: 'Resultater generert med <a href="https://sa11y.netlify.app">Sa11y.</a>',
     PREVIEW: "Forhåndsvisning",
     ELEMENT: "Element",
     PATH: "Sti",

@@ -64,7 +64,7 @@ export default {
     PAGE_TITLE: 'Τίτλος σελίδας',
     RESULTS: 'Αποτελέσματα',
     EXPORT_RESULTS: 'Εξαγωγή αποτελεσμάτων',
-    GENERATED: 'Τα αποτελέσματα δημιουργήθηκαν με %(tool).',
+    GENERATED: 'Τα αποτελέσματα δημιουργήθηκαν με <a href="https://sa11y.netlify.app">Sa11y.</a>',
     PREVIEW: 'Προεπισκόπηση',
     ELEMENT: 'Στοιχείο',
     PATH: 'Διαδρομή',

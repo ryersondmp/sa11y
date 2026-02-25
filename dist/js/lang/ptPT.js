@@ -54,7 +54,7 @@ const ptPT = {
     PAGE_TITLE: "Título da página",
     RESULTS: "Resultados",
     EXPORT_RESULTS: "Exportar resultados",
-    GENERATED: "Resultados gerados com %(tool).",
+    GENERATED: 'Resultados gerados com <a href="https://sa11y.netlify.app">Sa11y.</a>',
     PREVIEW: "Pré-visualização",
     ELEMENT: "Elemento",
     PATH: "Caminho",
