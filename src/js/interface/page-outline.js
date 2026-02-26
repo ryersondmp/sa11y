@@ -7,8 +7,6 @@ import { State } from '../core/state';
 
 /**
  * Define the base template ONCE outside the function.
- * The browser's C++ parser reads this HTML string immediately,
- * making it extremely fast to clone later.
  */
 const outlineTemplate = document.createElement('template');
 outlineTemplate.innerHTML = `

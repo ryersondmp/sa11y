@@ -200,7 +200,8 @@ const decodeURIs = (uri) => {
  * @returns {string} The safe URL, or about:blank if invalid.
  */
 export function sanitizeURL(url) {
-  if (!url) return BLANK_URL;
+  if (!url || typeof url !== 'string') return BLANK_URL;
+
   let charsToDecode;
   let decodedUrl = decodeURIs(url.trim());
 
@@ -959,7 +960,7 @@ export function validateLang(code, displayLangCode) {
   if (!langCache && typeof Intl !== 'undefined') {
     try {
       langCache = new Intl.DisplayNames([displayLangCode], { type: 'language', fallback: 'none' });
-    } catch {}
+    } catch { }
   }
 
   if (langCache) {
