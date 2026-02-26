@@ -16,7 +16,7 @@ export default class ConsoleErrors extends HTMLElement {
 
     // Styles
     const style = document.createElement('style');
-    style.innerHTML = styles + sharedStyles;
+    style.textContent = styles + sharedStyles;
     shadow.appendChild(style);
 
     // Container

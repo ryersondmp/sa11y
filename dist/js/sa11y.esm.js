@@ -53,6 +53,7 @@ const defaultOptions = {
   autoDetectShadowComponents: false,
   pepper: window.location.hostname,
   // Provide a string to seed hashes.
+  unitTestMode: false,
   // Annotations
   showGoodImageButton: true,
   showGoodLinkButton: true,
@@ -6002,10 +6003,10 @@ function annotate(issue) {
     dismiss,
     margin
   } = issue;
-  const validTypes = ["error", "warning", "good"];
   if (!type && !element) {
     return;
   }
+  const validTypes = ["error", "warning", "good"];
   if (validTypes.indexOf(type) === -1) {
     throw Error(`Invalid type [${type}] for annotation`);
   }
@@ -6014,7 +6015,6 @@ function annotate(issue) {
     [validTypes[1]]: Lang._("WARNING"),
     [validTypes[2]]: Lang._("GOOD")
   };
-  const dismissBtn = State.option.dismissAnnotations && (type === "warning" || type === "good") && dismiss ? `<button data-sa11y-dismiss='${id}' type='button'>${Lang._("DISMISS")}</button>` : "";
   if (element) {
     if (type === "good") {
       if (!State.option.showGoodImageButton && element?.tagName === "IMG") {
@@ -6036,6 +6036,9 @@ function annotate(issue) {
     });
     const annotation = document.createElement("sa11y-annotation");
     annotation.setAttribute("data-sa11y-annotation", id);
+    if (State.option.unitTestMode) {
+      annotation.setAttribute("data-content", `${ariaLabel[type]} ${content.textContent}`);
+    }
     if (supportsAnchorPositioning()) {
       annotation.style.position = "absolute";
       annotation.style.positionAnchor = `--sa11y-anchor-${id}`;
@@ -6064,10 +6067,15 @@ function annotate(issue) {
       parent.setAttribute("data-sa11y-overflow", "");
     }
   } else {
+    const dismissBtn = State.option.dismissAnnotations && ["warning", "good"].includes(type) && dismiss ? Object.assign(document.createElement("button"), {
+      type: "button",
+      textContent: Lang._("DISMISS")
+    }) : null;
+    if (dismissBtn) dismissBtn.dataset.sa11yDismiss = id;
     const listItem = document.createElement("li");
     listItem.innerHTML = `<h3>${ariaLabel[type]}</h3>`;
-    listItem.append(content, dismissBtn);
-    Constants.Panel.pageIssuesList.insertAdjacentElement("afterbegin", listItem);
+    listItem.append(content, dismissBtn || "");
+    Constants.Panel.pageIssuesList.prepend(listItem);
     Constants.Panel.pageIssues.classList.add("active");
     Constants.Panel.panel.classList.add("has-page-issues");
   }

@@ -16,7 +16,7 @@ export default function mainToggle() {
       Constants.Panel.toggle.setAttribute('aria-expanded', 'false');
       resetAll();
 
-      if (Constants.Panel.notifCount.innerHTML.trim().length === 0) {
+      if (Constants.Panel.notifCount.textContent.trim().length === 0) {
         Constants.Panel.notifBadge.style.display = 'none';
       } else {
         Constants.Panel.notifBadge.style.display = 'flex';

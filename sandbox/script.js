@@ -5,7 +5,7 @@ import Sa11yLangEn from '../src/lang/en.js';
 Lang.addI18n(Sa11yLangEn.strings);
 const sa11y = new Sa11y({
   checkRoot: 'body',
-  readabilityRoot: 'body',
+  readabilityRoot: 'main',
   customChecks: 'listen',
   langOfPartsCache: 0,
   langOfPartsPlugin: 1,

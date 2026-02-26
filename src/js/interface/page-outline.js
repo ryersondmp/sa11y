@@ -83,7 +83,6 @@ export default function generatePageOutline() {
       // User supplied content via textContent.
       listItemText.textContent = text;
 
-      // Apply Error/Warning specific styling using innerHTML ONLY for safe, hardcoded UI elements
       if (type === 'error' && isWithinRoot === true) {
         badge.className = 'badge error-badge';
         badge.innerHTML = `<span aria-hidden="true">${visibleIcon}<span class="error-icon"></span></span><span class="visually-hidden">${Lang._('ERROR')}</span>${badgeH}${headingLevel}`;
@@ -139,7 +138,7 @@ export default function generatePageOutline() {
       }
     });
 
-    // Handle Empty State
+    // Handle empty state.
     if (State.headingOutline.length === 0) {
       const emptyLi = document.createElement('li');
       emptyLi.textContent = Lang._('PANEL_NO_HEADINGS');

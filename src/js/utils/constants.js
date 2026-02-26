@@ -125,20 +125,13 @@ const Constants = (function myConstants() {
           Constants.Root.Readability.push(root);
         });
       } else {
+        // If desired root area is not found, use the root target area.
+        Root.Readability = Root.areaToCheck;
+
+        // Message for headless.
         console.error(
           `Sa11y: The target readability root (${desiredReadabilityRoot}) does not exist.`,
         );
-      }
-    } catch {
-      Root.Readability.length = 0;
-    }
-
-    if (Root.Readability.length === 0 && Global.headless === false) {
-      if (Root.areaToCheck.length === 0) {
-        Root.Readability.push(document.body);
-      } else {
-        // If desired root area is not found, use the root target area.
-        Root.Readability = Root.areaToCheck;
 
         // Create a warning if the desired readability root is not found.
         setTimeout(() => {
@@ -146,7 +139,6 @@ const Constants = (function myConstants() {
           const readabilityOn = readabilityToggle?.getAttribute('aria-pressed') === 'true';
           const alert = Constants.Panel.readability.querySelector('#readability-alert');
           if (readabilityDetails && readabilityOn && !alert) {
-            // Roots that readability will be based on.
             const roots = Root.areaToCheck
               .map((el) => {
                 if (el.id) return `#${el.id}`;
@@ -158,11 +150,15 @@ const Constants = (function myConstants() {
             // Append note to Readability panel.
             const note = document.createElement('div');
             note.id = 'readability-alert';
-            note.innerHTML = `<hr><p>${Lang.sprintf('MISSING_READABILITY_ROOT', roots, desiredReadabilityRoot)}</p>`;
+            note.appendChild(document.createElement('hr'));
+            const message = Lang.sprintf('MISSING_READABILITY_ROOT', roots, desiredReadabilityRoot);
+            note.appendChild(message);
             readabilityDetails.insertAdjacentElement('afterend', note);
           }
         }, 100);
       }
+    } catch {
+      Root.Readability.length = 0;
     }
   }
 

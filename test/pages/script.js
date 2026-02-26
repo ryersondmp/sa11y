@@ -16,6 +16,7 @@ const warningsPageChecks = isWarningsPage
 // Instantiate
 Lang.addI18n(Sa11yLangEn.strings);
 const sa11y = new Sa11y({
+  unitTestMode: true,
   headerIgnore: '#nothing-ignore-this-heading *, .ignore-this-heading',
   autoDetectShadowComponents: true,
   linkIgnoreSpan: '.sr-only-example',

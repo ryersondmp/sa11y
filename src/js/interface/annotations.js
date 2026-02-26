@@ -15,7 +15,7 @@ export class Annotations extends HTMLElement {
 
     // Styles
     const style = document.createElement('style');
-    style.innerHTML = annotationStyles + sharedStyles;
+    style.textContent = annotationStyles + sharedStyles;
     shadow.appendChild(style);
   }
 }
@@ -41,10 +41,11 @@ export function annotate(issue) {
   } = issue;
 
   // Validate types to prevent errors.
-  const validTypes = ['error', 'warning', 'good'];
   if (!type && !element) {
     return; // Readability issue object.
   }
+
+  const validTypes = ['error', 'warning', 'good'];
   if (validTypes.indexOf(type) === -1) {
     throw Error(`Invalid type [${type}] for annotation`);
   }
@@ -55,12 +56,6 @@ export function annotate(issue) {
     [validTypes[1]]: Lang._('WARNING'),
     [validTypes[2]]: Lang._('GOOD'),
   };
-
-  // Add dismiss button if prop enabled & has a dismiss key.
-  const dismissBtn =
-    State.option.dismissAnnotations && (type === 'warning' || type === 'good') && dismiss
-      ? `<button data-sa11y-dismiss='${id}' type='button'>${Lang._('DISMISS')}</button>`
-      : '';
 
   // Generate HTML for painted annotations.
   if (element) {
@@ -89,6 +84,11 @@ export function annotate(issue) {
     // Create 'sa11y-annotation' web component for each annotation.
     const annotation = document.createElement('sa11y-annotation');
     annotation.setAttribute('data-sa11y-annotation', id);
+
+    // For unit tests.
+    if (State.option.unitTestMode) {
+      annotation.setAttribute('data-content', `${ariaLabel[type]} ${content.textContent}`);
+    }
 
     // Add anchor positioning on <sa11y-annotation> web component to improve accuracy of positioning.
     if (supportsAnchorPositioning()) {
@@ -128,19 +128,31 @@ export function annotate(issue) {
     // Modifies the annotation's parent container with overflow: hidden, making it visible and scrollable so content authors can access it.
     const ignoredElements = State.option.ignoreHiddenOverflow
       ? State.option.ignoreHiddenOverflow
-          .split(',')
-          .flatMap((selector) => [...document.querySelectorAll(selector)])
+        .split(',')
+        .flatMap((selector) => [...document.querySelectorAll(selector)])
       : [];
     const parent = findVisibleParent(element, 'overflow', 'hidden');
     if (parent && !ignoredElements.includes(parent)) {
       parent.setAttribute('data-sa11y-overflow', '');
     }
   } else {
-    // If no valid element, send issue to main panel.
+    // Dismiss button for warnings and good issues.
+    const dismissBtn =
+      State.option.dismissAnnotations && ['warning', 'good'].includes(type) && dismiss
+        ? Object.assign(document.createElement('button'), {
+          type: 'button',
+          textContent: Lang._('DISMISS'),
+        })
+        : null;
+    if (dismissBtn) dismissBtn.dataset.sa11yDismiss = id;
+
+    // Append to Page Issues.
     const listItem = document.createElement('li');
-    listItem.innerHTML = `<h3>${ariaLabel[type]}</h3>`;
-    listItem.append(content, dismissBtn);
-    Constants.Panel.pageIssuesList.insertAdjacentElement('afterbegin', listItem);
+    const heading = document.createElement('h3');
+    heading.textContent = ariaLabel[type];
+    listItem.appendChild(heading);
+    listItem.append(content, dismissBtn || '');
+    Constants.Panel.pageIssuesList.prepend(listItem);
 
     // Display Page Issues panel.
     Constants.Panel.pageIssues.classList.add('active');
