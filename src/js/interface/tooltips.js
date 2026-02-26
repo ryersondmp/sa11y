@@ -42,7 +42,7 @@ export class AnnotationTooltips extends HTMLElement {
         const result = template.find((item) => String(item.id) === String(id));
         if (!result) return null;
 
-        const { element, type, content, dismiss, dismissAll, contrastDetails } = result;
+        const { element, type, content, issueLabel, dismiss, dismissAll, contrastDetails } = result;
         if (!element) return;
 
         // 1. Create the tooltip container.
@@ -64,21 +64,10 @@ export class AnnotationTooltips extends HTMLElement {
             ? `<button data-sa11y-dismiss='${id}' type='button'>${Lang._('DISMISS')}</button>`
             : '';
 
-        // Quick type check.
-        const validTypes = ['error', 'warning', 'good'];
-        if (validTypes.indexOf(type) === -1) {
-          throw Error(`Invalid type [${type}] for annotation`);
-        }
-        const ariaLabel = {
-          [validTypes[0]]: Lang._('ERROR'),
-          [validTypes[1]]: Lang._('WARNING'),
-          [validTypes[2]]: Lang._('GOOD'),
-        };
-
         // 3. Full tooltip structure.
         wrapper.innerHTML = `
           <button type='button' class='close-btn close-tooltip' aria-label='${Lang._('ALERT_CLOSE')}'></button>
-          <h2>${ariaLabel[type]}</h2>
+          <h2>${issueLabel}</h2>
           <div class="sa11y-content-body"></div>
           ${contrastDetails ? '<div data-sa11y-contrast-details></div>' : ''}
           <div class='dismiss-group'>

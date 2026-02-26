@@ -10,6 +10,7 @@ import * as Utils from '../utils/utils';
 import { State } from './state';
 import Elements from '../utils/elements';
 import Constants from '../utils/constants';
+import Lang from '../utils/lang';
 
 /* *********************************************************** */
 /*  Update results array.                                      */
@@ -67,12 +68,16 @@ export default async function updateResults() {
     }
 
     return true;
-  }); // 2. Data enrichment. Generate...
+  });
+
+  // 2. Data enrichment. Generate...
   // a) ID
   // b) (Optional) CSS selector path,
   // c) HTML path of element.
   // d) Encrypted dismiss keys.
   // e) Ensure content property is always a DOM node.
+  // f) Validate type.
+  // g) Generate visible issue type/label.
   await Promise.all(
     State.results.map(async (item, id) => {
       item.id = id;
@@ -86,6 +91,20 @@ export default async function updateResults() {
         wrapper.innerHTML = Utils.sanitizeHTML(item.content);
         item.content = wrapper;
       }
+
+      // Validate type.
+      const validTypes = ['error', 'warning', 'good'];
+      if (item.type && validTypes.indexOf(item.type) === -1) {
+        throw Error(`Invalid type [${item.type}] for annotation`);
+      }
+
+      // Generate visible label for issue.
+      const mapLabel = {
+        [validTypes[0]]: Lang._('ERROR'),
+        [validTypes[1]]: Lang._('WARNING'),
+        [validTypes[2]]: Lang._('GOOD'),
+      };
+      item.issueLabel = mapLabel[item.type];
     }),
   );
 

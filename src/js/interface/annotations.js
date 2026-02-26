@@ -5,15 +5,11 @@ import Lang from '../utils/lang';
 import { findVisibleParent, supportsAnchorPositioning } from '../utils/utils';
 import { State } from '../core/state';
 
+// Annotation wrapper <annotation>
 export class Annotations extends HTMLElement {
   connectedCallback() {
-    if (this.shadowRoot) {
-      return;
-    }
-
+    if (this.shadowRoot) return;
     const shadow = this.attachShadow({ mode: 'open' });
-
-    // Styles
     const style = document.createElement('style');
     style.textContent = annotationStyles + sharedStyles;
     shadow.appendChild(style);
@@ -38,24 +34,11 @@ export function annotate(issue) {
     id,
     dismiss,
     margin,
+    issueLabel,
   } = issue;
 
-  // Validate types to prevent errors.
-  if (!type && !element) {
-    return; // Readability issue object.
-  }
-
-  const validTypes = ['error', 'warning', 'good'];
-  if (validTypes.indexOf(type) === -1) {
-    throw Error(`Invalid type [${type}] for annotation`);
-  }
-
-  // Generate aria-label for annotations.
-  const ariaLabel = {
-    [validTypes[0]]: Lang._('ERROR'),
-    [validTypes[1]]: Lang._('WARNING'),
-    [validTypes[2]]: Lang._('GOOD'),
-  };
+  // Readability issue object or page issue that does not correspond to an element.
+  if (!type && !element) return;
 
   // Generate HTML for painted annotations.
   if (element) {
@@ -71,9 +54,9 @@ export function annotate(issue) {
 
     // Tag element with border outline.
     const tag = {
-      [validTypes[0]]: 'data-sa11y-error',
-      [validTypes[1]]: 'data-sa11y-warning',
-      [validTypes[2]]: 'data-sa11y-good',
+      [type[0]]: 'data-sa11y-error',
+      [type[1]]: 'data-sa11y-warning',
+      [type[2]]: 'data-sa11y-good',
     };
     [type].forEach(($el) => {
       if (tag[$el]) {
@@ -87,7 +70,7 @@ export function annotate(issue) {
 
     // For unit tests.
     if (State.option.unitTestMode) {
-      annotation.setAttribute('data-content', `${ariaLabel[type]} ${content.textContent}`);
+      annotation.setAttribute('data-content', `${issueLabel} ${content.textContent}`);
     }
 
     // Add anchor positioning on <sa11y-annotation> web component to improve accuracy of positioning.
@@ -110,7 +93,7 @@ export function annotate(issue) {
     const button = document.createElement('button');
     button.type = 'button';
     button.className = `${type}-btn`;
-    button.setAttribute('aria-label', ariaLabel[type]);
+    button.setAttribute('aria-label', issueLabel);
     button.setAttribute('aria-haspopup', 'dialog');
     button.style.margin = `${inline ? '-10px' : ''} ${margin}`;
     buttonWrapper.appendChild(button);
@@ -149,7 +132,7 @@ export function annotate(issue) {
     // Append to Page Issues.
     const listItem = document.createElement('li');
     const heading = document.createElement('h3');
-    heading.textContent = ariaLabel[type];
+    heading.textContent = issueLabel;
     listItem.appendChild(heading);
     listItem.append(content, dismissBtn || '');
     Constants.Panel.pageIssuesList.prepend(listItem);

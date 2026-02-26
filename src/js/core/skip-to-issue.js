@@ -56,6 +56,15 @@ const getScrollPosition = ($el, results) => {
     if (result.content instanceof Element) {
       result.content.setAttribute('lang', Lang._('LANG_CODE'));
       result.content.className = result.type;
+
+      // Add issue type label.
+      let h3 = result.content.querySelector('.issue-label');
+      if (!h3) {
+        h3 = document.createElement('h3');
+        h3.className = 'issue-label';
+        result.content.prepend(h3);
+      }
+      h3.textContent = result.issueLabel;
     }
     createAlert(`${Lang._('NOT_VISIBLE')}`, result.content, elementPreview);
 
