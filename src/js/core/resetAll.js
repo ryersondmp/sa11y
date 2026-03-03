@@ -28,7 +28,7 @@ export async function resetAll(restartPanel = true) {
 
   // Remove Sa11y anchor positioning markup (while preserving any existing anchors).
   if (Utils.supportsAnchorPositioning()) {
-    find('[data-sa11y-error], [data-sa11y-warning], [data-sa11y-good]', 'document').forEach(
+    find('[style]', 'document').forEach(
       ($el) => {
         const anchor = $el;
         const anchors = (anchor.style.anchorName || '')

@@ -45,7 +45,13 @@ export function createAlert(alertMessage, errorPreview, extendedPreview) {
   const skipButton = Sa11yPanel.getElementById('skip-button');
 
   alert.classList.add('active');
-  alertText.textContent = alertMessage;
+
+  // Simple alert message.
+  if (typeof alertMessage === 'string') {
+    alertText.textContent = alertMessage;
+  } else {
+    alertText.appendChild(alertMessage);
+  }
 
   // Clear any existing preview content.
   alertPreview.innerHTML = '';

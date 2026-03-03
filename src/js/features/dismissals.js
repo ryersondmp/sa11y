@@ -91,7 +91,7 @@ const dismissIssueButton = async (e) => {
 
     // Give a one time reminder that dismissed items are temporary.
     if (savedDismissKeys === null) {
-      setTimeout(() => createAlert(Lang._('DISMISS_REMINDER')), 0);
+      setTimeout(() => createAlert(Lang.sprintf('DISMISS_REMINDER')), 0);
       // If no existing entries, create empty array to iterate on.
       savedDismissKeys = [];
     }

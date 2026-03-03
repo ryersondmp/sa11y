@@ -12,9 +12,7 @@ export default function checkLabels() {
       const ariaHidden = $el.getAttribute('aria-hidden') === 'true';
       const negativeTabindex = $el.getAttribute('tabindex') === '-1';
       const hidden = Utils.isElementHidden($el);
-      if (hidden || (ariaHidden && negativeTabindex)) {
-        return;
-      }
+      if (hidden || (ariaHidden && negativeTabindex)) return;
 
       // Compute accessible name on input.
       const computeName = computeAccessibleName($el);
@@ -24,7 +22,6 @@ export default function checkLabels() {
       const alt = $el.getAttribute('alt');
       const type = $el.getAttribute('type');
       const hasTitle = $el.getAttribute('title');
-      const hasPlaceholder = $el.placeholder && $el.placeholder !== 0;
       const hasAria = $el.getAttribute('aria-label') || $el.getAttribute('aria-labelledby');
 
       // Pass: Ignore if it's a submit or hidden button.
@@ -46,7 +43,7 @@ export default function checkLabels() {
             type: State.option.checks.LABELS_MISSING_IMAGE_INPUT.type || 'error',
             content: Lang.sprintf(
               State.option.checks.LABELS_MISSING_IMAGE_INPUT.content ||
-                'LABELS_MISSING_IMAGE_INPUT',
+              'LABELS_MISSING_IMAGE_INPUT',
             ),
             dismiss: Utils.prepareDismissal(`LABELS_MISSING_IMAGE_INPUT ${type + inputName}`),
             dismissAll: State.option.checks.LABELS_MISSING_IMAGE_INPUT.dismissAll
@@ -78,24 +75,27 @@ export default function checkLabels() {
         return;
       }
 
+      // Warning: Uses placeholder.
+      const hasPlaceholder = $el.placeholder && $el.placeholder !== 0;
+      if (hasPlaceholder && State.option.checks.LABELS_PLACEHOLDER) {
+        State.results.push({
+          test: 'LABELS_PLACEHOLDER',
+          element: $el,
+          type: State.option.checks.LABELS_PLACEHOLDER.type || 'warning',
+          content: Lang.sprintf(
+            State.option.checks.LABELS_PLACEHOLDER.content || 'LABELS_PLACEHOLDER',
+          ),
+          dismiss: Utils.prepareDismissal(`LABELS_PLACEHOLDER ${type + inputName}`),
+          dismissAll: State.option.checks.LABELS_PLACEHOLDER.dismissAll
+            ? 'LABELS_PLACEHOLDER'
+            : false,
+          developer: State.option.checks.LABELS_PLACEHOLDER.developer || true,
+        });
+      }
+
       // Uses ARIA or title attribute. Warn them to ensure there's a visible label.
-      if (hasAria || hasTitle || hasPlaceholder) {
-        // Avoid using placeholder attributes.
-        if (hasPlaceholder && State.option.checks.LABELS_PLACEHOLDER) {
-          State.results.push({
-            test: 'LABELS_PLACEHOLDER',
-            element: $el,
-            type: State.option.checks.LABELS_PLACEHOLDER.type || 'warning',
-            content: Lang.sprintf(
-              State.option.checks.LABELS_PLACEHOLDER.content || 'LABELS_PLACEHOLDER',
-            ),
-            dismiss: Utils.prepareDismissal(`LABELS_PLACEHOLDER ${type + inputName}`),
-            dismissAll: State.option.checks.LABELS_PLACEHOLDER.dismissAll
-              ? 'LABELS_PLACEHOLDER'
-              : false,
-            developer: State.option.checks.LABELS_PLACEHOLDER.developer || true,
-          });
-        } else if (inputName.length === 0) {
+      if (hasAria || hasTitle) {
+        if (inputName.length === 0) {
           if (State.option.checks.LABELS_MISSING_LABEL) {
             State.results.push({
               test: 'LABELS_MISSING_LABEL',
@@ -142,32 +142,32 @@ export default function checkLabels() {
 
       // Implicit label: <label>First name: <input type="text"/><label>
       const closestLabel = $el.closest('label');
-      const labelName = closestLabel
-        ? Utils.removeWhitespace(computeAccessibleName(closestLabel))
-        : '';
+      const labelName = closestLabel ? computeAccessibleName(closestLabel) : '';
       if (closestLabel && labelName.length) return;
 
-      // Check to see if each label has a matching for and it attribute.
+      // Error: Matching for and id attribute?
       const id = $el.getAttribute('id');
       if (id) {
-        // Find labels without a match.
-        if (!Elements.Found.Labels.some((label) => label.getAttribute('for') === id)) {
-          if (State.option.checks.LABELS_NO_FOR_ATTRIBUTE) {
-            State.results.push({
-              test: 'LABELS_NO_FOR_ATTRIBUTE',
-              element: $el,
-              type: State.option.checks.LABELS_NO_FOR_ATTRIBUTE.type || 'error',
-              content: Lang.sprintf(
-                State.option.checks.LABELS_NO_FOR_ATTRIBUTE.content || 'LABELS_NO_FOR_ATTRIBUTE',
-                id,
-              ),
-              dismiss: Utils.prepareDismissal(`LABELS_NO_FOR_ATTRIBUTE ${type + inputName}`),
-              dismissAll: State.option.checks.LABELS_NO_FOR_ATTRIBUTE.dismissAll
-                ? 'LABELS_NO_FOR_ATTRIBUTE'
-                : false,
-              developer: State.option.checks.LABELS_NO_FOR_ATTRIBUTE.developer || true,
-            });
-          }
+        // Has match.
+        const hasMatchingLabel = Elements.Found.Labels.some((label) => label.getAttribute('for') === id);
+        if (hasMatchingLabel) return;
+
+        // Labels without a match.
+        if (State.option.checks.LABELS_NO_FOR_ATTRIBUTE) {
+          State.results.push({
+            test: 'LABELS_NO_FOR_ATTRIBUTE',
+            element: $el,
+            type: State.option.checks.LABELS_NO_FOR_ATTRIBUTE.type || 'error',
+            content: Lang.sprintf(
+              State.option.checks.LABELS_NO_FOR_ATTRIBUTE.content || 'LABELS_NO_FOR_ATTRIBUTE',
+              id,
+            ),
+            dismiss: Utils.prepareDismissal(`LABELS_NO_FOR_ATTRIBUTE ${type + inputName}`),
+            dismissAll: State.option.checks.LABELS_NO_FOR_ATTRIBUTE.dismissAll
+              ? 'LABELS_NO_FOR_ATTRIBUTE'
+              : false,
+            developer: State.option.checks.LABELS_NO_FOR_ATTRIBUTE.developer || true,
+          });
         }
       } else if (State.option.checks.LABELS_MISSING_LABEL) {
         // No id!

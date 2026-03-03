@@ -80,11 +80,13 @@ export function annotate(issue) {
       annotation.style.top = 'anchor(top)';
       annotation.style.left = 'anchor(left)';
 
-      // Preserve original anchor name.
-      const existing = element.style.anchorName;
-      element.style.anchorName = existing
-        ? `${existing}, --sa11y-anchor-${id}`
-        : `--sa11y-anchor-${id}`;
+      // Preserve existing anchor names.
+      const existingNames = element.style.anchorName
+        ? element.style.anchorName.split(',').map(name => name.trim())
+        : [];
+      const filteredNames = existingNames.filter(name => !name.startsWith('--sa11y-anchor-'));
+      filteredNames.push(`--sa11y-anchor-${id}`);
+      element.style.anchorName = filteredNames.join(', ');
     }
 
     // Create button annotations.
