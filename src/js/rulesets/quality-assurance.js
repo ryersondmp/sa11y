@@ -349,8 +349,9 @@ export default function checkQA() {
           }
           const secondPrefix = decrement(secondText);
           if (isAlphabetic) {
-            // Check for repeats (*,*) or increments(a,b)
-            if (firstPrefix !== 'A ' && firstPrefix === secondPrefix) {
+            const firstChar = firstPrefix.charAt(0);
+            const secondChar = secondText.charAt(0);
+            if (decrement(secondChar) === firstChar) {
               hit = true;
             }
           } else if (isEmoji && !lastHitWasEmoji) {
