@@ -51,7 +51,7 @@ const sa11y = new Sa11y({
     QA_BAD_LINK: {
       sources: "a[href^='https://www.dev.']",
     },
-    LABELS_PLACEHOLDER: false,
+    // LABELS_PLACEHOLDER: false,
   },
 });
 
