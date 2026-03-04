@@ -53,9 +53,9 @@ export class AnnotationTooltips extends HTMLElement {
         // 2. Build the HTML for the buttons/header.
         const dismissAllBtn =
           State.option.dismissAnnotations &&
-            State.option.dismissAll &&
-            typeof dismissAll === 'string' &&
-            (type === 'warning' || type === 'good')
+          State.option.dismissAll &&
+          typeof dismissAll === 'string' &&
+          (type === 'warning' || type === 'good')
             ? `<button data-sa11y-dismiss='${id}' data-sa11y-dismiss-all type='button'>${Lang._('DISMISS_ALL')}</button>`
             : '';
 

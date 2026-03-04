@@ -241,60 +241,103 @@ export function initializeContrastTools(container, contrastDetails) {
  * @param {HTMLElement} container The container where the color suggestion will be inserted.
  */
 export function generateColorSuggestion(contrastDetails) {
-  let adviceContainer;
-  const { color, background, fontWeight, fontSize, isLargeText, type } = contrastDetails;
+  const { color, background, fontWeight, fontSize, isLargeText, type, opacity } = contrastDetails;
+
   if (
-    color &&
-    background &&
-    background.type !== 'image' &&
-    (type === 'text' || type === 'svg-error' || type === 'input')
+    !color ||
+    !background ||
+    background.type === 'image' ||
+    !(type === 'text' || type === 'svg-error' || type === 'input')
   ) {
-    const suggested =
-      Constants.Global.contrastAlgorithm === 'APCA'
-        ? Contrast.suggestColorAPCA(color, background, fontWeight, fontSize)
-        : Contrast.suggestColorWCAG(
-            color,
-            background,
-            isLargeText,
-            Constants.Global.contrastAlgorithm,
-          );
-
-    let advice;
-    const hr = '<hr aria-hidden="true">';
-    const bgHex = Contrast.getHex(contrastDetails.background);
-    const style = `color:${suggested.color};background-color:${bgHex};`;
-    const colorBadge = `<button id="suggest" class="badge" style="${style}">${suggested.color}</button>`;
-    const sizeBadge = `<button id="suggest-size" class="normal-badge">${suggested.size}px</button>`;
-
-    if (
-      Constants.Global.contrastAlgorithm === 'AA' ||
-      Constants.Global.contrastAlgorithm === 'AAA'
-    ) {
-      if (suggested.color === null) {
-        advice = `${hr} ${Lang._('NO_SUGGESTION')}`;
-      } else {
-        advice = `${hr} ${Lang._('CONTRAST_COLOR')} ${colorBadge}`;
-      }
-    } else if (suggested.color && suggested.size) {
-      advice = `${hr} ${Lang._('CONTRAST_APCA')} ${colorBadge} ${sizeBadge}`;
-    } else if (suggested.color) {
-      advice = `${hr} ${Lang._('CONTRAST_COLOR')} ${colorBadge}`;
-    } else if (suggested.size) {
-      advice = `${hr} ${Lang._('CONTRAST_SIZE')} ${sizeBadge}`;
-    }
-
-    // Append it to contrast details container.
-    adviceContainer = document.createElement('div');
-    adviceContainer.id = 'advice';
-
-    // If low opacity, suggest increase opacity first.
-    const suggestion =
-      contrastDetails.opacity < 1
-        ? `<hr aria-hidden="true"> ${Lang.sprintf('CONTRAST_OPACITY')}`
-        : advice;
-
-    // Append advice to contrast details container.
-    adviceContainer.innerHTML = suggestion;
+    return;
   }
+
+  const suggested =
+    Constants.Global.contrastAlgorithm === 'APCA'
+      ? Contrast.suggestColorAPCA(color, background, fontWeight, fontSize)
+      : Contrast.suggestColorWCAG(
+          color,
+          background,
+          isLargeText,
+          Constants.Global.contrastAlgorithm,
+        );
+
+  const adviceContainer = document.createElement('div');
+  adviceContainer.id = 'advice';
+
+  // Helper to create the <hr> element
+  const createHr = () => {
+    const hr = document.createElement('hr');
+    hr.setAttribute('aria-hidden', 'true');
+    return hr;
+  };
+
+  // Helper to create the Color Badge Button
+  const createColorBadge = (suggestedColor) => {
+    const btn = document.createElement('button');
+    btn.id = 'suggest';
+    btn.className = 'badge';
+    const bgHex = Contrast.getHex(background);
+    btn.style.color = suggestedColor;
+    btn.style.backgroundColor = bgHex;
+    btn.textContent = suggestedColor;
+    return btn;
+  };
+
+  // Helper to create the Size Badge Button
+  const createSizeBadge = (size) => {
+    const btn = document.createElement('button');
+    btn.id = 'suggest-size';
+    btn.className = 'normal-badge';
+    btn.textContent = `${size}px`;
+    return btn;
+  };
+
+  // 1. Opacity Check.
+  if (opacity < 1) {
+    adviceContainer.append(createHr(), ' ', Lang.sprintf('CONTRAST_OPACITY'));
+    return adviceContainer;
+  }
+
+  const algo = Constants.Global.contrastAlgorithm;
+
+  // 2. WCAG Logic (AA / AAA)
+  if (algo === 'AA' || algo === 'AAA') {
+    if (suggested.color === null) {
+      adviceContainer.append(createHr(), ' ', Lang._('NO_SUGGESTION'));
+    } else {
+      adviceContainer.append(
+        createHr(),
+        ' ',
+        Lang._('CONTRAST_COLOR'),
+        ' ',
+        createColorBadge(suggested.color),
+      );
+    }
+  }
+  // 3. APCA / Size-based Logic
+  else {
+    const hasColor = !!suggested.color;
+    const hasSize = !!suggested.size;
+
+    if (hasColor || hasSize) {
+      adviceContainer.append(createHr(), ' ');
+
+      if (hasColor && hasSize) {
+        adviceContainer.append(
+          Lang._('CONTRAST_APCA'),
+          ' ',
+          createColorBadge(suggested.color),
+          ' ',
+          createSizeBadge(suggested.size),
+        );
+      } else if (hasColor) {
+        adviceContainer.append(Lang._('CONTRAST_COLOR'), ' ', createColorBadge(suggested.color));
+      } else if (hasSize) {
+        adviceContainer.append(Lang._('CONTRAST_SIZE'), ' ', createSizeBadge(suggested.size));
+      }
+    }
+  }
+
   return adviceContainer;
 }

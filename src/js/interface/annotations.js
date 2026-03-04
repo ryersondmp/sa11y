@@ -53,16 +53,14 @@ export function annotate(issue) {
     }
 
     // Tag element with border outline.
-    const tag = {
-      [type[0]]: 'data-sa11y-error',
-      [type[1]]: 'data-sa11y-warning',
-      [type[2]]: 'data-sa11y-good',
+    const tagMap = {
+      error: 'data-sa11y-error',
+      warning: 'data-sa11y-warning',
+      good: 'data-sa11y-good',
     };
-    [type].forEach(($el) => {
-      if (tag[$el]) {
-        element.setAttribute(tag[$el], '');
-      }
-    });
+    if (element && tagMap[type]) {
+      element.setAttribute(tagMap[type], '');
+    }
 
     // Create 'sa11y-annotation' web component for each annotation.
     const annotation = document.createElement('sa11y-annotation');
@@ -82,9 +80,9 @@ export function annotate(issue) {
 
       // Preserve existing anchor names.
       const existingNames = element.style.anchorName
-        ? element.style.anchorName.split(',').map(name => name.trim())
+        ? element.style.anchorName.split(',').map((name) => name.trim())
         : [];
-      const filteredNames = existingNames.filter(name => !name.startsWith('--sa11y-anchor-'));
+      const filteredNames = existingNames.filter((name) => !name.startsWith('--sa11y-anchor-'));
       filteredNames.push(`--sa11y-anchor-${id}`);
       element.style.anchorName = filteredNames.join(', ');
     }

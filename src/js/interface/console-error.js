@@ -67,7 +67,7 @@ ${this.error.stack}
       document.createElement('br'),
       `Version: ${Sa11yVersion}`,
       document.createElement('br'),
-      `URL: ${url}`
+      `URL: ${url}`,
     );
 
     // 5. Assemble and append.

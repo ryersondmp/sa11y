@@ -26,13 +26,13 @@ export function getLanguageDetector() {
           createAlert(Lang.sprintf('LANG_UNSUPPORTED'));
           Utils.store.setItem(STORAGE_KEY, []);
         }
-        console.error(`Sa11y: ${Lang.sprintf('LANG_UNSUPPORTED')}`);
+        console.error(`Sa11y: ${Lang._('LANG_UNSUPPORTED')}`);
         return null;
       }
       return await globalThis.LanguageDetector.create();
     } catch {
       createAlert(Lang.sprintf('LANG_UNSUPPORTED'));
-      console.error(`Sa11y: ${Lang.sprintf('LANG_UNSUPPORTED')}`);
+      console.error(`Sa11y: ${Lang._('LANG_UNSUPPORTED')}`);
       return null;
     }
   })();
@@ -42,19 +42,13 @@ export function getLanguageDetector() {
 // Get the reader-friendly language label, e.g. "English"
 const getLanguageLabel = (lang) => {
   try {
-    // 1. Validate and standardise the code first (e.g. cleans up 'EN-us' to 'en-US').
     const canonicalLang = Intl.getCanonicalLocales(lang)[0];
-
-    // 2. Extract just the base language (e.g. 'en' from 'en-US').
     const baseLang = new Intl.Locale(canonicalLang).language;
-
-    // 3. Get the human readable name.
-    const displayName = new Intl.DisplayNames(navigator.language, {
+    return new Intl.DisplayNames(navigator.language, {
       type: 'language',
     }).of(baseLang);
-    return `<span lang="${navigator.language}">${displayName}</span>`;
   } catch {
-    return Lang.sprintf(`<strong {C}>${lang}</strong>`);
+    return lang;
   }
 };
 
@@ -132,18 +126,28 @@ export default async function checkPageLanguage() {
   // Push cached version to page.
   if (cached && !isStale) {
     if (cached.test) {
-      const tip = cached.element ? Lang.sprintf('LANG_TIP') : '';
       const getElement = cached.element ? find(cached.element, 'root')[0] : null;
       const processVariables = cached.variables.map((variable) => getLanguageLabel(variable));
+
+      // Build the content container safely
+      const contentContainer = document.createElement('div');
+
+      // Get the translated node
+      const mainContent = Lang.sprintf(
+        State.option.checks[cached.test].content || [cached.test],
+        ...processVariables,
+      );
+
+      contentContainer.append(mainContent);
+      if (cached.element) {
+        contentContainer.append(' ', Lang.sprintf('LANG_TIP'));
+      }
+
       State.results.push({
         element: getElement || null,
         test: cached.test,
         type: State.option.checks[cached.test].type || cached.type,
-        content:
-          Lang.sprintf(
-            State.option.checks[cached.test].content || [cached.test],
-            ...processVariables,
-          ) + tip,
+        content: contentContainer,
         dismiss: Utils.prepareDismissal(cached.test),
         developer: State.option.checks[cached.test].developer ?? false,
         confidence: cached.confidence,
@@ -242,35 +246,39 @@ export default async function checkPageLanguage() {
         // Language tag doesn't match.
         if (langAttribute && langAttribute !== nodeLang) {
           test = 'LANG_MISMATCH';
-          content =
-            Lang.sprintf(
-              State.option.checks.LANG_MISMATCH.content || 'LANG_MISMATCH',
-              getLanguageLabel(nodeLang),
-              getLanguageLabel(langAttribute),
-            ) + Lang.sprintf('LANG_TIP');
+          content = Lang.sprintf(
+            State.option.checks.LANG_MISMATCH.content || 'LANG_MISMATCH',
+            getLanguageLabel(nodeLang),
+            getLanguageLabel(langAttribute)
+          );
+
+          // Append the tip node safely to the result.
+          const wrapper = document.createElement('div');
+          wrapper.append(content, ' ', Lang.sprintf('LANG_TIP'));
+          content = wrapper;
           variables = [nodeLang, langAttribute];
         } else if (node.nodeName === 'IMG' && node?.alt?.length !== 0) {
           // Alt text is in different language.
           const alt = node.alt;
           const altText = Utils.truncateString(alt, 600);
           test = 'LANG_OF_PARTS_ALT';
-          content =
-            Lang.sprintf(
-              State.option.checks.LANG_OF_PARTS_ALT.content || 'LANG_OF_PARTS_ALT',
-              getLanguageLabel(nodeLang),
-              getLanguageLabel(declared),
-              altText,
-            ) + Lang.sprintf('LANG_TIP');
+          content = Lang.sprintf(
+            State.option.checks.LANG_OF_PARTS_ALT.content || 'LANG_OF_PARTS_ALT',
+            getLanguageLabel(nodeLang),
+            getLanguageLabel(declared),
+            altText,
+            Lang._('LANG_TIP'),
+          );
           variables = [nodeLang, declared, altText];
         } else {
           // Text node is in different language.
           test = 'LANG_OF_PARTS';
-          content =
-            Lang.sprintf(
-              State.option.checks.LANG_OF_PARTS.content || 'LANG_OF_PARTS',
-              getLanguageLabel(declared),
-              getLanguageLabel(nodeLang),
-            ) + Lang.sprintf('LANG_TIP');
+          content = Lang.sprintf(
+            State.option.checks.LANG_OF_PARTS.content || 'LANG_OF_PARTS',
+            getLanguageLabel(declared),
+            getLanguageLabel(nodeLang),
+            Lang._('LANG_TIP'),
+          );
           variables = [declared, nodeLang];
         }
 

@@ -26,7 +26,7 @@ export function updatePanel() {
     Constants.Panel.skipButton.classList.remove('active');
   } else {
     Constants.Panel.content.setAttribute('class', 'good');
-    Constants.Panel.status.innerHTML = `${Lang._('NO_ERRORS_FOUND')}`;
+    Constants.Panel.status.textContent = Lang._('NO_ERRORS_FOUND');
   }
 
   // If there are no button annotations, disable the Skip-to-Toggle switch.

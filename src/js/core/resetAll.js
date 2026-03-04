@@ -28,23 +28,21 @@ export async function resetAll(restartPanel = true) {
 
   // Remove Sa11y anchor positioning markup (while preserving any existing anchors).
   if (Utils.supportsAnchorPositioning()) {
-    find('[style]', 'document').forEach(
-      ($el) => {
-        const anchor = $el;
-        const anchors = (anchor.style.anchorName || '')
-          .split(',')
-          .map((s) => s.trim())
-          .filter((s) => s && !s.startsWith('--sa11y-anchor'));
-        if (anchors.length) {
-          anchor.style.anchorName = anchors.join(', ');
-        } else {
-          anchor.style.removeProperty('anchor-name');
-          if (!anchor.style.length) {
-            anchor.removeAttribute('style');
-          }
+    find('[style]', 'document').forEach(($el) => {
+      const anchor = $el;
+      const anchors = (anchor.style.anchorName || '')
+        .split(',')
+        .map((s) => s.trim())
+        .filter((s) => s && !s.startsWith('--sa11y-anchor'));
+      if (anchors.length) {
+        anchor.style.anchorName = anchors.join(', ');
+      } else {
+        anchor.style.removeProperty('anchor-name');
+        if (!anchor.style.length) {
+          anchor.removeAttribute('style');
         }
-      },
-    );
+      }
+    });
   }
 
   // Reset all data attributes.

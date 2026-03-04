@@ -326,7 +326,11 @@
     const alertClose = Sa11yPanel.getElementById("close-alert");
     const skipButton = Sa11yPanel.getElementById("skip-button");
     alert.classList.add("active");
-    alertText.textContent = alertMessage;
+    if (typeof alertMessage === "string") {
+      alertText.textContent = alertMessage;
+    } else {
+      alertText.appendChild(alertMessage);
+    }
     alertPreview.innerHTML = "";
     if (errorPreview) {
       alertPreview.classList.add("panel-alert-preview");
@@ -479,35 +483,31 @@
             Constants.Root.Readability.push(root);
           });
         } else {
+          Root.Readability = Root.areaToCheck;
           console.error(
             `Sa11y: The target readability root (${desiredReadabilityRoot}) does not exist.`
           );
-        }
-      } catch {
-        Root.Readability.length = 0;
-      }
-      if (Root.Readability.length === 0 && Global.headless === false) {
-        if (Root.areaToCheck.length === 0) {
-          Root.Readability.push(document.body);
-        } else {
-          Root.Readability = Root.areaToCheck;
           setTimeout(() => {
             const { readabilityDetails, readabilityToggle } = Constants.Panel;
             const readabilityOn = readabilityToggle?.getAttribute("aria-pressed") === "true";
             const alert = Constants.Panel.readability.querySelector("#readability-alert");
             if (readabilityDetails && readabilityOn && !alert) {
-              const roots = Root.areaToCheck.map((el2) => {
+              const roots2 = Root.areaToCheck.map((el2) => {
                 if (el2.id) return `#${el2.id}`;
                 if (el2.className) return `.${el2.className.split(/\s+/).filter(Boolean).join(".")}`;
                 return el2.tagName.toLowerCase();
               }).join(", ");
               const note = document.createElement("div");
               note.id = "readability-alert";
-              note.innerHTML = `<hr><p>${Lang.sprintf("MISSING_READABILITY_ROOT", roots, desiredReadabilityRoot)}</p>`;
+              note.appendChild(document.createElement("hr"));
+              const message = Lang.sprintf("MISSING_READABILITY_ROOT", roots2, desiredReadabilityRoot);
+              note.appendChild(message);
               readabilityDetails.insertAdjacentElement("afterend", note);
             }
           }, 100);
         }
+      } catch {
+        Root.Readability.length = 0;
       }
     }
     const Panel = {};
@@ -831,7 +831,7 @@
     }
   };
   function sanitizeURL(url2) {
-    if (!url2) return BLANK_URL;
+    if (!url2 || typeof url2 !== "string") return BLANK_URL;
     let charsToDecode;
     let decodedUrl = decodeURIs(url2.trim());
     do {
@@ -1523,12 +1523,12 @@
     connectedCallback() {
       const shadow = this.attachShadow({ mode: "open" });
       const style = document.createElement("style");
-      style.innerHTML = styles + sharedStyles;
+      style.textContent = styles + sharedStyles;
       shadow.appendChild(style);
       const content = document.createElement("div");
       content.setAttribute("id", "dialog");
       content.setAttribute("tabindex", "-1");
-      const url2 = sanitizeURL(window.location);
+      const url2 = sanitizeURL(window.location.href);
       const google = "https://forms.gle/sjzK9XykETaoqZv99";
       const template = `## Error Description
 \`\`\`javascript
@@ -1543,12 +1543,24 @@ ${this.error.stack}
 `;
       const encodedTemplate = encodeURIComponent(template);
       const github = `https://github.com/ryersondmp/sa11y/issues/new?title=Bug%20report&body=${encodedTemplate}`;
-      content.innerHTML = `
-      <button class="close-btn" aria-label="${Lang._("ALERT_CLOSE")}"></button>
-      <h2>${Lang._("ERROR")}</h2>
-      <p>${Lang.sprintf("CONSOLE_ERROR", google, github)}</p>
-      <p class="error">${escapeHTML(this.error.stack)}<br><br>Version: ${"4.5.0"} <br> URL: ${url2}</p>
-    `;
+      const closeBtn = document.createElement("button");
+      closeBtn.className = "close-btn";
+      closeBtn.setAttribute("aria-label", Lang._("ALERT_CLOSE"));
+      const h2 = document.createElement("h2");
+      h2.textContent = Lang._("ERROR");
+      const p1 = document.createElement("p");
+      p1.append(Lang.sprintf("CONSOLE_ERROR", google, github));
+      const p2 = document.createElement("p");
+      p2.className = "error";
+      p2.append(
+        this.error.stack,
+        document.createElement("br"),
+        document.createElement("br"),
+        `Version: ${"4.5.0"}`,
+        document.createElement("br"),
+        `URL: ${url2}`
+      );
+      content.append(closeBtn, h2, p1, p2);
       shadow.appendChild(content);
       setTimeout(() => {
         Constants.Panel.toggle.style.display = "none";
@@ -1596,6 +1608,13 @@ ${this.error.stack}
       if (result.content instanceof Element) {
         result.content.setAttribute("lang", Lang._("LANG_CODE"));
         result.content.className = result.type;
+        let h3 = result.content.querySelector(".issue-label");
+        if (!h3) {
+          h3 = document.createElement("h3");
+          h3.className = "issue-label";
+          result.content.prepend(h3);
+        }
+        h3.textContent = result.issueLabel;
       }
       createAlert(`${Lang._("NOT_VISIBLE")}`, result.content, elementPreview);
       closeAnyActiveTooltips();
@@ -2024,20 +2043,18 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
       "document"
     );
     if (supportsAnchorPositioning()) {
-      find("[data-sa11y-error], [data-sa11y-warning], [data-sa11y-good]", "document").forEach(
-        ($el) => {
-          const anchor = $el;
-          const anchors = (anchor.style.anchorName || "").split(",").map((s) => s.trim()).filter((s) => s && !s.startsWith("--sa11y-anchor"));
-          if (anchors.length) {
-            anchor.style.anchorName = anchors.join(", ");
-          } else {
-            anchor.style.removeProperty("anchor-name");
-            if (!anchor.style.length) {
-              anchor.removeAttribute("style");
-            }
+      find("[style]", "document").forEach(($el) => {
+        const anchor = $el;
+        const anchors = (anchor.style.anchorName || "").split(",").map((s) => s.trim()).filter((s) => s && !s.startsWith("--sa11y-anchor"));
+        if (anchors.length) {
+          anchor.style.anchorName = anchors.join(", ");
+        } else {
+          anchor.style.removeProperty("anchor-name");
+          if (!anchor.style.length) {
+            anchor.removeAttribute("style");
           }
         }
-      );
+      });
     }
     resetAttributes(
       [
@@ -2129,7 +2146,7 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
       const dismissItem = parseInt(dismissButton.getAttribute("data-sa11y-dismiss"), 10);
       const issue = State.results.find(($el) => $el.id === dismissItem);
       if (savedDismissKeys === null) {
-        setTimeout(() => createAlert(Lang._("DISMISS_REMINDER")), 0);
+        setTimeout(() => createAlert(Lang.sprintf("DISMISS_REMINDER")), 0);
         savedDismissKeys = [];
       }
       if (issue.dismissDigest) {
@@ -2687,7 +2704,7 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
       Constants.Panel.skipButton.classList.remove("active");
     } else {
       Constants.Panel.content.setAttribute("class", "good");
-      Constants.Panel.status.innerHTML = `${Lang._("NO_ERRORS_FOUND")}`;
+      Constants.Panel.status.textContent = Lang._("NO_ERRORS_FOUND");
     }
     const annotations = document.querySelectorAll("sa11y-annotation");
     if (annotations.length === 0) {
@@ -5948,50 +5965,86 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
     }, 0);
   }
   function generateColorSuggestion(contrastDetails) {
-    let adviceContainer;
-    const { color, background, fontWeight, fontSize, isLargeText, type } = contrastDetails;
-    if (color && background && background.type !== "image" && (type === "text" || type === "svg-error" || type === "input")) {
-      const suggested = Constants.Global.contrastAlgorithm === "APCA" ? suggestColorAPCA(color, background, fontWeight, fontSize) : suggestColorWCAG(
-        color,
-        background,
-        isLargeText,
-        Constants.Global.contrastAlgorithm
-      );
-      let advice;
-      const hr = '<hr aria-hidden="true">';
-      const bgHex = getHex(contrastDetails.background);
-      const style = `color:${suggested.color};background-color:${bgHex};`;
-      const colorBadge = `<button id="suggest" class="badge" style="${style}">${suggested.color}</button>`;
-      const sizeBadge = `<button id="suggest-size" class="normal-badge">${suggested.size}px</button>`;
-      if (Constants.Global.contrastAlgorithm === "AA" || Constants.Global.contrastAlgorithm === "AAA") {
-        if (suggested.color === null) {
-          advice = `${hr} ${Lang._("NO_SUGGESTION")}`;
-        } else {
-          advice = `${hr} ${Lang._("CONTRAST_COLOR")} ${colorBadge}`;
-        }
-      } else if (suggested.color && suggested.size) {
-        advice = `${hr} ${Lang._("CONTRAST_APCA")} ${colorBadge} ${sizeBadge}`;
-      } else if (suggested.color) {
-        advice = `${hr} ${Lang._("CONTRAST_COLOR")} ${colorBadge}`;
-      } else if (suggested.size) {
-        advice = `${hr} ${Lang._("CONTRAST_SIZE")} ${sizeBadge}`;
+    const { color, background, fontWeight, fontSize, isLargeText, type, opacity } = contrastDetails;
+    if (!color || !background || background.type === "image" || !(type === "text" || type === "svg-error" || type === "input")) {
+      return;
+    }
+    const suggested = Constants.Global.contrastAlgorithm === "APCA" ? suggestColorAPCA(color, background, fontWeight, fontSize) : suggestColorWCAG(
+      color,
+      background,
+      isLargeText,
+      Constants.Global.contrastAlgorithm
+    );
+    const adviceContainer = document.createElement("div");
+    adviceContainer.id = "advice";
+    const createHr = () => {
+      const hr = document.createElement("hr");
+      hr.setAttribute("aria-hidden", "true");
+      return hr;
+    };
+    const createColorBadge = (suggestedColor) => {
+      const btn = document.createElement("button");
+      btn.id = "suggest";
+      btn.className = "badge";
+      const bgHex = getHex(background);
+      btn.style.color = suggestedColor;
+      btn.style.backgroundColor = bgHex;
+      btn.textContent = suggestedColor;
+      return btn;
+    };
+    const createSizeBadge = (size) => {
+      const btn = document.createElement("button");
+      btn.id = "suggest-size";
+      btn.className = "normal-badge";
+      btn.textContent = `${size}px`;
+      return btn;
+    };
+    if (opacity < 1) {
+      adviceContainer.append(createHr(), " ", Lang.sprintf("CONTRAST_OPACITY"));
+      return adviceContainer;
+    }
+    const algo = Constants.Global.contrastAlgorithm;
+    if (algo === "AA" || algo === "AAA") {
+      if (suggested.color === null) {
+        adviceContainer.append(createHr(), " ", Lang._("NO_SUGGESTION"));
+      } else {
+        adviceContainer.append(
+          createHr(),
+          " ",
+          Lang._("CONTRAST_COLOR"),
+          " ",
+          createColorBadge(suggested.color)
+        );
       }
-      adviceContainer = document.createElement("div");
-      adviceContainer.id = "advice";
-      const suggestion = contrastDetails.opacity < 1 ? `<hr aria-hidden="true"> ${Lang.sprintf("CONTRAST_OPACITY")}` : advice;
-      adviceContainer.innerHTML = suggestion;
+    } else {
+      const hasColor = !!suggested.color;
+      const hasSize = !!suggested.size;
+      if (hasColor || hasSize) {
+        adviceContainer.append(createHr(), " ");
+        if (hasColor && hasSize) {
+          adviceContainer.append(
+            Lang._("CONTRAST_APCA"),
+            " ",
+            createColorBadge(suggested.color),
+            " ",
+            createSizeBadge(suggested.size)
+          );
+        } else if (hasColor) {
+          adviceContainer.append(Lang._("CONTRAST_COLOR"), " ", createColorBadge(suggested.color));
+        } else if (hasSize) {
+          adviceContainer.append(Lang._("CONTRAST_SIZE"), " ", createSizeBadge(suggested.size));
+        }
+      }
     }
     return adviceContainer;
   }
   const annotationStyles = '.annotation{display:block;position:relative}.annotation-inline{text-align:end;display:inline-block;position:relative}button{cursor:pointer;border-radius:50%;width:36px;height:36px;padding:0;transition:all .2s ease-in-out;display:block;position:absolute;box-shadow:0 0 16px #0000004f}button:after{content:"";width:36px;height:36px;padding:7px;position:absolute;top:-7px;left:-7px}.error-btn{z-index:9999;background:50% 50% var(--sa11y-error-svg) no-repeat;background-color:var(--sa11y-error);border:1px solid var(--sa11y-error);background-size:22px}.error-btn:hover,.error-btn:focus{background-color:var(--sa11y-error-hover)}.good-btn{z-index:9977;background:50% 50% var(--sa11y-good) var(--sa11y-good-svg) no-repeat;background-color:var(--sa11y-good);border:1px solid var(--sa11y-good);background-size:20px}.good-btn:hover,.good-btn:focus{background-color:var(--sa11y-good-hover)}.warning-btn{z-index:9988;background:50% 50% var(--sa11y-warning) var(--sa11y-warning-svg) no-repeat;background-color:var(--sa11y-warning);border:1px solid var(--sa11y-warning);transform:scaleX(var(--sa11y-icon-direction));background-size:24px}.warning-btn:hover,.warning-btn:focus{background-color:var(--sa11y-warning-hover)}button:active,button:focus{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}@media screen and (forced-colors:active){button{forced-color-adjust:none;border:1px solid #0000!important;outline:3px solid #0000!important}}';
   class Annotations extends HTMLElement {
     connectedCallback() {
-      if (this.shadowRoot) {
-        return;
-      }
+      if (this.shadowRoot) return;
       const shadow = this.attachShadow({ mode: "open" });
       const style = document.createElement("style");
-      style.innerHTML = annotationStyles + sharedStyles;
+      style.textContent = annotationStyles + sharedStyles;
       shadow.appendChild(style);
     }
   }
@@ -6005,20 +6058,10 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
       position = "beforebegin",
       id,
       dismiss,
-      margin
+      margin,
+      issueLabel
     } = issue;
-    if (!type && !element) {
-      return;
-    }
-    const validTypes = ["error", "warning", "good"];
-    if (validTypes.indexOf(type) === -1) {
-      throw Error(`Invalid type [${type}] for annotation`);
-    }
-    const ariaLabel = {
-      [validTypes[0]]: Lang._("ERROR"),
-      [validTypes[1]]: Lang._("WARNING"),
-      [validTypes[2]]: Lang._("GOOD")
-    };
+    if (!type && !element) return;
     if (element) {
       if (type === "good") {
         if (!State.option.showGoodImageButton && element?.tagName === "IMG") {
@@ -6029,9 +6072,9 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
         }
       }
       const tag = {
-        [validTypes[0]]: "data-sa11y-error",
-        [validTypes[1]]: "data-sa11y-warning",
-        [validTypes[2]]: "data-sa11y-good"
+        [type[0]]: "data-sa11y-error",
+        [type[1]]: "data-sa11y-warning",
+        [type[2]]: "data-sa11y-good"
       };
       [type].forEach(($el) => {
         if (tag[$el]) {
@@ -6041,22 +6084,24 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
       const annotation = document.createElement("sa11y-annotation");
       annotation.setAttribute("data-sa11y-annotation", id);
       if (State.option.unitTestMode) {
-        annotation.setAttribute("data-content", `${ariaLabel[type]} ${content.textContent}`);
+        annotation.setAttribute("data-content", `${issueLabel} ${content.textContent}`);
       }
       if (supportsAnchorPositioning()) {
         annotation.style.position = "absolute";
         annotation.style.positionAnchor = `--sa11y-anchor-${id}`;
         annotation.style.top = "anchor(top)";
         annotation.style.left = "anchor(left)";
-        const existing = element.style.anchorName;
-        element.style.anchorName = existing ? `${existing}, --sa11y-anchor-${id}` : `--sa11y-anchor-${id}`;
+        const existingNames = element.style.anchorName ? element.style.anchorName.split(",").map((name) => name.trim()) : [];
+        const filteredNames = existingNames.filter((name) => !name.startsWith("--sa11y-anchor-"));
+        filteredNames.push(`--sa11y-anchor-${id}`);
+        element.style.anchorName = filteredNames.join(", ");
       }
       const buttonWrapper = document.createElement("div");
       buttonWrapper.classList.add(inline ? "annotation-inline" : "annotation");
       const button = document.createElement("button");
       button.type = "button";
       button.className = `${type}-btn`;
-      button.setAttribute("aria-label", ariaLabel[type]);
+      button.setAttribute("aria-label", issueLabel);
       button.setAttribute("aria-haspopup", "dialog");
       button.style.margin = `${inline ? "-10px" : ""} ${margin}`;
       buttonWrapper.appendChild(button);
@@ -6077,7 +6122,9 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
       }) : null;
       if (dismissBtn) dismissBtn.dataset.sa11yDismiss = id;
       const listItem = document.createElement("li");
-      listItem.innerHTML = `<h3>${ariaLabel[type]}</h3>`;
+      const heading = document.createElement("h3");
+      heading.textContent = issueLabel;
+      listItem.appendChild(heading);
       listItem.append(content, dismissBtn || "");
       Constants.Panel.pageIssuesList.prepend(listItem);
       Constants.Panel.pageIssues.classList.add("active");
@@ -6088,7 +6135,7 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
     connectedCallback() {
       const shadowRoot = this.attachShadow({ mode: "open" });
       const style = document.createElement("style");
-      style.innerHTML = tooltipStyles + sharedStyles;
+      style.textContent = tooltipStyles + sharedStyles;
       shadowRoot.appendChild(style);
       const template = State.results;
       const annotations = tippy(annotationButtons, {
@@ -6105,25 +6152,16 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
           const id = reference2.getRootNode().host.getAttribute("data-sa11y-annotation");
           const result = template.find((item) => String(item.id) === String(id));
           if (!result) return null;
-          const { element, type, content, dismiss, dismissAll, contrastDetails } = result;
+          const { element, type, content, issueLabel, dismiss, dismissAll, contrastDetails } = result;
           if (!element) return;
           const wrapper = document.createElement("div");
           wrapper.setAttribute("lang", Lang._("LANG_CODE"));
           wrapper.className = type;
           const dismissAllBtn = State.option.dismissAnnotations && State.option.dismissAll && typeof dismissAll === "string" && (type === "warning" || type === "good") ? `<button data-sa11y-dismiss='${id}' data-sa11y-dismiss-all type='button'>${Lang._("DISMISS_ALL")}</button>` : "";
           const dismissBtn = State.option.dismissAnnotations && (type === "warning" || type === "good") && dismiss ? `<button data-sa11y-dismiss='${id}' type='button'>${Lang._("DISMISS")}</button>` : "";
-          const validTypes = ["error", "warning", "good"];
-          if (validTypes.indexOf(type) === -1) {
-            throw Error(`Invalid type [${type}] for annotation`);
-          }
-          const ariaLabel = {
-            [validTypes[0]]: Lang._("ERROR"),
-            [validTypes[1]]: Lang._("WARNING"),
-            [validTypes[2]]: Lang._("GOOD")
-          };
           wrapper.innerHTML = `
           <button type='button' class='close-btn close-tooltip' aria-label='${Lang._("ALERT_CLOSE")}'></button>
-          <h2>${ariaLabel[type]}</h2>
+          <h2>${issueLabel}</h2>
           <div class="sa11y-content-body"></div>
           ${contrastDetails ? "<div data-sa11y-contrast-details></div>" : ""}
           <div class='dismiss-group'>
@@ -6247,7 +6285,7 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
       });
       const shadowRoot = this.attachShadow({ mode: "open" });
       const style = document.createElement("style");
-      style.innerHTML = tooltipStyles + sharedStyles;
+      style.textContent = tooltipStyles + sharedStyles;
       shadowRoot.appendChild(style);
       const keyboardShortcut2 = navigator.userAgent.indexOf("Mac") !== -1 ? '<span class="kbd">Option</span> + <span class="kbd">S</span>' : '<span class="kbd">Alt</span> + <span class="kbd">S</span>';
       tippy(Constants.Panel.skipButton, {
@@ -6325,6 +6363,16 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
           wrapper.innerHTML = sanitizeHTML(item.content);
           item.content = wrapper;
         }
+        const validTypes = ["error", "warning", "good"];
+        if (item.type && validTypes.indexOf(item.type) === -1) {
+          throw Error(`Invalid type [${item.type}] for annotation`);
+        }
+        const mapLabel = {
+          [validTypes[0]]: Lang._("ERROR"),
+          [validTypes[1]]: Lang._("WARNING"),
+          [validTypes[2]]: Lang._("GOOD")
+        };
+        item.issueLabel = mapLabel[item.type];
       })
     );
     if (!option.headless) syncUI();
@@ -7657,15 +7705,12 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
         const ariaHidden = $el.getAttribute("aria-hidden") === "true";
         const negativeTabindex = $el.getAttribute("tabindex") === "-1";
         const hidden = isElementHidden($el);
-        if (hidden || ariaHidden && negativeTabindex) {
-          return;
-        }
+        if (hidden || ariaHidden && negativeTabindex) return;
         const computeName = computeAccessibleName($el);
         const inputName = removeWhitespace(computeName);
         const alt = $el.getAttribute("alt");
         const type = $el.getAttribute("type");
         const hasTitle = $el.getAttribute("title");
-        const hasPlaceholder = $el.placeholder && $el.placeholder !== 0;
         const hasAria = $el.getAttribute("aria-label") || $el.getAttribute("aria-labelledby");
         if (type === "submit" || type === "button" || type === "hidden") {
           return;
@@ -7702,20 +7747,22 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
           }
           return;
         }
-        if (hasAria || hasTitle || hasPlaceholder) {
-          if (hasPlaceholder && State.option.checks.LABELS_PLACEHOLDER) {
-            State.results.push({
-              test: "LABELS_PLACEHOLDER",
-              element: $el,
-              type: State.option.checks.LABELS_PLACEHOLDER.type || "warning",
-              content: Lang.sprintf(
-                State.option.checks.LABELS_PLACEHOLDER.content || "LABELS_PLACEHOLDER"
-              ),
-              dismiss: prepareDismissal(`LABELS_PLACEHOLDER ${type + inputName}`),
-              dismissAll: State.option.checks.LABELS_PLACEHOLDER.dismissAll ? "LABELS_PLACEHOLDER" : false,
-              developer: State.option.checks.LABELS_PLACEHOLDER.developer || true
-            });
-          } else if (inputName.length === 0) {
+        const hasPlaceholder = $el.placeholder && $el.placeholder !== 0;
+        if (hasPlaceholder && State.option.checks.LABELS_PLACEHOLDER) {
+          State.results.push({
+            test: "LABELS_PLACEHOLDER",
+            element: $el,
+            type: State.option.checks.LABELS_PLACEHOLDER.type || "warning",
+            content: Lang.sprintf(
+              State.option.checks.LABELS_PLACEHOLDER.content || "LABELS_PLACEHOLDER"
+            ),
+            dismiss: prepareDismissal(`LABELS_PLACEHOLDER ${type + inputName}`),
+            dismissAll: State.option.checks.LABELS_PLACEHOLDER.dismissAll ? "LABELS_PLACEHOLDER" : false,
+            developer: State.option.checks.LABELS_PLACEHOLDER.developer || true
+          });
+        }
+        if (hasAria || hasTitle) {
+          if (inputName.length === 0) {
             if (State.option.checks.LABELS_MISSING_LABEL) {
               State.results.push({
                 test: "LABELS_MISSING_LABEL",
@@ -7751,25 +7798,27 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
           return;
         }
         const closestLabel = $el.closest("label");
-        const labelName = closestLabel ? removeWhitespace(computeAccessibleName(closestLabel)) : "";
+        const labelName = closestLabel ? computeAccessibleName(closestLabel) : "";
         if (closestLabel && labelName.length) return;
         const id = $el.getAttribute("id");
         if (id) {
-          if (!Elements.Found.Labels.some((label) => label.getAttribute("for") === id)) {
-            if (State.option.checks.LABELS_NO_FOR_ATTRIBUTE) {
-              State.results.push({
-                test: "LABELS_NO_FOR_ATTRIBUTE",
-                element: $el,
-                type: State.option.checks.LABELS_NO_FOR_ATTRIBUTE.type || "error",
-                content: Lang.sprintf(
-                  State.option.checks.LABELS_NO_FOR_ATTRIBUTE.content || "LABELS_NO_FOR_ATTRIBUTE",
-                  id
-                ),
-                dismiss: prepareDismissal(`LABELS_NO_FOR_ATTRIBUTE ${type + inputName}`),
-                dismissAll: State.option.checks.LABELS_NO_FOR_ATTRIBUTE.dismissAll ? "LABELS_NO_FOR_ATTRIBUTE" : false,
-                developer: State.option.checks.LABELS_NO_FOR_ATTRIBUTE.developer || true
-              });
-            }
+          const hasMatchingLabel = Elements.Found.Labels.some(
+            (label) => label.getAttribute("for") === id
+          );
+          if (hasMatchingLabel) return;
+          if (State.option.checks.LABELS_NO_FOR_ATTRIBUTE) {
+            State.results.push({
+              test: "LABELS_NO_FOR_ATTRIBUTE",
+              element: $el,
+              type: State.option.checks.LABELS_NO_FOR_ATTRIBUTE.type || "error",
+              content: Lang.sprintf(
+                State.option.checks.LABELS_NO_FOR_ATTRIBUTE.content || "LABELS_NO_FOR_ATTRIBUTE",
+                id
+              ),
+              dismiss: prepareDismissal(`LABELS_NO_FOR_ATTRIBUTE ${type + inputName}`),
+              dismissAll: State.option.checks.LABELS_NO_FOR_ATTRIBUTE.dismissAll ? "LABELS_NO_FOR_ATTRIBUTE" : false,
+              developer: State.option.checks.LABELS_NO_FOR_ATTRIBUTE.developer || true
+            });
           }
         } else if (State.option.checks.LABELS_MISSING_LABEL) {
           State.results.push({
@@ -8296,7 +8345,9 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
             }
             const secondPrefix = decrement(secondText);
             if (isAlphabetic) {
-              if (firstPrefix !== "A " && firstPrefix === secondPrefix) {
+              const firstChar = firstPrefix.charAt(0);
+              const secondChar = secondText.charAt(0);
+              if (decrement(secondChar) === firstChar) {
                 hit = true;
               }
             } else if (isEmoji && !lastHitWasEmoji) {
@@ -8900,8 +8951,9 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
             content = Lang.sprintf(
               State.option.checks.LANG_MISMATCH.content || "LANG_MISMATCH",
               getLanguageLabel(nodeLang),
-              getLanguageLabel(langAttribute)
-            ) + Lang.sprintf("LANG_TIP");
+              getLanguageLabel(langAttribute),
+              Lang._("LANG_TIP")
+            );
             variables = [nodeLang, langAttribute];
           } else if (node.nodeName === "IMG" && node?.alt?.length !== 0) {
             const alt = node.alt;
@@ -8911,16 +8963,18 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
               State.option.checks.LANG_OF_PARTS_ALT.content || "LANG_OF_PARTS_ALT",
               getLanguageLabel(nodeLang),
               getLanguageLabel(declared),
-              altText
-            ) + Lang.sprintf("LANG_TIP");
+              altText,
+              Lang._("LANG_TIP")
+            );
             variables = [nodeLang, declared, altText];
           } else {
             test = "LANG_OF_PARTS";
             content = Lang.sprintf(
               State.option.checks.LANG_OF_PARTS.content || "LANG_OF_PARTS",
               getLanguageLabel(declared),
-              getLanguageLabel(nodeLang)
-            ) + Lang.sprintf("LANG_TIP");
+              getLanguageLabel(nodeLang),
+              Lang._("LANG_TIP")
+            );
             variables = [declared, nodeLang];
           }
           element = node;
@@ -9031,7 +9085,7 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
         Constants.Panel.toggle.classList.remove("on");
         Constants.Panel.toggle.setAttribute("aria-expanded", "false");
         resetAll();
-        if (Constants.Panel.notifCount.innerHTML.trim().length === 0) {
+        if (Constants.Panel.notifCount.textContent.trim().length === 0) {
           Constants.Panel.notifBadge.style.display = "none";
         } else {
           Constants.Panel.notifBadge.style.display = "flex";

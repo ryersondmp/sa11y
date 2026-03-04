@@ -43,7 +43,7 @@ export default function checkLabels() {
             type: State.option.checks.LABELS_MISSING_IMAGE_INPUT.type || 'error',
             content: Lang.sprintf(
               State.option.checks.LABELS_MISSING_IMAGE_INPUT.content ||
-              'LABELS_MISSING_IMAGE_INPUT',
+                'LABELS_MISSING_IMAGE_INPUT',
             ),
             dismiss: Utils.prepareDismissal(`LABELS_MISSING_IMAGE_INPUT ${type + inputName}`),
             dismissAll: State.option.checks.LABELS_MISSING_IMAGE_INPUT.dismissAll
@@ -149,7 +149,9 @@ export default function checkLabels() {
       const id = $el.getAttribute('id');
       if (id) {
         // Has match.
-        const hasMatchingLabel = Elements.Found.Labels.some((label) => label.getAttribute('for') === id);
+        const hasMatchingLabel = Elements.Found.Labels.some(
+          (label) => label.getAttribute('for') === id,
+        );
         if (hasMatchingLabel) return;
 
         // Labels without a match.
