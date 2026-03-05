@@ -58,7 +58,7 @@ export function annotate(issue) {
       warning: 'data-sa11y-warning',
       good: 'data-sa11y-good',
     };
-    if (element && tagMap[type]) {
+    if (tagMap[type]) {
       element.setAttribute(tagMap[type], '');
     }
 
