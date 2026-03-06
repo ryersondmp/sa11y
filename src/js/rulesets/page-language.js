@@ -43,7 +43,8 @@ export function getLanguageDetector() {
 const getLanguageLabel = (lang) => {
   try {
     const canonicalLang = Intl.getCanonicalLocales(lang)[0];
-    const baseLang = new Intl.Locale(canonicalLang).language; const label = new Intl.DisplayNames(navigator.language, {
+    const baseLang = new Intl.Locale(canonicalLang).language;
+    const label = new Intl.DisplayNames(navigator.language, {
       type: 'language',
     }).of(baseLang);
 

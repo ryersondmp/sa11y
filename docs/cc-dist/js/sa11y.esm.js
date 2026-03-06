@@ -383,7 +383,7 @@ const Lang = {
       args.forEach((arg, index2) => {
         const replacement = el2.querySelector(`[data-arg="${index2}"]`);
         if (!replacement || arg === null) return;
-        const match = String(arg).match(/«sa11y-lang:([\w-]+)\|([^»]+)»/);
+        const match = String(arg).match(/{{langAttr:([\w-]+)\|([^}]+)}}/);
         if (match) replacement.setAttribute("lang", match[1]);
         replacement.textContent = match ? match[2] : arg;
       });
@@ -927,6 +927,7 @@ const allowedTags = [
   "sub",
   "summary",
   "sup",
+  "svg",
   "table",
   "tbody",
   "td",
@@ -8930,7 +8931,7 @@ const getLanguageLabel = (lang) => {
       type: "language"
     }).of(baseLang);
     const browserLang = primary(navigator.language);
-    return `«sa11y-lang:${browserLang}|${label}»`;
+    return `{{langAttr:${browserLang}|${label}}}`;
   } catch {
     return lang;
   }
