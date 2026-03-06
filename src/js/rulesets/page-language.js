@@ -43,10 +43,13 @@ export function getLanguageDetector() {
 const getLanguageLabel = (lang) => {
   try {
     const canonicalLang = Intl.getCanonicalLocales(lang)[0];
-    const baseLang = new Intl.Locale(canonicalLang).language;
-    return new Intl.DisplayNames(navigator.language, {
+    const baseLang = new Intl.Locale(canonicalLang).language; const label = new Intl.DisplayNames(navigator.language, {
       type: 'language',
     }).of(baseLang);
+
+    // sprintf will regex replace {{langAttr:}} with respective lang attribute and readable language label.
+    const browserLang = primary(navigator.language);
+    return `{{langAttr:${browserLang}|${label}}}`;
   } catch {
     return lang;
   }
@@ -249,7 +252,7 @@ export default async function checkPageLanguage() {
           content = Lang.sprintf(
             State.option.checks.LANG_MISMATCH.content || 'LANG_MISMATCH',
             getLanguageLabel(nodeLang),
-            getLanguageLabel(langAttribute)
+            getLanguageLabel(langAttribute),
           );
 
           // Append the tip node safely to the result.
@@ -267,7 +270,6 @@ export default async function checkPageLanguage() {
             getLanguageLabel(nodeLang),
             getLanguageLabel(declared),
             altText,
-            Lang._('LANG_TIP'),
           );
           variables = [nodeLang, declared, altText];
         } else {
@@ -277,7 +279,6 @@ export default async function checkPageLanguage() {
             State.option.checks.LANG_OF_PARTS.content || 'LANG_OF_PARTS',
             getLanguageLabel(declared),
             getLanguageLabel(nodeLang),
-            Lang._('LANG_TIP'),
           );
           variables = [declared, nodeLang];
         }
@@ -306,11 +307,16 @@ export default async function checkPageLanguage() {
 
   // Non-cached result.
   if (test) {
+    // Supplementary tip if message has an associated element.
+    const wrapper = document.createElement('div');
+    wrapper.append(content, ' ', Lang.sprintf('LANG_TIP'));
+
+    // Push result.
     State.results.push({
       element: element,
       test: test,
       type: State.option.checks[test].type || type,
-      content: content,
+      content: element ? wrapper : content,
       dismiss: dismiss,
       developer: State.option.checks[test].developer ?? false,
       cached: false,

@@ -22,9 +22,14 @@ const Lang = {
       // Inject the actual values as textContent.
       args.forEach((arg, index) => {
         const replacement = el.querySelector(`[data-arg="${index}"]`);
-        if (replacement && arg !== null) {
-          replacement.textContent = arg;
-        }
+        if (!replacement || arg === null) return;
+
+        // Super specific: but this is needed to meet Language of Parts for the tooltip content.
+        const match = String(arg).match(/{{langAttr:([\w-]+)\|([^}]+)}}/);
+        if (match) replacement.setAttribute('lang', match[1]);
+
+        // Always return user content via textContent.
+        replacement.textContent = match ? match[2] : arg;
       });
     }
     return el;

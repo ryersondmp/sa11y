@@ -386,9 +386,10 @@
         });
         args.forEach((arg, index2) => {
           const replacement = el2.querySelector(`[data-arg="${index2}"]`);
-          if (replacement && arg !== null) {
-            replacement.textContent = arg;
-          }
+          if (!replacement || arg === null) return;
+          const match = String(arg).match(/«sa11y-lang:([\w-]+)\|([^»]+)»/);
+          if (match) replacement.setAttribute("lang", match[1]);
+          replacement.textContent = match ? match[2] : arg;
         });
       }
       return el2;
@@ -832,6 +833,8 @@
   };
   function sanitizeURL(url2) {
     if (!url2 || typeof url2 !== "string") return BLANK_URL;
+    const isBase64Data = /^data:([a-z]+\/[a-z0-9-+.]+)?;base64,/i.test(url2.trim());
+    if (isBase64Data) return url2.trim();
     let charsToDecode;
     let decodedUrl = decodeURIs(url2.trim());
     do {
@@ -858,27 +861,144 @@
     }
     return backSanitized;
   }
+  const allowedTags = [
+    "a",
+    "abbr",
+    "address",
+    "article",
+    "aside",
+    "audio",
+    "b",
+    "bdo",
+    "blockquote",
+    "br",
+    "button",
+    "canvas",
+    "cite",
+    "code",
+    "data",
+    "dd",
+    "del",
+    "details",
+    "dfn",
+    "div",
+    "dl",
+    "dt",
+    "em",
+    "fieldset",
+    "figcaption",
+    "figure",
+    "footer",
+    "form",
+    "h1",
+    "h2",
+    "h3",
+    "h4",
+    "h5",
+    "h6",
+    "header",
+    "hr",
+    "i",
+    "iframe",
+    "img",
+    "input",
+    "ins",
+    "kbd",
+    "label",
+    "li",
+    "main",
+    "mark",
+    "meter",
+    "nav",
+    "noscript",
+    "ol",
+    "output",
+    "p",
+    "picture",
+    "pre",
+    "progress",
+    "q",
+    "rp",
+    "rt",
+    "s",
+    "samp",
+    "section",
+    "select",
+    "small",
+    "source",
+    "span",
+    "strong",
+    "sub",
+    "summary",
+    "sup",
+    "table",
+    "tbody",
+    "td",
+    "textarea",
+    "tfoot",
+    "th",
+    "thead",
+    "time",
+    "tr",
+    "track",
+    "u",
+    "ul",
+    "var",
+    "video",
+    "wbr"
+  ];
+  const attrWhitelist = {
+    a: ["href", "title", "target", "rel", "download"],
+    img: ["src", "alt", "title", "width", "height", "loading", "srcset", "sizes"],
+    iframe: [
+      "src",
+      "width",
+      "height",
+      "title",
+      "frameborder",
+      "allowfullscreen",
+      "loading",
+      "sandbox"
+    ],
+    details: ["open"],
+    ol: ["start", "type", "reversed"],
+    li: ["value"],
+    td: ["colspan", "rowspan"],
+    th: ["colspan", "rowspan", "scope"],
+    global: ["class", "id", "role", "lang", "dir", "name"]
+  };
   function sanitizeHTML(string) {
-    const doc = new DOMParser().parseFromString(string, "text/html");
-    const dangerousTags = "script, iframe, object, embed, applet, style";
-    doc.body.querySelectorAll(dangerousTags).forEach((node) => {
-      node.remove();
-    });
-    doc.body.querySelectorAll("*").forEach((node) => {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(string, "text/html");
+    const allElements = doc.body.querySelectorAll("*");
+    allElements.forEach((node) => {
+      const tag = node.tagName.toLowerCase();
+      if (!allowedTags.includes(tag)) {
+        node.remove();
+        return;
+      }
+      const allowedForThisTag = attrWhitelist[tag] || [];
+      const globals = attrWhitelist.global;
       [...node.attributes].forEach(({ name, value }) => {
-        const val = value.replace(/\s+/g, "").toLowerCase();
-        const isEvent = name.startsWith("on");
-        const isUrl = ["src", "href", "xlink:href"].includes(name);
-        const isPhishy = val.includes("javascript:") || val.includes("data:text/html") || val.includes("vbscript:");
-        if (isEvent || isUrl && isPhishy) {
+        const isAria = name.startsWith("aria-");
+        const isAllowed = allowedForThisTag.includes(name) || globals.includes(name) || isAria;
+        const isUrlAttr = ["src", "href", "srcset"].includes(name);
+        if (!isAllowed) {
           node.removeAttribute(name);
+        } else if (isUrlAttr) {
+          const cleanURL = sanitizeURL(value);
+          if (!cleanURL) {
+            node.removeAttribute(name);
+          } else {
+            node.setAttribute(name, cleanURL);
+          }
         }
       });
     });
     return doc.body.innerHTML;
   }
+  const baseIgnores = "noscript,script,style,audio,video,form,iframe";
   function fnIgnore(element, selectors = []) {
-    const baseIgnores = "noscript,script,style,audio,video,form,iframe";
     const ignoreQuery = selectors.length ? `${baseIgnores},${selectors.join(",")}` : baseIgnores;
     if (!element || element.nodeType !== Node.ELEMENT_NODE) {
       return element ? element.cloneNode(true) : null;
@@ -1790,8 +1910,8 @@ ${this.error.stack}
       li.appendChild(msgContainer);
       const ul = document.createElement("ul");
       if (issue.element) {
-        const allowedTags = ["IMG"];
-        if (allowedTags.includes(issue.element.tagName)) {
+        const allowedTags2 = ["IMG"];
+        if (allowedTags2.includes(issue.element.tagName)) {
           const previewLi = document.createElement("li");
           const strong = el("strong", { textContent: `${Lang._("PREVIEW")}: ` });
           previewLi.appendChild(strong);
@@ -6071,16 +6191,14 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
           return;
         }
       }
-      const tag = {
-        [type[0]]: "data-sa11y-error",
-        [type[1]]: "data-sa11y-warning",
-        [type[2]]: "data-sa11y-good"
+      const tagMap = {
+        error: "data-sa11y-error",
+        warning: "data-sa11y-warning",
+        good: "data-sa11y-good"
       };
-      [type].forEach(($el) => {
-        if (tag[$el]) {
-          element.setAttribute(tag[$el], "");
-        }
-      });
+      if (tagMap[type]) {
+        element.setAttribute(tagMap[type], "");
+      }
       const annotation = document.createElement("sa11y-annotation");
       annotation.setAttribute("data-sa11y-annotation", id);
       if (State.option.unitTestMode) {
@@ -8796,13 +8914,13 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
             createAlert(Lang.sprintf("LANG_UNSUPPORTED"));
             store.setItem(STORAGE_KEY, []);
           }
-          console.error(`Sa11y: ${Lang.sprintf("LANG_UNSUPPORTED")}`);
+          console.error(`Sa11y: ${Lang._("LANG_UNSUPPORTED")}`);
           return null;
         }
         return await globalThis.LanguageDetector.create();
       } catch {
         createAlert(Lang.sprintf("LANG_UNSUPPORTED"));
-        console.error(`Sa11y: ${Lang.sprintf("LANG_UNSUPPORTED")}`);
+        console.error(`Sa11y: ${Lang._("LANG_UNSUPPORTED")}`);
         return null;
       }
     })();
@@ -8812,12 +8930,13 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
     try {
       const canonicalLang = Intl.getCanonicalLocales(lang)[0];
       const baseLang = new Intl.Locale(canonicalLang).language;
-      const displayName = new Intl.DisplayNames(navigator.language, {
+      const label = new Intl.DisplayNames(navigator.language, {
         type: "language"
       }).of(baseLang);
-      return `<span lang="${navigator.language}">${displayName}</span>`;
+      const browserLang = primary(navigator.language);
+      return `«sa11y-lang:${browserLang}|${label}»`;
     } catch {
-      return Lang.sprintf(`<strong {C}>${lang}</strong>`);
+      return lang;
     }
   };
   const primary = (lang) => String(lang).toLowerCase().split("-")[0];
@@ -8867,17 +8986,22 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
     }
     if (cached && !isStale) {
       if (cached.test) {
-        const tip = cached.element ? Lang.sprintf("LANG_TIP") : "";
         const getElement = cached.element ? find(cached.element, "root")[0] : null;
         const processVariables = cached.variables.map((variable) => getLanguageLabel(variable));
+        const contentContainer = document.createElement("div");
+        const mainContent = Lang.sprintf(
+          State.option.checks[cached.test].content || [cached.test],
+          ...processVariables
+        );
+        contentContainer.append(mainContent);
+        if (cached.element) {
+          contentContainer.append(" ", Lang.sprintf("LANG_TIP"));
+        }
         State.results.push({
           element: getElement || null,
           test: cached.test,
           type: State.option.checks[cached.test].type || cached.type,
-          content: Lang.sprintf(
-            State.option.checks[cached.test].content || [cached.test],
-            ...processVariables
-          ) + tip,
+          content: contentContainer,
           dismiss: prepareDismissal(cached.test),
           developer: State.option.checks[cached.test].developer ?? false,
           confidence: cached.confidence,
@@ -8951,9 +9075,11 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
             content = Lang.sprintf(
               State.option.checks.LANG_MISMATCH.content || "LANG_MISMATCH",
               getLanguageLabel(nodeLang),
-              getLanguageLabel(langAttribute),
-              Lang._("LANG_TIP")
+              getLanguageLabel(langAttribute)
             );
+            const wrapper = document.createElement("div");
+            wrapper.append(content, " ", Lang.sprintf("LANG_TIP"));
+            content = wrapper;
             variables = [nodeLang, langAttribute];
           } else if (node.nodeName === "IMG" && node?.alt?.length !== 0) {
             const alt = node.alt;
@@ -8963,8 +9089,7 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
               State.option.checks.LANG_OF_PARTS_ALT.content || "LANG_OF_PARTS_ALT",
               getLanguageLabel(nodeLang),
               getLanguageLabel(declared),
-              altText,
-              Lang._("LANG_TIP")
+              altText
             );
             variables = [nodeLang, declared, altText];
           } else {
@@ -8972,8 +9097,7 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
             content = Lang.sprintf(
               State.option.checks.LANG_OF_PARTS.content || "LANG_OF_PARTS",
               getLanguageLabel(declared),
-              getLanguageLabel(nodeLang),
-              Lang._("LANG_TIP")
+              getLanguageLabel(nodeLang)
             );
             variables = [declared, nodeLang];
           }
@@ -8996,11 +9120,13 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
       }
     }
     if (test) {
+      const wrapper = document.createElement("div");
+      wrapper.append(content, " ", Lang.sprintf("LANG_TIP"));
       State.results.push({
         element,
         test,
         type: State.option.checks[test].type || type,
-        content,
+        content: element ? wrapper : content,
         dismiss,
         developer: State.option.checks[test].developer ?? false,
         cached: false,

@@ -111,8 +111,8 @@ export function annotate(issue) {
     // Modifies the annotation's parent container with overflow: hidden, making it visible and scrollable so content authors can access it.
     const ignoredElements = State.option.ignoreHiddenOverflow
       ? State.option.ignoreHiddenOverflow
-        .split(',')
-        .flatMap((selector) => [...document.querySelectorAll(selector)])
+          .split(',')
+          .flatMap((selector) => [...document.querySelectorAll(selector)])
       : [];
     const parent = findVisibleParent(element, 'overflow', 'hidden');
     if (parent && !ignoredElements.includes(parent)) {
@@ -123,9 +123,9 @@ export function annotate(issue) {
     const dismissBtn =
       State.option.dismissAnnotations && ['warning', 'good'].includes(type) && dismiss
         ? Object.assign(document.createElement('button'), {
-          type: 'button',
-          textContent: Lang._('DISMISS'),
-        })
+            type: 'button',
+            textContent: Lang._('DISMISS'),
+          })
         : null;
     if (dismissBtn) dismissBtn.dataset.sa11yDismiss = id;
 

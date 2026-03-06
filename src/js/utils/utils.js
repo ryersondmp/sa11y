@@ -202,9 +202,12 @@ const decodeURIs = (uri) => {
 export function sanitizeURL(url) {
   if (!url || typeof url !== 'string') return BLANK_URL;
 
+  // Quick bypass for legitimate base64 data URIs
+  const isBase64Data = /^data:([a-z]+\/[a-z0-9-+.]+)?;base64,/i.test(url.trim());
+  if (isBase64Data) return url.trim();
+
   let charsToDecode;
   let decodedUrl = decodeURIs(url.trim());
-
   do {
     decodedUrl = decodeHtmlCharacters(decodedUrl)
       .replace(htmlCtrlEntityRegex, '')
@@ -245,33 +248,150 @@ export function sanitizeURL(url) {
   return backSanitized;
 }
 
+const allowedTags = [
+  'a',
+  'abbr',
+  'address',
+  'article',
+  'aside',
+  'audio',
+  'b',
+  'bdo',
+  'blockquote',
+  'br',
+  'button',
+  'canvas',
+  'cite',
+  'code',
+  'data',
+  'dd',
+  'del',
+  'details',
+  'dfn',
+  'div',
+  'dl',
+  'dt',
+  'em',
+  'fieldset',
+  'figcaption',
+  'figure',
+  'footer',
+  'form',
+  'h1',
+  'h2',
+  'h3',
+  'h4',
+  'h5',
+  'h6',
+  'header',
+  'hr',
+  'i',
+  'iframe',
+  'img',
+  'input',
+  'ins',
+  'kbd',
+  'label',
+  'li',
+  'main',
+  'mark',
+  'meter',
+  'nav',
+  'noscript',
+  'ol',
+  'output',
+  'p',
+  'picture',
+  'pre',
+  'progress',
+  'q',
+  'rp',
+  'rt',
+  's',
+  'samp',
+  'section',
+  'select',
+  'small',
+  'source',
+  'span',
+  'strong',
+  'sub',
+  'summary',
+  'sup',
+  'svg',
+  'table',
+  'tbody',
+  'td',
+  'textarea',
+  'tfoot',
+  'th',
+  'thead',
+  'time',
+  'tr',
+  'track',
+  'u',
+  'ul',
+  'var',
+  'video',
+  'wbr',
+];
+const attrWhitelist = {
+  a: ['href', 'title', 'target', 'rel', 'download'],
+  img: ['src', 'alt', 'title', 'width', 'height', 'loading', 'srcset', 'sizes'],
+  iframe: [
+    'src',
+    'width',
+    'height',
+    'title',
+    'frameborder',
+    'allowfullscreen',
+    'loading',
+    'sandbox',
+  ],
+  details: ['open'],
+  ol: ['start', 'type', 'reversed'],
+  li: ['value'],
+  td: ['colspan', 'rowspan'],
+  th: ['colspan', 'rowspan', 'scope'],
+  global: ['class', 'id', 'role', 'lang', 'dir', 'name'],
+};
 /**
  * A lightweight method for sanitizes HTML strings.
  * @param {string} string - The raw HTML string to sanitize.
  * @returns {string} The sanitized HTML string.
- * Adapted from gomakethings.com/how-to-sanitize-html-strings-with-vanilla-js-to-reduce-your-risk-of-xss-attacks/
  */
 export function sanitizeHTML(string) {
-  const doc = new DOMParser().parseFromString(string, 'text/html');
-  const dangerousTags = 'script, iframe, object, embed, applet, style';
-  doc.body.querySelectorAll(dangerousTags).forEach((node) => {
-    node.remove();
-  });
-  doc.body.querySelectorAll('*').forEach((node) => {
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(string, 'text/html');
+  const allElements = doc.body.querySelectorAll('*');
+  allElements.forEach((node) => {
+    const tag = node.tagName.toLowerCase();
+    if (!allowedTags.includes(tag)) {
+      node.remove();
+      return;
+    }
+    const allowedForThisTag = attrWhitelist[tag] || [];
+    const globals = attrWhitelist.global;
     [...node.attributes].forEach(({ name, value }) => {
-      const val = value.replace(/\s+/g, '').toLowerCase();
-      const isEvent = name.startsWith('on');
-      const isUrl = ['src', 'href', 'xlink:href'].includes(name);
-      const isPhishy =
-        val.includes('javascript:') || val.includes('data:text/html') || val.includes('vbscript:');
-      if (isEvent || (isUrl && isPhishy)) {
+      const isAria = name.startsWith('aria-');
+      const isAllowed = allowedForThisTag.includes(name) || globals.includes(name) || isAria;
+      const isUrlAttr = ['src', 'href', 'srcset'].includes(name);
+      if (!isAllowed) {
         node.removeAttribute(name);
+      } else if (isUrlAttr) {
+        const cleanURL = sanitizeURL(value);
+        if (!cleanURL) {
+          node.removeAttribute(name);
+        } else {
+          node.setAttribute(name, cleanURL);
+        }
       }
     });
   });
   return doc.body.innerHTML;
 }
 
+const baseIgnores = 'noscript,script,style,audio,video,form,iframe';
 /**
  * Creates a clone of an element while ignoring specified elements or elements matching a selector.
  * @param {Element} element The element to clone.
@@ -279,7 +399,6 @@ export function sanitizeHTML(string) {
  * @returns {Element|null} The cloned element or null if the root itself is ignored.
  */
 export function fnIgnore(element, selectors = []) {
-  const baseIgnores = 'noscript,script,style,audio,video,form,iframe';
   const ignoreQuery = selectors.length ? `${baseIgnores},${selectors.join(',')}` : baseIgnores;
 
   // Safety check: if it's not an element, return a clone or null.
@@ -960,7 +1079,7 @@ export function validateLang(code, displayLangCode) {
   if (!langCache && typeof Intl !== 'undefined') {
     try {
       langCache = new Intl.DisplayNames([displayLangCode], { type: 'language', fallback: 'none' });
-    } catch {}
+    } catch { }
   }
 
   if (langCache) {
