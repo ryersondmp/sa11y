@@ -19,8 +19,11 @@ import { State } from '../core/state';
  * @param {...(Node|string)} children
  * @returns {HTMLElement}
  */
-function el(tag, props = {}, ...children) {
-  const node = document.createElement(tag);
+function el(tagOrNode, props = {}, ...children) {
+  const node = typeof tagOrNode === 'string'
+    ? document.createElement(tagOrNode)
+    : tagOrNode;
+
   for (const [key, val] of Object.entries(props)) {
     if (key === 'textContent') {
       node.textContent = val;
@@ -30,6 +33,7 @@ function el(tag, props = {}, ...children) {
       node.setAttribute(key, val);
     }
   }
+
   for (const child of children) {
     if (child == null) continue;
     if (typeof child === 'string') {
@@ -38,24 +42,8 @@ function el(tag, props = {}, ...children) {
       node.appendChild(child);
     }
   }
-  return node;
-}
 
-/**
- * Sanitize a DOM node or HTML string and return a sanitized DocumentFragment.
- * @param {Node|string} node
- * @returns {Promise<DocumentFragment>}
- */
-async function sanitizeToFragment(node) {
-  const wrapper = document.createElement('div');
-  wrapper.appendChild(node.cloneNode(true));
-  const raw = wrapper.innerHTML; // READ only.
-  const fragment = document.createDocumentFragment();
-  const safeHTML = Utils.sanitizeHTML(raw);
-  const parsed = new DOMParser().parseFromString(safeHTML, 'text/html');
-  const imported = document.importNode(parsed.body, true);
-  while (imported.firstChild) fragment.appendChild(imported.firstChild);
-  return fragment;
+  return node;
 }
 
 // Generate metadata used in both HTML and CSV exports.
@@ -88,10 +76,7 @@ function sanitizeCSVCell(value) {
 /* ------------------------------------------------------------------ */
 
 /**
- * Build a <fragment> containing an <h2> heading and an <ol> (or
- * <details>/<ol> for dismissed) for a list of issues.
- * All user-derived values are inserted via textContent or through
- * sanitizeToFragment (which returns a safe DocumentFragment).
+ * Build a <fragment> containing an <h2> heading and an <ol> (or <details>/<ol> for dismissed) for a list of issues.
  * @param {Array}  issues
  * @param {string} type  'error' | 'warning' | 'dismissed'
  * @returns {Promise<DocumentFragment|null>}
@@ -107,33 +92,29 @@ async function generateList(issues, type) {
 
   const fragment = document.createDocumentFragment();
   fragment.appendChild(el('h2', { textContent: typeLabels[type] }));
-
   const ol = el('ol', { className: type });
 
   for (const issue of issues) {
     const li = document.createElement('li');
-
-    // Issue message — sanitizeToFragment returns a DocumentFragment, appended directly.
     const msgContainer = document.createElement('div');
-    const msgFragment = await sanitizeToFragment(issue.content);
-    msgContainer.appendChild(msgFragment);
+    const importedBody = document.importNode(issue.content, true);
+
+    // 2. Append the contents of that body to your container
+    msgContainer.append(...importedBody.childNodes);
     li.appendChild(msgContainer);
 
     const ul = document.createElement('ul');
 
     if (issue.element) {
-      const allowedTags = ['IMG'];
 
       // Image preview — serialized & sanitized.
-      if (allowedTags.includes(issue.element.tagName)) {
+      if (['IMG'].includes(issue.element.tagName)) {
         const previewLi = document.createElement('li');
         const strong = el('strong', { textContent: `${Lang._('PREVIEW')}: ` });
         previewLi.appendChild(strong);
-
         const previewNode = await Utils.generateElementPreview(issue, true);
-        const previewFragment = await sanitizeToFragment(previewNode);
-        const previewContainer = document.createElement('span');
-        previewContainer.appendChild(previewFragment);
+        const previewContainer = document.createElement('div');
+        previewContainer.appendChild(previewNode);
         previewLi.appendChild(previewContainer);
         ul.appendChild(previewLi);
       }
@@ -164,27 +145,21 @@ async function generateList(issues, type) {
   // Dismissed issues are wrapped in a <details> element.
   if (type === 'dismissed') {
     const details = document.createElement('details');
+    details.className = 'warning';
     details.appendChild(
-      el('summary', {
-        textContent: Lang.sprintf('PANEL_DISMISS_BUTTON', State.counts.dismissed),
-      }),
+      el('summary', {}, Lang.sprintf('PANEL_DISMISS_BUTTON', State.counts.dismissed))
     );
     details.appendChild(ol);
     fragment.appendChild(details);
   } else {
     fragment.appendChild(ol);
   }
-
   return fragment;
 }
 
 /**
- * Build the full export HTML document using the DOM API.
- * User-supplied values (page title, URL, issue content) are never
- * interpolated directly into HTML strings — they go through textContent
- * or serializeNode. XMLSerializer produces the final string only once
- * the DOM tree is complete and trusted.
- */
+ * Build the full export HTML document using the DOM API. User-supplied values (page title, URL, issue content) are never directly into HTML strings — they go through textContent.
+*/
 async function generateHTMLTemplate() {
   const errors = State.results.filter((issue) => issue.type === 'error');
   const warnings = State.results.filter((issue) => issue.type === 'warning');

@@ -78,49 +78,6 @@ export function isElementVisuallyHiddenOrHidden(element) {
 }
 
 /**
- * Decodes/unescapes HTML entities back to their corresponding character.
- * @param {string} string The string.
- * @returns {string} Decoded string.
- */
-export function decodeHTML(string) {
-  if (!string) return '';
-  return string.replace(/&(#?[a-zA-Z0-9]+);/g, (match, entity) => {
-    switch (entity) {
-      case 'amp':
-        return '&';
-      case 'lt':
-        return '<';
-      case 'gt':
-        return '>';
-      case 'quot':
-        return "'";
-      case '#39':
-        return "'"; // Convert single quotes to actual single quotes.
-      default:
-        // For numeric entities, convert them back to the corresponding character.
-        if (entity.charAt(0) === '#') {
-          return String.fromCharCode(
-            entity.charAt(1) === 'x'
-              ? parseInt(entity.substr(2), 16)
-              : parseInt(entity.substr(1), 10),
-          );
-        }
-        return match;
-    }
-  });
-}
-
-/**
- * Strips HTML tags from a string.
- * @param {string} string The string.
- * @returns {string} String without any HTML tags.
- */
-export function stripHTMLtags(string) {
-  if (!string) return '';
-  return string.replace(/<[^>]*>/g, '');
-}
-
-/**
  * Removes ALL non-alphanumeric characters and normalizes whitespace. Accounts for non-Latin characters.
  * @param {string} string - The input text to be sanitized.
  * @returns {string} The sanitized and trimmed string.
@@ -131,17 +88,6 @@ export function stripAllSpecialCharacters(string) {
     .replace(/[^\p{L}\p{N}\s]/gu, '')
     .replace(/\s+/g, ' ')
     .trim();
-}
-
-/**
- * Encodes special characters with their corresponding HTML entities for safe escape.
- * @param {string} string The HTML string to encode.
- * @returns {string} The encoded HTML string with special characters replaced by their corresponding entities.
- * @link https://portswigger.net/web-security/cross-site-scripting/preventing
- */
-export function escapeHTML(string) {
-  if (!string) return '';
-  return string.replace(/[^\w. ]/gi, (c) => `&#${c.charCodeAt(0)};`);
 }
 
 /**

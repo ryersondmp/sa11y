@@ -284,7 +284,7 @@ export default function checkQA() {
       if (paragraph && paragraph.length <= 250) return;
 
       // Ok, it's most likely a fake heading.
-      addResult(possibleHeading, Utils.escapeHTML(text));
+      addResult(possibleHeading, text);
     };
 
     Elements.Found.Paragraphs.forEach((p) => {

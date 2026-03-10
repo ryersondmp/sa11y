@@ -99,7 +99,6 @@ export default function generateImageOutline() {
       const { element, type, developer, dismissedImage } = image;
       const ariaLabel = computeAriaLabel(element);
 
-      // Removed Utils.escapeHTML because textContent inherently protects against XSS
       const altText =
         ariaLabel === 'noAria' ? (element.getAttribute('alt') ?? '') : (ariaLabel ?? '');
 

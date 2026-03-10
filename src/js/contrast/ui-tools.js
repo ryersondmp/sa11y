@@ -9,7 +9,7 @@ import { convertToRGBA } from './convertColors';
  * @param {HTMLElement} container The tooltip container to inject the contrast colour pickers.
  */
 export function generateContrastTools(contrastDetails) {
-  const { sanitizedText, color, background, fontWeight, fontSize, ratio, textUnderline } =
+  const { previewText, color, background, fontWeight, fontSize, ratio, textUnderline } =
     contrastDetails;
 
   // Initialize variables.
@@ -50,7 +50,7 @@ export function generateContrastTools(contrastDetails) {
       <div id="contrast" class="badge">${Lang._('CONTRAST')}</div>
       <div id="value" class="badge">${displayedRatio}</div>
       <div id="good" class="badge good-contrast" hidden>${Lang._('GOOD')} <span class="good-icon"></span></div>
-      <div id="contrast-preview" style="color:${foregroundHex};${hasBackgroundColor ? `background:${backgroundHex};` : ''}${hasFontWeight + hasFontSize + textDecoration}">${sanitizedText}</div>
+      <div id="contrast-preview" style="color:${foregroundHex};${hasBackgroundColor ? `background:${backgroundHex};` : ''}${hasFontWeight + hasFontSize + textDecoration}"></div>
       <div id="color-pickers">
         <label for="fg-text">${Lang._('FG')} ${unknownFGText}
           <div id="fg-color-wrapper" ${unknownFG}>
@@ -63,6 +63,7 @@ export function generateContrastTools(contrastDetails) {
           </div>
         </label>
       </div>`;
+  contrastTools.querySelector('#contrast-preview').textContent = previewText;
   return contrastTools;
 }
 
@@ -222,7 +223,7 @@ export function initializeContrastTools(container, contrastDetails) {
       el.addEventListener('click', () => {
         action(el.textContent);
         updatePreview();
-        navigator.clipboard.writeText(el.textContent).catch(() => {});
+        navigator.clipboard.writeText(el.textContent).catch(() => { });
       });
     };
     bindSuggest('#suggest', (val) => {
@@ -256,11 +257,11 @@ export function generateColorSuggestion(contrastDetails) {
     Constants.Global.contrastAlgorithm === 'APCA'
       ? Contrast.suggestColorAPCA(color, background, fontWeight, fontSize)
       : Contrast.suggestColorWCAG(
-          color,
-          background,
-          isLargeText,
-          Constants.Global.contrastAlgorithm,
-        );
+        color,
+        background,
+        isLargeText,
+        Constants.Global.contrastAlgorithm,
+      );
 
   const adviceContainer = document.createElement('div');
   adviceContainer.id = 'advice';
