@@ -51,17 +51,6 @@ async function sanitizeToFragment(node) {
   wrapper.appendChild(node.cloneNode(true));
   const raw = wrapper.innerHTML; // READ only.
   const fragment = document.createDocumentFragment();
-
-  // Utilize brand new sanitizer API if it's available.
-  if (typeof window.Sanitizer === 'function') {
-    const sanitizer = new Sanitizer();
-    const target = document.createElement('div');
-    target.setHTML(raw, { sanitizer });
-    while (target.firstChild) fragment.appendChild(target.firstChild);
-    return fragment;
-  }
-
-  // DOMParser creates a completely separate document — no scripts execute.
   const safeHTML = Utils.sanitizeHTML(raw);
   const parsed = new DOMParser().parseFromString(safeHTML, 'text/html');
   const imported = document.importNode(parsed.body, true);
@@ -218,9 +207,7 @@ async function generateHTMLTemplate() {
   );
 
   // Page title.
-  const titleEl = doc.createElement('title');
-  titleEl.textContent = `${Lang._('RESULTS')}: ${meta.metaTitle}`;
-  doc.head.appendChild(titleEl);
+  doc.title = `${Lang._('RESULTS')}: ${meta.metaTitle}`;
 
   // Inject page styles.
   const styleEl = doc.createElement('style');

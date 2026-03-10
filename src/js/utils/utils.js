@@ -248,6 +248,7 @@ export function sanitizeURL(url) {
   return backSanitized;
 }
 
+// Sanitize allow list.
 const allowedTags = [
   'a',
   'abbr',
@@ -334,6 +335,7 @@ const allowedTags = [
   'var',
   'video',
   'wbr',
+  'path',
 ];
 const attrWhitelist = {
   a: ['href', 'title', 'target', 'rel', 'download'],
@@ -354,6 +356,7 @@ const attrWhitelist = {
   td: ['colspan', 'rowspan'],
   th: ['colspan', 'rowspan', 'scope'],
   global: ['class', 'id', 'role', 'lang', 'dir', 'name'],
+  path: ['d', 'fill', 'fill-rule'],
 };
 /**
  * A lightweight method for sanitizes HTML strings.
@@ -1079,7 +1082,7 @@ export function validateLang(code, displayLangCode) {
   if (!langCache && typeof Intl !== 'undefined') {
     try {
       langCache = new Intl.DisplayNames([displayLangCode], { type: 'language', fallback: 'none' });
-    } catch {}
+    } catch { }
   }
 
   if (langCache) {
