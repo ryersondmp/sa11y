@@ -231,6 +231,8 @@ export default {
       'Odkaz odkazuje na soubor PDF nebo soubor ke stažení (např. MP3, Zip, dokument Word) bez varování. Typ souboru uveďte v textu odkazu. Pokud se jedná o velký soubor, zvažte uvedení jeho velikosti.<hr><strong>Příklad:</strong> Výkonná zpráva (PDF, 3 MB)',
     LINK_IDENTICAL_NAME:
       'Odkaz má stejný text jako jiný odkaz, přestože odkazuje na jinou stránku. Více odkazů se stejným textem může způsobit zmatek u lidí, kteří používají čtečky obrazovky. <strong>Zvažte, zda následující odkaz nebude více popisný, abyste ho lépe odlišili od ostatních odkazů.</strong> <hr> <strong {B}>Přístupné jméno</strong> <strong {C}>%(TEXT)</strong>',
+    LINK_UNPRONOUNCEABLE:
+      'Text odkazu obsahuje pouze symboly. Pokud si myslíte, že je tento odkaz chybný kvůli chybě při kopírování/vkládání, zvažte jeho odstranění.',
 
     // Images
     ALT_UNPRONOUNCEABLE:

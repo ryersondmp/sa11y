@@ -403,7 +403,7 @@ export default function checkLinkText() {
             });
           }
         }
-      } else if (matchedSymbol) {
+      } else if (matchedSymbol && linkText.length > 1) {
         // If link contains a special character used as a CTA.
         if (State.option.checks.LINK_SYMBOLS) {
           State.results.push({
@@ -420,19 +420,24 @@ export default function checkLinkText() {
             developer: State.option.checks.LINK_SYMBOLS.developer || false,
           });
         }
-      } else if (isSingleSpecialChar && !titleAttr) {
+      } else if ((isSingleSpecialChar || matchedSymbol) && !titleAttr) {
         // Link is ONLY a period, comma, or special character.
-        if (State.option.checks.LINK_EMPTY) {
+        if (State.option.checks.LINK_UNPRONOUNCEABLE) {
           State.results.push({
-            test: 'LINK_EMPTY',
+            test: 'LINK_UNPRONOUNCEABLE',
             element: $el,
-            type: State.option.checks.LINK_EMPTY.type || 'error',
-            content: Lang.sprintf(State.option.checks.LINK_EMPTY.content || 'LINK_EMPTY'),
+            type: State.option.checks.LINK_UNPRONOUNCEABLE.type || 'error',
+            content: Lang.sprintf(
+              State.option.checks.LINK_UNPRONOUNCEABLE.content ||
+                Lang._('LINK_UNPRONOUNCEABLE') + Lang._('LINK_TIP'),
+            ),
             inline: true,
             position: 'afterend',
-            dismiss: Utils.prepareDismissal(`LINK_EMPTY ${href}`),
-            dismissAll: State.option.checks.LINK_EMPTY.dismissAll ? 'LINK_EMPTY' : false,
-            developer: State.option.checks.LINK_EMPTY.developer || false,
+            dismiss: Utils.prepareDismissal(`LINK_UNPRONOUNCEABLE ${href}`),
+            dismissAll: State.option.checks.LINK_UNPRONOUNCEABLE.dismissAll
+              ? 'LINK_UNPRONOUNCEABLE'
+              : false,
+            developer: State.option.checks.LINK_UNPRONOUNCEABLE.developer || false,
           });
         }
         return;

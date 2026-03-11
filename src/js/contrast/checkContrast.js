@@ -386,9 +386,9 @@ export default function checkContrast() {
             type: State.option.checks.CONTRAST_ERROR.type || 'error',
             content: Lang.sprintf(
               State.option.checks.CONTRAST_ERROR.content ||
-              (isWcag
-                ? `${Lang._('CONTRAST_ERROR')} ${Lang._(ratioRequirementKey)}`
-                : Lang._('CONTRAST_ERROR')),
+                (isWcag
+                  ? `${Lang._('CONTRAST_ERROR')} ${Lang._(ratioRequirementKey)}`
+                  : Lang._('CONTRAST_ERROR')),
               ratioToDisplay,
             ),
             dismiss: Utils.prepareDismissal(`CONTRAST_ERROR ${previewText}`),
@@ -406,9 +406,9 @@ export default function checkContrast() {
             type: State.option.checks.CONTRAST_INPUT.type || 'error',
             content: Lang.sprintf(
               State.option.checks.CONTRAST_INPUT.content ||
-              (isWcag
-                ? `${Lang._('CONTRAST_INPUT')} ${Lang._(ratioRequirementKey)}`
-                : Lang._('CONTRAST_INPUT')),
+                (isWcag
+                  ? `${Lang._('CONTRAST_INPUT')} ${Lang._(ratioRequirementKey)}`
+                  : Lang._('CONTRAST_INPUT')),
               ratio,
               ratioToDisplay,
             ),
@@ -427,9 +427,9 @@ export default function checkContrast() {
             type: State.option.checks.CONTRAST_PLACEHOLDER.type || 'error',
             content: Lang.sprintf(
               State.option.checks.CONTRAST_PLACEHOLDER.content ||
-              (isWcag
-                ? `${Lang._('CONTRAST_PLACEHOLDER')} ${Lang._(ratioRequirementKey)}`
-                : Lang._('CONTRAST_PLACEHOLDER')),
+                (isWcag
+                  ? `${Lang._('CONTRAST_PLACEHOLDER')} ${Lang._(ratioRequirementKey)}`
+                  : Lang._('CONTRAST_PLACEHOLDER')),
               ratioToDisplay,
             ),
             position: 'afterend',
@@ -451,15 +451,13 @@ export default function checkContrast() {
             type: State.option.checks.CONTRAST_PLACEHOLDER_UNSUPPORTED.type || 'warning',
             content: Lang.sprintf(
               State.option.checks.CONTRAST_PLACEHOLDER_UNSUPPORTED.content ||
-              (isWcag
-                ? `${Lang._('CONTRAST_PLACEHOLDER_UNSUPPORTED')} ${Lang._(ratioRequirementKey)}`
-                : Lang._('CONTRAST_PLACEHOLDER_UNSUPPORTED')),
+                (isWcag
+                  ? `${Lang._('CONTRAST_PLACEHOLDER_UNSUPPORTED')} ${Lang._(ratioRequirementKey)}`
+                  : Lang._('CONTRAST_PLACEHOLDER_UNSUPPORTED')),
               ratioToDisplay,
             ),
             position: 'afterend',
-            dismiss: Utils.prepareDismissal(
-              `CONTRAST_PLACEHOLDER_UNSUPPORTED ${$el.outerHTML}`,
-            ),
+            dismiss: Utils.prepareDismissal(`CONTRAST_PLACEHOLDER_UNSUPPORTED ${$el.outerHTML}`),
             dismissAll: State.option.checks.CONTRAST_PLACEHOLDER_UNSUPPORTED.dismissAll
               ? 'CONTRAST_PLACEHOLDER_UNSUPPORTED'
               : false,
@@ -477,9 +475,9 @@ export default function checkContrast() {
             type: State.option.checks.CONTRAST_ERROR_GRAPHIC.type || 'error',
             content: Lang.sprintf(
               State.option.checks.CONTRAST_ERROR_GRAPHIC.content ||
-              (State.option.contrastAlgorithm !== 'APCA'
-                ? `${Lang._('CONTRAST_ERROR_GRAPHIC')} ${Lang._('CONTRAST_TIP_GRAPHIC')}`
-                : Lang._('CONTRAST_ERROR_GRAPHIC')),
+                (State.option.contrastAlgorithm !== 'APCA'
+                  ? `${Lang._('CONTRAST_ERROR_GRAPHIC')} ${Lang._('CONTRAST_TIP_GRAPHIC')}`
+                  : Lang._('CONTRAST_ERROR_GRAPHIC')),
             ),
             dismiss: Utils.prepareDismissal(`CONTRAST_ERROR_GRAPHIC ${$el.outerHTML}`),
             dismissAll: State.option.checks.CONTRAST_ERROR_GRAPHIC.dismissAll
@@ -500,9 +498,9 @@ export default function checkContrast() {
             type: State.option.checks.CONTRAST_WARNING_GRAPHIC.type || 'warning',
             content: Lang.sprintf(
               State.option.checks.CONTRAST_WARNING_GRAPHIC.content ||
-              (State.option.contrastAlgorithm !== 'APCA'
-                ? `${Lang._('CONTRAST_WARNING_GRAPHIC')} ${Lang._('CONTRAST_TIP_GRAPHIC')}`
-                : Lang._('CONTRAST_WARNING_GRAPHIC')),
+                (State.option.contrastAlgorithm !== 'APCA'
+                  ? `${Lang._('CONTRAST_WARNING_GRAPHIC')} ${Lang._('CONTRAST_TIP_GRAPHIC')}`
+                  : Lang._('CONTRAST_WARNING_GRAPHIC')),
             ),
             dismiss: Utils.prepareDismissal(`CONTRAST_WARNING_GRAPHIC ${$el.outerHTML}`),
             dismissAll: State.option.checks.CONTRAST_WARNING_GRAPHIC.dismissAll
@@ -523,9 +521,9 @@ export default function checkContrast() {
             type: State.option.checks.CONTRAST_WARNING.type || 'warning',
             content: Lang.sprintf(
               State.option.checks.CONTRAST_WARNING.content ||
-              (isWcag
-                ? `${Lang._('CONTRAST_WARNING')} ${Lang._(ratioRequirementKey)}`
-                : Lang._('CONTRAST_WARNING')),
+                (isWcag
+                  ? `${Lang._('CONTRAST_WARNING')} ${Lang._(ratioRequirementKey)}`
+                  : Lang._('CONTRAST_WARNING')),
               ratioToDisplay,
             ),
             dismiss: Utils.prepareDismissal(`CONTRAST_WARNING ${previewText}`),
@@ -546,9 +544,9 @@ export default function checkContrast() {
             type: State.option.checks.CONTRAST_UNSUPPORTED.type || 'warning',
             content: Lang.sprintf(
               State.option.checks.CONTRAST_UNSUPPORTED.content ||
-              (isWcag
-                ? `${Lang._('CONTRAST_WARNING')} ${Lang._(ratioRequirementKey)}`
-                : Lang._('CONTRAST_WARNING')),
+                (isWcag
+                  ? `${Lang._('CONTRAST_WARNING')} ${Lang._(ratioRequirementKey)}`
+                  : Lang._('CONTRAST_WARNING')),
               ratioToDisplay,
             ),
             dismiss: Utils.prepareDismissal(`CONTRAST_UNSUPPORTED ${previewText}`),

@@ -169,6 +169,7 @@ const defaultOptions = {
       dismissAll: true
     },
     LINK_FILE_EXT: true,
+    LINK_UNPRONOUNCEABLE: true,
     // Form labels checks
     LABELS_MISSING_IMAGE_INPUT: true,
     LABELS_INPUT_RESET: true,
@@ -374,7 +375,7 @@ const Lang = {
   sprintf(string, ...args) {
     let transString = this._(string);
     transString = this.prepHTML(transString);
-    const el2 = document.createElement("div");
+    const el2 = document.createElement("span");
     el2.innerHTML = transString;
     if (args?.length) {
       args.forEach((_arg, index2) => {
@@ -752,42 +753,9 @@ function isElementVisuallyHiddenOrHidden(element) {
   }
   return isElementHidden(element);
 }
-function decodeHTML(string) {
-  if (!string) return "";
-  return string.replace(/&(#?[a-zA-Z0-9]+);/g, (match, entity) => {
-    switch (entity) {
-      case "amp":
-        return "&";
-      case "lt":
-        return "<";
-      case "gt":
-        return ">";
-      case "quot":
-        return "'";
-      case "#39":
-        return "'";
-      // Convert single quotes to actual single quotes.
-      default:
-        if (entity.charAt(0) === "#") {
-          return String.fromCharCode(
-            entity.charAt(1) === "x" ? parseInt(entity.substr(2), 16) : parseInt(entity.substr(1), 10)
-          );
-        }
-        return match;
-    }
-  });
-}
-function stripHTMLtags(string) {
-  if (!string) return "";
-  return string.replace(/<[^>]*>/g, "");
-}
 function stripAllSpecialCharacters(string) {
   if (!string) return "";
   return string.replace(/[^\p{L}\p{N}\s]/gu, "").replace(/\s+/g, " ").trim();
-}
-function escapeHTML(string) {
-  if (!string) return "";
-  return string.replace(/[^\w. ]/gi, (c) => `&#${c.charCodeAt(0)};`);
 }
 const invalidProtocolRegex = /^([^\w]*)(javascript|data|vbscript)/im;
 const htmlEntitiesRegex = /&#(\w+)(^\w|;)?/g;
@@ -942,7 +910,8 @@ const allowedTags = [
   "ul",
   "var",
   "video",
-  "wbr"
+  "wbr",
+  "path"
 ];
 const attrWhitelist = {
   a: ["href", "title", "target", "rel", "download"],
@@ -962,7 +931,8 @@ const attrWhitelist = {
   li: ["value"],
   td: ["colspan", "rowspan"],
   th: ["colspan", "rowspan", "scope"],
-  global: ["class", "id", "role", "lang", "dir", "name"]
+  global: ["class", "id", "role", "lang", "dir", "name"],
+  path: ["d", "fill", "fill-rule"]
 };
 function sanitizeHTML(string) {
   const parser = new DOMParser();
@@ -1434,10 +1404,8 @@ const Utils = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.definePropert
   addPulse,
   blobToBase64,
   debounce: debounce$2,
-  decodeHTML,
   dismissDigest,
   documentLoadingCheck,
-  escapeHTML,
   findVisibleParent,
   fnIgnore,
   generateElementPreview,
@@ -1464,7 +1432,6 @@ const Utils = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.definePropert
   standardizeHref,
   store,
   stripAllSpecialCharacters,
-  stripHTMLtags,
   supportsAnchorPositioning,
   trapFocus,
   truncateString,
@@ -1829,8 +1796,8 @@ function removeSkipBtnListeners() {
   Constants.Panel.skipButton.removeEventListener("click", handleSkipButtonHandler);
 }
 const exportResultsStyles = `:root{--font-primary:system-ui, "Segoe UI", roboto, helvetica, arial, sans-serif;--font-secondary:consolas, monaco, "Ubuntu Mono", "Liberation Mono", "Courier New", courier, monospace;--body-text:#333;--bg-primary:#fff;--bg-secondary:#f6f8fa;--bg-tertiary:#d7d7d7;--link-primary:#004c9b;--red-text:#d30017;--warning-text:#966f0d;--hr:#d7d7d74d;--sa11y-link-icon-svg:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 640 512'%3E%3Cpath d='M579.8 267.7c56.5-56.5 56.5-148 0-204.5c-50-50-128.8-56.5-186.3-15.4l-1.6 1.1c-14.4 10.3-17.7 30.3-7.4 44.6s30.3 17.7 44.6 7.4l1.6-1.1c32.1-22.9 76-19.3 103.8 8.6c31.5 31.5 31.5 82.5 0 114L422.3 334.8c-31.5 31.5-82.5 31.5-114 0c-27.9-27.9-31.5-71.8-8.6-103.8l1.1-1.6c10.3-14.4 6.9-34.4-7.4-44.6s-34.4-6.9-44.6 7.4l-1.1 1.6C206.5 251.2 213 330 263 380c56.5 56.5 148 56.5 204.5 0L579.8 267.7zM60.2 244.3c-56.5 56.5-56.5 148 0 204.5c50 50 128.8 56.5 186.3 15.4l1.6-1.1c14.4-10.3 17.7-30.3 7.4-44.6s-30.3-17.7-44.6-7.4l-1.6 1.1c-32.1 22.9-76 19.3-103.8-8.6C74 372 74 321 105.5 289.5L217.7 177.2c31.5-31.5 82.5-31.5 114 0c27.9 27.9 31.5 71.8 8.6 103.9l-1.1 1.6c-10.3 14.4-6.9 34.4 7.4 44.6s34.4 6.9 44.6-7.4l1.1-1.6C433.5 260.8 427 182 377 132c-56.5-56.5-148-56.5-204.5 0L60.2 244.3z'/%3E%3C/svg%3E")}@media (prefers-color-scheme:dark){:root{--body-text:#dde8ff;--bg-primary:#0a2051;--bg-secondary:#072c7c;--bg-tertiary:#0041c9;--link-primary:#64b2ff;--red-text:#ffa2a2;--warning-text:#ffdb59;--hr:#0041c94d}}*{margin:0;padding:0}article,aside,nav,ol,p,pre,section,ul{margin-bottom:1rem}body{max-width:70ch;font-family:var(--font-primary);color:var(--body-text);word-break:break-word;overflow-wrap:break-word;background:var(--bg-primary);margin:0 auto;padding:2rem;font-size:1rem;line-height:1.5;overflow-x:hidden}h1,h2,h3{color:var(--body-text);margin-bottom:8px;padding-top:.875rem;padding-bottom:2px;line-height:1}h1{font-size:2.25rem}h2{font-size:1.85rem}h3{font-size:1.55rem}a{color:var(--link-primary)}a:hover,a:focus{text-decoration:none}header,footer{background:var(--bg-secondary);padding:2rem calc(50vw - 50%)}header{border-bottom:1px solid var(--bg-tertiary);margin:-2rem calc(-50vw + 50%) 2rem}footer{text-align:center;border-top:1px solid var(--bg-tertiary);margin:3rem calc(-50vw + 50%) -2rem}header>:first-child{margin-top:0;padding-top:0}header>:last-child{margin-bottom:0}hr{background:var(--hr);opacity:1;border:none;height:1px;margin:10px 0;padding:0}code,samp,kbd,pre{font-family:var(--font-secondary);background:var(--bg-secondary);border:1px solid var(--bg-tertiary);border-radius:4px;padding:3px 6px;font-size:.9rem}pre{max-width:100%;padding:1rem 1.4rem;display:block;overflow:auto}pre code{font-size:inherit;color:inherit;background:inherit;border:0;margin:0;padding:0}code pre{font-size:inherit;color:inherit;background:inherit;border:0;margin:0;padding:0;display:inline}details{background:var(--bg-primary);border:2px solid var(--link-primary);border-radius:4px;padding:.6rem 1rem}summary{cursor:pointer;font-weight:700}details[open]{padding-bottom:.75rem}details[open] summary{margin-bottom:6px}details[open]>:last-child{margin-bottom:0}.two-columns{display:flex}.column{flex:1;margin-inline-end:20px}.count{max-width:220px}dl{padding-top:10px}.column dl{width:100%}dt{font-weight:700}dd{padding-bottom:10px}ul ul,ol ul,ul ol,ol ol{margin-bottom:0}ul li{margin-bottom:.5rem}ol,ul{padding-left:2rem}ol li:not(li li){margin-bottom:4rem}iframe,img{background:var(--bg-tertiary);border-radius:5px;max-width:50%;padding:5px;display:block}video,audio{border:0;display:block}.red-text{color:var(--red-text)}.visually-hidden{clip:rect(1px, 1px, 1px, 1px);white-space:nowrap;clip-path:inset(50%);border:0;width:1px;height:1px;padding:0;display:block;position:absolute;overflow:hidden}.badge{color:#fff;text-align:center;white-space:nowrap;vertical-align:baseline;border-radius:10px;outline:1px solid #0000;min-width:10px;padding:1px 5px 1.75px;font-size:14px;line-height:1;display:inline;font-weight:700!important}.error .colour{color:var(--red-text)}.error .badge{color:#fff;background:#d30017}.warning .colour{color:var(--warning-text)}.warning .badge{color:#fff;background:#966f0d}.link-icon{width:16px;height:16px;-webkit-mask:var(--sa11y-link-icon-svg) center no-repeat;mask:var(--sa11y-link-icon-svg) center no-repeat;background:#fff;margin-bottom:-3.5px;display:inline-block}li pre,li li pre,li li img,li li iframe,li li video,li li audio{margin-top:1rem}li li{margin-top:1rem;list-style:none}`;
-function el(tag, props = {}, ...children) {
-  const node = document.createElement(tag);
+function el(tagOrNode, props = {}, ...children) {
+  const node = typeof tagOrNode === "string" ? document.createElement(tagOrNode) : tagOrNode;
   for (const [key, val] of Object.entries(props)) {
     if (key === "textContent") {
       node.textContent = val;
@@ -1849,24 +1816,6 @@ function el(tag, props = {}, ...children) {
     }
   }
   return node;
-}
-async function sanitizeToFragment(node) {
-  const wrapper = document.createElement("div");
-  wrapper.appendChild(node.cloneNode(true));
-  const raw = wrapper.innerHTML;
-  const fragment = document.createDocumentFragment();
-  if (typeof window.Sanitizer === "function") {
-    const sanitizer = new Sanitizer();
-    const target = document.createElement("div");
-    target.setHTML(raw, { sanitizer });
-    while (target.firstChild) fragment.appendChild(target.firstChild);
-    return fragment;
-  }
-  const safeHTML = sanitizeHTML(raw);
-  const parsed = new DOMParser().parseFromString(safeHTML, "text/html");
-  const imported = document.importNode(parsed.body, true);
-  while (imported.firstChild) fragment.appendChild(imported.firstChild);
-  return fragment;
 }
 function generateMetaData() {
   const today = /* @__PURE__ */ new Date();
@@ -1902,20 +1851,18 @@ async function generateList(issues, type) {
   for (const issue of issues) {
     const li = document.createElement("li");
     const msgContainer = document.createElement("div");
-    const msgFragment = await sanitizeToFragment(issue.content);
-    msgContainer.appendChild(msgFragment);
+    const importedBody = document.importNode(issue.content, true);
+    msgContainer.append(...importedBody.childNodes);
     li.appendChild(msgContainer);
     const ul = document.createElement("ul");
     if (issue.element) {
-      const allowedTags2 = ["IMG"];
-      if (allowedTags2.includes(issue.element.tagName)) {
+      if (["IMG"].includes(issue.element.tagName)) {
         const previewLi = document.createElement("li");
         const strong = el("strong", { textContent: `${Lang._("PREVIEW")}: ` });
         previewLi.appendChild(strong);
         const previewNode = await generateElementPreview(issue, true);
-        const previewFragment = await sanitizeToFragment(previewNode);
-        const previewContainer = document.createElement("span");
-        previewContainer.appendChild(previewFragment);
+        const previewContainer = document.createElement("div");
+        previewContainer.appendChild(previewNode);
         previewLi.appendChild(previewContainer);
         ul.appendChild(previewLi);
       }
@@ -1939,10 +1886,9 @@ async function generateList(issues, type) {
   }
   if (type === "dismissed") {
     const details = document.createElement("details");
+    details.className = "warning";
     details.appendChild(
-      el("summary", {
-        textContent: Lang.sprintf("PANEL_DISMISS_BUTTON", State.counts.dismissed)
-      })
+      el("summary", {}, Lang.sprintf("PANEL_DISMISS_BUTTON", State.counts.dismissed))
     );
     details.appendChild(ol);
     fragment.appendChild(details);
@@ -1967,9 +1913,7 @@ async function generateHTMLTemplate() {
   doc.head.appendChild(
     el("meta", { name: "viewport", content: "width=device-width, initial-scale=1.0" })
   );
-  const titleEl = doc.createElement("title");
-  titleEl.textContent = `${Lang._("RESULTS")}: ${meta.metaTitle}`;
-  doc.head.appendChild(titleEl);
+  doc.title = `${Lang._("RESULTS")}: ${meta.metaTitle}`;
   const styleEl = doc.createElement("style");
   styleEl.textContent = exportResultsStyles;
   doc.head.appendChild(styleEl);
@@ -5915,7 +5859,7 @@ function extractColorFromString(cssValue) {
   return colors;
 }
 function generateContrastTools(contrastDetails) {
-  const { sanitizedText, color, background, fontWeight, fontSize, ratio, textUnderline } = contrastDetails;
+  const { previewText, color, background, fontWeight, fontSize, ratio, textUnderline } = contrastDetails;
   const hasBackgroundColor = background && background.type !== "image";
   const backgroundHex = hasBackgroundColor ? getHex(background) : "#000000";
   const foregroundHex = color ? getHex(color) : "#000000";
@@ -5939,7 +5883,7 @@ function generateContrastTools(contrastDetails) {
       <div id="contrast" class="badge">${Lang._("CONTRAST")}</div>
       <div id="value" class="badge">${displayedRatio}</div>
       <div id="good" class="badge good-contrast" hidden>${Lang._("GOOD")} <span class="good-icon"></span></div>
-      <div id="contrast-preview" style="color:${foregroundHex};${hasBackgroundColor ? `background:${backgroundHex};` : ""}${hasFontWeight + hasFontSize + textDecoration}">${sanitizedText}</div>
+      <div id="contrast-preview" style="color:${foregroundHex};${hasBackgroundColor ? `background:${backgroundHex};` : ""}${hasFontWeight + hasFontSize + textDecoration}"></div>
       <div id="color-pickers">
         <label for="fg-text">${Lang._("FG")} ${unknownFGText}
           <div id="fg-color-wrapper" ${unknownFG}>
@@ -5952,6 +5896,7 @@ function generateContrastTools(contrastDetails) {
           </div>
         </label>
       </div>`;
+  contrastTools.querySelector("#contrast-preview").textContent = previewText;
   return contrastTools;
 }
 function initializeContrastTools(container, contrastDetails) {
@@ -7293,7 +7238,7 @@ function checkLinkText() {
             });
           }
         }
-      } else if (matchedSymbol) {
+      } else if (matchedSymbol && linkText.length > 1) {
         if (State.option.checks.LINK_SYMBOLS) {
           State.results.push({
             test: "LINK_SYMBOLS",
@@ -7309,18 +7254,20 @@ function checkLinkText() {
             developer: State.option.checks.LINK_SYMBOLS.developer || false
           });
         }
-      } else if (isSingleSpecialChar && !titleAttr) {
-        if (State.option.checks.LINK_EMPTY) {
+      } else if ((isSingleSpecialChar || matchedSymbol) && !titleAttr) {
+        if (State.option.checks.LINK_UNPRONOUNCEABLE) {
           State.results.push({
-            test: "LINK_EMPTY",
+            test: "LINK_UNPRONOUNCEABLE",
             element: $el,
-            type: State.option.checks.LINK_EMPTY.type || "error",
-            content: Lang.sprintf(State.option.checks.LINK_EMPTY.content || "LINK_EMPTY"),
+            type: State.option.checks.LINK_UNPRONOUNCEABLE.type || "error",
+            content: Lang.sprintf(
+              State.option.checks.LINK_UNPRONOUNCEABLE.content || Lang._("LINK_UNPRONOUNCEABLE") + Lang._("LINK_TIP")
+            ),
             inline: true,
             position: "afterend",
-            dismiss: prepareDismissal(`LINK_EMPTY ${href}`),
-            dismissAll: State.option.checks.LINK_EMPTY.dismissAll ? "LINK_EMPTY" : false,
-            developer: State.option.checks.LINK_EMPTY.developer || false
+            dismiss: prepareDismissal(`LINK_UNPRONOUNCEABLE ${href}`),
+            dismissAll: State.option.checks.LINK_UNPRONOUNCEABLE.dismissAll ? "LINK_UNPRONOUNCEABLE" : false,
+            developer: State.option.checks.LINK_UNPRONOUNCEABLE.developer || false
           });
         }
         return;
@@ -7648,16 +7595,15 @@ function checkContrast() {
     const nodeText = fnIgnore(element, ["State.option:not(State.option:first-child)"]);
     const text = getText(nodeText);
     const truncatedText = truncateString(text, 80);
-    const sanitizedText = escapeHTML(truncatedText);
     let previewText;
     if (item.type === "placeholder" || item.type === "placeholder-unsupported") {
-      previewText = escapeHTML($el.placeholder);
+      previewText = $el.placeholder;
     } else if (item.type === "svg-error" || item.type === "svg-warning") {
       previewText = "";
     } else {
-      previewText = sanitizedText;
+      previewText = truncatedText;
     }
-    updatedItem.sanitizedText = previewText;
+    updatedItem.previewText = previewText;
     const isWcag = State.option.contrastAlgorithm === "AA" || State.option.contrastAlgorithm === "AAA";
     const normal = State.option.contrastAlgorithm === "AAA" ? "7:1" : "4.5:1";
     const large = State.option.contrastAlgorithm === "AAA" ? "4.5:1" : "3:1";
@@ -7674,7 +7620,7 @@ function checkContrast() {
               State.option.checks.CONTRAST_ERROR.content || (isWcag ? `${Lang._("CONTRAST_ERROR")} ${Lang._(ratioRequirementKey)}` : Lang._("CONTRAST_ERROR")),
               ratioToDisplay2
             ),
-            dismiss: prepareDismissal(`CONTRAST_ERROR ${sanitizedText}`),
+            dismiss: prepareDismissal(`CONTRAST_ERROR ${previewText}`),
             dismissAll: State.option.checks.CONTRAST_ERROR.dismissAll ? "CONTRAST_ERROR" : false,
             developer: State.option.checks.CONTRAST_ERROR.developer || false,
             contrastDetails: updatedItem
@@ -7683,7 +7629,6 @@ function checkContrast() {
         break;
       case "input":
         if (State.option.checks.CONTRAST_INPUT) {
-          const sanitizedInput = sanitizeHTML($el.outerHTML);
           State.results.push({
             test: "CONTRAST_INPUT",
             element,
@@ -7693,7 +7638,7 @@ function checkContrast() {
               ratio,
               ratioToDisplay2
             ),
-            dismiss: prepareDismissal(`CONTRAST_INPUT ${sanitizedInput}`),
+            dismiss: prepareDismissal(`CONTRAST_INPUT ${$el.outerHTML}`),
             dismissAll: State.option.checks.CONTRAST_INPUT.dismissAll ? "CONTRAST_INPUT" : false,
             developer: State.option.checks.CONTRAST_INPUT.developer || true,
             contrastDetails: updatedItem
@@ -7702,7 +7647,6 @@ function checkContrast() {
         break;
       case "placeholder":
         if (State.option.checks.CONTRAST_PLACEHOLDER) {
-          const sanitizedPlaceholder = sanitizeHTML($el.outerHTML);
           State.results.push({
             test: "CONTRAST_PLACEHOLDER",
             element: $el,
@@ -7712,7 +7656,7 @@ function checkContrast() {
               ratioToDisplay2
             ),
             position: "afterend",
-            dismiss: prepareDismissal(`CONTRAST_PLACEHOLDER ${sanitizedPlaceholder}`),
+            dismiss: prepareDismissal(`CONTRAST_PLACEHOLDER ${$el.outerHTML}`),
             dismissAll: State.option.checks.CONTRAST_PLACEHOLDER.dismissAll ? "CONTRAST_PLACEHOLDER" : false,
             developer: State.option.checks.CONTRAST_PLACEHOLDER.developer || true,
             contrastDetails: updatedItem
@@ -7721,7 +7665,6 @@ function checkContrast() {
         break;
       case "placeholder-unsupported":
         if (State.option.checks.CONTRAST_PLACEHOLDER_UNSUPPORTED) {
-          const sanitizedPlaceholder = sanitizeHTML($el.outerHTML);
           State.results.push({
             test: "CONTRAST_PLACEHOLDER_UNSUPPORTED",
             element: $el,
@@ -7731,9 +7674,7 @@ function checkContrast() {
               ratioToDisplay2
             ),
             position: "afterend",
-            dismiss: prepareDismissal(
-              `CONTRAST_PLACEHOLDER_UNSUPPORTED ${sanitizedPlaceholder}`
-            ),
+            dismiss: prepareDismissal(`CONTRAST_PLACEHOLDER_UNSUPPORTED ${$el.outerHTML}`),
             dismissAll: State.option.checks.CONTRAST_PLACEHOLDER_UNSUPPORTED.dismissAll ? "CONTRAST_PLACEHOLDER_UNSUPPORTED" : false,
             developer: State.option.checks.CONTRAST_PLACEHOLDER_UNSUPPORTED.developer || true,
             contrastDetails: updatedItem
@@ -7742,16 +7683,14 @@ function checkContrast() {
         break;
       case "svg-error":
         if (State.option.checks.CONTRAST_ERROR_GRAPHIC) {
-          const sanitizedSVG = sanitizeHTML($el.outerHTML);
           State.results.push({
             test: "CONTRAST_ERROR_GRAPHIC",
             element: $el,
             type: State.option.checks.CONTRAST_ERROR_GRAPHIC.type || "error",
-            // No trailing variable needed since the graphic tip is just static text
             content: Lang.sprintf(
               State.option.checks.CONTRAST_ERROR_GRAPHIC.content || (State.option.contrastAlgorithm !== "APCA" ? `${Lang._("CONTRAST_ERROR_GRAPHIC")} ${Lang._("CONTRAST_TIP_GRAPHIC")}` : Lang._("CONTRAST_ERROR_GRAPHIC"))
             ),
-            dismiss: prepareDismissal(`CONTRAST_ERROR_GRAPHIC ${sanitizedSVG}`),
+            dismiss: prepareDismissal(`CONTRAST_ERROR_GRAPHIC ${$el.outerHTML}`),
             dismissAll: State.option.checks.CONTRAST_ERROR_GRAPHIC.dismissAll ? "CONTRAST_ERROR_GRAPHIC" : false,
             developer: State.option.checks.CONTRAST_ERROR_GRAPHIC.developer || true,
             contrastDetails: updatedItem,
@@ -7761,7 +7700,6 @@ function checkContrast() {
         break;
       case "svg-warning":
         if (State.option.checks.CONTRAST_WARNING_GRAPHIC) {
-          const sanitizedSVG = sanitizeHTML($el.outerHTML);
           State.results.push({
             test: "CONTRAST_WARNING_GRAPHIC",
             element: $el,
@@ -7769,7 +7707,7 @@ function checkContrast() {
             content: Lang.sprintf(
               State.option.checks.CONTRAST_WARNING_GRAPHIC.content || (State.option.contrastAlgorithm !== "APCA" ? `${Lang._("CONTRAST_WARNING_GRAPHIC")} ${Lang._("CONTRAST_TIP_GRAPHIC")}` : Lang._("CONTRAST_WARNING_GRAPHIC"))
             ),
-            dismiss: prepareDismissal(`CONTRAST_WARNING_GRAPHIC ${sanitizedSVG}`),
+            dismiss: prepareDismissal(`CONTRAST_WARNING_GRAPHIC ${$el.outerHTML}`),
             dismissAll: State.option.checks.CONTRAST_WARNING_GRAPHIC.dismissAll ? "CONTRAST_WARNING_GRAPHIC" : false,
             developer: State.option.checks.CONTRAST_WARNING_GRAPHIC.developer || true,
             contrastDetails: updatedItem,
@@ -7787,7 +7725,7 @@ function checkContrast() {
               State.option.checks.CONTRAST_WARNING.content || (isWcag ? `${Lang._("CONTRAST_WARNING")} ${Lang._(ratioRequirementKey)}` : Lang._("CONTRAST_WARNING")),
               ratioToDisplay2
             ),
-            dismiss: prepareDismissal(`CONTRAST_WARNING ${sanitizedText}`),
+            dismiss: prepareDismissal(`CONTRAST_WARNING ${previewText}`),
             dismissAll: State.option.checks.CONTRAST_WARNING.dismissAll ? "CONTRAST_WARNING" : false,
             developer: State.option.checks.CONTRAST_WARNING.developer || false,
             contrastDetails: updatedItem
@@ -7804,7 +7742,7 @@ function checkContrast() {
               State.option.checks.CONTRAST_UNSUPPORTED.content || (isWcag ? `${Lang._("CONTRAST_WARNING")} ${Lang._(ratioRequirementKey)}` : Lang._("CONTRAST_WARNING")),
               ratioToDisplay2
             ),
-            dismiss: prepareDismissal(`CONTRAST_UNSUPPORTED ${sanitizedText}`),
+            dismiss: prepareDismissal(`CONTRAST_UNSUPPORTED ${previewText}`),
             dismissAll: State.option.checks.CONTRAST_UNSUPPORTED.dismissAll ? "CONTRAST_UNSUPPORTED" : false,
             developer: State.option.checks.CONTRAST_UNSUPPORTED.developer || false,
             contrastDetails: updatedItem
@@ -8416,7 +8354,7 @@ function checkQA() {
       if (text.length < 3 || text.length > 120 || /[.:;?!"']/.test(text)) return;
       const paragraph = fnIgnore(p, ["strong", "b"]).textContent.trim();
       if (paragraph && paragraph.length <= 250) return;
-      addResult(possibleHeading, escapeHTML(text));
+      addResult(possibleHeading, text);
     };
     Elements.Found.Paragraphs.forEach((p) => {
       computeLargeParagraphs(p);

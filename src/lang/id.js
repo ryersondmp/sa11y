@@ -228,6 +228,8 @@ export default {
       'Tautan mengarah ke PDF atau file yang dapat diunduh (mis. MP3, Zip, Word Doc) tanpa peringatan. Tunjukkan jenis file di dalam teks tautan. Jika file berukuran besar, pertimbangkan untuk menyertakan ukuran file tersebut. <hr> <strong>Contoh:</strong> Laporan Eksekutif (PDF, 3MB)',
     LINK_IDENTICAL_NAME:
       'Tautan memiliki teks yang sama dengan tautan lain, meskipun mengarah ke halaman yang berbeda. Beberapa tautan dengan teks yang sama dapat menyebabkan kebingungan bagi orang yang menggunakan pembaca layar. <strong>Pertimbangkan untuk membuat tautan berikut ini lebih deskriptif untuk membantu membedakannya dari tautan lain.</strong> <hr> <strong {B}>Nama yang dapat diakses</strong> <strong {C}>%(TEXT)</strong>',
+    LINK_UNPRONOUNCEABLE:
+      'Teks tautan hanya berisi simbol. Jika menurut Anda tautan ini salah karena bug salin/tempel, pertimbangkan untuk menghapusnya.',
 
     // Images
     ALT_UNPRONOUNCEABLE:

@@ -231,6 +231,8 @@ export default {
       'Link peger på en PDF eller en downloadbar fil (f.eks. MP3, Zip, Word Doc) uden advarsel. Angiv filtypen i linkteksten. Hvis det er en stor fil, kan du overveje at inkludere filstørrelsen. <hr> <strong>Eksempel:</strong> Executive Report (PDF, 3MB)',
     LINK_IDENTICAL_NAME:
       'Linket har samme tekst som et andet link, selvom det peger på en anden side. Flere links med samme tekst kan skabe forvirring for folk, der bruger skærmlæsere. <strong>Overvej at gøre følgende link mere beskrivende for at hjælpe med at skelne det fra andre links.</strong> <hr> <strong {B}>Tilgængeligt navn</strong> <strong {C}>%(TEXT)</strong>',
+    LINK_UNPRONOUNCEABLE:
+      'Linktekst indeholder kun symboler. Hvis du mener, at dette link er en fejl på grund af en kopier/sæt ind-fejl, bør du overveje at slette det.',
 
     // Images
     ALT_UNPRONOUNCEABLE:

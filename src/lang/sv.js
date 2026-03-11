@@ -248,6 +248,8 @@ export default {
       'Länken pekar till en PDF eller nedladdningsbar fil (t.ex. MP3, Zip, Word Doc) utan förvarning. Ange filtypen i länktexten. Om det är en stor fil, överväg att ta med filstorleken. <hr> <strong>Exempel:</strong> Verkställande rapport (PDF, 3MB)',
     LINK_IDENTICAL_NAME:
       'Länken har identisk text som en annan länk, även om den pekar på en annan sida. Flera länkar med samma text kan orsaka förvirring för personer som använder skärmläsare. <strong>Överväg att göra följande länk mer beskrivande för att hjälpa till att skilja den från andra länkar.</strong> <hr> <strong {B}>Tillgängligt namn</strong> <strong {C}>%(TEXT)</strong>',
+    LINK_UNPRONOUNCEABLE:
+      'Länktexten innehåller endast symboler. Om du tror att den här länken är ett fel på grund av en kopiera/klistra in-bugg, bör du överväga att ta bort den.',
 
     // Images
     ALT_UNPRONOUNCEABLE:

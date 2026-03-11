@@ -228,6 +228,8 @@ export default {
       'Lenken peker til en PDF-fil eller en nedlastbar fil (f.eks. MP3, Zip, Word-dokument) uten advarsel. Oppgi filtypen i lenketeksten. Hvis det er en stor fil, bør du vurdere å inkludere filstørrelsen. <hr> <strong>Eksempel:</strong> Executive Report (PDF, 3 MB)',
     LINK_IDENTICAL_NAME:
       'Lenken har samme tekst som en annen lenke, selv om den peker til en annen side. Flere lenker med samme tekst kan skape forvirring for personer som bruker skjermlesere. <strong>Vurder å gjøre følgende lenke mer beskrivende for å skille den fra andre lenker.</strong> <hr> <strong {B}>Tilgjengelig navn</strong> <strong {C}>%(TEXT)</strong>',
+    LINK_UNPRONOUNCEABLE:
+      'Lenketeksten inneholder bare symboler. Hvis du tror denne lenken er en feil som skyldes en kopier/lim inn-feil, bør du vurdere å slette den.',
 
     // Images
     ALT_UNPRONOUNCEABLE:

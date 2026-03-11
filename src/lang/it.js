@@ -228,6 +228,8 @@ export default {
       'Il link punta a un PDF o a un file scaricabile (ad es. MP3, Zip, Word Doc) senza alcun avviso. Indicate il tipo di file nel testo del link. Se si tratta di un file di grandi dimensioni, considerate la possibilità di includere la dimensione del file. <hr> <strong>Esempio:</strong> Relazione esecutiva (PDF, 3MB)',
     LINK_IDENTICAL_NAME:
       'Il link ha lo stesso testo di un altro link, anche se punta a una pagina diversa. Più link con lo stesso testo possono creare confusione per le persone che utilizzano gli screen reader. <strong>Considerate di rendere il seguente link più descrittivo per aiutarlo a distinguersi dagli altri link.</strong> <hr> <strong {B}>Nome accessibile</strong> <strong {C}>%(TEXT)</strong>',
+    LINK_UNPRONOUNCEABLE:
+      'Il testo del collegamento contiene solo simboli. Se ritieni che questo collegamento sia un errore dovuto a un bug di copia/incolla, valuta di eliminarlo.',
 
     // Images
     ALT_UNPRONOUNCEABLE:

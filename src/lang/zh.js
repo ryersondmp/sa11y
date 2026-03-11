@@ -226,6 +226,8 @@ export default {
       '链接指向PDF或可下载的文件 (如MP3、Zip、Word Doc) , 而没有警告。在链接文本中指出文件类型。如果是大文件, 可以考虑包括文件大小。<hr> <strong>示例:</strong>执行报告 (PDF, 3MB) 。',
     LINK_IDENTICAL_NAME:
       '链接的文字与另一个链接相同, 但它指向不同的页面。<strong>考虑使以下链接更具描述性, 以帮助将其与其他链接区分开来。</strong> <hr> <strong {B}>可访问名称</strong> <strong {C}>%(TEXT)</strong>',
+    LINK_UNPRONOUNCEABLE:
+      '链接文本仅包含符号。如果您认为此链接由于复制/粘贴错误而出现异常，请考虑将其删除。',
 
     // Images
     ALT_UNPRONOUNCEABLE:

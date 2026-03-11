@@ -230,6 +230,8 @@ export default {
       'A link figyelmeztetés nélkül PDF vagy letölthető fájlra (pl. MP3, Zip, Word Doc) mutat. A hivatkozás szövegében tüntesse fel a fájl típusát. Ha nagyméretű fájlról van szó, fontolja meg a fájlméret feltüntetését. <hr> <strong>Példa:</strong> Vezetői jelentés (PDF, 3MB)',
     LINK_IDENTICAL_NAME:
       'A link szövege megegyezik egy másik link szövegével, bár egy másik oldalra mutat. A több azonos szövegű hivatkozás zavart okozhat a képernyőolvasót használó emberek számára. <strong>Figyeljen arra, hogy a következő hivatkozás leíróbb legyen, hogy jobban megkülönböztethető legyen a többi hivatkozástól.</strong> <hr> <strong {B}>Hozzáférhető név</strong> <strong {C}>%(TEXT)</strong>',
+    LINK_UNPRONOUNCEABLE:
+      'A hivatkozás szövege csak szimbólumokat tartalmaz. Ha úgy gondolja, hogy ez a hivatkozás másolási/beillesztési hiba miatt hibás, fontolja meg a törlését.',
 
     // Images
     ALT_UNPRONOUNCEABLE:

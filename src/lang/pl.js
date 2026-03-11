@@ -230,6 +230,8 @@ export default {
       'Łącze wskazuje  bez ostrzeżenia na plik PDF lub plik do pobrania (np. MP3, zip, doc). Wskaż typ pliku w tekście łącza. Jeśli jest to duży plik, rozważ podanie jego rozmiaru. <hr> <strong>Przykład:</strong> Raport końcowy (PDF, 3MB)',
     LINK_IDENTICAL_NAME:
       'Łącze ma identyczny tekst jak inne łącze, choć wskazuje na inną stronę. Wiele łączy z takim samym tekstem może powodować zamieszanie u osób korzystających z czytników ekranu. <strong>Rozważ nadanie poniższemu łączu bardziej opisowego charakteru, aby odróżnić je od innych łączy.</strong> <hr> <strong {B}>Dostępna nazwa</strong> <strong {C}>%(TEXT)</strong>',
+    LINK_UNPRONOUNCEABLE:
+      'Tekst linku zawiera tylko symbole. Jeśli uważasz, że ten link jest błędem wynikającym z kopiowania/wklejania, rozważ jego usunięcie.',
 
     // Images
     ALT_UNPRONOUNCEABLE:

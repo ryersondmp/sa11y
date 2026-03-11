@@ -20,9 +20,7 @@ import { State } from '../core/state';
  * @returns {HTMLElement}
  */
 function el(tagOrNode, props = {}, ...children) {
-  const node = typeof tagOrNode === 'string'
-    ? document.createElement(tagOrNode)
-    : tagOrNode;
+  const node = typeof tagOrNode === 'string' ? document.createElement(tagOrNode) : tagOrNode;
 
   for (const [key, val] of Object.entries(props)) {
     if (key === 'textContent') {
@@ -106,7 +104,6 @@ async function generateList(issues, type) {
     const ul = document.createElement('ul');
 
     if (issue.element) {
-
       // Image preview — serialized & sanitized.
       if (['IMG'].includes(issue.element.tagName)) {
         const previewLi = document.createElement('li');
@@ -147,7 +144,7 @@ async function generateList(issues, type) {
     const details = document.createElement('details');
     details.className = 'warning';
     details.appendChild(
-      el('summary', {}, Lang.sprintf('PANEL_DISMISS_BUTTON', State.counts.dismissed))
+      el('summary', {}, Lang.sprintf('PANEL_DISMISS_BUTTON', State.counts.dismissed)),
     );
     details.appendChild(ol);
     fragment.appendChild(details);
@@ -159,7 +156,7 @@ async function generateList(issues, type) {
 
 /**
  * Build the full export HTML document using the DOM API. User-supplied values (page title, URL, issue content) are never directly into HTML strings — they go through textContent.
-*/
+ */
 async function generateHTMLTemplate() {
   const errors = State.results.filter((issue) => issue.type === 'error');
   const warnings = State.results.filter((issue) => issue.type === 'warning');

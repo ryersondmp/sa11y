@@ -225,6 +225,8 @@ export default {
       'Linkki osoittaa PDF-tiedostoon tai ladattavaan tiedostoon (esim. MP3, Zip, Word Doc) ilman varoitusta. Ilmoita tiedostotyyppi linkkitekstissä. Jos kyseessä on suuri tiedosto, harkitse tiedoston koon ilmoittamista. <hr> <strong>Esimerkki:</strong> Toimitusjohtajan raportti (PDF, 3MB)',
     LINK_IDENTICAL_NAME:
       'Linkillä on sama teksti kuin toisella linkillä, vaikka se osoittaa eri sivulle. Useat linkit, joissa on sama teksti, voivat aiheuttaa sekaannusta ruudunlukuohjelmia käyttäville henkilöille. <strong>Harkitse seuraavan linkin tekemistä kuvaavammaksi, jotta se erottuu paremmin muista linkeistä.</strong> <hr> <strong {B}>Saavutettava nimi</strong> <strong {C}>%(TEXT)</strong>',
+    LINK_UNPRONOUNCEABLE:
+      'Linkin teksti sisältää vain symboleja. Jos uskot, että tämä linkki on kopiointi-/liittämisvirhe, harkitse sen poistamista.',
 
     // Images
     ALT_UNPRONOUNCEABLE:

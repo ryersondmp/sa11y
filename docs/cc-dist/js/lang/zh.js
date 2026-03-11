@@ -197,6 +197,7 @@ const zh = {
     LINK_NEW_TAB: '链接在新的标签或窗口中打开, 没有警告。这样做可能会使人迷失方向, 特别是对那些对视觉内容有感知困难的人来说。其次, 控制别人的体验或为他们做决定并不总是一种好的做法。在链接文本中指出该链接在新窗口中打开 <hr> <strong>提示！</strong>学习最佳做法: <a href="https://www.nngroup.com/articles/new-browser-windows-and-tabs/">在新的浏览器窗口和标签中打开链接。</a>',
     LINK_FILE_EXT: "链接指向PDF或可下载的文件 (如MP3、Zip、Word Doc) , 而没有警告。在链接文本中指出文件类型。如果是大文件, 可以考虑包括文件大小。<hr> <strong>示例:</strong>执行报告 (PDF, 3MB) 。",
     LINK_IDENTICAL_NAME: "链接的文字与另一个链接相同, 但它指向不同的页面。<strong>考虑使以下链接更具描述性, 以帮助将其与其他链接区分开来。</strong> <hr> <strong {B}>可访问名称</strong> <strong {C}>%(TEXT)</strong>",
+    LINK_UNPRONOUNCEABLE: "链接文本仅包含符号。如果您认为此链接由于复制/粘贴错误而出现异常，请考虑将其删除。",
     // Images
     ALT_UNPRONOUNCEABLE: "替代文字只包含无法发音的符号和/或空格。屏幕阅读器将宣布图像，然后暂停。如果图像为装饰性，请确保替代文字中没有空格。 <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>",
     LINK_ALT_UNPRONOUNCEABLE: "此链接图像的替代文字只包含无法发音的符号和/或空格。屏幕阅读器将宣布图像，然后暂停。请确保替代文字描述了链接的目标。 <hr> {L} {ALT} <strong {C}>%(ALT_TEXT)</strong>",

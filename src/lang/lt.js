@@ -230,6 +230,8 @@ export default {
       'Nuoroda nukreipia į PDF arba atsisiunčiamą failą (pvz., MP3, Zip, "Word" dokumentą) be įspėjimo. Nuorodos tekste nurodykite failo tipą. Jei tai didelis failas, apsvarstykite galimybę nurodyti failo dydį. <hr> <strong>Pavyzdys:</strong> Vykdomoji ataskaita (PDF, 3 MB)',
     LINK_IDENTICAL_NAME:
       'Nuoroda turi tokį patį tekstą kaip ir kita nuoroda, nors nukreipia į kitą puslapį. Kelios nuorodos su tuo pačiu tekstu gali klaidinti ekrano skaitytuvus naudojančius žmones. <strong>Pagalvokite, ar nevertėtų šios nuorodos aprašyti labiau, kad ją būtų lengviau atskirti nuo kitų nuorodų.</strong> <hr> <strong {B}>Prieinamas pavadinimas</strong> <strong {C}>%(TEXT)</strong>',
+    LINK_UNPRONOUNCEABLE:
+      'Nuorodos tekste yra tik simboliai. Jei manote, kad ši nuoroda yra klaida dėl kopijavimo / įklijavimo klaidos, apsvarstykite galimybę ją ištrinti.',
 
     // Images
     ALT_UNPRONOUNCEABLE:

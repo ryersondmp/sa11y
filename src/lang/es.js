@@ -230,6 +230,8 @@ export default {
       'El enlace apunta a un archivo PDF o descargable (por ejemplo, MP3, Zip, Word Doc) sin previo aviso. Indique el tipo de archivo dentro del texto del enlace. Si es un archivo grande, considere incluir el tamaño del archivo. <hr> <strong>Ejemplo:</strong> Informe ejecutivo (PDF, 3 MB)',
     LINK_IDENTICAL_NAME:
       'El enlace tiene el mismo texto que otro enlace, aunque apunta a una página diferente. Varios enlaces con el mismo texto pueden causar confusión a las personas que usan lectores de pantalla. <strong>Considere hacer el siguiente enlace más descriptivo para ayudar a distinguirlo de otros enlaces.</strong> <hr> <strong {B}>Nombre accesible</strong> <strong {C}>%(TEXT)</strong>',
+    LINK_UNPRONOUNCEABLE:
+      'El texto del enlace solo contiene símbolos. Si cree que este enlace es un error debido a un fallo al copiar y pegar, considere eliminarlo.',
 
     // Images
     ALT_UNPRONOUNCEABLE:

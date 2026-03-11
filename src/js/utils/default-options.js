@@ -170,6 +170,7 @@ const defaultOptions = {
       dismissAll: true,
     },
     LINK_FILE_EXT: true,
+    LINK_UNPRONOUNCEABLE: true,
 
     // Form labels checks
     LABELS_MISSING_IMAGE_INPUT: true,

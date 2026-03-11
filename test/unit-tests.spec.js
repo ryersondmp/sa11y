@@ -744,8 +744,18 @@ test.describe('Sa11y Unit Tests', () => {
     expect(issue3).toBe(true);
     const issue4 = await checkTooltip(page, 'error-empty-4', 'Remove empty links');
     expect(issue4).toBe(true);
-    const issue5 = await checkTooltip(page, 'error-empty-5', 'Remove empty links');
-    expect(issue5).toBe(true);
+  });
+
+  test('Unpronounceable links', async () => {
+    const issue1 = await checkTooltip(page, 'error-unpronounceable-1', 'Link text only contains symbols.');
+    expect(issue1).toBe(true);
+    const issue2 = await checkTooltip(page, 'error-unpronounceable-2', 'Link text only contains symbols.');
+    expect(issue2).toBe(true);
+  });
+
+  test('CTA symbol with accompanying text', async () => {
+    const issue1 = await checkTooltip(page, 'warning-unpronounceable-1', 'Avoid using symbols as calls to action within link text unless they are hidden from assistive technologies');
+    expect(issue1).toBe(true);
   });
 
   test('Empty icon links', async () => {

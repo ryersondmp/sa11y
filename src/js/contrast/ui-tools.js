@@ -223,7 +223,7 @@ export function initializeContrastTools(container, contrastDetails) {
       el.addEventListener('click', () => {
         action(el.textContent);
         updatePreview();
-        navigator.clipboard.writeText(el.textContent).catch(() => { });
+        navigator.clipboard.writeText(el.textContent).catch(() => {});
       });
     };
     bindSuggest('#suggest', (val) => {
@@ -257,11 +257,11 @@ export function generateColorSuggestion(contrastDetails) {
     Constants.Global.contrastAlgorithm === 'APCA'
       ? Contrast.suggestColorAPCA(color, background, fontWeight, fontSize)
       : Contrast.suggestColorWCAG(
-        color,
-        background,
-        isLargeText,
-        Constants.Global.contrastAlgorithm,
-      );
+          color,
+          background,
+          isLargeText,
+          Constants.Global.contrastAlgorithm,
+        );
 
   const adviceContainer = document.createElement('div');
   adviceContainer.id = 'advice';

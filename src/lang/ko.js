@@ -230,6 +230,8 @@ export default {
       '링크는 경고 없이 PDF 또는 다운로드 가능한 파일(예: MP3, Zip, Word Doc)을 가리킵니다. 링크 텍스트에 파일 유형을 표시합니다. 대용량 파일인 경우 파일 크기를 포함하는 것이 좋습니다. <hr> <strong>예시:</strong> 임원 보고서(PDF, 3MB)',
     LINK_IDENTICAL_NAME:
       '다른 페이지를 가리키지만 링크의 텍스트가 다른 링크와 동일합니다. 동일한 텍스트의 링크가 여러 개 있으면 화면 리더를 사용하는 사용자에게 혼란을 줄 수 있습니다. <strong>다음 링크를 다른 링크와 구분할 수 있도록 더 설명적으로 만드는 것을 고려하세요.</strong> <hr> <strong {B}>접근 가능한 이름</strong> <strong {C}>%(TEXT)</strong>',
+    LINK_UNPRONOUNCEABLE:
+      '링크 텍스트에 기호만 포함되어 있습니다. 복사/붙여넣기 오류로 인한 링크라고 생각되면 삭제를 고려해 보세요.',
 
     // Images
     ALT_UNPRONOUNCEABLE:

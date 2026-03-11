@@ -276,6 +276,8 @@ export default {
       'Der Link verweist ohne Warnung auf eine PDF- oder herunterladbare Datei (z. B. MP3, Zip, Word Doc). Gib den Dateityp im Linktext an. Wenn es sich um eine große Datei handelt, solltest Du die Dateigröße angeben. <hr> <strong>Beispiel:</strong> Bericht der Geschäftsführung (PDF, 3MB)',
     LINK_IDENTICAL_NAME:
       'Der Link hat den gleichen Text wie ein anderer Link, obwohl er auf eine andere Seite verweist. Mehrere Links mit demselben Text können bei Personen, die Bildschirmlesegeräte verwenden, zu Verwirrung führen. <strong>Erwäge, den folgenden Link beschreibender zu gestalten, um ihn von anderen Links zu unterscheiden.</strong> <hr> <strong {B}>Zugänglicher Name</strong> <strong {C}>%(TEXT)</strong>',
+    LINK_UNPRONOUNCEABLE:
+      'Der Linktext enthält nur Symbole. Wenn du glaubst, dass dieser Link ein Fehler beim Kopieren/Einfügen ist, solltest du ihn löschen.',
 
     // Images
     ALT_UNPRONOUNCEABLE:

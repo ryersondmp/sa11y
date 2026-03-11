@@ -232,6 +232,8 @@ export default {
       'Legătura trimite la un fișier PDF sau la un fișier descărcabil (de exemplu, MP3, Zip, Word Doc) fără avertisment. Indicați tipul de fișier în textul linkului. Dacă este un fișier de mari dimensiuni, luați în considerare posibilitatea de a include dimensiunea fișierului. <hr> <strong>Exemplu:</strong> Raport executiv (PDF, 3MB)',
     LINK_IDENTICAL_NAME:
       'Linkul are un text identic cu cel al unui alt link, deși trimite la o pagină diferită. Mai multe linkuri cu același text pot crea confuzie pentru persoanele care utilizează cititoare de ecran. <strong>Considerați posibilitatea de a face următorul link mai descriptiv pentru a ajuta la distingerea acestuia de alte linkuri.</strong> <hr> <strong {B}>Numele accesibil</strong> <strong {C}>%(TEXT)</strong>',
+    LINK_UNPRONOUNCEABLE:
+      'Textul linkului conține doar simboluri. Dacă credeți că acest link este o eroare din cauza unei probleme de copiere/lipire, luați în considerare ștergerea acestuia.',
 
     // Images
     ALT_UNPRONOUNCEABLE:

@@ -232,6 +232,8 @@ export default {
       'Le lien dirige vers un PDF ou un fichier téléchargeable (exemple: MP3, Zip, Word Doc) sans avertissement. Indiquez le type de fichier dans le lien du texte. S’il s’agit d’un fichier volumineux, envisagez d’inclure la taille du fichier. <hr> <strong>Exemple:</strong> Rapport de synthèse (PDF, 3 Mo)',
     LINK_IDENTICAL_NAME:
       'Le texte du lien est identique à un autre, bien qu’il pointe vers une page différente. Des liens qui contiennent le même texte peuvent porter à confusion pour les gens qui utilisent des lecteurs d’écran. <strong>Ajoutez une description plus complète au lien suivant pour le différencier des autres.</strong> <hr> <strong {B}>Nom accessible</strong> <strong {C}>%(TEXT)</strong>',
+    LINK_UNPRONOUNCEABLE:
+      'Le texte du lien ne contient que des symboles. Si vous pensez que ce lien est une erreur due à un problème de copier-coller, envisagez de le supprimer.',
 
     // Images
     ALT_UNPRONOUNCEABLE:

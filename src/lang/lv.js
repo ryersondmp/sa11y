@@ -233,6 +233,8 @@ export default {
       'Saite norāda uz PDF vai lejupielādējamu failu (piemēram, MP3, Zip, Word Doc) bez brīdinājuma. Saites tekstā norādiet faila veidu. Ja tas ir liels fails, apsveriet iespēju norādīt faila lielumu. <hr> <strong>Piemērs:</strong> Vadības ziņojums (PDF, 3 MB).',
     LINK_IDENTICAL_NAME:
       'Saitei ir identisks teksts kā citai saitei, lai gan tā norāda uz citu lapu. Vairākas saites ar vienādu tekstu var radīt neskaidrības cilvēkiem, kuri izmanto ekrānlasītājus. <strong>Padomājiet, vai šādu saiti nevajadzētu padarīt aprakstošāku, lai palīdzētu to atšķirt no citām saitēm.</strong> <hr> <strong {B}>Pieejamais nosaukums</strong> <strong {C}>%(TEXT)</strong>',
+    LINK_UNPRONOUNCEABLE:
+      'Saites tekstā ir tikai simboli. Ja uzskatāt, ka šī saite ir kļūda kopēšanas/ielīmēšanas kļūdas dēļ, apsveriet iespēju to dzēst.',
 
     // Images
     ALT_UNPRONOUNCEABLE:

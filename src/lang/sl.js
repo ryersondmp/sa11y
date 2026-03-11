@@ -230,6 +230,8 @@ export default {
       'Povezava kaže na datoteko PDF ali datoteko za prenos (npr. MP3, Zip, Wordov dokument) brez opozorila. V besedilu povezave navedite vrsto datoteke. Če gre za veliko datoteko, razmislite o vključitvi velikosti datoteke. <hr> <strong>Primer:</strong> Izvršno poročilo (PDF, 3 MB)',
     LINK_IDENTICAL_NAME:
       'Povezava ima enako besedilo kot druga povezava, čeprav kaže na drugo stran. Več povezav z enakim besedilom lahko povzroči zmedo pri ljudeh, ki uporabljajo bralnike zaslona. <strong>Premislite, ali naj bo naslednja povezava bolj opisna, da jo boste lažje razlikovali od drugih povezav.</strong> <hr> <strong {B}>Dostopno ime</strong> <strong {C}>%(TEXT)</strong>',
+    LINK_UNPRONOUNCEABLE:
+      'Besedilo povezave vsebuje le simbole. Če menite, da je ta povezava napaka zaradi napake pri kopiranju/lepljenju, jo poskusite izbrisati.',
 
     // Images
     ALT_UNPRONOUNCEABLE:
