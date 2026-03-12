@@ -355,7 +355,8 @@ export default function checkQA() {
           if (isAlphabetic) {
             const firstChar = firstPrefix.charAt(0);
             const secondChar = secondText.charAt(0);
-            if (decrement(secondChar) === firstChar) {
+            // Ensure it's a list marker (e.g., "B.") rather than a word (e.g., "Banana").
+            if (decrement(secondChar) === firstChar && !/\w/.test(secondText.charAt(1))) {
               hit = true;
             }
           } else if (isEmoji && !lastHitWasEmoji) {
