@@ -8363,7 +8363,7 @@ function checkQA() {
   }
   if (State.option.checks.QA_FAKE_LIST) {
     const numberMatch = new RegExp(/(([023456789][\d\s])|(1\d))/, "");
-    const alphabeticMatch = new RegExp(/(^[aA1αаΑ]|[^p{Alphabetic}\s])[-\s.)]/, "u");
+    const alphabeticMatch = new RegExp(/(^[aA1αаΑ]|[^p{Alphabetic}\s])[-\s.)\]]/, "u");
     const emojiMatch = new RegExp(/\p{Extended_Pictographic}/, "u");
     const secondTextNoMatch = ["a", "A", "α", "Α", "а", "А", "1"];
     const specialCharsMatch = /[([{#]/;
@@ -8376,23 +8376,24 @@ function checkQA() {
       б: "а",
       Б: "А"
     };
-    const decrement = (element) => element.replace(/^b|^B|^б|^Б|^β|^В|^2/, (match) => prefixDecrement[match]);
+    const decrement = (element) => element.replace(/^b|^B|^б|^Б|^β|^В|^[2-9]/, (match) => prefixDecrement[match]);
     let activeMatch = "";
     let firstText = "";
     let lastHitWasEmoji = false;
     Elements.Found.Paragraphs.forEach((p, i) => {
       let secondText = false;
       let hit = false;
-      firstText = firstText || getText(p).replace("(", "");
+      firstText = firstText || getText(p).replace(/[([]/, "");
       const firstPrefix = firstText.substring(0, 2);
       const isAlphabetic = firstPrefix.match(alphabeticMatch);
       const isNumber = firstPrefix.match(numberMatch);
       const isEmoji = firstPrefix.match(emojiMatch);
       const isSpecialChar = specialCharsMatch.test(firstPrefix.charAt(0));
       if (firstPrefix.length > 0 && firstPrefix !== activeMatch && !isNumber && (isAlphabetic || isEmoji || isSpecialChar)) {
+        if (/^[A-Z]\.[A-Z]\./.test(firstText)) return;
         const secondP = Elements.Found.Paragraphs[i + 1];
         if (secondP) {
-          secondText = getText(secondP).replace("(", "").substring(0, 2);
+          secondText = getText(secondP).replace(/[([]/, "").substring(0, 2);
           if (secondTextNoMatch.includes(secondText?.toLowerCase().trim())) {
             return;
           }

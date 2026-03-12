@@ -299,7 +299,7 @@ export default function checkQA() {
   /* *************************************************************** */
   if (State.option.checks.QA_FAKE_LIST) {
     const numberMatch = new RegExp(/(([023456789][\d\s])|(1\d))/, ''); // All numbers but 1.
-    const alphabeticMatch = new RegExp(/(^[aA1αаΑ]|[^p{Alphabetic}\s])[-\s.)]/, 'u');
+    const alphabeticMatch = new RegExp(/(^[aA1αаΑ]|[^p{Alphabetic}\s])[-\s.)\]]/, 'u');
     // biome-ignore lint/complexity/noUselessEscapeInRegex: Escape is indeed needed!
     const emojiMatch = new RegExp(/\p{Extended_Pictographic}/, 'u');
     const secondTextNoMatch = ['a', 'A', 'α', 'Α', 'а', 'А', '1'];
@@ -314,7 +314,7 @@ export default function checkQA() {
       Б: 'А',
     };
     const decrement = (element) =>
-      element.replace(/^b|^B|^б|^Б|^β|^В|^2/, (match) => prefixDecrement[match]);
+      element.replace(/^b|^B|^б|^Б|^β|^В|^[2-9]/, (match) => prefixDecrement[match]);
 
     // Variables to carry in loop.
     let activeMatch = ''; // Carried in loop for second paragraph.
@@ -324,7 +324,8 @@ export default function checkQA() {
     Elements.Found.Paragraphs.forEach((p, i) => {
       let secondText = false;
       let hit = false;
-      firstText = firstText || Utils.getText(p).replace('(', '');
+
+      firstText = firstText || Utils.getText(p).replace(/[([]/, '');
       const firstPrefix = firstText.substring(0, 2);
 
       // Grab first two characters.
@@ -339,10 +340,13 @@ export default function checkQA() {
         !isNumber &&
         (isAlphabetic || isEmoji || isSpecialChar)
       ) {
+        // Ignore paragraphs that have double initialis, e.g. A.M. Smith
+        if (/^[A-Z]\.[A-Z]\./.test(firstText)) return;
+
         // We have a prefix and a possible hit; check next detected paragraph.
         const secondP = Elements.Found.Paragraphs[i + 1];
         if (secondP) {
-          secondText = Utils.getText(secondP).replace('(', '').substring(0, 2);
+          secondText = Utils.getText(secondP).replace(/[([]/, '').substring(0, 2);
           if (secondTextNoMatch.includes(secondText?.toLowerCase().trim())) {
             // A sentence. Another sentence. (A sentence). 1 apple, 1 banana.
             return;
