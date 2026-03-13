@@ -299,7 +299,8 @@ export default function checkQA() {
   /* *************************************************************** */
   if (State.option.checks.QA_FAKE_LIST) {
     const numberMatch = new RegExp(/(([023456789][\d\s])|(1\d))/, ''); // All numbers but 1.
-    const alphabeticMatch = new RegExp(/(^[aA1αаΑ]|[^p{Alphabetic}\s])[-\s.)\]]/, 'u');
+    // biome-ignore lint/complexity/noUselessEscapeInRegex: Escape is indeed needed!
+    const alphabeticMatch = new RegExp(/(^[aA1αаΑ]|[^\p{Alphabetic}\s])[-\s.)\]]/, 'u');
     // biome-ignore lint/complexity/noUselessEscapeInRegex: Escape is indeed needed!
     const emojiMatch = new RegExp(/\p{Extended_Pictographic}/, 'u');
     const secondTextNoMatch = ['a', 'A', 'α', 'Α', 'а', 'А', '1'];
@@ -333,12 +334,13 @@ export default function checkQA() {
       const isNumber = firstPrefix.match(numberMatch);
       const isEmoji = firstPrefix.match(emojiMatch);
       const isSpecialChar = specialCharsMatch.test(firstPrefix.charAt(0));
+      const isRoman = /^(I|i)[.)\]]/.test(firstPrefix);
 
       if (
         firstPrefix.length > 0 &&
         firstPrefix !== activeMatch &&
         !isNumber &&
-        (isAlphabetic || isEmoji || isSpecialChar)
+        (isAlphabetic || isEmoji || isSpecialChar || isRoman)
       ) {
         // Ignore paragraphs that have double initialis, e.g. A.M. Smith
         if (/^[A-Z]\.[A-Z]\./.test(firstText)) return;
@@ -352,10 +354,17 @@ export default function checkQA() {
             return;
           }
           const secondPrefix = decrement(secondText);
-          if (isAlphabetic) {
+
+          if (isRoman) {
+            // If first is I. or I), secondText (which is 2 chars) should just be "II" or "ii"
+            if (secondText.toLowerCase() === 'ii') {
+              hit = true;
+            }
+          } else if (isAlphabetic) {
             const firstChar = firstPrefix.charAt(0);
             const secondChar = secondText.charAt(0);
-            // Ensure it's a list marker (e.g., "B.") rather than a word (e.g., "Banana").
+
+            // Ensure we are only looking at the very first char and it's a valid sequence.
             if (decrement(secondChar) === firstChar && !/\w/.test(secondText.charAt(1))) {
               hit = true;
             }
@@ -380,6 +389,7 @@ export default function checkQA() {
             if (
               checkForOtherPrefixChars ||
               firstPrefix === decrement(textAfterBreak) ||
+              (isRoman && textAfterBreak.toLowerCase() === 'ii') ||
               (!lastHitWasEmoji && textAfterBreak.match(emojiMatch))
             ) {
               hit = true;
@@ -403,6 +413,8 @@ export default function checkQA() {
         } else {
           activeMatch = '';
         }
+      } else {
+        activeMatch = '';
       }
       // Reset for next loop, carry over text query if available.
       firstText = secondText ? '' : secondText;

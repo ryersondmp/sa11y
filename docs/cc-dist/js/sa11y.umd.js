@@ -8367,7 +8367,7 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
     }
     if (State.option.checks.QA_FAKE_LIST) {
       const numberMatch = new RegExp(/(([023456789][\d\s])|(1\d))/, "");
-      const alphabeticMatch = new RegExp(/(^[aA1αаΑ]|[^p{Alphabetic}\s])[-\s.)\]]/, "u");
+      const alphabeticMatch = new RegExp(/(^[aA1αаΑ]|[^\p{Alphabetic}\s])[-\s.)\]]/, "u");
       const emojiMatch = new RegExp(/\p{Extended_Pictographic}/, "u");
       const secondTextNoMatch = ["a", "A", "α", "Α", "а", "А", "1"];
       const specialCharsMatch = /[([{#]/;
@@ -8393,7 +8393,8 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
         const isNumber = firstPrefix.match(numberMatch);
         const isEmoji = firstPrefix.match(emojiMatch);
         const isSpecialChar = specialCharsMatch.test(firstPrefix.charAt(0));
-        if (firstPrefix.length > 0 && firstPrefix !== activeMatch && !isNumber && (isAlphabetic || isEmoji || isSpecialChar)) {
+        const isRoman = /^(I|i)[.)\]]/.test(firstPrefix);
+        if (firstPrefix.length > 0 && firstPrefix !== activeMatch && !isNumber && (isAlphabetic || isEmoji || isSpecialChar || isRoman)) {
           if (/^[A-Z]\.[A-Z]\./.test(firstText)) return;
           const secondP = Elements.Found.Paragraphs[i + 1];
           if (secondP) {
@@ -8402,7 +8403,11 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
               return;
             }
             const secondPrefix = decrement(secondText);
-            if (isAlphabetic) {
+            if (isRoman) {
+              if (secondText.toLowerCase() === "ii") {
+                hit = true;
+              }
+            } else if (isAlphabetic) {
               const firstChar = firstPrefix.charAt(0);
               const secondChar = secondText.charAt(0);
               if (decrement(secondChar) === firstChar && !/\w/.test(secondText.charAt(1))) {
@@ -8420,7 +8425,7 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
             if (textAfterBreak) {
               textAfterBreak = textAfterBreak.replace(/<\/?[^>]+(>|$)/g, "").trim().substring(0, 2);
               const checkForOtherPrefixChars = specialCharsMatch.test(textAfterBreak.charAt(0));
-              if (checkForOtherPrefixChars || firstPrefix === decrement(textAfterBreak) || !lastHitWasEmoji && textAfterBreak.match(emojiMatch)) {
+              if (checkForOtherPrefixChars || firstPrefix === decrement(textAfterBreak) || isRoman && textAfterBreak.toLowerCase() === "ii" || !lastHitWasEmoji && textAfterBreak.match(emojiMatch)) {
                 hit = true;
               }
             }
@@ -8442,6 +8447,8 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
           } else {
             activeMatch = "";
           }
+        } else {
+          activeMatch = "";
         }
         firstText = secondText ? "" : secondText;
       });
