@@ -10,6 +10,7 @@ export default {
     WARNING: 'Figyelmeztetés',
     WARNINGS: 'Figyelmeztetések',
     GOOD: 'Jó',
+    REVIEW: 'Ellenőrzés',
     ON: 'A oldalon.',
     OFF: 'Off',
     ALERT_TEXT: 'Riasztás',

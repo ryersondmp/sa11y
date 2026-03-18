@@ -9,6 +9,7 @@ const tr = {
     WARNING: "Uyarı",
     WARNINGS: "Uyarılar",
     GOOD: "İyi",
+    REVIEW: "İncele",
     ON: "Açık",
     OFF: "Kapalı",
     ALERT_TEXT: "Uyarı",

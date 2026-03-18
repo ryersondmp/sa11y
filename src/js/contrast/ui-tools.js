@@ -136,7 +136,7 @@ export function initializeContrastTools(container, contrastDetails) {
       container.querySelector(`#${e.target.id}-unknown`)?.remove();
     }
 
-    // Do not calculcate contrast or update badges if either FG or BG is unknown.
+    // Do not calculate contrast or update badges if either FG or BG is unknown.
     if (fgInput.classList.contains('unknown') || bgInput.classList.contains('unknown')) return;
 
     // Get contrast ratio.

@@ -13,6 +13,7 @@
       WARNING: "Avvertenze",
       WARNINGS: "Avvertenze",
       GOOD: "Buono",
+      REVIEW: "Revisione",
       ON: "Acceso",
       OFF: "Spento",
       ALERT_TEXT: "Allarme",

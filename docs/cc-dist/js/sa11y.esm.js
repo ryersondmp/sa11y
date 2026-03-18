@@ -25,7 +25,10 @@ const defaultOptions = {
   linkIgnoreStrings: [],
   paragraphIgnore: "table p",
   ignoreContentOutsideRoots: false,
-  ignoreByTest: {},
+  ignoreByTest: {
+    LABELS_ARIA_LABELS_INPUT: ':is(header, footer) [type="search"]',
+    LABELS_PLACEHOLDER: ':is(header, footer) [type="search"]'
+  },
   // Control panel settings
   aboutContent: "",
   panelPosition: "right",
@@ -174,9 +177,9 @@ const defaultOptions = {
     LABELS_MISSING_IMAGE_INPUT: true,
     LABELS_INPUT_RESET: true,
     LABELS_MISSING_LABEL: true,
-    LABELS_ARIA_LABEL_INPUT: true,
     LABELS_NO_FOR_ATTRIBUTE: true,
     LABELS_PLACEHOLDER: true,
+    LABELS_ARIA_LABEL_INPUT: true,
     // Embedded content checks
     EMBED_AUDIO: {
       sources: ""
@@ -6212,16 +6215,17 @@ class AnnotationTooltips extends HTMLElement {
         const id = reference2.getRootNode().host.getAttribute("data-sa11y-annotation");
         const result = template.find((item) => String(item.id) === String(id));
         if (!result) return null;
-        const { element, type, content, issueLabel, dismiss, dismissAll, contrastDetails } = result;
+        const { element, test, type, content, issueLabel, dismiss, dismissAll, contrastDetails } = result;
         if (!element) return;
         const wrapper = document.createElement("div");
         wrapper.setAttribute("lang", Lang._("LANG_CODE"));
         wrapper.className = type;
         const dismissAllBtn = State.option.dismissAnnotations && State.option.dismissAll && typeof dismissAll === "string" && (type === "warning" || type === "good") ? `<button data-sa11y-dismiss='${id}' data-sa11y-dismiss-all type='button'>${Lang._("DISMISS_ALL")}</button>` : "";
         const dismissBtn = State.option.dismissAnnotations && (type === "warning" || type === "good") && dismiss ? `<button data-sa11y-dismiss='${id}' type='button'>${Lang._("DISMISS")}</button>` : "";
+        const review = type === "good" && ["IMAGE_PASS", "LINK_LABEL"].some((val) => test.includes(val)) ? Lang._("REVIEW") : issueLabel;
         wrapper.innerHTML = `
           <button type='button' class='close-btn close-tooltip' aria-label='${Lang._("ALERT_CLOSE")}'></button>
-          <h2>${issueLabel}</h2>
+          <h2>${review}</h2>
           <div class="sa11y-content-body"></div>
           ${contrastDetails ? "<div data-sa11y-contrast-details></div>" : ""}
           <div class='dismiss-group'>
@@ -6690,10 +6694,10 @@ function checkImages() {
         return;
       }
     }
-    const error = containsAltTextStopWords(rawAlt);
+    const error = containsAltTextStopWords(altText);
     const maybeBadAlt = link ? State.option.checks.LINK_ALT_MAYBE_BAD : State.option.checks.ALT_MAYBE_BAD;
     const isTooLongSingleWord = new RegExp(`^\\S{${maybeBadAlt.minLength || 15},}$`);
-    const containsNonAlphaChar = /[^\p{L}\-,.!?]/u.test(rawAlt);
+    const containsNonAlphaChar = /[^\p{L}\-,.!?]/u.test(altText);
     if (error[0] !== null) {
       const rule = link ? State.option.checks.LINK_ALT_FILE_EXT : State.option.checks.ALT_FILE_EXT;
       const conditional = link ? "LINK_ALT_FILE_EXT" : "ALT_FILE_EXT";

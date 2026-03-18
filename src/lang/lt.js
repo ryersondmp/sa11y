@@ -10,6 +10,7 @@ export default {
     WARNING: 'Įspėjimas',
     WARNINGS: 'Įspėjimai',
     GOOD: 'Geras',
+    REVIEW: 'Peržiūra',
     ON: 'įjungta',
     OFF: 'Išjungta',
     ALERT_TEXT: 'Įspėjimas',

@@ -10,6 +10,7 @@ export default {
     WARNING: 'Предупреждение',
     WARNINGS: 'Предупреждения',
     GOOD: 'Добър',
+    REVIEW: 'Преглед',
     ON: 'На',
     OFF: 'Изключено',
     ALERT_TEXT: 'Предупреждение',

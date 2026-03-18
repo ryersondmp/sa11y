@@ -10,6 +10,7 @@ export default {
     WARNING: 'Προειδοποίηση',
     WARNINGS: 'Προειδοποιήσεις',
     GOOD: 'Καλή',
+    REVIEW: 'Επιθεώρηση',
     ON: 'Ενεργό',
     OFF: 'Ανενεργό',
     ALERT_TEXT: 'Ειδοποίηση',

@@ -16,7 +16,10 @@ const defaultOptions = {
   linkIgnoreStrings: [],
   paragraphIgnore: 'table p',
   ignoreContentOutsideRoots: false,
-  ignoreByTest: {},
+  ignoreByTest: {
+    LABELS_ARIA_LABELS_INPUT: ':is(header, footer) [type="search"]',
+    LABELS_PLACEHOLDER: ':is(header, footer) [type="search"]',
+  },
 
   // Control panel settings
   aboutContent: '',
@@ -176,9 +179,9 @@ const defaultOptions = {
     LABELS_MISSING_IMAGE_INPUT: true,
     LABELS_INPUT_RESET: true,
     LABELS_MISSING_LABEL: true,
-    LABELS_ARIA_LABEL_INPUT: true,
     LABELS_NO_FOR_ATTRIBUTE: true,
     LABELS_PLACEHOLDER: true,
+    LABELS_ARIA_LABEL_INPUT: true,
 
     // Embedded content checks
     EMBED_AUDIO: {

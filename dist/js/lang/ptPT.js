@@ -9,6 +9,7 @@ const ptPT = {
     WARNING: "Aviso",
     WARNINGS: "Avisos",
     GOOD: "Bom",
+    REVIEW: "Rever",
     ON: "Ligado",
     OFF: "Desligado",
     ALERT_TEXT: "Alerta",

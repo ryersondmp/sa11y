@@ -13,6 +13,7 @@
       WARNING: "Waarschuwing",
       WARNINGS: "Waarschuwingen",
       GOOD: "Goed",
+      REVIEW: "Beoordelen",
       ON: "Aan",
       OFF: "Uit",
       ALERT_TEXT: "Waarschuwing",

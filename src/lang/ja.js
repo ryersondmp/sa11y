@@ -10,6 +10,7 @@ export default {
     WARNING: '警告',
     WARNINGS: '注意事項',
     GOOD: '良い',
+    REVIEW: '確認',
     ON: 'オン',
     OFF: 'オフ',
     ALERT_TEXT: 'アラート',

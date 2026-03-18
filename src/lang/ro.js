@@ -10,6 +10,7 @@ export default {
     WARNING: 'Avertisment',
     WARNINGS: 'Avertismente',
     GOOD: 'Bun',
+    REVIEW: 'Revizuire',
     ON: 'Pornit',
     OFF: 'Oprit',
     ALERT_TEXT: 'Alertă',

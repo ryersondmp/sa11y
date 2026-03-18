@@ -10,6 +10,7 @@ export default {
     WARNING: 'Upozornenie',
     WARNINGS: 'Upozornenia',
     GOOD: 'Dobrý',
+    REVIEW: 'Kontrola',
     ON: 'Na stránke',
     OFF: 'Vypnuté',
     ALERT_TEXT: 'Upozornenie',

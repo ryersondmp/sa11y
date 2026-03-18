@@ -13,6 +13,7 @@
       WARNING: "Advertencia",
       WARNINGS: "Advertencias",
       GOOD: "Bien",
+      REVIEW: "Revisar",
       ON: "Activado",
       OFF: "Desactivado",
       ALERT_TEXT: "Alerta",

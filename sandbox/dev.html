@@ -26,6 +26,8 @@
   </header>
   <main>
 
+    <img src="#" alt="             Image of a photo of a turtledove.">
+
     <div id="nothing-english-prose">
       <h3>1. English Prose (I/A start)</h3>
       <p>I am planning to update the repository tomorrow morning.</p>
@@ -176,14 +178,15 @@
     <h2>aria-labelledby on inputs shouldn't flag warning for invisible labels</h2>
     <div id="lorem" hidden>Lorem</div>
     <div id="ipsum">Ipsum</div>
-    <div class="filter-contents keyword-wrapper details-wrapper"><label for="cs-keyword"
-        id="filter-keywords-label">Keyword
-        Search</label> <input id="cs-keyword" class="form-control" name="keyword"
-        aria-labelledby="filter-keywords-label lorem ipsum" value="" on="alert(xss)">
-      <p><small>Search title, description, instructor, or subject &amp; catalog number (e.g.
-          COS126).</small></p>
-    </div>
-
+    <header>
+      <div class="filter-contents keyword-wrapper details-wrapper"><label for="cs-keyword"
+          id="filter-keywords-label">Keyword
+          Search</label> <input id="cs-keyword" class="form-control" name="keyword"
+          aria-labelledby="filter-keywords-label lorem ipsum" value="" type="search" on="alert(xss)">
+        <p><small>Search title, description, instructor, or subject &amp; catalog number (e.g.
+            COS126).</small></p>
+      </div>
+    </header>
     <label for="cs-keyword2" id="filter-keywords-label2">Keyword
       Search</label> <input id="cs-keyword2" class="form-control" name="keyword"
       aria-labelledby="filter-keywords-label2" value="">
@@ -834,8 +837,7 @@
     </a>
 
     <div hidden>
-      <h4>Somthing</h4>
-
+      <h4>Something</h4>
       <svg fill="currentColor" id="svg_new_tab">
         <path
           d="M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z" />

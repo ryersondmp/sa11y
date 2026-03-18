@@ -9,6 +9,7 @@ const et = {
     WARNING: "Hoiatus",
     WARNINGS: "Hoiatused",
     GOOD: "Hea",
+    REVIEW: "Ülevaade",
     ON: "Veebilehel",
     OFF: "Väljaspool",
     ALERT_TEXT: "Hoiatus",

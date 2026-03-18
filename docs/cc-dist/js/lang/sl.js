@@ -9,6 +9,7 @@ const sl = {
     WARNING: "Opozorilo",
     WARNINGS: "Opozorila",
     GOOD: "Dobro",
+    REVIEW: "Pregled",
     ON: "Vklopljeno",
     OFF: "Izklopljeno",
     ALERT_TEXT: "Opozorilo",

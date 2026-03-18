@@ -10,6 +10,7 @@ export default {
     WARNING: 'Varování',
     WARNINGS: 'Varování',
     GOOD: 'Dobrý',
+    REVIEW: 'Recenze',
     ON: 'Zapnuto',
     OFF: 'Vypnuto',
     ALERT_TEXT: 'Upozornění',

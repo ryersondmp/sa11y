@@ -10,6 +10,7 @@ export default {
     WARNING: '警告',
     WARNINGS: '警告',
     GOOD: '良好',
+    REVIEW: '审查',
     ON: '在',
     OFF: '关闭',
     ALERT_TEXT: '警报',

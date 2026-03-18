@@ -158,7 +158,7 @@ function syncUI() {
     // After annotations are painted, find & cache.
     Elements.initializeAnnotations();
 
-    // Initialize tooltips
+    // Initialize tooltips.
     document.body.appendChild(new AnnotationTooltips());
 
     dismissButtons();

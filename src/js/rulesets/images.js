@@ -324,14 +324,14 @@ export default function checkImages() {
     /* ********************* */
     /*  ALT TEXT QUALITY     */
     /* ********************* */
-    const error = containsAltTextStopWords(rawAlt);
+    const error = containsAltTextStopWords(altText);
 
     // Potentially contains auto-generated placeholder text.
     const maybeBadAlt = link
       ? State.option.checks.LINK_ALT_MAYBE_BAD
       : State.option.checks.ALT_MAYBE_BAD;
     const isTooLongSingleWord = new RegExp(`^\\S{${maybeBadAlt.minLength || 15},}$`);
-    const containsNonAlphaChar = /[^\p{L}\-,.!?]/u.test(rawAlt);
+    const containsNonAlphaChar = /[^\p{L}\-,.!?]/u.test(altText);
 
     if (error[0] !== null) {
       // Has stop words.

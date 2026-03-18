@@ -10,6 +10,7 @@ export default {
     WARNING: 'Varoitus',
     WARNINGS: 'Varoitukset',
     GOOD: 'Hyvä',
+    REVIEW: 'Arvioi',
     ON: 'Päällä',
     OFF: 'Pois päältä',
     ALERT_TEXT: 'Hälytys',

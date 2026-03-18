@@ -13,6 +13,7 @@
       WARNING: "경고",
       WARNINGS: "경고",
       GOOD: "양호함",
+      REVIEW: "검토",
       ON: "켜짐",
       OFF: "꺼짐",
       ALERT_TEXT: "경고",

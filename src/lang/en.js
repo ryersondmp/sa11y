@@ -9,6 +9,7 @@ export default {
     WARNING: 'Warning',
     WARNINGS: 'Warnings',
     GOOD: 'Good',
+    REVIEW: 'Review',
     ON: 'On',
     OFF: 'Off',
     ALERT_TEXT: 'Alert',

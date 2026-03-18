@@ -9,6 +9,7 @@ const de = {
     WARNING: "Warnung",
     WARNINGS: "Warnungen",
     GOOD: "Gut",
+    REVIEW: "Überprüfung",
     ON: "An",
     OFF: "Aus",
     ALERT_TEXT: "Alarm",

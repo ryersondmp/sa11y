@@ -10,6 +10,7 @@ export default {
     WARNING: 'Brīdinājums',
     WARNINGS: 'Brīdinājumi',
     GOOD: 'Labi',
+    REVIEW: 'Pārskatīšana',
     ON: 'Ieslēgts',
     OFF: 'Izslēgts',
     ALERT_TEXT: 'Brīdinājums',

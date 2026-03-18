@@ -9,6 +9,7 @@ export default {
     WARNING: 'Avertissement',
     WARNINGS: 'Avertissements',
     GOOD: 'Conforme',
+    REVIEW: 'Examiner',
     ON: 'Activé',
     OFF: 'Desactivé',
     ALERT_TEXT: 'Alerte',
