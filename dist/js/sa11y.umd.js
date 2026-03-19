@@ -2439,6 +2439,9 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
       return ariaLabel;
     }
     let computedText = "";
+    const and = (word) => {
+      computedText += ` ${word}`;
+    };
     if (!element.children.length) {
       computedText = wrapPseudoContent(element, element.textContent);
       if (!computedText.trim() && element.hasAttribute("title")) {
@@ -2478,19 +2481,19 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
         for (let i = 0; i < shadowChildren.length; i++) {
           const child = shadowChildren[i];
           if (!excludeSelector || !child.closest(excludeSelector)) {
-            computedText += computeAccessibleName(child, exclusions, recursing + 1);
+            and(computeAccessibleName(child, exclusions, recursing + 1));
           }
         }
       }
       if (node.nodeType === Node.TEXT_NODE) {
         if (node.parentNode.tagName !== "SLOT") {
-          computedText += ` ${node.nodeValue}`;
+          and(node.nodeValue);
         }
         continue;
       }
       if (addTitleIfNoName && !node.closest("a")) {
         if (aText === computedText) {
-          computedText += addTitleIfNoName;
+          and(addTitleIfNoName);
         }
         addTitleIfNoName = false;
         aText = false;
@@ -2503,7 +2506,7 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
       }
       const aria = computeAriaLabel(node, recursing);
       if (aria !== "noAria") {
-        computedText += ` ${aria}`;
+        and(aria);
         if (!nextTreeBranch(treeWalker)) {
           continueWalker = false;
         }
@@ -2512,16 +2515,16 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
       switch (node.tagName) {
         case "IMG":
           if (node.hasAttribute("alt") && node.role !== "presentation") {
-            computedText += node.getAttribute("alt");
+            and(node.getAttribute("alt"));
           }
           break;
         case "SVG":
           if (node.role === "img" || node.role === "graphics-document") {
-            computedText += computeAriaLabel(node);
+            and(computeAriaLabel(node));
           } else {
             const title = node.querySelector("title");
             if (title) {
-              computedText += title.textContent;
+              and(title.textContent);
             }
           }
           break;
@@ -2533,10 +2536,10 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
             addTitleIfNoName = false;
             aText = false;
           }
-          computedText += wrapPseudoContent(node, "");
+          and(wrapPseudoContent(node, ""));
           break;
         case "INPUT":
-          computedText += wrapPseudoContent(treeWalker.currentNode, "");
+          and(wrapPseudoContent(treeWalker.currentNode, ""));
           if (treeWalker.currentNode.hasAttribute("title")) {
             addTitleIfNoName = treeWalker.currentNode.getAttribute("title");
           }
@@ -2551,24 +2554,24 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
               slotText += child.nodeValue;
             }
           });
-          computedText += slotText;
-          computedText += wrapPseudoContent(node, "");
+          and(slotText);
+          and(wrapPseudoContent(node, ""));
           break;
         }
         case "SPAN": {
-          computedText += wrapPseudoContent(treeWalker.currentNode, "");
+          and(wrapPseudoContent(treeWalker.currentNode, ""));
           if (treeWalker.currentNode.hasAttribute("title")) {
             addTitleIfNoName = treeWalker.currentNode.getAttribute("title");
           }
           break;
         }
         default:
-          computedText += wrapPseudoContent(node, "");
+          and(wrapPseudoContent(node, ""));
           break;
       }
     }
     if (addTitleIfNoName && !aText) {
-      computedText += ` ${addTitleIfNoName}`;
+      and(addTitleIfNoName);
     }
     computedText = computedText.replace(/[\uE000-\uF8FF]/gu, "");
     if (!computedText.trim()) {
