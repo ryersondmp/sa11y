@@ -145,6 +145,8 @@ const defaultOptions = {
     LINK_ALT_MAYBE_BAD: {
       minLength: 15
     },
+    ALT_MAYBE_BAD_WARNING: true,
+    LINK_ALT_MAYBE_BAD_WARNING: true,
     // Link checks
     DUPLICATE_TITLE: {
       dismissAll: true
@@ -6499,7 +6501,7 @@ function checkImages() {
   const extraPlaceholderStopWords = State.option.extraPlaceholderStopWords.split(",").map((word) => word.trim().toLowerCase()).filter(Boolean);
   const containsAltTextStopWords = (alt) => {
     const altLowerCase = alt.toLowerCase();
-    const altNoNumbers = altLowerCase.replace(/\d+/g, "").trim();
+    const altOnlyLetters = altLowerCase.replace(/[^\p{L}\s]/gu, "").trim();
     const hit = [null, null, null];
     for (const urlHit of url) {
       if (altLowerCase.includes(urlHit)) {
@@ -6518,7 +6520,7 @@ function checkImages() {
         break;
       }
     }
-    if (placeholderAltSet.has(altLowerCase) || placeholderAltSet.has(altNoNumbers)) {
+    if (placeholderAltSet.has(altLowerCase) || placeholderAltSet.has(altOnlyLetters)) {
       hit[2] = alt;
     }
     if (extraPlaceholderStopWords.length) {
@@ -6697,7 +6699,13 @@ function checkImages() {
     const error = containsAltTextStopWords(altText);
     const maybeBadAlt = link ? State.option.checks.LINK_ALT_MAYBE_BAD : State.option.checks.ALT_MAYBE_BAD;
     const isTooLongSingleWord = new RegExp(`^\\S{${maybeBadAlt.minLength || 15},}$`);
-    const containsNonAlphaChar = /[^\p{L}\-,.!?]/u.test(altText);
+    const containsNonAlphaChar = /[^\p{L}\-,.!? ]/u.test(altText);
+    const isBadFilename = new RegExp(
+      `^(?=[^_-]*([_-][^_-]*){3,})\\S{${maybeBadAlt.minLength || 15},}$`
+    ).test(altText);
+    const hasTooMuchNoise = /^(?:\s*\d){5,}\s*$/.test(altText) || // Is a number longer than 5 digits.
+    (altText.match(/[_-]/g) || []).length >= 3 || // Contains more than 3 delimiters (- or _)
+    (altText.match(/[^\p{L}\s,.!?\-\d]/gu) || []).length >= 5;
     if (error[0] !== null) {
       const rule = link ? State.option.checks.LINK_ALT_FILE_EXT : State.option.checks.ALT_FILE_EXT;
       const conditional = link ? "LINK_ALT_FILE_EXT" : "ALT_FILE_EXT";
@@ -6740,17 +6748,34 @@ function checkImages() {
           developer: rule.developer || false
         });
       }
-    } else if (maybeBadAlt && isTooLongSingleWord.test(rawAlt) && containsNonAlphaChar) {
+    } else if (isBadFilename || maybeBadAlt && isTooLongSingleWord.test(rawAlt) && containsNonAlphaChar) {
+      const rule = link ? State.option.checks.LINK_ALT_MAYBE_BAD : State.option.checks.ALT_MAYBE_BAD;
       const conditional = link ? "LINK_ALT_MAYBE_BAD" : "ALT_MAYBE_BAD";
-      State.results.push({
-        test: conditional,
-        element: $el,
-        type: maybeBadAlt.type || "error",
-        content: Lang.sprintf(maybeBadAlt.content || conditional, altText),
-        dismiss: prepareDismissal(`${conditional + src + rawAlt}`),
-        dismissAll: maybeBadAlt.dismissAll ? conditional : false,
-        developer: maybeBadAlt.developer || false
-      });
+      if (rule) {
+        State.results.push({
+          test: conditional,
+          element: $el,
+          type: rule.type || "error",
+          content: Lang.sprintf(rule.content || conditional, altText),
+          dismiss: prepareDismissal(`${conditional + src + rawAlt}`),
+          dismissAll: rule.dismissAll ? conditional : false,
+          developer: rule.developer || false
+        });
+      }
+    } else if (hasTooMuchNoise) {
+      const conditional = link ? "LINK_ALT_MAYBE_BAD" : "ALT_MAYBE_BAD";
+      const rule = link ? State.option.checks.LINK_ALT_MAYBE_BAD_WARNING : State.option.checks.ALT_MAYBE_BAD_WARNING;
+      if (rule) {
+        State.results.push({
+          test: link ? "LINK_ALT_MAYBE_BAD_WARNING" : "ALT_MAYBE_BAD_WARNING",
+          element: $el,
+          type: rule.type || "warning",
+          content: Lang.sprintf(rule.content || conditional, altText),
+          dismiss: prepareDismissal(`${conditional}WARNING${src + rawAlt} `),
+          dismissAll: rule.dismissAll ? conditional : false,
+          developer: rule.developer || false
+        });
+      }
     } else if (link ? rawAlt.length > maxAltCharactersLinks : rawAlt.length > maxAltCharacters) {
       const rule = link ? State.option.checks.LINK_IMAGE_LONG_ALT : State.option.checks.IMAGE_ALT_TOO_LONG;
       const conditional = link ? "LINK_IMAGE_LONG_ALT" : "IMAGE_ALT_TOO_LONG";

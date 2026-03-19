@@ -145,6 +145,8 @@ const defaultOptions = {
     LINK_ALT_MAYBE_BAD: {
       minLength: 15,
     },
+    ALT_MAYBE_BAD_WARNING: true,
+    LINK_ALT_MAYBE_BAD_WARNING: true,
 
     // Link checks
     DUPLICATE_TITLE: {

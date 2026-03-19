@@ -105,6 +105,9 @@ export default {
       'homepage feature image',
       'featured image',
       'untitled',
+      'untitled image',
+      'unnamed',
+      'copy',
     ],
     LINK_STOPWORDS: [
       'click',

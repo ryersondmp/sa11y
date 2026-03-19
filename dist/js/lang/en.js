@@ -93,7 +93,10 @@ const en = {
       "hero slide",
       "homepage feature image",
       "featured image",
-      "untitled"
+      "untitled",
+      "untitled image",
+      "unnamed",
+      "copy"
     ],
     LINK_STOPWORDS: [
       "click",
