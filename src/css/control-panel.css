@@ -303,6 +303,7 @@ audio {
 }
 
 /* Dismiss button for issues */
+.dismiss-alert,
 button[data-sa11y-dismiss] {
   display: block;
   padding: 4px 8px;

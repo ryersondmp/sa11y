@@ -11,6 +11,8 @@ import { State } from './state';
 import Elements from '../utils/elements';
 import Constants from '../utils/constants';
 import Lang from '../utils/lang';
+import { getLanguageDetector } from '../rulesets/page-language';
+import { createAlert } from '../interface/alert';
 
 /* *********************************************************** */
 /*  Update results array.                                      */
@@ -120,7 +122,7 @@ export default async function updateResults() {
 /* *********************************************************** */
 /*  Sync all UI elements.                                      */
 /* *********************************************************** */
-function syncUI() {
+async function syncUI() {
   // Build array of images to be used for image panel.
   State.imageResults = Elements.Found.Images.map((image) =>
     State.results.find((i) => i.element === image),
@@ -144,11 +146,51 @@ function syncUI() {
   if (Utils.store.getItem('sa11y-panel') === 'Opened') {
     const counts = new Map();
     State.results.forEach((issue) => {
-      // Dynamically alter margins if an element has multiple issues.
-      if (issue.element && !issue.margin) {
-        const index = counts.get(issue.element) || 0;
-        counts.set(issue.element, index + 1);
-        issue.margin = `${index * 20 + (issue.inline ? 0 : 15)}px`;
+      // Prep for issues with a corresponding element.
+      if (issue.element) {
+        // Dynamically alter margins if an element has multiple issues.
+        if (!issue.margin) {
+          const index = counts.get(issue.element) || 0;
+          counts.set(issue.element, index + 1);
+          issue.margin = `${index * 20 + (issue.inline ? 0 : 15)}px`;
+        }
+
+        // Let's create a new property that will contain all final HTML for UI-based Sa11y.
+        issue.finalContent = issue?.content?.cloneNode(true);
+        issue.finalContent.setAttribute('lang', Lang._('LANG_CODE'));
+        issue.finalContent.className = issue.type;
+
+        // Header of tooltip content.
+        const reviewText =
+          issue.type === 'good' &&
+          ['IMAGE_PASS', 'LINK_LABEL'].some((val) => issue.test.includes(val))
+            ? Lang._('REVIEW')
+            : issue.issueLabel;
+        const header = document.createElement('h2');
+        header.textContent = reviewText;
+        issue.finalContent?.prepend(header);
+
+        // Append dismiss functionality.
+        const dismissable =
+          State.option.dismissAnnotations && (issue.type === 'warning' || issue.type === 'good');
+        const showDismissAll =
+          dismissable && State.option.dismissAll && typeof issue.dismissAll === 'string';
+        const showDismiss = dismissable && issue.dismiss;
+        if (showDismiss || showDismissAll) {
+          const container = document.createElement('div');
+          container.className = 'dismiss-group';
+          const createBtn = (text, isAll) => {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.textContent = Lang._(text);
+            btn.setAttribute('data-sa11y-dismiss', issue.id);
+            if (isAll) btn.setAttribute('data-sa11y-dismiss-all', '');
+            return btn;
+          };
+          if (showDismiss) container.append(createBtn('DISMISS', false));
+          if (showDismissAll) container.append(createBtn('DISMISS_ALL', true));
+          issue.finalContent.append(container);
+        }
       }
 
       // Paint the page with annotations.
@@ -167,6 +209,11 @@ function syncUI() {
     updatePanel();
     skipToIssue();
     exportResults();
+
+    // Throw an alert for unavailable page language detection.
+    if (State.option.langOfPartsPlugin && (await getLanguageDetector()) === null) {
+      createAlert(Lang.sprintf('LANG_UNSUPPORTED'), null, null, true);
+    }
 
     // Page issues: add gradient if scrollable list.
     Utils.isScrollable(Constants.Panel.pageIssuesList, Constants.Panel.pageIssuesContent);

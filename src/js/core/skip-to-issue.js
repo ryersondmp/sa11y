@@ -66,7 +66,7 @@ const getScrollPosition = ($el, results) => {
       }
       h3.textContent = result.issueLabel;
     }
-    createAlert(`${Lang._('NOT_VISIBLE')}`, result.content, elementPreview);
+    createAlert(`${Lang._('NOT_VISIBLE')}`, result.finalContent, elementPreview);
 
     closeAnyActiveTooltips();
 

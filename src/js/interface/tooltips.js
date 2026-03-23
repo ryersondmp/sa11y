@@ -42,53 +42,32 @@ export class AnnotationTooltips extends HTMLElement {
         const result = template.find((item) => String(item.id) === String(id));
         if (!result) return null;
 
-        const { element, test, type, content, issueLabel, dismiss, dismissAll, contrastDetails } =
-          result;
+        const { element, finalContent, contrastDetails } = result;
         if (!element) return;
 
-        // 1. Create the tooltip container.
+        // Create the tooltip container.
         const wrapper = document.createElement('div');
-        wrapper.setAttribute('lang', Lang._('LANG_CODE'));
-        wrapper.className = type;
+        const closeBtn = document.createElement('button');
+        closeBtn.type = 'button';
+        closeBtn.className = 'close-btn close-tooltip';
+        closeBtn.setAttribute('aria-label', Lang._('ALERT_CLOSE'));
+        const contentBody = document.createElement('div');
+        contentBody.className = 'sa11y-content-body';
+        wrapper.append(closeBtn, contentBody);
 
-        // 2. Build the HTML for the buttons/header.
-        const dismissAllBtn =
-          State.option.dismissAnnotations &&
-          State.option.dismissAll &&
-          typeof dismissAll === 'string' &&
-          (type === 'warning' || type === 'good')
-            ? `<button data-sa11y-dismiss='${id}' data-sa11y-dismiss-all type='button'>${Lang._('DISMISS_ALL')}</button>`
-            : '';
-
-        const dismissBtn =
-          State.option.dismissAnnotations && (type === 'warning' || type === 'good') && dismiss
-            ? `<button data-sa11y-dismiss='${id}' type='button'>${Lang._('DISMISS')}</button>`
-            : '';
-
-        // Show "Review" instead of "Good" -- don't want to give false impression that's element is accessible.
-        const review =
-          type === 'good' && ['IMAGE_PASS', 'LINK_LABEL'].some((val) => test.includes(val))
-            ? Lang._('REVIEW')
-            : issueLabel;
-
-        // 3. Full tooltip structure.
-        wrapper.innerHTML = `
-          <button type='button' class='close-btn close-tooltip' aria-label='${Lang._('ALERT_CLOSE')}'></button>
-          <h2>${review}</h2>
-          <div class="sa11y-content-body"></div>
-          ${contrastDetails ? '<div data-sa11y-contrast-details></div>' : ''}
-          <div class='dismiss-group'>
-            ${dismissBtn || ''}
-            ${dismissAllBtn}
-          </div>
-        `;
+        // Conditionally add contrast details.
+        if (contrastDetails) {
+          const contrastDiv = document.createElement('div');
+          contrastDiv.setAttribute('data-sa11y-contrast-details', '');
+          wrapper.append(contrastDiv);
+        }
 
         // Replace user supplied content via textContent instead of .innerHTML
         const body = wrapper.querySelector('.sa11y-content-body');
-        if (content instanceof HTMLElement || content instanceof DocumentFragment) {
-          body.appendChild(content);
-        } else if (typeof content === 'string') {
-          body.textContent += content;
+        if (finalContent instanceof HTMLElement || finalContent instanceof DocumentFragment) {
+          body.appendChild(finalContent);
+        } else if (typeof finalContent === 'string') {
+          body.textContent += finalContent;
         }
         return wrapper;
       },
@@ -112,9 +91,7 @@ export class AnnotationTooltips extends HTMLElement {
         }
 
         const host = instance.reference.getRootNode().host;
-        if (host) {
-          host.setAttribute('data-sa11y-opened', '');
-        }
+        if (host) host.setAttribute('data-sa11y-opened', '');
 
         const closeButton = instance.popper.querySelector('.close-btn');
         const closeButtonHandler = () => {
@@ -122,9 +99,7 @@ export class AnnotationTooltips extends HTMLElement {
           instance.reference.focus();
         };
 
-        if (closeButton) {
-          closeButton.addEventListener('click', closeButtonHandler);
-        }
+        if (closeButton) closeButton.addEventListener('click', closeButtonHandler);
 
         const escapeListener = (event) => {
           if (event.key === 'Escape') {
@@ -134,12 +109,16 @@ export class AnnotationTooltips extends HTMLElement {
         };
         instance.popper.addEventListener('keydown', escapeListener);
 
+        const rawId = host?.getAttribute('data-sa11y-annotation');
+        const results = window.sa11yCheckComplete?.results || [];
+        const issueObject = results.find((issue) => String(issue.id) === String(rawId));
+
+        // Add lang attribute and issue type to tooltip container.
+        instance.popper.setAttribute('lang', Lang._('LANG_CODE'));
+        instance.popper.className = issueObject.type;
+
         // Contrast tools initialization.
         if (!instance.popper.hasAttribute('contrast-tools-initialized')) {
-          const rawId = host?.getAttribute('data-sa11y-annotation');
-          const results = window.sa11yCheckComplete?.results || [];
-          const issueObject = results.find((issue) => String(issue.id) === String(rawId));
-
           const contrastDetails = issueObject?.contrastDetails;
           if (contrastDetails) {
             const container = instance.popper.querySelector('[data-sa11y-contrast-details]');

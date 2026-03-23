@@ -341,8 +341,7 @@ export default function checkImages() {
     // Maybe bad alt... but not high confidence.
     const hasTooMuchNoise =
       /^(?:\s*\d){5,}\s*$/.test(altText) || // Is a number longer than 5 digits.
-      (altText.match(/[_-]/g) || []).length >= 3 || // Contains more than 3 delimiters (- or _)
-      (altText.match(/[^\p{L}\s,.!?\-\d]/gu) || []).length >= 5; // More than 5 special chars.
+      (altText.match(/[_-]/g) || []).length >= 3; // Contains more than 3 delimiters (- or _)
 
     if (error[0] !== null) {
       // Has stop words.

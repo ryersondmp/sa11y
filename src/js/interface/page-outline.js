@@ -36,7 +36,7 @@ export default function generatePageOutline() {
     });
 
     // Show meta page title in Page Outline.
-    if (State.option.showTitleInPageOutline) {
+    if (State.option.showTitleInPageOutline && Utils.store.getItem('sa11y-developer') === 'On') {
       const metaTitleElement = document.querySelector('head title');
       const li = document.createElement('li');
 

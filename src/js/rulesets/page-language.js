@@ -3,7 +3,6 @@ import * as Utils from '../utils/utils';
 import Lang from '../utils/lang';
 import Elements from '../utils/elements';
 import { State } from '../core/state';
-import { createAlert } from '../interface/alert';
 import find from '../utils/find';
 
 // FIFO cache for language detection.
@@ -23,15 +22,13 @@ export function getLanguageDetector() {
     try {
       if (!('LanguageDetector' in globalThis)) {
         if (!Utils.store.getItem(STORAGE_KEY)) {
-          createAlert(Lang.sprintf('LANG_UNSUPPORTED'));
           Utils.store.setItem(STORAGE_KEY, []);
+          console.error(`Sa11y: ${Lang._('LANG_UNSUPPORTED')}`);
         }
-        console.error(`Sa11y: ${Lang._('LANG_UNSUPPORTED')}`);
         return null;
       }
       return await globalThis.LanguageDetector.create();
     } catch {
-      createAlert(Lang.sprintf('LANG_UNSUPPORTED'));
       console.error(`Sa11y: ${Lang._('LANG_UNSUPPORTED')}`);
       return null;
     }

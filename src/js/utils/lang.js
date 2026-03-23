@@ -10,8 +10,10 @@ const Lang = {
   sprintf(string, ...args) {
     let transString = this._(string);
     transString = this.prepHTML(transString);
-    const el = document.createElement('span');
-    el.innerHTML = transString;
+    const el = document.createElement('div');
+    const p = document.createElement('p');
+    p.innerHTML = transString;
+    el.appendChild(p);
 
     // Replace placeholders with span markers.
     if (args?.length) {
