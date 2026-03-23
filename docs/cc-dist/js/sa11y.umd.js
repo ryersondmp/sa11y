@@ -6252,16 +6252,14 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
           const contentBody = document.createElement("div");
           contentBody.className = "sa11y-content-body";
           wrapper.append(closeBtn, contentBody);
+          const body = wrapper.querySelector(".sa11y-content-body");
+          if (finalContent instanceof Node) body.appendChild(finalContent);
+          else if (finalContent) body.textContent = finalContent;
           if (contrastDetails) {
             const contrastDiv = document.createElement("div");
             contrastDiv.setAttribute("data-sa11y-contrast-details", "");
-            wrapper.append(contrastDiv);
-          }
-          const body = wrapper.querySelector(".sa11y-content-body");
-          if (finalContent instanceof HTMLElement || finalContent instanceof DocumentFragment) {
-            body.appendChild(finalContent);
-          } else if (typeof finalContent === "string") {
-            body.textContent += finalContent;
+            const target = body.querySelector(".dismiss-group");
+            target ? target.before(contrastDiv) : body.append(contrastDiv);
           }
           return wrapper;
         },

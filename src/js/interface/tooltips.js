@@ -55,20 +55,19 @@ export class AnnotationTooltips extends HTMLElement {
         contentBody.className = 'sa11y-content-body';
         wrapper.append(closeBtn, contentBody);
 
-        // Conditionally add contrast details.
+        // Replace user supplied content via textContent instead of .innerHTML
+        const body = wrapper.querySelector('.sa11y-content-body');
+        if (finalContent instanceof Node) body.appendChild(finalContent);
+        else if (finalContent) body.textContent = finalContent;
+
+        // Conditionally add contrast details (before dismiss buttons).
         if (contrastDetails) {
           const contrastDiv = document.createElement('div');
           contrastDiv.setAttribute('data-sa11y-contrast-details', '');
-          wrapper.append(contrastDiv);
+          const target = body.querySelector('.dismiss-group');
+          target ? target.before(contrastDiv) : body.append(contrastDiv);
         }
 
-        // Replace user supplied content via textContent instead of .innerHTML
-        const body = wrapper.querySelector('.sa11y-content-body');
-        if (finalContent instanceof HTMLElement || finalContent instanceof DocumentFragment) {
-          body.appendChild(finalContent);
-        } else if (typeof finalContent === 'string') {
-          body.textContent += finalContent;
-        }
         return wrapper;
       },
       allowHTML: true,
