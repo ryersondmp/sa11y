@@ -57,7 +57,7 @@ const runBuild = async (config) => {
 (async () => {
   console.log(`\n🚀 Starting build process for version ${pkg.version}\n`);
 
-  const languages = ['bg', 'cs', 'da', 'de', 'el', 'en', 'enUS', 'es', 'et', 'fi', 'fr', 'hu', 'id', 'it', 'ja', 'ko', 'lt', 'lv', 'nb', 'nl', 'pl', 'ptBR', 'ptPT', 'ro', 'sk', 'sl', 'sv', 'tr', 'ua', 'zh'];
+  const languages = ['bg', 'cs', 'da', 'de', 'el', 'en', 'enUS', 'es', 'et', 'fi', 'fr', 'hu', 'id', 'it', 'ja', 'ko', 'lt', 'lv', 'nb', 'nl', 'pl', 'ptBR', 'ptPT', 'ro', 'sk', 'sl', 'sv', 'ta', 'tr', 'ua', 'zh'];
 
   console.log(`Processing ${languages.length} language files...`);
 

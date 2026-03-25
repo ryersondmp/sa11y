@@ -825,12 +825,12 @@ test.describe('Sa11y Unit Tests', () => {
 
   test('Links that have the same name but different URL', async () => {
     const issue = await checkTooltip(
-      page, 'warning-same-name-diff-url-1', 'Link has identical text as another link',
+      page, 'warning-same-name-diff-url-1', 'Multiple links on this page use the same link text',
     );
 
     // Uses ARIA-label
     const issue2 = await checkTooltip(
-      page, 'warning-same-name-diff-url-2', 'Link has identical text as another link',
+      page, 'warning-same-name-diff-url-2', 'Multiple links on this page use the same link text',
     );
     expect(issue).toBe(true);
     expect(issue2).toBe(true);

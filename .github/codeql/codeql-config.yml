@@ -1,7 +1,0 @@
-name: "Custom CodeQL Config"
-
-paths-ignore:
-  - 'dist'
-  - '**/dist/**'
-  - 'docs'
-  - '**/docs/**'
