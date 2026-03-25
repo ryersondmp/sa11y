@@ -28,6 +28,7 @@ import Sa11yLangRo from '../src/lang/ro.js';
 import Sa11yLangSk from '../src/lang/sk.js';
 import Sa11yLangSl from '../src/lang/sl.js';
 import Sa11yLangSv from '../src/lang/sv.js';
+import Sa11yLangTa from '../src/lang/ta.js';
 import Sa11yLangTr from '../src/lang/tr.js';
 import Sa11yLangUa from '../src/lang/ua.js';
 import Sa11yLangZh from '../src/lang/zh.js';
@@ -65,6 +66,7 @@ test.describe('Sa11y i18n tests', () => {
       { lang: 'SK', obj: Sa11yLangSk },
       { lang: 'SL', obj: Sa11yLangSl },
       { lang: 'SV', obj: Sa11yLangSv },
+      { lang: 'TA', obj: Sa11yLangTa },
       { lang: 'TR', obj: Sa11yLangTr },
       { lang: 'UA', obj: Sa11yLangUa },
       { lang: 'ZH', obj: Sa11yLangZh },

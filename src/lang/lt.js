@@ -229,8 +229,7 @@ export default {
       'Nuoroda atsidaro naujame skirtuke arba lange be įspėjimo. Tai gali trikdyti, ypač žmones, kuriems sunku suvokti vaizdinį turinį. Antra, ne visada yra gera praktika kontroliuoti kieno nors patirtį ar priimti sprendimus už jį. Nuorodos tekste nurodykite, kad nuoroda atidaroma naujame lange. <hr> <strong>Tipas!</strong> Išmokite geriausios praktikos: <a href="https://www.nngroup.com/articles/new-browser-windows-and-tabs/">atidaryti nuorodas naujuose naršyklės languose ir skirtukuose.</a>',
     LINK_FILE_EXT:
       'Nuoroda nukreipia į PDF arba atsisiunčiamą failą (pvz., MP3, Zip, "Word" dokumentą) be įspėjimo. Nuorodos tekste nurodykite failo tipą. Jei tai didelis failas, apsvarstykite galimybę nurodyti failo dydį. <hr> <strong>Pavyzdys:</strong> Vykdomoji ataskaita (PDF, 3 MB)',
-    LINK_IDENTICAL_NAME:
-      'Nuoroda turi tokį patį tekstą kaip ir kita nuoroda, nors nukreipia į kitą puslapį. Kelios nuorodos su tuo pačiu tekstu gali klaidinti ekrano skaitytuvus naudojančius žmones. <strong>Pagalvokite, ar nevertėtų šios nuorodos aprašyti labiau, kad ją būtų lengviau atskirti nuo kitų nuorodų.</strong> <hr> <strong {B}>Prieinamas pavadinimas</strong> <strong {C}>%(TEXT)</strong>',
+    LINK_IDENTICAL_NAME: 'Kelios nuorodos šiame puslapyje naudoja tą patį tekstą, bet veda į skirtingas vietas. Tai gali suklaidinti pagalbinių technologijų naudotojus. Norėdami tai ištaisyti, padarykite šį nuorodos tekstą vaizdingesnį: <strong {C}>%(TEXT)</strong>',
     LINK_UNPRONOUNCEABLE:
       'Nuorodos tekste yra tik simboliai. Jei manote, kad ši nuoroda yra klaida dėl kopijavimo / įklijavimo klaidos, apsvarstykite galimybę ją ištrinti.',
 

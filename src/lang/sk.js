@@ -229,8 +229,7 @@ export default {
       'Odkaz sa otvorí v novej karte alebo okne bez upozornenia. Môže to byť dezorientujúce, najmä pre ľudí, ktorí majú problémy s vnímaním vizuálneho obsahu. Po druhé, nie vždy je dobrým postupom kontrolovať niečí zážitok alebo robiť rozhodnutia za neho. Uveďte, že sa odkaz otvára v novom okne, v texte odkazu. <hr> <strong>Tip!</strong> Naučte sa osvedčené postupy: <a href="https://www.nngroup.com/articles/new-browser-windows-and-tabs/">otváranie odkazov v nových oknách a kartách prehliadača.</a>',
     LINK_FILE_EXT:
       'Odkaz odkazuje na súbor PDF alebo súbor na stiahnutie (napr. MP3, Zip, Word Doc) bez upozornenia. Typ súboru uveďte v texte odkazu. Ak ide o veľký súbor, zvážte uvedenie jeho veľkosti. <hr> <strong>Príklad:</strong> Výkonná správa (PDF, 3 MB)',
-    LINK_IDENTICAL_NAME:
-      'Odkaz má rovnaký text ako iný odkaz, hoci odkazuje na inú stránku. Viacero odkazov s rovnakým textom môže spôsobiť zmätok u ľudí, ktorí používajú čítačky obrazovky. <strong>Premyslite si, či by nasledujúci odkaz nemal byť viac popisný, aby ste ho odlíšili od ostatných odkazov.</strong> <hr> <strong {B}>Prístupné meno</strong> <strong {C}>%(TEXT)</strong>',
+    LINK_IDENTICAL_NAME: 'Viacero odkazov na tejto stránke používa rovnaký text, ale smerujú na rôzne miesta. To môže zmiasť používateľov asistenčných technológií. Ak to chcete napraviť, upravte text tohto odkazu tak, aby bol popisnejší: <strong {C}>%(TEXT)</strong>',
     LINK_UNPRONOUNCEABLE:
       'Text odkazu obsahuje iba symboly. Ak si myslíte, že tento odkaz je chybou spôsobenou kopírovaním/vložením, zvážte jeho odstránenie.',
 

@@ -227,8 +227,7 @@ export default {
       'Tautan terbuka di tab atau jendela baru tanpa peringatan. Hal ini dapat membingungkan, terutama bagi orang yang mengalami kesulitan dalam memahami konten visual. Kedua, tidak selalu merupakan praktik yang baik untuk mengontrol pengalaman seseorang atau membuat keputusan untuk mereka. Tunjukkan bahwa tautan akan terbuka di jendela baru di dalam teks tautan. <hr> <strong>Tip!</strong> Pelajari praktik terbaik: <a href="https://www.nngroup.com/articles/new-browser-windows-and-tabs/">membuka tautan di jendela dan tab peramban baru</a>.',
     LINK_FILE_EXT:
       'Tautan mengarah ke PDF atau file yang dapat diunduh (mis. MP3, Zip, Word Doc) tanpa peringatan. Tunjukkan jenis file di dalam teks tautan. Jika file berukuran besar, pertimbangkan untuk menyertakan ukuran file tersebut. <hr> <strong>Contoh:</strong> Laporan Eksekutif (PDF, 3MB)',
-    LINK_IDENTICAL_NAME:
-      'Tautan memiliki teks yang sama dengan tautan lain, meskipun mengarah ke halaman yang berbeda. Beberapa tautan dengan teks yang sama dapat menyebabkan kebingungan bagi orang yang menggunakan pembaca layar. <strong>Pertimbangkan untuk membuat tautan berikut ini lebih deskriptif untuk membantu membedakannya dari tautan lain.</strong> <hr> <strong {B}>Nama yang dapat diakses</strong> <strong {C}>%(TEXT)</strong>',
+    LINK_IDENTICAL_NAME: 'Beberapa tautan di halaman ini menggunakan teks yang sama tetapi mengarah ke tempat yang berbeda. Hal ini dapat membingungkan pengguna teknologi asistif. Untuk memperbaikinya, buatlah teks tautan ini lebih deskriptif: <strong {C}>%(TEXT)</strong>',
     LINK_UNPRONOUNCEABLE:
       'Teks tautan hanya berisi simbol. Jika menurut Anda tautan ini salah karena bug salin/tempel, pertimbangkan untuk menghapusnya.',
 

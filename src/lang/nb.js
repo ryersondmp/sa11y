@@ -227,8 +227,7 @@ export default {
       'Lenken åpnes i en ny fane eller et nytt vindu uten forvarsel. Det kan virke forvirrende, særlig for personer som har problemer med å oppfatte visuelt innhold. For det andre er det ikke alltid en god praksis å kontrollere andres opplevelse eller ta avgjørelser for dem. Angi at lenken åpnes i et nytt vindu i lenketeksten. <hr> <strong>Tips!</strong> Lær beste praksis: <a href="https://www.nngroup.com/articles/new-browser-windows-and-tabs/">åpning av lenker i nye nettleservinduer og faner.</a>',
     LINK_FILE_EXT:
       'Lenken peker til en PDF-fil eller en nedlastbar fil (f.eks. MP3, Zip, Word-dokument) uten advarsel. Oppgi filtypen i lenketeksten. Hvis det er en stor fil, bør du vurdere å inkludere filstørrelsen. <hr> <strong>Eksempel:</strong> Executive Report (PDF, 3 MB)',
-    LINK_IDENTICAL_NAME:
-      'Lenken har samme tekst som en annen lenke, selv om den peker til en annen side. Flere lenker med samme tekst kan skape forvirring for personer som bruker skjermlesere. <strong>Vurder å gjøre følgende lenke mer beskrivende for å skille den fra andre lenker.</strong> <hr> <strong {B}>Tilgjengelig navn</strong> <strong {C}>%(TEXT)</strong>',
+    LINK_IDENTICAL_NAME: 'Flere lenker på denne siden bruker samme tekst, men peker til ulike steder. Dette kan føre til forvirring for brukere av hjelpemiddelteknologi. For å fikse dette, gjør lenketeksten mer beskrivende: <strong {C}>%(TEXT)</strong>',
     LINK_UNPRONOUNCEABLE:
       'Lenketeksten inneholder bare symboler. Hvis du tror denne lenken er en feil som skyldes en kopier/lim inn-feil, bør du vurdere å slette den.',
 

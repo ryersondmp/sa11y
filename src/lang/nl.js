@@ -237,8 +237,7 @@ export default {
       'Link opent in een nieuw tabblad of venster zonder waarschuwing. Dit kan desoriënterend zijn, vooral voor mensen die moeite hebben met het waarnemen van visuele inhoud. Ten tweede is het niet altijd een goede gewoonte om iemands ervaring te controleren of beslissingen voor hem te nemen. Geef in de tekst van de koppeling aan dat deze in een nieuw venster wordt geopend. <hr> <strong>Tip!</strong> Leer de beste werkwijzen: <a href="https://www.nngroup.com/articles/new-browser-windows-and-tabs/">links openen in nieuwe browservensters en tabbladen.</a>',
     LINK_FILE_EXT:
       'Link verwijst naar een PDF of downloadbaar bestand (bijv. MP3, Zip, Word Doc) zonder waarschuwing. Vermeld het bestandstype in de linktekst. Als het een groot bestand is, kun je overwegen de bestandsgrootte te vermelden. <hr> <strong>Voorbeeld:</strong> Uitvoerend rapport (PDF, 3 MB)',
-    LINK_IDENTICAL_NAME:
-      'Link heeft dezelfde tekst als een andere link, maar verwijst naar een andere pagina. Meerdere links met dezelfde tekst kunnen verwarring veroorzaken voor mensen die schermlezers gebruiken. <strong>Overweeg om de volgende link beschrijvender te maken om hem te helpen onderscheiden van andere links.</strong> <hr> <strong {B}>Toegankelijk naam</strong> <strong {C}>%(TEXT)</strong>',
+    LINK_IDENTICAL_NAME: 'Meerdere links op deze pagina gebruiken dezelfde tekst, maar verwijzen naar verschillende locaties. Dit kan verwarrend zijn voor gebruikers van ondersteunende technologieën. Maak deze linktekst beschrijvender om dit op te lossen: <strong {C}>%(TEXT)</strong>',
     LINK_UNPRONOUNCEABLE:
       'Linktekst bevat alleen symbolen. Als je denkt dat deze link een fout is door een kopieer-/plakfout, overweeg dan om deze te verwijderen.',
 

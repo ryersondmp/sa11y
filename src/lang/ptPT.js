@@ -228,8 +228,7 @@ export default {
       'A ligação abre num novo separador ou janela sem aviso. Se o fizer, pode ser desorientador, especialmente para as pessoas que têm dificuldade em percecionar conteúdos visuais. Em segundo lugar, nem sempre é uma boa prática controlar a experiência de alguém ou tomar decisões por ele. Indique que a hiperligação abre numa nova janela no texto da hiperligação<hr><strong>Dica!</strong> Conheça as melhores práticas: <a href="https://www.nngroup.com/articles/new-browser-windows-and-tabs/">abrir ligações em novas janelas e separadores do browser.</a>',
     LINK_FILE_EXT:
       'A ligação aponta para um PDF ou um ficheiro descarregável (por exemplo, MP3, Zip, Word Doc) sem aviso. Indique o tipo de ficheiro no texto da ligação. Se for um ficheiro grande, considere incluir o tamanho do ficheiro. <hr> <strong>Exemplo:</strong> Relatório executivo (PDF, 3MB)',
-    LINK_IDENTICAL_NAME:
-      'A ligação tem um texto idêntico ao de outra ligação, embora aponte para uma página diferente. Vários links com o mesmo texto podem causar confusão para pessoas que usam leitores de tela. <strong>Considere tornar o link a seguir mais descritivo para ajudar a distingui-lo de outros links.</strong> <hr> <strong {B}>Nome acessível</strong> <strong {C}>%(TEXT)</strong>',
+    LINK_IDENTICAL_NAME: 'Vários links nesta página utilizam o mesmo texto, mas apontam para locais diferentes. Isto pode causar confusão aos utilizadores de tecnologias de apoio. Para corrigir, torne o texto deste link mais descritivo: <strong {C}>%(TEXT)</strong>',
     LINK_UNPRONOUNCEABLE:
       'O texto do link contém apenas símbolos. Se considerar que este link é um erro devido a uma falha de copiar/colar, considere eliminá-lo.',
 

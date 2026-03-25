@@ -495,7 +495,7 @@ export default function checkLinkText() {
             type: State.option.checks.LINK_IDENTICAL_NAME.type || 'warning',
             content: Lang.sprintf(
               State.option.checks.LINK_IDENTICAL_NAME.content ||
-                Lang._('LINK_IDENTICAL_NAME') + Lang._('ACC_NAME_TIP'),
+                Lang._('LINK_IDENTICAL_NAME') + Lang._('LINK_TIP'),
               linkText,
             ),
             inline: true,
@@ -507,7 +507,7 @@ export default function checkLinkText() {
           });
         }
       } else {
-        seen[strippedLinkText] = true;
+        seen[strippedLinkText] = href;
         seen[href] = true;
       }
 

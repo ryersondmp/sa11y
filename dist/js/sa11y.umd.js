@@ -7620,7 +7620,7 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
               element: $el,
               type: State.option.checks.LINK_IDENTICAL_NAME.type || "warning",
               content: Lang.sprintf(
-                State.option.checks.LINK_IDENTICAL_NAME.content || Lang._("LINK_IDENTICAL_NAME") + Lang._("ACC_NAME_TIP"),
+                State.option.checks.LINK_IDENTICAL_NAME.content || Lang._("LINK_IDENTICAL_NAME") + Lang._("LINK_TIP"),
                 linkText
               ),
               inline: true,
@@ -7630,7 +7630,7 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
             });
           }
         } else {
-          seen[strippedLinkText] = true;
+          seen[strippedLinkText] = href;
           seen[href] = true;
         }
         if (targetBlank && !fileTypeMatch && !containsNewWindowPhrases) {

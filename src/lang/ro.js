@@ -231,8 +231,7 @@ export default {
       'Legătura se deschide într-o fereastră sau într-un tab nou fără avertisment. Acest lucru poate fi dezorientant, în special pentru persoanele care au dificultăți în perceperea conținutului vizual. În al doilea rând, nu este întotdeauna o practică bună să controlați experiența unei persoane sau să luați decizii în locul ei. Indicați că link-ul se deschide într-o fereastră nouă în textul linkului<hr><strong>Tip!</strong> Învățați cele mai bune practici: <a href="https://www.nngroup.com/articles/new-browser-windows-and-tabs/">deschiderea linkurilor în ferestre și file noi de browser.</a>.',
     LINK_FILE_EXT:
       'Legătura trimite la un fișier PDF sau la un fișier descărcabil (de exemplu, MP3, Zip, Word Doc) fără avertisment. Indicați tipul de fișier în textul linkului. Dacă este un fișier de mari dimensiuni, luați în considerare posibilitatea de a include dimensiunea fișierului. <hr> <strong>Exemplu:</strong> Raport executiv (PDF, 3MB)',
-    LINK_IDENTICAL_NAME:
-      'Linkul are un text identic cu cel al unui alt link, deși trimite la o pagină diferită. Mai multe linkuri cu același text pot crea confuzie pentru persoanele care utilizează cititoare de ecran. <strong>Considerați posibilitatea de a face următorul link mai descriptiv pentru a ajuta la distingerea acestuia de alte linkuri.</strong> <hr> <strong {B}>Numele accesibil</strong> <strong {C}>%(TEXT)</strong>',
+    LINK_IDENTICAL_NAME: 'Mai multe linkuri de pe această pagină folosesc același text, dar indică locuri diferite. Acest lucru poate crea confuzie pentru utilizatorii de tehnologii de asistență. Pentru a remedia problema, faceți textul acestui link mai descriptiv: <strong {C}>%(TEXT)</strong>',
     LINK_UNPRONOUNCEABLE:
       'Textul linkului conține doar simboluri. Dacă credeți că acest link este o eroare din cauza unei probleme de copiere/lipire, luați în considerare ștergerea acestuia.',
 

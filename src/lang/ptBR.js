@@ -226,8 +226,7 @@ export default {
       'O link abre em uma nova guia ou janela sem aviso. Fazer isso pode ser desorientador, especialmente para pessoas que têm dificuldade de perceber o conteúdo visual. Em segundo lugar, nem sempre é uma boa prática controlar a experiência de alguém ou tomar decisões por ele. Indique que o link abre em uma nova janela no texto do link. <hr> <strong>Dica!</strong> Conheça as práticas recomendadas: <a href="https://www.nngroup.com/articles/new-browser-windows-and-tabs/">abrir links em novas janelas e guias do navegador.</a>',
     LINK_FILE_EXT:
       'O link aponta para um PDF ou arquivo para download (por exemplo, MP3, Zip, Word Doc) sem aviso. Indique o tipo de arquivo no texto do link. Se for um arquivo grande, considere incluir o tamanho do arquivo. <hr> <strong>Exemplo:</strong> Relatório executivo (PDF, 3 MB)',
-    LINK_IDENTICAL_NAME:
-      'O link tem texto idêntico ao de outro link, embora aponte para uma página diferente. Vários links com o mesmo texto podem causar confusão para pessoas que usam leitores de tela. <strong>Considere tornar o link a seguir mais descritivo para ajudar a distingui-lo de outros links.</strong> <hr> <strong {B}>Nome acessível</strong> <strong {C}>%(TEXT)</strong>',
+    LINK_IDENTICAL_NAME: 'Vários links nesta página usam o mesmo texto, mas apontam para lugares diferentes. Isso pode causar confusão para usuários de tecnologias assistivas. Para corrigir, torne o texto deste link mais descritivo: <strong {C}>%(TEXT)</strong>',
     LINK_UNPRONOUNCEABLE:
       'O texto do link contém apenas símbolos. Se você acha que este link é um erro devido a uma falha de copiar/colar, considere excluí-lo.',
 

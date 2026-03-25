@@ -224,8 +224,7 @@ export default {
       'Linkki avautuu uuteen välilehteen tai ikkunaan ilman varoitusta. Tämä voi olla hämmentävää erityisesti henkilöille, joilla on vaikeuksia visuaalisen sisällön hahmottamisessa. Toiseksi, ei ole aina hyvä käytäntö hallita toisen kokemusta tai tehdä päätöksiä hänen puolestaan. Ilmoita linkkitekstissä, että linkki avautuu uuteen ikkunaan<hr><strong>Vinkki!</strong> Opi parhaat käytännöt: <a href="https://www.nngroup.com/articles/new-browser-windows-and-tabs/">Linkkien avaaminen uusissa selainikkunoissa ja välilehdissä.</a>',
     LINK_FILE_EXT:
       'Linkki osoittaa PDF-tiedostoon tai ladattavaan tiedostoon (esim. MP3, Zip, Word Doc) ilman varoitusta. Ilmoita tiedostotyyppi linkkitekstissä. Jos kyseessä on suuri tiedosto, harkitse tiedoston koon ilmoittamista. <hr> <strong>Esimerkki:</strong> Toimitusjohtajan raportti (PDF, 3MB)',
-    LINK_IDENTICAL_NAME:
-      'Linkillä on sama teksti kuin toisella linkillä, vaikka se osoittaa eri sivulle. Useat linkit, joissa on sama teksti, voivat aiheuttaa sekaannusta ruudunlukuohjelmia käyttäville henkilöille. <strong>Harkitse seuraavan linkin tekemistä kuvaavammaksi, jotta se erottuu paremmin muista linkeistä.</strong> <hr> <strong {B}>Saavutettava nimi</strong> <strong {C}>%(TEXT)</strong>',
+    LINK_IDENTICAL_NAME: 'Useat linkit tällä sivulla käyttävät samaa linkkitekstiä, mutta osoittavat eri paikkoihin. Tämä voi aiheuttaa hämmennystä avustavan teknologian käyttäjille. Korjaa ongelma tekemällä tästä linkkitekstistä kuvaavampi: <strong {C}>%(TEXT)</strong>',
     LINK_UNPRONOUNCEABLE:
       'Linkin teksti sisältää vain symboleja. Jos uskot, että tämä linkki on kopiointi-/liittämisvirhe, harkitse sen poistamista.',
 
