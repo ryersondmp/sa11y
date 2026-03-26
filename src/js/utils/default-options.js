@@ -205,7 +205,6 @@ const defaultOptions = {
     },
     QA_STRONG_ITALICS: true,
     QA_IN_PAGE_LINK: true,
-    LINK_MAYBE_BUTTON: true,
     QA_DOCUMENT: {
       sources: '',
       dismissAll: true,
@@ -256,6 +255,7 @@ const defaultOptions = {
     BTN_EMPTY: true,
     BTN_EMPTY_LABELLEDBY: true,
     BTN_ROLE_IN_NAME: true,
+    LINK_MAYBE_BUTTON: true,
 
     // Contrast checks
     CONTRAST_WARNING: {

@@ -205,7 +205,6 @@
       },
       QA_STRONG_ITALICS: true,
       QA_IN_PAGE_LINK: true,
-      LINK_MAYBE_BUTTON: true,
       QA_DOCUMENT: {
         sources: "",
         dismissAll: true
@@ -254,6 +253,7 @@
       BTN_EMPTY: true,
       BTN_EMPTY_LABELLEDBY: true,
       BTN_ROLE_IN_NAME: true,
+      LINK_MAYBE_BUTTON: true,
       // Contrast checks
       CONTRAST_WARNING: {
         dismissAll: true
@@ -8540,10 +8540,12 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
             if (!targetElement) {
               let isFauxButton = false;
               if (State.option.checks.LINK_MAYBE_BUTTON) {
-                const accessibleName = computeAccessibleName($el);
+                const accName = removeWhitespace(
+                  computeAccessibleName($el, Constants.Exclusions.LinkSpan)
+                ).toLowerCase();
                 const keywords = Lang._("POTENTIAL_UI_ELEMENTS");
-                const matchedKeyword = keywords.find((word) => accessibleName.includes(word));
-                if (matchedKeyword && accessibleName.length <= 15) {
+                const matchedKeyword = keywords.find((word) => accName.includes(word));
+                if (matchedKeyword && accName.length <= 15) {
                   isFauxButton = true;
                   State.results.push({
                     test: "LINK_MAYBE_BUTTON",
@@ -8551,7 +8553,7 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
                     type: State.option.checks.LINK_MAYBE_BUTTON.type || "error",
                     content: Lang.sprintf(
                       State.option.checks.LINK_MAYBE_BUTTON.content || "LINK_MAYBE_BUTTON",
-                      accessibleName
+                      accName
                     ),
                     inline: true,
                     dismiss: prepareDismissal(`LINK_MAYBE_BUTTON_${matchedKeyword}`),

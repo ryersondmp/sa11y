@@ -91,10 +91,12 @@ export default function checkQA() {
 
             // 1. Broken same page link AND most likely a button!
             if (State.option.checks.LINK_MAYBE_BUTTON) {
-              const accessibleName = computeAccessibleName($el);
+              const accName = Utils.removeWhitespace(
+                computeAccessibleName($el, Constants.Exclusions.LinkSpan),
+              ).toLowerCase();
               const keywords = Lang._('POTENTIAL_UI_ELEMENTS');
-              const matchedKeyword = keywords.find((word) => accessibleName.includes(word));
-              if (matchedKeyword && accessibleName.length <= 15) {
+              const matchedKeyword = keywords.find((word) => accName.includes(word));
+              if (matchedKeyword && accName.length <= 15) {
                 isFauxButton = true;
                 State.results.push({
                   test: 'LINK_MAYBE_BUTTON',
@@ -102,7 +104,7 @@ export default function checkQA() {
                   type: State.option.checks.LINK_MAYBE_BUTTON.type || 'error',
                   content: Lang.sprintf(
                     State.option.checks.LINK_MAYBE_BUTTON.content || 'LINK_MAYBE_BUTTON',
-                    accessibleName,
+                    accName,
                   ),
                   inline: true,
                   dismiss: Utils.prepareDismissal(`LINK_MAYBE_BUTTON_${matchedKeyword}`),
