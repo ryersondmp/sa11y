@@ -323,8 +323,7 @@ export default {
     // QA
     QA_BAD_LINK:
       'Slechte link gevonden. Link lijkt te verwijzen naar een ontwikkelomgeving. <hr> {L} <strong {C}>%(LINK)</strong>',
-    QA_IN_PAGE_LINK:
-      'Gebroken koppeling naar dezelfde pagina. Het koppelingsdoel komt niet overeen met enig element op deze pagina.',
+    QA_IN_PAGE_LINK: 'Defecte link op dezelfde pagina. Deze link probeert te navigeren naar een gedeelte van de pagina dat niet kan worden gevonden. Zorg er voor dat de link overeenkomt met de <code>id</code> van het element waarnaar u wilt springen om dit op te lossen.',
     QA_STRONG_ITALICS:
       "Vetgedrukte en cursieve tags hebben een semantische betekenis en moeten <strong>niet</strong> worden gebruikt om hele alinea's te benadrukken. Vetgedrukte tekst moet worden gebruikt om een woord of zin sterk te <strong>accentueren</strong>. Cursief moet worden gebruikt om eigennamen (bijv. titels van boeken en artikelen), vreemde woorden en aanhalingstekens te benadrukken. Lange citaten moeten worden opgemaakt als een blokcitaat.",
     QA_PDF:
@@ -388,6 +387,8 @@ export default {
       'Gebruik het woord "knop" niet in de naam van een knop. Schermlezers vermelden al de rol van een element naast de naam.',
     LABEL_IN_NAME:
       'De zichtbare tekst voor dit element lijkt te verschillen van de toegankelijke naam, wat verwarring kan veroorzaken voor gebruikers van ondersteunende technologieën. Controleer alstublieft: <hr> <strong {B}>Toegankelijke Naam</strong> <strong {C}>%(TEXT)</strong>',
+    LINK_MAYBE_BUTTON: 'Deze link heeft een ongeldig doel en de toegankelijke naam bevat het woord "<strong>%(NAME)</strong>". Dit suggereert dat dit misschien helemaal geen link is, maar in plaats daarvan gescript gedrag op de pagina aanstuurt. Vervang de link door een <a href="https://www.w3.org/WAI/ARIA/apg/patterns/button/">toegankelijke knop</a> of corrigeer de bestemming van de link om dit op te lossen. <hr> <strong>Tip!</strong> Ondersteunende technologieën behandelen knoppen en links verschillend. Het gebruik van het juiste HTML-element zorgt ervoor dat gebruikers weten welke sneltoetsen ze moeten gebruiken en welke actie wordt geactiveerd.',
+    POTENTIAL_UI_ELEMENTS: ['menu', 'sluiten', 'schakelen', 'openen', 'uitvouwen', 'samenvouwen', 'volgende', 'vorige', 'afspelen', 'pauzeren', 'submenu', 'tonen', 'verbergen', 'dropdown', 'terug', 'vooruit', 'overslaan', 'verzenden', 'annuleren', 'opslaan', 'bewerken', 'verwijderen', 'verwijderen', 'zoeken', 'filteren', 'sorteren', 'stoppen', 'dempen', 'dempen opheffen', 'volledig scherm', 'minimaliseren', 'maximaliseren'],
 
     // Tables
     TABLES_MISSING_HEADINGS:

@@ -4,6 +4,7 @@ import sharedStyles from '../../css/shared.css?inline';
 import Constants from '../utils/constants';
 import Lang from '../utils/lang';
 import { sanitizeURL } from '../utils/utils';
+import { State } from '../core/state';
 
 export default class ConsoleErrors extends HTMLElement {
   constructor(error) {
@@ -29,9 +30,14 @@ export default class ConsoleErrors extends HTMLElement {
     const google = 'https://forms.gle/sjzK9XykETaoqZv99';
 
     // GitHub template
-    const template = `## Error Description
+    const template = `## Error description
 \`\`\`javascript
 ${this.error.stack}
+\`\`\`
+
+## Configuration options
+\`\`\`javascript
+${JSON.stringify(State.option)}
 \`\`\`
 
 ## Details
@@ -68,6 +74,9 @@ ${this.error.stack}
       `Version: ${Sa11yVersion}`,
       document.createElement('br'),
       `URL: ${url}`,
+      document.createElement('br'),
+      document.createElement('br'),
+      `Config options: ${JSON.stringify(State.option)}`,
     );
 
     // 5. Assemble and append.

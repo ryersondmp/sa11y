@@ -311,8 +311,7 @@ export default {
     // QA
     QA_BAD_LINK:
       'Feil lenke funnet. Lenken ser ut til å peke til et utviklingsmiljø. <hr> {L} <strong {C}>%(LINK)</strong>',
-    QA_IN_PAGE_LINK:
-      'Ødelagt samme-sides lenke. Lenkemålet samsvarer ikke med noen element på denne siden.',
+    QA_IN_PAGE_LINK: 'Ødelagt lenke til samme side. Denne lenken prøver å navigere til en seksjon på siden som ikke finnes. For å fikse dette, sørg for at lenken samsvarer med <code>id</code>-en til elementet du vil hoppe til.',
     QA_STRONG_ITALICS:
       'Fet og kursiv har en semantisk betydning, og bør <strong>ikke</strong> brukes til å fremheve hele avsnitt. Fet skrift skal brukes til å fremheve et ord eller en frase. Kursiv skal brukes til å fremheve egennavn (f.eks. bok- og artikkeltitler), fremmedord og sitater. Lange sitater bør formateres som blokksitater.',
     QA_PDF:
@@ -376,6 +375,8 @@ export default {
       'Ikke inkluder ordet "knapp" i navnet på en knapp. Skjermlesere kunngjør allerede elementets rolle i tillegg til navnet.',
     LABEL_IN_NAME:
       'Den synlige teksten for dette elementet ser ut til å være forskjellig fra det tilgjengelige navnet, noe som kan føre til forvirring for brukere av hjelpemiddelsteknologi. Vennligst sjekk: <hr> <strong {B}>Tilgjengelig Navn</strong> <strong {C}>%(TEXT)</strong>',
+    LINK_MAYBE_BUTTON: 'Denne lenken har et ugyldig mål, og det tilgjengelige navnet inneholder ordet "<strong>%(NAME)</strong>". Dette tyder på at dette kanskje ikke er en lenke i det hele tatt, men i stedet kontrollerer en skriptet oppførsel på siden. For å fikse dette, erstatt lenken med en <a href="https://www.w3.org/WAI/ARIA/apg/patterns/button/">tilgjengelig knapp</a>, eller korriger lenkens destinasjon. <hr> <strong>Tips!</strong> Hjelpemiddelteknologi behandler knapper og lenker forskjellig. Bruk av riktig HTML-element sikrer at brukerne vet hvilke hurtigtaster de skal bruke og hvilken handling som vil bli utløst.',
+    POTENTIAL_UI_ELEMENTS: ['meny', 'lukk', 'veksle', 'åpne', 'utvid', 'skjul', 'neste', 'forrige', 'spill av', 'pause', 'undermeny', 'vis', 'skjul', 'rullegardin', 'tilbake', 'fremover', 'hopp over', 'send inn', 'avbryt', 'lagre', 'rediger', 'slett', 'fjern', 'søk', 'filter', 'sorter', 'stopp', 'demp', 'opphev demping', 'fullskjerm', 'minimer', 'maksimer'],
 
     // Tables
     TABLES_MISSING_HEADINGS:

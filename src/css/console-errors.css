@@ -51,4 +51,6 @@ p {
   color: var(--sa11y-error-text);
   background: var(--sa11y-error);
   border: 2px dashed #f08080;
+  max-height: 300px;
+  overflow: scroll;
 }

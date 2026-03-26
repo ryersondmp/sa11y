@@ -313,8 +313,7 @@ export default {
     // QA
     QA_BAD_LINK:
       'Rossz linket találtunk. Úgy tűnik, hogy a link egy fejlesztői környezetre mutat. <hr> {L} <strong {C}>%(LINK)</strong>',
-    QA_IN_PAGE_LINK:
-      'Sérült azonos oldalú link. A hivatkozás célja nem egyezik meg egyetlen elemmel sem ezen az oldalon.',
+    QA_IN_PAGE_LINK: 'Hibás belső hivatkozás. Ez a hivatkozás az oldal egy olyan szakaszára próbál navigálni, amely nem található. A javításhoz győződjön meg arról, hogy a hivatkozás megegyezik annak az elemnek az <code>id</code> azonosítójával, amelyre ugrani szeretne.',
     QA_STRONG_ITALICS:
       'A vastag és dőlt betűs címkéknek szemantikai jelentésük van, és <strong>nem</strong> szabad egész bekezdések kiemelésére használni őket. A félkövérrel kiemelt szöveget egy szó vagy kifejezés erős <strong>kiemelésére</strong> kell használni. A dőlt betűt a tulajdonnevek (pl. könyv- és cikkcímek), idegen szavak, idézőjelek kiemelésére kell használni. A hosszú idézeteket blokkidézetként kell formázni.',
     QA_PDF:
@@ -378,6 +377,8 @@ export default {
       'Ne tartalmazza a "gomb" szót a gomb nevében. A képernyőolvasók már közlik az elem szerepét annak neve mellett.',
     LABEL_IN_NAME:
       'Ennek az elemnek a látható szövege eltérhet az akadálymentes névtől, ami zavart okozhat az akadálymentes technológiákat használó felhasználók számára. Kérem, ellenőrizze: <hr> <strong {B}>Akadálymentes Név</strong> <strong {C}>%(TEXT)</strong>',
+    LINK_MAYBE_BUTTON: 'Ez a hivatkozás érvénytelen céllal rendelkezik, és a hozzáférhető név tartalmazza a „<strong>%(NAME)</strong>” szót. Ez arra utal, hogy ez egyáltalán nem hivatkozás, hanem valamilyen szkriptelt viselkedést vezérel az oldalon. A javításhoz cserélje ki a hivatkozást egy <a href="https://www.w3.org/WAI/ARIA/apg/patterns/button/">hozzáférhető gombra</a>, vagy javítsa ki a hivatkozás célját. <hr> <strong>Tipp!</strong> A segítő technológiák eltérően kezelik a gombokat és a hivatkozásokat. A megfelelő HTML-elem használata biztosítja, hogy a felhasználók tudják, melyik billentyűparancsokat használják, és milyen művelet fog elindulni.',
+    POTENTIAL_UI_ELEMENTS: ['menü', 'bezárás', 'váltás', 'megnyitás', 'kibontás', 'összecsukás', 'következő', 'előző', 'lejátszás', 'szünet', 'almenü', 'megjelenítés', 'elrejtés', 'legördülő', 'vissza', 'előre', 'kihagyás', 'beküldés', 'mégse', 'mentés', 'szerkesztés', 'törlés', 'eltávolítás', 'keresés', 'szűrés', 'rendezés', 'leállítás', 'némítás', 'visszahangosítás', 'teljes képernyő', 'minimalizálás', 'maximalizálás'],
 
     // Tables
     TABLES_MISSING_HEADINGS:

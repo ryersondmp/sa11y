@@ -313,8 +313,7 @@ export default {
     // QA
     QA_BAD_LINK:
       'Nájdené zlé prepojenie. Zdá sa, že odkaz smeruje na vývojové prostredie. <hr> {L} <strong {C}>%(LINK)</strong>',
-    QA_IN_PAGE_LINK:
-      'Rozbitý odkaz na rovnakú stránku. Cieľ odkazu nezodpovedá žiadnemu prvku na tejto stránke.',
+    QA_IN_PAGE_LINK: 'Nefunkčný odkaz na rovnakú stránku. Tento odkaz sa pokúša navigovať do sekcie stránky, ktorú nie je možné nájsť. Ak to chcete napraviť, uistite sa, že odkaz zodpovedá <code>id</code> prvku, na ktorý chcete prejsť.',
     QA_STRONG_ITALICS:
       'Tučné písmo a kurzíva majú sémantický význam a nemali by sa používať na zvýraznenie celých odsekov. Tučný text by sa mal používať na výrazné <strong>zdôraznenie</strong> slova alebo frázy. Kurzíva by sa mala používať na zvýraznenie vlastných mien (t. j. názvov kníh a článkov), cudzích slov, citátov. Dlhé citáty by sa mali formátovať ako blokové citáty.',
     QA_PDF:
@@ -378,6 +377,8 @@ export default {
       'Nezahŕňajte slovo „tlačidlo“ v názve tlačidla. Čítačky obrazovky už oznamujú úlohu prvku spolu s jeho názvom.',
     LABEL_IN_NAME:
       'Viditeľný text tohto prvku sa zdá byť iný ako prístupné meno, čo môže spôsobiť zmätok pre používateľov asistenčných technológií. Skontrolujte prosím: <hr> <strong {B}>Prístupné meno</strong> <strong {C}>%(TEXT)</strong>',
+    LINK_MAYBE_BUTTON: 'Tento odkaz má neplatný cieľ a prístupný názov obsahuje slovo „<strong>%(NAME)</strong>“. To naznačuje, že to možno vôbec nie je odkaz, ale prvok ovládajúci skriptované správanie na stránke. Ak to chcete napraviť, nahraďte odkaz <a href="https://www.w3.org/WAI/ARIA/apg/patterns/button/">prístupným tlačidlom</a> alebo opravte cieľ odkazu. <hr> <strong>Tip!</strong> Asistenčné technológie zaobchádzajú s tlačidlami a odkazmi odlišne. Použitie správneho HTML prvku zaisťuje, že používatelia vedia, ktoré klávesové skratky majú použiť a aká akcia sa spustí.',
+    POTENTIAL_UI_ELEMENTS: ['menu', 'zatvoriť', 'prepnuť', 'otvoriť', 'rozbaliť', 'zbaliť', 'ďalší', 'predchádzajúci', 'prehrať', 'pozastaviť', 'podponuka', 'zobraziť', 'skryť', 'rozbaľovacia ponuka', 'späť', 'vpred', 'preskočiť', 'odoslať', 'zrušiť', 'uložiť', 'upraviť', 'vymazať', 'odstrániť', 'hľadať', 'filter', 'zoradiť', 'zastaviť', 'stlmiť', 'zrušiť stlmenie', 'celá obrazovka', 'minimalizovať', 'maximalizovať'],
 
     // Tables
     TABLES_MISSING_HEADINGS:

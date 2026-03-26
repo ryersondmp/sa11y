@@ -359,8 +359,7 @@ export default {
     // Quality assurance
     QA_BAD_LINK:
       'Ungültiger Link gefunden. Link scheint auf eine Entwicklungsumgebung zu verweisen. <hr> {L} <strong {C}>%(LINK)</strong>',
-    QA_IN_PAGE_LINK:
-      'Defekter Verweis innerhalb der Seite. Das Ziel des Verweises stimmt mit keinem Element auf dieser Seite überein.',
+    QA_IN_PAGE_LINK: 'Defekter Anker-Link. Dieser Link versucht, zu einem Abschnitt der Seite zu navigieren, der nicht gefunden werden kann. Um dies zu beheben, stellen Sie sicher, dass der Link mit der <code>id</code> des Elements übereinstimmt, zu dem Sie springen möchten.',
     QA_STRONG_ITALICS:
       'Fett- und Kursiv-Tags haben semantische Bedeutung und sollten <strong>nicht</strong> verwendet werden, um ganze Absätze hervorzuheben. Fettgedruckter Text sollte verwendet werden, um ein Wort oder einen Ausdruck stark <strong>zu betonen</strong>. Kursiv sollte verwendet werden, um Eigennamen (z. B. Buch- und Artikeltitel), Fremdwörter, Zitate hervorzuheben. Lange Zitate sollten als Blockquote formatiert werden.',
     QA_PDF:
@@ -425,6 +424,8 @@ export default {
       'Fügen Sie das Wort „Schaltfläche“ nicht in den Namen einer Schaltfläche ein. Bildschirmlesegeräte geben bereits die Rolle eines Elements zusätzlich zu seinem Namen an.',
     LABEL_IN_NAME:
       'Der sichtbare Text dieses Elements scheint sich vom zugänglichen Namen zu unterscheiden, was für Benutzer von Hilfstechnologien verwirrend sein kann. Bitte überprüfen: <hr> <strong {B}>Zugänglicher Name</strong> <strong {C}>%(TEXT)</strong>',
+    LINK_MAYBE_BUTTON: 'Dieser Link hat ein ungültiges Ziel und der barrierefreie Name enthält das Wort „<strong>%(NAME)</strong>“. Dies deutet darauf hin, dass es sich möglicherweise gar nicht um einen Link handelt, sondern stattdessen ein skriptgesteuertes Verhalten auf der Seite steuert. Um dies zu beheben, ersetzen Sie den Link durch eine <a href="https://www.w3.org/WAI/ARIA/apg/patterns/button/">barrierefreie Schaltfläche</a> oder korrigieren Sie das Ziel des Links. <hr> <strong>Tipp!</strong> Hilfsmittel behandeln Schaltflächen und Links unterschiedlich. Die Verwendung des richtigen HTML-Elements stellt sicher, dass die Benutzer wissen, welche Tastenkombinationen sie verwenden müssen und welche Aktion ausgelöst wird.',
+    POTENTIAL_UI_ELEMENTS: ['Menü', 'Schließen', 'Umschalten', 'Öffnen', 'Erweitern', 'Reduzieren', 'Weiter', 'Zurück', 'Abspielen', 'Pause', 'Untermenü', 'Anzeigen', 'Ausblenden', 'Dropdown', 'Zurück', 'Vorwärts', 'Überspringen', 'Absenden', 'Abbrechen', 'Speichern', 'Bearbeiten', 'Löschen', 'Entfernen', 'Suche', 'Filter', 'Sortieren', 'Stopp', 'Stummschalten', 'Ton an', 'Vollbild', 'Minimieren', 'Maximieren'],
 
     // Tables
     TABLES_MISSING_HEADINGS:

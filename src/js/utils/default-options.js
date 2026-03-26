@@ -205,6 +205,7 @@ const defaultOptions = {
     },
     QA_STRONG_ITALICS: true,
     QA_IN_PAGE_LINK: true,
+    LINK_MAYBE_BUTTON: true,
     QA_DOCUMENT: {
       sources: '',
       dismissAll: true,

@@ -135,6 +135,13 @@ export function annotate(issue) {
     heading.textContent = issueLabel;
     listItem.appendChild(heading);
     listItem.append(content, dismissBtn || '');
+
+    // Debug mode.
+    if (State.option.unitTestMode) {
+      const test = Lang.sprintf('<strong>Test ID:</strong> <code>%(TEST)</code>', issue.test);
+      listItem.append(test);
+    }
+
     Constants.Panel.pageIssuesList.prepend(listItem);
 
     // Display Page Issues panel.

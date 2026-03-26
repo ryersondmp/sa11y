@@ -308,8 +308,7 @@ export default {
     // QA
     QA_BAD_LINK:
       'Huono linkki löytyi. Linkki näyttää osoittavan kehitysympäristöön. <hr> {L} <strong {C}>%(LINK)</strong>',
-    QA_IN_PAGE_LINK:
-      'Rikkinäinen samalla sivulla oleva linkki. Linkin kohde ei vastaa mitään tämän sivun elementtiä.',
+    QA_IN_PAGE_LINK: 'Rikkoutunut saman sivun linkki. Tämä linkki yrittää navigoida sivun osioon, jota ei löydy. Korjaa ongelma varmistamalla, että linkki vastaa sen elementin <code>id</code>-tunnusta, johon haluat hypätä.',
     QA_STRONG_ITALICS:
       'Lihavointi- ja kursivointitunnisteilla on semanttinen merkitys, eikä niitä tulisi <strong>ei</strong> käyttää kokonaisten kappaleiden korostamiseen. Lihavoitua tekstiä tulisi käyttää sanan tai lauseen voimakkaaseen <strong>korostamiseen</strong>. Kursivointia tulisi käyttää oikeiden nimien (esim. kirjan ja artikkelin otsikot), vierasperäisten sanojen ja lainausmerkkien korostamiseen. Pitkät lainaukset olisi muotoiltava blokkilainauksiksi.',
     QA_PDF:
@@ -374,6 +373,8 @@ export default {
       'Älä sisällytä sanaa "painike" painikkeen nimeen. Ruudunlukijat ilmoittavat jo elementin roolin sen nimen lisäksi.',
     LABEL_IN_NAME:
       'Tämän elementin näkyvä teksti näyttää olevan erilainen kuin saavutettava nimi, mikä saattaa aiheuttaa hämmennystä avustavien teknologioiden käyttäjille. Tarkista: <hr> <strong {B}>Saavutettava nimi</strong> <strong {C}>%(TEXT)</strong>',
+    LINK_MAYBE_BUTTON: 'Tällä linkillä on virheellinen kohde, ja saavutettava nimi sisältää sanan "<strong>%(NAME)</strong>". Tämä viittaa siihen, ettei kyseessä välttämättä ole linkki lainkaan, vaan se ohjaa jotakin sivun skriptattua toimintaa. Korjaa ongelma korvaamalla linkki <a href="https://www.w3.org/WAI/ARIA/apg/patterns/button/">saavutettavalla painikkeella</a> tai korjaamalla linkin kohde. <hr> <strong>Vinkki!</strong> Avustavat teknologiat käsittelevät painikkeita ja linkkejä eri tavalla. Oikean HTML-elementin käyttö varmistaa, että käyttäjät tietävät, mitä pikanäppäimiä käyttää ja mikä toiminto käynnistyy.',
+    POTENTIAL_UI_ELEMENTS: ['valikko', 'sulje', 'vaihda', 'avaa', 'laajenna', 'supista', 'seuraava', 'edellinen', 'toista', 'tauko', 'alavalikko', 'näytä', 'piilota', 'pudotusvalikko', 'takaisin', 'eteenpäin', 'ohita', 'lähetä', 'peruuta', 'tallenna', 'muokkaa', 'poista', 'poista', 'etsi', 'suodata', 'lajittele', 'pysäytä', 'vaimenna', 'poista vaimennus', 'koko näyttö', 'minimoi', 'maksimoi'],
 
     // Tables
     TABLES_MISSING_HEADINGS:

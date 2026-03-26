@@ -244,7 +244,7 @@
       EMBED_UNFOCUSABLE: '带有无法聚焦元素的 <code>&lt;iframe&gt;</code> 不应具有 <code>tabindex="-1"</code>。嵌入内容将无法通过键盘访问。',
       // QA
       QA_BAD_LINK: "发现坏的链接。链接似乎指向一个开发环境。<hr> {L} <strong {C}>%(LINK)</strong>",
-      QA_IN_PAGE_LINK: "破损的同页链接。链接目标与此页面上的任何元素都不匹配。",
+      QA_IN_PAGE_LINK: "无效的同页面链接。此链接尝试跳转到页面中找不到的部分。要修复此问题，请确保链接与您要跳转的元素的 <code>id</code> 相匹配。",
       QA_STRONG_ITALICS: "粗体和斜体标签具有语义, 不应<strong></strong>用于突出整个段落。加粗的文字应该用于对一个词或短语进行强烈的<strong>强调</strong>。斜体字应该用来突出专有名词 (即书名和文章标题) 、外国词、引号。长篇引语应采用块状引语的格式。",
       QA_PDF: '无法检查PDF的可访问性。PDF被认为是网络内容, 也必须做到无障碍。对于使用屏幕阅读器的人 (缺失结构标签或缺失表格字段标签) 和低视力的人 (文本在放大时不回流) 来说, PDF经常包含一些问题。<ul><li>如果这是一个表格, 请考虑使用可访问的HTML表格作为替代。</li><li>如果这是一个文档, 请考虑将其转换为网页。</li></ul>否则, 请在Acrobat DC中检查<a href="https://helpx.adobe.com/acrobat/using/create-verify-pdf-accessibility.html">PDF的可访问性。</a>',
       QA_DOCUMENT: '无法检查文件的可访问性。链接文件被认为是网络内容, 也必须做到无障碍。请手动审查该文件。<ul><li>使您的<a href="https://support.google.com/docs/answer/6199477?hl=zh">Google Workspace文档或演示文稿更易于访问。</a></li><li>使您的<a href="https://support.microsoft.com/zh/office/create-accessible-office-documents-868ecfcd-4f00-4224-b881-a65537a7c155">Office文档更易于访问。</a></li></ul>。',
@@ -280,6 +280,8 @@
       BTN_TIP: '了解如何制作一个<a href="https://www.sarasoueidan.com/blog/accessible-icon-buttons/">可访问的按钮。</a>',
       BTN_ROLE_IN_NAME: "不要在按钮的名称中包含“按钮”一词。屏幕阅读器已经会传达元素的角色和名称。",
       LABEL_IN_NAME: "此元素的可见文本似乎与可访问名称不同，可能会对辅助技术用户造成混淆。请检查：<hr> <strong {B}>可访问名称</strong> <strong {C}>%(TEXT)</strong>",
+      LINK_MAYBE_BUTTON: '此链接的目标无效，其辅助名称包含单词“<strong>%(NAME)</strong>”。这表明它可能根本不是链接，而是控制页面上的某些脚本行为。要修复此问题，请将链接替换为 <a href="https://www.w3.org/WAI/ARIA/apg/patterns/button/">无障碍按钮</a>，或纠正链接的目标地址。 <hr> <strong>提示！</strong> 辅助技术对按钮和链接的处理方式不同。使用正确的 HTML 元素可确保用户了解应使用的键盘快捷键以及将触发的操作。',
+      POTENTIAL_UI_ELEMENTS: ["菜单", "关闭", "切换", "打开", "展开", "折叠", "下一步", "上一步", "播放", "暂停", "子菜单", "显示", "隐藏", "下拉", "返回", "前进", "跳过", "提交", "取消", "保存", "编辑", "删除", "移除", "搜索", "筛选", "排序", "停止", "静音", "取消静音", "全屏", "最小化", "最大化"],
       // Tables
       TABLES_MISSING_HEADINGS: '缺少表头!可访问的表格需要HTML标记, 表明标题单元和数据单元, 定义它们的关系。这种信息为使用辅助技术的人提供了背景。表格应该只用于表格式的数据。<hr> 了解更多关于<a href="https://www.w3.org/WAI/tutorials/tables/">无障碍表格的信息。</a>',
       TABLES_SEMANTIC_HEADING: '语义标题, 如Heading 2或Heading 3, 只能用于内容的章节；<strong>不能</strong>用于HTML表格。使用<code>&lt;th&gt;</code>元素来表示表格的标题。<hr> 了解更多关于<a href="https://www.w3.org/WAI/tutorials/tables/">可访问的表格。</a>',

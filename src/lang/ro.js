@@ -315,8 +315,7 @@ export default {
     // QA
     QA_BAD_LINK:
       'Link greșit găsit. Linkul pare să indice un mediu de dezvoltare. <hr> {L} <strong {C}>%(LINK)</strong>.',
-    QA_IN_PAGE_LINK:
-      'Legătură internă ruptă. Destinația linkului nu se potrivește cu niciun element de pe această pagină.',
+    QA_IN_PAGE_LINK: 'Link intern nefuncțional. Acest link încearcă să navigheze către o secțiune a paginii care nu poate fi găsită. Pentru a remedia problema, asigurați-vă că linkul corespunde cu <code>id</code>-ul elementului către care doriți să faceți saltul.',
     QA_STRONG_ITALICS:
       'Etichetele bold și italic au o semnificație semantică și nu trebuie <strong>nu</strong> folosite pentru a evidenția paragrafe întregi. Textul cu caractere aldine trebuie folosit pentru a oferi o <strong>accentuare</strong> puternică asupra unui cuvânt sau a unei fraze. Italicul ar trebui utilizat pentru a evidenția nume proprii (de exemplu, titluri de cărți și articole), cuvinte străine, ghilimele. Citatele lungi ar trebui să fie formatate ca un blockquote.',
     QA_PDF:
@@ -380,6 +379,8 @@ export default {
       'Nu includeți cuvântul „buton” în numele unui buton. Cititoarele de ecran deja comunică rolul unui element în plus față de numele său.',
     LABEL_IN_NAME:
       'Textul vizibil pentru acest element pare a fi diferit de numele accesibil, ceea ce poate cauza confuzie pentru utilizatorii de tehnologii asistive. Vă rugăm să verificați: <hr> <strong {B}>Nume Accesibil</strong> <strong {C}>%(TEXT)</strong>',
+    LINK_MAYBE_BUTTON: 'Acest link are o țintă nevalidă, iar numele accesibil conține cuvântul „<strong>%(NAME)</strong>”. Acest lucru sugerează că s-ar putea să nu fie deloc un link, ci să controleze un comportament scriptat pe pagină. Pentru a remedia problema, înlocuiți linkul cu un <a href="https://www.w3.org/WAI/ARIA/apg/patterns/button/">buton accesibil</a> sau corectați destinația linkului. <hr> <strong>Sfat!</strong> Tehnologiile de asistență tratează butoanele și linkurile în mod diferit. Utilizarea elementului HTML corect asigură că utilizatorii știu ce scurtături de tastatură să folosească și ce acțiune va fi declanșată.',
+    POTENTIAL_UI_ELEMENTS: ['meniu', 'închide', 'comută', 'deschide', 'extinde', 'restrânge', 'următorul', 'anteriorul', 'redare', 'pauză', 'submeniu', 'afișează', 'ascunde', 'meniu derulant', 'înapoi', 'înainte', 'omite', 'trimite', 'anulează', 'salvează', 'editează', 'șterge', 'elimină', 'caută', 'filtrează', 'sortează', 'stop', 'fără sunet', 'activează sunetul', 'ecran complet', 'minimizează', 'maximizează'],
 
     // Tables
     TABLES_MISSING_HEADINGS:

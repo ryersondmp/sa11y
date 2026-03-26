@@ -312,8 +312,7 @@ export default {
     // QA
     QA_BAD_LINK:
       'Leitud halb link. Link näib viitavat arenduskeskkonnale. <hr> {L} <strong {C}>%(LINK)</strong>',
-    QA_IN_PAGE_LINK:
-      'Katkine samalehekülje link. Lingi sihtmärk ei vasta sellel lehel ühelegi elemendile.',
+    QA_IN_PAGE_LINK: 'Katkine sama lehe link. See link üritab navigeerida lehe sektsiooni, mida ei leita. Parandamiseks veenduge, et link ühtiks selle elemendi <code>id</code>-ga, kuhu soovite hüpata.',
     QA_STRONG_ITALICS:
       'Paks ja kursiivne märgistus on semantilise tähendusega ja neid ei tohiks <strong>ei</strong> kasutada tervete lõigete esiletõstmiseks. Häälestatud teksti tuleks kasutada selleks, et rõhutada sõna või fraasi tugevalt <strong>kõrge</strong>. Kursiivkirjas tuleks kasutada pärisnimede (st raamatute ja artiklite pealkirjade), võõrsõnade, jutumärkide esiletõstmiseks. Pikad tsitaadid tuleks vormistada plokktsitaatidena.',
     QA_PDF:
@@ -377,6 +376,8 @@ export default {
       'Ära lisa sõna "nupp" nupu nimesse. Ekraani lugejad edastavad juba elemendi rolli lisaks selle nimele.',
     LABEL_IN_NAME:
       'Selle elemendi nähtav tekst näib olevat erinev ligipääsetavast nimest, mis võib tekitada segadust abivahendite kasutajatele. Palun vaata üle: <hr> <strong {B}>Ligipääsetav nimi</strong> <strong {C}>%(TEXT)</strong>',
+    LINK_MAYBE_BUTTON: 'Sellel lingil on vigane sihtkoht ja selle juurdepääsetav nimi sisaldab sõna "<strong>%(NAME)</strong>". See viitab sellele, že tegu ei pruugi üldse olla lingiga, vaid see juhib hoopis mingit skriptitud käitumist lehel. Parandamiseks asendage link <a href="https://www.w3.org/WAI/ARIA/apg/patterns/button/">juurdepääsetava nupuga</a> või parandage lingi sihtkoht. <hr> <strong>Nõuanne!</strong> Abitehnoloogiad käsitlevad nuppe ja linke erinevalt. Õige HTML-elemendi kasutamine tagab, et kasutajad teavad, milliseid kiirklahve kasutada ja milline tegevus käivitub.',
+    POTENTIAL_UI_ELEMENTS: ['menüü', 'sulge', 'lülita', 'ava', 'laienda', 'ahenda', 'järgmine', 'eelmine', 'mängi', 'paus', 'alammenüü', 'näita', 'peida', 'rippmenüü', 'tagasi', 'edasi', 'jäta vahele', 'esita', 'tühista', 'salvesta', 'muuda', 'kustuta', 'eemalda', 'otsi', 'filtreeri', 'sorteeri', 'peata', 'vaigista', 'lülita heli sisse', 'täisekraan', 'minimeeri', 'maksimeeri'],
 
     // Tables
     TABLES_MISSING_HEADINGS:

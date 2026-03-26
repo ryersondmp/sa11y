@@ -315,8 +315,7 @@ export default {
     // Quality assurance
     QA_BAD_LINK:
       'Lien incorrect trouvé. Le lien semble diriger vers un environnement de développement. <hr> {L} <strong {C}>%(LINK)</strong>',
-    QA_IN_PAGE_LINK:
-      'Lien interne cassé. La cible du lien ne correspond à aucun élément de cette page.',
+    QA_IN_PAGE_LINK: 'Lien interne rompu. Ce lien tente de naviguer vers une section de la page introuvable. Pour corriger cela, assurez-vous que le lien correspond à l\'<code>id</code> de l\'élément vers lequel vous souhaitez sauter.',
     QA_STRONG_ITALICS:
       'Les balises Gras et Italique ont une signification sémantique et <strong>ne devraient pas</strong> être utilisées pour surligner des paragraphes en entier. Le texte en gras doit être utilisé pour mettre fortement <strong>l’accent</strong> sur un mot ou une phrase. Les textes en Italiques doivent être utilisés pour surligner les noms propres (ex. livres et titre d’articles), les mots étrangers et les citations. Les citations longues doivent être formatées comme une citation en bloc.',
     QA_PDF:
@@ -380,6 +379,8 @@ export default {
       'N’incluez pas le mot « bouton » dans le nom d’un bouton. Les lecteurs d’écran annoncent déjà le rôle d’un élément en plus de son nom.',
     LABEL_IN_NAME:
       'Le texte visible pour cet élément semble différent du nom accessible, ce qui peut entraîner de la confusion pour les utilisateurs des technologies d’assistance. Veuillez vérifier : <hr> <strong {B}>Nom Accessible</strong> <strong {C}>%(TEXT)</strong>',
+    LINK_MAYBE_BUTTON: 'Ce lien a une cible non valide et le nom accessible contient le mot "<strong>%(NAME)</strong>". Cela suggère qu\'il ne s\'agit peut-être pas d\'un lien du tout, mais qu\'il contrôle plutôt un comportement scripté sur la page. Pour corriger cela, remplacez le lien par un <a href="https://www.w3.org/WAI/ARIA/apg/patterns/button/">bouton accessible</a>, ou corrigez la destination du lien. <hr> <strong>Astuce !</strong> Les technologies d\'assistance traitent les boutons et les liens différemment. L\'utilisation du bon élément HTML garantit que les utilisateurs savent quels raccourcis clavier utiliser et quelle action sera déclenchée.',
+    POTENTIAL_UI_ELEMENTS: ['menu', 'fermer', 'basculer', 'ouvrir', 'développer', 'réduire', 'suivant', 'précédent', 'lire', 'pause', 'sous-menu', 'afficher', 'masquer', 'déroulant', 'retour', 'avancer', 'ignorer', 'envoyer', 'annuler', 'enregistrer', 'modifier', 'supprimer', 'retirer', 'rechercher', 'filtrer', 'trier', 'arrêter', 'muet', 'réactiver le son', 'plein écran', 'minimiser', 'maximiser'],
 
     // Tables
     TABLES_MISSING_HEADINGS:

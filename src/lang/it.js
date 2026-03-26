@@ -311,8 +311,7 @@ export default {
     // QA
     QA_BAD_LINK:
       'Trovato un link errato. Il link sembra puntare a un ambiente di sviluppo. <hr> {L} <strong {C}>%(LINK)</strong>',
-    QA_IN_PAGE_LINK:
-      'Link interno rotto. Il target del link non corrisponde a nessun elemento di questa pagina.',
+    QA_IN_PAGE_LINK: 'Link interno alla pagina non funzionante. Questo link tenta di navigare verso una sezione della pagina che non è stata trovata. Per risolvere il problema, assicurati che il link corrisponda all\'<code>id</code> dell\'elemento a cui vuoi saltare.',
     QA_STRONG_ITALICS:
       'I tag grassetto e corsivo hanno un significato semantico e non devono essere usati per evidenziare interi paragrafi. Il testo in grassetto deve essere usato per dare un forte <strong>enfasi</strong> su una parola o una frase. Il corsivo deve essere usato per evidenziare nomi propri (ad esempio, titoli di libri e articoli), parole straniere e citazioni. Le citazioni lunghe devono essere formattate come blockquote.',
     QA_PDF:
@@ -376,6 +375,8 @@ export default {
       'Non includere la parola "pulsante" nel nome di un pulsante. Gli screen reader comunicano già il ruolo di un elemento oltre al suo nome.',
     LABEL_IN_NAME:
       'Il testo visibile per questo elemento sembra essere diverso dal nome accessibile, il che potrebbe causare confusione per gli utenti di tecnologie assistive. Si prega di rivedere: <hr> <strong {B}>Nome Accessibile</strong> <strong {C}>%(TEXT)</strong>',
+    LINK_MAYBE_BUTTON: 'Questo link ha una destinazione non valida e il nome accessibile contiene la parola "<strong>%(NAME)</strong>". Ciò suggerisce che potrebbe non essere affatto un link, ma che controlli invece un comportamento scriptato sulla pagina. Per risolvere il problema, sostituisci il link con un <a href="https://www.w3.org/WAI/ARIA/apg/patterns/button/">pulsante accessibile</a> o correggi la destinazione del link. <hr> <strong>Suggerimento!</strong> Le tecnologie assistive trattano i pulsanti e i link in modo diverso. L\'uso dell\'elemento HTML corretto garantisce che gli utenti sappiano quali scorciatoie da tastiera utilizzare e quale azione verrà attivata.',
+    POTENTIAL_UI_ELEMENTS: ['menu', 'chiudi', 'attiva/disattiva', 'apri', 'espandi', 'comprimi', 'successivo', 'precedente', 'riproduci', 'pausa', 'sottomenu', 'mostra', 'nascondi', 'menu a discesa', 'indietro', 'avanti', 'salta', 'invia', 'annulla', 'salva', 'modifica', 'elimina', 'rimuovi', 'cerca', 'filtra', 'ordina', 'stop', 'muto', 'riattiva audio', 'schermo intero', 'minimizza', 'massimizza'],
 
     // Tables
     TABLES_MISSING_HEADINGS:

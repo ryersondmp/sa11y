@@ -201,6 +201,7 @@ const defaultOptions = {
     },
     QA_STRONG_ITALICS: true,
     QA_IN_PAGE_LINK: true,
+    LINK_MAYBE_BUTTON: true,
     QA_DOCUMENT: {
       sources: "",
       dismissAll: true
@@ -319,8 +320,13 @@ const Lang = {
     p.innerHTML = transString;
     el2.appendChild(p);
     if (args?.length) {
-      args.forEach((_arg, index2) => {
-        el2.innerHTML = el2.innerHTML.replace(/%\([a-zA-z]+\)/, `<span data-arg='${index2}'></span>`);
+      args.forEach((arg, index2) => {
+        const argString = String(arg);
+        if (argString.startsWith("https://")) {
+          p.innerHTML = p.innerHTML.replace(/%\([a-zA-z]+\)/, argString);
+        } else {
+          p.innerHTML = p.innerHTML.replace(/%\([a-zA-z]+\)/, `<span data-arg='${index2}'></span>`);
+        }
       });
       args.forEach((arg, index2) => {
         const replacement = el2.querySelector(`[data-arg="${index2}"]`);
@@ -1620,7 +1626,7 @@ const Elements = /* @__PURE__ */ (function myElements() {
     Annotations: Annotations2
   };
 })();
-const styles = ":host{z-index:999999;background:var(--sa11y-panel-bg);border-top:5px solid var(--sa11y-panel-bg-splitter);width:100%;height:fit-content;display:block;position:fixed;bottom:0;left:0;right:0}*{font-size:var(--sa11y-normal-text);color:var(--sa11y-panel-primary);font-family:var(--sa11y-font-face)!important;-webkit-font-smoothing:auto!important;line-height:22px!important}#dialog{max-width:900px;margin:20px auto;padding:20px}h2{font-size:var(--sa11y-large-text);margin-top:0}a{color:var(--sa11y-hyperlink);cursor:pointer;text-decoration:underline}a:hover,a:focus{text-decoration:none}p{margin-top:0}.error{color:var(--sa11y-error-text);background:var(--sa11y-error);border:2px dashed #f08080;margin-bottom:0;padding:5px}";
+const styles = ":host{z-index:999999;background:var(--sa11y-panel-bg);border-top:5px solid var(--sa11y-panel-bg-splitter);width:100%;height:fit-content;display:block;position:fixed;bottom:0;left:0;right:0}*{font-size:var(--sa11y-normal-text);color:var(--sa11y-panel-primary);font-family:var(--sa11y-font-face)!important;-webkit-font-smoothing:auto!important;line-height:22px!important}#dialog{max-width:900px;margin:20px auto;padding:20px}h2{font-size:var(--sa11y-large-text);margin-top:0}a{color:var(--sa11y-hyperlink);cursor:pointer;text-decoration:underline}a:hover,a:focus{text-decoration:none}p{margin-top:0}.error{color:var(--sa11y-error-text);background:var(--sa11y-error);border:2px dashed #f08080;max-height:300px;margin-bottom:0;padding:5px;overflow:scroll}";
 const sharedStyles = '.visually-hidden{clip:rect(1px, 1px, 1px, 1px);white-space:nowrap;clip-path:inset(50%);border:0;width:1px;height:1px;padding:0;display:block;position:absolute;overflow:hidden}[hidden]{display:none!important}h2,.header-text-inline,.header-text{font-size:var(--sa11y-large-text);color:var(--sa11y-panel-primary);margin-bottom:3px;font-weight:600;display:block}.header-text-inline{display:inline-block!important}code{font-size:calc(var(--sa11y-normal-text) - 1px);font-weight:600;font-family:monospace!important}pre code{white-space:pre-wrap;overflow:auto}pre,code,kbd,.kbd{color:var(--sa11y-panel-primary);background-color:var(--sa11y-panel-badge);border-radius:3.2px;padding:1.6px 4.8px}.bold{font-weight:600}.error .colour,.red-text{font-family:var(--sa11y-font-face);color:var(--sa11y-red-text)}.warning .colour,.yellow-text{font-family:var(--sa11y-font-face);color:var(--sa11y-yellow-text)}.normal-badge,.badge{min-width:10px;color:var(--sa11y-panel-primary);text-align:center;white-space:nowrap;vertical-align:baseline;background-color:var(--sa11y-panel-badge);border-radius:10px;outline:1px solid #0000;padding:1px 5px 1.75px;font-size:14px;line-height:1;display:inline;font-weight:700!important}.error .badge{color:var(--sa11y-error-text);background:var(--sa11y-error)}.error-badge{color:var(--sa11y-error-text)!important;background:var(--sa11y-error)!important}.warning .badge{color:var(--sa11y-panel-bg);background:var(--sa11y-yellow-text)}.warning-badge{color:var(--sa11y-panel-bg)!important;background:var(--sa11y-yellow-text)!important}.good-contrast{color:var(--sa11y-good-text)!important;background:var(--sa11y-good)!important}#contrast-preview{overflow-wrap:break-word;border:2px dashed var(--sa11y-panel-bg-splitter);background-color:#e8e8e8;background-image:linear-gradient(45deg,#ccc 25%,#0000 25% 75%,#ccc 75%,#ccc),linear-gradient(45deg,#ccc 25%,#0000 25% 75%,#ccc 75%,#ccc);background-position:0 0,5px 5px;background-size:10px 10px;border-radius:3.2px;max-height:100px;margin-top:10px;padding:5px;line-height:1;overflow:clip}#contrast-preview:empty{display:none}#color-pickers{justify-content:space-between;margin-top:10px;margin-bottom:10px;display:flex}#color-pickers label{align-items:center;display:flex}#color-pickers input{cursor:pointer;margin-inline-start:7px}#fg-color-wrapper.unknown,#bg-color-wrapper.unknown{display:inline-block;position:relative}:is(#fg-color-wrapper.unknown,#bg-color-wrapper.unknown):after{z-index:2;color:#fff;pointer-events:none;content:"?";justify-content:center;align-items:center;width:44px;height:44px;margin:-46px 7px;font-size:22px;display:flex;position:absolute}input[type=color i]{background:var(--sa11y-panel-bg-secondary);border-color:var(--sa11y-button-outline);border-style:solid;border-width:1px;border-radius:50%;block-size:44px;inline-size:44px;padding:2px}input[type=color i]::-webkit-color-swatch-wrapper{padding:1px}input[type=color i]::-webkit-color-swatch{border-color:var(--sa11y-button-outline);border-radius:50%}input[type=color i]::-moz-color-swatch{border-color:var(--sa11y-button-outline);border-radius:50%}input[type=color i].unknown{box-shadow:0 0 0 3px var(--sa11y-yellow-text)}.close-btn{float:var(--sa11y-float-rtl);width:32px;height:32px;font-size:var(--sa11y-normal-text);color:var(--sa11y-panel-primary);cursor:pointer;background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-button-outline);border-radius:50%;margin:0;font-weight:400;transition:all .2s ease-in-out;position:relative}.close-btn:hover,.close-btn:focus{background-color:var(--sa11y-shortcut-hover)}.close-btn:after{content:"";background:var(--sa11y-setting-switch-bg-off);-webkit-mask:var(--sa11y-close-btn-svg) center no-repeat;mask:var(--sa11y-close-btn-svg) center no-repeat;position:absolute;inset:-7px}@media screen and (forced-colors:active){.close-btn:after{filter:invert()}}#container [tabindex="0"]:focus,#container [tabindex="-1"]:focus,#container input:focus,#container select:focus,#container button:focus,#container a:focus{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}#container .switch:focus,#container #panel-controls button:focus{box-shadow:inset 0 0 0 4px var(--sa11y-focus-color);outline:0}#container [tabindex="0"]:focus:not(:focus-visible),#container [tabindex="-1"]:focus:not(:focus-visible),#container input:focus:not(:focus-visible),#container button:focus:not(:focus-visible),#container select:focus:not(:focus-visible),#container #panel-controls button:focus:not(:focus-visible){box-shadow:none;outline:0}#container a:focus-visible,#container button:not(#panel-controls button,.switch):focus-visible,#container select:focus-visible,#container input:focus-visible,#container [tabindex="0"]:focus-visible,#container [tabindex="-1"]:focus-visible{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}#container .switch:focus-visible,#container #panel-controls button:focus-visible{box-shadow:inset 0 0 0 4px var(--sa11y-focus-color);outline:0}@media screen and (forced-colors:active){#panel-controls button:focus{border:inset 3px solid transparent}.close-btn:focus{outline:3px solid #0000!important}#container a:focus,#container [tabindex="-1"]:focus,#container [tabindex="0"]:focus,#container select:focus,#container button:focus{outline:3px solid #0000!important}}';
 class ConsoleErrors extends HTMLElement {
   constructor(error) {
@@ -1637,9 +1643,14 @@ class ConsoleErrors extends HTMLElement {
     content.setAttribute("tabindex", "-1");
     const url2 = sanitizeURL(window.location.href);
     const google = "https://forms.gle/sjzK9XykETaoqZv99";
-    const template = `## Error Description
+    const template = `## Error description
 \`\`\`javascript
 ${this.error.stack}
+\`\`\`
+
+## Configuration options
+\`\`\`javascript
+${JSON.stringify(State.option)}
 \`\`\`
 
 ## Details
@@ -1665,7 +1676,10 @@ ${this.error.stack}
       document.createElement("br"),
       `Version: ${"4.5.0"}`,
       document.createElement("br"),
-      `URL: ${url2}`
+      `URL: ${url2}`,
+      document.createElement("br"),
+      document.createElement("br"),
+      `Config options: ${JSON.stringify(State.option)}`
     );
     content.append(closeBtn, h2, p1, p2);
     shadow.appendChild(content);
@@ -6212,6 +6226,10 @@ function annotate(issue) {
     heading.textContent = issueLabel;
     listItem.appendChild(heading);
     listItem.append(content, dismissBtn || "");
+    if (State.option.unitTestMode) {
+      const test = Lang.sprintf("<strong>Test ID:</strong> <code>%(TEST)</code>", issue.test);
+      listItem.append(test);
+    }
     Constants.Panel.pageIssuesList.prepend(listItem);
     Constants.Panel.pageIssues.classList.add("active");
     Constants.Panel.panel.classList.add("has-page-issues");
@@ -6736,6 +6754,13 @@ async function syncUI() {
           if (showDismiss) container.append(createBtn("DISMISS", false));
           if (showDismissAll) container.append(createBtn("DISMISS_ALL", true));
           issue.finalContent.append(container);
+        }
+        if (State.option.unitTestMode) {
+          const test = Lang.sprintf(
+            "<hr><strong>Test ID:</strong> <code>%(TEST)</code>",
+            issue.test
+          );
+          issue.finalContent.append(test);
         }
       }
       annotate(issue);
@@ -8498,27 +8523,54 @@ function checkQA() {
       const href = $el.getAttribute("href");
       const hasExtension = $el.matches(Constants.Global.documentSources);
       const hasPDF = $el.matches('a[href$=".pdf"], a[href*=".pdf?"]');
-      if (State.option.checks.QA_IN_PAGE_LINK) {
+      if (State.option.checks.QA_IN_PAGE_LINK || State.option.checks.LINK_MAYBE_BUTTON) {
         const hasText = getText($el).length !== 0;
         const ignored = $el.ariaHidden === "true" && $el.getAttribute("tabindex") === "-1";
-        const hasAttributes = $el.hasAttribute("role") || $el.hasAttribute("aria-haspopup") || $el.hasAttribute("aria-expanded") || $el.hasAttribute("onclick") || $el.hasAttribute("disabled") || $el.closest('nav, [role="navigation"]');
+        const hasAttributes = $el.hasAttribute("role") || $el.hasAttribute("aria-haspopup") || $el.hasAttribute("aria-expanded") || $el.hasAttribute("onclick") || $el.hasAttribute("disabled") || !!$el.closest('nav, [role="navigation"]');
         if ((href.startsWith("#") || href === "") && hasText && !ignored && !hasAttributes) {
           const targetId = href.substring(1);
           const ariaControls = $el.getAttribute("aria-controls");
-          const targetElement = targetId && (document.getElementById(targetId) || document.getElementById(decodeURIComponent(targetId)) || document.getElementById(encodeURIComponent(targetId)) || document.getElementById(ariaControls) || document.querySelector(`a[name="${targetId}"]`));
+          const decoded = targetId ? decodeURIComponent(targetId) : "";
+          const encoded = targetId ? encodeURIComponent(targetId) : "";
+          const targetElement = targetId && (document.getElementById(targetId) || ariaControls && document.getElementById(ariaControls) || decoded !== targetId && document.getElementById(decoded) || encoded !== targetId && document.getElementById(encoded) || document.querySelector(`a[name="${CSS.escape(targetId)}"]`));
           if (!targetElement) {
-            State.results.push({
-              test: "QA_IN_PAGE_LINK",
-              element: $el,
-              type: State.option.checks.QA_IN_PAGE_LINK.type || "error",
-              content: Lang.sprintf(
-                State.option.checks.QA_IN_PAGE_LINK.content || "QA_IN_PAGE_LINK"
-              ),
-              inline: true,
-              dismiss: prepareDismissal(`QA_IN_PAGE_LINK ${href}`),
-              dismissAll: State.option.checks.QA_IN_PAGE_LINK.dismissAll ? "QA_IN_PAGE_LINK" : false,
-              developer: State.option.checks.QA_IN_PAGE_LINK.developer || false
-            });
+            let isFauxButton = false;
+            if (State.option.checks.LINK_MAYBE_BUTTON) {
+              const accessibleName = computeAccessibleName($el);
+              const keywords = Lang._("POTENTIAL_UI_ELEMENTS");
+              const matchedKeyword = keywords.find((word) => accessibleName.includes(word));
+              if (matchedKeyword && accessibleName.length <= 15) {
+                isFauxButton = true;
+                State.results.push({
+                  test: "LINK_MAYBE_BUTTON",
+                  element: $el,
+                  type: State.option.checks.LINK_MAYBE_BUTTON.type || "error",
+                  content: Lang.sprintf(
+                    State.option.checks.LINK_MAYBE_BUTTON.content || "LINK_MAYBE_BUTTON",
+                    accessibleName
+                  ),
+                  inline: true,
+                  dismiss: prepareDismissal(`LINK_MAYBE_BUTTON_${matchedKeyword}`),
+                  dismissAll: State.option.checks.LINK_MAYBE_BUTTON.dismissAll ? "LINK_MAYBE_BUTTON" : false,
+                  developer: State.option.checks.LINK_MAYBE_BUTTON.developer || true
+                });
+              }
+            }
+            if (State.option.checks.QA_IN_PAGE_LINK && !isFauxButton) {
+              State.results.push({
+                test: "QA_IN_PAGE_LINK",
+                element: $el,
+                type: State.option.checks.QA_IN_PAGE_LINK.type || "error",
+                content: Lang.sprintf(
+                  State.option.checks.QA_IN_PAGE_LINK.content || "QA_IN_PAGE_LINK",
+                  targetId
+                ),
+                inline: true,
+                dismiss: prepareDismissal(`QA_IN_PAGE_LINK ${href}`),
+                dismissAll: State.option.checks.QA_IN_PAGE_LINK.dismissAll ? "QA_IN_PAGE_LINK" : false,
+                developer: State.option.checks.QA_IN_PAGE_LINK.developer || false
+              });
+            }
           }
         }
       }

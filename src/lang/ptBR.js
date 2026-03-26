@@ -310,8 +310,7 @@ export default {
     // QA
     QA_BAD_LINK:
       'Encontrado link incorreto. O link parece apontar para um ambiente de desenvolvimento. <hr> {L} <strong {C}>%(LINK)</strong>',
-    QA_IN_PAGE_LINK:
-      'Link quebrado na mesma página. O destino do link não corresponde a nenhum elemento nesta página.',
+    QA_IN_PAGE_LINK: 'Link quebrado para a mesma página. Este link tenta navegar para uma seção da página que não pode ser encontrada. Para corrigir isso, certifique-se de que o link corresponda ao <code>id</code> do elemento para o qual você deseja pular.',
     QA_STRONG_ITALICS:
       'As tags negrito e itálico têm significado semântico e não devem ser usadas para destacar parágrafos inteiros. O texto em negrito deve ser usado para dar forte <strong>ênfase</strong> a uma palavra ou frase. O itálico deve ser usado para destacar nomes próprios (ou seja, títulos de livros e artigos), palavras estrangeiras e citações. As citações longas devem ser formatadas como uma citação em bloco.',
     QA_PDF:
@@ -375,6 +374,8 @@ export default {
       'Não inclua a palavra "botão" no nome de um botão. Os leitores de tela já informam o papel do elemento além do seu nome.',
     LABEL_IN_NAME:
       'O texto visível deste elemento parece ser diferente do nome acessível, o que pode causar confusão para os usuários de tecnologias assistivas. Por favor, revise: <hr> <strong {B}>Nome Acessível</strong> <strong {C}>%(TEXT)</strong>',
+    LINK_MAYBE_BUTTON: 'Este link tem um destino inválido e o nome acessível contém a palavra "<strong>%(NAME)</strong>". Isso sugere que pode não ser um link, mas sim um controle de comportamento programado na página. Para corrigir, substitua o link por um <a href="https://www.w3.org/WAI/ARIA/apg/patterns/button/">botão acessível</a> ou corrija o destino do link. <hr> <strong>Dica!</strong> As tecnologias assistivas tratam botões e links de maneira diferente. O uso do elemento HTML correto garante que os usuários saibam quais atalhos de teclado usar e qual ação será disparada.',
+    POTENTIAL_UI_ELEMENTS: ['menu', 'fechar', 'alternar', 'abrir', 'expandir', 'recolher', 'próximo', 'anterior', 'reproduzir', 'pausar', 'submenu', 'mostrar', 'ocultar', 'suspenso', 'voltar', 'avançar', 'pular', 'enviar', 'cancelar', 'salvar', 'editar', 'excluir', 'remover', 'buscar', 'filtrar', 'ordenar', 'parar', 'mudo', 'ativar som', 'tela cheia', 'minimizar', 'maximizar'],
 
     // Tables
     TABLES_MISSING_HEADINGS:

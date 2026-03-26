@@ -311,8 +311,7 @@ export default {
     // QA
     QA_BAD_LINK:
       'Tautan buruk ditemukan. Tautan yang muncul mengarah ke lingkungan pengembangan. <hr> {L} <strong {C}>%(LINK)</strong>',
-    QA_IN_PAGE_LINK:
-      'Tautan dalam halaman rusak. Tujuan tautan tidak cocok dengan elemen apa pun di halaman ini.',
+    QA_IN_PAGE_LINK: 'Tautan halaman yang sama rusak. Tautan ini mencoba menavigasi ke bagian halaman yang tidak dapat ditemukan. Untuk memperbaikinya, pastikan tautan cocok dengan <code>id</code> elemen yang ingin Anda tuju.',
     QA_STRONG_ITALICS:
       'Tag cetak tebal dan miring memiliki makna semantik, dan tidak boleh digunakan untuk menyorot seluruh paragraf. Teks yang dicetak tebal harus digunakan untuk memberikan <strong>penekanan</strong> yang kuat pada sebuah kata atau frasa. Huruf miring harus digunakan untuk menyoroti nama diri (misalnya judul buku dan artikel), kata-kata asing, kutipan. Kutipan panjang harus diformat sebagai kutipan blok.',
     QA_PDF:
@@ -377,6 +376,8 @@ export default {
       'Jangan sertakan kata "tombol" dalam nama tombol. Pembaca layar sudah menyampaikan peran elemen selain namanya.',
     LABEL_IN_NAME:
       'Teks yang terlihat untuk elemen ini tampaknya berbeda dari nama aksesibel, yang dapat menyebabkan kebingungan bagi pengguna teknologi bantuan. Harap periksa: <hr> <strong {B}>Nama Aksesibel</strong> <strong {C}>%(TEXT)</strong>',
+    LINK_MAYBE_BUTTON: 'Tautan ini memiliki target yang tidak valid, dan nama yang dapat diakses mengandung kata "<strong>%(NAME)</strong>". Ini menunjukkan bahwa ini mungkin bukan tautan sama sekali, melainkan mengontrol beberapa perilaku skrip di halaman. Untuk memperbaikinya, ganti tautan dengan <a href="https://www.w3.org/WAI/ARIA/apg/patterns/button/">tombol yang dapat diakses</a>, atau perbaiki tujuan tautan. <hr> <strong>Tips!</strong> Teknologi asistif memperlakukan tombol dan tautan secara berbeda. Menggunakan elemen HTML yang benar memastikan pengguna mengetahui pintasan keyboard mana yang harus digunakan dan tindakan apa yang akan dipicu.',
+    POTENTIAL_UI_ELEMENTS: ['menu', 'tutup', 'alihkan', 'buka', 'perluas', 'ciutkan', 'berikutnya', 'sebelumnya', 'putar', 'jeda', 'submenu', 'tampilkan', 'sembunyikan', 'dropdown', 'kembali', 'maju', 'lewati', 'kirim', 'batal', 'simpan', 'edit', 'hapus', 'hapus', 'cari', 'filter', 'urutkan', 'berhenti', 'bisukan', 'bunyikan', 'layar penuh', 'minimalkan', 'maksimalkan'],
 
     // Tables
     TABLES_MISSING_HEADINGS:

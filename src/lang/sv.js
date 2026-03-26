@@ -331,7 +331,7 @@ export default {
     // Quality assurance
     QA_BAD_LINK:
       'Dålig länk hittades. Länk verkar peka till en utvecklingsmiljö. <hr> {L} <strong {C}>%(LINK)</strong>',
-    QA_IN_PAGE_LINK: 'Bruten samma-sideslänk. Länkmålet matchar inte något element på denna sida.',
+    QA_IN_PAGE_LINK: 'Trasig länk på samma sida. Den här länken försöker navigera till ett avsnitt på sidan som inte kan hittas. För att åtgärda detta, se till att länken matchar <code>id</code> för elementet du vill hoppa till.',
     QA_STRONG_ITALICS:
       'Feta och kursiva HTML-taggar har semantisk betydelse och bör <strong>inte</strong> användas för att markera hela stycken. Fetstil text bör användas för att ge ett ord eller en fras stark <strong>betoning</strong>. Kursiv stil ska användas för att markera egennamn (d.v.s. bok- och artikeltitlar), främmande ord, citat. Långa citat bör formateras som ett blockcitat.',
     QA_PDF:
@@ -395,6 +395,8 @@ export default {
       'Inkludera inte ordet "knapp" i namnet på en knapp. Skärmläsare anger redan elementets roll utöver dess namn.',
     LABEL_IN_NAME:
       'Den synliga texten för detta element verkar skilja sig från det tillgängliga namnet, vilket kan orsaka förvirring för användare av hjälpmedelstekniker. Vänligen granska: <hr> <strong {B}>Tillgängligt namn</strong> <strong {C}>%(TEXT)</strong>',
+    LINK_MAYBE_BUTTON: 'Den här länken har ett ogiltigt mål och det tillgängliga namnet innehåller ordet "<strong>%(NAME)</strong>". Detta tyder på att det kanske inte alls är en länk, utan istället styr ett skriptat beteende på sidan. För att åtgärda detta, ersätt länken med en <a href="https://www.w3.org/WAI/ARIA/apg/patterns/button/">tillgänglig knapp</a>, eller korrigera länkens mål. <hr> <strong>Tips!</strong> Hjälpmedelsteknik hanterar knappar och länkar på olika sätt. Genom att använda rätt HTML-element säkerställer du att användarna vet vilka kortkommandon de ska använda och vilken åtgärd som utlöses.',
+    POTENTIAL_UI_ELEMENTS: ['meny', 'stäng', 'växla', 'öppna', 'expandera', 'fäll ihop', 'nästa', 'föregående', 'spela upp', 'pausa', 'undermeny', 'visa', 'dölj', 'rullgardinsmeny', 'bakåt', 'framåt', 'hoppa över', 'skicka', 'avbryt', 'spara', 'redigera', 'radera', 'ta bort', 'sök', 'filter', 'sortera', 'stopp', 'ljud av', 'ljud på', 'helskärm', 'minimera', 'maximera'],
 
     // Tables
     TABLES_MISSING_HEADINGS:

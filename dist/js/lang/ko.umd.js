@@ -243,7 +243,7 @@
       EMBED_UNFOCUSABLE: '포커스할 수 없는 요소를 포함한 <code>&lt;iframe&gt;</code>은 <code>tabindex="-1"</code>을 가져서는 안 됩니다. 포함된 콘텐츠는 키보드로 접근할 수 없습니다.',
       // QA
       QA_BAD_LINK: "잘못된 링크를 찾았습니다. 링크가 개발 환경을 가리키는 것으로 보입니다. <hr> {L} <strong {C}>%(LINK)</strong>",
-      QA_IN_PAGE_LINK: "부서진 동일 페이지 링크입니다. 링크 대상이 이 페이지에 있는 어떤 요소와도 일치하지 않습니다.",
+      QA_IN_PAGE_LINK: "끊어진 페이지 내 링크입니다. 이 링크는 찾을 수 없는 페이지 섹션으로 이동하려고 시도합니다. 이 문제를 해결하려면 링크가 이동하려는 요소의 <code>id</code>와 일치하는지 확인하세요.",
       QA_STRONG_ITALICS: "굵게 및 이탤릭체 태그는 의미론적 의미가 있으며, 전체 단락을 강조할 때는 <강함>이 아닌 <강함>을 사용해야 합니다. 굵은 텍스트는 단어나 문구에 강한 <강한> 강조를 제공할 때 사용해야 합니다. 고유명사(예: 책 및 기사 제목), 외래어, 따옴표는 이탤릭체로 강조 표시해야 합니다. 긴 따옴표는 블록 따옴표로 서식을 지정해야 합니다.",
       QA_PDF: 'PDF의 접근성을 확인할 수 없습니다. PDF는 웹 콘텐츠로 간주되며 접근성을 확보해야 합니다. PDF에는 종종 스크린 리더를 사용하는 사람들을 위한 문제가 있습니다(구조 태그가 누락되거나 양식 필드 레이블이 누락됨) 및 시각이 낮은 사람들(텍스트가 확대되면 재배치되지 않음). <ul><li>이것이 양식이면 접근 가능한 HTML 양식을 대안으로 사용하는 것을 고려하십시오.</li><li>이것이 문서인 경우 웹 페이지로 변환하는 것을 고려하십시오.</li></ul>그렇지 않으면, <a href="https://helpx.adobe.com/acrobat/using/create-verify-pdf-accessibility.html">Acrobat DC에서 PDF의 접근성을 확인하세요.</a>',
       QA_DOCUMENT: '문서의 접근성을 확인할 수 없습니다. 링크된 문서는 웹 콘텐츠로 간주되므로 접근성을 제공해야 합니다. 이 문서를 수동으로 검토해 주세요. <a href="https://support.google.com/docs/answer/6199477?hl=ko">Google 스페이스 문서 또는 프레젠테이션에 더 쉽게 액세스할 수 있도록 설정하세요.</a></li><li><a href="https://support.microsoft.com/ko/office/create-accessible-office-documents-868ecfcd-4f00-4224-b881-a65537a7c155">Office 문서에 더 쉽게 액세스할 수 있도록 설정하세요.</a></li></ul>',
@@ -279,6 +279,8 @@
       BTN_TIP: '접근 가능한 <a href="https://www.sarasoueidan.com/blog/accessible-icon-buttons/">버튼 만드는 법</a> 배우기.',
       BTN_ROLE_IN_NAME: '버튼 이름에 "버튼"이라는 단어를 포함하지 마십시오. 스크린 리더는 이름 외에도 요소의 역할을 전달합니다.',
       LABEL_IN_NAME: "이 요소의 표시되는 텍스트가 접근 가능한 이름과 다른 것처럼 보이며, 지원 기술을 사용하는 사용자에게 혼란을 줄 수 있습니다. 검토해 주세요: <hr> <strong {B}>접근 가능한 이름</strong> <strong {C}>%(TEXT)</strong>",
+      LINK_MAYBE_BUTTON: '이 링크에는 유효하지 않은 대상이 있으며, 접근 가능한 이름에 "<strong>%(NAME)</strong>"이라는 단어가 포함되어 있습니다. 이는 이것이 링크가 아니라 페이지의 일부 스크립트 동작을 제어하고 있음을 나타냅니다. 문제를 해결하려면 링크를 <a href="https://www.w3.org/WAI/ARIA/apg/patterns/button/">접근 가능한 버튼</a>으로 교체하거나 링크의 대상을 수정하세요. <hr> <strong>팁!</strong> 보조 기술은 버튼과 링크를 다르게 취급합니다. 올바른 HTML 요소를 사용하면 사용자가 어떤 키보드 단축키를 사용해야 하는지, 어떤 동작이 트리거되는지 알 수 있습니다.',
+      POTENTIAL_UI_ELEMENTS: ["메뉴", "닫기", "토글", "열기", "확장", "축소", "다음", "이전", "재생", "일시 중지", "하위 메뉴", "표시", "숨기기", "드롭다운", "뒤로", "앞으로", "건너뛰기", "제출", "취소", "저장", "편집", "삭제", "제거", "검색", "필터", "정렬", "중지", "음소거", "음소거 해제", "전체 화면", "최소화", "최대화"],
       // Tables
       TABLES_MISSING_HEADINGS: '표 헤더가 누락되었습니다! 접근 가능한 표에는 머리글 셀과 데이터 셀의 관계를 정의하는 HTML 마크업이 필요합니다. 이 정보는 보조 기술을 사용하는 사람들에게 컨텍스트를 제공합니다. 표는 표 형식의 데이터에만 사용해야 합니다. <hr> <a href="https://www.w3.org/WAI/tutorials/tables/">액세스 가능한 표에 대해 자세히 알아보기.</a>',
       TABLES_SEMANTIC_HEADING: '제목 2 또는 제목 3과 같은 시맨틱 제목은 콘텐츠 섹션에만 사용해야 하며, HTML 표에는 <strong>이 아닌</strong>을 사용해야 합니다. 대신 <code>&lt;th&gt;</code> 요소를 사용하여 표 제목을 표시하세요. <hr> <a href="https://www.w3.org/WAI/tutorials/tables/">액세스 가능한 표에 대해 자세히 알아보기.</a>',

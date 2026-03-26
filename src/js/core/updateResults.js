@@ -191,6 +191,15 @@ async function syncUI() {
           if (showDismissAll) container.append(createBtn('DISMISS_ALL', true));
           issue.finalContent.append(container);
         }
+
+        // If unit test mode, add the test ID to the tooltips.
+        if (State.option.unitTestMode) {
+          const test = Lang.sprintf(
+            '<hr><strong>Test ID:</strong> <code>%(TEST)</code>',
+            issue.test,
+          );
+          issue.finalContent.append(test);
+        }
       }
 
       // Paint the page with annotations.

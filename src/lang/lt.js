@@ -313,8 +313,7 @@ export default {
     // QA
     QA_BAD_LINK:
       'Rasta bloga nuoroda. Atrodo, kad nuoroda nukreipia į kūrimo aplinką. <hr> {L} <strong {C}>%(LINK)</strong>',
-    QA_IN_PAGE_LINK:
-      'Nugriautas tos pačios puslapio nuorodas. Nuorodos tikslas nesutampa su jokiu šios puslapio elementu.',
+    QA_IN_PAGE_LINK: 'Sugedusi nuoroda į tą patį puslapį. Ši nuoroda bando nuvesti į puslapio skiltį, kurios nepavyko rasti. Norėdami tai ištaisyti, įsitikinkite, kad nuoroda sutampa su elemento, į kurį norite nušokti, <code>id</code>.',
     QA_STRONG_ITALICS:
       'Paryškinimo ir kursyvo žymės turi semantinę reikšmę ir neturėtų būti naudojamos <strong>ne</strong> ištisoms pastraipoms paryškinti. Paryškintas tekstas turėtų būti naudojamas stipriai <strong>pabrėžti</strong> žodį ar frazę. Kursyvu reikėtų paryškinti tikruosius vardus (t. y. knygų ir straipsnių pavadinimus), svetimžodžius, kabutes. Ilgos citatos turėtų būti formatuojamos kaip blokinė citata.',
     QA_PDF:
@@ -378,6 +377,8 @@ export default {
       'Nepalikite žodžio „mygtukas“ mygtuko pavadinime. Ekrano skaitytuvai jau praneša elemento vaidmenį be jo pavadinimo.',
     LABEL_IN_NAME:
       'Matomas šio elemento tekstas atrodo skirtingas nei prieinamas pavadinimas, kas gali sukelti painiavą pagalbinių technologijų naudotojams. Peržiūrėkite: <hr> <strong {B}>Prieinamas Pavadinimas</strong> <strong {C}>%(TEXT)</strong>',
+    LINK_MAYBE_BUTTON: 'Ši nuoroda turi negaliojantį tikslą, o jos prieinamame pavadinime yra žodis „<strong>%(NAME)</strong>“. Tai rodo, kad tai gali būti visai ne nuoroda, o elementas, valdantis tam tikrą skriptų elgseną puslapyje. Norėdami tai ištaisyti, pakeiskite nuorodą <a href="https://www.w3.org/WAI/ARIA/apg/patterns/button/">prieinamu mygtuku</a> arba ištaisykite nuorodos tikslą. <hr> <strong>Patarimas!</strong> Pagalbinės technologijos mygtukus ir nuorodas apdoroja skirtingai. Teisingo HTML elemento naudojimas užtikrina, kad naudotojai žinotų, kuriuos sparčiuosius klavišus naudoti ir koks veiksmas bus atliktas.',
+    POTENTIAL_UI_ELEMENTS: ['meniu', 'uždaryti', 'perjungti', 'atidaryti', 'išskleisti', 'suskleisti', 'kitas', 'ankstesnis', 'leisti', 'pauzė', 'papildomas meniu', 'rodyti', 'slėpti', 'išskleidžiamasis meniu', 'atgal', 'pirmyn', 'praleisti', 'pateikti', 'atšaukti', 'išsaugoti', 'redaguoti', 'ištrinti', 'pašalinti', 'ieškoti', 'filtras', 'rūšiuoti', 'sustabdyti', 'nutildyti', 'atitildyti', 'visas ekranas', 'sumažinti', 'padidinti'],
 
     // Tables
     TABLES_MISSING_HEADINGS:

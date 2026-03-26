@@ -320,7 +320,7 @@ export default {
     QA_DOCUMENT:
       'Unable to check document for accessibility. Linked documents are considered web content and must be made accessible as well. Please manually review this document. <ul><li>Make your <a href="https://support.google.com/docs/answer/6199477?hl=en">Google Workspace document or presentation more accessible.</a></li><li>Make your <a href="https://support.microsoft.com/en-us/office/create-accessible-office-documents-868ecfcd-4f00-4224-b881-a65537a7c155">Office documents more accessible.</a></li></ul>',
     QA_BLOCKQUOTE:
-      'Is this a heading? <strong {C}>%(TEXT)</strong> <hr> Blockquotes should be used for quotes only. If this is intended to be a heading, change this blockquote to a semantic heading (e.g. Heading 2 or Heading 3).',
+      'Should this blockquote be a heading? <strong {C}>%(TEXT)</strong> <hr> Blockquotes should be used for quotes only. If this is intended to be a heading, change this blockquote to a semantic heading (e.g. Heading 2 or Heading 3).',
     QA_FAKE_HEADING:
       'Is this a heading? <strong {C}>%(TEXT)</strong> <hr> A line of bold or large text might look like a heading, but someone using a screen reader cannot tell that it is important or jump to its content. Bold or large text should never replace semantic headings (Heading 2 to Heading 6).',
     QA_FAKE_LIST:
@@ -332,7 +332,7 @@ export default {
     QA_SUBSCRIPT:
       'The subscript and superscript formatting options should only be used to change the position of text for typographical conventions or standards. It should <strong>not</strong> solely be used for presentation or appearance purposes. Formatting entire sentences poses readability issues. Appropriate use cases would include displaying exponents, ordinal numbers such as 4<sup>th</sup> instead of fourth, and chemical formulas (e.g. H<sub>2</sub>O).',
     QA_IN_PAGE_LINK:
-      'Broken same-page link. The link target does not match any element on the page.',
+      'Broken same-page link. This link tries to navigate to a section of the page that cannot be found. To fix this, make sure the link matches the <code>id</code> of the element you want to jump to.',
     QA_NESTED_COMPONENTS:
       'Avoid nesting interactive layout components, such as placing accordions within other accordions, or placing tabs inside accordions and vice versa. This can complicate navigation, increase cognitive overload, and lead to people overlooking content.',
     QA_JUSTIFY:
@@ -378,6 +378,10 @@ export default {
       'Do not include the word "button" in the name of a button. Screen readers already convey the role of an element in addition to its name.',
     LABEL_IN_NAME:
       'The visible text for this element appears to be different than the accessible name, which may cause confusion for assistive technologies users. Please review: <hr> <strong {B}>Accessible Name</strong> <strong {C}>%(TEXT)</strong>',
+    LINK_MAYBE_BUTTON: 'This link has an invalid target, and the accessible name contains the word "<strong>%(NAME)</strong>". This suggests that this might not be a link at all, and instead controls some scripted behaviour on the page. To fix, replace the link with an <a href="https://www.w3.org/WAI/ARIA/apg/patterns/button/">accessible button</a>, or correct the link\'s destination. <hr> <strong>Tip!</strong> Assistive technologies treat buttons and links differently. Using the correct HTML element ensures users know which keyboard shortcuts to use and what action will trigger.',
+    POTENTIAL_UI_ELEMENTS: [
+      'menu', 'close', 'toggle', 'open', 'expand', 'collapse', 'next', 'previous', 'play', 'pause', 'submenu', 'show', 'hide', 'dropdown', 'back', 'forward', 'skip', 'submit', 'cancel', 'save', 'edit', 'delete', 'remove', 'search', 'filter', 'sort', 'stop', 'mute', 'unmute', 'fullscreen', 'minimize', 'maximize',
+    ],
 
     // Tables
     TABLES_MISSING_HEADINGS:

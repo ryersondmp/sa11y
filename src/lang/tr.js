@@ -314,8 +314,7 @@ export default {
     // QA
     QA_BAD_LINK:
       'Kötü bağlantı bulundu. Bağlantı bir geliştirme ortamına işaret ediyor gibi görünüyor. <hr> {L} <strong {C}>%(LINK)</strong>',
-    QA_IN_PAGE_LINK:
-      'Kırık aynı sayfa bağlantısı. Bağlantı hedefi, bu sayfadaki herhangi bir öğeyle eşleşmiyor.',
+    QA_IN_PAGE_LINK: 'Bozuk sayfa içi bağlantı. Bu bağlantı, sayfanın bulunamayan ஒரு bölümüne gitmeye çalışıyor. Bunu düzeltmek için bağlantının, atlamak istediğiniz öğenin <code>id</code>\'siyle eşleştiğinden emin olun.',
     QA_STRONG_ITALICS:
       'Kalın ve italik etiketlerinin anlamsal bir anlamı vardır ve paragrafların tamamını vurgulamak için <strong>kullanılmamalıdır</strong>. Kalınlaştırılmış metin, bir kelime veya cümleye güçlü bir <strong>vurgu</strong> yapmak için kullanılmalıdır. İtalik yazılar özel isimleri (kitap ve makale başlıkları gibi), yabancı kelimeleri ve alıntıları vurgulamak için kullanılmalıdır. Uzun alıntılar blok alıntı olarak biçimlendirilmelidir.',
     QA_PDF:
@@ -379,6 +378,8 @@ export default {
       'Bir düğmenin adında "düğme" kelimesini içermeyin. Ekran okuyucular zaten öğenin rolünü adıyla birlikte iletir.',
     LABEL_IN_NAME:
       'Bu öğe için görünen metin, erişilebilir ad ile farklı görünüyor, bu da yardımcı teknoloji kullanıcıları için kafa karışıklığına neden olabilir. Lütfen gözden geçirin: <hr> <strong {B}>Erişilebilir Ad</strong> <strong {C}>%(TEXT)</strong>',
+    LINK_MAYBE_BUTTON: 'Bu bağlantının geçersiz bir hedefi var ve erişilebilir ad "<strong>%(NAME)</strong>" kelimesini içeriyor. Bu, bunun bir bağlantı olmayabileceğini, bunun yerine sayfadaki bazı komut dosyası davranışlarını kontrol ettiğini gösteriyor. Düzeltmek için bağlantıyı <a href="https://www.w3.org/WAI/ARIA/apg/patterns/button/">erişilebilir bir düğme</a> ile değiştirin veya bağlantının hedefini düzeltin. <hr> <strong>İpucu!</strong> Yardımcı teknolojiler düğmelere ve bağlantılara farklı şekilde davranır. Doğru HTML öğesinin kullanılması, kullanıcıların hangi klavye kısayollarını kullanacaklarını ve hangi eylemin tetikleneceğini bilmelerini sağlar.',
+    POTENTIAL_UI_ELEMENTS: ['menü', 'kapat', 'değiştir', 'aç', 'genişlet', 'daralt', 'sonraki', 'önceki', 'oynat', 'duraklat', 'alt menü', 'göster', 'gizle', 'açılır menü', 'geri', 'ileri', 'atla', 'gönder', 'iptal', 'kaydet', 'düzenle', 'sil', 'kaldır', 'ara', 'filtre', 'sırala', 'dur', 'sessiz', 'sesi aç', 'tam ekran', 'küçült', 'büyüt'],
 
     // Tables
     TABLES_MISSING_HEADINGS:

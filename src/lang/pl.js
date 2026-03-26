@@ -313,8 +313,7 @@ export default {
     // Quality assurance
     QA_BAD_LINK:
       'Podejrzane łącze. Łącze wydaje się wskazywać środowisko programistyczne. <hr> {L} <strong {C}>%(LINK)</strong>',
-    QA_IN_PAGE_LINK:
-      'Uszkodzony link na tej samej stronie. Cel linku nie odpowiada żadnemu elementowi na tej stronie.',
+    QA_IN_PAGE_LINK: 'Uszkodzony link wewnątrzstronicowy. Ten link próbuje prowadzić do sekcji strony, której nie można znaleźć. Aby to naprawit, upewnij się, że link pasuje do identyfikatora <code>id</code> elementu, do którego chcesz przejść.',
     QA_STRONG_ITALICS:
       'Znaczniki pogrubienia i kursywy mają znaczenie semantyczne i <strong>nie powinny</strong> być używane do wyróżniania całych akapitów. Pogrubiony tekst powinien być używany w celu <strong>silnego podkreślenia słowa lub frazy</strong>. Kursywa powinna być używana do wyróżnienia nazw własnych (np. tytułów książek i artykułów), wyrazów obcych, cytatów. Długie cytaty powinny być sformatowane jako blockquote.',
     QA_PDF:
@@ -378,6 +377,8 @@ export default {
       'Nie włączaj słowa „przycisk” w nazwie przycisku. Czytniki ekranowe już podają rolę elementu oprócz jego nazwy.',
     LABEL_IN_NAME:
       'Widoczny tekst tego elementu wydaje się różnić od dostępnej nazwy, co może wprowadzać w błąd użytkowników technologii wspomagających. Sprawdź: <hr> <strong {B}>Dostępna nazwa</strong> <strong {C}>%(TEXT)</strong>',
+    LINK_MAYBE_BUTTON: 'Ten link ma nieprawidłowy cel, a nazwa dostępna zawiera słowo „<strong>%(NAME)</strong>”. Sugeruje to, że może to w ogóle nie być link, lecz element sterujący skryptowym zachowaniem na stronie. Aby to naprawić, zastąp link <a href="https://www.w3.org/WAI/ARIA/apg/patterns/button/">dostępnym przyciskiem</a> lub popraw cel linku. <hr> <strong>Wskazówka!</strong> Technologie wspomagające traktują przyciski i linki w różny sposób. Użycie właściwego elementu HTML daje pewność, że użytkownicy wiedzą, jakich skrótów klawiszowych użyć i jaka akcja zostanie wywołana.',
+    POTENTIAL_UI_ELEMENTS: ['menu', 'zamknij', 'przełącz', 'otwórz', 'rozwiń', 'zwiń', 'następny', 'poprzedni', 'odtwórz', 'pauza', 'podmenu', 'pokaż', 'ukryj', 'rozwijane', 'wstecz', 'dalej', 'pomiń', 'wyślij', 'anuluj', 'zapisz', 'edytuj', 'usuń', 'usuń', 'szukaj', 'filtr', 'sortuj', 'stop', 'wycisz', 'wyłącz wyciszenie', 'pełny ekran', 'minimalizuj', 'maksymalizuj'],
 
     // Tables
     TABLES_MISSING_HEADINGS:

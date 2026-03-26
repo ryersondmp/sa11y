@@ -2,6 +2,7 @@ import Constants from '../utils/constants';
 import Elements from '../utils/elements';
 import Lang from '../utils/lang';
 import * as Utils from '../utils/utils';
+import { computeAccessibleName } from '../utils/computeAccessibleName';
 import { State } from '../core/state';
 
 export default function checkQA() {
@@ -58,45 +59,79 @@ export default function checkQA() {
       const hasExtension = $el.matches(Constants.Global.documentSources);
       const hasPDF = $el.matches('a[href$=".pdf"], a[href*=".pdf?"]');
 
-      // Check for broken same-page links.
-      if (State.option.checks.QA_IN_PAGE_LINK) {
+      // Check for broken same-page links and missing interactive semantics.
+      if (State.option.checks.QA_IN_PAGE_LINK || State.option.checks.LINK_MAYBE_BUTTON) {
         const hasText = Utils.getText($el).length !== 0;
         const ignored = $el.ariaHidden === 'true' && $el.getAttribute('tabindex') === '-1';
+
         const hasAttributes =
           $el.hasAttribute('role') ||
           $el.hasAttribute('aria-haspopup') ||
           $el.hasAttribute('aria-expanded') ||
           $el.hasAttribute('onclick') ||
           $el.hasAttribute('disabled') ||
-          $el.closest('nav, [role="navigation"]');
+          !!$el.closest('nav, [role="navigation"]');
 
         if ((href.startsWith('#') || href === '') && hasText && !ignored && !hasAttributes) {
           const targetId = href.substring(1);
           const ariaControls = $el.getAttribute('aria-controls');
+          const decoded = targetId ? decodeURIComponent(targetId) : '';
+          const encoded = targetId ? encodeURIComponent(targetId) : '';
           const targetElement =
             targetId &&
             (document.getElementById(targetId) ||
-              document.getElementById(decodeURIComponent(targetId)) ||
-              document.getElementById(encodeURIComponent(targetId)) ||
-              document.getElementById(ariaControls) ||
-              document.querySelector(`a[name="${targetId}"]`));
+              (ariaControls && document.getElementById(ariaControls)) ||
+              (decoded !== targetId && document.getElementById(decoded)) ||
+              (encoded !== targetId && document.getElementById(encoded)) ||
+              document.querySelector(`a[name="${CSS.escape(targetId)}"]`));
 
-          // If reference ID doesn't exist.
+          // If reference ID doesn't exist (Target failed)
           if (!targetElement) {
-            State.results.push({
-              test: 'QA_IN_PAGE_LINK',
-              element: $el,
-              type: State.option.checks.QA_IN_PAGE_LINK.type || 'error',
-              content: Lang.sprintf(
-                State.option.checks.QA_IN_PAGE_LINK.content || 'QA_IN_PAGE_LINK',
-              ),
-              inline: true,
-              dismiss: Utils.prepareDismissal(`QA_IN_PAGE_LINK ${href}`),
-              dismissAll: State.option.checks.QA_IN_PAGE_LINK.dismissAll
-                ? 'QA_IN_PAGE_LINK'
-                : false,
-              developer: State.option.checks.QA_IN_PAGE_LINK.developer || false,
-            });
+            let isFauxButton = false;
+
+            // 1. Broken same page link AND most likely a button!
+            if (State.option.checks.LINK_MAYBE_BUTTON) {
+              const accessibleName = computeAccessibleName($el);
+              const keywords = Lang._('POTENTIAL_UI_ELEMENTS');
+              const matchedKeyword = keywords.find((word) => accessibleName.includes(word));
+              if (matchedKeyword && accessibleName.length <= 15) {
+                isFauxButton = true;
+                State.results.push({
+                  test: 'LINK_MAYBE_BUTTON',
+                  element: $el,
+                  type: State.option.checks.LINK_MAYBE_BUTTON.type || 'error',
+                  content: Lang.sprintf(
+                    State.option.checks.LINK_MAYBE_BUTTON.content || 'LINK_MAYBE_BUTTON',
+                    accessibleName,
+                  ),
+                  inline: true,
+                  dismiss: Utils.prepareDismissal(`LINK_MAYBE_BUTTON_${matchedKeyword}`),
+                  dismissAll: State.option.checks.LINK_MAYBE_BUTTON.dismissAll
+                    ? 'LINK_MAYBE_BUTTON'
+                    : false,
+                  developer: State.option.checks.LINK_MAYBE_BUTTON.developer || true,
+                });
+              }
+            }
+
+            // 2. Mostly likely broken same-page link.
+            if (State.option.checks.QA_IN_PAGE_LINK && !isFauxButton) {
+              State.results.push({
+                test: 'QA_IN_PAGE_LINK',
+                element: $el,
+                type: State.option.checks.QA_IN_PAGE_LINK.type || 'error',
+                content: Lang.sprintf(
+                  State.option.checks.QA_IN_PAGE_LINK.content || 'QA_IN_PAGE_LINK',
+                  targetId,
+                ),
+                inline: true,
+                dismiss: Utils.prepareDismissal(`QA_IN_PAGE_LINK ${href}`),
+                dismissAll: State.option.checks.QA_IN_PAGE_LINK.dismissAll
+                  ? 'QA_IN_PAGE_LINK'
+                  : false,
+                developer: State.option.checks.QA_IN_PAGE_LINK.developer || false,
+              });
+            }
           }
         }
       }
