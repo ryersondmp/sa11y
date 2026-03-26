@@ -95,6 +95,7 @@
         "test",
         "hero image",
         "hero slide",
+        "slide image",
         "homepage feature image",
         "featured image",
         "untitled",

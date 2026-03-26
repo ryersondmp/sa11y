@@ -6804,8 +6804,8 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
     const linkIgnoreStringPattern = generateRegexString(State.option.linkIgnoreStrings);
     const extraPlaceholderStopWords = State.option.extraPlaceholderStopWords.split(",").map((word) => word.trim().toLowerCase()).filter(Boolean);
     const containsAltTextStopWords = (alt) => {
-      const altLowerCase = alt.toLowerCase();
-      const altOnlyLetters = altLowerCase.replace(/[^\p{L}\s]/gu, "").trim();
+      const altLowerCase = removeWhitespace(alt).toLowerCase();
+      const altOnlyLetters = removeWhitespace(altLowerCase.replace(/[^\p{L}\s]/gu, ""));
       const hit = [null, null, null];
       for (const urlHit of url) {
         if (altLowerCase.includes(urlHit)) {
@@ -8894,7 +8894,8 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
       const computedFontSize = parseFloat(fontSize);
       const parentFontSize = $el.parentElement ? parseFloat(getComputedStyle($el.parentElement).fontSize) : null;
       const isInherited = parentFontSize === computedFontSize;
-      const withinRange = !isInherited && computedFontSize > 1 && computedFontSize <= defaultSize;
+      const isSup = $el.closest("sup, sub") !== null;
+      const withinRange = !isInherited && !isSup && computedFontSize > 1 && computedFontSize <= defaultSize;
       if (State.option.checks.QA_SMALL_TEXT && withinRange) {
         addSmallTextResult($el);
       }

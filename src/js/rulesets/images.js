@@ -43,8 +43,8 @@ export default function checkImages() {
 
   // Utility function to process alt text for stop words.
   const containsAltTextStopWords = (alt) => {
-    const altLowerCase = alt.toLowerCase();
-    const altOnlyLetters = altLowerCase.replace(/[^\p{L}\s]/gu, '').trim();
+    const altLowerCase = Utils.removeWhitespace(alt).toLowerCase();
+    const altOnlyLetters = Utils.removeWhitespace(altLowerCase.replace(/[^\p{L}\s]/gu, ''));
     const hit = [null, null, null];
 
     // 1) URL hit.

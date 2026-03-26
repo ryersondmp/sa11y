@@ -573,7 +573,9 @@ export default function checkQA() {
     const isInherited = parentFontSize === computedFontSize;
 
     // Ensure the font size is specific to the element, not inherited.
-    const withinRange = !isInherited && computedFontSize > 1 && computedFontSize <= defaultSize;
+    const isSup = $el.closest('sup, sub') !== null;
+    const withinRange =
+      !isInherited && !isSup && computedFontSize > 1 && computedFontSize <= defaultSize;
     if (State.option.checks.QA_SMALL_TEXT && withinRange) {
       addSmallTextResult($el);
     }

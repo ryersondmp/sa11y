@@ -47,6 +47,29 @@
   </header>
   <main>
 
+    <h2>Exclude sup and sub from font size too small QA check</h2>
+    <style>
+      sub,
+      sup {
+        font-size: 75%;
+        line-height: 1.5;
+        position: relative;
+        vertical-align: baseline;
+      }
+    </style>
+
+    <sup>
+      <p><sup>1</sup>Joint 155th in the QS World University Rankings 2026 and 170th in the THE World Rankings 2026,
+        <sup>2</sup> The Graduate Market in 2025 report by High Fliers Research, <br><sup>3</sup>Times Higher Education
+        (THE) Impact Rankings 2025: Joint 2nd in the world for Responsible Consumption and Production; joint 17th for
+        Climate Action
+      </p>
+    </sup>
+
+    <hr>
+
+    <h2>New check <code>LINK_MAYBE_BUTTON</code></h2>
+
     <a href="#">
       MENU
     </a>
@@ -55,10 +78,19 @@
 
     <a href="#0">where is the menu</a>
 
+    <hr>
     <h2>Disabled elements contrast</h2>
     <button disabled>Disabled</button>
 
+    <hr>
+
     <h2>Improved detection of nonsensical alt text</h2>
+
+    <img src="https://newsocietyinstitute.ca/wp-content/uploads/2025/11/nsi-hero-homeA-1920x1080.jpg"
+      alt="slide 1 image">
+
+    <img src="https://newsocietyinstitute.ca/wp-content/uploads/2025/11/nsi-hero-homeA-1920x1080.jpg"
+      alt="slide #25121 image">
 
     <br>
     <img src="https://newsocietyinstitute.ca/wp-content/uploads/2025/11/nsi-hero-homeA-1920x1080.jpg"
