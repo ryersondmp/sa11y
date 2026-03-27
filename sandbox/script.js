@@ -4,7 +4,6 @@ import Sa11yLangEn from '../src/lang/en.js';
 // Instantiate
 Lang.addI18n(Sa11yLangEn.strings);
 const sa11y = new Sa11y({
-  unitTestMode: true,
   checkRoot: 'body',
   readabilityRoot: 'main',
   customChecks: 'listen',
@@ -55,6 +54,8 @@ const sa11y = new Sa11y({
     // LABELS_PLACEHOLDER: false,
   },
 });
+
+window.sa11y = sa11y;
 
 /* Console all results */
 document.addEventListener('sa11y-check-complete', (e) => {

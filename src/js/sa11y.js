@@ -6,6 +6,7 @@ import find from './utils/find';
 import * as Utils from './utils/utils';
 import checkAll from './core/checkAll';
 import { resetAll } from './core/resetAll';
+import Found from './utils/elements';
 
 class Sa11y {
   constructor(options) {
@@ -28,6 +29,11 @@ class Sa11y {
   // Get main results array.
   get results() {
     return State.results;
+  }
+
+  // Get found elements.
+  get elements() {
+    return Found.Found;
   }
 }
 
