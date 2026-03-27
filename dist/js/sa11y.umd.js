@@ -7712,6 +7712,7 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
       const fontSize = parseFloat(style.fontSize);
       if ($el.disabled || opacity === 0 || fontSize === 0 || isElementHidden($el)) continue;
       if (isScreenReaderOnly($el)) continue;
+      if (text.length === 1 && "|/\\".includes(text)) continue;
       const color = convertToRGBA(style.color, opacity);
       const getFontWeight = style.fontWeight;
       const fontWeight = normalizeFontWeight(getFontWeight);
@@ -9865,6 +9866,10 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
     // Get main results array.
     get results() {
       return State.results;
+    }
+    // Get found elements.
+    get elements() {
+      return Elements.Found;
     }
   }
   exports2.Lang = Lang;
