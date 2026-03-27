@@ -21,86 +21,95 @@ export function normalizeFontWeight(weight) {
 }
 
 /**
- * Retrieves the background colour of an element by traversing up the DOM tree.
+ * Retrieves the background colour of an element by traversing up the DOM tree,
+ * accounting for slotted content and shadow DOM boundaries.
  * @param {HTMLElement} $el - The DOM element from which to start searching for the background.
  * @param {Boolean} shadowDetection - Whether to traverse shadow DOM.
- * @returns {string} - The background color in RGBA format, or "image" if background image.
+ * @returns {string|Array|Object} - The background color in RGBA format, or object if image.
  */
 export function getBackground($el, shadowDetection) {
-  let targetEl = $el;
-  while (targetEl && targetEl.nodeType === 1) {
-    // Element is within a shadow component.
+  // Helper to traverse the flattened tree (crosses slot and shadow boundaries)
+  const getVisualParent = (node) => {
+    if (!node) return null;
     if (shadowDetection) {
-      const root = targetEl.getRootNode();
-      if (root instanceof ShadowRoot) {
-        // Traverse upward until the shadow root's host.
-        let node = targetEl;
-        while (node && node !== root.host) {
-          const styles = getComputedStyle(node);
+      if (node.assignedSlot) return node.assignedSlot;
+      if (node instanceof ShadowRoot) return node.host;
+    }
+    return node.parentElement || node.parentNode;
+  };
 
-          // Background image check.
-          if (styles.backgroundImage && styles.backgroundImage !== 'none') {
-            return { type: 'image', value: styles.backgroundImage };
-          }
+  let targetEl = $el;
 
-          // Background colour check.
-          const bgColor = convertToRGBA(styles.backgroundColor);
-          if (bgColor[3] !== 0 && bgColor !== 'transparent') {
-            return bgColor;
-          }
-          node = node.parentElement;
-        }
-
-        // If nothing found within the shadow tree, continue with the host.
-        return getBackground(root.host);
-      }
+  // Allow Node.ELEMENT_NODE (1) and Node.DOCUMENT_FRAGMENT_NODE / ShadowRoot (11).
+  while (targetEl && (targetEl.nodeType === 1 || targetEl.nodeType === 11)) {
+    // If we land exactly on a ShadowRoot, skip computing styles and jump to its host.
+    if (targetEl instanceof ShadowRoot) {
+      targetEl = targetEl.host;
+      continue;
     }
 
-    // Element has background image.
     const styles = getComputedStyle(targetEl);
+
+    // Element has background image.
     const bgImage = styles.backgroundImage;
-    if (bgImage !== 'none') {
+    if (bgImage && bgImage !== 'none') {
       return { type: 'image', value: bgImage };
     }
 
     // Element has background colour.
     const bgColor = convertToRGBA(styles.backgroundColor);
+
     if (bgColor[3] !== 0 && bgColor !== 'transparent') {
       // If the background colour has an alpha channel.
       if (bgColor[3] < 1) {
         // We need to find the first non-transparent parent background and blend them together.
-        let parentEl = targetEl.parentElement;
-        let parentBgColor = 'rgba(255, 255, 255, 1)';
-        while (parentEl && parentEl.nodeType === 1) {
+        let parentEl = getVisualParent(targetEl);
+        let parentBgColor = 'rgba(255, 255, 255, 1)'; // Default assumption
+
+        while (parentEl && (parentEl.nodeType === 1 || parentEl.nodeType === 11)) {
+          if (parentEl instanceof ShadowRoot) {
+            parentEl = parentEl.host;
+            continue;
+          }
+
           const parentStyles = getComputedStyle(parentEl);
-          parentBgColor = parentStyles.backgroundColor;
+          const currentParentBg = parentStyles.backgroundColor;
 
           // Stop, valid colour found.
-          if (parentBgColor !== 'rgba(0, 0, 0, 0)') {
+          if (currentParentBg !== 'rgba(0, 0, 0, 0)' && currentParentBg !== 'transparent') {
+            parentBgColor = currentParentBg;
             break;
           }
 
-          // If we reach the HTML tag, default to white.
-          if (parentBgColor === 'rgba(0, 0, 0, 0)' && parentEl.tagName === 'HTML') {
-            parentBgColor = 'rgba(255, 255, 255, 1)';
-          }
-
-          // Move up the DOM tree.
-          parentEl = parentEl.parentElement;
+          // Move up the flattened DOM tree.
+          parentEl = getVisualParent(parentEl);
         }
-        const parentColor = convertToRGBA(parentBgColor || 'rgba(255, 255, 255, 1)');
+
+        // If we reach the HTML tag without finding a solid background, default to white.
+        if (parentBgColor === 'rgba(0, 0, 0, 0)' || parentBgColor === 'transparent') {
+          parentBgColor = 'rgba(255, 255, 255, 1)';
+        }
+
+        const parentColor = convertToRGBA(parentBgColor);
         const blendedBG = alphaBlend(bgColor, parentColor);
         return blendedBG;
       }
+
       // Return solid color immediately if no alpha channel.
       return bgColor;
     }
+
+    // Default to white if we reach the HTML tag.
     if (targetEl.tagName === 'HTML') {
-      return [255, 255, 255]; // Default to white if we reach the HTML tag.
+      return [255, 255, 255];
     }
-    targetEl = targetEl.parentNode;
+
+    // Move up the flattened DOM tree instead of just parentNode.
+    targetEl = getVisualParent(targetEl);
   }
-  return [255, 255, 255]; // Default to white if no background color is found.
+
+  // Default to white if no background color is found.
+  return [255, 255, 255];
 }
 
 /**

@@ -47,6 +47,61 @@
   </header>
   <main>
 
+    <h2>Contrast support for slotted elements</h2>
+    <div id="error-slotted-1">
+      <contrast-card bg-color="#f0f0f0">
+        <p style="color: hotpink">This is white text slotted into a light gray shadow box.</p>
+      </contrast-card>
+    </div>
+
+    <div id="nothing-slotted">
+      <contrast-card bg-color="#f0f0f0">
+        <p style="color: darkblue">This is dark text slotted into a light gray shadow box.</p>
+      </contrast-card>
+    </div>
+
+    <div id="error-slotted-2">
+      <contrast-card bg-color="#000" slotted-color="#222">
+        <span>This text is dark, but the background is black via Shadow CSS.</span>
+      </contrast-card>
+    </div>
+
+    <script>
+      // Define the Web Component
+      customElements.define('contrast-card', class extends HTMLElement {
+        constructor() {
+          super();
+          this.attachShadow({ mode: 'open' });
+        }
+
+        connectedCallback() {
+          const bg = this.getAttribute('bg-color') || '#fff';
+          const slottedColor = this.getAttribute('slotted-color') || 'inherit';
+
+          this.shadowRoot.innerHTML = `
+          <style>
+              :host { display: block; margin: 10px 0; }
+              .container {
+                  padding: 20px;
+                  background-color: ${bg}; /* Background is INSIDE shadow */
+                  border: 1px solid #ccc;
+              }
+              /* Styles applied to light DOM nodes via the shadow boundary */
+              ::slotted(*) {
+                  color: ${slottedColor};
+                  margin: 0;
+              }
+          </style>
+          <div class="container">
+              <slot></slot>
+          </div>
+          `;
+        }
+      });
+    </script>
+
+    <hr>
+
     <h2>Exclude sup and sub from font size too small QA check</h2>
     <style>
       sub,

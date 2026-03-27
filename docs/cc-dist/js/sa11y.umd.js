@@ -5599,48 +5599,47 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
     return weightMap[weight] || 400;
   }
   function getBackground($el, shadowDetection) {
-    let targetEl = $el;
-    while (targetEl && targetEl.nodeType === 1) {
+    const getVisualParent = (node) => {
+      if (!node) return null;
       if (shadowDetection) {
-        const root = targetEl.getRootNode();
-        if (root instanceof ShadowRoot) {
-          let node = targetEl;
-          while (node && node !== root.host) {
-            const styles3 = getComputedStyle(node);
-            if (styles3.backgroundImage && styles3.backgroundImage !== "none") {
-              return { type: "image", value: styles3.backgroundImage };
-            }
-            const bgColor2 = convertToRGBA(styles3.backgroundColor);
-            if (bgColor2[3] !== 0 && bgColor2 !== "transparent") {
-              return bgColor2;
-            }
-            node = node.parentElement;
-          }
-          return getBackground(root.host);
-        }
+        if (node.assignedSlot) return node.assignedSlot;
+        if (node instanceof ShadowRoot) return node.host;
+      }
+      return node.parentElement || node.parentNode;
+    };
+    let targetEl = $el;
+    while (targetEl && (targetEl.nodeType === 1 || targetEl.nodeType === 11)) {
+      if (targetEl instanceof ShadowRoot) {
+        targetEl = targetEl.host;
+        continue;
       }
       const styles2 = getComputedStyle(targetEl);
       const bgImage = styles2.backgroundImage;
-      if (bgImage !== "none") {
+      if (bgImage && bgImage !== "none") {
         return { type: "image", value: bgImage };
       }
       const bgColor = convertToRGBA(styles2.backgroundColor);
       if (bgColor[3] !== 0 && bgColor !== "transparent") {
         if (bgColor[3] < 1) {
-          let parentEl = targetEl.parentElement;
+          let parentEl = getVisualParent(targetEl);
           let parentBgColor = "rgba(255, 255, 255, 1)";
-          while (parentEl && parentEl.nodeType === 1) {
+          while (parentEl && (parentEl.nodeType === 1 || parentEl.nodeType === 11)) {
+            if (parentEl instanceof ShadowRoot) {
+              parentEl = parentEl.host;
+              continue;
+            }
             const parentStyles = getComputedStyle(parentEl);
-            parentBgColor = parentStyles.backgroundColor;
-            if (parentBgColor !== "rgba(0, 0, 0, 0)") {
+            const currentParentBg = parentStyles.backgroundColor;
+            if (currentParentBg !== "rgba(0, 0, 0, 0)" && currentParentBg !== "transparent") {
+              parentBgColor = currentParentBg;
               break;
             }
-            if (parentBgColor === "rgba(0, 0, 0, 0)" && parentEl.tagName === "HTML") {
-              parentBgColor = "rgba(255, 255, 255, 1)";
-            }
-            parentEl = parentEl.parentElement;
+            parentEl = getVisualParent(parentEl);
           }
-          const parentColor = convertToRGBA(parentBgColor || "rgba(255, 255, 255, 1)");
+          if (parentBgColor === "rgba(0, 0, 0, 0)" || parentBgColor === "transparent") {
+            parentBgColor = "rgba(255, 255, 255, 1)";
+          }
+          const parentColor = convertToRGBA(parentBgColor);
           const blendedBG = alphaBlend(bgColor, parentColor);
           return blendedBG;
         }
@@ -5649,7 +5648,7 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
       if (targetEl.tagName === "HTML") {
         return [255, 255, 255];
       }
-      targetEl = targetEl.parentNode;
+      targetEl = getVisualParent(targetEl);
     }
     return [255, 255, 255];
   }
