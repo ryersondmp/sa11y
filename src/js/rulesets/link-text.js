@@ -196,7 +196,8 @@ export default function checkLinkText() {
             element: $el,
             type: State.option.checks.LABEL_IN_NAME.type || 'warning',
             content: Lang.sprintf(
-              State.option.checks.LABEL_IN_NAME.content || 'LABEL_IN_NAME',
+              State.option.checks.LABEL_IN_NAME.content ||
+                Lang._('LABEL_IN_NAME') + Lang._('ACC_NAME_TIP'),
               linkText,
             ),
             inline: true,
@@ -455,6 +456,7 @@ export default function checkLinkText() {
             content: Lang.sprintf(
               State.option.checks.LINK_CLICK_HERE.content ||
                 Lang._('LINK_CLICK_HERE') + Lang._('LINK_TIP'),
+              linkText,
             ),
             inline: true,
             dismiss: Utils.prepareDismissal(`LINK_CLICK_HERE ${strippedLinkText}`),

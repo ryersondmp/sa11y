@@ -136,7 +136,14 @@ const Elements = (function myElements() {
             .map((n) => n.textContent)
             .join(' ');
         } else {
-          text = Utils.getText(Utils.fnIgnore($el));
+          // We want to exclude all elements with a 'lang' attribute when we do the initial language confidence check.
+          const clone = $el.cloneNode(true);
+          if (clone.querySelectorAll) {
+            const nestedLangNodes = clone.querySelectorAll('[lang]');
+            for (const node of nestedLangNodes) node.remove();
+          }
+
+          text = Utils.getText(Utils.fnIgnore(clone));
         }
         return Utils.normalizeString(text);
       })

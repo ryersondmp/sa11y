@@ -333,7 +333,7 @@ const Lang = {
         if (!replacement || arg === null) return;
         const match = String(arg).match(/{{langAttr:([\w-]+)\|([^}]+)}}/);
         if (match) replacement.setAttribute("lang", match[1]);
-        replacement.textContent = match ? match[2] : arg;
+        replacement.textContent = match ? match[2] : this.truncateString(String(arg), 300);
       });
     }
     return el2;
@@ -346,6 +346,10 @@ const Lang = {
       /{L}/g,
       `<strong class="badge"><span class="link-icon"></span><span class="visually-hidden">${Lang._("LINKED")}</span></strong>`
     );
+  },
+  truncateString(string, maxLength) {
+    const truncatedString = string.substring(0, maxLength).trimEnd();
+    return string.length > maxLength ? `${truncatedString}...` : string;
   }
 };
 function removeAlert() {
@@ -1581,7 +1585,12 @@ const Elements = /* @__PURE__ */ (function myElements() {
       } else if ($el.tagName === "LI") {
         text = Array.from($el.childNodes).filter((n) => n.nodeType === 3).map((n) => n.textContent).join(" ");
       } else {
-        text = getText(fnIgnore($el));
+        const clone = $el.cloneNode(true);
+        if (clone.querySelectorAll) {
+          const nestedLangNodes = clone.querySelectorAll("[lang]");
+          for (const node of nestedLangNodes) node.remove();
+        }
+        text = getText(fnIgnore(clone));
       }
       return normalizeString(text);
     }).filter(Boolean);
@@ -6505,7 +6514,19 @@ async function checkPageLanguage() {
   if (cached && !isStale) {
     if (cached.test) {
       const getElement = cached.element ? find(cached.element, "root")[0] : null;
-      const processVariables = cached.variables.map((variable) => getLanguageLabel(variable));
+      const processVariables = cached.variables.map((variable) => {
+        if (typeof variable === "string" && variable.length >= 5) {
+          try {
+            const targetEl = find(variable, "root")[0];
+            if (targetEl) {
+              return getText(targetEl);
+            }
+          } catch {
+            return Lang._("UNKNOWN");
+          }
+        }
+        return getLanguageLabel(variable);
+      });
       const contentContainer = document.createElement("div");
       const mainContent = Lang.sprintf(
         State.option.checks[cached.test].content || [cached.test],
@@ -6561,8 +6582,9 @@ async function checkPageLanguage() {
     });
   }
   if (detectedLangCode === declared) {
+    const langAttributes = find("[lang]", "root");
     const confidenceTarget = State.option.PAGE_LANG_CONFIDENCE?.confidence || 0.95;
-    if (detected[0].confidence >= confidenceTarget) {
+    if (detected[0].confidence >= confidenceTarget && langAttributes.length === 0) {
       setCache({
         key: cacheKey,
         textLength: pageText.length,
@@ -6572,58 +6594,60 @@ async function checkPageLanguage() {
       return;
     }
     for (const node of Elements.Found.Everything) {
-      if (node.nodeName !== "IMG" && (!node.textContent || node.textContent.length < 30)) {
+      const isImage = node.nodeName === "IMG";
+      if (!isImage && (!node.textContent || node.textContent.length < 30)) {
         continue;
       }
       let textString = "";
-      if (node.nodeName === "IMG") textString = node.alt || "";
-      else {
-        textString = Array.from(node.childNodes).filter((child) => child.nodeType === 3).map((child) => child.textContent).join(" ");
+      if (isImage) {
+        textString = node.alt || "";
+      } else {
+        textString = Array.from(node.childNodes).filter((child) => child.nodeType === Node.TEXT_NODE).map((child) => child.textContent).join(" ");
       }
       const nodeText = normalizeString(textString);
       if (nodeText.length <= 30) continue;
       const detectNode = await detector.detect(nodeText);
       const nodeLang = primary(detectNode[0].detectedLanguage);
       const nodeConfidence = detectNode[0].confidence;
-      const langAttribute = node?.getAttribute("lang") ? primary(node.getAttribute("lang")) : null;
-      if (nodeLang !== declared && nodeConfidence >= 0.6) {
-        if (nodeLang === declared || langAttribute === nodeLang) continue;
+      if (nodeConfidence >= 0.6) {
+        const langAttribute = node.getAttribute("lang") ? primary(node.getAttribute("lang")) : "";
+        const selector = generateSelectorPath(node);
         if (langAttribute && langAttribute !== nodeLang) {
           test = "LANG_MISMATCH";
           content = Lang.sprintf(
             State.option.checks.LANG_MISMATCH.content || "LANG_MISMATCH",
             getLanguageLabel(nodeLang),
-            getLanguageLabel(langAttribute)
+            getLanguageLabel(langAttribute),
+            textString
           );
-          const wrapper = document.createElement("div");
-          wrapper.append(content, " ", Lang.sprintf("LANG_TIP"));
-          content = wrapper;
-          variables = [nodeLang, langAttribute];
-        } else if (node.nodeName === "IMG" && node?.alt?.length !== 0) {
-          const alt = node.alt;
-          const altText = truncateString(alt, 600);
-          test = "LANG_OF_PARTS_ALT";
-          content = Lang.sprintf(
-            State.option.checks.LANG_OF_PARTS_ALT.content || "LANG_OF_PARTS_ALT",
-            getLanguageLabel(nodeLang),
-            getLanguageLabel(declared),
-            altText
-          );
-          variables = [nodeLang, declared, altText];
+          variables = [nodeLang, langAttribute, selector];
+        } else if (!langAttribute && nodeLang !== declared) {
+          if (isImage && node.alt) {
+            test = "LANG_OF_PARTS_ALT";
+            content = Lang.sprintf(
+              State.option.checks.LANG_OF_PARTS_ALT.content || "LANG_OF_PARTS_ALT",
+              getLanguageLabel(nodeLang),
+              getLanguageLabel(declared),
+              node.alt
+            );
+            variables = [nodeLang, declared, node.alt];
+          } else {
+            test = "LANG_OF_PARTS";
+            content = Lang.sprintf(
+              State.option.checks.LANG_OF_PARTS.content || "LANG_OF_PARTS",
+              getLanguageLabel(declared),
+              getLanguageLabel(nodeLang),
+              textString
+            );
+            variables = [declared, nodeLang, selector];
+          }
         } else {
-          test = "LANG_OF_PARTS";
-          content = Lang.sprintf(
-            State.option.checks.LANG_OF_PARTS.content || "LANG_OF_PARTS",
-            getLanguageLabel(declared),
-            getLanguageLabel(nodeLang)
-          );
-          variables = [declared, nodeLang];
+          continue;
         }
         element = node;
         type = nodeConfidence >= 0.9 ? "error" : "warning";
         dismiss = prepareDismissal(nodeText.slice(0, 256));
         confidence = nodeConfidence;
-        const selector = generateSelectorPath(node);
         setCache({
           key: cacheKey,
           test,
@@ -6634,6 +6658,7 @@ async function checkPageLanguage() {
           textLength: pageText.length,
           declared
         });
+        break;
       }
     }
   }
@@ -7077,13 +7102,12 @@ function checkImages() {
     } else if (link ? rawAlt.length > maxAltCharactersLinks : rawAlt.length > maxAltCharacters) {
       const rule = link ? State.option.checks.LINK_IMAGE_LONG_ALT : State.option.checks.IMAGE_ALT_TOO_LONG;
       const conditional = link ? "LINK_IMAGE_LONG_ALT" : "IMAGE_ALT_TOO_LONG";
-      const truncated = truncateString(altText, 600);
       if (rule) {
         State.results.push({
           test: conditional,
           element: $el,
           type: rule.type || "warning",
-          content: Lang.sprintf(rule.content || conditional, rawAlt.length, truncated),
+          content: Lang.sprintf(rule.content || conditional, rawAlt.length, altText),
           dismiss: prepareDismissal(`${conditional + src + rawAlt}`),
           dismissAll: rule.dismissAll ? conditional : false,
           developer: rule.developer || false
@@ -7411,7 +7435,7 @@ function checkLinkText() {
             element: $el,
             type: State.option.checks.LABEL_IN_NAME.type || "warning",
             content: Lang.sprintf(
-              State.option.checks.LABEL_IN_NAME.content || "LABEL_IN_NAME",
+              State.option.checks.LABEL_IN_NAME.content || Lang._("LABEL_IN_NAME") + Lang._("ACC_NAME_TIP"),
               linkText
             ),
             inline: true,
@@ -7606,7 +7630,8 @@ function checkLinkText() {
             element: $el,
             type: State.option.checks.LINK_CLICK_HERE.type || "warning",
             content: Lang.sprintf(
-              State.option.checks.LINK_CLICK_HERE.content || Lang._("LINK_CLICK_HERE") + Lang._("LINK_TIP")
+              State.option.checks.LINK_CLICK_HERE.content || Lang._("LINK_CLICK_HERE") + Lang._("LINK_TIP"),
+              linkText
             ),
             inline: true,
             dismiss: prepareDismissal(`LINK_CLICK_HERE ${strippedLinkText}`),
@@ -8825,7 +8850,10 @@ function checkQA() {
           test: "QA_UPPERCASE",
           element: $el,
           type: State.option.checks.QA_UPPERCASE.type || "warning",
-          content: Lang.sprintf(State.option.checks.QA_UPPERCASE.content || "QA_UPPERCASE"),
+          content: Lang.sprintf(
+            State.option.checks.QA_UPPERCASE.content || "QA_UPPERCASE",
+            thisText
+          ),
           dismiss: prepareDismissal(`QA_UPPERCASE ${thisText}`),
           dismissAll: State.option.checks.QA_UPPERCASE.dismissAll ? "QA_UPPERCASE" : false,
           developer: State.option.checks.QA_UPPERCASE.developer || false
@@ -8846,35 +8874,38 @@ function checkQA() {
     });
   }
   const addUnderlineResult = ($el) => {
+    const text = getText($el);
     State.results.push({
       test: "QA_UNDERLINE",
       element: $el,
       type: State.option.checks.QA_UNDERLINE.type || "warning",
-      content: Lang.sprintf(State.option.checks.QA_UNDERLINE.content || "QA_UNDERLINE"),
+      content: Lang.sprintf(State.option.checks.QA_UNDERLINE.content || "QA_UNDERLINE", text),
       inline: true,
-      dismiss: prepareDismissal(`QA_UNDERLINE ${$el.textContent}`),
+      dismiss: prepareDismissal(`QA_UNDERLINE ${text}`),
       dismissAll: State.option.checks.QA_UNDERLINE.dismissAll ? "QA_UNDERLINE" : false,
       developer: State.option.checks.QA_UNDERLINE.developer || false
     });
   };
   const addJustifyResult = ($el) => {
+    const text = getText($el);
     State.results.push({
       test: "QA_JUSTIFY",
       element: $el,
       type: State.option.checks.QA_JUSTIFY.type || "warning",
-      content: Lang.sprintf(State.option.checks.QA_JUSTIFY.content || "QA_JUSTIFY"),
-      dismiss: prepareDismissal(`QA_JUSTIFY ${$el.textContent}`),
+      content: Lang.sprintf(State.option.checks.QA_JUSTIFY.content || "QA_JUSTIFY", text),
+      dismiss: prepareDismissal(`QA_JUSTIFY ${text}`),
       dismissAll: State.option.checks.QA_JUSTIFY.dismissAll ? "QA_JUSTIFY" : true,
       developer: State.option.checks.QA_JUSTIFY.developer || false
     });
   };
   const addSmallTextResult = ($el) => {
+    const text = getText($el);
     State.results.push({
       test: "QA_SMALL_TEXT",
       element: $el,
       type: State.option.checks.QA_SMALL_TEXT.type || "warning",
-      content: Lang.sprintf(State.option.checks.QA_SMALL_TEXT.content || "QA_SMALL_TEXT"),
-      dismiss: prepareDismissal(`QA_SMALL_TEXT ${$el.textContent}`),
+      content: Lang.sprintf(State.option.checks.QA_SMALL_TEXT.content || "QA_SMALL_TEXT", text),
+      dismiss: prepareDismissal(`QA_SMALL_TEXT ${text}`),
       dismissAll: State.option.checks.QA_SMALL_TEXT.dismissAll ? "QA_SMALL_TEXT" : true,
       developer: State.option.checks.QA_SMALL_TEXT.developer || false
     });
@@ -9144,7 +9175,10 @@ function checkDeveloper() {
           test: "LABEL_IN_NAME",
           element: $el,
           type: State.option.checks.LABEL_IN_NAME.type || "warning",
-          content: State.option.checks.LABEL_IN_NAME.content ? Lang.sprintf(State.option.checks.LABEL_IN_NAME.content, accName) : Lang.sprintf(Lang._("LABEL_IN_NAME") + Lang._("ACC_NAME_TIP"), accName),
+          content: Lang.sprintf(
+            State.option.checks.LABEL_IN_NAME.content || Lang._("LABEL_IN_NAME") + Lang._("ACC_NAME_TIP"),
+            accName
+          ),
           dismiss: prepareDismissal(
             `LABEL_IN_NAME ${$el.tagName + $el.id + $el.className + accName}`
           ),
@@ -9159,7 +9193,8 @@ function checkDeveloper() {
           element: $el,
           type: State.option.checks.BTN_ROLE_IN_NAME.type || "warning",
           content: Lang.sprintf(
-            State.option.checks.BTN_ROLE_IN_NAME.content || Lang._("BTN_ROLE_IN_NAME") + Lang._("BTN_TIP")
+            State.option.checks.BTN_ROLE_IN_NAME.content || Lang._("BTN_ROLE_IN_NAME") + Lang._("ACC_NAME_TIP") + Lang._("BTN_TIP"),
+            accName
           ),
           dismiss: prepareDismissal(
             `BTN_ROLE_IN_NAME ${$el.tagName + $el.id + $el.className + accName}`

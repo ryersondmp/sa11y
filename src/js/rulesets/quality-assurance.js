@@ -484,7 +484,10 @@ export default function checkQA() {
           test: 'QA_UPPERCASE',
           element: $el,
           type: State.option.checks.QA_UPPERCASE.type || 'warning',
-          content: Lang.sprintf(State.option.checks.QA_UPPERCASE.content || 'QA_UPPERCASE'),
+          content: Lang.sprintf(
+            State.option.checks.QA_UPPERCASE.content || 'QA_UPPERCASE',
+            thisText,
+          ),
           dismiss: Utils.prepareDismissal(`QA_UPPERCASE ${thisText}`),
           dismissAll: State.option.checks.QA_UPPERCASE.dismissAll ? 'QA_UPPERCASE' : false,
           developer: State.option.checks.QA_UPPERCASE.developer || false,
@@ -510,37 +513,40 @@ export default function checkQA() {
   /* ************************************************************** */
   // Check underlined text. Created by Brian Teeman!
   const addUnderlineResult = ($el) => {
+    const text = Utils.getText($el);
     State.results.push({
       test: 'QA_UNDERLINE',
       element: $el,
       type: State.option.checks.QA_UNDERLINE.type || 'warning',
-      content: Lang.sprintf(State.option.checks.QA_UNDERLINE.content || 'QA_UNDERLINE'),
+      content: Lang.sprintf(State.option.checks.QA_UNDERLINE.content || 'QA_UNDERLINE', text),
       inline: true,
-      dismiss: Utils.prepareDismissal(`QA_UNDERLINE ${$el.textContent}`),
+      dismiss: Utils.prepareDismissal(`QA_UNDERLINE ${text}`),
       dismissAll: State.option.checks.QA_UNDERLINE.dismissAll ? 'QA_UNDERLINE' : false,
       developer: State.option.checks.QA_UNDERLINE.developer || false,
     });
   };
 
   const addJustifyResult = ($el) => {
+    const text = Utils.getText($el);
     State.results.push({
       test: 'QA_JUSTIFY',
       element: $el,
       type: State.option.checks.QA_JUSTIFY.type || 'warning',
-      content: Lang.sprintf(State.option.checks.QA_JUSTIFY.content || 'QA_JUSTIFY'),
-      dismiss: Utils.prepareDismissal(`QA_JUSTIFY ${$el.textContent}`),
+      content: Lang.sprintf(State.option.checks.QA_JUSTIFY.content || 'QA_JUSTIFY', text),
+      dismiss: Utils.prepareDismissal(`QA_JUSTIFY ${text}`),
       dismissAll: State.option.checks.QA_JUSTIFY.dismissAll ? 'QA_JUSTIFY' : true,
       developer: State.option.checks.QA_JUSTIFY.developer || false,
     });
   };
 
   const addSmallTextResult = ($el) => {
+    const text = Utils.getText($el);
     State.results.push({
       test: 'QA_SMALL_TEXT',
       element: $el,
       type: State.option.checks.QA_SMALL_TEXT.type || 'warning',
-      content: Lang.sprintf(State.option.checks.QA_SMALL_TEXT.content || 'QA_SMALL_TEXT'),
-      dismiss: Utils.prepareDismissal(`QA_SMALL_TEXT ${$el.textContent}`),
+      content: Lang.sprintf(State.option.checks.QA_SMALL_TEXT.content || 'QA_SMALL_TEXT', text),
+      dismiss: Utils.prepareDismissal(`QA_SMALL_TEXT ${text}`),
       dismissAll: State.option.checks.QA_SMALL_TEXT.dismissAll ? 'QA_SMALL_TEXT' : true,
       developer: State.option.checks.QA_SMALL_TEXT.developer || false,
     });

@@ -269,9 +269,11 @@ export default function checkDeveloper() {
           test: 'LABEL_IN_NAME',
           element: $el,
           type: State.option.checks.LABEL_IN_NAME.type || 'warning',
-          content: State.option.checks.LABEL_IN_NAME.content
-            ? Lang.sprintf(State.option.checks.LABEL_IN_NAME.content, accName)
-            : Lang.sprintf(Lang._('LABEL_IN_NAME') + Lang._('ACC_NAME_TIP'), accName),
+          content: Lang.sprintf(
+            State.option.checks.LABEL_IN_NAME.content ||
+              Lang._('LABEL_IN_NAME') + Lang._('ACC_NAME_TIP'),
+            accName,
+          ),
           dismiss: Utils.prepareDismissal(
             `LABEL_IN_NAME ${$el.tagName + $el.id + $el.className + accName}`,
           ),
@@ -289,7 +291,8 @@ export default function checkDeveloper() {
           type: State.option.checks.BTN_ROLE_IN_NAME.type || 'warning',
           content: Lang.sprintf(
             State.option.checks.BTN_ROLE_IN_NAME.content ||
-              Lang._('BTN_ROLE_IN_NAME') + Lang._('BTN_TIP'),
+              Lang._('BTN_ROLE_IN_NAME') + Lang._('ACC_NAME_TIP') + Lang._('BTN_TIP'),
+            accName,
           ),
           dismiss: Utils.prepareDismissal(
             `BTN_ROLE_IN_NAME ${$el.tagName + $el.id + $el.className + accName}`,

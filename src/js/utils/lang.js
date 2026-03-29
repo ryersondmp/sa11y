@@ -37,8 +37,8 @@ const Lang = {
         const match = String(arg).match(/{{langAttr:([\w-]+)\|([^}]+)}}/);
         if (match) replacement.setAttribute('lang', match[1]);
 
-        // Always return user content via textContent.
-        replacement.textContent = match ? match[2] : arg;
+        // Always return user content via textContent and truncate super long strings.
+        replacement.textContent = match ? match[2] : this.truncateString(String(arg), 300);
       });
     }
     return el;
@@ -58,6 +58,10 @@ const Lang = {
         /{L}/g,
         `<strong class="badge"><span class="link-icon"></span><span class="visually-hidden">${Lang._('LINKED')}</span></strong>`,
       );
+  },
+  truncateString(string, maxLength) {
+    const truncatedString = string.substring(0, maxLength).trimEnd();
+    return string.length > maxLength ? `${truncatedString}...` : string;
   },
 };
 export default Lang;
