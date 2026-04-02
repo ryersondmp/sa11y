@@ -150,7 +150,7 @@ test.describe('Sa11y Unit Tests', () => {
 
   test('Empty heading', async () => {
     const issue = await checkTooltip(
-      page, 'error-empty-heading', 'Empty heading found',
+      page, 'error-empty-heading', 'Empty heading found!',
     );
     expect(issue).toBe(true);
   });

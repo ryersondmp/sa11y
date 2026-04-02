@@ -341,7 +341,8 @@ export default {
       'Lille tekst er sværere at læse, især for dem med nedsat syn. For at sikre bedre læsbarhed skal du undgå at bruge skriftstørrelser, der er mindre end standarden.',
 
     // Shared
-    ACC_NAME: '<strong {B}>Tilgængeligt navn</strong> %(TEXT)',
+    LINK_TEXT: '<strong {B}>Linktekst</strong> <strong {C}>%(TEXT)</strong>',
+    ACC_NAME: '<strong {B}>Tilgængeligt navn</strong> <strong {C}>%(TEXT)</strong>',
     ACC_NAME_TIP:
       '<hr><strong>Tip!</strong> "Tilgængeligt navn" er den endelige etiket, der kommunikeres til personer, der bruger hjælpemidler. Dette hjælper dem med at forstå formålet med linket eller knappen.',
     HIDDEN_FOCUSABLE:
@@ -377,7 +378,7 @@ export default {
     BTN_ROLE_IN_NAME:
       'Inkluder ikke ordet "knap" i navnet på en knap. Skærmlæsere meddeler allerede elementets rolle ud over dets navn.',
     LABEL_IN_NAME:
-      'Den synlige tekst for dette element ser ud til at være forskellig fra det tilgængelige navn, hvilket kan forårsage forvirring for brugere af hjælpeværktøjer. Gennemgå venligst: <hr> <strong {B}>Tilgængeligt navn</strong> <strong {C}>%(TEXT)</strong>',
+      'Den synlige tekst for dette element ser ud til at være forskellig fra det tilgængelige navn, hvilket kan forårsage forvirring for brugere af hjælpeværktøjer. Gennemgå venligst: <hr> <strong {B}>Tekst</strong> <strong {C}>%(TEXT)</strong> <hr> <strong {B}>Tilgængeligt navn</strong> <strong {C}>%(TEXT)</strong>',
     LINK_MAYBE_BUTTON: 'Dette link har en ugyldig destination, og det tilgængelige navn indeholder ordet "<strong>%(NAME)</strong>". Dette tyder på, at det måske slet ikke er et link, men i stedet styrer en scriptet adfærd på siden. For at løse det skal linket erstattes med en <a href="https://www.w3.org/WAI/ARIA/apg/patterns/button/">tilgængelig knap</a>, eller linkets destination skal korrigeres. <hr> <strong>Tip!</strong> Hjælpemidler behandler knapper og links forskelligt. Brug af det korrekte HTML-element sikrer, at brugerne ved, hvilke tastaturgenveje de skal bruge, og hvilken handling der udløses.',
     POTENTIAL_UI_ELEMENTS: ['menu', 'luk', 'skift', 'åbn', 'udvid', 'skjul', 'næste', 'forrige', 'afspil', 'pause', 'undermenu', 'vis', 'skjul', 'rullemenu', 'tilbage', 'frem', 'spring over', 'indsend', 'annuller', 'gem', 'rediger', 'slet', 'fjern', 'søg', 'filter', 'sorter', 'stop', 'lydløs', 'slå lyd til', 'fuldskærm', 'minimer', 'maksimer'],
 

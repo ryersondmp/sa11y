@@ -42,6 +42,7 @@ export default function checkHeaders() {
     let developer = null;
     let dismissAll = null;
     let margin = null;
+    let args = null;
 
     // Rulesets.
     if (headingLength === 0) {
@@ -56,6 +57,7 @@ export default function checkHeaders() {
               State.option.checks.HEADING_EMPTY_WITH_IMAGE.content || 'HEADING_EMPTY_WITH_IMAGE',
               level,
             );
+            args = [level];
             developer = State.option.checks.HEADING_EMPTY_WITH_IMAGE.developer || false;
             dismissAll = State.option.checks.HEADING_EMPTY_WITH_IMAGE.dismissAll
               ? 'HEADING_EMPTY_WITH_IMAGE'
@@ -67,6 +69,7 @@ export default function checkHeaders() {
         test = 'HEADING_EMPTY';
         type = State.option.checks.HEADING_EMPTY.type || 'error';
         content = Lang.sprintf(State.option.checks.HEADING_EMPTY.content || 'HEADING_EMPTY', level);
+        args = [level];
         developer = State.option.checks.HEADING_EMPTY.developer || false;
         dismissAll = State.option.checks.HEADING_EMPTY.dismissAll ? 'HEADING_EMPTY' : false;
         margin = '0';
@@ -83,6 +86,13 @@ export default function checkHeaders() {
           Utils.truncateString(prevHeadingText, 60),
           prevLevel + 1,
         );
+        args = [
+          prevLevel,
+          level,
+          Utils.truncateString(headingText, 60),
+          Utils.truncateString(prevHeadingText, 60),
+          prevLevel + 1,
+        ];
         developer = State.option.checks.HEADING_SKIPPED_LEVEL.developer || false;
         dismissAll = State.option.checks.HEADING_SKIPPED_LEVEL.dismissAll
           ? 'HEADING_SKIPPED_LEVEL'
@@ -104,7 +114,9 @@ export default function checkHeaders() {
           State.option.checks.HEADING_LONG.content || 'HEADING_LONG',
           maxHeadingLength,
           headingLength,
+          headingText,
         );
+        args = [maxHeadingLength, headingLength, headingText];
         developer = State.option.checks.HEADING_LONG.developer || false;
         dismissAll = State.option.checks.HEADING_LONG.dismissAll ? 'HEADING_LONG' : false;
       }
@@ -117,6 +129,7 @@ export default function checkHeaders() {
         element: $el,
         type,
         content,
+        args,
         dismiss: Utils.prepareDismissal(`${test + level + headingText}`),
         dismissAll,
         isWithinRoot,

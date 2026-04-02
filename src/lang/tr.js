@@ -341,7 +341,8 @@ export default {
       'Küçük metin, özellikle görme sorunu yaşayanlar için okumak daha zordur. Daha iyi okunabilirlik sağlamak için varsayılandan daha küçük yazı tipi boyutlarını kullanmaktan kaçının.',
 
     // Shared
-    ACC_NAME: '<strong {B}>Erişilebilir ad</strong> %(TEXT)',
+    LINK_TEXT: '<strong {B}>Bağlantı metni</strong> <strong {C}>%(TEXT)</strong>',
+    ACC_NAME: '<strong {B}>Erişilebilir ad</strong> <strong {C}>%(TEXT)</strong>',
     ACC_NAME_TIP:
       '<hr><strong>İpucu!</strong> "Erişilebilir ad", yardımcı teknolojiyi kullanan kişilere iletilen son etikettir ve ARIA tarafından hesaplanır. Bu, bağlantının veya düğmenin amacını anlamalarına yardımcı olur.',
     HIDDEN_FOCUSABLE:
@@ -377,7 +378,7 @@ export default {
     BTN_ROLE_IN_NAME:
       'Bir düğmenin adında "düğme" kelimesini içermeyin. Ekran okuyucular zaten öğenin rolünü adıyla birlikte iletir.',
     LABEL_IN_NAME:
-      'Bu öğe için görünen metin, erişilebilir ad ile farklı görünüyor, bu da yardımcı teknoloji kullanıcıları için kafa karışıklığına neden olabilir. Lütfen gözden geçirin: <hr> <strong {B}>Erişilebilir Ad</strong> <strong {C}>%(TEXT)</strong>',
+      'Bu öğe için görünen metin, erişilebilir ad ile farklı görünüyor, bu da yardımcı teknoloji kullanıcıları için kafa karışıklığına neden olabilir. Lütfen gözden geçirin: <hr> <strong {B}>Metin</strong> <strong {C}>%(TEXT)</strong> <hr> <strong {B}>Erişilebilir Ad</strong> <strong {C}>%(TEXT)</strong>',
     LINK_MAYBE_BUTTON: 'Bu bağlantının geçersiz bir hedefi var ve erişilebilir ad "<strong>%(NAME)</strong>" kelimesini içeriyor. Bu, bunun bir bağlantı olmayabileceğini, bunun yerine sayfadaki bazı komut dosyası davranışlarını kontrol ettiğini gösteriyor. Düzeltmek için bağlantıyı <a href="https://www.w3.org/WAI/ARIA/apg/patterns/button/">erişilebilir bir düğme</a> ile değiştirin veya bağlantının hedefini düzeltin. <hr> <strong>İpucu!</strong> Yardımcı teknolojiler düğmelere ve bağlantılara farklı şekilde davranır. Doğru HTML öğesinin kullanılması, kullanıcıların hangi klavye kısayollarını kullanacaklarını ve hangi eylemin tetikleneceğini bilmelerini sağlar.',
     POTENTIAL_UI_ELEMENTS: ['menü', 'kapat', 'değiştir', 'aç', 'genişlet', 'daralt', 'sonraki', 'önceki', 'oynat', 'duraklat', 'alt menü', 'göster', 'gizle', 'açılır menü', 'geri', 'ileri', 'atla', 'gönder', 'iptal', 'kaydet', 'düzenle', 'sil', 'kaldır', 'ara', 'filtre', 'sırala', 'dur', 'sessiz', 'sesi aç', 'tam ekran', 'küçült', 'büyüt'],
 

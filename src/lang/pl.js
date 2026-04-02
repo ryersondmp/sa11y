@@ -340,7 +340,8 @@ export default {
       'Mały tekst jest trudniejszy do odczytania, szczególnie dla osób słabowidzących. Aby zapewnić lepszą czytelność, unikaj używania czcionek mniejszych niż domyślne.',
 
     // Shared
-    ACC_NAME: '<strong {B}>Dostępna nazwa</strong> %(TEXT)',
+    LINK_TEXT: '<strong {B}>Tekst linku</strong> <strong {C}>%(TEXT)</strong>',
+    ACC_NAME: '<strong {B}>Dostępna nazwa</strong> <strong {C}>%(TEXT)</strong>',
     ACC_NAME_TIP:
       '<hr><strong>Wskazówka!</strong> "Dostępna nazwa" to ostateczna etykieta, która jest przekazywana osobom korzystającym z technologii wspomagających i jest obliczana przez ARIA. Pomaga to im zrozumieć cel linku lub przycisku.',
     HIDDEN_FOCUSABLE:
@@ -376,7 +377,7 @@ export default {
     BTN_ROLE_IN_NAME:
       'Nie włączaj słowa „przycisk” w nazwie przycisku. Czytniki ekranowe już podają rolę elementu oprócz jego nazwy.',
     LABEL_IN_NAME:
-      'Widoczny tekst tego elementu wydaje się różnić od dostępnej nazwy, co może wprowadzać w błąd użytkowników technologii wspomagających. Sprawdź: <hr> <strong {B}>Dostępna nazwa</strong> <strong {C}>%(TEXT)</strong>',
+      'Widoczny tekst tego elementu wydaje się różnić od dostępnej nazwy, co może wprowadzać w błąd użytkowników technologii wspomagających. Sprawdź: <hr> <strong {B}>Tekst</strong> <strong {C}>%(TEXT)</strong> <hr> <strong {B}>Dostępna nazwa</strong> <strong {C}>%(TEXT)</strong>',
     LINK_MAYBE_BUTTON: 'Ten link ma nieprawidłowy cel, a nazwa dostępna zawiera słowo „<strong>%(NAME)</strong>”. Sugeruje to, że może to w ogóle nie być link, lecz element sterujący skryptowym zachowaniem na stronie. Aby to naprawić, zastąp link <a href="https://www.w3.org/WAI/ARIA/apg/patterns/button/">dostępnym przyciskiem</a> lub popraw cel linku. <hr> <strong>Wskazówka!</strong> Technologie wspomagające traktują przyciski i linki w różny sposób. Użycie właściwego elementu HTML daje pewność, że użytkownicy wiedzą, jakich skrótów klawiszowych użyć i jaka akcja zostanie wywołana.',
     POTENTIAL_UI_ELEMENTS: ['menu', 'zamknij', 'przełącz', 'otwórz', 'rozwiń', 'zwiń', 'następny', 'poprzedni', 'odtwórz', 'pauza', 'podmenu', 'pokaż', 'ukryj', 'rozwijane', 'wstecz', 'dalej', 'pomiń', 'wyślij', 'anuluj', 'zapisz', 'edytuj', 'usuń', 'usuń', 'szukaj', 'filtr', 'sortuj', 'stop', 'wycisz', 'wyłącz wyciszenie', 'pełny ekran', 'minimalizuj', 'maksymalizuj'],
 

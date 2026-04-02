@@ -340,7 +340,8 @@ export default {
       'Mažas tekstas yra sunkiau skaitomas, ypač žmonėms, turintiems silpną regėjimą. Siekiant geresnio skaitomumo, venkite naudoti šrifto dydžių, mažesnių už numatytąjį.',
 
     // Shared
-    ACC_NAME: '<strong {B}>Prieinamas pavadinimas</strong> %(TEXT)',
+    LINK_TEXT: '<strong {B}>Nuorodos tekstas</strong> <strong {C}>%(TEXT)</strong>',
+    ACC_NAME: '<strong {B}>Prieinamas pavadinimas</strong> <strong {C}>%(TEXT)</strong>',
     ACC_NAME_TIP:
       '<hr><strong>Patarimas!</strong> "Prieinamas pavadinimas" yra galutinis etiketas, kuris perduodamas žmonėms, naudojantiems pagalbines technologijas, ir skaičiuojamas ARIA. Tai padeda jiems suprasti nuorodos ar mygtuko tikslą.',
     HIDDEN_FOCUSABLE:
@@ -376,7 +377,7 @@ export default {
     BTN_ROLE_IN_NAME:
       'Nepalikite žodžio „mygtukas“ mygtuko pavadinime. Ekrano skaitytuvai jau praneša elemento vaidmenį be jo pavadinimo.',
     LABEL_IN_NAME:
-      'Matomas šio elemento tekstas atrodo skirtingas nei prieinamas pavadinimas, kas gali sukelti painiavą pagalbinių technologijų naudotojams. Peržiūrėkite: <hr> <strong {B}>Prieinamas Pavadinimas</strong> <strong {C}>%(TEXT)</strong>',
+      'Matomas šio elemento tekstas atrodo skirtingas nei prieinamas pavadinimas, kas gali sukelti painiavą pagalbinių technologijų naudotojams. Peržiūrėkite: <hr> <strong {B}>Tekstas</strong> <strong {C}>%(TEXT)</strong> <hr> <strong {B}>Prieinamas Pavadinimas</strong> <strong {C}>%(TEXT)</strong>',
     LINK_MAYBE_BUTTON: 'Ši nuoroda turi negaliojantį tikslą, o jos prieinamame pavadinime yra žodis „<strong>%(NAME)</strong>“. Tai rodo, kad tai gali būti visai ne nuoroda, o elementas, valdantis tam tikrą skriptų elgseną puslapyje. Norėdami tai ištaisyti, pakeiskite nuorodą <a href="https://www.w3.org/WAI/ARIA/apg/patterns/button/">prieinamu mygtuku</a> arba ištaisykite nuorodos tikslą. <hr> <strong>Patarimas!</strong> Pagalbinės technologijos mygtukus ir nuorodas apdoroja skirtingai. Teisingo HTML elemento naudojimas užtikrina, kad naudotojai žinotų, kuriuos sparčiuosius klavišus naudoti ir koks veiksmas bus atliktas.',
     POTENTIAL_UI_ELEMENTS: ['meniu', 'uždaryti', 'perjungti', 'atidaryti', 'išskleisti', 'suskleisti', 'kitas', 'ankstesnis', 'leisti', 'pauzė', 'papildomas meniu', 'rodyti', 'slėpti', 'išskleidžiamasis meniu', 'atgal', 'pirmyn', 'praleisti', 'pateikti', 'atšaukti', 'išsaugoti', 'redaguoti', 'ištrinti', 'pašalinti', 'ieškoti', 'filtras', 'rūšiuoti', 'sustabdyti', 'nutildyti', 'atitildyti', 'visas ekranas', 'sumažinti', 'padidinti'],
 

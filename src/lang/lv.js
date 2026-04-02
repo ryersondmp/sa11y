@@ -343,7 +343,8 @@ export default {
       'Mazs teksts ir grūtāk lasāms, it īpaši cilvēkiem ar vāju redzi. Lai nodrošinātu labāku lasāmību, izvairieties no fontu izmēriem, kas ir mazāki par noklusējuma izmēru.',
 
     // Shared
-    ACC_NAME: '<strong {B}>Pieejamais nosaukums</strong> %(TEXT)',
+    LINK_TEXT: '<strong {B}>Saites teksts</strong> <strong {C}>%(TEXT)</strong>',
+    ACC_NAME: '<strong {B}>Pieejamais nosaukums</strong> <strong {C}>%(TEXT)</strong>',
     ACC_NAME_TIP:
       '<hr><strong>Ieteikums!</strong> "Pieejamais nosaukums" ir galīgā etiķete, kas tiek sazināta ar cilvēkiem, kuri izmanto palīgtehnoloģijas, un kuru aprēķina ARIA. Tas palīdz viņiem saprast saites vai pogas mērķi.',
     HIDDEN_FOCUSABLE:
@@ -380,7 +381,7 @@ export default {
     BTN_ROLE_IN_NAME:
       'Neiekļaujiet vārdu "poga" pogas nosaukumā. Ekrāna lasītāji jau paziņo elementa lomu papildus tā nosaukumam.',
     LABEL_IN_NAME:
-      'Šī elementa redzamais teksts šķiet atšķirīgs no pieejamā nosaukuma, kas var radīt neskaidrības palīdzības tehnoloģiju lietotājiem. Lūdzu, pārskatiet: <hr> <strong {B}>Pieejams Nosaukums</strong> <strong {C}>%(TEXT)</strong>',
+      'Šī elementa redzamais teksts šķiet atšķirīgs no pieejamā nosaukuma, kas var radīt neskaidrības palīdzības tehnoloģiju lietotājiem. Lūdzu, pārskatiet: <hr> <strong {B}>Teksts</strong> <strong {C}>%(TEXT)</strong> <hr> <strong {B}>Pieejams Nosaukums</strong> <strong {C}>%(TEXT)</strong>',
     LINK_MAYBE_BUTTON: 'Šai saitei ir nederīgs mērķis, un pieejamais nosaukums satur vārdu "<strong>%(NAME)</strong>". Tas liecina, ka tā, iespējams, nemaz nav saite, bet tā vietā kontrolē kādu skriptētu darbību lapā. Lai to labotu, aizstājiet saiti ar <a href="https://www.w3.org/WAI/ARIA/apg/patterns/button/">pieejamu pogu</a> vai izlabojiet saites mērķi. <hr> <strong>Padoms!</strong> Asistenttehnoloģijas pogas un saites apstrādā atšķirīgi. Izmantojot pareizo HTML elementu, lietotāji zina, kurus tastatūras īsinājumtaustiņus izmantot un kāda darbība tiks aktivizēta.',
     POTENTIAL_UI_ELEMENTS: ['izvēlne', 'aizvērt', 'pārslēgt', 'atvērt', 'izvērst', 'samazināt', 'nākamais', 'iepriekšējais', 'atskaņot', 'pauze', 'apakšizvēlne', 'rādīt', 'paslēpt', 'nolaižamā izvēlne', 'atpakaļ', 'uz priekšu', 'izlaist', 'iesniegt', 'atcelt', 'saglabāt', 'rediģēt', 'dzēst', 'noņemt', 'meklēt', 'filtrs', 'kārtot', 'stop', 'izslēgt skaņu', 'ieslēgt skaņu', 'pilnekrāna režīms', 'minimizēt', 'maksimizēt'],
 

@@ -227,7 +227,7 @@ export default function generateImageOutline() {
           }
 
           removeAlert();
-          if (!image || image.hasAttribute('data-sa11y-parent')) {
+          if (!image || $el.querySelector('span.hidden-icon')) {
             createAlert(Lang._('NOT_VISIBLE'));
           }
         });

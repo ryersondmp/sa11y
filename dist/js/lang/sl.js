@@ -253,7 +253,8 @@ const sl = {
     QA_JUSTIFY: "Izogibajte se uporabi poravnanega besedila, ki je poravnano tako na levi kot na desni rob. Zaradi neenakomernih presledkov med besedami je lahko za nekatere ljudi težko berljivo. Uporabite levo poravnano besedilo za boljšo berljivost.",
     QA_SMALL_TEXT: "Majhno besedilo je težje brati, zlasti za osebe s slabim vidom. Za boljšo berljivost se izogibajte uporabi velikosti pisave, ki so manjše od privzetih.",
     // Shared
-    ACC_NAME: "<strong {B}>Dostopno ime</strong> %(TEXT)",
+    LINK_TEXT: "<strong {B}>Besedilo povezave</strong> <strong {C}>%(TEXT)</strong>",
+    ACC_NAME: "<strong {B}>Dostopno ime</strong> <strong {C}>%(TEXT)</strong>",
     ACC_NAME_TIP: '<hr> <strong>Nasvet!</strong> "Dostopno ime" je končna oznaka, ki se sporoča ljudem, ki uporabljajo pripomočke, in se izračuna z ARIA. To jim pomaga razumeti namen povezave ali gumba.',
     HIDDEN_FOCUSABLE: 'Povezava ali gumb ima <code>aria-hidden=&quot;true&quot;</code>, vendar je še vedno dostopen s tipkovnico. Če nameravate skriti podvojeno povezavo ali gumb, dodajte tudi <code>tabindex=&quot;-1&quot;</code>. V nasprotnem primeru se <code>aria-hidden=&quot;true&quot;</code> ne sme uporabljati na elementih, ki lahko prejmejo fokus. <hr> Več o <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">atributu aria-hidden.</a>',
     // Developer
@@ -274,7 +275,7 @@ const sl = {
     BTN: "gumb",
     BTN_TIP: 'Naučite se, kako narediti <a href="https://www.sarasoueidan.com/blog/accessible-icon-buttons/">dostopen gumb.</a>',
     BTN_ROLE_IN_NAME: "Ne vključujte besede „gumb“ v ime gumba. Bralniki zaslona že posredujejo vlogo elementa poleg njegovega imena.",
-    LABEL_IN_NAME: "Vidno besedilo za ta element se zdi drugačno od dostopnega imena, kar lahko povzroči zmedo pri uporabnikih podpornih tehnologij. Preverite: <hr> <strong {B}>Dostopno ime</strong> <strong {C}>%(TEXT)</strong>",
+    LABEL_IN_NAME: "Vidno besedilo za ta element se zdi drugačno od dostopnega imena, kar lahko povzroči zmedo pri uporabnikih podpornih tehnologij. Preverite: <hr> <strong {B}>Besedilo</strong> <strong {C}>%(TEXT)</strong> <hr> <strong {B}>Dostopno ime</strong> <strong {C}>%(TEXT)</strong>",
     LINK_MAYBE_BUTTON: 'Ta povezava ima neveljaven cilj, dostopno ime pa vsebuje besedo »<strong>%(NAME)</strong>«. To nakazuje, da to morda sploh ni povezava, ampak element, ki upravlja skriptno vedenje na strani. Če želite to popraviti, zamenjajte povezavo z <a href="https://www.w3.org/WAI/ARIA/apg/patterns/button/">dostopnim gumbom</a> ali popravite cilj povezave. <hr> <strong>Nasvet!</strong> Asistivne tehnologije obravnavajo gumbe in povezave različno. Uporaba pravilnega elementa HTML zagotavlja, da uporabniki vedo, katere tipkovne bližnjice uporabiti in katero dejanje se bo sprožilo.',
     POTENTIAL_UI_ELEMENTS: ["meni", "zapri", "preklopi", "odpri", "razširi", "strni", "naslednji", "prejšnji", "predvajaj", "premor", "podmeni", "pokaži", "skrij", "spustni meni", "nazaj", "naprej", "preskoči", "pošlji", "prekliči", "shrani", "uredi", "izbriši", "odstrani", "išči", "filter", "razvrsti", "ustavi", "nemo", "vklopi zvok", "celozaslonski način", "pomanjšaj", "povečaj"],
     // Tables

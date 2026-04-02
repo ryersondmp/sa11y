@@ -253,7 +253,8 @@ const cs = {
     QA_JUSTIFY: "Vyhněte se používání zarovnaného textu, který je zarovnán jak vlevo, tak vpravo. To může být pro některé lidi obtížné číst kvůli nerovnoměrným mezerám mezi slovy. Použijte text zarovnaný vlevo pro lepší čitelnost.",
     QA_SMALL_TEXT: "Malý text je těžší číst, zejména pro osoby se slabým zrakem. Pro lepší čitelnost se vyhněte používání velikostí písma menších než výchozí.",
     // Shared
-    ACC_NAME: "<strong {B}>Přístupné jméno</strong> %(TEXT)",
+    LINK_TEXT: "<strong {B}>Text odkazu</strong> <strong {C}>%(TEXT)</strong>",
+    ACC_NAME: "<strong {B}>Přístupné jméno</strong> <strong {C}>%(TEXT)</strong>",
     ACC_NAME_TIP: '<hr><strong>Tip!</strong> "Přístupné jméno" je konečný štítek, který je komunikován lidem používajícím asistenční technologie. To jim pomáhá pochopit účel odkazu nebo tlačítka.',
     HIDDEN_FOCUSABLE: 'Odkaz nebo tlačítko má <code>aria-hidden=&quot;true&quot;</code>, ale je stále přístupné klávesnicí. Pokud máte v úmyslu skrýt duplicitní odkaz nebo tlačítko, přidejte také <code>tabindex=&quot;-1&quot;</code>. Jinak by se <code>aria-hidden=&quot;true&quot;</code> nemělo používat na prvcích, které mohou získat fokus. <hr> Další informace o <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">atributu aria-hidden.</a>',
     // Developer
@@ -274,7 +275,7 @@ const cs = {
     BTN: "tlačítko",
     BTN_TIP: 'Naučte se, jak vytvořit <a href="https://www.sarasoueidan.com/blog/accessible-icon-buttons/">přístupné tlačítko.</a>',
     BTN_ROLE_IN_NAME: "Nezahrnujte slovo „tlačítko“ do názvu tlačítka. Čtečky obrazovky již oznamují roli prvku kromě jeho názvu.",
-    LABEL_IN_NAME: "Viditelný text tohoto prvku se zdá být odlišný od přístupného jména, což může způsobit zmatek u uživatelů asistivních technologií. Prosím, zkontrolujte: <hr> <strong {B}>Přístupné jméno</strong> <strong {C}>%(TEXT)</strong>",
+    LABEL_IN_NAME: "Viditelný text tohoto prvku se zdá být odlišný od přístupného jména, což může způsobit zmatek u uživatelů asistivních technologií. Prosím, zkontrolujte: <hr> <strong {B}>Теxt</strong> <strong {C}>%(TEXT)</strong> <hr> <strong {B}>Přístupné jméno</strong> <strong {C}>%(TEXT)</strong>",
     LINK_MAYBE_BUTTON: 'Tento odkaz má neplatný cíl a přístupný název obsahuje slovo „<strong>%(NAME)</strong>“. To naznačuje, že se možná vůbec nejedná o odkaz, ale o prvek ovládající skriptované chování na stránce. Chcete-li to napravit, nahraďte odkaz <a href="https://www.w3.org/WAI/ARIA/apg/patterns/button/">přístupným tlačítkem</a> nebo opravte cíl odkazu. <hr> <strong>Tip!</strong> Asistivní technologie zacházejí s tlačítky a odkazy odlišně. Použití správného HTML prvku zajišťuje, že uživatelé vědí, které klávesové zkratky mají použít a jaká akce se spustí.',
     POTENTIAL_UI_ELEMENTS: ["menu", "zavřít", "přepnout", "otevřít", "rozbalit", "sbalit", "další", "předchozí", "přehrát", "pozastavit", "podnabídka", "zobrazit", "skrýt", "rozbalovací nabídka", "zpět", "vpřed", "přeskočit", "odeslat", "zrušit", "uložit", "upravit", "smazat", "odstranit", "hledat", "filtr", "seřadit", "zastavit", "ztlumit", "zrušit ztlumení", "celá obrazovka", "minimalizovat", "maximalizovat"],
     // Tables

@@ -340,7 +340,8 @@ export default {
       'A kis betűméret nehezebben olvasható, különösen a gyengén látók számára. A jobb olvashatóság érdekében kerülje a kisebb betűméretek használatát az alapértelmezettnél.',
 
     // Shared
-    ACC_NAME: '<strong {B}>Hozzáférhető név</strong> %(TEXT)',
+    LINK_TEXT: '<strong {B}>Hivatkozás szövege</strong> <strong {C}>%(TEXT)</strong>',
+    ACC_NAME: '<strong {B}>Hozzáférhető név</strong> <strong {C}>%(TEXT)</strong>',
     ACC_NAME_TIP:
       '<hr> <strong>Tippek!</strong> A "hozzáférhető név" az a végső címke, amelyet a segédeszközöket használó embereknek kommunikálnak, és amelyet az ARIA számít. Ez segít nekik megérteni a hivatkozás vagy gomb célját.',
     HIDDEN_FOCUSABLE:
@@ -376,7 +377,7 @@ export default {
     BTN_ROLE_IN_NAME:
       'Ne tartalmazza a "gomb" szót a gomb nevében. A képernyőolvasók már közlik az elem szerepét annak neve mellett.',
     LABEL_IN_NAME:
-      'Ennek az elemnek a látható szövege eltérhet az akadálymentes névtől, ami zavart okozhat az akadálymentes technológiákat használó felhasználók számára. Kérem, ellenőrizze: <hr> <strong {B}>Akadálymentes Név</strong> <strong {C}>%(TEXT)</strong>',
+      'Ennek az elemnek a látható szövege eltérhet az akadálymentes névtől, ami zavart okozhat az akadálymentes technológiákat használó felhasználók számára. Kérem, ellenőrizze: <hr> <strong {B}>Szöveg</strong> <strong {C}>%(TEXT)</strong> <hr> <strong {B}>Akadálymentes Név</strong> <strong {C}>%(TEXT)</strong>',
     LINK_MAYBE_BUTTON: 'Ez a hivatkozás érvénytelen céllal rendelkezik, és a hozzáférhető név tartalmazza a „<strong>%(NAME)</strong>” szót. Ez arra utal, hogy ez egyáltalán nem hivatkozás, hanem valamilyen szkriptelt viselkedést vezérel az oldalon. A javításhoz cserélje ki a hivatkozást egy <a href="https://www.w3.org/WAI/ARIA/apg/patterns/button/">hozzáférhető gombra</a>, vagy javítsa ki a hivatkozás célját. <hr> <strong>Tipp!</strong> A segítő technológiák eltérően kezelik a gombokat és a hivatkozásokat. A megfelelő HTML-elem használata biztosítja, hogy a felhasználók tudják, melyik billentyűparancsokat használják, és milyen művelet fog elindulni.',
     POTENTIAL_UI_ELEMENTS: ['menü', 'bezárás', 'váltás', 'megnyitás', 'kibontás', 'összecsukás', 'következő', 'előző', 'lejátszás', 'szünet', 'almenü', 'megjelenítés', 'elrejtés', 'legördülő', 'vissza', 'előre', 'kihagyás', 'beküldés', 'mégse', 'mentés', 'szerkesztés', 'törlés', 'eltávolítás', 'keresés', 'szűrés', 'rendezés', 'leállítás', 'némítás', 'visszahangosítás', 'teljes képernyő', 'minimalizálás', 'maximalizálás'],
 

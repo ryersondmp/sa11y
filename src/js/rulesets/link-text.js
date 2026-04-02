@@ -42,7 +42,7 @@ const urlEndings =
   /\b(?:\.edu\/|\.gob\/|\.gov\/|\.app\/|\.com\/|\.net\/|\.org\/|\.us\/|\.ca\/|\.de\/|\.icu\/|\.uk\/|\.ru\/|\.info\/|\.top\/|\.xyz\/|\.tk\/|\.cn\/|\.ga\/|\.cf\/|\.nl\/|\.io\/|\.fr\/|\.pe\/|\.nz\/|\.pt\/|\.es\/|\.pl\/|\.ua\/)\b/i;
 
 // Regex pattern to match any special characters (that isn't alpha numeric)
-const specialCharPattern = /[^a-zA-Z0-9]/g;
+const specialCharPattern = /[^a-zA-Z0-9]/;
 
 // Regex pattern to match HTML symbols commonly used as CTAs in link text.
 const htmlSymbols = /([<>↣↳←→↓«»↴]+)/;
@@ -111,6 +111,9 @@ export default function checkLinkText() {
 
     // Original preserved text to lowercase.
     const textContent = Utils.getText($el).toLowerCase();
+    const textContentIgnoredStrings = Utils.getText(
+      Utils.fnIgnore($el, Constants.Exclusions.LinkSpan),
+    ).replace(ignorePattern, '');
 
     // Shared tests.
     const containsNewWindowPhrases =
@@ -178,6 +181,7 @@ export default function checkLinkText() {
               stopword,
               linkText,
             ),
+            args: [stopword, linkText],
             inline: true,
             dismiss: Utils.prepareDismissal(`LINK_STOPWORD_ARIA ${strippedLinkText}`),
             dismissAll: State.option.checks.LINK_STOPWORD_ARIA.dismissAll
@@ -198,8 +202,10 @@ export default function checkLinkText() {
             content: Lang.sprintf(
               State.option.checks.LABEL_IN_NAME.content ||
                 Lang._('LABEL_IN_NAME') + Lang._('ACC_NAME_TIP'),
+              textContentIgnoredStrings,
               linkText,
             ),
+            args: [textContentIgnoredStrings, linkText],
             inline: true,
             position: 'afterend',
             dismiss: Utils.prepareDismissal(`LABEL_IN_NAME ${strippedLinkText}`),
@@ -216,6 +222,7 @@ export default function checkLinkText() {
               State.option.checks.LINK_LABEL.content || Lang._('ACC_NAME') + Lang._('ACC_NAME_TIP'),
               linkText,
             ),
+            args: [linkText],
             inline: true,
             position: 'afterend',
             dismiss: Utils.prepareDismissal(`LINK_LABEL ${strippedLinkText}`),
@@ -229,7 +236,7 @@ export default function checkLinkText() {
        * If link text is only "new window" or similar phrases.
        */
       let oneStop;
-      const addStopWordResult = (element, stopword) => {
+      const addStopWordResult = (element) => {
         if (State.option.checks.LINK_STOPWORD && !oneStop) {
           oneStop = true;
           State.results.push({
@@ -239,8 +246,9 @@ export default function checkLinkText() {
             content: Lang.sprintf(
               State.option.checks.LINK_STOPWORD.content ||
                 Lang._('LINK_STOPWORD') + Lang._('LINK_TIP'),
-              stopword,
+              linkText,
             ),
+            args: [linkText],
             inline: true,
             position: 'afterend',
             dismiss: Utils.prepareDismissal(`LINK_STOPWORD ${strippedLinkText}`),
@@ -258,12 +266,12 @@ export default function checkLinkText() {
        * Note: these two MUST come before empty hyperlink checks.
        */
       if (isLinkIgnoreStrings === textContent || isLinkIgnoreStrings === strippedLinkText) {
-        addStopWordResult($el, isLinkIgnoreStrings);
+        addStopWordResult($el);
       } else if (
         containsNewWindowPhrases === textContent ||
         containsNewWindowPhrases === strippedLinkText
       ) {
-        addStopWordResult($el, containsNewWindowPhrases);
+        addStopWordResult($el);
         return;
       }
 
@@ -300,7 +308,7 @@ export default function checkLinkText() {
                 .trim()
                 .toLowerCase();
               if (spanText === textContent) {
-                addStopWordResult($el, spanText);
+                addStopWordResult($el);
                 hasStopWordWarning = true;
               }
             }
@@ -369,7 +377,7 @@ export default function checkLinkText() {
 
       if (isStopWord) {
         // Link is exact stop word.
-        addStopWordResult($el, isStopWord);
+        addStopWordResult($el);
       } else if (isCitation) {
         // Contains DOI URL in link text.
         if (linkText.length > 8) {
@@ -378,7 +386,8 @@ export default function checkLinkText() {
               test: 'LINK_DOI',
               element: $el,
               type: State.option.checks.LINK_DOI.type || 'warning',
-              content: Lang.sprintf(State.option.checks.LINK_DOI.content || 'LINK_DOI'),
+              content: Lang.sprintf(State.option.checks.LINK_DOI.content || 'LINK_DOI', linkText),
+              args: [linkText],
               inline: true,
               dismiss: Utils.prepareDismissal(`LINK_DOI ${strippedLinkText}`),
               dismissAll: State.option.checks.LINK_DOI.dismissAll ? 'LINK_DOI' : false,
@@ -396,7 +405,9 @@ export default function checkLinkText() {
               type: State.option.checks.LINK_URL.type || 'warning',
               content: Lang.sprintf(
                 State.option.checks.LINK_URL.content || Lang._('LINK_URL') + Lang._('LINK_TIP'),
+                linkText,
               ),
+              args: [linkText],
               inline: true,
               dismiss: Utils.prepareDismissal(`LINK_URL ${strippedLinkText}`),
               dismissAll: State.option.checks.LINK_URL.dismissAll ? 'LINK_URL' : false,
@@ -414,7 +425,9 @@ export default function checkLinkText() {
             content: Lang.sprintf(
               State.option.checks.LINK_SYMBOLS.content || 'LINK_SYMBOLS',
               matchedSymbol,
+              linkText,
             ),
+            args: [matchedSymbol, linkText],
             inline: true,
             dismiss: Utils.prepareDismissal(`LINK_SYMBOLS ${strippedLinkText}`),
             dismissAll: State.option.checks.LINK_SYMBOLS.dismissAll ? 'LINK_SYMBOLS' : false,
@@ -431,7 +444,9 @@ export default function checkLinkText() {
             content: Lang.sprintf(
               State.option.checks.LINK_UNPRONOUNCEABLE.content ||
                 Lang._('LINK_UNPRONOUNCEABLE') + Lang._('LINK_TIP'),
+              linkText,
             ),
+            args: [linkText],
             inline: true,
             position: 'afterend',
             dismiss: Utils.prepareDismissal(`LINK_UNPRONOUNCEABLE ${href}`),
@@ -458,6 +473,7 @@ export default function checkLinkText() {
                 Lang._('LINK_CLICK_HERE') + Lang._('LINK_TIP'),
               linkText,
             ),
+            args: [linkText],
             inline: true,
             dismiss: Utils.prepareDismissal(`LINK_CLICK_HERE ${strippedLinkText}`),
             dismissAll: State.option.checks.LINK_CLICK_HERE.dismissAll ? 'LINK_CLICK_HERE' : false,
@@ -490,6 +506,11 @@ export default function checkLinkText() {
       if (seen[strippedLinkText] && !seen[href]) {
         const ignored = $el.ariaHidden === 'true' && $el.getAttribute('tabindex') === '-1';
         const hasAttributes = $el.hasAttribute('role') || $el.hasAttribute('disabled');
+        const condition = linkText.toLowerCase() !== textContentIgnoredStrings.toLowerCase();
+        const diffAccName = condition
+          ? `<hr> ${Lang._('ACC_NAME')}`
+          : `<hr> ${Lang._('LINK_TEXT')}`;
+        const variable = condition ? linkText : textContentIgnoredStrings;
         if (State.option.checks.LINK_IDENTICAL_NAME && !hasAttributes && !ignored) {
           State.results.push({
             test: 'LINK_IDENTICAL_NAME',
@@ -497,9 +518,10 @@ export default function checkLinkText() {
             type: State.option.checks.LINK_IDENTICAL_NAME.type || 'warning',
             content: Lang.sprintf(
               State.option.checks.LINK_IDENTICAL_NAME.content ||
-                Lang._('LINK_IDENTICAL_NAME') + Lang._('LINK_TIP'),
-              linkText,
+                Lang._('LINK_IDENTICAL_NAME') + diffAccName + Lang._('LINK_TIP'),
+              variable,
             ),
+            args: [textContentIgnoredStrings, linkText],
             inline: true,
             dismiss: Utils.prepareDismissal(`LINK_IDENTICAL_NAME ${strippedLinkText}`),
             dismissAll: State.option.checks.LINK_IDENTICAL_NAME.dismissAll
@@ -515,12 +537,20 @@ export default function checkLinkText() {
 
       // Link opens in new tab without warning.
       if (targetBlank && !fileTypeMatch && !containsNewWindowPhrases) {
+        const condition = linkText.toLowerCase() !== textContentIgnoredStrings.toLowerCase();
+        const diffAccName = condition
+          ? `<hr> ${Lang._('ACC_NAME') + Lang._('ACC_NAME_TIP')}`
+          : `<hr> ${Lang._('LINK_TEXT')}`;
         if (State.option.checks.LINK_NEW_TAB) {
           State.results.push({
             test: 'LINK_NEW_TAB',
             element: $el,
             type: State.option.checks.LINK_NEW_TAB.type || 'warning',
-            content: Lang.sprintf(State.option.checks.LINK_NEW_TAB.content || 'LINK_NEW_TAB'),
+            content: Lang.sprintf(
+              State.option.checks.LINK_NEW_TAB.content || Lang._('LINK_NEW_TAB') + diffAccName,
+              linkText,
+            ),
+            args: [linkText],
             inline: true,
             dismiss: Utils.prepareDismissal(`LINK_NEW_TAB ${strippedLinkText}`),
             dismissAll: State.option.checks.LINK_NEW_TAB.dismissAll ? 'LINK_NEW_TAB' : false,
@@ -536,7 +566,11 @@ export default function checkLinkText() {
             test: 'LINK_FILE_EXT',
             element: $el,
             type: State.option.checks.LINK_FILE_EXT.type || 'warning',
-            content: Lang.sprintf(State.option.checks.LINK_FILE_EXT.content || 'LINK_FILE_EXT'),
+            content: Lang.sprintf(
+              State.option.checks.LINK_FILE_EXT.content || 'LINK_FILE_EXT',
+              linkText,
+            ),
+            args: [linkText],
             inline: true,
             dismiss: Utils.prepareDismissal(`LINK_FILE_EXT ${strippedLinkText}`),
             dismissAll: State.option.checks.LINK_FILE_EXT.dismissAll ? 'LINK_FILE_EXT' : false,

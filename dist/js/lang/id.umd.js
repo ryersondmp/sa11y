@@ -255,7 +255,8 @@
       QA_JUSTIFY: "Hindari penggunaan teks rata kanan-kiri, yang sejajar dengan margin kiri dan kanan. Ini bisa sulit dibaca oleh beberapa orang karena spasi antar kata yang tidak merata. Gunakan teks rata kiri untuk keterbacaan yang lebih baik.",
       QA_SMALL_TEXT: "Teks kecil lebih sulit dibaca, terutama bagi mereka yang memiliki penglihatan rendah. Untuk memastikan keterbacaan yang lebih baik, hindari menggunakan ukuran font yang lebih kecil dari ukuran default.",
       // Shared
-      ACC_NAME: "<strong {B}>Nama yang dapat diakses</strong> %(TEXT)",
+      LINK_TEXT: "<strong {B}>Teks tautan</strong> <strong {C}>%(TEXT)</strong>",
+      ACC_NAME: "<strong {B}>Nama yang dapat diakses</strong> <strong {C}>%(TEXT)</strong>",
       ACC_NAME_TIP: '<hr><strong>Tips!</strong> "Nama yang dapat diakses" adalah label akhir yang dikomunikasikan kepada orang-orang yang menggunakan teknologi bantuan dan dihitung oleh ARIA. Ini membantu mereka memahami tujuan tautan atau tombol.',
       HIDDEN_FOCUSABLE: 'Tautan atau tombol memiliki <code>aria-hidden=&quot;true&quot;</code> namun masih bisa difokuskan melalui keyboard. Jika Anda berniat untuk menyembunyikan tautan atau tombol duplikat, tambahkan juga <code>tabindex=&quot;-1&quot;</code>. Jika tidak, <code>aria-hidden=&quot;true&quot;</code> tidak boleh digunakan pada elemen yang bisa menerima fokus. <hr> Pelajari lebih lanjut tentang <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">atribut aria-hidden.</a>',
       // Developer
@@ -276,7 +277,7 @@
       BTN: "tombol",
       BTN_TIP: 'Pelajari cara membuat <a href="https://www.sarasoueidan.com/blog/accessible-icon-buttons/">tombol aksesibel.</a>',
       BTN_ROLE_IN_NAME: 'Jangan sertakan kata "tombol" dalam nama tombol. Pembaca layar sudah menyampaikan peran elemen selain namanya.',
-      LABEL_IN_NAME: "Teks yang terlihat untuk elemen ini tampaknya berbeda dari nama aksesibel, yang dapat menyebabkan kebingungan bagi pengguna teknologi bantuan. Harap periksa: <hr> <strong {B}>Nama Aksesibel</strong> <strong {C}>%(TEXT)</strong>",
+      LABEL_IN_NAME: "Teks yang terlihat untuk elemen ini tampaknya berbeda dari nama aksesibel, yang dapat menyebabkan kebingungan bagi pengguna teknologi bantuan. Harap periksa: <hr> <strong {B}>Teks</strong> <strong {C}>%(TEXT)</strong> <hr> <strong {B}>Nama Aksesibel</strong> <strong {C}>%(TEXT)</strong>",
       LINK_MAYBE_BUTTON: 'Tautan ini memiliki target yang tidak valid, dan nama yang dapat diakses mengandung kata "<strong>%(NAME)</strong>". Ini menunjukkan bahwa ini mungkin bukan tautan sama sekali, melainkan mengontrol beberapa perilaku skrip di halaman. Untuk memperbaikinya, ganti tautan dengan <a href="https://www.w3.org/WAI/ARIA/apg/patterns/button/">tombol yang dapat diakses</a>, atau perbaiki tujuan tautan. <hr> <strong>Tips!</strong> Teknologi asistif memperlakukan tombol dan tautan secara berbeda. Menggunakan elemen HTML yang benar memastikan pengguna mengetahui pintasan keyboard mana yang harus digunakan dan tindakan apa yang akan dipicu.',
       POTENTIAL_UI_ELEMENTS: ["menu", "tutup", "alihkan", "buka", "perluas", "ciutkan", "berikutnya", "sebelumnya", "putar", "jeda", "submenu", "tampilkan", "sembunyikan", "dropdown", "kembali", "maju", "lewati", "kirim", "batal", "simpan", "edit", "hapus", "hapus", "cari", "filter", "urutkan", "berhenti", "bisukan", "bunyikan", "layar penuh", "minimalkan", "maksimalkan"],
       // Tables

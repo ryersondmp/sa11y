@@ -258,7 +258,8 @@
       QA_JUSTIFY: "避免使用两端对齐的文本，两端对齐的文本会同时对齐左侧和右侧边距。由于单词之间的间距不均匀，这可能会使一些人难以阅读。使用左对齐文本以提高可读性。",
       QA_SMALL_TEXT: "小号文字更难阅读，尤其是对于视力低下的人。为了确保更好的可读性，请避免使用小于默认大小的字体。",
       // Shared
-      ACC_NAME: "<strong {B}>可访问名称</strong> %(TEXT)",
+      LINK_TEXT: "<strong {B}>链接文本</strong> <strong {C}>%(TEXT)</strong>",
+      ACC_NAME: "<strong {B}>可访问名称</strong> <strong {C}>%(TEXT)</strong>",
       ACC_NAME_TIP: "<hr> <strong>提示！</strong> “可访问名称”是传达给使用辅助技术的人的最终标签，并由 ARIA 计算。这有助于他们理解链接或按钮的目的。",
       HIDDEN_FOCUSABLE: '链接或按钮已设置 <code>aria-hidden=&quot;true&quot;</code>，但仍然可以通过键盘聚焦。如果您打算隐藏重复的链接或按钮，请添加 <code>tabindex=&quot;-1&quot;</code>。否则，不应在可以接收焦点的元素上使用 <code>aria-hidden=&quot;true&quot;</code>。了解更多关于 <a href="https://developer.mozilla.org/zh-CH/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">aria-hidden 属性</a>。',
       // Developer
@@ -279,7 +280,7 @@
       BTN: "按钮",
       BTN_TIP: '了解如何制作一个<a href="https://www.sarasoueidan.com/blog/accessible-icon-buttons/">可访问的按钮。</a>',
       BTN_ROLE_IN_NAME: "不要在按钮的名称中包含“按钮”一词。屏幕阅读器已经会传达元素的角色和名称。",
-      LABEL_IN_NAME: "此元素的可见文本似乎与可访问名称不同，可能会对辅助技术用户造成混淆。请检查：<hr> <strong {B}>可访问名称</strong> <strong {C}>%(TEXT)</strong>",
+      LABEL_IN_NAME: "此元素的可见文本似乎与可访问名称不同，可能会对辅助技术用户造成混淆。请检查：<hr> <strong {B}>文本</strong> <strong {C}>%(TEXT)</strong> <hr> <strong {B}>可访问名称</strong> <strong {C}>%(TEXT)</strong>",
       LINK_MAYBE_BUTTON: '此链接的目标无效，其辅助名称包含单词“<strong>%(NAME)</strong>”。这表明它可能根本不是链接，而是控制页面上的某些脚本行为。要修复此问题，请将链接替换为 <a href="https://www.w3.org/WAI/ARIA/apg/patterns/button/">无障碍按钮</a>，或纠正链接的目标地址。 <hr> <strong>提示！</strong> 辅助技术对按钮和链接的处理方式不同。使用正确的 HTML 元素可确保用户了解应使用的键盘快捷键以及将触发的操作。',
       POTENTIAL_UI_ELEMENTS: ["菜单", "关闭", "切换", "打开", "展开", "折叠", "下一步", "上一步", "播放", "暂停", "子菜单", "显示", "隐藏", "下拉", "返回", "前进", "跳过", "提交", "取消", "保存", "编辑", "删除", "移除", "搜索", "筛选", "排序", "停止", "静音", "取消静音", "全屏", "最小化", "最大化"],
       // Tables

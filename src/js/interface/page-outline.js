@@ -169,7 +169,7 @@ export default function generatePageOutline() {
 
           // Alert if hidden or doesn't exist.
           removeAlert();
-          if (!heading || heading.hasAttribute('data-sa11y-parent')) {
+          if (!heading || button.querySelector('span.hidden-icon')) {
             createAlert(Lang._('NOT_VISIBLE'));
           }
         });

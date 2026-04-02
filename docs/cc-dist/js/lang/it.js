@@ -249,7 +249,8 @@ const it = {
     QA_JUSTIFY: "Evitare di utilizzare il testo giustificato, che si allinea sia ai margini sinistro che destro. Questo può essere difficile da leggere per alcune persone a causa degli spazi irregolari tra le parole. Utilizzare testo allineato a sinistra per una migliore leggibilità.",
     QA_SMALL_TEXT: "Il testo piccolo è più difficile da leggere, in particolare per coloro che hanno problemi di vista. Per garantire una migliore leggibilità, evitare di usare dimensioni di carattere inferiori a quelle predefinite.",
     // Shared
-    ACC_NAME: "<strong {B}>Nome accessibile</strong> %(TEXT)",
+    LINK_TEXT: "<strong {B}>Testo del link</strong> <strong {C}>%(TEXT)</strong>",
+    ACC_NAME: "<strong {B}>Nome accessibile</strong> <strong {C}>%(TEXT)</strong>",
     ACC_NAME_TIP: `<hr><strong>Consiglio!</strong> Il "nome accessibile" è l'etichetta finale comunicata alle persone che utilizzano tecnologie assistive e viene calcolata da ARIA. Questo aiuta a comprendere lo scopo del collegamento o del pulsante.`,
     HIDDEN_FOCUSABLE: `Il link o il pulsante ha <code>aria-hidden=&quot;true&quot;</code> ma è ancora focalizzabile con la tastiera. Se intendi nascondere un link o un pulsante duplicato, aggiungi anche <code>tabindex=&quot;-1&quot;</code>. In caso contrario, <code>aria-hidden=&quot;true&quot;</code> non dovrebbe essere utilizzato su elementi che possono ricevere il focus. <hr> Scopri di più sull' <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">attributo aria-hidden.</a>`,
     // Developer
@@ -270,7 +271,7 @@ const it = {
     BTN: "pulsante",
     BTN_TIP: 'Scopri come creare un <a href="https://www.sarasoueidan.com/blog/accessible-icon-buttons/">pulsante accessibile.</a>',
     BTN_ROLE_IN_NAME: 'Non includere la parola "pulsante" nel nome di un pulsante. Gli screen reader comunicano già il ruolo di un elemento oltre al suo nome.',
-    LABEL_IN_NAME: "Il testo visibile per questo elemento sembra essere diverso dal nome accessibile, il che potrebbe causare confusione per gli utenti di tecnologie assistive. Si prega di rivedere: <hr> <strong {B}>Nome Accessibile</strong> <strong {C}>%(TEXT)</strong>",
+    LABEL_IN_NAME: "Il testo visibile per questo elemento sembra essere diverso dal nome accessibile, il che potrebbe causare confusione per gli utenti di tecnologie assistive. Si prega di rivedere: <hr> <strong {B}>Testo</strong> <strong {C}>%(TEXT)</strong> <hr> <strong {B}>Nome Accessibile</strong> <strong {C}>%(TEXT)</strong>",
     LINK_MAYBE_BUTTON: `Questo link ha una destinazione non valida e il nome accessibile contiene la parola "<strong>%(NAME)</strong>". Ciò suggerisce che potrebbe non essere affatto un link, ma che controlli invece un comportamento scriptato sulla pagina. Per risolvere il problema, sostituisci il link con un <a href="https://www.w3.org/WAI/ARIA/apg/patterns/button/">pulsante accessibile</a> o correggi la destinazione del link. <hr> <strong>Suggerimento!</strong> Le tecnologie assistive trattano i pulsanti e i link in modo diverso. L'uso dell'elemento HTML corretto garantisce che gli utenti sappiano quali scorciatoie da tastiera utilizzare e quale azione verrà attivata.`,
     POTENTIAL_UI_ELEMENTS: ["menu", "chiudi", "attiva/disattiva", "apri", "espandi", "comprimi", "successivo", "precedente", "riproduci", "pausa", "sottomenu", "mostra", "nascondi", "menu a discesa", "indietro", "avanti", "salta", "invia", "annulla", "salva", "modifica", "elimina", "rimuovi", "cerca", "filtra", "ordina", "stop", "muto", "riattiva audio", "schermo intero", "minimizza", "massimizza"],
     // Tables

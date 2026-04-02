@@ -294,7 +294,8 @@
       QA_JUSTIFY: "左右のマージンに揃える「両端揃え」を使用しないでください。単語間の不均等なスペースのため、一部の人には読みにくくなる可能性があります。読みやすさを向上させるために、左揃えのテキストを使用してください。",
       QA_SMALL_TEXT: "小さな文字は、特に視力の低下した人にとって読みづらいです。より良い可読性を確保するため、デフォルトサイズより小さいフォントサイズの使用は避けてください。",
       // Shared
-      ACC_NAME: "<strong {B}>アクセシブル名</strong> %(TEXT)",
+      LINK_TEXT: "<strong {B}>リンクテキスト</strong> <strong {C}>%(TEXT)</strong>",
+      ACC_NAME: "<strong {B}>アクセシブル名</strong> <strong {C}>%(TEXT)</strong>",
       ACC_NAME_TIP: '<hr><strong>ヒント!</strong> "アクセシブル名"は、支援技術を使用する人々に伝えられる最終的なラベルであり、ARIAによって計算されます。これにより、リンクやボタンの目的を理解するのに役立ちます。',
       HIDDEN_FOCUSABLE: 'リンクやボタンに <code>aria-hidden=&quot;true&quot;</code> が設定されていますが、キーボードでフォーカス可能です。重複したリンクやボタンを非表示にする場合は、<code>tabindex=&quot;-1&quot;</code> も追加してください。それ以外の場合、フォーカスを受け取ることができる要素に <code>aria-hidden=&quot;true&quot;</code> を使用してはいけません。<hr> <a href="https://developer.mozilla.org/ja/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">aria-hidden 属性について</a>詳しく知る。',
       // Developer
@@ -315,7 +316,7 @@
       BTN: "ボタン",
       BTN_TIP: 'アクセシブルな <a href="https://www.sarasoueidan.com/blog/accessible-icon-buttons/">ボタンの作り方</a> を学ぶ。',
       BTN_ROLE_IN_NAME: "ボタンの名前に「ボタン」という単語を含めないでください。スクリーンリーダーは、名前に加えて要素の役割をすでに伝えています。",
-      LABEL_IN_NAME: "この要素の表示されるテキストがアクセシブルな名前と異なっているようで、支援技術を使用するユーザーに混乱を招く可能性があります。確認してください：<hr> <strong {B}>アクセシブルな名前</strong> <strong {C}>%(TEXT)</strong>",
+      LABEL_IN_NAME: "この要素の表示されるテキストがアクセシブルな名前と異なっているようで、支援技術を使用するユーザーに混乱を招く可能性があります。確認してください：<hr> <strong {B}>文章</strong> <strong {C}>%(TEXT)</strong> <hr> <strong {B}>アクセシブルな名前</strong> <strong {C}>%(TEXT)</strong>",
       LINK_MAYBE_BUTTON: 'このリンクには無効なターゲットがあり、アクセシブルな名前には「<strong>%(NAME)</strong>」という単語が含まれています。これは、これがリンクではなく、ページ上のスクリプト動作を制御している可能性があることを示唆しています。修正するには、リンクを <a href="https://www.w3.org/WAI/ARIA/apg/patterns/button/">アクセシブルなボタン</a> に置き換えるか、リンク先を修正してください。 <hr> <strong>ヒント！</strong> 支援技術はボタンとリンクを異なる方法で処理します。正しいHTML要素を使用することで、ユーザーはどのキーボードショートカットを使用すべきか、どのアクションがトリガーされるかを知ることができます。',
       POTENTIAL_UI_ELEMENTS: ["メニュー", "閉じる", "切り替え", "開く", "展開", "折りたたみ", "次へ", "前へ", "再生", "一時停止", "サブメニュー", "表示", "非表示", "ドロップダウン", "戻る", "進む", "スキップ", "送信", "キャンセル", "保存", "編集", "削除", "削除", "検索", "フィルター", "並べ替え", "停止", "ミュート", "ミュート解除", "全画面", "最小化", "最大化"],
       // Tables

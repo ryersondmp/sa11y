@@ -335,9 +335,7 @@
         args.forEach((arg, index2) => {
           const replacement = el2.querySelector(`[data-arg="${index2}"]`);
           if (!replacement || arg === null) return;
-          const match = String(arg).match(/{{langAttr:([\w-]+)\|([^}]+)}}/);
-          if (match) replacement.setAttribute("lang", match[1]);
-          replacement.textContent = match ? match[2] : this.truncateString(String(arg), 300);
+          replacement.textContent = this.truncateString(String(arg), 300);
         });
       }
       return el2;
@@ -1474,7 +1472,7 @@
     truncateString,
     validateLang
   }, Symbol.toStringTag, { value: "Module" }));
-  const styles$1 = "[data-sa11y-overflow]{overflow:auto!important}[data-sa11y-error]{outline-offset:2px;outline:5px solid var(--sa11y-error)!important}[data-sa11y-warning]:not([data-sa11y-error]){outline-offset:2px;outline:5px solid var(--sa11y-warning)!important}[data-sa11y-pulse-border]{box-shadow:0;animation:1s 2 pulse;outline:5px solid var(--sa11y-focus-color)!important}[data-sa11y-pulse-border]:hover,[data-sa11y-pulse-border]:focus{animation:none}@keyframes pulse{0%{box-shadow:0 0 0 5px var(--sa11y-focus-color)}50%{box-shadow:0 0 0 12px var(--sa11y-pulse-color)}to{box-shadow:0 0 0 5px var(--sa11y-pulse-color)}}img[data-sa11y-pulse-border],h1[data-sa11y-pulse-border],h2[data-sa11y-pulse-border],h3[data-sa11y-pulse-border],h4[data-sa11y-pulse-border],h5[data-sa11y-pulse-border],h6[data-sa11y-pulse-border]{animation:1s 2 pulse-scale}@keyframes pulse-scale{0%{opacity:1;transform:scale(1)}50%{opacity:.7;transform:scale(1.02)}to{opacity:1;transform:scale(1)}}@media (prefers-reduced-motion:reduce){[data-sa11y-pulse-border]{animation:none!important}}@media (forced-colors:active){[data-sa11y-error],[data-sa11y-warning],[data-sa11y-good],[data-sa11y-error-inline],[data-sa11y-warning-inline],[data-sa11y-pulse-border]{forced-color-adjust:none}}";
+  const styles$1 = "[data-sa11y-overflow]{overflow:auto!important}[data-sa11y-error]{outline-offset:2px;outline:5px solid var(--sa11y-error)!important}a[data-sa11y-error]:empty{margin:1px}[data-sa11y-warning]:not([data-sa11y-error]){outline-offset:2px;outline:5px solid var(--sa11y-warning)!important}[data-sa11y-pulse-border]{box-shadow:0;animation:1s 2 pulse;outline:5px solid var(--sa11y-focus-color)!important}[data-sa11y-pulse-border]:hover,[data-sa11y-pulse-border]:focus{animation:none}@keyframes pulse{0%{box-shadow:0 0 0 5px var(--sa11y-focus-color)}50%{box-shadow:0 0 0 12px var(--sa11y-pulse-color)}to{box-shadow:0 0 0 5px var(--sa11y-pulse-color)}}img[data-sa11y-pulse-border],h1[data-sa11y-pulse-border],h2[data-sa11y-pulse-border],h3[data-sa11y-pulse-border],h4[data-sa11y-pulse-border],h5[data-sa11y-pulse-border],h6[data-sa11y-pulse-border]{animation:1s 2 pulse-scale}@keyframes pulse-scale{0%{opacity:1;transform:scale(1)}50%{opacity:.7;transform:scale(1.02)}to{opacity:1;transform:scale(1)}}@media (prefers-reduced-motion:reduce){[data-sa11y-pulse-border]{animation:none!important}}@media (forced-colors:active){[data-sa11y-error],[data-sa11y-warning],[data-sa11y-good],[data-sa11y-error-inline],[data-sa11y-warning-inline],[data-sa11y-pulse-border]{forced-color-adjust:none}}";
   const addStyleUtilities = (component) => {
     const CSSUtils = component.shadowRoot.querySelectorAll(".sa11y-css-utilities");
     if (CSSUtils.length === 0) {
@@ -2415,7 +2413,7 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
               addPulse(heading.parentNode || heading);
             }
             removeAlert();
-            if (!heading || heading.hasAttribute("data-sa11y-parent")) {
+            if (!heading || button.querySelector("span.hidden-icon")) {
               createAlert(Lang._("NOT_VISIBLE"));
             }
           });
@@ -2784,7 +2782,7 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
               addPulse(image);
             }
             removeAlert();
-            if (!image || image.hasAttribute("data-sa11y-parent")) {
+            if (!image || $el.querySelector("span.hidden-icon")) {
               createAlert(Lang._("NOT_VISIBLE"));
             }
           });
@@ -5378,7 +5376,7 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
   tippy.setDefaultProps({
     render
   });
-  const tooltipStyles = 'h1,h2,div,p,span,ol,ul,li,a,button,svg,strong,kbd,code{all:unset;box-sizing:border-box!important}div{display:block}:before,:after{all:unset}.tippy-box[data-animation=fade][data-state=hidden]{opacity:0}[data-tippy-root]{max-width:calc(100vw - 10px)}@media (forced-colors:active){[data-tippy-root]{border:2px solid #0000;border-radius:5px}}.tippy-arrow{color:#333;width:16px;height:16px}.tippy-arrow:before{content:"";border-style:solid;border-color:#0000;position:absolute}.tippy-box[data-placement^=top] .tippy-arrow{bottom:0}.tippy-box[data-placement^=top] .tippy-arrow:before{border-width:8px 8px 0;border-top-color:initial;transform-origin:top;bottom:-7px;left:0}.tippy-box[data-placement^=bottom] .tippy-arrow{top:0}.tippy-box[data-placement^=bottom] .tippy-arrow:before{border-width:0 8px 8px;border-bottom-color:initial;transform-origin:bottom;top:-7px;left:0}.tippy-box[data-placement^=left] .tippy-arrow{right:0}.tippy-box[data-placement^=left] .tippy-arrow:before{border-width:8px 0 8px 8px;border-left-color:initial;transform-origin:0;right:-7px}.tippy-box[data-placement^=right] .tippy-arrow{left:0}.tippy-box[data-placement^=right] .tippy-arrow:before{border-width:8px 8px 8px 0;border-right-color:initial;transform-origin:100%;left:-7px}.tippy-content{z-index:1;padding:5px 9px;position:relative}.tippy-box[data-theme~=sa11y-theme][role=tooltip]{box-sizing:border-box!important}.tippy-box[data-theme~=sa11y-theme][role=tooltip][data-animation=fade][data-state=hidden]{opacity:0}.tippy-box[data-theme~=sa11y-theme][role=tooltip][data-inertia][data-state=visible]{transition-timing-function:cubic-bezier(.54,1.5,.38,1.11)}[role=dialog]{text-align:start;word-wrap:break-word;min-width:300px}[role=tooltip]{text-align:center;min-width:185px}.tippy-box[data-theme~=sa11y-panel]{border:1px solid var(--sa11y-panel-bg-splitter);box-shadow:var(--sa11y-box-shadow)}.tippy-box[data-theme~=sa11y-theme]:not([data-theme~=sa11y-panel]){box-shadow:0 0 20px 4px #9aa1b126,0 4px 80px -8px #24282f40,0 4px 4px -2px #5b5e6926!important}.tippy-box[data-theme~=sa11y-theme]{font-family:var(--sa11y-font-face);font-size:var(--sa11y-normal-text);color:var(--sa11y-panel-primary);letter-spacing:normal;background-color:var(--sa11y-panel-bg);-webkit-font-smoothing:auto;border-radius:4px;outline:0;padding:8px;font-weight:400;line-height:22px;transition-property:transform,visibility,opacity;display:block;position:relative}.tippy-box[data-theme~=sa11y-theme] pre code{white-space:pre-wrap;display:block;overflow:auto}.tippy-box[data-theme~=sa11y-theme] code{font-family:monospace;font-size:calc(var(--sa11y-normal-text) - 1px);font-weight:500}.tippy-box[data-theme~=sa11y-theme] pre,.tippy-box[data-theme~=sa11y-theme] code,.tippy-box[data-theme~=sa11y-theme] kbd{color:var(--sa11y-panel-primary);letter-spacing:normal;background-color:var(--sa11y-panel-badge);-webkit-font-smoothing:auto;border-radius:3.2px;padding:1.6px 4.8px;line-height:22px}.tippy-box[data-theme~=sa11y-theme] .tippy-content{padding:5px 9px}.tippy-box[data-theme~=sa11y-theme] sub,.tippy-box[data-theme~=sa11y-theme] sup{font-size:var(--sa11y-small-text)}.tippy-box[data-theme~=sa11y-theme] ul{margin:0;margin-block:0;padding:0;position:relative}.tippy-box[data-theme~=sa11y-theme] li{margin:5px 10px 0 20px;padding-bottom:5px;display:list-item}.tippy-box[data-theme~=sa11y-theme] a{color:var(--sa11y-hyperlink);cursor:pointer;font-weight:500;text-decoration:underline}.tippy-box[data-theme~=sa11y-theme] a:hover,.tippy-box[data-theme~=sa11y-theme] a:focus{text-decoration:none}.tippy-box[data-theme~=sa11y-theme] strong{font-weight:600}.tippy-box[data-theme~=sa11y-theme] hr{background:var(--sa11y-panel-bg-splitter);opacity:1;border:none;height:1px;margin:10px 0;padding:0}.tippy-box[data-theme~=sa11y-theme] button.close-btn{margin-inline-start:10px;margin-bottom:10px}.tippy-box[data-theme~=sa11y-theme] button#suggest-size,.tippy-box[data-theme~=sa11y-theme] button#suggest{cursor:pointer;padding:.2rem;transition:background-color .2s,color .2s;position:relative}:is(.tippy-box[data-theme~=sa11y-theme] button#suggest-size,.tippy-box[data-theme~=sa11y-theme] button#suggest):after{content:"";position:absolute;inset:-10px -5px -14px}:is(.tippy-box[data-theme~=sa11y-theme] button#suggest-size,.tippy-box[data-theme~=sa11y-theme] button#suggest):hover,:is(.tippy-box[data-theme~=sa11y-theme] button#suggest-size,.tippy-box[data-theme~=sa11y-theme] button#suggest):focus-visible{color:#000!important;background-color:#fff!important}.tippy-box[data-theme~=sa11y-theme] .dismiss-group{margin-top:5px}.tippy-box[data-theme~=sa11y-theme] .dismiss-group button{margin:10px 5px 5px 0;color:var(--sa11y-panel-primary);cursor:pointer;background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-button-outline);border-radius:5px;margin-inline-end:15px;padding:4px 8px;display:inline-block}.tippy-box[data-theme~=sa11y-theme] .dismiss-group button:hover,.tippy-box[data-theme~=sa11y-theme] .dismiss-group button:focus{background:var(--sa11y-shortcut-hover)}.tippy-box[data-theme~=sa11y-theme] .good-icon{background:var(--sa11y-good-text);width:14px;height:14px;-webkit-mask:var(--sa11y-good-svg) center no-repeat;mask:var(--sa11y-good-svg) center no-repeat;margin-bottom:-2.5px;display:inline-block}.tippy-box[data-theme~=sa11y-theme] .link-icon{background:var(--sa11y-panel-primary);width:16px;height:16px;-webkit-mask:var(--sa11y-link-icon-svg) center no-repeat;mask:var(--sa11y-link-icon-svg) center no-repeat;margin-bottom:-3.5px;display:inline-block}.tippy-box[data-theme~=sa11y-theme] .error .badge{color:var(--sa11y-error-text);background:var(--sa11y-error)}.tippy-box[data-theme~=sa11y-theme] .error .colour{color:var(--sa11y-red-text)}.tippy-box[data-theme~=sa11y-theme] .error .link-icon{background:var(--sa11y-error-text)}.tippy-box[data-theme~=sa11y-theme] .warning .badge{color:var(--sa11y-panel-bg);background:var(--sa11y-yellow-text)}.tippy-box[data-theme~=sa11y-theme] .warning .colour{color:var(--sa11y-yellow-text)}.tippy-box[data-theme~=sa11y-theme] .warning .link-icon{background:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme][data-placement^=top] .tippy-arrow:before{border-top-color:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme][data-placement^=bottom] .tippy-arrow:before{border-bottom-color:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme][data-placement^=left] .tippy-arrow:before{border-left-color:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme][data-placement^=right] .tippy-arrow:before{border-right-color:var(--sa11y-panel-bg)}@media (forced-colors:active){.tippy-box[data-theme~=sa11y-theme][data-placement^=top] .tippy-arrow:before,.tippy-box[data-theme~=sa11y-theme][data-placement^=bottom] .tippy-arrow:before,.tippy-box[data-theme~=sa11y-theme][data-placement^=left] .tippy-arrow:before,.tippy-box[data-theme~=sa11y-theme][data-placement^=right] .tippy-arrow:before{forced-color-adjust:none}.tippy-box[data-theme~=sa11y-theme] .tippy-arrow{z-index:-1}}.tippy-box[data-theme~=sa11y-theme] a:focus,.tippy-box[data-theme~=sa11y-theme] input:focus,.tippy-box[data-theme~=sa11y-theme] button:focus,.tippy-box[data-theme~=sa11y-theme] button:active,.tippy-box[data-theme~=sa11y-theme] [tabindex="-1"]:focus{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}.tippy-box[data-theme~=sa11y-theme] input:focus:not(:focus-visible),.tippy-box[data-theme~=sa11y-theme] a:focus:not(:focus-visible),.tippy-box[data-theme~=sa11y-theme] button:focus:not(:focus-visible),.tippy-box[data-theme~=sa11y-theme] [tabindex="-1"]:focus:not(:focus-visible){box-shadow:none;outline:0}.tippy-box[data-theme~=sa11y-theme] a:focus-visible,.tippy-box[data-theme~=sa11y-theme] button:focus-visible,.tippy-box[data-theme~=sa11y-theme] input:focus-visible,.tippy-box[data-theme~=sa11y-theme] [tabindex="-1"]:focus-visible{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}@media screen and (forced-colors:active){.tippy-box[data-theme~=sa11y-theme] .error-icon,.tippy-box[data-theme~=sa11y-theme] .link-icon,.tippy-box[data-theme~=sa11y-theme] .hidden-icon{filter:invert()}.tippy-box[data-theme~=sa11y-theme] a:focus,.tippy-box[data-theme~=sa11y-theme] button:focus,.tippy-box[data-theme~=sa11y-theme] [tabindex="-1"]:focus{outline:3px solid #0000!important}}';
+  const tooltipStyles = 'h1,h2,div,p,span,ol,ul,li,a,button,svg,strong,kbd,code{all:unset;box-sizing:border-box!important}div{display:block}:before,:after{all:unset}.tippy-box[data-animation=fade][data-state=hidden]{opacity:0}[data-tippy-root]{max-width:calc(100vw - 10px)}@media (forced-colors:active){[data-tippy-root]{border:2px solid #0000;border-radius:5px}}.tippy-arrow{color:#333;width:16px;height:16px}.tippy-arrow:before{content:"";border-style:solid;border-color:#0000;position:absolute}.tippy-box[data-placement^=top] .tippy-arrow{bottom:0}.tippy-box[data-placement^=top] .tippy-arrow:before{border-width:8px 8px 0;border-top-color:initial;transform-origin:top;bottom:-7px;left:0}.tippy-box[data-placement^=bottom] .tippy-arrow{top:0}.tippy-box[data-placement^=bottom] .tippy-arrow:before{border-width:0 8px 8px;border-bottom-color:initial;transform-origin:bottom;top:-7px;left:0}.tippy-box[data-placement^=left] .tippy-arrow{right:0}.tippy-box[data-placement^=left] .tippy-arrow:before{border-width:8px 0 8px 8px;border-left-color:initial;transform-origin:0;right:-7px}.tippy-box[data-placement^=right] .tippy-arrow{left:0}.tippy-box[data-placement^=right] .tippy-arrow:before{border-width:8px 8px 8px 0;border-right-color:initial;transform-origin:100%;left:-7px}.tippy-content{z-index:1;padding:5px 9px;position:relative}.tippy-box[data-theme~=sa11y-theme][role=tooltip]{box-sizing:border-box!important}.tippy-box[data-theme~=sa11y-theme][role=tooltip][data-animation=fade][data-state=hidden]{opacity:0}.tippy-box[data-theme~=sa11y-theme][role=tooltip][data-inertia][data-state=visible]{transition-timing-function:cubic-bezier(.54,1.5,.38,1.11)}[role=dialog]{text-align:start;word-wrap:break-word;min-width:300px}[role=tooltip]{text-align:center;min-width:185px}.tippy-box[data-theme~=sa11y-panel]{border:1px solid var(--sa11y-panel-bg-splitter);box-shadow:var(--sa11y-box-shadow)}.tippy-box[data-theme~=sa11y-theme]:not([data-theme~=sa11y-panel]){box-shadow:0 0 20px 4px #9aa1b126,0 4px 80px -8px #24282f40,0 4px 4px -2px #5b5e6926!important}.tippy-box[data-theme~=sa11y-theme]{font-family:var(--sa11y-font-face);font-size:var(--sa11y-normal-text);color:var(--sa11y-panel-primary);letter-spacing:normal;background-color:var(--sa11y-panel-bg);-webkit-font-smoothing:auto;border-radius:4px;outline:0;padding:8px;font-weight:400;line-height:22px;transition-property:transform,visibility,opacity;display:block;position:relative}.tippy-box[data-theme~=sa11y-theme] pre code{white-space:pre-wrap;display:block;overflow:auto}.tippy-box[data-theme~=sa11y-theme] code{font-family:monospace;font-size:calc(var(--sa11y-normal-text) - 1px);font-weight:500}.tippy-box[data-theme~=sa11y-theme] pre,.tippy-box[data-theme~=sa11y-theme] code,.tippy-box[data-theme~=sa11y-theme] kbd{color:var(--sa11y-panel-primary);letter-spacing:normal;background-color:var(--sa11y-panel-badge);-webkit-font-smoothing:auto;border-radius:3.2px;padding:1.6px 4.8px;line-height:22px}.tippy-box[data-theme~=sa11y-theme] .tippy-content{padding:5px 9px}.tippy-box[data-theme~=sa11y-theme] sub,.tippy-box[data-theme~=sa11y-theme] sup{font-size:var(--sa11y-small-text)}.tippy-box[data-theme~=sa11y-theme] ul{margin:0;margin-block:0;padding:0;position:relative}.tippy-box[data-theme~=sa11y-theme] li{margin:5px 10px 0 20px;padding-bottom:5px;display:list-item}.tippy-box[data-theme~=sa11y-theme] a{color:var(--sa11y-hyperlink);cursor:pointer;font-weight:500;text-decoration:underline}.tippy-box[data-theme~=sa11y-theme] a:hover,.tippy-box[data-theme~=sa11y-theme] a:focus{text-decoration:none}.tippy-box[data-theme~=sa11y-theme] .good .colour{font-weight:400}.tippy-box[data-theme~=sa11y-theme] strong{font-weight:600}.tippy-box[data-theme~=sa11y-theme] hr{background:var(--sa11y-panel-bg-splitter);opacity:1;border:none;height:1px;margin:10px 0;padding:0}.tippy-box[data-theme~=sa11y-theme] button.close-btn{margin-inline-start:10px;margin-bottom:10px}.tippy-box[data-theme~=sa11y-theme] button#suggest-size,.tippy-box[data-theme~=sa11y-theme] button#suggest{cursor:pointer;padding:.2rem;transition:background-color .2s,color .2s;position:relative}:is(.tippy-box[data-theme~=sa11y-theme] button#suggest-size,.tippy-box[data-theme~=sa11y-theme] button#suggest):after{content:"";position:absolute;inset:-10px -5px -14px}:is(.tippy-box[data-theme~=sa11y-theme] button#suggest-size,.tippy-box[data-theme~=sa11y-theme] button#suggest):hover,:is(.tippy-box[data-theme~=sa11y-theme] button#suggest-size,.tippy-box[data-theme~=sa11y-theme] button#suggest):focus-visible{color:#000!important;background-color:#fff!important}.tippy-box[data-theme~=sa11y-theme] .dismiss-group{margin-top:5px}.tippy-box[data-theme~=sa11y-theme] .dismiss-group button{margin:10px 5px 5px 0;color:var(--sa11y-panel-primary);cursor:pointer;background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-button-outline);border-radius:5px;margin-inline-end:15px;padding:4px 8px;display:inline-block}.tippy-box[data-theme~=sa11y-theme] .dismiss-group button:hover,.tippy-box[data-theme~=sa11y-theme] .dismiss-group button:focus{background:var(--sa11y-shortcut-hover)}.tippy-box[data-theme~=sa11y-theme] .good-icon{background:var(--sa11y-good-text);width:14px;height:14px;-webkit-mask:var(--sa11y-good-svg) center no-repeat;mask:var(--sa11y-good-svg) center no-repeat;margin-bottom:-2.5px;display:inline-block}.tippy-box[data-theme~=sa11y-theme] .link-icon{background:var(--sa11y-panel-primary);width:16px;height:16px;-webkit-mask:var(--sa11y-link-icon-svg) center no-repeat;mask:var(--sa11y-link-icon-svg) center no-repeat;margin-bottom:-3.5px;display:inline-block}.tippy-box[data-theme~=sa11y-theme] .error .badge{color:var(--sa11y-error-text);background:var(--sa11y-error)}.tippy-box[data-theme~=sa11y-theme] .error .colour{color:var(--sa11y-red-text)}.tippy-box[data-theme~=sa11y-theme] .error .link-icon{background:var(--sa11y-error-text)}.tippy-box[data-theme~=sa11y-theme] .warning .badge{color:var(--sa11y-panel-bg);background:var(--sa11y-yellow-text)}.tippy-box[data-theme~=sa11y-theme] .warning .colour{color:var(--sa11y-yellow-text)}.tippy-box[data-theme~=sa11y-theme] .warning .link-icon{background:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme][data-placement^=top] .tippy-arrow:before{border-top-color:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme][data-placement^=bottom] .tippy-arrow:before{border-bottom-color:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme][data-placement^=left] .tippy-arrow:before{border-left-color:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme][data-placement^=right] .tippy-arrow:before{border-right-color:var(--sa11y-panel-bg)}@media (forced-colors:active){.tippy-box[data-theme~=sa11y-theme][data-placement^=top] .tippy-arrow:before,.tippy-box[data-theme~=sa11y-theme][data-placement^=bottom] .tippy-arrow:before,.tippy-box[data-theme~=sa11y-theme][data-placement^=left] .tippy-arrow:before,.tippy-box[data-theme~=sa11y-theme][data-placement^=right] .tippy-arrow:before{forced-color-adjust:none}.tippy-box[data-theme~=sa11y-theme] .tippy-arrow{z-index:-1}}.tippy-box[data-theme~=sa11y-theme] a:focus,.tippy-box[data-theme~=sa11y-theme] input:focus,.tippy-box[data-theme~=sa11y-theme] button:focus,.tippy-box[data-theme~=sa11y-theme] button:active,.tippy-box[data-theme~=sa11y-theme] [tabindex="-1"]:focus{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}.tippy-box[data-theme~=sa11y-theme] input:focus:not(:focus-visible),.tippy-box[data-theme~=sa11y-theme] a:focus:not(:focus-visible),.tippy-box[data-theme~=sa11y-theme] button:focus:not(:focus-visible),.tippy-box[data-theme~=sa11y-theme] [tabindex="-1"]:focus:not(:focus-visible){box-shadow:none;outline:0}.tippy-box[data-theme~=sa11y-theme] a:focus-visible,.tippy-box[data-theme~=sa11y-theme] button:focus-visible,.tippy-box[data-theme~=sa11y-theme] input:focus-visible,.tippy-box[data-theme~=sa11y-theme] [tabindex="-1"]:focus-visible{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}@media screen and (forced-colors:active){.tippy-box[data-theme~=sa11y-theme] .error-icon,.tippy-box[data-theme~=sa11y-theme] .link-icon,.tippy-box[data-theme~=sa11y-theme] .hidden-icon{filter:invert()}.tippy-box[data-theme~=sa11y-theme] a:focus,.tippy-box[data-theme~=sa11y-theme] button:focus,.tippy-box[data-theme~=sa11y-theme] [tabindex="-1"]:focus{outline:3px solid #0000!important}}';
   const SA98G = {
     mainTRC: 2.4,
     sRco: 0.2126729,
@@ -6461,11 +6459,10 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
     try {
       const canonicalLang = Intl.getCanonicalLocales(lang)[0];
       const baseLang = new Intl.Locale(canonicalLang).language;
-      const label = new Intl.DisplayNames(navigator.language, {
+      const label = new Intl.DisplayNames(Lang._("LANG_CODE") || navigator.language, {
         type: "language"
       }).of(baseLang);
-      const browserLang = primary(navigator.language);
-      return `{{langAttr:${browserLang}|${label}}}`;
+      return label;
     } catch {
       return lang;
     }
@@ -6563,7 +6560,7 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
     let element = null;
     let dismiss = null;
     let confidence = null;
-    let variables = null;
+    let args = null;
     if (detectedLangCode !== declared) {
       test = "PAGE_LANG_CONFIDENCE";
       content = Lang.sprintf(
@@ -6574,12 +6571,12 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
       dismiss = prepareDismissal(cacheKey);
       type = detected[0].confidence >= 0.6 ? "error" : "warning";
       confidence = detected[0].confidence;
-      variables = [detectedLangCode, declared];
+      args = [detectedLangCode, declared];
       setCache({
         key: cacheKey,
         test,
         type,
-        variables,
+        args,
         confidence,
         textLength: pageText.length,
         declared
@@ -6624,7 +6621,7 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
               getLanguageLabel(langAttribute),
               textString
             );
-            variables = [nodeLang, langAttribute, selector];
+            args = [nodeLang, langAttribute, selector];
           } else if (!langAttribute && nodeLang !== declared) {
             if (isImage && node.alt) {
               test = "LANG_OF_PARTS_ALT";
@@ -6634,7 +6631,7 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
                 getLanguageLabel(declared),
                 node.alt
               );
-              variables = [nodeLang, declared, node.alt];
+              args = [nodeLang, declared, node.alt];
             } else {
               test = "LANG_OF_PARTS";
               content = Lang.sprintf(
@@ -6643,7 +6640,7 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
                 getLanguageLabel(nodeLang),
                 textString
               );
-              variables = [declared, nodeLang, selector];
+              args = [declared, nodeLang, selector];
             }
           } else {
             continue;
@@ -6657,7 +6654,7 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
             test,
             element: selector,
             type,
-            variables,
+            args,
             confidence: nodeConfidence,
             textLength: pageText.length,
             declared
@@ -7017,6 +7014,7 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
             element: $el,
             type: unpronounceable.type || "error",
             content: Lang.sprintf(unpronounceable.content || conditional, altText),
+            args: [altText],
             dismiss: prepareDismissal(`${conditional + src}`),
             dismissAll: unpronounceable.dismissAll ? "ALT_UNPRONOUNCEABLE" : false,
             developer: unpronounceable.developer || false
@@ -7042,6 +7040,7 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
             element: $el,
             type: rule.type || "error",
             content: Lang.sprintf(rule.content || conditional, error[0], altText),
+            args: [error[0], altText],
             dismiss: prepareDismissal(`${conditional + src + rawAlt}`),
             dismissAll: rule.dismissAll ? conditional : false,
             developer: rule.developer || false
@@ -7056,6 +7055,7 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
             element: $el,
             type: rule.type || "error",
             content: Lang.sprintf(rule.content || conditional, altText),
+            args: [altText],
             dismiss: prepareDismissal(`${conditional + src + rawAlt}`),
             dismissAll: rule.dismissAll ? conditional : false,
             developer: rule.developer || false
@@ -7070,6 +7070,7 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
             element: $el,
             type: rule.type || "warning",
             content: Lang.sprintf(rule.content || conditional, error[1], altText),
+            args: [error[1], altText],
             dismiss: prepareDismissal(`${conditional + src + rawAlt}`),
             dismissAll: rule.dismissAll ? conditional : false,
             developer: rule.developer || false
@@ -7084,6 +7085,7 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
             element: $el,
             type: rule.type || "error",
             content: Lang.sprintf(rule.content || conditional, altText),
+            args: [altText],
             dismiss: prepareDismissal(`${conditional + src + rawAlt}`),
             dismissAll: rule.dismissAll ? conditional : false,
             developer: rule.developer || false
@@ -7098,6 +7100,7 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
             element: $el,
             type: rule.type || "warning",
             content: Lang.sprintf(rule.content || conditional, altText),
+            args: [altText],
             dismiss: prepareDismissal(`${conditional}WARNING${src + rawAlt} `),
             dismissAll: rule.dismissAll ? conditional : false,
             developer: rule.developer || false
@@ -7112,6 +7115,7 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
             element: $el,
             type: rule.type || "warning",
             content: Lang.sprintf(rule.content || conditional, rawAlt.length, altText),
+            args: [rawAlt.length, altText],
             dismiss: prepareDismissal(`${conditional + src + rawAlt}`),
             dismissAll: rule.dismissAll ? conditional : false,
             developer: rule.developer || false
@@ -7133,6 +7137,7 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
             element: $el,
             type: rule.type || "warning",
             content: rule.content ? Lang.sprintf(rule.content, altText, accName) : tooltip,
+            args: [altText, accName],
             dismiss: prepareDismissal(`${conditional + src + rawAlt}`),
             dismissAll: rule.dismissAll ? conditional : false,
             developer: rule.developer || false
@@ -7150,6 +7155,7 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
                 State.option.checks.IMAGE_FIGURE_DUPLICATE_ALT.content || "IMAGE_FIGURE_DUPLICATE_ALT",
                 altText
               ),
+              args: [altText],
               dismiss: prepareDismissal(`IMAGE_FIGURE_DUPLICATE_ALT ${src}`),
               dismissAll: State.option.checks.IMAGE_FIGURE_DUPLICATE_ALT.dismissAll ? "IMAGE_FIGURE_DUPLICATE_ALT" : false,
               developer: State.option.checks.IMAGE_FIGURE_DUPLICATE_ALT.developer || false
@@ -7161,6 +7167,7 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
             element: $el,
             type: State.option.checks.IMAGE_PASS.type || "good",
             content: Lang.sprintf(State.option.checks.IMAGE_PASS.content || "IMAGE_PASS", altText),
+            args: [altText],
             dismiss: prepareDismissal(`IMAGE_PASS FIGURE ${src + rawAlt}`),
             dismissAll: State.option.checks.IMAGE_PASS.dismissAll ? "IMAGE_PASS" : false,
             developer: State.option.checks.IMAGE_PASS.developer || false
@@ -7173,6 +7180,7 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
             element: $el,
             type: State.option.checks.IMAGE_PASS.type || "good",
             content: Lang.sprintf(State.option.checks.IMAGE_PASS.content || "IMAGE_PASS", altText),
+            args: [altText],
             dismiss: prepareDismissal(`IMAGE_PASS ${src + rawAlt}`),
             dismissAll: State.option.checks.IMAGE_PASS.dismissAll ? "IMAGE_PASS" : false,
             developer: State.option.checks.IMAGE_PASS.developer || false
@@ -7222,6 +7230,7 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
       let developer = null;
       let dismissAll = null;
       let margin = null;
+      let args = null;
       if (headingLength === 0) {
         const image = $el.querySelector("img");
         if (image) {
@@ -7234,6 +7243,7 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
                 State.option.checks.HEADING_EMPTY_WITH_IMAGE.content || "HEADING_EMPTY_WITH_IMAGE",
                 level
               );
+              args = [level];
               developer = State.option.checks.HEADING_EMPTY_WITH_IMAGE.developer || false;
               dismissAll = State.option.checks.HEADING_EMPTY_WITH_IMAGE.dismissAll ? "HEADING_EMPTY_WITH_IMAGE" : false;
               margin = "-15px 30px";
@@ -7243,6 +7253,7 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
           test = "HEADING_EMPTY";
           type = State.option.checks.HEADING_EMPTY.type || "error";
           content = Lang.sprintf(State.option.checks.HEADING_EMPTY.content || "HEADING_EMPTY", level);
+          args = [level];
           developer = State.option.checks.HEADING_EMPTY.developer || false;
           dismissAll = State.option.checks.HEADING_EMPTY.dismissAll ? "HEADING_EMPTY" : false;
           margin = "0";
@@ -7259,6 +7270,13 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
             truncateString(prevHeadingText, 60),
             prevLevel + 1
           );
+          args = [
+            prevLevel,
+            level,
+            truncateString(headingText, 60),
+            truncateString(prevHeadingText, 60),
+            prevLevel + 1
+          ];
           developer = State.option.checks.HEADING_SKIPPED_LEVEL.developer || false;
           dismissAll = State.option.checks.HEADING_SKIPPED_LEVEL.dismissAll ? "HEADING_SKIPPED_LEVEL" : false;
         }
@@ -7277,8 +7295,10 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
           content = Lang.sprintf(
             State.option.checks.HEADING_LONG.content || "HEADING_LONG",
             maxHeadingLength,
-            headingLength
+            headingLength,
+            headingText
           );
+          args = [maxHeadingLength, headingLength, headingText];
           developer = State.option.checks.HEADING_LONG.developer || false;
           dismissAll = State.option.checks.HEADING_LONG.dismissAll ? "HEADING_LONG" : false;
         }
@@ -7289,6 +7309,7 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
           element: $el,
           type,
           content,
+          args,
           dismiss: prepareDismissal(`${test + level + headingText}`),
           dismissAll,
           isWithinRoot,
@@ -7347,7 +7368,7 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
   const cssFileTypeSelectors = 'a[href$=".pdf"], a[href$=".doc"], a[href$=".docx"], a[href$=".zip"], a[href$=".mp3"], a[href$=".txt"], a[href$=".exe"], a[href$=".dmg"], a[href$=".rtf"], a[href$=".pptx"], a[href$=".ppt"], a[href$=".xls"], a[href$=".xlsx"], a[href$=".csv"], a[href$=".mp4"], a[href$=".mov"], a[href$=".avi"]';
   const citationPattern = /(doi\.org\/|dl\.acm\.org\/|link\.springer\.com\/|pubmed\.ncbi\.nlm\.nih\.gov\/|scholar\.google\.com\/|ieeexplore\.ieee\.org\/|researchgate\.net\/publication\/|sciencedirect\.com\/science\/article\/|10\.\d{4,}\/)[a-z0-9/.-]+/i;
   const urlEndings = /\b(?:\.edu\/|\.gob\/|\.gov\/|\.app\/|\.com\/|\.net\/|\.org\/|\.us\/|\.ca\/|\.de\/|\.icu\/|\.uk\/|\.ru\/|\.info\/|\.top\/|\.xyz\/|\.tk\/|\.cn\/|\.ga\/|\.cf\/|\.nl\/|\.io\/|\.fr\/|\.pe\/|\.nz\/|\.pt\/|\.es\/|\.pl\/|\.ua\/)\b/i;
-  const specialCharPattern = /[^a-zA-Z0-9]/g;
+  const specialCharPattern = /[^a-zA-Z0-9]/;
   const htmlSymbols = /([<>↣↳←→↓«»↴]+)/;
   const checkStopWords = (textContent, stopWordsSet, stripStrings) => {
     const stripped = textContent.replace(stripStrings, "").trim();
@@ -7383,6 +7404,9 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
       const lowercaseLinkText = linkText.toLowerCase();
       const strippedLinkText = stripAllSpecialCharacters(lowercaseLinkText);
       const textContent = getText($el).toLowerCase();
+      const textContentIgnoredStrings = getText(
+        fnIgnore($el, Constants.Exclusions.LinkSpan)
+      ).replace(ignorePattern, "");
       const containsNewWindowPhrases = lowercaseLinkText.match(newWindowRegex)?.[0] || textContent.match(newWindowRegex)?.[0];
       const containsFileTypePhrases = lowercaseLinkText.match(fileTypeRegex)?.[0] || textContent.match(fileTypeRegex)?.[0];
       const fileTypeMatch = $el.matches(cssFileTypeSelectors);
@@ -7428,6 +7452,7 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
                 stopword,
                 linkText
               ),
+              args: [stopword, linkText],
               inline: true,
               dismiss: prepareDismissal(`LINK_STOPWORD_ARIA ${strippedLinkText}`),
               dismissAll: State.option.checks.LINK_STOPWORD_ARIA.dismissAll ? " LINK_STOPWORD_ARIA" : false,
@@ -7440,8 +7465,10 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
               type: State.option.checks.LABEL_IN_NAME.type || "warning",
               content: Lang.sprintf(
                 State.option.checks.LABEL_IN_NAME.content || Lang._("LABEL_IN_NAME") + Lang._("ACC_NAME_TIP"),
+                textContentIgnoredStrings,
                 linkText
               ),
+              args: [textContentIgnoredStrings, linkText],
               inline: true,
               position: "afterend",
               dismiss: prepareDismissal(`LABEL_IN_NAME ${strippedLinkText}`),
@@ -7457,6 +7484,7 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
                 State.option.checks.LINK_LABEL.content || Lang._("ACC_NAME") + Lang._("ACC_NAME_TIP"),
                 linkText
               ),
+              args: [linkText],
               inline: true,
               position: "afterend",
               dismiss: prepareDismissal(`LINK_LABEL ${strippedLinkText}`),
@@ -7466,7 +7494,7 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
           }
         }
         let oneStop;
-        const addStopWordResult = (element, stopword) => {
+        const addStopWordResult = (element) => {
           if (State.option.checks.LINK_STOPWORD && !oneStop) {
             oneStop = true;
             State.results.push({
@@ -7475,8 +7503,9 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
               type: State.option.checks.LINK_STOPWORD.type || "error",
               content: Lang.sprintf(
                 State.option.checks.LINK_STOPWORD.content || Lang._("LINK_STOPWORD") + Lang._("LINK_TIP"),
-                stopword
+                linkText
               ),
+              args: [linkText],
               inline: true,
               position: "afterend",
               dismiss: prepareDismissal(`LINK_STOPWORD ${strippedLinkText}`),
@@ -7487,9 +7516,9 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
         };
         const isLinkIgnoreStrings = checkStopWords(textContent, linkIgnoreStrings);
         if (isLinkIgnoreStrings === textContent || isLinkIgnoreStrings === strippedLinkText) {
-          addStopWordResult($el, isLinkIgnoreStrings);
+          addStopWordResult($el);
         } else if (containsNewWindowPhrases === textContent || containsNewWindowPhrases === strippedLinkText) {
-          addStopWordResult($el, containsNewWindowPhrases);
+          addStopWordResult($el);
           return;
         }
         if (linkText.length === 0) {
@@ -7516,7 +7545,7 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
               if (spanEl) {
                 const spanText = stripAllSpecialCharacters(spanEl.textContent).trim().toLowerCase();
                 if (spanText === textContent) {
-                  addStopWordResult($el, spanText);
+                  addStopWordResult($el);
                   hasStopWordWarning = true;
                 }
               }
@@ -7560,7 +7589,7 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
         const isSingleSpecialChar = linkText.length === 1 && specialCharPattern.test(linkText);
         const matchedSymbol = lowercaseLinkText.match(htmlSymbols)?.[0];
         if (isStopWord) {
-          addStopWordResult($el, isStopWord);
+          addStopWordResult($el);
         } else if (isCitation) {
           if (linkText.length > 8) {
             if (State.option.checks.LINK_DOI) {
@@ -7568,7 +7597,8 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
                 test: "LINK_DOI",
                 element: $el,
                 type: State.option.checks.LINK_DOI.type || "warning",
-                content: Lang.sprintf(State.option.checks.LINK_DOI.content || "LINK_DOI"),
+                content: Lang.sprintf(State.option.checks.LINK_DOI.content || "LINK_DOI", linkText),
+                args: [linkText],
                 inline: true,
                 dismiss: prepareDismissal(`LINK_DOI ${strippedLinkText}`),
                 dismissAll: State.option.checks.LINK_DOI.dismissAll ? "LINK_DOI" : false,
@@ -7584,8 +7614,10 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
                 element: $el,
                 type: State.option.checks.LINK_URL.type || "warning",
                 content: Lang.sprintf(
-                  State.option.checks.LINK_URL.content || Lang._("LINK_URL") + Lang._("LINK_TIP")
+                  State.option.checks.LINK_URL.content || Lang._("LINK_URL") + Lang._("LINK_TIP"),
+                  linkText
                 ),
+                args: [linkText],
                 inline: true,
                 dismiss: prepareDismissal(`LINK_URL ${strippedLinkText}`),
                 dismissAll: State.option.checks.LINK_URL.dismissAll ? "LINK_URL" : false,
@@ -7601,8 +7633,10 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
               type: State.option.checks.LINK_SYMBOLS.type || "warning",
               content: Lang.sprintf(
                 State.option.checks.LINK_SYMBOLS.content || "LINK_SYMBOLS",
-                matchedSymbol
+                matchedSymbol,
+                linkText
               ),
+              args: [matchedSymbol, linkText],
               inline: true,
               dismiss: prepareDismissal(`LINK_SYMBOLS ${strippedLinkText}`),
               dismissAll: State.option.checks.LINK_SYMBOLS.dismissAll ? "LINK_SYMBOLS" : false,
@@ -7616,8 +7650,10 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
               element: $el,
               type: State.option.checks.LINK_UNPRONOUNCEABLE.type || "error",
               content: Lang.sprintf(
-                State.option.checks.LINK_UNPRONOUNCEABLE.content || Lang._("LINK_UNPRONOUNCEABLE") + Lang._("LINK_TIP")
+                State.option.checks.LINK_UNPRONOUNCEABLE.content || Lang._("LINK_UNPRONOUNCEABLE") + Lang._("LINK_TIP"),
+                linkText
               ),
+              args: [linkText],
               inline: true,
               position: "afterend",
               dismiss: prepareDismissal(`LINK_UNPRONOUNCEABLE ${href}`),
@@ -7637,6 +7673,7 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
                 State.option.checks.LINK_CLICK_HERE.content || Lang._("LINK_CLICK_HERE") + Lang._("LINK_TIP"),
                 linkText
               ),
+              args: [linkText],
               inline: true,
               dismiss: prepareDismissal(`LINK_CLICK_HERE ${strippedLinkText}`),
               dismissAll: State.option.checks.LINK_CLICK_HERE.dismissAll ? "LINK_CLICK_HERE" : false,
@@ -7663,15 +7700,19 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
         if (seen[strippedLinkText] && !seen[href]) {
           const ignored = $el.ariaHidden === "true" && $el.getAttribute("tabindex") === "-1";
           const hasAttributes = $el.hasAttribute("role") || $el.hasAttribute("disabled");
+          const condition = linkText.toLowerCase() !== textContentIgnoredStrings.toLowerCase();
+          const diffAccName = condition ? `<hr> ${Lang._("ACC_NAME")}` : `<hr> ${Lang._("LINK_TEXT")}`;
+          const variable = condition ? linkText : textContentIgnoredStrings;
           if (State.option.checks.LINK_IDENTICAL_NAME && !hasAttributes && !ignored) {
             State.results.push({
               test: "LINK_IDENTICAL_NAME",
               element: $el,
               type: State.option.checks.LINK_IDENTICAL_NAME.type || "warning",
               content: Lang.sprintf(
-                State.option.checks.LINK_IDENTICAL_NAME.content || Lang._("LINK_IDENTICAL_NAME") + Lang._("LINK_TIP"),
-                linkText
+                State.option.checks.LINK_IDENTICAL_NAME.content || Lang._("LINK_IDENTICAL_NAME") + diffAccName + Lang._("LINK_TIP"),
+                variable
               ),
+              args: [textContentIgnoredStrings, linkText],
               inline: true,
               dismiss: prepareDismissal(`LINK_IDENTICAL_NAME ${strippedLinkText}`),
               dismissAll: State.option.checks.LINK_IDENTICAL_NAME.dismissAll ? "LINK_IDENTICAL_NAME" : false,
@@ -7683,12 +7724,18 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
           seen[href] = true;
         }
         if (targetBlank && !fileTypeMatch && !containsNewWindowPhrases) {
+          const condition = linkText.toLowerCase() !== textContentIgnoredStrings.toLowerCase();
+          const diffAccName = condition ? `<hr> ${Lang._("ACC_NAME") + Lang._("ACC_NAME_TIP")}` : `<hr> ${Lang._("LINK_TEXT")}`;
           if (State.option.checks.LINK_NEW_TAB) {
             State.results.push({
               test: "LINK_NEW_TAB",
               element: $el,
               type: State.option.checks.LINK_NEW_TAB.type || "warning",
-              content: Lang.sprintf(State.option.checks.LINK_NEW_TAB.content || "LINK_NEW_TAB"),
+              content: Lang.sprintf(
+                State.option.checks.LINK_NEW_TAB.content || Lang._("LINK_NEW_TAB") + diffAccName,
+                linkText
+              ),
+              args: [linkText],
               inline: true,
               dismiss: prepareDismissal(`LINK_NEW_TAB ${strippedLinkText}`),
               dismissAll: State.option.checks.LINK_NEW_TAB.dismissAll ? "LINK_NEW_TAB" : false,
@@ -7702,7 +7749,11 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
               test: "LINK_FILE_EXT",
               element: $el,
               type: State.option.checks.LINK_FILE_EXT.type || "warning",
-              content: Lang.sprintf(State.option.checks.LINK_FILE_EXT.content || "LINK_FILE_EXT"),
+              content: Lang.sprintf(
+                State.option.checks.LINK_FILE_EXT.content || "LINK_FILE_EXT",
+                linkText
+              ),
+              args: [linkText],
               inline: true,
               dismiss: prepareDismissal(`LINK_FILE_EXT ${strippedLinkText}`),
               dismissAll: State.option.checks.LINK_FILE_EXT.dismissAll ? "LINK_FILE_EXT" : false,
@@ -8200,6 +8251,7 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
               element: $el,
               type: State.option.checks.LABELS_ARIA_LABEL_INPUT.type || "warning",
               content: State.option.checks.LABELS_ARIA_LABEL_INPUT.content ? Lang.sprintf(State.option.checks.LABELS_ARIA_LABEL_INPUT.content, inputName) : Lang.sprintf(Lang._("LABELS_ARIA_LABEL_INPUT") + Lang._("ACC_NAME_TIP"), inputName),
+              args: [inputName],
               dismiss: prepareDismissal(`LABELS_ARIA_LABEL_INPUT ${type + inputName}`),
               dismissAll: State.option.checks.LABELS_ARIA_LABEL_INPUT.dismissAll ? "LABELS_ARIA_LABEL_INPUT" : false,
               developer: State.option.checks.LABELS_ARIA_LABEL_INPUT.developer || true
@@ -8225,6 +8277,7 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
                 State.option.checks.LABELS_NO_FOR_ATTRIBUTE.content || "LABELS_NO_FOR_ATTRIBUTE",
                 id
               ),
+              args: [id],
               dismiss: prepareDismissal(`LABELS_NO_FOR_ATTRIBUTE ${type + inputName}`),
               dismissAll: State.option.checks.LABELS_NO_FOR_ATTRIBUTE.dismissAll ? "LABELS_NO_FOR_ATTRIBUTE" : false,
               developer: State.option.checks.LABELS_NO_FOR_ATTRIBUTE.developer || true
@@ -8517,11 +8570,13 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
   function checkQA() {
     if (State.option.checks.QA_BAD_LINK) {
       Elements.Found.CustomErrorLinks.forEach(($el) => {
+        const text = getText($el);
         State.results.push({
           test: "QA_BAD_LINK",
           element: $el,
           type: State.option.checks.QA_BAD_LINK.type || "error",
-          content: Lang.sprintf(State.option.checks.QA_BAD_LINK.content || "QA_BAD_LINK", $el),
+          content: Lang.sprintf(State.option.checks.QA_BAD_LINK.content || "QA_BAD_LINK", $el, text),
+          args: [$el, text],
           inline: true,
           dismiss: prepareDismissal(`QA_BAD_LINK ${$el.tagName + $el.textContent}`),
           dismissAll: State.option.checks.QA_BAD_LINK.dismissAll ? "QA_BAD_LINK" : false,
@@ -8538,8 +8593,10 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
             element: $el.parentNode,
             type: State.option.checks.QA_STRONG_ITALICS.type || "warning",
             content: Lang.sprintf(
-              State.option.checks.QA_STRONG_ITALICS.content || "QA_STRONG_ITALICS"
+              State.option.checks.QA_STRONG_ITALICS.content || "QA_STRONG_ITALICS",
+              text
             ),
+            args: [text],
             dismiss: prepareDismissal(`QA_STRONG_ITALICS ${$el.tagName + $el.textContent}`),
             dismissAll: State.option.checks.QA_STRONG_ITALICS.dismissAll ? "QA_STRONG_ITALICS" : false,
             developer: State.option.checks.QA_STRONG_ITALICS.developer || false
@@ -8550,6 +8607,9 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
     Elements.Found.Links.forEach(($el) => {
       if ($el.hasAttribute("href")) {
         const href = $el.getAttribute("href");
+        const accName = removeWhitespace(
+          computeAccessibleName($el, Constants.Exclusions.LinkSpan)
+        );
         const hasExtension = $el.matches(Constants.Global.documentSources);
         const hasPDF = $el.matches('a[href$=".pdf"], a[href*=".pdf?"]');
         if (State.option.checks.QA_IN_PAGE_LINK || State.option.checks.LINK_MAYBE_BUTTON) {
@@ -8565,11 +8625,8 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
             if (!targetElement) {
               let isFauxButton = false;
               if (State.option.checks.LINK_MAYBE_BUTTON) {
-                const accName = removeWhitespace(
-                  computeAccessibleName($el, Constants.Exclusions.LinkSpan)
-                ).toLowerCase();
                 const keywords = Lang._("POTENTIAL_UI_ELEMENTS");
-                const matchedKeyword = keywords.find((word) => accName.includes(word));
+                const matchedKeyword = keywords.find((word) => accName.toLowerCase().includes(word));
                 if (matchedKeyword && accName.length <= 15) {
                   isFauxButton = true;
                   State.results.push({
@@ -8578,8 +8635,10 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
                     type: State.option.checks.LINK_MAYBE_BUTTON.type || "error",
                     content: Lang.sprintf(
                       State.option.checks.LINK_MAYBE_BUTTON.content || "LINK_MAYBE_BUTTON",
+                      matchedKeyword,
                       accName
                     ),
+                    args: [matchedKeyword, accName],
                     inline: true,
                     dismiss: prepareDismissal(`LINK_MAYBE_BUTTON_${matchedKeyword}`),
                     dismissAll: State.option.checks.LINK_MAYBE_BUTTON.dismissAll ? "LINK_MAYBE_BUTTON" : false,
@@ -8594,8 +8653,10 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
                   type: State.option.checks.QA_IN_PAGE_LINK.type || "error",
                   content: Lang.sprintf(
                     State.option.checks.QA_IN_PAGE_LINK.content || "QA_IN_PAGE_LINK",
-                    targetId
+                    targetId,
+                    accName
                   ),
+                  args: [targetId, accName],
                   inline: true,
                   dismiss: prepareDismissal(`QA_IN_PAGE_LINK ${href}`),
                   dismissAll: State.option.checks.QA_IN_PAGE_LINK.dismissAll ? "QA_IN_PAGE_LINK" : false,
@@ -8610,7 +8671,8 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
             test: "QA_DOCUMENT",
             element: $el,
             type: State.option.checks.QA_DOCUMENT.type || "warning",
-            content: Lang.sprintf(State.option.checks.QA_DOCUMENT.content || "QA_DOCUMENT"),
+            content: Lang.sprintf(State.option.checks.QA_DOCUMENT.content || "QA_DOCUMENT", accName),
+            args: [accName],
             inline: true,
             dismiss: prepareDismissal(`QA_DOCUMENT ${href}`),
             dismissAll: State.option.checks.QA_DOCUMENT.dismissAll ? "QA_DOCUMENT" : false,
@@ -8621,7 +8683,8 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
             test: "QA_PDF",
             element: $el,
             type: State.option.checks.QA_PDF.type || "warning",
-            content: Lang.sprintf(State.option.checks.QA_PDF.content || "QA_PDF"),
+            content: Lang.sprintf(State.option.checks.QA_PDF.content || "QA_PDF", accName),
+            args: [accName],
             inline: true,
             dismiss: prepareDismissal(`QA_PDF ${href}`),
             dismissAll: State.option.checks.QA_PDF.dismissAll ? "QA_PDF" : false,
@@ -8639,6 +8702,7 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
             element: $el,
             type: State.option.checks.QA_BLOCKQUOTE.type || "warning",
             content: Lang.sprintf(State.option.checks.QA_BLOCKQUOTE.content || "QA_BLOCKQUOTE", text),
+            args: [text],
             dismiss: prepareDismissal(`QA_BLOCKQUOTE ${text}`),
             dismissAll: State.option.checks.QA_BLOCKQUOTE.dismissAll ? "QA_BLOCKQUOTE" : false,
             developer: State.option.checks.QA_BLOCKQUOTE.developer || false
@@ -8698,16 +8762,17 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
       }
     });
     if (State.option.checks.QA_FAKE_HEADING) {
-      const addResult = (element, escapedText) => {
+      const addResult = (element, text) => {
         State.results.push({
           test: "QA_FAKE_HEADING",
           element,
           type: State.option.checks.QA_FAKE_HEADING.type || "warning",
           content: Lang.sprintf(
             State.option.checks.QA_FAKE_HEADING.content || "QA_FAKE_HEADING",
-            escapedText
+            text
           ),
-          dismiss: prepareDismissal(`QA_FAKE_HEADING ${escapedText}`),
+          args: [text],
+          dismiss: prepareDismissal(`QA_FAKE_HEADING ${text}`),
           inline: true,
           dismissAll: State.option.checks.QA_FAKE_HEADING.dismissAll ? "QA_FAKE_HEADING" : false,
           developer: State.option.checks.QA_FAKE_HEADING.developer || false
@@ -8819,8 +8884,10 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
               type: State.option.checks.QA_FAKE_LIST.type || "warning",
               content: Lang.sprintf(
                 State.option.checks.QA_FAKE_LIST.content || "QA_FAKE_LIST",
-                firstPrefix
+                firstPrefix,
+                firstText
               ),
+              args: [firstPrefix, firstText],
               dismiss: prepareDismissal(`QA_FAKE_LIST ${p.textContent}`),
               dismissAll: State.option.checks.QA_FAKE_LIST.dismissAll ? "QA_FAKE_LIST" : false,
               developer: State.option.checks.QA_FAKE_LIST.developer || false
@@ -8858,6 +8925,7 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
               State.option.checks.QA_UPPERCASE.content || "QA_UPPERCASE",
               thisText
             ),
+            args: [thisText],
             dismiss: prepareDismissal(`QA_UPPERCASE ${thisText}`),
             dismissAll: State.option.checks.QA_UPPERCASE.dismissAll ? "QA_UPPERCASE" : false,
             developer: State.option.checks.QA_UPPERCASE.developer || false
@@ -8884,6 +8952,7 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
         element: $el,
         type: State.option.checks.QA_UNDERLINE.type || "warning",
         content: Lang.sprintf(State.option.checks.QA_UNDERLINE.content || "QA_UNDERLINE", text),
+        args: [text],
         inline: true,
         dismiss: prepareDismissal(`QA_UNDERLINE ${text}`),
         dismissAll: State.option.checks.QA_UNDERLINE.dismissAll ? "QA_UNDERLINE" : false,
@@ -8897,6 +8966,7 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
         element: $el,
         type: State.option.checks.QA_JUSTIFY.type || "warning",
         content: Lang.sprintf(State.option.checks.QA_JUSTIFY.content || "QA_JUSTIFY", text),
+        args: [text],
         dismiss: prepareDismissal(`QA_JUSTIFY ${text}`),
         dismissAll: State.option.checks.QA_JUSTIFY.dismissAll ? "QA_JUSTIFY" : true,
         developer: State.option.checks.QA_JUSTIFY.developer || false
@@ -8909,6 +8979,7 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
         element: $el,
         type: State.option.checks.QA_SMALL_TEXT.type || "warning",
         content: Lang.sprintf(State.option.checks.QA_SMALL_TEXT.content || "QA_SMALL_TEXT", text),
+        args: [text],
         dismiss: prepareDismissal(`QA_SMALL_TEXT ${text}`),
         dismissAll: State.option.checks.QA_SMALL_TEXT.dismissAll ? "QA_SMALL_TEXT" : true,
         developer: State.option.checks.QA_SMALL_TEXT.developer || false
@@ -8954,7 +9025,8 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
             test: "QA_SUBSCRIPT",
             element: $el,
             type: State.option.checks.QA_SUBSCRIPT.type || "warning",
-            content: Lang.sprintf(State.option.checks.QA_SUBSCRIPT.content || "QA_SUBSCRIPT"),
+            content: Lang.sprintf(State.option.checks.QA_SUBSCRIPT.content || "QA_SUBSCRIPT", text),
+            args: [text],
             inline: true,
             dismiss: prepareDismissal(`QA_SUBSCRIPT ${$el.tagName + text}`),
             dismissAll: State.option.checks.QA_SUBSCRIPT.dismissAll ? "QA_SUBSCRIPT" : false,
@@ -8991,6 +9063,7 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
         test: key,
         type: rule.type || "error",
         content: Lang.sprintf(rule.content || key, ...args),
+        args: [...args],
         dismiss: prepareDismissal(key),
         developer: rule.developer || true
       });
@@ -9093,6 +9166,7 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
                     State.option.checks.DUPLICATE_ID.content || "DUPLICATE_ID",
                     id
                   ),
+                  args: [id],
                   dismiss: prepareDismissal(`DUPLICATE_ID ${id}${$el.textContent}`),
                   dismissAll: State.option.checks.DUPLICATE_ID.dismissAll ? "DUPLICATE_ID" : false,
                   developer: State.option.checks.DUPLICATE_ID.developer || true
@@ -9117,6 +9191,7 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
       Elements.Found.Buttons.forEach(($el) => {
         const accName = computeAccessibleName($el);
         const buttonText = accName.replace(/'|"|-|\.|\s+/g, "").toLowerCase();
+        const textContent = getText($el);
         const hasAria = $el.querySelector(":scope [aria-labelledby], :scope [aria-label]") || $el.getAttribute("aria-labelledby") || $el.getAttribute("aria-label");
         const hasAriaLabelledby = $el.querySelector(":scope [aria-labelledby]") || $el.getAttribute("aria-labelledby");
         const ariaHidden = $el.getAttribute("aria-hidden") === "true";
@@ -9164,9 +9239,7 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
               content: Lang.sprintf(
                 State.option.checks.BTN_EMPTY.content || Lang._("BTN_EMPTY") + Lang._("BTN_TIP")
               ),
-              dismiss: prepareDismissal(
-                `BTN_EMPTY ${$el.tagName + $el.id + $el.className + accName}`
-              ),
+              dismiss: prepareDismissal(`BTN_EMPTY ${$el.tagName + $el.id + $el.className}`),
               dismissAll: State.option.checks.BTN_EMPTY.dismissAll ? "BTN_EMPTY" : false,
               developer: State.option.checks.BTN_EMPTY.developer || true
             });
@@ -9181,8 +9254,10 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
             type: State.option.checks.LABEL_IN_NAME.type || "warning",
             content: Lang.sprintf(
               State.option.checks.LABEL_IN_NAME.content || Lang._("LABEL_IN_NAME") + Lang._("ACC_NAME_TIP"),
+              textContent,
               accName
             ),
+            args: [textContent, accName],
             dismiss: prepareDismissal(
               `LABEL_IN_NAME ${$el.tagName + $el.id + $el.className + accName}`
             ),
@@ -9200,6 +9275,7 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
               State.option.checks.BTN_ROLE_IN_NAME.content || Lang._("BTN_ROLE_IN_NAME") + Lang._("ACC_NAME_TIP") + Lang._("BTN_TIP"),
               accName
             ),
+            args: [accName],
             dismiss: prepareDismissal(
               `BTN_ROLE_IN_NAME ${$el.tagName + $el.id + $el.className + accName}`
             ),
@@ -9212,11 +9288,16 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
     if (State.option.checks.UNCONTAINED_LI) {
       Elements.Found.Lists.forEach(($el) => {
         if (!$el.closest("ul, ol, menu")) {
+          const text = getText($el);
           State.results.push({
             test: "UNCONTAINED_LI",
             element: $el,
             type: State.option.checks.UNCONTAINED_LI.type || "error",
-            content: Lang.sprintf(State.option.checks.UNCONTAINED_LI.content || "UNCONTAINED_LI"),
+            content: Lang.sprintf(
+              State.option.checks.UNCONTAINED_LI.content || "UNCONTAINED_LI",
+              text
+            ),
+            args: [text],
             dismiss: prepareDismissal(`UNCONTAINED_LI ${$el.textContent}`),
             dismissAll: State.option.checks.UNCONTAINED_LI.dismissAll ? "UNCONTAINED_LI" : false,
             developer: State.option.checks.UNCONTAINED_LI.developer || true

@@ -257,7 +257,8 @@
       QA_JUSTIFY: "왼쪽 및 오른쪽 여백에 맞춘 정렬된 텍스트를 사용하지 마십시오. 단어 사이의 불균등한 간격 때문에 일부 사람들에게는 읽기 어렵습니다. 더 나은 가독성을 위해 왼쪽 정렬된 텍스트를 사용하십시오.",
       QA_SMALL_TEXT: "작은 글씨는 특히 시력이 낮은 사람들에게 읽기 어렵습니다. 더 나은 가독성을 보장하려면 기본값보다 작은 글꼴 크기를 사용하지 마십시오.",
       // Shared
-      ACC_NAME: "<strong {B}>접근 가능한 이름</strong> %(TEXT)",
+      LINK_TEXT: "<strong {B}>링크 텍스트</strong> <strong {C}>%(TEXT)</strong>",
+      ACC_NAME: "<strong {B}>접근 가능한 이름</strong> <strong {C}>%(TEXT)</strong>",
       ACC_NAME_TIP: '<hr><strong>팁!</strong> "접근 가능한 이름"은 보조 기술을 사용하는 사람들에게 전달되는 최종 레이블이며 ARIA에 의해 계산됩니다. 이를 통해 링크 또는 버튼의 목적을 이해하는 데 도움이 됩니다.',
       HIDDEN_FOCUSABLE: '링크 또는 버튼에 <code>aria-hidden=&quot;true&quot;</code> 속성이 있지만 여전히 키보드로 포커스할 수 있습니다. 중복된 링크 또는 버튼을 숨기려면 <code>tabindex=&quot;-1&quot;</code> 속성을 추가하세요. 그렇지 않으면, 포커스를 받을 수 있는 요소에 <code>aria-hidden=&quot;true&quot;</code>를 사용해서는 안 됩니다. <hr> <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">aria-hidden 속성</a>에 대해 더 알아보세요.',
       // Developer
@@ -278,7 +279,7 @@
       BTN: "버튼",
       BTN_TIP: '접근 가능한 <a href="https://www.sarasoueidan.com/blog/accessible-icon-buttons/">버튼 만드는 법</a> 배우기.',
       BTN_ROLE_IN_NAME: '버튼 이름에 "버튼"이라는 단어를 포함하지 마십시오. 스크린 리더는 이름 외에도 요소의 역할을 전달합니다.',
-      LABEL_IN_NAME: "이 요소의 표시되는 텍스트가 접근 가능한 이름과 다른 것처럼 보이며, 지원 기술을 사용하는 사용자에게 혼란을 줄 수 있습니다. 검토해 주세요: <hr> <strong {B}>접근 가능한 이름</strong> <strong {C}>%(TEXT)</strong>",
+      LABEL_IN_NAME: "이 요소의 표시되는 텍스트가 접근 가능한 이름과 다른 것처럼 보이며, 지원 기술을 사용하는 사용자에게 혼란을 줄 수 있습니다. 검토해 주세요: <hr> <strong {B}>텍스트</strong> <strong {C}>%(TEXT)</strong> <hr> <strong {B}>접근 가능한 이름</strong> <strong {C}>%(TEXT)</strong>",
       LINK_MAYBE_BUTTON: '이 링크에는 유효하지 않은 대상이 있으며, 접근 가능한 이름에 "<strong>%(NAME)</strong>"이라는 단어가 포함되어 있습니다. 이는 이것이 링크가 아니라 페이지의 일부 스크립트 동작을 제어하고 있음을 나타냅니다. 문제를 해결하려면 링크를 <a href="https://www.w3.org/WAI/ARIA/apg/patterns/button/">접근 가능한 버튼</a>으로 교체하거나 링크의 대상을 수정하세요. <hr> <strong>팁!</strong> 보조 기술은 버튼과 링크를 다르게 취급합니다. 올바른 HTML 요소를 사용하면 사용자가 어떤 키보드 단축키를 사용해야 하는지, 어떤 동작이 트리거되는지 알 수 있습니다.',
       POTENTIAL_UI_ELEMENTS: ["메뉴", "닫기", "토글", "열기", "확장", "축소", "다음", "이전", "재생", "일시 중지", "하위 메뉴", "표시", "숨기기", "드롭다운", "뒤로", "앞으로", "건너뛰기", "제출", "취소", "저장", "편집", "삭제", "제거", "검색", "필터", "정렬", "중지", "음소거", "음소거 해제", "전체 화면", "최소화", "최대화"],
       // Tables

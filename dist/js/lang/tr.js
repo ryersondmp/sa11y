@@ -253,7 +253,8 @@ const tr = {
     QA_JUSTIFY: "Hem sol hem de sağ kenar boşluklarına hizalanan metinleri kullanmaktan kaçının. Kelimeler arasındaki düzensiz boşluklar nedeniyle bu, bazı insanlar için zor olabilir. Daha iyi okunabilirlik için sola hizalanmış metin kullanın.",
     QA_SMALL_TEXT: "Küçük metin, özellikle görme sorunu yaşayanlar için okumak daha zordur. Daha iyi okunabilirlik sağlamak için varsayılandan daha küçük yazı tipi boyutlarını kullanmaktan kaçının.",
     // Shared
-    ACC_NAME: "<strong {B}>Erişilebilir ad</strong> %(TEXT)",
+    LINK_TEXT: "<strong {B}>Bağlantı metni</strong> <strong {C}>%(TEXT)</strong>",
+    ACC_NAME: "<strong {B}>Erişilebilir ad</strong> <strong {C}>%(TEXT)</strong>",
     ACC_NAME_TIP: '<hr><strong>İpucu!</strong> "Erişilebilir ad", yardımcı teknolojiyi kullanan kişilere iletilen son etikettir ve ARIA tarafından hesaplanır. Bu, bağlantının veya düğmenin amacını anlamalarına yardımcı olur.',
     HIDDEN_FOCUSABLE: 'Bağlantı veya düğme <code>aria-hidden=&quot;true&quot;</code> değerine sahip ancak hâlâ klavye ile odaklanabilir durumda. Bir kopya bağlantı veya düğmeyi gizlemeyi düşünüyorsanız, <code>tabindex=&quot;-1&quot;</code> ekleyin. Aksi takdirde, odak alabilen öğelerde <code>aria-hidden=&quot;true&quot;</code> kullanılmamalıdır. <hr> <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">aria-hidden özelliği</a> hakkında daha fazla bilgi edinin.',
     // Developer
@@ -274,7 +275,7 @@ const tr = {
     BTN: "düğme",
     BTN_TIP: 'Bir <a href="https://www.sarasoueidan.com/blog/accessible-icon-buttons/">erişilebilir düğme</a> nasıl yapılacağını öğrenin.',
     BTN_ROLE_IN_NAME: 'Bir düğmenin adında "düğme" kelimesini içermeyin. Ekran okuyucular zaten öğenin rolünü adıyla birlikte iletir.',
-    LABEL_IN_NAME: "Bu öğe için görünen metin, erişilebilir ad ile farklı görünüyor, bu da yardımcı teknoloji kullanıcıları için kafa karışıklığına neden olabilir. Lütfen gözden geçirin: <hr> <strong {B}>Erişilebilir Ad</strong> <strong {C}>%(TEXT)</strong>",
+    LABEL_IN_NAME: "Bu öğe için görünen metin, erişilebilir ad ile farklı görünüyor, bu da yardımcı teknoloji kullanıcıları için kafa karışıklığına neden olabilir. Lütfen gözden geçirin: <hr> <strong {B}>Metin</strong> <strong {C}>%(TEXT)</strong> <hr> <strong {B}>Erişilebilir Ad</strong> <strong {C}>%(TEXT)</strong>",
     LINK_MAYBE_BUTTON: 'Bu bağlantının geçersiz bir hedefi var ve erişilebilir ad "<strong>%(NAME)</strong>" kelimesini içeriyor. Bu, bunun bir bağlantı olmayabileceğini, bunun yerine sayfadaki bazı komut dosyası davranışlarını kontrol ettiğini gösteriyor. Düzeltmek için bağlantıyı <a href="https://www.w3.org/WAI/ARIA/apg/patterns/button/">erişilebilir bir düğme</a> ile değiştirin veya bağlantının hedefini düzeltin. <hr> <strong>İpucu!</strong> Yardımcı teknolojiler düğmelere ve bağlantılara farklı şekilde davranır. Doğru HTML öğesinin kullanılması, kullanıcıların hangi klavye kısayollarını kullanacaklarını ve hangi eylemin tetikleneceğini bilmelerini sağlar.',
     POTENTIAL_UI_ELEMENTS: ["menü", "kapat", "değiştir", "aç", "genişlet", "daralt", "sonraki", "önceki", "oynat", "duraklat", "alt menü", "göster", "gizle", "açılır menü", "geri", "ileri", "atla", "gönder", "iptal", "kaydet", "düzenle", "sil", "kaldır", "ara", "filtre", "sırala", "dur", "sessiz", "sesi aç", "tam ekran", "küçült", "büyüt"],
     // Tables

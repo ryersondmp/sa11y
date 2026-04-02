@@ -358,7 +358,8 @@ export default {
       'Liten text är svårare att läsa, särskilt för dem med nedsatt syn. För att säkerställa bättre läsbarhet, undvik att använda teckenstorlekar mindre än standard.',
 
     // Shared
-    ACC_NAME: '<strong {B}>Tillgängligt namn</strong> %(TEXT)',
+    LINK_TEXT: '<strong {B}>Länktext</strong> <strong {C}>%(TEXT)</strong>',
+    ACC_NAME: '<strong {B}>Tillgängligt namn</strong> <strong {C}>%(TEXT)</strong>',
     ACC_NAME_TIP:
       '<hr><strong>Tips!</strong> "Tillgängligt namn" är den slutliga etiketten som kommuniceras till personer som använder hjälpmedel och beräknas av ARIA. Detta hjälper dem att förstå syftet med länken eller knappen.',
     HIDDEN_FOCUSABLE:
@@ -394,7 +395,7 @@ export default {
     BTN_ROLE_IN_NAME:
       'Inkludera inte ordet "knapp" i namnet på en knapp. Skärmläsare anger redan elementets roll utöver dess namn.',
     LABEL_IN_NAME:
-      'Den synliga texten för detta element verkar skilja sig från det tillgängliga namnet, vilket kan orsaka förvirring för användare av hjälpmedelstekniker. Vänligen granska: <hr> <strong {B}>Tillgängligt namn</strong> <strong {C}>%(TEXT)</strong>',
+      'Den synliga texten för detta element verkar skilja sig från det tillgängliga namnet, vilket kan orsaka förvirring för användare av hjälpmedelstekniker. Vänligen granska: <hr> <strong {B}>Text</strong> <strong {C}>%(TEXT)</strong> <hr> <strong {B}>Tillgängligt namn</strong> <strong {C}>%(TEXT)</strong>',
     LINK_MAYBE_BUTTON: 'Den här länken har ett ogiltigt mål och det tillgängliga namnet innehåller ordet "<strong>%(NAME)</strong>". Detta tyder på att det kanske inte alls är en länk, utan istället styr ett skriptat beteende på sidan. För att åtgärda detta, ersätt länken med en <a href="https://www.w3.org/WAI/ARIA/apg/patterns/button/">tillgänglig knapp</a>, eller korrigera länkens mål. <hr> <strong>Tips!</strong> Hjälpmedelsteknik hanterar knappar och länkar på olika sätt. Genom att använda rätt HTML-element säkerställer du att användarna vet vilka kortkommandon de ska använda och vilken åtgärd som utlöses.',
     POTENTIAL_UI_ELEMENTS: ['meny', 'stäng', 'växla', 'öppna', 'expandera', 'fäll ihop', 'nästa', 'föregående', 'spela upp', 'pausa', 'undermeny', 'visa', 'dölj', 'rullgardinsmeny', 'bakåt', 'framåt', 'hoppa över', 'skicka', 'avbryt', 'spara', 'redigera', 'radera', 'ta bort', 'sök', 'filter', 'sortera', 'stopp', 'ljud av', 'ljud på', 'helskärm', 'minimera', 'maximera'],
 

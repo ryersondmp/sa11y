@@ -257,7 +257,8 @@
       QA_JUSTIFY: "Evitați utilizarea textului justificat, care se aliniază atât la marginea stângă, cât și la cea dreaptă. Acest lucru poate fi dificil de citit pentru unele persoane din cauza spațiilor inegale dintre cuvinte. Utilizați text aliniat la stânga pentru o lizibilitate mai bună.",
       QA_SMALL_TEXT: "Textul mic este mai greu de citit, în special pentru persoanele cu vedere slabă. Pentru a asigura o lizibilitate mai bună, evitați utilizarea dimensiunilor de font mai mici decât cele implicite.",
       // Shared
-      ACC_NAME: "<strong {B}>Numele accesibil</strong> %(TEXT)",
+      LINK_TEXT: "<strong {B}>Text link</strong> <strong {C}>%(TEXT)</strong>",
+      ACC_NAME: "<strong {B}>Numele accesibil</strong> <strong {C}>%(TEXT)</strong>",
       ACC_NAME_TIP: '<hr><strong>Sfat!</strong> "Numele accesibil" este eticheta finală care este comunicată persoanelor care utilizează tehnologii de asistență și este calculată de ARIA. Acest lucru le ajută să înțeleagă scopul legăturii sau butonului.',
       HIDDEN_FOCUSABLE: 'Linkul sau butonul are atributul <code>aria-hidden=&quot;true&quot;</code>, dar este poate fi totuși accesat folosind tastatura. Dacă intenționați să ascundeți un link sau un buton duplicat, adăugați și <code>tabindex=&quot;-1&quot;</code>. În caz contrar, <code>aria-hidden=&quot;true&quot;</code> nu ar trebui să fie utilizat pe elemente care pot primi focus. <hr> Aflați mai multe despre <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">atributul aria-hidden.</a>',
       // Developer
@@ -278,7 +279,7 @@
       BTN: "buton",
       BTN_TIP: 'Învățați cum să creați un <a href="https://www.sarasoueidan.com/blog/accessible-icon-buttons/">buton accesibil.</a>',
       BTN_ROLE_IN_NAME: "Nu includeți cuvântul „buton” în numele unui buton. Cititoarele de ecran deja comunică rolul unui element în plus față de numele său.",
-      LABEL_IN_NAME: "Textul vizibil pentru acest element pare a fi diferit de numele accesibil, ceea ce poate cauza confuzie pentru utilizatorii de tehnologii asistive. Vă rugăm să verificați: <hr> <strong {B}>Nume Accesibil</strong> <strong {C}>%(TEXT)</strong>",
+      LABEL_IN_NAME: "Textul vizibil pentru acest element pare a fi diferit de numele accesibil, ceea ce poate cauza confuzie pentru utilizatorii de tehnologii asistive. Vă rugăm să verificați: <hr> <strong {B}>Text</strong> <strong {C}>%(TEXT)</strong> <hr> <strong {B}>Nume Accesibil</strong> <strong {C}>%(TEXT)</strong>",
       LINK_MAYBE_BUTTON: 'Acest link are o țintă nevalidă, iar numele accesibil conține cuvântul „<strong>%(NAME)</strong>”. Acest lucru sugerează că s-ar putea să nu fie deloc un link, ci să controleze un comportament scriptat pe pagină. Pentru a remedia problema, înlocuiți linkul cu un <a href="https://www.w3.org/WAI/ARIA/apg/patterns/button/">buton accesibil</a> sau corectați destinația linkului. <hr> <strong>Sfat!</strong> Tehnologiile de asistență tratează butoanele și linkurile în mod diferit. Utilizarea elementului HTML corect asigură că utilizatorii știu ce scurtături de tastatură să folosească și ce acțiune va fi declanșată.',
       POTENTIAL_UI_ELEMENTS: ["meniu", "închide", "comută", "deschide", "extinde", "restrânge", "următorul", "anteriorul", "redare", "pauză", "submeniu", "afișează", "ascunde", "meniu derulant", "înapoi", "înainte", "omite", "trimite", "anulează", "salvează", "editează", "șterge", "elimină", "caută", "filtrează", "sortează", "stop", "fără sunet", "activează sunetul", "ecran complet", "minimizează", "maximizează"],
       // Tables

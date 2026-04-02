@@ -16,6 +16,7 @@ export default function checkDeveloper() {
       test: key,
       type: rule.type || 'error',
       content: Lang.sprintf(rule.content || key, ...args),
+      args: [...args],
       dismiss: Utils.prepareDismissal(key),
       developer: rule.developer || true,
     });
@@ -152,6 +153,7 @@ export default function checkDeveloper() {
                   State.option.checks.DUPLICATE_ID.content || 'DUPLICATE_ID',
                   id,
                 ),
+                args: [id],
                 dismiss: Utils.prepareDismissal(`DUPLICATE_ID ${id}${$el.textContent}`),
                 dismissAll: State.option.checks.DUPLICATE_ID.dismissAll ? 'DUPLICATE_ID' : false,
                 developer: State.option.checks.DUPLICATE_ID.developer || true,
@@ -190,6 +192,7 @@ export default function checkDeveloper() {
     Elements.Found.Buttons.forEach(($el) => {
       const accName = computeAccessibleName($el);
       const buttonText = accName.replace(/'|"|-|\.|\s+/g, '').toLowerCase();
+      const textContent = Utils.getText($el);
 
       // Has ARIA
       const hasAria =
@@ -252,9 +255,7 @@ export default function checkDeveloper() {
             content: Lang.sprintf(
               State.option.checks.BTN_EMPTY.content || Lang._('BTN_EMPTY') + Lang._('BTN_TIP'),
             ),
-            dismiss: Utils.prepareDismissal(
-              `BTN_EMPTY ${$el.tagName + $el.id + $el.className + accName}`,
-            ),
+            dismiss: Utils.prepareDismissal(`BTN_EMPTY ${$el.tagName + $el.id + $el.className}`),
             dismissAll: State.option.checks.BTN_EMPTY.dismissAll ? 'BTN_EMPTY' : false,
             developer: State.option.checks.BTN_EMPTY.developer || true,
           });
@@ -272,8 +273,10 @@ export default function checkDeveloper() {
           content: Lang.sprintf(
             State.option.checks.LABEL_IN_NAME.content ||
               Lang._('LABEL_IN_NAME') + Lang._('ACC_NAME_TIP'),
+            textContent,
             accName,
           ),
+          args: [textContent, accName],
           dismiss: Utils.prepareDismissal(
             `LABEL_IN_NAME ${$el.tagName + $el.id + $el.className + accName}`,
           ),
@@ -294,6 +297,7 @@ export default function checkDeveloper() {
               Lang._('BTN_ROLE_IN_NAME') + Lang._('ACC_NAME_TIP') + Lang._('BTN_TIP'),
             accName,
           ),
+          args: [accName],
           dismiss: Utils.prepareDismissal(
             `BTN_ROLE_IN_NAME ${$el.tagName + $el.id + $el.className + accName}`,
           ),
@@ -310,11 +314,16 @@ export default function checkDeveloper() {
   if (State.option.checks.UNCONTAINED_LI) {
     Elements.Found.Lists.forEach(($el) => {
       if (!$el.closest('ul, ol, menu')) {
+        const text = Utils.getText($el);
         State.results.push({
           test: 'UNCONTAINED_LI',
           element: $el,
           type: State.option.checks.UNCONTAINED_LI.type || 'error',
-          content: Lang.sprintf(State.option.checks.UNCONTAINED_LI.content || 'UNCONTAINED_LI'),
+          content: Lang.sprintf(
+            State.option.checks.UNCONTAINED_LI.content || 'UNCONTAINED_LI',
+            text,
+          ),
+          args: [text],
           dismiss: Utils.prepareDismissal(`UNCONTAINED_LI ${$el.textContent}`),
           dismissAll: State.option.checks.UNCONTAINED_LI.dismissAll ? 'UNCONTAINED_LI' : false,
           developer: State.option.checks.UNCONTAINED_LI.developer || true,

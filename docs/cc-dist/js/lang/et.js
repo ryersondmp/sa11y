@@ -251,7 +251,8 @@ const et = {
     QA_JUSTIFY: "Vältige õigustatud teksti kasutamist, mis on joondatud nii vasakule kui ka paremale äärele. See võib olla raskesti loetav mõnele inimesele ebaühtlaste sõnavahede tõttu. Kasutage vasakule joondatud teksti parema loetavuse saavutamiseks.",
     QA_SMALL_TEXT: "Väikest teksti on raskem lugeda, eriti inimestel, kellel on nägemishäired. Parema loetavuse tagamiseks vältige väiksemate fontide kasutamist kui vaikefondi suurus.",
     // Shared
-    ACC_NAME: "<strong {B}>Ligipääsetav nimi</strong> %(TEXT)",
+    ACC_NAME: "<strong {B}>Ligipääsetav nimi</strong> <strong {C}>%(TEXT)</strong>",
+    LINK_TEXT: "<strong {B}>Lingi tekst</strong> <strong {C}>%(TEXT)</strong>",
     ACC_NAME_TIP: '<hr><strong>Nõuanne!</strong> "Ligipääsetav nimi" on lõplik silt, mis edastatakse abivahendeid kasutavatele inimestele ja mille arvutamine toimub ARIA kaudu. See aitab neil mõista lingi või nupu eesmärki.',
     HIDDEN_FOCUSABLE: 'Link või nupp on <code>aria-hidden=&quot;true&quot;</code>, kuid on endiselt klaviatuurilt fookustatav. Kui kavatsete peita dubleeritud lingi või nupu, lisage ka <code>tabindex=&quot;-1&quot;</code>. Vastasel juhul ei tohiks <code>aria-hidden=&quot;true&quot;</code> kasutada elementidel, mis saavad fookust. <hr> Lisateave <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">aria-hidden atribuudi kohta.</a>',
     // Developer
@@ -272,7 +273,7 @@ const et = {
     BTN: "nupp",
     BTN_TIP: 'Õpi, kuidas teha <a href="https://www.sarasoueidan.com/blog/accessible-icon-buttons/">ligipääsetav nupp.</a>',
     BTN_ROLE_IN_NAME: 'Ära lisa sõna "nupp" nupu nimesse. Ekraani lugejad edastavad juba elemendi rolli lisaks selle nimele.',
-    LABEL_IN_NAME: "Selle elemendi nähtav tekst näib olevat erinev ligipääsetavast nimest, mis võib tekitada segadust abivahendite kasutajatele. Palun vaata üle: <hr> <strong {B}>Ligipääsetav nimi</strong> <strong {C}>%(TEXT)</strong>",
+    LABEL_IN_NAME: "Selle elemendi nähtav tekst näib olevat erinev ligipääsetavast nimest, mis võib tekitada segadust abivahendite kasutajatele. Palun vaata üle: <hr> <strong {B}>Tekst</strong> <strong {C}>%(TEXT)</strong> <hr> <strong {B}>Ligipääsetav nimi</strong> <strong {C}>%(TEXT)</strong>",
     LINK_MAYBE_BUTTON: 'Sellel lingil on vigane sihtkoht ja selle juurdepääsetav nimi sisaldab sõna "<strong>%(NAME)</strong>". See viitab sellele, že tegu ei pruugi üldse olla lingiga, vaid see juhib hoopis mingit skriptitud käitumist lehel. Parandamiseks asendage link <a href="https://www.w3.org/WAI/ARIA/apg/patterns/button/">juurdepääsetava nupuga</a> või parandage lingi sihtkoht. <hr> <strong>Nõuanne!</strong> Abitehnoloogiad käsitlevad nuppe ja linke erinevalt. Õige HTML-elemendi kasutamine tagab, et kasutajad teavad, milliseid kiirklahve kasutada ja milline tegevus käivitub.',
     POTENTIAL_UI_ELEMENTS: ["menüü", "sulge", "lülita", "ava", "laienda", "ahenda", "järgmine", "eelmine", "mängi", "paus", "alammenüü", "näita", "peida", "rippmenüü", "tagasi", "edasi", "jäta vahele", "esita", "tühista", "salvesta", "muuda", "kustuta", "eemalda", "otsi", "filtreeri", "sorteeri", "peata", "vaigista", "lülita heli sisse", "täisekraan", "minimeeri", "maksimeeri"],
     // Tables

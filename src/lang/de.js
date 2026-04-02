@@ -386,7 +386,8 @@ export default {
       'Kleiner Text ist schwieriger zu lesen, insbesondere für Menschen mit Sehbehinderungen. Um eine bessere Lesbarkeit zu gewährleisten, vermeiden Sie die Verwendung von Schriftgrößen, die kleiner als die Standardeinstellung sind.',
 
     // Shared
-    ACC_NAME: '<strong {B}>Zugänglicher Name</strong> %(TEXT)',
+    LINK_TEXT: '<strong {B}>Linktext</strong> <strong {C}>%(TEXT)</strong>',
+    ACC_NAME: '<strong {B}>Zugänglicher Name</strong> <strong {C}>%(TEXT)</strong>',
     ACC_NAME_TIP:
       '<hr> <strong>Hinweis!</strong> Der "zugängliche Name" ist das endgültige Etikett, das an Personen kommuniziert wird, die Hilfstechnologien verwenden. Dies hilft ihnen, den Zweck des Links oder der Schaltfläche zu verstehen.',
     HIDDEN_FOCUSABLE:
@@ -423,7 +424,7 @@ export default {
     BTN_ROLE_IN_NAME:
       'Fügen Sie das Wort „Schaltfläche“ nicht in den Namen einer Schaltfläche ein. Bildschirmlesegeräte geben bereits die Rolle eines Elements zusätzlich zu seinem Namen an.',
     LABEL_IN_NAME:
-      'Der sichtbare Text dieses Elements scheint sich vom zugänglichen Namen zu unterscheiden, was für Benutzer von Hilfstechnologien verwirrend sein kann. Bitte überprüfen: <hr> <strong {B}>Zugänglicher Name</strong> <strong {C}>%(TEXT)</strong>',
+      'Der sichtbare Text dieses Elements scheint sich vom zugänglichen Namen zu unterscheiden, was für Benutzer von Hilfstechnologien verwirrend sein kann. Bitte überprüfen: <hr> <strong {B}>Text</strong> <strong {C}>%(TEXT)</strong> <hr> <strong {B}>Zugänglicher Name</strong> <strong {C}>%(TEXT)</strong>',
     LINK_MAYBE_BUTTON: 'Dieser Link hat ein ungültiges Ziel und der barrierefreie Name enthält das Wort „<strong>%(NAME)</strong>“. Dies deutet darauf hin, dass es sich möglicherweise gar nicht um einen Link handelt, sondern stattdessen ein skriptgesteuertes Verhalten auf der Seite steuert. Um dies zu beheben, ersetzen Sie den Link durch eine <a href="https://www.w3.org/WAI/ARIA/apg/patterns/button/">barrierefreie Schaltfläche</a> oder korrigieren Sie das Ziel des Links. <hr> <strong>Tipp!</strong> Hilfsmittel behandeln Schaltflächen und Links unterschiedlich. Die Verwendung des richtigen HTML-Elements stellt sicher, dass die Benutzer wissen, welche Tastenkombinationen sie verwenden müssen und welche Aktion ausgelöst wird.',
     POTENTIAL_UI_ELEMENTS: ['Menü', 'Schließen', 'Umschalten', 'Öffnen', 'Erweitern', 'Reduzieren', 'Weiter', 'Zurück', 'Abspielen', 'Pause', 'Untermenü', 'Anzeigen', 'Ausblenden', 'Dropdown', 'Zurück', 'Vorwärts', 'Überspringen', 'Absenden', 'Abbrechen', 'Speichern', 'Bearbeiten', 'Löschen', 'Entfernen', 'Suche', 'Filter', 'Sortieren', 'Stopp', 'Stummschalten', 'Ton an', 'Vollbild', 'Minimieren', 'Maximieren'],
 

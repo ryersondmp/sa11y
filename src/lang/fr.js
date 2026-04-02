@@ -342,7 +342,8 @@ export default {
       "Le texte petit est plus difficile à lire, en particulier pour les personnes malvoyantes. Pour garantir une meilleure lisibilité, évitez d'utiliser des tailles de police inférieures à la valeur par défaut.",
 
     // Shared
-    ACC_NAME: '<strong {B}>Nom accessible</strong> %(TEXT)',
+    LINK_TEXT: '<strong {B}>Texte du lien</strong> <strong {C}>%(TEXT)</strong>',
+    ACC_NAME: '<strong {B}>Nom accessible</strong> <strong {C}>%(TEXT)</strong>',
     ACC_NAME_TIP:
       '<hr><strong>Astuce !</strong> Le "nom accessible" est l\'étiquette finale qui est communiquée aux personnes utilisant des technologies d\'assistance et qui est calculée par ARIA. Cela les aide à comprendre le but du lien ou du bouton.',
     HIDDEN_FOCUSABLE:
@@ -378,7 +379,7 @@ export default {
     BTN_ROLE_IN_NAME:
       'N’incluez pas le mot « bouton » dans le nom d’un bouton. Les lecteurs d’écran annoncent déjà le rôle d’un élément en plus de son nom.',
     LABEL_IN_NAME:
-      'Le texte visible pour cet élément semble différent du nom accessible, ce qui peut entraîner de la confusion pour les utilisateurs des technologies d’assistance. Veuillez vérifier : <hr> <strong {B}>Nom Accessible</strong> <strong {C}>%(TEXT)</strong>',
+      'Le texte visible pour cet élément semble différent du nom accessible, ce qui peut entraîner de la confusion pour les utilisateurs des technologies d’assistance. Veuillez vérifier : <hr> <strong {B}>Texte</strong> <strong {C}>%(TEXT)</strong> <hr> <strong {B}>Nom Accessible</strong> <strong {C}>%(TEXT)</strong>',
     LINK_MAYBE_BUTTON: 'Ce lien a une cible non valide et le nom accessible contient le mot "<strong>%(NAME)</strong>". Cela suggère qu\'il ne s\'agit peut-être pas d\'un lien du tout, mais qu\'il contrôle plutôt un comportement scripté sur la page. Pour corriger cela, remplacez le lien par un <a href="https://www.w3.org/WAI/ARIA/apg/patterns/button/">bouton accessible</a>, ou corrigez la destination du lien. <hr> <strong>Astuce !</strong> Les technologies d\'assistance traitent les boutons et les liens différemment. L\'utilisation du bon élément HTML garantit que les utilisateurs savent quels raccourcis clavier utiliser et quelle action sera déclenchée.',
     POTENTIAL_UI_ELEMENTS: ['menu', 'fermer', 'basculer', 'ouvrir', 'développer', 'réduire', 'suivant', 'précédent', 'lire', 'pause', 'sous-menu', 'afficher', 'masquer', 'déroulant', 'retour', 'avancer', 'ignorer', 'envoyer', 'annuler', 'enregistrer', 'modifier', 'supprimer', 'retirer', 'rechercher', 'filtrer', 'trier', 'arrêter', 'muet', 'réactiver le son', 'plein écran', 'minimiser', 'maximiser'],
 

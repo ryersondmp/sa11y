@@ -261,7 +261,8 @@ const nl = {
     QA_JUSTIFY: "Vermijd het gebruik van uitgevulde tekst, die zowel aan de linker- als aan de rechterkant is uitgelijnd. Dit kan moeilijk te lezen zijn voor sommige mensen vanwege de ongelijke ruimtes tussen de woorden. Gebruik links uitgelijnde tekst voor betere leesbaarheid.",
     QA_SMALL_TEXT: "Kleine tekst is moeilijker te lezen, vooral voor mensen met een verminderd gezichtsvermogen. Gebruik geen lettergroottes die kleiner zijn dan de standaard, om de leesbaarheid te verbeteren.",
     // Shared
-    ACC_NAME: "<strong {B}>Toegankelijk naam</strong> %(TEXT)",
+    LINK_TEXT: "<strong {B}>Linktekst</strong> <strong {C}>%(TEXT)</strong>",
+    ACC_NAME: "<strong {B}>Toegankelijk naam</strong> <strong {C}>%(TEXT)</strong>",
     ACC_NAME_TIP: '<hr><strong>Tip!</strong> De "toegankelijke naam" is het uiteindelijke label dat wordt gecommuniceerd aan mensen die gebruik maken van ondersteunende technologie. Dit helpt hen om het doel van de link of knop te begrijpen.',
     HIDDEN_FOCUSABLE: 'De link of knop heeft <code>aria-hidden=&quot;true&quot;</code>, maar is nog steeds via het toetsenbord toegankelijk. Als u een dubbele link of knop wilt verbergen, voeg dan ook <code>tabindex=&quot;-1&quot;</code> toe. Anders moet <code>aria-hidden=&quot;true&quot;</code> niet worden gebruikt op elementen die focus kunnen ontvangen. <hr> Lees meer over het <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">aria-hidden-attribuut.</a>',
     // Developer
@@ -282,7 +283,7 @@ const nl = {
     BTN: "knop",
     BTN_TIP: 'Leer hoe u een <a href="https://www.sarasoueidan.com/blog/accessible-icon-buttons/">toegankelijke knop maakt.</a>',
     BTN_ROLE_IN_NAME: 'Gebruik het woord "knop" niet in de naam van een knop. Schermlezers vermelden al de rol van een element naast de naam.',
-    LABEL_IN_NAME: "De zichtbare tekst voor dit element lijkt te verschillen van de toegankelijke naam, wat verwarring kan veroorzaken voor gebruikers van ondersteunende technologieën. Controleer alstublieft: <hr> <strong {B}>Toegankelijke Naam</strong> <strong {C}>%(TEXT)</strong>",
+    LABEL_IN_NAME: "De zichtbare tekst voor dit element lijkt te verschillen van de toegankelijke naam, wat verwarring kan veroorzaken voor gebruikers van ondersteunende technologieën. Controleer alstublieft: <hr> <strong {B}>Tekst</strong> <strong {C}>%(TEXT)</strong> <hr> <strong {B}>Toegankelijke Naam</strong> <strong {C}>%(TEXT)</strong>",
     LINK_MAYBE_BUTTON: 'Deze link heeft een ongeldig doel en de toegankelijke naam bevat het woord "<strong>%(NAME)</strong>". Dit suggereert dat dit misschien helemaal geen link is, maar in plaats daarvan gescript gedrag op de pagina aanstuurt. Vervang de link door een <a href="https://www.w3.org/WAI/ARIA/apg/patterns/button/">toegankelijke knop</a> of corrigeer de bestemming van de link om dit op te lossen. <hr> <strong>Tip!</strong> Ondersteunende technologieën behandelen knoppen en links verschillend. Het gebruik van het juiste HTML-element zorgt ervoor dat gebruikers weten welke sneltoetsen ze moeten gebruiken en welke actie wordt geactiveerd.',
     POTENTIAL_UI_ELEMENTS: ["menu", "sluiten", "schakelen", "openen", "uitvouwen", "samenvouwen", "volgende", "vorige", "afspelen", "pauzeren", "submenu", "tonen", "verbergen", "dropdown", "terug", "vooruit", "overslaan", "verzenden", "annuleren", "opslaan", "bewerken", "verwijderen", "verwijderen", "zoeken", "filteren", "sorteren", "stoppen", "dempen", "dempen opheffen", "volledig scherm", "minimaliseren", "maximaliseren"],
     // Tables

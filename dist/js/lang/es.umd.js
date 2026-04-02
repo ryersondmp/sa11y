@@ -257,7 +257,8 @@
       QA_JUSTIFY: "Evite usar texto justificado, que se alinea tanto a los márgenes izquierdo como derecho. Esto puede ser difícil de leer para algunas personas debido a los espacios desiguales entre las palabras. Use texto alineado a la izquierda para una mejor legibilidad.",
       QA_SMALL_TEXT: "El texto pequeño es más difícil de leer, especialmente para aquellos con baja visión. Para garantizar una mejor legibilidad, evite usar tamaños de fuente más pequeños que el predeterminado.",
       // Shared
-      ACC_NAME: "<strong {B}>Nombre accesible</strong> %(TEXT)",
+      LINK_TEXT: "<strong {B}>Texto del enlace</strong> <strong {C}>%(TEXT)</strong>",
+      ACC_NAME: "<strong {B}>Nombre accesible</strong> <strong {C}>%(TEXT)</strong>",
       ACC_NAME_TIP: '<hr> <strong>Consejo!</strong> El "nombre accesible" es la etiqueta final que se comunica a las personas que utilizan tecnología de asistencia. Esto les ayuda a entender el propósito del enlace o botón.',
       HIDDEN_FOCUSABLE: 'El enlace o botón tiene <code>aria-hidden=&quot;true&quot;</code>, pero aún es accesible con el teclado. Si tiene la intención de ocultar un enlace o botón duplicado, agregue también <code>tabindex=&quot;-1&quot;</code>. De lo contrario, no debe usarse <code>aria-hidden=&quot;true&quot;</code> en elementos que puedan recibir el enfoque. <hr> Obtenga más información sobre el <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">atributo aria-hidden.</a>',
       // Developer
@@ -278,7 +279,7 @@
       BTN: "botón",
       BTN_TIP: 'Aprende a crear un <a href="https://www.sarasoueidan.com/blog/accessible-icon-buttons/">botón accesible.</a>',
       BTN_ROLE_IN_NAME: 'No incluyas la palabra "botón" en el nombre de un botón. Los lectores de pantalla ya comunican el rol de un elemento además de su nombre.',
-      LABEL_IN_NAME: "El texto visible para este elemento parece ser diferente al nombre accesible, lo que puede causar confusión para los usuarios de tecnologías de asistencia. Por favor revisa: <hr> <strong {B}>Nombre Accesible</strong> <strong {C}>%(TEXT)</strong>",
+      LABEL_IN_NAME: "El texto visible para este elemento parece ser diferente al nombre accesible, lo que puede causar confusión para los usuarios de tecnologías de asistencia. Por favor revisa: <hr> <strong {B}>Texto</strong> <strong {C}>%(TEXT)</strong> <hr> <strong {B}>Nombre Accesible</strong> <strong {C}>%(TEXT)</strong>",
       LINK_MAYBE_BUTTON: 'Este enlace tiene un destino no válido y el nombre accesible contiene la palabra "<strong>%(NAME)</strong>". Esto sugiere que tal vez no sea un enlace en absoluto y que, en su lugar, controle algún comportamiento programado en la página. Para solucionarlo, reemplace el enlace con un <a href="https://www.w3.org/WAI/ARIA/apg/patterns/button/">botón accesible</a> o corrija el destino del enlace. <hr> <strong>¡Consejo!</strong> Las tecnologías de asistencia tratan los botones y los enlaces de manera diferente. El uso del elemento HTML correcto garantiza que los usuarios sepan qué atajos de teclado usar y qué acción se activará.',
       POTENTIAL_UI_ELEMENTS: ["menú", "cerrar", "alternar", "abrir", "expandir", "contraer", "siguiente", "anterior", "reproducir", "pausar", "submenú", "mostrar", "ocultar", "desplegable", "atrás", "adelante", "omitir", "enviar", "cancelar", "guardar", "editar", "eliminar", "quitar", "buscar", "filtrar", "ordenar", "detener", "silenciar", "activar sonido", "pantalla completa", "minimizar", "maximizar"],
       // Tables

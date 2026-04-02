@@ -41,13 +41,10 @@ const getLanguageLabel = (lang) => {
   try {
     const canonicalLang = Intl.getCanonicalLocales(lang)[0];
     const baseLang = new Intl.Locale(canonicalLang).language;
-    const label = new Intl.DisplayNames(navigator.language, {
+    const label = new Intl.DisplayNames(Lang._('LANG_CODE') || navigator.language, {
       type: 'language',
     }).of(baseLang);
-
-    // sprintf will regex replace {{langAttr:}} with respective lang attribute and readable language label.
-    const browserLang = primary(navigator.language);
-    return `{{langAttr:${browserLang}|${label}}}`;
+    return label;
   } catch {
     return lang;
   }
@@ -189,7 +186,7 @@ export default async function checkPageLanguage() {
   let element = null;
   let dismiss = null;
   let confidence = null;
-  let variables = null;
+  let args = null;
 
   // Declared page language doesn't match the detected content.
   if (detectedLangCode !== declared) {
@@ -202,13 +199,13 @@ export default async function checkPageLanguage() {
     dismiss = Utils.prepareDismissal(cacheKey);
     type = detected[0].confidence >= 0.6 ? 'error' : 'warning';
     confidence = detected[0].confidence;
-    variables = [detectedLangCode, declared];
+    args = [detectedLangCode, declared];
 
     setCache({
       key: cacheKey,
       test: test,
       type: type,
-      variables: variables,
+      args: args,
       confidence: confidence,
       textLength: pageText.length,
       declared: declared,
@@ -276,7 +273,7 @@ export default async function checkPageLanguage() {
             getLanguageLabel(langAttribute),
             textString,
           );
-          variables = [nodeLang, langAttribute, selector];
+          args = [nodeLang, langAttribute, selector];
 
           // 2. No specific 'lang' attribute, but text contradicts page language.
         } else if (!langAttribute && nodeLang !== declared) {
@@ -289,7 +286,7 @@ export default async function checkPageLanguage() {
               getLanguageLabel(declared),
               node.alt,
             );
-            variables = [nodeLang, declared, node.alt];
+            args = [nodeLang, declared, node.alt];
           } else {
             // Text node is different language.
             test = 'LANG_OF_PARTS';
@@ -299,7 +296,7 @@ export default async function checkPageLanguage() {
               getLanguageLabel(nodeLang),
               textString,
             );
-            variables = [declared, nodeLang, selector];
+            args = [declared, nodeLang, selector];
           }
           // 3. No conflict detected.
         } else {
@@ -318,7 +315,7 @@ export default async function checkPageLanguage() {
           test: test,
           element: selector,
           type: type,
-          variables: variables,
+          args: args,
           confidence: nodeConfidence,
           textLength: pageText.length,
           declared: declared,

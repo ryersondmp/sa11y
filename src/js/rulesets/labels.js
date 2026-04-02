@@ -130,6 +130,7 @@ export default function checkLabels() {
             content: State.option.checks.LABELS_ARIA_LABEL_INPUT.content
               ? Lang.sprintf(State.option.checks.LABELS_ARIA_LABEL_INPUT.content, inputName)
               : Lang.sprintf(Lang._('LABELS_ARIA_LABEL_INPUT') + Lang._('ACC_NAME_TIP'), inputName),
+            args: [inputName],
             dismiss: Utils.prepareDismissal(`LABELS_ARIA_LABEL_INPUT ${type + inputName}`),
             dismissAll: State.option.checks.LABELS_ARIA_LABEL_INPUT.dismissAll
               ? 'LABELS_ARIA_LABEL_INPUT'
@@ -164,6 +165,7 @@ export default function checkLabels() {
               State.option.checks.LABELS_NO_FOR_ATTRIBUTE.content || 'LABELS_NO_FOR_ATTRIBUTE',
               id,
             ),
+            args: [id],
             dismiss: Utils.prepareDismissal(`LABELS_NO_FOR_ATTRIBUTE ${type + inputName}`),
             dismissAll: State.option.checks.LABELS_NO_FOR_ATTRIBUTE.dismissAll
               ? 'LABELS_NO_FOR_ATTRIBUTE'

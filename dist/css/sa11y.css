@@ -7,6 +7,10 @@
   outline: 5px solid var(--sa11y-error) !important;
 }
 
+a[data-sa11y-error]:empty {
+  margin: 1px;
+}
+
 [data-sa11y-warning]:not([data-sa11y-error]) {
   outline-offset: 2px;
   outline: 5px solid var(--sa11y-warning) !important;

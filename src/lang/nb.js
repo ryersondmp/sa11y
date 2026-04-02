@@ -338,7 +338,8 @@ export default {
       'Liten tekst er vanskeligere å lese, spesielt for de med dårlig syn. For å sikre bedre lesbarhet, unngå å bruke skrifttyper mindre enn standard.',
 
     // Shared
-    ACC_NAME: '<strong {B}>Tilgjengelig navn</strong> %(TEXT)',
+    LINK_TEXT: '<strong {B}>Lenketekst</strong> <strong {C}>%(TEXT)</strong>',
+    ACC_NAME: '<strong {B}>Tilgjengelig navn</strong> <strong {C}>%(TEXT)</strong>',
     ACC_NAME_TIP:
       '<hr><strong>Tips!</strong> "Tilgjengelig navn" er den endelige etiketten som kommuniseres til personer som bruker hjelpemidler, og beregnes av ARIA. Dette hjelper dem med å forstå formålet med lenken eller knappen.',
     HIDDEN_FOCUSABLE:
@@ -374,7 +375,7 @@ export default {
     BTN_ROLE_IN_NAME:
       'Ikke inkluder ordet "knapp" i navnet på en knapp. Skjermlesere kunngjør allerede elementets rolle i tillegg til navnet.',
     LABEL_IN_NAME:
-      'Den synlige teksten for dette elementet ser ut til å være forskjellig fra det tilgjengelige navnet, noe som kan føre til forvirring for brukere av hjelpemiddelsteknologi. Vennligst sjekk: <hr> <strong {B}>Tilgjengelig Navn</strong> <strong {C}>%(TEXT)</strong>',
+      'Den synlige teksten for dette elementet ser ut til å være forskjellig fra det tilgjengelige navnet, noe som kan føre til forvirring for brukere av hjelpemiddelsteknologi. Vennligst sjekk: <hr> <strong {B}>Tekst</strong> <strong {C}>%(TEXT)</strong> <hr> <strong {B}>Tilgjengelig Navn</strong> <strong {C}>%(TEXT)</strong>',
     LINK_MAYBE_BUTTON: 'Denne lenken har et ugyldig mål, og det tilgjengelige navnet inneholder ordet "<strong>%(NAME)</strong>". Dette tyder på at dette kanskje ikke er en lenke i det hele tatt, men i stedet kontrollerer en skriptet oppførsel på siden. For å fikse dette, erstatt lenken med en <a href="https://www.w3.org/WAI/ARIA/apg/patterns/button/">tilgjengelig knapp</a>, eller korriger lenkens destinasjon. <hr> <strong>Tips!</strong> Hjelpemiddelteknologi behandler knapper og lenker forskjellig. Bruk av riktig HTML-element sikrer at brukerne vet hvilke hurtigtaster de skal bruke og hvilken handling som vil bli utløst.',
     POTENTIAL_UI_ELEMENTS: ['meny', 'lukk', 'veksle', 'åpne', 'utvid', 'skjul', 'neste', 'forrige', 'spill av', 'pause', 'undermeny', 'vis', 'skjul', 'rullegardin', 'tilbake', 'fremover', 'hopp over', 'send inn', 'avbryt', 'lagre', 'rediger', 'slett', 'fjern', 'søk', 'filter', 'sorter', 'stopp', 'demp', 'opphev demping', 'fullskjerm', 'minimer', 'maksimer'],
 

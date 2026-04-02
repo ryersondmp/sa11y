@@ -229,6 +229,13 @@ div {
     }
   }
 
+  /* We do not want to bold the user submitted content of "Good" annotations. */
+  .good {
+    .colour {
+      font-weight: normal;
+    }
+  }
+
   strong {
     font-weight: 600;
   }

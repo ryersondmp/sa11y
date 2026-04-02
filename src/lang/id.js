@@ -338,7 +338,8 @@ export default {
       'Teks kecil lebih sulit dibaca, terutama bagi mereka yang memiliki penglihatan rendah. Untuk memastikan keterbacaan yang lebih baik, hindari menggunakan ukuran font yang lebih kecil dari ukuran default.',
 
     // Shared
-    ACC_NAME: '<strong {B}>Nama yang dapat diakses</strong> %(TEXT)',
+    LINK_TEXT: '<strong {B}>Teks tautan</strong> <strong {C}>%(TEXT)</strong>',
+    ACC_NAME: '<strong {B}>Nama yang dapat diakses</strong> <strong {C}>%(TEXT)</strong>',
     ACC_NAME_TIP:
       '<hr><strong>Tips!</strong> "Nama yang dapat diakses" adalah label akhir yang dikomunikasikan kepada orang-orang yang menggunakan teknologi bantuan dan dihitung oleh ARIA. Ini membantu mereka memahami tujuan tautan atau tombol.',
     HIDDEN_FOCUSABLE:
@@ -375,7 +376,7 @@ export default {
     BTN_ROLE_IN_NAME:
       'Jangan sertakan kata "tombol" dalam nama tombol. Pembaca layar sudah menyampaikan peran elemen selain namanya.',
     LABEL_IN_NAME:
-      'Teks yang terlihat untuk elemen ini tampaknya berbeda dari nama aksesibel, yang dapat menyebabkan kebingungan bagi pengguna teknologi bantuan. Harap periksa: <hr> <strong {B}>Nama Aksesibel</strong> <strong {C}>%(TEXT)</strong>',
+      'Teks yang terlihat untuk elemen ini tampaknya berbeda dari nama aksesibel, yang dapat menyebabkan kebingungan bagi pengguna teknologi bantuan. Harap periksa: <hr> <strong {B}>Teks</strong> <strong {C}>%(TEXT)</strong> <hr> <strong {B}>Nama Aksesibel</strong> <strong {C}>%(TEXT)</strong>',
     LINK_MAYBE_BUTTON: 'Tautan ini memiliki target yang tidak valid, dan nama yang dapat diakses mengandung kata "<strong>%(NAME)</strong>". Ini menunjukkan bahwa ini mungkin bukan tautan sama sekali, melainkan mengontrol beberapa perilaku skrip di halaman. Untuk memperbaikinya, ganti tautan dengan <a href="https://www.w3.org/WAI/ARIA/apg/patterns/button/">tombol yang dapat diakses</a>, atau perbaiki tujuan tautan. <hr> <strong>Tips!</strong> Teknologi asistif memperlakukan tombol dan tautan secara berbeda. Menggunakan elemen HTML yang benar memastikan pengguna mengetahui pintasan keyboard mana yang harus digunakan dan tindakan apa yang akan dipicu.',
     POTENTIAL_UI_ELEMENTS: ['menu', 'tutup', 'alihkan', 'buka', 'perluas', 'ciutkan', 'berikutnya', 'sebelumnya', 'putar', 'jeda', 'submenu', 'tampilkan', 'sembunyikan', 'dropdown', 'kembali', 'maju', 'lewati', 'kirim', 'batal', 'simpan', 'edit', 'hapus', 'hapus', 'cari', 'filter', 'urutkan', 'berhenti', 'bisukan', 'bunyikan', 'layar penuh', 'minimalkan', 'maksimalkan'],
 

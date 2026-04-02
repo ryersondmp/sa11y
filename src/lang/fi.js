@@ -335,7 +335,8 @@ export default {
       'Pientä tekstiä on vaikeampi lukea, erityisesti heikkonäköisille. Varmistaaksesi paremman luettavuuden, vältä käyttämästä oletusarvoa pienempiä kirjasinkokoja.',
 
     // Shared
-    ACC_NAME: '<strong {B}>Saavutettava nimi</strong> %(TEXT)',
+    ACC_NAME: '<strong {B}>Saavutettava nimi</strong> <strong {C}>%(TEXT)</strong>',
+    LINK_TEXT: '<strong {B}>Linkkiteksti</strong> <strong {C}>%(TEXT)</strong>',
     ACC_NAME_TIP:
       '<hr> <strong>Vinkki!</strong> "Saavutettava nimi" on lopullinen etiketti, joka viestitään apuvälineitä käyttävien henkilöiden kanssa ja joka lasketaan ARIA:n avulla. Tämä auttaa heitä ymmärtämään linkin tai painikkeen tarkoituksen.',
     HIDDEN_FOCUSABLE:
@@ -372,7 +373,7 @@ export default {
     BTN_ROLE_IN_NAME:
       'Älä sisällytä sanaa "painike" painikkeen nimeen. Ruudunlukijat ilmoittavat jo elementin roolin sen nimen lisäksi.',
     LABEL_IN_NAME:
-      'Tämän elementin näkyvä teksti näyttää olevan erilainen kuin saavutettava nimi, mikä saattaa aiheuttaa hämmennystä avustavien teknologioiden käyttäjille. Tarkista: <hr> <strong {B}>Saavutettava nimi</strong> <strong {C}>%(TEXT)</strong>',
+      'Tämän elementin näkyvä teksti näyttää olevan erilainen kuin saavutettava nimi, mikä saattaa aiheuttaa hämmennystä avustavien teknologioiden käyttäjille. Tarkista: <hr> <strong {B}>Teksti</strong> <strong {C}>%(TEXT)</strong> <hr> <strong {B}>Saavutettava nimi</strong> <strong {C}>%(TEXT)</strong>',
     LINK_MAYBE_BUTTON: 'Tällä linkillä on virheellinen kohde, ja saavutettava nimi sisältää sanan "<strong>%(NAME)</strong>". Tämä viittaa siihen, ettei kyseessä välttämättä ole linkki lainkaan, vaan se ohjaa jotakin sivun skriptattua toimintaa. Korjaa ongelma korvaamalla linkki <a href="https://www.w3.org/WAI/ARIA/apg/patterns/button/">saavutettavalla painikkeella</a> tai korjaamalla linkin kohde. <hr> <strong>Vinkki!</strong> Avustavat teknologiat käsittelevät painikkeita ja linkkejä eri tavalla. Oikean HTML-elementin käyttö varmistaa, että käyttäjät tietävät, mitä pikanäppäimiä käyttää ja mikä toiminto käynnistyy.',
     POTENTIAL_UI_ELEMENTS: ['valikko', 'sulje', 'vaihda', 'avaa', 'laajenna', 'supista', 'seuraava', 'edellinen', 'toista', 'tauko', 'alavalikko', 'näytä', 'piilota', 'pudotusvalikko', 'takaisin', 'eteenpäin', 'ohita', 'lähetä', 'peruuta', 'tallenna', 'muokkaa', 'poista', 'poista', 'etsi', 'suodata', 'lajittele', 'pysäytä', 'vaimenna', 'poista vaimennus', 'koko näyttö', 'minimoi', 'maksimoi'],
 

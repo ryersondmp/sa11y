@@ -339,7 +339,8 @@ export default {
       'O texto pequeno é mais difícil de ler, especialmente para pessoas com baixa visão. Para garantir melhor legibilidade, evite usar tamanhos de fonte menores que o padrão.',
 
     // Shared
-    ACC_NAME: '<strong {B}>Nome acessível</strong> %(TEXT)',
+    LINK_TEXT: '<strong {B}>Texto da ligação</strong> <strong {C}>%(TEXT)</strong>',
+    ACC_NAME: '<strong {B}>Nome acessível</strong> <strong {C}>%(TEXT)</strong>',
     ACC_NAME_TIP:
       '<hr><strong>Dica!</strong> O "nome acessível" é o rótulo final que é comunicado às pessoas que utilizam tecnologia assistiva e é calculado pelo ARIA. Isso ajuda a compreender o propósito do link ou botão.',
     HIDDEN_FOCUSABLE:
@@ -375,7 +376,7 @@ export default {
     BTN_ROLE_IN_NAME:
       'Não inclua a palavra "botão" no nome de um botão. Os leitores de tela já informam o papel do elemento além do seu nome.',
     LABEL_IN_NAME:
-      'O texto visível deste elemento parece ser diferente do nome acessível, o que pode causar confusão para os usuários de tecnologias assistivas. Por favor, reveja: <hr> <strong {B}>Nome Acessível</strong> <strong {C}>%(TEXT)</strong>',
+      'O texto visível deste elemento parece ser diferente do nome acessível, o que pode causar confusão para os usuários de tecnologias assistivas. Por favor, reveja: <hr> <strong {B}>Texto</strong> <strong {C}>%(TEXT)</strong> <hr> <strong {B}>Nome Acessível</strong> <strong {C}>%(TEXT)</strong>',
     LINK_MAYBE_BUTTON: 'Esta ligação tem um destino inválido e o nome acessível contém a palavra "<strong>%(NAME)</strong>". Isto sugere que pode não ser uma ligação, mas sim um controlo de comportamento programado na página. Para corrigir, substitua a ligação por um <a href="https://www.w3.org/WAI/ARIA/apg/patterns/button/">botão acessível</a> ou corrija o destino da ligação. <hr> <strong>Dica!</strong> As tecnologias de apoio tratam botões e ligações de forma diferente. A utilização do elemento HTML correto garante que os utilizadores saibam quais os atalhos de teclado a utilizar e que ação será desencadeada.',
     POTENTIAL_UI_ELEMENTS: ['menu', 'fechar', 'alternar', 'abrir', 'expandir', 'recolher', 'seguinte', 'anterior', 'reproduzir', 'pausa', 'submenu', 'mostrar', 'ocultar', 'pendente', 'voltar', 'avançar', 'saltar', 'submeter', 'cancelar', 'guardar', 'editar', 'eliminar', 'remover', 'procurar', 'filtrar', 'ordenar', 'parar', 'mudo', 'ativar som', 'ecrã inteiro', 'minimizar', 'maximizar'],
 
