@@ -303,7 +303,7 @@ export default async function checkPageLanguage() {
           continue;
         }
 
-        // Set shared variables.
+        // Set shared values.
         element = node;
         type = nodeConfidence >= 0.9 ? 'error' : 'warning';
         dismiss = Utils.prepareDismissal(nodeText.slice(0, 256));

@@ -1,6 +1,6 @@
 /*!
       * Sa11y, the accessibility quality assurance assistant.
-      * @version 4.5.0
+      * @version 5.0.0
       * @author Adam Chaboryk
       * @license GPL-2.0-or-later
       * @copyright © 2020 - 2026 Toronto Metropolitan University.
@@ -1662,7 +1662,7 @@ ${JSON.stringify(State.option)}
 
 ## Details
 - **URL:** ${url2}
-- **Version:** ${"4.5.0"}
+- **Version:** ${"5.0.0"}
 
 ## Comments
 `;
@@ -1681,7 +1681,7 @@ ${JSON.stringify(State.option)}
       this.error.stack,
       document.createElement("br"),
       document.createElement("br"),
-      `Version: ${"4.5.0"}`,
+      `Version: ${"5.0.0"}`,
       document.createElement("br"),
       `URL: ${url2}`,
       document.createElement("br"),
@@ -6511,8 +6511,7 @@ async function checkPageLanguage() {
   if (cached && !isStale) {
     if (cached.test) {
       const getElement = cached.element ? find(cached.element, "root")[0] : null;
-      console.log();
-      const processVariables = cached.args.map((arg) => {
+      const processArgs = cached.args.map((arg) => {
         if (typeof arg === "string" && arg.length >= 5) {
           try {
             const targetEl = find(arg, "root")[0];
@@ -6528,7 +6527,7 @@ async function checkPageLanguage() {
       const contentContainer = document.createElement("div");
       const mainContent = Lang.sprintf(
         State.option.checks[cached.test].content || [cached.test],
-        ...processVariables
+        ...processArgs
       );
       contentContainer.append(mainContent);
       if (cached.element) {
@@ -9602,7 +9601,7 @@ class ControlPanel extends HTMLElement {
     const container = document.createElement("div");
     container.setAttribute("id", "container");
     container.setAttribute("role", "region");
-    container.setAttribute("data-sa11y-version", "4.5.0");
+    container.setAttribute("data-sa11y-version", "5.0.0");
     container.setAttribute("lang", Lang._("LANG_CODE"));
     container.setAttribute("aria-label", Lang._("CONTAINER_LABEL"));
     container.setAttribute("dir", Constants.Global.langDirection);
