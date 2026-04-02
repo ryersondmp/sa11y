@@ -227,7 +227,7 @@ export default {
       'Il link si apre in una nuova scheda o finestra senza preavviso. Ciò può disorientare, soprattutto le persone che hanno difficoltà a percepire i contenuti visivi. In secondo luogo, non è sempre una buona pratica controllare l\'esperienza di una persona o prendere decisioni al posto suo. Indicate che il link si apre in una nuova finestra all\'interno del testo del link. <hr> <strong>Tip!</strong> Imparate le migliori pratiche: <a href="https://www.nngroup.com/articles/new-browser-windows-and-tabs/">aprire i link in nuove finestre e schede del browser.</a>',
     LINK_FILE_EXT:
       'Il link punta a un PDF o a un file scaricabile (ad es. MP3, Zip, Word Doc) senza alcun avviso. Indicate il tipo di file nel testo del link. Se si tratta di un file di grandi dimensioni, considerate la possibilità di includere la dimensione del file. <hr> <strong>Esempio:</strong> Relazione esecutiva (PDF, 3MB)',
-    LINK_IDENTICAL_NAME: 'Più link in questa pagina utilizzano lo stesso testo ma puntano a destinazioni diverse. Ciò può causare confusione agli utenti di tecnologie assistive. Per risolvere il problema, rendi il testo del link più descrittivo: <strong {C}>%(TEXT)</strong>',
+    LINK_IDENTICAL_NAME: 'Più link in questa pagina utilizzano lo stesso testo ma puntano a destinazioni diverse. Ciò può causare confusione agli utenti di tecnologie assistive. Per risolvere il problema, rendi il testo del link più descrittivo.',
     LINK_UNPRONOUNCEABLE:
       'Il testo del collegamento contiene solo simboli. Se ritieni che questo collegamento sia un errore dovuto a un bug di copia/incolla, valuta di eliminarlo.',
 

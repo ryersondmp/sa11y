@@ -229,7 +229,7 @@ export default {
       'Łącze otwiera się na nowej karcie lub w oknie bez ostrzeżenia. Może to być dezorientujące, szczególnie dla osób, które mają problemy z&nbsp;odbiorem treści wizualnych. Ponadto, nie zawsze dobrym zwyczajem jest kontrolowanie czyichś doświadczeń lub podejmowanie decyzji za kogoś. Wskaż w tekście łącza, że łącze otwiera się w nowym oknie. <hr> <strong>Porada!</strong> Poznaj najlepsze praktyki: <a href="https://www.nngroup.com/articles/new-browser-windows-and-tabs/">otwieranie łączy w nowych oknach i kartach przeglądarki.</a>',
     LINK_FILE_EXT:
       'Łącze wskazuje  bez ostrzeżenia na plik PDF lub plik do pobrania (np. MP3, zip, doc). Wskaż typ pliku w tekście łącza. Jeśli jest to duży plik, rozważ podanie jego rozmiaru. <hr> <strong>Przykład:</strong> Raport końcowy (PDF, 3MB)',
-    LINK_IDENTICAL_NAME: 'Wiele linków na tej stronie używa tego samego tekstu, ale prowadzi do różnych miejsc. Może to wprowadzać w błąd użytkowników technologii wspomagających. Aby to naprawić, nadaj temu linkowi bardziej opisowy tekst: <strong {C}>%(TEXT)</strong>',
+    LINK_IDENTICAL_NAME: 'Wiele linków na tej stronie używa tego samego tekstu, ale prowadzi do różnych miejsc. Może to wprowadzać w błąd użytkowników technologii wspomagających. Aby to naprawić, nadaj temu linkowi bardziej opisowy tekst.',
     LINK_UNPRONOUNCEABLE:
       'Tekst linku zawiera tylko symbole. Jeśli uważasz, że ten link jest błędem wynikającym z kopiowania/wklejania, rozważ jego usunięcie.',
 

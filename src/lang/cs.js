@@ -230,7 +230,7 @@ export default {
       'Odkaz se bez varování otevře v nové kartě nebo okně. To může být dezorientující, zejména pro lidi, kteří mají potíže s vnímáním vizuálního obsahu. Za druhé, není vždy vhodné kontrolovat něčí zážitek nebo rozhodovat za něj. Uveďte, že se odkaz otevírá v novém okně, v textu odkazu<hr><strong>Tip!</strong> Naučte se osvědčené postupy: <a href="https://www.nngroup.com/articles/new-browser-windows-and-tabs/">otevírání odkazů v nových oknech a kartách prohlížeče.</a>',
     LINK_FILE_EXT:
       'Odkaz odkazuje na soubor PDF nebo soubor ke stažení (např. MP3, Zip, dokument Word) bez varování. Typ souboru uveďte v textu odkazu. Pokud se jedná o velký soubor, zvažte uvedení jeho velikosti.<hr><strong>Příklad:</strong> Výkonná zpráva (PDF, 3 MB)',
-    LINK_IDENTICAL_NAME: 'Několik odkazů na této stránce používá stejný text, ale směřují na různá místa. To může zmást uživatele asistivních technologií. Chcete-li to napravit, upravte text tohoto odkazu tak, aby byl popisnější: <strong {C}>%(TEXT)</strong>',
+    LINK_IDENTICAL_NAME: 'Několik odkazů na této stránce používá stejný text, ale směřují na různá místa. To může zmást uživatele asistivních technologií. Chcete-li to napravit, upravte text tohoto odkazu tak, aby byl popisnější.',
     LINK_UNPRONOUNCEABLE:
       'Text odkazu obsahuje pouze symboly. Pokud si myslíte, že je tento odkaz chybný kvůli chybě při kopírování/vkládání, zvažte jeho odstranění.',
 

@@ -6511,10 +6511,11 @@ async function checkPageLanguage() {
   if (cached && !isStale) {
     if (cached.test) {
       const getElement = cached.element ? find(cached.element, "root")[0] : null;
-      const processVariables = cached.variables.map((variable) => {
-        if (typeof variable === "string" && variable.length >= 5) {
+      console.log();
+      const processVariables = cached.args.map((arg) => {
+        if (typeof arg === "string" && arg.length >= 5) {
           try {
-            const targetEl = find(variable, "root")[0];
+            const targetEl = find(arg, "root")[0];
             if (targetEl) {
               return getText(targetEl);
             }
@@ -6522,7 +6523,7 @@ async function checkPageLanguage() {
             return Lang._("UNKNOWN");
           }
         }
-        return getLanguageLabel(variable);
+        return getLanguageLabel(arg);
       });
       const contentContainer = document.createElement("div");
       const mainContent = Lang.sprintf(

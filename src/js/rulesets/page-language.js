@@ -125,11 +125,11 @@ export default async function checkPageLanguage() {
   if (cached && !isStale) {
     if (cached.test) {
       const getElement = cached.element ? find(cached.element, 'root')[0] : null;
-      const processVariables = cached.variables.map((variable) => {
+      const processArgs = cached.args.map((arg) => {
         // If it's a string and long enough to potentially be a selector, we grab the text.
-        if (typeof variable === 'string' && variable.length >= 5) {
+        if (typeof arg === 'string' && arg.length >= 5) {
           try {
-            const targetEl = find(variable, 'root')[0];
+            const targetEl = find(arg, 'root')[0];
             if (targetEl) {
               return Utils.getText(targetEl);
             }
@@ -140,7 +140,7 @@ export default async function checkPageLanguage() {
         }
 
         // Fallback for short strings or strings that didn't match an element
-        return getLanguageLabel(variable);
+        return getLanguageLabel(arg);
       });
 
       // Build the content container safely
@@ -149,7 +149,7 @@ export default async function checkPageLanguage() {
       // Get the translated node
       const mainContent = Lang.sprintf(
         State.option.checks[cached.test].content || [cached.test],
-        ...processVariables,
+        ...processArgs,
       );
 
       contentContainer.append(mainContent);

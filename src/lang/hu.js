@@ -229,7 +229,7 @@ export default {
       'A link figyelmeztetés nélkül új lapon vagy ablakban nyílik meg. Ez zavaró lehet, különösen azok számára, akik nehezen érzékelik a vizuális tartalmakat. Másodszor, nem mindig jó gyakorlat, ha valakinek az élményét irányítjuk, vagy döntéseket hozunk helyettük. Jelezze, hogy a link új ablakban nyílik meg a link szövegében<hr><strong>Tipp!</strong> Ismerje meg a legjobb gyakorlatokat: <a href="https://www.nngroup.com/articles/new-browser-windows-and-tabs/">Hivatkozások megnyitása új böngészőablakban és lapon.</a>',
     LINK_FILE_EXT:
       'A link figyelmeztetés nélkül PDF vagy letölthető fájlra (pl. MP3, Zip, Word Doc) mutat. A hivatkozás szövegében tüntesse fel a fájl típusát. Ha nagyméretű fájlról van szó, fontolja meg a fájlméret feltüntetését. <hr> <strong>Példa:</strong> Vezetői jelentés (PDF, 3MB)',
-    LINK_IDENTICAL_NAME: 'Az oldalon több hivatkozás ugyanazt a szöveget használja, de különböző helyekre mutatnak. Ez zavaró lehet a segítő technológiát használók számára. A javításhoz tegye leíróbbá a hivatkozás szövegét: <strong {C}>%(TEXT)</strong>',
+    LINK_IDENTICAL_NAME: 'Az oldalon több hivatkozás ugyanazt a szöveget használja, de különböző helyekre mutatnak. Ez zavaró lehet a segítő technológiát használók számára. A javításhoz tegye leíróbbá a hivatkozás szövegét.',
     LINK_UNPRONOUNCEABLE:
       'A hivatkozás szövege csak szimbólumokat tartalmaz. Ha úgy gondolja, hogy ez a hivatkozás másolási/beillesztési hiba miatt hibás, fontolja meg a törlését.',
 

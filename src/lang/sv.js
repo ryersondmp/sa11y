@@ -247,7 +247,7 @@ export default {
       'Länken öppnas i en ny flik eller ett nytt fönster utan förvarning. Att göra det kan vara desorienterande, särskilt för personer som har svårt att uppfatta visuellt innehåll. För det andra är det inte alltid en bra praxis att styra någons erfarenhet eller fatta beslut åt dem. Ange att länken öppnas i ett nytt fönster i länktexten. <hr> <strong>Tips!</strong> Lär dig bästa praxis: <a href="https://www.nngroup.com/articles/new-browser-windows-and-tabs/">att öppna länkar i nya webbläsarfönster och flikar.</a>',
     LINK_FILE_EXT:
       'Länken pekar till en PDF eller nedladdningsbar fil (t.ex. MP3, Zip, Word Doc) utan förvarning. Ange filtypen i länktexten. Om det är en stor fil, överväg att ta med filstorleken. <hr> <strong>Exempel:</strong> Verkställande rapport (PDF, 3MB)',
-    LINK_IDENTICAL_NAME: 'Flera länkar på den här sidan använder samma länktext men pekar på olika ställen. Detta kan orsaka förvirring för användare av hjälpmedelsteknik. För att åtgärda detta, gör länktexten mer beskrivande: <strong {C}>%(TEXT)</strong>',
+    LINK_IDENTICAL_NAME: 'Flera länkar på den här sidan använder samma länktext men pekar på olika ställen. Detta kan orsaka förvirring för användare av hjälpmedelsteknik. För att åtgärda detta, gör länktexten mer beskrivande.',
     LINK_UNPRONOUNCEABLE:
       'Länktexten innehåller endast symboler. Om du tror att den här länken är ett fel på grund av en kopiera/klistra in-bugg, bör du överväga att ta bort den.',
 

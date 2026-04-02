@@ -230,7 +230,7 @@ export default {
       'Link åbner i en ny fane eller et nyt vindue uden advarsel. Det kan være desorienterende, især for folk, der har svært ved at opfatte visuelt indhold. For det andet er det ikke altid en god praksis at kontrollere andres oplevelse eller træffe beslutninger for dem. Angiv, at linket åbner i et nyt vindue i linkteksten. <hr> <strong>Tip!</strong> Lær bedste praksis: <a href="https://www.nngroup.com/articles/new-browser-windows-and-tabs/">åbning af links i nye browservinduer og faner.</a>',
     LINK_FILE_EXT:
       'Link peger på en PDF eller en downloadbar fil (f.eks. MP3, Zip, Word Doc) uden advarsel. Angiv filtypen i linkteksten. Hvis det er en stor fil, kan du overveje at inkludere filstørrelsen. <hr> <strong>Eksempel:</strong> Executive Report (PDF, 3MB)',
-    LINK_IDENTICAL_NAME: 'Flere links på denne side bruger samme linktekst, men peger på forskellige steder. Dette kan skabe forvirring for brugere af hjælpemidler. For at løse det skal denne linktekst gøres mere beskrivende: <strong {C}>%(TEXT)</strong>',
+    LINK_IDENTICAL_NAME: 'Flere links på denne side bruger samme linktekst, men peger på forskellige steder. Dette kan skabe forvirring for brugere af hjælpemidler. For at løse det skal denne linktekst gøres mere beskrivende.',
     LINK_UNPRONOUNCEABLE:
       'Linktekst indeholder kun symboler. Hvis du mener, at dette link er en fejl på grund af en kopier/sæt ind-fejl, bør du overveje at slette det.',
 

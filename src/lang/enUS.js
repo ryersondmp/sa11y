@@ -231,7 +231,7 @@ export default {
     LINK_FILE_EXT:
       'Link points to a PDF or downloadable file (e.g. MP3, Zip, Word Doc) without warning. Indicate the file type within the link text. If it is a large file, consider including the file size. For example: "Executive Report (PDF, 3MB)" <hr> <strong {B}>Link text</strong> <strong {C}>%(TEXT)</strong>',
     LINK_IDENTICAL_NAME:
-      'Multiple links on this page use the same link text but point to different places. This may cause confusion for assistive technology users. To fix, make this link text more descriptive. <hr> <strong {B}>Link text</strong> <strong {C}>%(TEXT)</strong>',
+      'Multiple links on this page use the same link text but point to different places. This may cause confusion for assistive technology users. To fix, make this link text more descriptive.',
     LINK_UNPRONOUNCEABLE:
       'Link text only contains symbols. If you think this link is an error due to a copy/paste bug, consider deleting it.  <hr> <strong {B}>Link text</strong> <strong {C}>%(TEXT)</strong>',
 

@@ -232,7 +232,7 @@ export default {
       'Saite atveras jaunā cilnē vai logā bez brīdinājuma. Tas var radīt apjukumu, jo īpaši cilvēkiem, kuriem ir grūtības uztvert vizuālo saturu. Otrkārt, ne vienmēr ir laba prakse kontrolēt kāda cilvēka pieredzi vai pieņemt lēmumus viņa vietā. Norādiet, ka saite atveras jaunā logā, saites tekstā. <hr> <strong>Padoms!</strong> Apgūstiet labāko praksi: <a href="https://www.nngroup.com/articles/new-browser-windows-and-tabs/">atvērt saites jaunos pārlūkprogrammas logos un cilnēs</a>.',
     LINK_FILE_EXT:
       'Saite norāda uz PDF vai lejupielādējamu failu (piemēram, MP3, Zip, Word Doc) bez brīdinājuma. Saites tekstā norādiet faila veidu. Ja tas ir liels fails, apsveriet iespēju norādīt faila lielumu. <hr> <strong>Piemērs:</strong> Vadības ziņojums (PDF, 3 MB).',
-    LINK_IDENTICAL_NAME: 'Vairākas saites šajā lapā izmanto vienu un to pašu tekstu, bet norāda uz dažādām vietām. Tas var radīt neskaidrības asistenttehnoloģiju lietotājiem. Lai to labotu, padariet šīs saites tekstu aprakstošāku: <strong {C}>%(TEXT)</strong>',
+    LINK_IDENTICAL_NAME: 'Vairākas saites šajā lapā izmanto vienu un to pašu tekstu, bet norāda uz dažādām vietām. Tas var radīt neskaidrības asistenttehnoloģiju lietotājiem. Lai to labotu, padariet šīs saites tekstu aprakstošāku.',
     LINK_UNPRONOUNCEABLE:
       'Saites tekstā ir tikai simboli. Ja uzskatāt, ka šī saite ir kļūda kopēšanas/ielīmēšanas kļūdas dēļ, apsveriet iespēju to dzēst.',
 

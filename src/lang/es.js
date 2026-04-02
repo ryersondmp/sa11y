@@ -229,7 +229,7 @@ export default {
       'El enlace se abre en una nueva pestaña o ventana sin previo aviso. Si lo hace, puede ser desorientador, especialmente para las personas que tienen dificultades para percibir el contenido visual. En segundo lugar, no siempre es una buena práctica controlar la experiencia de alguien o tomar decisiones por ellos. Indique que el enlace se abre en una nueva ventana dentro del texto del enlace. <hr> <strong>¡Consejo!</strong> Aprenda las mejores prácticas: <a href="https://www.nngroup.com/articles/new-browser-windows-and-tabs/">abrir enlaces en nuevas ventanas y pestañas del navegador.</a>',
     LINK_FILE_EXT:
       'El enlace apunta a un archivo PDF o descargable (por ejemplo, MP3, Zip, Word Doc) sin previo aviso. Indique el tipo de archivo dentro del texto del enlace. Si es un archivo grande, considere incluir el tamaño del archivo. <hr> <strong>Ejemplo:</strong> Informe ejecutivo (PDF, 3 MB)',
-    LINK_IDENTICAL_NAME: 'Varios enlaces de esta página utilizan el mismo texto pero apuntan a lugares diferentes. Esto puede causar confusión a los usuarios de tecnologías de asistencia. Para solucionarlo, haga que el texto de este enlace sea más descriptivo: <strong {C}>%(TEXT)</strong>',
+    LINK_IDENTICAL_NAME: 'Varios enlaces de esta página utilizan el mismo texto pero apuntan a lugares diferentes. Esto puede causar confusión a los usuarios de tecnologías de asistencia. Para solucionarlo, haga que el texto de este enlace sea más descriptivo.',
     LINK_UNPRONOUNCEABLE:
       'El texto del enlace solo contiene símbolos. Si cree que este enlace es un error debido a un fallo al copiar y pegar, considere eliminarlo.',
 

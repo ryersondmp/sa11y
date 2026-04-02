@@ -231,7 +231,7 @@ export default {
       'Le lien s’ouvre dans une nouvelle fenêtre ou un nouvel onglet sans avertissement. Cela peut être particulièrement désorientant pour les personnes ayant des difficultés à percevoir le contenu visuel. De plus, il n’est pas recommandé de contrôler l\'expérience d\'une personne ou de prendre des décisions à sa place. Indiquez que le lien s’ouvrira dans une nouvelle fenêtre à l’intérieur du texte du lien. <hr> <strong>Conseil !</strong> Apprenez les meilleures pratiques: <a href="https://www.nngroup.com/articles/new-browser-windows-and-tabs/">l’ouverture de lien dans les nouvelles fenêtres ou onglets des navigateurs.</a>',
     LINK_FILE_EXT:
       'Le lien dirige vers un PDF ou un fichier téléchargeable (exemple: MP3, Zip, Word Doc) sans avertissement. Indiquez le type de fichier dans le lien du texte. S’il s’agit d’un fichier volumineux, envisagez d’inclure la taille du fichier. <hr> <strong>Exemple:</strong> Rapport de synthèse (PDF, 3 Mo)',
-    LINK_IDENTICAL_NAME: 'Plusieurs liens sur cette page utilisent le même texte mais pointent vers des endroits différents. Cela peut prêter à confusion pour les utilisateurs de technologies d’assistance. Pour corriger cela, rendez le texte de ce lien plus descriptif : <strong {C}>%(TEXT)</strong>',
+    LINK_IDENTICAL_NAME: 'Plusieurs liens sur cette page utilisent le même texte mais pointent vers des endroits différents. Cela peut prêter à confusion pour les utilisateurs de technologies d’assistance. Pour corriger cela, rendez le texte de ce lien plus descriptif.',
     LINK_UNPRONOUNCEABLE:
       'Le texte du lien ne contient que des symboles. Si vous pensez que ce lien est une erreur due à un problème de copier-coller, envisagez de le supprimer.',
 

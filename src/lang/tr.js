@@ -230,7 +230,7 @@ export default {
       'Bağlantı uyarı vermeden yeni bir sekmede veya pencerede açılır. Bunu yapmak, özellikle görsel içeriği algılamakta zorluk çeken kişiler için kafa karıştırıcı olabilir. İkinci olarak, bir kişinin deneyimini kontrol etmek veya onun yerine karar vermek her zaman iyi bir uygulama değildir. Bağlantı metninde bağlantının yeni bir pencerede açıldığını belirtin. <hr> <strong>İpucu!</strong> En iyi uygulamaları öğrenin: <a href="https://www.nngroup.com/articles/new-browser-windows-and-tabs/">bağlantıları yeni tarayıcı pencerelerinde ve sekmelerinde açma.</a>',
     LINK_FILE_EXT:
       'Bağlantı, uyarı vermeden bir PDF veya indirilebilir dosyaya (örn. MP3, Zip, Word Doc) işaret ediyor. Bağlantı metni içinde dosya türünü belirtin. Büyük bir dosya ise, dosya boyutunu da eklemeyi düşünün. <hr> <strong>Örnek:</strong> Yönetici Raporu (PDF, 3MB)',
-    LINK_IDENTICAL_NAME: 'Bu sayfadaki birden fazla bağlantı aynı metni kullanıyor ancak farklı yerlere gidiyor. Bu durum yardımcı teknoloji kullanıcıları için kafa karıştırıcı olabilir. Düzeltmek için bu bağlantı metnini daha açıklayıcı hale getirin: <strong {C}>%(TEXT)</strong>',
+    LINK_IDENTICAL_NAME: 'Bu sayfadaki birden fazla bağlantı aynı metni kullanıyor ancak farklı yerlere gidiyor. Bu durum yardımcı teknoloji kullanıcıları için kafa karıştırıcı olabilir. Düzeltmek için bu bağlantı metnini daha açıklayıcı hale getirin.',
     LINK_UNPRONOUNCEABLE:
       'Bağlantı metni yalnızca semboller içeriyor. Bu bağlantının kopyala/yapıştır hatasından kaynaklandığını düşünüyorsanız silmeyi düşünebilirsiniz.',
 

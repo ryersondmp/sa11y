@@ -229,7 +229,7 @@ export default {
       'Povezava se brez opozorila odpre v novem zavihku ali oknu. To je lahko moteče, zlasti za ljudi, ki imajo težave z zaznavanjem vizualne vsebine. Drugič, ni vedno dobra praksa, da bi nadzorovali izkušnjo nekoga ali sprejemali odločitve namesto njega. Navedite, da se povezava odpre v novem oknu, v besedilu povezave. <hr> <strong>Tip!</strong> Spoznajte najboljše prakse: <a href="https://www.nngroup.com/articles/new-browser-windows-and-tabs/">odpiranje povezav v novih oknih in zavihkih brskalnika.</a>',
     LINK_FILE_EXT:
       'Povezava kaže na datoteko PDF ali datoteko za prenos (npr. MP3, Zip, Wordov dokument) brez opozorila. V besedilu povezave navedite vrsto datoteke. Če gre za veliko datoteko, razmislite o vključitvi velikosti datoteke. <hr> <strong>Primer:</strong> Izvršno poročilo (PDF, 3 MB)',
-    LINK_IDENTICAL_NAME: 'Več povezav na tej strani uporablja isto besedilo, vendar kažejo na različna mesta. To lahko zmede uporabnike asistivne tehnologije. Če želite to popraviti, naredite besedilo te povezave bolj opisno: <strong {C}>%(TEXT)</strong>',
+    LINK_IDENTICAL_NAME: 'Več povezav na tej strani uporablja isto besedilo, vendar kažejo na različna mesta. To lahko zmede uporabnike asistivne tehnologije. Če želite to popraviti, naredite besedilo te povezave bolj opisno.',
     LINK_UNPRONOUNCEABLE:
       'Besedilo povezave vsebuje le simbole. Če menite, da je ta povezava napaka zaradi napake pri kopiranju/lepljenju, jo poskusite izbrisati.',
 

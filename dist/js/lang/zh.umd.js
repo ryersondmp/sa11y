@@ -201,7 +201,7 @@
       LINK_DOI: '对于网页或纯在线资源，<a href="https://apastyle.apa.org/style-grammar-guidelines/paper-format/accessibility/urls#:~:text=descriptive%20links">APA风格指南</a>建议使用描述性链接，将作品的URL或DOI包裹在其标题上。使用较长的、不易理解的URL作为链接文本，在使用辅助技术访问时可能难以理解。',
       LINK_NEW_TAB: '链接在新的标签或窗口中打开, 没有警告。这样做可能会使人迷失方向, 特别是对那些对视觉内容有感知困难的人来说。其次, 控制别人的体验或为他们做决定并不总是一种好的做法。在链接文本中指出该链接在新窗口中打开 <hr> <strong>提示！</strong>学习最佳做法: <a href="https://www.nngroup.com/articles/new-browser-windows-and-tabs/">在新的浏览器窗口和标签中打开链接。</a>',
       LINK_FILE_EXT: "链接指向PDF或可下载的文件 (如MP3、Zip、Word Doc) , 而没有警告。在链接文本中指出文件类型。如果是大文件, 可以考虑包括文件大小。<hr> <strong>示例:</strong>执行报告 (PDF, 3MB) 。",
-      LINK_IDENTICAL_NAME: "此页面上的多个链接使用相同的文本，但指向不同的位置。这可能会给辅助技术用户带来困惑。要修复此问题，请使此链接文本更具描述性：<strong {C}>%(TEXT)</strong>",
+      LINK_IDENTICAL_NAME: "此页面上的多个链接使用相同的文本，但指向不同的位置。这可能会给辅助技术用户带来困惑。要修复此问题，请使此链接文本更具描述性。",
       LINK_UNPRONOUNCEABLE: "链接文本仅包含符号。如果您认为此链接由于复制/粘贴错误而出现异常，请考虑将其删除。",
       // Images
       ALT_UNPRONOUNCEABLE: "替代文字只包含无法发音的符号和/或空格。屏幕阅读器将宣布图像，然后暂停。如果图像为装饰性，请确保替代文字中没有空格。 <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>",

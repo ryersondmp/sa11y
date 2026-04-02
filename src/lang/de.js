@@ -275,7 +275,7 @@ export default {
       'Der Link öffnet sich in einem neuen Tab oder einem neuen Fenster ohne Warnung. Dies kann verwirrend sein, insbesondere für Menschen, die Schwierigkeiten haben, visuelle Inhalte wahrzunehmen. Zweitens ist es nicht immer eine gute Praxis, die Erfahrungen der anderen zu kontrollieren oder für sie Entscheidungen zu treffen. Gib im Linktext an, dass der Link in einem neuen Fenster geöffnet wird. <hr> <strong>Tipp!</strong> Lerne bewährte Praktiken kennen: <a href="https://www.nngroup.com/articles/new-browser-windows-and-tabs/">Öffnen von Links in neuen Browserfenstern und Tabs.</a>',
     LINK_FILE_EXT:
       'Der Link verweist ohne Warnung auf eine PDF- oder herunterladbare Datei (z. B. MP3, Zip, Word Doc). Gib den Dateityp im Linktext an. Wenn es sich um eine große Datei handelt, solltest Du die Dateigröße angeben. <hr> <strong>Beispiel:</strong> Bericht der Geschäftsführung (PDF, 3MB)',
-    LINK_IDENTICAL_NAME: 'Mehrere Links auf dieser Seite verwenden denselben Linktext, führen aber zu unterschiedlichen Zielen. Dies kann bei Benutzern von Hilfsmitteln zu Verwirrung führen. Um dies zu beheben, machen Sie diesen Linktext aussagekräftiger: <strong {C}>%(TEXT)</strong>',
+    LINK_IDENTICAL_NAME: 'Mehrere Links auf dieser Seite verwenden denselben Linktext, führen aber zu unterschiedlichen Zielen. Dies kann bei Benutzern von Hilfsmitteln zu Verwirrung führen. Um dies zu beheben, machen Sie diesen Linktext aussagekräftiger.',
     LINK_UNPRONOUNCEABLE:
       'Der Linktext enthält nur Symbole. Wenn du glaubst, dass dieser Link ein Fehler beim Kopieren/Einfügen ist, solltest du ihn löschen.',
 

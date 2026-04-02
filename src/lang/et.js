@@ -228,7 +228,7 @@ export default {
       'Link avaneb uues vahekaardis või aknas ilma hoiatuseta. See võib olla häiriv, eriti inimestele, kellel on raskusi visuaalse sisu tajumisega. Teiseks ei ole alati hea tava kontrollida kellegi kogemust või teha otsuseid tema eest. Märkige lingi tekstis, et link avaneb uues aknas. <hr> <strong>Nipp!</strong> Õppige ära parimad tavad: <a href="https://www.nngroup.com/articles/new-browser-windows-and-tabs/">Linkide avamine uues brauseriaknas ja vahekaardis.</a>',
     LINK_FILE_EXT:
       'Link viitab ilma hoiatuseta PDF- või allalaaditavale failile (nt MP3, Zip, Word Doc). Märkige faili tüüp lingi tekstis. Kui tegemist on suure failiga, kaaluge faili suuruse lisamist. <hr> <strong>Näide:</strong> Juhtkonna aruanne (PDF, 3MB)',
-    LINK_IDENTICAL_NAME: 'Mitu selle lehe linki kasutavad sama teksti, kuid viitavad erinevatesse kohtadesse. See võib abitehnoloogia kasutajates segadust tekitada. Parandamiseks muutke see lingi tekst kirjeldavamaks: <strong {C}>%(TEXT)</strong>',
+    LINK_IDENTICAL_NAME: 'Mitu selle lehe linki kasutavad sama teksti, kuid viitavad erinevatesse kohtadesse. See võib abitehnoloogia kasutajates segadust tekitada. Parandamiseks muutke see lingi tekst kirjeldavamaks.',
     LINK_UNPRONOUNCEABLE:
       'Lingi tekst sisaldab ainult sümboleid. Kui arvate, et see link on kopeerimis- või kleepimisvea tõttu vale, kaaluge selle kustutamist.',
 
