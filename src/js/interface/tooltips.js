@@ -80,7 +80,7 @@ export class AnnotationTooltips extends HTMLElement {
       zIndex: 2147483645,
       onShow(instance) {
         // Ensure instance and popper exist.
-        if (!instance || !instance.popper) return;
+        if (!instance?.popper) return;
 
         // Hide other tooltips.
         if (Array.isArray(annotations)) {

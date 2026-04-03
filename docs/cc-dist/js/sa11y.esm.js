@@ -6292,7 +6292,7 @@ class AnnotationTooltips extends HTMLElement {
       appendTo: shadowRoot,
       zIndex: 2147483645,
       onShow(instance) {
-        if (!instance || !instance.popper) return;
+        if (!instance?.popper) return;
         if (Array.isArray(annotations)) {
           annotations.forEach((popper2) => {
             if (popper2 !== instance) popper2.hide();
@@ -6504,31 +6504,22 @@ async function checkPageLanguage() {
     const currentElement = find(cached.element, "root")[0];
     if (!currentElement) {
       isStale = true;
-    } else if (currentElement.hasAttribute("lang")) {
+    } else if (currentElement.getAttribute("lang") === cached.args[0]) {
       isStale = true;
     }
   }
   if (cached && !isStale) {
     if (cached.test) {
       const getElement = cached.element ? find(cached.element, "root")[0] : null;
-      const processArgs = cached.args.map((arg) => {
-        if (typeof arg === "string" && arg.length >= 5) {
-          try {
-            const targetEl = find(arg, "root")[0];
-            if (targetEl) {
-              return getText(targetEl);
-            }
-          } catch {
-            return Lang._("UNKNOWN");
-          }
-        }
-        return getLanguageLabel(arg);
-      });
-      const contentContainer = document.createElement("div");
+      const elementText = getElement ? getText(getElement) : null;
+      const processArgs = cached.args.map((arg) => getLanguageLabel(arg));
+      const finalArgs = [...processArgs];
+      if (elementText) finalArgs.push(elementText);
       const mainContent = Lang.sprintf(
         State.option.checks[cached.test].content || [cached.test],
-        ...processArgs
+        ...finalArgs
       );
+      const contentContainer = document.createElement("div");
       contentContainer.append(mainContent);
       if (cached.element) {
         contentContainer.append(" ", Lang.sprintf("LANG_TIP"));
@@ -6617,7 +6608,7 @@ async function checkPageLanguage() {
             getLanguageLabel(langAttribute),
             textString
           );
-          args = [nodeLang, langAttribute, selector];
+          args = [nodeLang, langAttribute];
         } else if (!langAttribute && nodeLang !== declared) {
           if (isImage && node.alt) {
             test = "LANG_OF_PARTS_ALT";
@@ -6636,7 +6627,7 @@ async function checkPageLanguage() {
               getLanguageLabel(nodeLang),
               textString
             );
-            args = [declared, nodeLang, selector];
+            args = [declared, nodeLang];
           }
         } else {
           continue;

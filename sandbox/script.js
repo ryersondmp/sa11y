@@ -7,7 +7,7 @@ const sa11y = new Sa11y({
   checkRoot: 'body',
   readabilityRoot: 'main',
   customChecks: 'listen',
-  langOfPartsCache: 0,
+  langOfPartsCache: true,
   langOfPartsPlugin: 1,
   stopOnFirstLangMismatch: false,
   delayCheck: 500,

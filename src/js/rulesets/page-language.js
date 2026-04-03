@@ -111,12 +111,12 @@ export default async function checkPageLanguage() {
   const langChanged = cached?.declared && cached.declared !== declared;
   let isStale = cached && (Math.abs(cached.textLength - pageText.length) > 5 || langChanged);
 
-  // User fixed the error by adding 'lang'
+  // User fixed the error by adding 'lang' and correct lang attr.
   if (cached && !isStale && cached.element) {
     const currentElement = find(cached.element, 'root')[0];
     if (!currentElement) {
       isStale = true;
-    } else if (currentElement.hasAttribute('lang')) {
+    } else if (currentElement.getAttribute('lang') === cached.args[0]) {
       isStale = true;
     }
   }
@@ -125,33 +125,25 @@ export default async function checkPageLanguage() {
   if (cached && !isStale) {
     if (cached.test) {
       const getElement = cached.element ? find(cached.element, 'root')[0] : null;
-      const processArgs = cached.args.map((arg) => {
-        // If it's a string and long enough to potentially be a selector, we grab the text.
-        if (typeof arg === 'string' && arg.length >= 5) {
-          try {
-            const targetEl = find(arg, 'root')[0];
-            if (targetEl) {
-              return Utils.getText(targetEl);
-            }
-          } catch {
-            // Query selector above failed...
-            return Lang._('UNKNOWN');
-          }
-        }
 
-        // Fallback for short strings or strings that didn't match an element
-        return getLanguageLabel(arg);
-      });
+      // Get text of flagged element.
+      const elementText = getElement ? Utils.getText(getElement) : null;
+
+      // Get language labels.
+      const processArgs = cached.args.map((arg) => getLanguageLabel(arg));
+
+      // Push processed args to tooltip.
+      const finalArgs = [...processArgs];
+      if (elementText) finalArgs.push(elementText);
+
+      // Generate tooltip content.
+      const mainContent = Lang.sprintf(
+        State.option.checks[cached.test].content || [cached.test],
+        ...finalArgs,
+      );
 
       // Build the content container safely
       const contentContainer = document.createElement('div');
-
-      // Get the translated node
-      const mainContent = Lang.sprintf(
-        State.option.checks[cached.test].content || [cached.test],
-        ...processArgs,
-      );
-
       contentContainer.append(mainContent);
       if (cached.element) {
         contentContainer.append(' ', Lang.sprintf('LANG_TIP'));
@@ -273,7 +265,7 @@ export default async function checkPageLanguage() {
             getLanguageLabel(langAttribute),
             textString,
           );
-          args = [nodeLang, langAttribute, selector];
+          args = [nodeLang, langAttribute];
 
           // 2. No specific 'lang' attribute, but text contradicts page language.
         } else if (!langAttribute && nodeLang !== declared) {
@@ -296,7 +288,7 @@ export default async function checkPageLanguage() {
               getLanguageLabel(nodeLang),
               textString,
             );
-            args = [declared, nodeLang, selector];
+            args = [declared, nodeLang];
           }
           // 3. No conflict detected.
         } else {
