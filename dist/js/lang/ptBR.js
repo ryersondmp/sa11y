@@ -40,7 +40,7 @@ const ptBR = {
     MISSING_ROOT: "A página inteira foi verificada quanto à acessibilidade porque a área de destino <code>%(root)</code> não existe.",
     MISSING_READABILITY_ROOT: "A pontuação de legibilidade é baseada na área de conteúdo <code>%(fallback)</code>, pois a área alvo <code>%(root)</code> não existe.",
     SKIP_TO_PAGE_ISSUES: "Pular para os problemas da página",
-    CONSOLE_ERROR: 'Desculpe, mas há um problema com o verificador de acessibilidade nesta página. Você pode <a href="%(link)">relatar o problema por meio deste formulário</a> ou no <a href="%(link)">GitHub</a>?',
+    CONSOLE_ERROR: 'Desculpe, mas há um problema com o verificador de acessibilidade nesta página. Você pode <a href="https://forms.gle/sjzK9XykETaoqZv99">relatar o problema por meio deste formulário</a> ou no <a href="https://github.com/ryersondmp/sa11y/issues/new?title=Bug%20report">GitHub</a>?',
     APPEARANCE: "Aparência",
     MOVE_PANEL: "Mover painel",
     HIDDEN: "Oculto",

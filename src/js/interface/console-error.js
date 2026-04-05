@@ -27,27 +27,6 @@ export default class ConsoleErrors extends HTMLElement {
 
     // Google Form & GitHub error link.
     const url = sanitizeURL(window.location.href);
-    const google = 'https://forms.gle/sjzK9XykETaoqZv99';
-
-    // GitHub template
-    const template = `## Error description
-\`\`\`javascript
-${this.error.stack}
-\`\`\`
-
-## Configuration options
-\`\`\`javascript
-${JSON.stringify(State.option)}
-\`\`\`
-
-## Details
-- **URL:** ${url}
-- **Version:** ${Sa11yVersion}
-
-## Comments
-`;
-    const encodedTemplate = encodeURIComponent(template);
-    const github = `https://github.com/ryersondmp/sa11y/issues/new?title=Bug%20report&body=${encodedTemplate}`;
 
     // 1. Create the Close Button.
     const closeBtn = document.createElement('button');
@@ -60,7 +39,7 @@ ${JSON.stringify(State.option)}
 
     // 3. Create the main message.
     const p1 = document.createElement('p');
-    p1.append(Lang.sprintf('CONSOLE_ERROR', google, github));
+    p1.append(Lang.sprintf('CONSOLE_ERROR'));
 
     // 4. Create the Error Details (Stack trace and version).
     const p2 = document.createElement('p');

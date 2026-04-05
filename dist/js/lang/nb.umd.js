@@ -44,7 +44,7 @@
       MISSING_ROOT: "Hele siden ble kontrollert for tilgjengelighet fordi målområdet <code>%(root)</code> ikke finnes.",
       MISSING_READABILITY_ROOT: "Lesbarhetspoengene er basert på innholdsområdet <code>%(fallback)</code>, fordi målområdet <code>%(root)</code> ikke finnes.",
       SKIP_TO_PAGE_ISSUES: "Gå til sideproblemer",
-      CONSOLE_ERROR: 'Beklager, men det er et problem med tilgjengelighetskontrollen på denne siden. Kan du <a href="%(link)">rapportere det via dette skjemaet</a> eller på <a href="%(link)">GitHub</a>?',
+      CONSOLE_ERROR: 'Beklager, men det er et problem med tilgjengelighetskontrollen på denne siden. Kan du <a href="https://forms.gle/sjzK9XykETaoqZv99">rapportere det via dette skjemaet</a> eller på <a href="https://github.com/ryersondmp/sa11y/issues/new?title=Bug%20report">GitHub</a>?',
       APPEARANCE: "Utseende",
       MOVE_PANEL: "Flytt panel",
       HIDDEN: "Skjult",

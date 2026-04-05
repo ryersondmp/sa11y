@@ -47,7 +47,7 @@ export default {
       'Lasāmības vērtējums ir balstīts uz satura apgabalu <code>%(fallback)</code>, jo mērķa apgabals <code>%(root)</code> nepastāv.',
     SKIP_TO_PAGE_ISSUES: 'Pāriet uz lapas jautājumiem',
     CONSOLE_ERROR:
-      'Atvainojiet, bet šajā lapā ir problēma ar pieejamības pārbaudītāju. Vai varat, lūdzu, <a href="%(link)">ziņot par to, izmantojot šo formu</a> vai <a href="%(link)">GitHub</a>?',
+      'Atvainojiet, bet šajā lapā ir problēma ar pieejamības pārbaudītāju. Vai varat, lūdzu, <a href="https://forms.gle/sjzK9XykETaoqZv99">ziņot par to, izmantojot šo formu</a> vai <a href="https://github.com/ryersondmp/sa11y/issues/new?title=Bug%20report">GitHub</a>?',
     APPEARANCE: 'Izskats',
     MOVE_PANEL: 'Pārvietot paneli',
     HIDDEN: 'Slēpts',

@@ -43,7 +43,7 @@ export default {
       '可读性评分基于<code>%(fallback)</code>内容区域，因为目标区域<code>%(root)</code>不存在。',
     SKIP_TO_PAGE_ISSUES: '跳到页面问题',
     CONSOLE_ERROR:
-      '对不起, 本页面的可访问性检查器有问题。您能否<a href="%(link)">通过此表格</a>或<a href="%(link)">GitHub</a>报告?',
+      '对不起, 本页面的可访问性检查器有问题。您能否<a href="https://forms.gle/sjzK9XykETaoqZv99">通过此表格</a>或<a href="https://github.com/ryersondmp/sa11y/issues/new?title=Bug%20report">GitHub</a>报告?',
     APPEARANCE: '外观',
     MOVE_PANEL: '移动面板',
     HIDDEN: '隐藏',

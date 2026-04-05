@@ -47,7 +47,7 @@ export default {
       'Оценката за четимост се основава на съдържателната област <code>%(fallback)</code>, тъй като целевата област <code>%(root)</code> не съществува.',
     SKIP_TO_PAGE_ISSUES: 'Преминаване към страница Проблеми',
     CONSOLE_ERROR:
-      'Съжаляваме, но има проблем с проверката за достъпност на тази страница. Можете ли да го <a href="%(link)">докладвате чрез този формуляр</a> или на <a href="%(link)">GitHub</a>?',
+      'Съжаляваме, но има проблем с проверката за достъпност на тази страница. Можете ли да го <a href="https://forms.gle/sjzK9XykETaoqZv99">докладвате чрез този формуляр</a> или на <a href="https://github.com/ryersondmp/sa11y/issues/new?title=Bug%20report">GitHub</a>?',
     APPEARANCE: 'Външен вид',
     MOVE_PANEL: 'Преместване на панела',
     HIDDEN: 'Скрит',

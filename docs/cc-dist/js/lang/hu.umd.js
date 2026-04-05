@@ -44,7 +44,7 @@
       MISSING_ROOT: "A teljes oldal elérhetőségi ellenőrzése azért történt, mert a célterület <code>%(root)</code> nem létezik.",
       MISSING_READABILITY_ROOT: "Az olvashatósági pontszám a <code>%(fallback)</code> tartalomterületen alapul, mert a célterület <code>%(root)</code> nem létezik.",
       SKIP_TO_PAGE_ISSUES: "Ugrás az oldalra problémák",
-      CONSOLE_ERROR: 'Sajnáljuk, de probléma van az oldal hozzáférhetőségi ellenőrzőjével. Megtenné, hogy <a href="%(link)">bejelenti ezen az űrlapon</a> vagy a <a href="%(link)">GitHubon</a>?',
+      CONSOLE_ERROR: 'Sajnáljuk, de probléma van az oldal hozzáférhetőségi ellenőrzőjével. Megtenné, hogy <a href="https://forms.gle/sjzK9XykETaoqZv99">bejelenti ezen az űrlapon</a> vagy a <a href="https://github.com/ryersondmp/sa11y/issues/new?title=Bug%20report">GitHubon</a>?',
       APPEARANCE: "Megjelenés",
       MOVE_PANEL: "Panel mozgatása",
       HIDDEN: "Rejtett",

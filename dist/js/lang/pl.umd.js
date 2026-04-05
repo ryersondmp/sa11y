@@ -44,7 +44,7 @@
       MISSING_ROOT: "Sprawdzono dostępność całej strony, ponieważ obszar docelowy nie istnieje: <code>%(root)</code>",
       MISSING_READABILITY_ROOT: "Ocena czytelności opiera się na obszarze treści <code>%(fallback)</code>, ponieważ docelowy obszar <code>%(root)</code> nie istnieje.",
       SKIP_TO_PAGE_ISSUES: "Przejdź do problemów ze stroną",
-      CONSOLE_ERROR: 'Przepraszamy, ale wystąpił problem z narzędziem do sprawdzania ułatwień dostępu na tej stronie. Czy możesz <a href="%(link)">zgłosić to za pomocą tego formularza</a> lub na <a href="%(link)">GitHub</a>?',
+      CONSOLE_ERROR: 'Przepraszamy, ale wystąpił problem z narzędziem do sprawdzania ułatwień dostępu na tej stronie. Czy możesz <a href="https://forms.gle/sjzK9XykETaoqZv99">zgłosić to za pomocą tego formularza</a> lub na <a href="https://github.com/ryersondmp/sa11y/issues/new?title=Bug%20report">GitHub</a>?',
       APPEARANCE: "Wygląd",
       MOVE_PANEL: "Przenieś panel",
       HIDDEN: "Ukryty",

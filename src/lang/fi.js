@@ -47,7 +47,7 @@ export default {
       'Luettavuuspisteytys perustuu sisältöalueeseen <code>%(fallback)</code>, koska kohdealue <code>%(root)</code> ei ole olemassa.',
     SKIP_TO_PAGE_ISSUES: 'Siirry sivulle Issues',
     CONSOLE_ERROR:
-      'Anteeksi, mutta tämän sivun saavutettavuuden tarkistuksessa on ongelma. Voisitko <a href="%(link)">ilmoittaa siitä tällä lomakkeella</a> tai <a href="%(link)">GitHubissa</a>?',
+      'Anteeksi, mutta tämän sivun saavutettavuuden tarkistuksessa on ongelma. Voisitko <a href="https://forms.gle/sjzK9XykETaoqZv99">ilmoittaa siitä tällä lomakkeella</a> tai <a href="https://github.com/ryersondmp/sa11y/issues/new?title=Bug%20report">GitHubissa</a>?',
     APPEARANCE: 'Ulkonäkö',
     MOVE_PANEL: 'Siirrä paneeli',
     HIDDEN: 'Piilotettu',

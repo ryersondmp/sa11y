@@ -320,13 +320,8 @@ const Lang = {
     p.innerHTML = transString;
     el2.appendChild(p);
     if (args?.length) {
-      args.forEach((arg, index2) => {
-        const argString = String(arg);
-        if (argString.startsWith("https://")) {
-          p.innerHTML = p.innerHTML.replace(/%\([a-zA-z]+\)/, argString);
-        } else {
-          p.innerHTML = p.innerHTML.replace(/%\([a-zA-z]+\)/, `<span data-arg='${index2}'></span>`);
-        }
+      args.forEach((_arg, index2) => {
+        p.innerHTML = p.innerHTML.replace(/%\([a-zA-z]+\)/, `<span data-arg='${index2}'></span>`);
       });
       args.forEach((arg, index2) => {
         const replacement = el2.querySelector(`[data-arg="${index2}"]`);
@@ -1649,32 +1644,13 @@ class ConsoleErrors extends HTMLElement {
     content.setAttribute("id", "dialog");
     content.setAttribute("tabindex", "-1");
     const url2 = sanitizeURL(window.location.href);
-    const google = "https://forms.gle/sjzK9XykETaoqZv99";
-    const template = `## Error description
-\`\`\`javascript
-${this.error.stack}
-\`\`\`
-
-## Configuration options
-\`\`\`javascript
-${JSON.stringify(State.option)}
-\`\`\`
-
-## Details
-- **URL:** ${url2}
-- **Version:** ${"5.0.0"}
-
-## Comments
-`;
-    const encodedTemplate = encodeURIComponent(template);
-    const github = `https://github.com/ryersondmp/sa11y/issues/new?title=Bug%20report&body=${encodedTemplate}`;
     const closeBtn = document.createElement("button");
     closeBtn.className = "close-btn";
     closeBtn.setAttribute("aria-label", Lang._("ALERT_CLOSE"));
     const h2 = document.createElement("h2");
     h2.textContent = Lang._("ERROR");
     const p1 = document.createElement("p");
-    p1.append(Lang.sprintf("CONSOLE_ERROR", google, github));
+    p1.append(Lang.sprintf("CONSOLE_ERROR"));
     const p2 = document.createElement("p");
     p2.className = "error";
     p2.append(

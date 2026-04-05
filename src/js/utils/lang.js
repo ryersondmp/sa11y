@@ -17,15 +17,8 @@ const Lang = {
 
     // Replace placeholders with span markers.
     if (args?.length) {
-      args.forEach((arg, index) => {
-        const argString = String(arg);
-        // If it's a URL, replace the placeholder with the raw string.
-        if (argString.startsWith('https://')) {
-          p.innerHTML = p.innerHTML.replace(/%\([a-zA-z]+\)/, argString);
-        } else {
-          // If it's a normal string, use the span marker for safe injection later.
-          p.innerHTML = p.innerHTML.replace(/%\([a-zA-z]+\)/, `<span data-arg='${index}'></span>`);
-        }
+      args.forEach((_arg, index) => {
+        p.innerHTML = p.innerHTML.replace(/%\([a-zA-z]+\)/, `<span data-arg='${index}'></span>`);
       });
 
       // Inject the actual values as textContent.

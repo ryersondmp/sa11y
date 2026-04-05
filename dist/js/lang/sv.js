@@ -40,7 +40,7 @@ const sv = {
     MISSING_ROOT: "Hela sidan kontrolleras för tillgänglighet eftersom målområdet <code>%(root)</code> inte existerar.",
     MISSING_READABILITY_ROOT: "Läsbarhetspoängen baseras på innehållsområdet <code>%(fallback)</code>, eftersom målområdet <code>%(root)</code> inte existerar.",
     SKIP_TO_PAGE_ISSUES: "Hoppa till sidans problem",
-    CONSOLE_ERROR: 'Tyvärr, men det finns ett problem med tillgänglighetskontrollen på den här sidan. Kan du <a href="%(link)">rapportera det via det här formuläret</a> eller på <a href="%(link)">GitHub</a>?',
+    CONSOLE_ERROR: 'Tyvärr, men det finns ett problem med tillgänglighetskontrollen på den här sidan. Kan du <a href="https://forms.gle/sjzK9XykETaoqZv99">rapportera det via det här formuläret</a> eller på <a href="https://github.com/ryersondmp/sa11y/issues/new?title=Bug%20report">GitHub</a>?',
     APPEARANCE: "Utseende",
     MOVE_PANEL: "Flytta panel",
     HIDDEN: "Dold",

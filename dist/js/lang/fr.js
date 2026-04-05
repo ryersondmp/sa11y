@@ -40,7 +40,7 @@ const fr = {
     MISSING_ROOT: "L'accessibilité de la page entière a été vérifiée, car la zone cible <code>%(root)</code> n'existe pas.",
     MISSING_READABILITY_ROOT: "Le score de lisibilité est basé sur la zone de contenu <code>%(fallback)</code>, car la zone cible <code>%(root)</code> n’existe pas.",
     SKIP_TO_PAGE_ISSUES: "Passer aux problèmes de page",
-    CONSOLE_ERROR: `Désolé, mais il y a un problème avec le vérificateur d'accessibilité sur cette page. Pouvez-vous s'il vous plaît <a href="%(link)">le signaler via ce formulaire</a> ou sur <a href="%(link)">GitHub</a> ?`,
+    CONSOLE_ERROR: `Désolé, mais il y a un problème avec le vérificateur d'accessibilité sur cette page. Pouvez-vous s'il vous plaît <a href="https://forms.gle/sjzK9XykETaoqZv99">le signaler via ce formulaire</a> ou sur <a href="https://github.com/ryersondmp/sa11y/issues/new?title=Bug%20report">GitHub</a> ?`,
     APPEARANCE: "Apparence",
     MOVE_PANEL: "Déplacer le panneau",
     HIDDEN: "Caché",

@@ -44,7 +44,7 @@
       MISSING_ROOT: "Celá stránka bola skontrolovaná z hľadiska prístupnosti, pretože cieľová oblasť <code>%(root)</code> neexistuje.",
       MISSING_READABILITY_ROOT: "Skóre čitateľnosti je založené na obsahovej oblasti <code>%(fallback)</code>, pretože cieľová oblasť <code>%(root)</code> neexistuje.",
       SKIP_TO_PAGE_ISSUES: "Prejsť na stránku Problémy",
-      CONSOLE_ERROR: 'Je nám ľúto, ale na tejto stránke je problém s kontrolou prístupnosti. Môžete to prosím <a href="%(link)">nahlásiť prostredníctvom tohto formulára</a> alebo na <a href="%(link)">GitHub</a>?',
+      CONSOLE_ERROR: 'Je nám ľúto, ale na tejto stránke je problém s kontrolou prístupnosti. Môžete to prosím <a href="https://forms.gle/sjzK9XykETaoqZv99">nahlásiť prostredníctvom tohto formulára</a> alebo na <a href="https://github.com/ryersondmp/sa11y/issues/new?title=Bug%20report">GitHub</a>?',
       APPEARANCE: "Vzhľad",
       MOVE_PANEL: "Presunúť panel",
       HIDDEN: "Skryté",

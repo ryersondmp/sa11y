@@ -47,7 +47,7 @@ export default {
       'Scorul de lizibilitate se bazează pe zona de conținut <code>%(fallback)</code>, deoarece zona țintă <code>%(root)</code> nu există.',
     SKIP_TO_PAGE_ISSUES: 'Treceți la pagina Probleme',
     CONSOLE_ERROR:
-      'Ne pare rău, dar există o problemă cu verificatorul de accesibilitate de pe această pagină. Puteți vă rog <a href="%(link)">raportați-o prin intermediul acestui formular</a> sau pe <a href="%(link)">GitHub</a>?',
+      'Ne pare rău, dar există o problemă cu verificatorul de accesibilitate de pe această pagină. Puteți vă rog <a href="https://forms.gle/sjzK9XykETaoqZv99">raportați-o prin intermediul acestui formular</a> sau pe <a href="https://github.com/ryersondmp/sa11y/issues/new?title=Bug%20report">GitHub</a>?',
     APPEARANCE: 'Aparență',
     MOVE_PANEL: 'Mută panoul',
     HIDDEN: 'Ascuns',

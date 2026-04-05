@@ -47,7 +47,7 @@ export default {
       'Læsbarhedsscoren er baseret på indholdsområdet <code>%(fallback)</code>, da målområdet <code>%(root)</code> ikke findes.',
     SKIP_TO_PAGE_ISSUES: 'Spring til sideudgaver',
     CONSOLE_ERROR:
-      'Beklager, men der er et problem med tilgængelighedstjekkeren på denne side. Kan du venligst <a href="%(link)">rapportere det via denne formular</a> eller på <a href="%(link)">GitHub</a>?',
+      'Beklager, men der er et problem med tilgængelighedstjekkeren på denne side. Kan du venligst <a href="https://forms.gle/sjzK9XykETaoqZv99">rapportere det via denne formular</a> eller på <a href="https://github.com/ryersondmp/sa11y/issues/new?title=Bug%20report">GitHub</a>?',
     APPEARANCE: 'Udseende',
     MOVE_PANEL: 'Flyt panel',
     HIDDEN: 'Skjult',

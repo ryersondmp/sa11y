@@ -44,7 +44,7 @@
       MISSING_ROOT: "Täielik lehekülg kontrolliti ligipääsetavuse osas, sest sihtala <code>%(root)</code> ei ole olemas.",
       MISSING_READABILITY_ROOT: "Loetavuse skoor põhineb sisu alal <code>%(fallback)</code>, kuna sihtpiirkond <code>%(root)</code> ei eksisteeri.",
       SKIP_TO_PAGE_ISSUES: "Skip to Page Issues (lehekülje probleemid)",
-      CONSOLE_ERROR: 'Vabandame, kuid selle lehekülje ligipääsetavuse kontrolliga on probleem. Kas te saaksite <a href="%(link)">teavitada sellest selle vormi kaudu</a> või <a href="%(link)">GitHubis</a>?',
+      CONSOLE_ERROR: 'Vabandame, kuid selle lehekülje ligipääsetavuse kontrolliga on probleem. Kas te saaksite <a href="https://forms.gle/sjzK9XykETaoqZv99">teavitada sellest selle vormi kaudu</a> või <a href="https://github.com/ryersondmp/sa11y/issues/new?title=Bug%20report">GitHubis</a>?',
       APPEARANCE: "Välimus",
       MOVE_PANEL: "Liiguta paneel",
       HIDDEN: "Peidetud",

@@ -44,7 +44,7 @@
       MISSING_ROOT: "De volledige pagina is gecontroleerd op toegankelijkheid omdat het doelgebied <code>%(root)</code> niet bestaat.",
       MISSING_READABILITY_ROOT: "De leesbaarheidsscore is gebaseerd op het inhoudsgebied <code>%(fallback)</code>, omdat het doelgebied <code>%(root)</code> niet bestaat.",
       SKIP_TO_PAGE_ISSUES: "Doorgaan naar paginaproblemen",
-      CONSOLE_ERROR: 'Sorry, maar er is een probleem met de toegankelijkheidscontrole op deze pagina. Kunt u dit alstublieft <a href="%(link)">melden via dit formulier</a> of op <a href="%(link)">GitHub</a>?',
+      CONSOLE_ERROR: 'Sorry, maar er is een probleem met de toegankelijkheidscontrole op deze pagina. Kunt u dit alstublieft <a href="https://forms.gle/sjzK9XykETaoqZv99">melden via dit formulier</a> of op <a href="https://github.com/ryersondmp/sa11y/issues/new?title=Bug%20report">GitHub</a>?',
       APPEARANCE: "Uiterlijk",
       MOVE_PANEL: "Verplaats paneel",
       HIDDEN: "Verborgen",

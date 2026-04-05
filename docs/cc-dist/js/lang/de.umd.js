@@ -44,7 +44,7 @@
       MISSING_ROOT: "Die gesamte Seite wurde auf Barrierefreiheit geprüft, da der Zielbereich <code>%(root)</code> nicht existiert.",
       MISSING_READABILITY_ROOT: "Die Lesbarkeitsbewertung basiert auf dem Inhaltsbereich <code>%(fallback)</code>, da der Zielbereich <code>%(root)</code> nicht existiert.",
       SKIP_TO_PAGE_ISSUES: "Zu Seitenproblemen springen",
-      CONSOLE_ERROR: 'Leider liegt ein Problem mit der Barrierefreiheitsprüfung auf dieser Seite vor. Können Sie es bitte <a href="%(link)">über dieses Formular</a> oder auf <a href="%(link)">GitHub</a> melden?',
+      CONSOLE_ERROR: 'Leider liegt ein Problem mit der Barrierefreiheitsprüfung auf dieser Seite vor. Können Sie es bitte <a href="https://forms.gle/sjzK9XykETaoqZv99">über dieses Formular</a> oder auf <a href="https://github.com/ryersondmp/sa11y/issues/new?title=Bug%20report">GitHub</a> melden?',
       APPEARANCE: "Erscheinungsbild",
       MOVE_PANEL: "Panel verschieben",
       HIDDEN: "Versteckt",

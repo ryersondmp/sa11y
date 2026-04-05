@@ -44,7 +44,7 @@
       MISSING_ROOT: "Se comprobó la accesibilidad de la página completa porque el área de destino <code>%(root)</code> no existe.",
       MISSING_READABILITY_ROOT: "La puntuación de legibilidad se basa en el área de contenido <code>%(fallback)</code>, porque el área objetivo <code>%(root)</code> no existe.",
       SKIP_TO_PAGE_ISSUES: "Saltar problemas de la página",
-      CONSOLE_ERROR: 'Lo siento, pero hay un problema con el comprobador de accesibilidad en esta página. Puedes por favor <a href="%(link)">reportarlo a través de este formulario</a> or on <a href="%(link)">GitHub</a>?',
+      CONSOLE_ERROR: 'Lo siento, pero hay un problema con el comprobador de accesibilidad en esta página. Puedes por favor <a href="https://forms.gle/sjzK9XykETaoqZv99">reportarlo a través de este formulario</a> or on <a href="https://github.com/ryersondmp/sa11y/issues/new?title=Bug%20report">GitHub</a>?',
       APPEARANCE: "Apariencia",
       MOVE_PANEL: "Mover panel",
       HIDDEN: "Oculto",

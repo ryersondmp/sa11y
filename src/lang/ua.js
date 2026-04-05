@@ -46,7 +46,7 @@ export default {
       'Оцінка читабельності базується на вмісті <code>%(fallback)</code>, оскільки цільова область <code>%(root)</code> не існує.',
     SKIP_TO_PAGE_ISSUES: 'Перейти до сторінки Проблеми',
     CONSOLE_ERROR:
-      'Вибачте, але на цій сторінці виникла проблема з перевіркою доступності. Чи можете ви <a href="%(link)">повідомити про це за допомогою цієї форми</a> або на <a href="%(link)">GitHub</a>?',
+      'Вибачте, але на цій сторінці виникла проблема з перевіркою доступності. Чи можете ви <a href="https://forms.gle/sjzK9XykETaoqZv99">повідомити про це за допомогою цієї форми</a> або на <a href="https://github.com/ryersondmp/sa11y/issues/new?title=Bug%20report">GitHub</a>?',
     APPEARANCE: 'Зовнішній вигляд',
     MOVE_PANEL: 'Перемістити панель',
     HIDDEN: 'Приховано',

@@ -44,7 +44,7 @@
       MISSING_ROOT: "Buvo patikrintas viso puslapio prieinamumas, nes tikslinė sritis <code>%(root)</code> neegzistuoja.",
       MISSING_READABILITY_ROOT: "Skaitymo įvertinimas pagrįstas turinio sritimi <code>%(fallback)</code>, nes tikslinė sritis <code>%(root)</code> neegzistuoja.",
       SKIP_TO_PAGE_ISSUES: "Pereiti prie puslapio klausimų",
-      CONSOLE_ERROR: 'Atsiprašome, bet šiame puslapyje yra problema su prieinamumo tikrintuvu. Ar galite apie tai <a href="%(link)">pranešti per šią formą</a> arba <a href="%(link)">GitHub</a>?',
+      CONSOLE_ERROR: 'Atsiprašome, bet šiame puslapyje yra problema su prieinamumo tikrintuvu. Ar galite apie tai <a href="https://forms.gle/sjzK9XykETaoqZv99">pranešti per šią formą</a> arba <a href="https://github.com/ryersondmp/sa11y/issues/new?title=Bug%20report">GitHub</a>?',
       APPEARANCE: "Išvaizda",
       MOVE_PANEL: "Perkelti skydelį",
       HIDDEN: "Paslėpta",

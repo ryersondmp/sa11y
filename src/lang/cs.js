@@ -47,7 +47,7 @@ export default {
       'Skóre čitelnosti je založeno na obsahové oblasti <code>%(fallback)</code>, protože cílová oblast <code>%(root)</code> neexistuje.',
     SKIP_TO_PAGE_ISSUES: 'Přeskočit na stránku Problémy',
     CONSOLE_ERROR:
-      'Omlouváme se, ale na této stránce je problém s kontrolou přístupnosti. Můžete ji prosím <a href="%(link)">nahlásit prostřednictvím tohoto formuláře</a> nebo na <a href="%(link)">GitHubu</a>?',
+      'Omlouváme se, ale na této stránce je problém s kontrolou přístupnosti. Můžete ji prosím <a href="https://forms.gle/sjzK9XykETaoqZv99">nahlásit prostřednictvím tohoto formuláře</a> nebo na <a href="https://github.com/ryersondmp/sa11y/issues/new?title=Bug%20report">GitHubu</a>?',
     APPEARANCE: 'Vzhled',
     MOVE_PANEL: 'Přesunout panel',
     HIDDEN: 'Skryté',

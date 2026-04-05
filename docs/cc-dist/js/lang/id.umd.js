@@ -44,7 +44,7 @@
       MISSING_ROOT: "Halaman penuh diperiksa aksesibilitasnya karena area target <code>%(root)</code> tidak ada.",
       MISSING_READABILITY_ROOT: "Skor keterbacaan didasarkan pada area konten <code>%(fallback)</code>, karena area target <code>%(root)</code> tidak ada.",
       SKIP_TO_PAGE_ISSUES: "Loncat ke Halaman Masalah",
-      CONSOLE_ERROR: 'Maaf, ada masalah dengan pemeriksa aksesibilitas di halaman ini. Bisakah Anda <a href="%(link)">melaporkannya melalui formulir ini</a> atau di <a href="%(link)">GitHub</a>?',
+      CONSOLE_ERROR: 'Maaf, ada masalah dengan pemeriksa aksesibilitas di halaman ini. Bisakah Anda <a href="https://forms.gle/sjzK9XykETaoqZv99">melaporkannya melalui formulir ini</a> atau di <a href="https://github.com/ryersondmp/sa11y/issues/new?title=Bug%20report">GitHub</a>?',
       APPEARANCE: "Tampilan",
       MOVE_PANEL: "Pindahkan panel",
       HIDDEN: "Tersembunyi",

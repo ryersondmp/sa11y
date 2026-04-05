@@ -40,7 +40,7 @@ const sl = {
     MISSING_ROOT: "Celotna stran je bila preverjena glede dostopnosti, ker ciljno območje <code>%(root)</code> ne obstaja.",
     MISSING_READABILITY_ROOT: "Ocena berljivosti temelji na vsebinski površini <code>%(fallback)</code>, ker ciljno območje <code>%(root)</code> ne obstaja.",
     SKIP_TO_PAGE_ISSUES: "Preskoči na stran Vprašanja",
-    CONSOLE_ERROR: 'Opravičujemo se, vendar je na tej strani prišlo do težave s preverjanjem dostopnosti. Ali jo lahko <a href="%(link)">prijavite prek tega obrazca</a> ali na <a href="%(link)">GitHub</a>?',
+    CONSOLE_ERROR: 'Opravičujemo se, vendar je na tej strani prišlo do težave s preverjanjem dostopnosti. Ali jo lahko <a href="https://forms.gle/sjzK9XykETaoqZv99">prijavite prek tega obrazca</a> ali na <a href="https://github.com/ryersondmp/sa11y/issues/new?title=Bug%20report">GitHub</a>?',
     APPEARANCE: "Izgled",
     MOVE_PANEL: "Premakni ploščo",
     HIDDEN: "Skrito",

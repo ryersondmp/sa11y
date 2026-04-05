@@ -40,7 +40,7 @@ const ja = {
     MISSING_ROOT: "対象領域<code>%(root)</code>が存在しないため、全ページのアクセシビリティを確認しました。",
     MISSING_READABILITY_ROOT: "可読性スコアは<code>%(fallback)</code>のコンテンツ領域に基づいています。ターゲット領域<code>%(root)</code>が存在しないためです。",
     SKIP_TO_PAGE_ISSUES: "ページの先頭へ戻る",
-    CONSOLE_ERROR: '申し訳ありませんが、このページのアクセシビリティチェッカーに問題があります。<a href="%(link)">このフォーム</a>または<a href="%(link)">GitHub</a>で報告していただけませんでしょうか',
+    CONSOLE_ERROR: '申し訳ありませんが、このページのアクセシビリティチェッカーに問題があります。<a href="https://forms.gle/sjzK9XykETaoqZv99">このフォーム</a>または<a href="https://github.com/ryersondmp/sa11y/issues/new?title=Bug%20report">GitHub</a>で報告していただけませんでしょうか',
     APPEARANCE: "外観",
     MOVE_PANEL: "パネルを移動",
     HIDDEN: "隠し",

@@ -44,7 +44,7 @@
       MISSING_ROOT: "<code>%(root)</code> hedef alanı mevcut olmadığı için sayfanın tamamı erişilebilirlik açısından kontrol edildi.",
       MISSING_READABILITY_ROOT: "Okunabilirlik puanı, <code>%(fallback)</code> içerik alanına dayanmaktadır çünkü hedef alan <code>%(root)</code> mevcut değildir.",
       SKIP_TO_PAGE_ISSUES: "Sayfa Sorunlarına Geç",
-      CONSOLE_ERROR: 'Üzgünüz, ancak bu sayfadaki erişilebilirlik denetleyicisinde bir sorun var. Lütfen <a href="%(link)">bu form</a> aracılığıyla veya <a href="%(link)">GitHub</a> üzerinden bildirebilir misiniz?',
+      CONSOLE_ERROR: 'Üzgünüz, ancak bu sayfadaki erişilebilirlik denetleyicisinde bir sorun var. Lütfen <a href="https://forms.gle/sjzK9XykETaoqZv99">bu form</a> aracılığıyla veya <a href="https://github.com/ryersondmp/sa11y/issues/new?title=Bug%20report">GitHub</a> üzerinden bildirebilir misiniz?',
       APPEARANCE: "Görünüm",
       MOVE_PANEL: "Paneli taşı",
       HIDDEN: "Gizli",

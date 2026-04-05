@@ -46,7 +46,7 @@ export default {
       'The readability score is based on the <code>%(fallback)</code> content area, because the target area <code>%(root)</code> does not exist.',
     SKIP_TO_PAGE_ISSUES: 'Skip to Page Issues',
     CONSOLE_ERROR:
-      'Sorry, but there is an issue with the accessibility checker on this page. Can you please <a href="%(link)">report it through this form</a> or on <a href="%(link)">GitHub</a>?',
+      'Sorry, but there is an issue with the accessibility checker on this page. Can you please <a href="https://forms.gle/sjzK9XykETaoqZv99">report it through this form</a> or on <a href="https://github.com/ryersondmp/sa11y/issues/new?title=Bug%20report">GitHub</a>?',
     APPEARANCE: 'Appearance',
     MOVE_PANEL: 'Move panel',
     HIDDEN: 'Hidden',

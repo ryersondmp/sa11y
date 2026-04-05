@@ -46,7 +46,7 @@ export default {
       '가독성 점수는 <code>%(fallback)</code> 콘텐츠 영역을 기반으로 합니다. 대상 영역 <code>%(root)</code>가 존재하지 않기 때문입니다.',
     SKIP_TO_PAGE_ISSUES: '페이지 문제로 건너뛰기',
     CONSOLE_ERROR:
-      '죄송합니다. 이 페이지에서 접근성 점검기에 문제가 있습니다. <a href="%(link)">이 양식</a>이나 <a href="%(link)">GitHub</a>을 통해 신고해 주십시오.',
+      '죄송합니다. 이 페이지에서 접근성 점검기에 문제가 있습니다. <a href="https://forms.gle/sjzK9XykETaoqZv99">이 양식</a>이나 <a href="https://github.com/ryersondmp/sa11y/issues/new?title=Bug%20report">GitHub</a>을 통해 신고해 주십시오.',
     APPEARANCE: '모양',
     MOVE_PANEL: '패널을 이동',
     HIDDEN: '숨김',
