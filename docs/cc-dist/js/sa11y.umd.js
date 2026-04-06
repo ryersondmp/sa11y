@@ -325,7 +325,7 @@
       el2.appendChild(p);
       if (args?.length) {
         args.forEach((_arg, index2) => {
-          p.innerHTML = p.innerHTML.replace(/%\([a-zA-z]+\)/, `<span data-arg='${index2}'></span>`);
+          p.innerHTML = p.innerHTML.replace(/%\([a-zA-Z_]+\)/, `<span data-arg='${index2}'></span>`);
         });
         args.forEach((arg, index2) => {
           const replacement = el2.querySelector(`[data-arg="${index2}"]`);
