@@ -1644,6 +1644,22 @@ class ConsoleErrors extends HTMLElement {
     content.setAttribute("id", "dialog");
     content.setAttribute("tabindex", "-1");
     const url2 = sanitizeURL(window.location.href);
+    const template = `## Error description
+\`\`\`javascript
+${this.error.stack}
+\`\`\`
+
+## Configuration options
+\`\`\`javascript
+${JSON.stringify(State.option)}
+\`\`\`
+
+## Details
+- **URL:** ${url2}
+- **Version:** ${"5.0.0"}
+
+## Comments
+`;
     const closeBtn = document.createElement("button");
     closeBtn.className = "close-btn";
     closeBtn.setAttribute("aria-label", Lang._("ALERT_CLOSE"));
@@ -1675,7 +1691,16 @@ class ConsoleErrors extends HTMLElement {
       close.addEventListener("click", () => {
         container.remove();
       });
-    }, 0);
+      const encodedTemplate = encodeURIComponent(template);
+      const github = container.shadowRoot.querySelector(
+        'a[href="https://github.com/ryersondmp/sa11y/issues/new?title=Bug%20report"]'
+      );
+      const href = github.getAttribute("href");
+      if (href) {
+        const newHref = `${href}&body=${encodedTemplate}`;
+        github.setAttribute("href", newHref);
+      }
+    }, 10);
   }
 }
 const isElementVisible = (element) => {

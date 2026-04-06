@@ -28,6 +28,24 @@ export default class ConsoleErrors extends HTMLElement {
     // Google Form & GitHub error link.
     const url = sanitizeURL(window.location.href);
 
+    // GitHub template
+    const template = `## Error description
+\`\`\`javascript
+${this.error.stack}
+\`\`\`
+
+## Configuration options
+\`\`\`javascript
+${JSON.stringify(State.option)}
+\`\`\`
+
+## Details
+- **URL:** ${url}
+- **Version:** ${Sa11yVersion}
+
+## Comments
+`;
+
     // 1. Create the Close Button.
     const closeBtn = document.createElement('button');
     closeBtn.className = 'close-btn';
@@ -73,6 +91,17 @@ export default class ConsoleErrors extends HTMLElement {
       close.addEventListener('click', () => {
         container.remove();
       });
-    }, 0);
+
+      // Append encoded issue template to GitHub link.
+      const encodedTemplate = encodeURIComponent(template);
+      const github = container.shadowRoot.querySelector(
+        'a[href="https://github.com/ryersondmp/sa11y/issues/new?title=Bug%20report"]',
+      );
+      const href = github.getAttribute('href');
+      if (href) {
+        const newHref = `${href}&body=${encodedTemplate}`;
+        github.setAttribute('href', newHref);
+      }
+    }, 10);
   }
 }
