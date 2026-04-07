@@ -281,7 +281,8 @@ const State = {
     running: false,
     finished: 0
   },
-  dismissedResults: []
+  dismissedResults: [],
+  start: 0
 };
 const resetState = () => {
   State.results = [];
@@ -293,6 +294,7 @@ const resetState = () => {
   State.customChecks.running = false;
   State.customChecks.finished = 0;
   State.dismissedResults = [];
+  State.start = 0;
 };
 const setState = (newOptions) => {
   State.option = {
@@ -751,7 +753,7 @@ function documentLoadingCheck(callback) {
   }
 }
 function isScreenReaderOnly(element) {
-  const style = getComputedStyle(element);
+  const style = getCachedStyle(element);
   if (style.getPropertyValue("clip-path").startsWith("inset(50%)")) {
     return true;
   }
@@ -771,7 +773,7 @@ function isScreenReaderOnly(element) {
   return parseFloat(style.fontSize) < 2;
 }
 function isElementHidden(element) {
-  return element.hidden || getComputedStyle(element).getPropertyValue("display") === "none";
+  return element.hidden || getCachedStyle(element).getPropertyValue("display") === "none";
 }
 function isElementVisuallyHiddenOrHidden(element) {
   if (element.offsetWidth === 0 && element.offsetHeight === 0 || element.clientHeight === 1 && element.clientWidth === 1) {
@@ -1032,6 +1034,39 @@ function getText(element) {
 function resetGetText() {
   gotText = /* @__PURE__ */ new WeakMap();
 }
+let styleCaches = {};
+const getCachedStyle = (node, pseudoElt = null) => {
+  if (!node) return null;
+  const cacheKey = pseudoElt || "base";
+  if (!styleCaches[cacheKey]) {
+    styleCaches[cacheKey] = /* @__PURE__ */ new WeakMap();
+  }
+  const targetCache = styleCaches[cacheKey];
+  if (!targetCache.has(node)) {
+    targetCache.set(node, getComputedStyle(node, pseudoElt));
+  }
+  return targetCache.get(node);
+};
+const resetStyleCache = () => {
+  styleCaches = {};
+};
+let parentCache = /* @__PURE__ */ new WeakMap();
+function getCachedClosest(element, selector) {
+  if (!element || !selector) return null;
+  if (!parentCache.has(element)) {
+    parentCache.set(element, /* @__PURE__ */ new Map());
+  }
+  const elementCache = parentCache.get(element);
+  if (elementCache.has(selector)) {
+    return elementCache.get(selector);
+  }
+  const result = element.closest(selector);
+  elementCache.set(selector, result);
+  return result;
+}
+function resetParentCache() {
+  parentCache = /* @__PURE__ */ new WeakMap();
+}
 function removeWhitespace(string) {
   return string.replace(/[\r\n]+/g, " ").replace(/\s+/g, " ").trim();
 }
@@ -1054,7 +1089,7 @@ function debounce$2(callback, wait) {
 function findVisibleParent(element, property, value) {
   let $el = element;
   while ($el) {
-    const style = window.getComputedStyle($el);
+    const style = getCachedStyle($el);
     const propValue = style.getPropertyValue(property);
     if (propValue === value) {
       return $el;
@@ -1206,7 +1241,7 @@ function getBestImageSource(element) {
   const resolveUrl = (src) => src ? new URL(src, window.location.href).href : null;
   const dataSrc = getLastSrc(element.getAttribute("data-src") || element.getAttribute("srcset"));
   if (dataSrc) return resolveUrl(dataSrc);
-  const pictureSrcset = element.closest("picture")?.querySelector("source[srcset]")?.getAttribute("srcset");
+  const pictureSrcset = getCachedClosest(element, "picture")?.querySelector("source[srcset]")?.getAttribute("srcset");
   const pictureSrc = getLastSrc(pictureSrcset);
   if (pictureSrc) return resolveUrl(pictureSrc);
   return resolveUrl(element.getAttribute("src"));
@@ -1258,7 +1293,7 @@ function generateElementPreview(issueObject, convertBase64 = false) {
     IMG: (element) => {
       const src = getBestImageSource(element);
       if (!src) return createCodeFallback();
-      const containerAnchor = element.closest("a[href]");
+      const containerAnchor = getCachedClosest(element, "a[href]");
       const buildImgElement = (url2) => {
         const img = document.createElement("img");
         img.src = url2.startsWith("data:image/") ? url2 : sanitizeURL(url2);
@@ -1438,6 +1473,8 @@ const Utils = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.definePropert
   generateRegexString,
   generateSelectorPath,
   getBestImageSource,
+  getCachedClosest,
+  getCachedStyle,
   getNextSibling,
   getText,
   initRovingTabindex,
@@ -1453,6 +1490,8 @@ const Utils = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.definePropert
   removeWhitespace,
   resetAttributes,
   resetGetText,
+  resetParentCache,
+  resetStyleCache,
   sanitizeHTML,
   sanitizeURL,
   standardizeHref,
@@ -2060,10 +2099,8 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
   link.setAttribute("download", `Sa11y_${meta.numericDate + fileNameTitle}.csv`);
   document.body.appendChild(link);
   link.click();
-  setTimeout(() => {
-    document.body.removeChild(link);
-    window.URL.revokeObjectURL(link.href);
-  }, 100);
+  link.href = "";
+  window.URL.revokeObjectURL(link.href);
 }
 let exportHTMLHandler;
 let exportCSVHandler;
@@ -2136,7 +2173,108 @@ function resetColourFilters() {
     Constants.Panel.controls.hidden = false;
   }
 }
+const annotationStyles = '.annotation{display:block;position:relative}.annotation-inline{text-align:end;display:inline-block;position:relative}button{cursor:pointer;border-radius:50%;width:36px;height:36px;padding:0;transition:all .2s ease-in-out;display:block;position:absolute;box-shadow:0 0 16px #0000004f}button:after{content:"";width:36px;height:36px;padding:7px;position:absolute;top:-7px;left:-7px}.error-btn{z-index:9999;background:50% 50% var(--sa11y-error-svg) no-repeat;background-color:var(--sa11y-error);border:1px solid var(--sa11y-error);background-size:22px}.error-btn:hover,.error-btn:focus{background-color:var(--sa11y-error-hover)}.good-btn{z-index:9977;background:50% 50% var(--sa11y-good) var(--sa11y-good-svg) no-repeat;background-color:var(--sa11y-good);border:1px solid var(--sa11y-good);background-size:20px}.good-btn:hover,.good-btn:focus{background-color:var(--sa11y-good-hover)}.warning-btn{z-index:9988;background:50% 50% var(--sa11y-warning) var(--sa11y-warning-svg) no-repeat;background-color:var(--sa11y-warning);border:1px solid var(--sa11y-warning);transform:scaleX(var(--sa11y-icon-direction));background-size:24px}.warning-btn:hover,.warning-btn:focus{background-color:var(--sa11y-warning-hover)}button:active,button:focus{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}@media screen and (forced-colors:active){button{forced-color-adjust:none;border:1px solid #0000!important;outline:3px solid #0000!important}}';
+class Annotations extends HTMLElement {
+  connectedCallback() {
+    if (this.shadowRoot) return;
+    const shadow = this.attachShadow({ mode: "open" });
+    const style = document.createElement("style");
+    style.textContent = annotationStyles + sharedStyles;
+    shadow.appendChild(style);
+  }
+}
+const annotationButtons = [];
+function annotate(issue) {
+  const {
+    element,
+    type,
+    content,
+    inline = false,
+    position = "beforebegin",
+    id,
+    dismiss,
+    margin,
+    issueLabel
+  } = issue;
+  if (!type && !element) return;
+  if (element) {
+    if (type === "good") {
+      if (!State.option.showGoodImageButton && element?.tagName === "IMG") {
+        return;
+      }
+      if (!State.option.showGoodLinkButton && element?.tagName === "A") {
+        return;
+      }
+    }
+    const tagMap = {
+      error: "data-sa11y-error",
+      warning: "data-sa11y-warning",
+      good: "data-sa11y-good"
+    };
+    if (tagMap[type]) {
+      element.setAttribute(tagMap[type], "");
+    }
+    const annotation = document.createElement("sa11y-annotation");
+    annotation.setAttribute("data-sa11y-annotation", id);
+    if (State.option.unitTestMode) {
+      annotation.setAttribute("data-content", `${issueLabel} ${content.textContent}`);
+    }
+    if (supportsAnchorPositioning()) {
+      annotation.style.position = "absolute";
+      annotation.style.positionAnchor = `--sa11y-anchor-${id}`;
+      annotation.style.top = "anchor(top)";
+      annotation.style.left = "anchor(left)";
+      const existingNames = element.style.anchorName ? element.style.anchorName.split(",").map((name) => name.trim()) : [];
+      const filteredNames = existingNames.filter((name) => !name.startsWith("--sa11y-anchor-"));
+      filteredNames.push(`--sa11y-anchor-${id}`);
+      element.style.anchorName = filteredNames.join(", ");
+    }
+    const buttonWrapper = document.createElement("div");
+    buttonWrapper.classList.add(inline ? "annotation-inline" : "annotation");
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = `${type}-btn`;
+    button.setAttribute("aria-label", issueLabel);
+    button.setAttribute("aria-haspopup", "dialog");
+    button.style.margin = `${inline ? "-10px" : ""} ${margin}`;
+    buttonWrapper.appendChild(button);
+    annotationButtons.push(button);
+    const insertBefore = State.option.insertAnnotationBefore ? `, ${State.option.insertAnnotationBefore}` : "";
+    const location = getCachedClosest(element, `a, button, [role="link"], [role="button"] ${insertBefore}`) || element;
+    location.insertAdjacentElement(position, annotation);
+    annotation.shadowRoot.appendChild(buttonWrapper);
+    const ignoredElements = State.option.ignoreHiddenOverflow ? State.option.ignoreHiddenOverflow.split(",").flatMap((selector) => [...document.querySelectorAll(selector)]) : [];
+    const parent = findVisibleParent(element, "overflow", "hidden");
+    if (parent && !ignoredElements.includes(parent)) {
+      parent.setAttribute("data-sa11y-overflow", "");
+    }
+  } else {
+    const dismissBtn = State.option.dismissAnnotations && ["warning", "good"].includes(type) && dismiss ? Object.assign(document.createElement("button"), {
+      type: "button",
+      textContent: Lang._("DISMISS")
+    }) : null;
+    if (dismissBtn) dismissBtn.dataset.sa11yDismiss = id;
+    const listItem = document.createElement("li");
+    const heading = document.createElement("h3");
+    heading.textContent = issueLabel;
+    listItem.appendChild(heading);
+    listItem.append(content, dismissBtn || "");
+    if (State.option.unitTestMode) {
+      const test = Lang.sprintf("<strong>Test ID:</strong> <code>%(TEST)</code>", issue.test);
+      listItem.append(test);
+    }
+    Constants.Panel.pageIssuesList.prepend(listItem);
+    Constants.Panel.pageIssues.classList.add("active");
+    Constants.Panel.panel.classList.add("has-page-issues");
+  }
+}
 async function resetAll(restartPanel = true) {
+  resetGetText();
+  resetStyleCache();
+  resetParentCache();
+  resetState();
+  window.sa11yCheckComplete = null;
+  if (State.option.headless) return;
   Constants.Global.html.removeAttribute("data-sa11y-active");
   remove(
     [
@@ -2148,6 +2286,7 @@ async function resetAll(restartPanel = true) {
     ],
     "document"
   );
+  annotationButtons.length = 0;
   if (supportsAnchorPositioning()) {
     find("[style]", "document").forEach(($el) => {
       const anchor = $el;
@@ -2204,8 +2343,6 @@ async function resetAll(restartPanel = true) {
   if (restartPanel) {
     Constants.Panel.panel.classList.remove("active");
   }
-  resetGetText();
-  resetState();
 }
 function initializeDismissals() {
   State.dismissedIssues = JSON.parse(store.getItem("sa11y-dismissed-digest") || "[]");
@@ -2269,7 +2406,7 @@ const dismissIssueButton = async (e) => {
       savedDismissKeys.push(dismissalDetails);
       store.setItem("sa11y-dismissed-digest", JSON.stringify(savedDismissKeys));
       store.removeItem("sa11y-dismiss-item");
-      const tooltip = dismissButton?.closest("[data-tippy-root]");
+      const tooltip = dismissButton ? getCachedClosest(dismissButton, "[data-tippy-root]") : null;
       if (tooltip) {
         setTimeout(() => {
           tooltip.remove();
@@ -2432,10 +2569,8 @@ const wrapPseudoContent = (element, string) => {
     const match = content.includes("url(") || content.includes("image-set(") ? content.match(/\/\s*"([^"]+)"/) : content.match(/"([^"]+)"/);
     return match ? match[1] : "";
   };
-  const before = getAltText(
-    window.getComputedStyle(element, ":before").getPropertyValue("content")
-  );
-  const after = getAltText(window.getComputedStyle(element, ":after").getPropertyValue("content"));
+  const before = getAltText(getCachedStyle(element, ":before").getPropertyValue("content"));
+  const after = getAltText(getCachedStyle(element, ":after").getPropertyValue("content"));
   return `${before}${string}${after}`;
 };
 const nextTreeBranch = (tree) => {
@@ -2516,7 +2651,7 @@ const computeAccessibleName = (element, exclusions = [], recursing = 0) => {
       const shadowChildren = node.shadowRoot.querySelectorAll("*");
       for (let i = 0; i < shadowChildren.length; i++) {
         const child = shadowChildren[i];
-        if (!excludeSelector || !child.closest(excludeSelector)) {
+        if (!excludeSelector || !getCachedClosest(child, excludeSelector)) {
           and(computeAccessibleName(child, exclusions, recursing + 1));
         }
       }
@@ -2527,7 +2662,7 @@ const computeAccessibleName = (element, exclusions = [], recursing = 0) => {
       }
       continue;
     }
-    if (addTitleIfNoName && !node.closest("a")) {
+    if (addTitleIfNoName && !getCachedClosest(node, "a")) {
       if (aText === computedText) {
         and(addTitleIfNoName);
       }
@@ -2717,7 +2852,7 @@ function generateImageOutline() {
         badgesHTML += `<div class="badge"><span class="hidden-icon"></span><span class="visually-hidden">${Lang._("HIDDEN")}</span></div> `;
       }
       const anchorSelector = State.option.imageWithinLightbox ? `a[href]:not(${State.option.imageWithinLightbox})` : "a[href]";
-      if (element.closest(anchorSelector)) {
+      if (getCachedClosest(element, anchorSelector)) {
         badgesHTML += `<div class="badge"><span class="link-icon"></span><span class="visually-hidden">${Lang._("LINKED")}</span></div> `;
       }
       if (type === "error" && !showDeveloperChecks) {
@@ -5617,7 +5752,7 @@ function getBackground($el, shadowDetection) {
       targetEl = targetEl.host;
       continue;
     }
-    const styles2 = getComputedStyle(targetEl);
+    const styles2 = getCachedStyle(targetEl);
     const bgImage = styles2.backgroundImage;
     if (bgImage && bgImage !== "none") {
       return { type: "image", value: bgImage };
@@ -5632,7 +5767,7 @@ function getBackground($el, shadowDetection) {
             parentEl = parentEl.host;
             continue;
           }
-          const parentStyles = getComputedStyle(parentEl);
+          const parentStyles = getCachedStyle(parentEl);
           const currentParentBg = parentStyles.backgroundColor;
           if (currentParentBg !== "rgba(0, 0, 0, 0)" && currentParentBg !== "transparent") {
             parentBgColor = currentParentBg;
@@ -5865,7 +6000,7 @@ function wcagAlgorithm($el, color, background, fontSize, fontWeight, opacity, co
       fontWeight,
       isLargeText,
       opacity,
-      textUnderline: getComputedStyle($el).textDecorationLine
+      textUnderline: getCachedStyle($el).textDecorationLine
     };
   }
   return null;
@@ -5884,7 +6019,7 @@ function apcaAlgorithm($el, color, background, fontSize, fontWeight, opacity, co
       fontWeight,
       fontSize,
       opacity,
-      textUnderline: getComputedStyle($el).textDecorationLine
+      textUnderline: getCachedStyle($el).textDecorationLine
     };
   }
   return null;
@@ -5967,7 +6102,7 @@ function initializeContrastTools(container, contrastDetails) {
       const match = contrastPreview.style.fontSize.match(/([\d.]+)/);
       if (match) return parseFloat(match[1]);
     }
-    const computed = getComputedStyle(contrastPreview).fontSize;
+    const computed = getCachedStyle(contrastPreview).fontSize;
     if (computed) {
       const match = computed.match(/([\d.]+)/);
       if (match) return parseFloat(match[1]);
@@ -6146,101 +6281,6 @@ function generateColorSuggestion(contrastDetails) {
     }
   }
   return adviceContainer;
-}
-const annotationStyles = '.annotation{display:block;position:relative}.annotation-inline{text-align:end;display:inline-block;position:relative}button{cursor:pointer;border-radius:50%;width:36px;height:36px;padding:0;transition:all .2s ease-in-out;display:block;position:absolute;box-shadow:0 0 16px #0000004f}button:after{content:"";width:36px;height:36px;padding:7px;position:absolute;top:-7px;left:-7px}.error-btn{z-index:9999;background:50% 50% var(--sa11y-error-svg) no-repeat;background-color:var(--sa11y-error);border:1px solid var(--sa11y-error);background-size:22px}.error-btn:hover,.error-btn:focus{background-color:var(--sa11y-error-hover)}.good-btn{z-index:9977;background:50% 50% var(--sa11y-good) var(--sa11y-good-svg) no-repeat;background-color:var(--sa11y-good);border:1px solid var(--sa11y-good);background-size:20px}.good-btn:hover,.good-btn:focus{background-color:var(--sa11y-good-hover)}.warning-btn{z-index:9988;background:50% 50% var(--sa11y-warning) var(--sa11y-warning-svg) no-repeat;background-color:var(--sa11y-warning);border:1px solid var(--sa11y-warning);transform:scaleX(var(--sa11y-icon-direction));background-size:24px}.warning-btn:hover,.warning-btn:focus{background-color:var(--sa11y-warning-hover)}button:active,button:focus{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}@media screen and (forced-colors:active){button{forced-color-adjust:none;border:1px solid #0000!important;outline:3px solid #0000!important}}';
-class Annotations extends HTMLElement {
-  connectedCallback() {
-    if (this.shadowRoot) return;
-    const shadow = this.attachShadow({ mode: "open" });
-    const style = document.createElement("style");
-    style.textContent = annotationStyles + sharedStyles;
-    shadow.appendChild(style);
-  }
-}
-const annotationButtons = [];
-function annotate(issue) {
-  const {
-    element,
-    type,
-    content,
-    inline = false,
-    position = "beforebegin",
-    id,
-    dismiss,
-    margin,
-    issueLabel
-  } = issue;
-  if (!type && !element) return;
-  if (element) {
-    if (type === "good") {
-      if (!State.option.showGoodImageButton && element?.tagName === "IMG") {
-        return;
-      }
-      if (!State.option.showGoodLinkButton && element?.tagName === "A") {
-        return;
-      }
-    }
-    const tagMap = {
-      error: "data-sa11y-error",
-      warning: "data-sa11y-warning",
-      good: "data-sa11y-good"
-    };
-    if (tagMap[type]) {
-      element.setAttribute(tagMap[type], "");
-    }
-    const annotation = document.createElement("sa11y-annotation");
-    annotation.setAttribute("data-sa11y-annotation", id);
-    if (State.option.unitTestMode) {
-      annotation.setAttribute("data-content", `${issueLabel} ${content.textContent}`);
-    }
-    if (supportsAnchorPositioning()) {
-      annotation.style.position = "absolute";
-      annotation.style.positionAnchor = `--sa11y-anchor-${id}`;
-      annotation.style.top = "anchor(top)";
-      annotation.style.left = "anchor(left)";
-      const existingNames = element.style.anchorName ? element.style.anchorName.split(",").map((name) => name.trim()) : [];
-      const filteredNames = existingNames.filter((name) => !name.startsWith("--sa11y-anchor-"));
-      filteredNames.push(`--sa11y-anchor-${id}`);
-      element.style.anchorName = filteredNames.join(", ");
-    }
-    const buttonWrapper = document.createElement("div");
-    buttonWrapper.classList.add(inline ? "annotation-inline" : "annotation");
-    const button = document.createElement("button");
-    button.type = "button";
-    button.className = `${type}-btn`;
-    button.setAttribute("aria-label", issueLabel);
-    button.setAttribute("aria-haspopup", "dialog");
-    button.style.margin = `${inline ? "-10px" : ""} ${margin}`;
-    buttonWrapper.appendChild(button);
-    annotationButtons.push(button);
-    const insertBefore = State.option.insertAnnotationBefore ? `, ${State.option.insertAnnotationBefore}` : "";
-    const location = element.closest(`a, button, [role="link"], [role="button"] ${insertBefore}`) || element;
-    location.insertAdjacentElement(position, annotation);
-    annotation.shadowRoot.appendChild(buttonWrapper);
-    const ignoredElements = State.option.ignoreHiddenOverflow ? State.option.ignoreHiddenOverflow.split(",").flatMap((selector) => [...document.querySelectorAll(selector)]) : [];
-    const parent = findVisibleParent(element, "overflow", "hidden");
-    if (parent && !ignoredElements.includes(parent)) {
-      parent.setAttribute("data-sa11y-overflow", "");
-    }
-  } else {
-    const dismissBtn = State.option.dismissAnnotations && ["warning", "good"].includes(type) && dismiss ? Object.assign(document.createElement("button"), {
-      type: "button",
-      textContent: Lang._("DISMISS")
-    }) : null;
-    if (dismissBtn) dismissBtn.dataset.sa11yDismiss = id;
-    const listItem = document.createElement("li");
-    const heading = document.createElement("h3");
-    heading.textContent = issueLabel;
-    listItem.appendChild(heading);
-    listItem.append(content, dismissBtn || "");
-    if (State.option.unitTestMode) {
-      const test = Lang.sprintf("<strong>Test ID:</strong> <code>%(TEST)</code>", issue.test);
-      listItem.append(test);
-    }
-    Constants.Panel.pageIssuesList.prepend(listItem);
-    Constants.Panel.pageIssues.classList.add("active");
-    Constants.Panel.panel.classList.add("has-page-issues");
-  }
 }
 class AnnotationTooltips extends HTMLElement {
   connectedCallback() {
@@ -6489,6 +6529,7 @@ const setCache = (data) => {
   }
 };
 async function checkPageLanguage() {
+  const start2 = performance.now();
   if (!State.option.langOfPartsPlugin) return;
   if (!await getLanguageDetector()) return;
   if (!State.option.langOfPartsCache) store.removeItem(STORAGE_KEY);
@@ -6582,7 +6623,12 @@ async function checkPageLanguage() {
       });
       return;
     }
-    for (const node of Elements.Found.Everything) {
+    const batchSize = 20;
+    let pendingBatch = [];
+    let violationFound = false;
+    for (let i = 0; i < Elements.Found.Everything.length; i++) {
+      if (violationFound) break;
+      const node = Elements.Found.Everything[i];
       const isImage = node.nodeName === "IMG";
       if (!isImage && (!node.textContent || node.textContent.length < 30)) {
         continue;
@@ -6595,59 +6641,70 @@ async function checkPageLanguage() {
       }
       const nodeText = normalizeString(textString);
       if (nodeText.length <= 30) continue;
-      const detectNode = await detector.detect(nodeText);
-      const nodeLang = primary(detectNode[0].detectedLanguage);
-      const nodeConfidence = detectNode[0].confidence;
-      if (nodeConfidence >= 0.6) {
-        const langAttribute = node.getAttribute("lang") ? primary(node.getAttribute("lang")) : "";
-        const selector = generateSelectorPath(node);
-        if (langAttribute && langAttribute !== nodeLang) {
-          test = "LANG_MISMATCH";
-          content = Lang.sprintf(
-            State.option.checks.LANG_MISMATCH.content || "LANG_MISMATCH",
-            getLanguageLabel(nodeLang),
-            getLanguageLabel(langAttribute),
-            textString
-          );
-          args = [nodeLang, langAttribute];
-        } else if (!langAttribute && nodeLang !== declared) {
-          if (isImage && node.alt) {
-            test = "LANG_OF_PARTS_ALT";
-            content = Lang.sprintf(
-              State.option.checks.LANG_OF_PARTS_ALT.content || "LANG_OF_PARTS_ALT",
-              getLanguageLabel(nodeLang),
-              getLanguageLabel(declared),
-              node.alt
-            );
-            args = [nodeLang, declared, node.alt];
-          } else {
-            test = "LANG_OF_PARTS";
-            content = Lang.sprintf(
-              State.option.checks.LANG_OF_PARTS.content || "LANG_OF_PARTS",
-              getLanguageLabel(declared),
-              getLanguageLabel(nodeLang),
-              textString
-            );
-            args = [declared, nodeLang];
+      pendingBatch.push(async () => {
+        const detectNode = await detector.detect(nodeText);
+        return { node, nodeText, textString, isImage, detectNode };
+      });
+      if (pendingBatch.length >= batchSize || i === Elements.Found.Everything.length - 1) {
+        const batchResults = await Promise.all(pendingBatch.map((task) => task()));
+        for (const result of batchResults) {
+          const nodeLang = primary(result.detectNode[0].detectedLanguage);
+          const nodeConfidence = result.detectNode[0].confidence;
+          if (nodeConfidence >= 0.6) {
+            const langAttribute = result.node.getAttribute("lang") ? primary(result.node.getAttribute("lang")) : "";
+            const selector = generateSelectorPath(result.node);
+            if (langAttribute && langAttribute !== nodeLang) {
+              test = "LANG_MISMATCH";
+              content = Lang.sprintf(
+                State.option.checks.LANG_MISMATCH.content || "LANG_MISMATCH",
+                getLanguageLabel(nodeLang),
+                getLanguageLabel(langAttribute),
+                result.textString
+              );
+              args = [nodeLang, langAttribute];
+            } else if (!langAttribute && nodeLang !== declared) {
+              if (result.isImage && result.node.alt) {
+                test = "LANG_OF_PARTS_ALT";
+                content = Lang.sprintf(
+                  State.option.checks.LANG_OF_PARTS_ALT.content || "LANG_OF_PARTS_ALT",
+                  getLanguageLabel(nodeLang),
+                  getLanguageLabel(declared),
+                  result.node.alt
+                );
+                args = [nodeLang, declared, result.node.alt];
+              } else {
+                test = "LANG_OF_PARTS";
+                content = Lang.sprintf(
+                  State.option.checks.LANG_OF_PARTS.content || "LANG_OF_PARTS",
+                  getLanguageLabel(declared),
+                  getLanguageLabel(nodeLang),
+                  result.textString
+                );
+                args = [declared, nodeLang];
+              }
+            } else {
+              continue;
+            }
+            element = result.node;
+            type = nodeConfidence >= 0.9 ? "error" : "warning";
+            dismiss = prepareDismissal(result.nodeText.slice(0, 256));
+            confidence = nodeConfidence;
+            setCache({
+              key: cacheKey,
+              test,
+              element: selector,
+              type,
+              args,
+              confidence: nodeConfidence,
+              textLength: pageText.length,
+              declared
+            });
+            violationFound = true;
+            break;
           }
-        } else {
-          continue;
         }
-        element = node;
-        type = nodeConfidence >= 0.9 ? "error" : "warning";
-        dismiss = prepareDismissal(nodeText.slice(0, 256));
-        confidence = nodeConfidence;
-        setCache({
-          key: cacheKey,
-          test,
-          element: selector,
-          type,
-          args,
-          confidence: nodeConfidence,
-          textLength: pageText.length,
-          declared
-        });
-        break;
+        pendingBatch = [];
+        await new Promise((resolve) => setTimeout(resolve, 0));
       }
     }
   }
@@ -6663,7 +6720,8 @@ async function checkPageLanguage() {
       developer: State.option.checks[test].developer ?? false,
       cached: false,
       pageText: pageText.length,
-      confidence
+      confidence,
+      time: `${(performance.now() - start2).toFixed(2)}ms`
     });
   }
 }
@@ -6718,7 +6776,8 @@ async function updateResults() {
     })
   );
   if (!option.headless) syncUI();
-  const detail = { results: State.results, page: window.location.pathname };
+  const duration = `${(performance.now() - State.start).toFixed(2)}ms`;
+  const detail = { results: State.results, page: window.location.pathname, time: duration };
   window.sa11yCheckComplete = detail;
   document.dispatchEvent(new CustomEvent("sa11y-check-complete", { detail }));
 }
@@ -6854,7 +6913,8 @@ function checkImages() {
     if ($el.height < 2 && $el.width < 2 && (isElementHidden($el) || rawAlt === "")) {
       return;
     }
-    const link = $el.closest(
+    const link = getCachedClosest(
+      $el,
       State.option.imageWithinLightbox ? `a[href]:not(${State.option.imageWithinLightbox})` : "a[href]"
     );
     const src = $el.getAttribute("src") ? $el.getAttribute("src").split("?")[0] : $el.getAttribute("srcset");
@@ -6926,7 +6986,7 @@ function checkImages() {
       }
     }
     let decorative = rawAlt === "";
-    const figure = $el.closest("figure");
+    const figure = getCachedClosest($el, "figure");
     const figcaption = figure?.querySelector("figcaption");
     const figcaptionText = figcaption ? getText(figcaption) : "";
     const maxAltCharactersLinks = State.option.checks.LINK_IMAGE_LONG_ALT.maxLength || 250;
@@ -6936,7 +6996,7 @@ function checkImages() {
     }
     if (decorative) {
       const carouselSources = State.option.checks.IMAGE_DECORATIVE_CAROUSEL.sources;
-      const carousel = carouselSources ? $el.closest(carouselSources) : "";
+      const carousel = carouselSources ? getCachedClosest($el, carouselSources) : "";
       if (carousel) {
         const numberOfSlides = carousel.querySelectorAll("img");
         const rule = numberOfSlides.length === 1 ? State.option.checks.IMAGE_DECORATIVE : State.option.checks.IMAGE_DECORATIVE_CAROUSEL;
@@ -7162,7 +7222,8 @@ function checkImages() {
         });
       }
     } else if (State.option.checks.IMAGE_PASS) {
-      if (!$el.closest('button, [role="button"]')) {
+      const button = getCachedClosest($el, 'button, [role="button"]');
+      if (!button) {
         State.results.push({
           test: "IMAGE_PASS",
           element: $el,
@@ -7771,7 +7832,7 @@ function checkContrast() {
       text = text.trim();
       if (!text) continue;
     }
-    const style = window.getComputedStyle($el);
+    const style = getCachedStyle($el);
     const opacity = parseFloat(style.opacity);
     const fontSize = parseFloat(style.fontSize);
     if ($el.disabled || opacity === 0 || fontSize === 0 || isElementHidden($el)) continue;
@@ -7847,14 +7908,14 @@ function checkContrast() {
     );
     let allSameColour = false;
     if (shapes.length) {
-      const ref = getComputedStyle(shapes[0]);
+      const ref = getCachedStyle(shapes[0]);
       allSameColour = Array.from(shapes).every((node) => {
-        const style = getComputedStyle(node);
+        const style = getCachedStyle(node);
         return style.fill === ref.fill && style.fillOpacity === ref.fillOpacity && style.stroke === ref.stroke && style.strokeOpacity === ref.strokeOpacity && style.opacity === ref.opacity;
       });
     }
     if ((shapes.length === 1 || allSameColour) && complex.length === 0) {
-      const style = getComputedStyle(shapes[0]);
+      const style = getCachedStyle(shapes[0]);
       const { fill, stroke, strokeWidth, opacity } = style;
       let strokePx = 0;
       const { width, height } = $el.getBBox();
@@ -7868,8 +7929,8 @@ function checkContrast() {
       const threshold = Math.min(width, height) < 50 ? 1 : 3;
       const hasStroke = stroke && strokePx >= threshold && stroke !== "none";
       const hasFill = fill && fill !== "none" && !fill.startsWith("url(");
-      const resolvedFill = fill === "currentColor" ? convertToRGBA(getComputedStyle(shapes[0]).color, opacity) : convertToRGBA(fill, opacity);
-      const resolvedStroke = stroke === "currentColor" ? convertToRGBA(getComputedStyle(shapes[0]).color, opacity) : convertToRGBA(stroke, opacity);
+      const resolvedFill = fill === "currentColor" ? convertToRGBA(getCachedStyle(shapes[0]).color, opacity) : convertToRGBA(fill, opacity);
+      const resolvedStroke = stroke === "currentColor" ? convertToRGBA(getCachedStyle(shapes[0]).color, opacity) : convertToRGBA(stroke, opacity);
       const supported = ![resolvedFill, resolvedStroke].includes("unsupported");
       if (supported && hasBackground) {
         let contrastValue;
@@ -7931,7 +7992,7 @@ function checkContrast() {
   });
   Elements.Found.Inputs.forEach(($el) => {
     if ($el.placeholder && $el.placeholder.length !== 0) {
-      const placeholder = getComputedStyle($el, "::placeholder");
+      const placeholder = getCachedStyle($el, "::placeholder");
       const pColor = convertToRGBA(placeholder.getPropertyValue("color"));
       const pSize = parseFloat(placeholder.fontSize);
       const pWeight = normalizeFontWeight(placeholder.fontWeight);
@@ -7987,7 +8048,7 @@ function checkContrast() {
   processedResults.forEach((item) => {
     const { $el, ratio } = item;
     const updatedItem = item;
-    const element = $el.tagName === "State.option" ? $el.closest("datalist, select, optgroup") : $el;
+    const element = $el.tagName === "State.option" ? getCachedClosest($el, "datalist, select, optgroup") : $el;
     const nodeText = fnIgnore(element, ["State.option:not(State.option:first-child)"]);
     const text = getText(nodeText);
     const truncatedText = truncateString(text, 80);
@@ -8247,7 +8308,7 @@ function checkLabels() {
         }
         return;
       }
-      const closestLabel = $el.closest("label");
+      const closestLabel = getCachedClosest($el, "label");
       const labelName = closestLabel ? computeAccessibleName(closestLabel) : "";
       if (closestLabel && labelName.length) return;
       const id = $el.getAttribute("id");
@@ -8603,7 +8664,7 @@ function checkQA() {
       if (State.option.checks.QA_IN_PAGE_LINK || State.option.checks.LINK_MAYBE_BUTTON) {
         const hasText = getText($el).length !== 0;
         const ignored = $el.ariaHidden === "true" && $el.getAttribute("tabindex") === "-1";
-        const hasAttributes = $el.hasAttribute("role") || $el.hasAttribute("aria-haspopup") || $el.hasAttribute("aria-expanded") || $el.hasAttribute("onclick") || $el.hasAttribute("disabled") || !!$el.closest('nav, [role="navigation"]');
+        const hasAttributes = $el.hasAttribute("role") || $el.hasAttribute("aria-haspopup") || $el.hasAttribute("aria-expanded") || $el.hasAttribute("onclick") || $el.hasAttribute("disabled") || !!getCachedClosest($el, 'nav, [role="navigation"]');
         if ((href.startsWith("#") || href === "") && hasText && !ignored && !hasAttributes) {
           const targetId = href.substring(1);
           const ariaControls = $el.getAttribute("aria-controls");
@@ -8774,11 +8835,11 @@ function checkQA() {
     };
     const ignoreParents = 'h1, h2, h3, h4, h5, h6, [role="heading"][aria-level], blockquote, table';
     const computeLargeParagraphs = (p) => {
-      const size = getComputedStyle(p).fontSize.replace("px", "");
+      const size = parseFloat(getCachedStyle(p).fontSize);
       const getText$1 = getText(p);
       const maybeSentence = getText$1.match(/[.;?!"]/) === null;
       const typicalHeadingLength = getText$1.length >= 4 && getText$1.length <= 120;
-      if (size >= 24 && !p.closest(ignoreParents) && typicalHeadingLength && maybeSentence && !isPreviousElementAHeading(p)) {
+      if (size >= 24 && !getCachedClosest(p, ignoreParents) && typicalHeadingLength && maybeSentence && !isPreviousElementAHeading(p)) {
         addResult(p, getText$1);
       }
     };
@@ -8786,7 +8847,7 @@ function checkQA() {
       const html = p.innerHTML.trim();
       if (html[0] !== "<") return;
       const likelyFakeHeading = /^<\s*(?:strong|b)\b[^>]*>[\s\S]*?<\/\s*(?:strong|b)\s*>(?:<\s*\/?\s*br\s*>|$)/i.test(html);
-      if (!likelyFakeHeading || p.closest(ignoreParents)) return;
+      if (!likelyFakeHeading || getCachedClosest(p, ignoreParents)) return;
       const possibleHeading = p.querySelector("strong, b");
       if (!possibleHeading) return;
       const text = getText(possibleHeading);
@@ -8973,35 +9034,48 @@ function checkQA() {
       developer: State.option.checks.QA_SMALL_TEXT.developer || false
     });
   };
-  const computeStyle = ($el) => {
-    const style = getComputedStyle($el);
-    const { textDecorationLine, textAlign, fontSize } = style;
-    const interactive = 'a[href], button, abbr, [role="link"], [role="button"], [tabindex="0"], [onclick]';
-    if (State.option.checks.QA_UNDERLINE && ($el.closest("u") || textDecorationLine === "underline") && !$el.closest(interactive) && !$el.matches(interactive)) {
-      addUnderlineResult($el);
-    }
-    const defaultSize = State.option.checks.QA_SMALL_TEXT.fontSize || 10;
-    const computedFontSize = parseFloat(fontSize);
-    const parentFontSize = $el.parentElement ? parseFloat(getComputedStyle($el.parentElement).fontSize) : null;
-    const isInherited = parentFontSize === computedFontSize;
-    const isSup = $el.closest("sup, sub") !== null;
-    const withinRange = !isInherited && !isSup && computedFontSize > 1 && computedFontSize <= defaultSize;
-    if (State.option.checks.QA_SMALL_TEXT && withinRange) {
-      addSmallTextResult($el);
-    }
-    const parentJustify = $el.parentElement ? getComputedStyle($el.parentElement).textAlign : null;
-    const justifyInherited = parentJustify === textAlign;
-    if (State.option.checks.QA_JUSTIFY && textAlign === "justify" && !justifyInherited) {
-      addJustifyResult($el);
-    }
-  };
-  if (State.option.checks.QA_UNDERLINE || State.option.checks.QA_JUSTIFY || State.option.checks.QA_SMALL_TEXT) {
+  const checkUnderline = State.option.checks.QA_UNDERLINE;
+  const checkSmallText = State.option.checks.QA_SMALL_TEXT;
+  const checkJustify = State.option.checks.QA_JUSTIFY;
+  if (checkUnderline || checkJustify || checkSmallText) {
+    const defaultSize = checkSmallText?.fontSize || 10;
+    const interactiveSelector = 'a[href], button, abbr, [role="link"], [role="button"], [tabindex="0"], [onclick]';
+    const hasDirectText = (el2) => {
+      let node = el2.firstChild;
+      while (node) {
+        if (node.nodeType === 3 && node.nodeValue.trim().length > 0) {
+          return true;
+        }
+        node = node.nextSibling;
+      }
+      return false;
+    };
     for (let i = 0; i < Elements.Found.Everything.length; i++) {
       const $el = Elements.Found.Everything[i];
-      const textString = Array.from($el.childNodes).filter((node) => node.nodeType === 3).map((node) => node.textContent).join("");
-      const text = textString.trim();
-      if (text.length !== 0) {
-        computeStyle($el);
+      if (!hasDirectText($el)) continue;
+      const style = getCachedStyle($el);
+      const parentStyle = getCachedStyle($el.parentElement);
+      if (checkUnderline) {
+        if ((style.textDecorationLine === "underline" || getCachedClosest($el, "u")) && !$el.matches(interactiveSelector) && !getCachedClosest($el, interactiveSelector)) {
+          addUnderlineResult($el);
+        }
+      }
+      if (checkSmallText) {
+        const computedFontSize = parseFloat(style.fontSize);
+        if (computedFontSize > 1 && computedFontSize <= defaultSize) {
+          const parentFontSize = parentStyle ? parseFloat(parentStyle.fontSize) : null;
+          const isInherited = parentFontSize === computedFontSize;
+          if (!isInherited && !getCachedClosest($el, "sup, sub")) {
+            addSmallTextResult($el);
+          }
+        }
+      }
+      if (checkJustify && style.textAlign === "justify") {
+        const parentJustify = parentStyle ? parentStyle.textAlign : null;
+        const justifyInherited = parentJustify === style.textAlign;
+        if (!justifyInherited) {
+          addJustifyResult($el);
+        }
       }
     }
   }
@@ -9275,7 +9349,7 @@ function checkDeveloper() {
   }
   if (State.option.checks.UNCONTAINED_LI) {
     Elements.Found.Lists.forEach(($el) => {
-      if (!$el.closest("ul, ol, menu")) {
+      if (!getCachedClosest($el, "ul, ol, menu")) {
         const text = getText($el);
         State.results.push({
           test: "UNCONTAINED_LI",
@@ -9313,6 +9387,7 @@ function checkCustom(results) {
 }
 async function checkAll(desiredRoot = State.option.checkRoot, desiredReadabilityRoot = State.option.readabilityRoot, fixedRoots = State.option.fixedRoots) {
   try {
+    State.start = performance.now();
     Constants.initializeRoot(desiredRoot, desiredReadabilityRoot, fixedRoots);
     findShadowComponents();
     Elements.initializeElements();
@@ -9358,7 +9433,7 @@ async function checkAll(desiredRoot = State.option.checkRoot, desiredReadability
   } catch (error) {
     const consoleErrors = new ConsoleErrors(error);
     document.body.appendChild(consoleErrors);
-    throw Error(error);
+    throw error;
   }
 }
 function detectPageChanges() {

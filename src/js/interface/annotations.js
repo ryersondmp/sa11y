@@ -2,7 +2,7 @@ import annotationStyles from '../../css/annotations.css?inline';
 import sharedStyles from '../../css/shared.css?inline';
 import Constants from '../utils/constants';
 import Lang from '../utils/lang';
-import { findVisibleParent, supportsAnchorPositioning } from '../utils/utils';
+import { findVisibleParent, supportsAnchorPositioning, getCachedClosest } from '../utils/utils';
 import { State } from '../core/state';
 
 // Annotation wrapper <annotation>
@@ -104,7 +104,8 @@ export function annotate(issue) {
       ? `, ${State.option.insertAnnotationBefore}`
       : '';
     const location =
-      element.closest(`a, button, [role="link"], [role="button"] ${insertBefore}`) || element;
+      getCachedClosest(element, `a, button, [role="link"], [role="button"] ${insertBefore}`) ||
+      element;
     location.insertAdjacentElement(position, annotation);
     annotation.shadowRoot.appendChild(buttonWrapper);
 

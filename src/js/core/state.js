@@ -15,6 +15,7 @@ export const State = {
     finished: 0,
   },
   dismissedResults: [],
+  start: 0,
 };
 
 export const resetState = () => {
@@ -27,6 +28,7 @@ export const resetState = () => {
   State.customChecks.running = false;
   State.customChecks.finished = 0;
   State.dismissedResults = [];
+  State.start = 0;
 };
 
 export const getResults = () => State.results;

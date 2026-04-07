@@ -144,7 +144,7 @@ export default function generateImageOutline() {
       const anchorSelector = State.option.imageWithinLightbox
         ? `a[href]:not(${State.option.imageWithinLightbox})`
         : 'a[href]';
-      if (element.closest(anchorSelector)) {
+      if (Utils.getCachedClosest(element, anchorSelector)) {
         badgesHTML += `<div class="badge"><span class="link-icon"></span><span class="visually-hidden">${Lang._('LINKED')}</span></div> `;
       }
 

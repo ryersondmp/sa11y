@@ -83,6 +83,7 @@ const setCache = (data) => {
 };
 
 export default async function checkPageLanguage() {
+  const start = performance.now();
   // Hard return if neither page language checks are enabled or if feature not supported.
   if (!State.option.langOfPartsPlugin) return;
   if (!(await getLanguageDetector())) return;
@@ -223,7 +224,14 @@ export default async function checkPageLanguage() {
 
     // Otherwise, iterate through every text node to check the language.
     // Break on the first detection of a node that doesn't match the expected language.
-    for (const node of Elements.Found.Everything) {
+    const batchSize = 20;
+    let pendingBatch = [];
+    let violationFound = false;
+
+    for (let i = 0; i < Elements.Found.Everything.length; i++) {
+      if (violationFound) break;
+
+      const node = Elements.Found.Everything[i];
       const isImage = node.nodeName === 'IMG';
 
       // Cheap check before running expensive text extraction and processing.
@@ -237,7 +245,7 @@ export default async function checkPageLanguage() {
         textString = node.alt || '';
       } else {
         textString = Array.from(node.childNodes)
-          .filter((child) => child.nodeType === Node.TEXT_NODE) // Using semantic constant instead of '3'
+          .filter((child) => child.nodeType === Node.TEXT_NODE)
           .map((child) => child.textContent)
           .join(' ');
       }
@@ -246,73 +254,92 @@ export default async function checkPageLanguage() {
       // Skip nodes that are too short to accurately detect.
       if (nodeText.length <= 30) continue;
 
-      // Node data.
-      const detectNode = await detector.detect(nodeText);
-      const nodeLang = primary(detectNode[0].detectedLanguage);
-      const nodeConfidence = detectNode[0].confidence;
+      // Add the detection task to our current batch instead of awaiting immediately.
+      pendingBatch.push(async () => {
+        const detectNode = await detector.detect(nodeText);
+        return { node, nodeText, textString, isImage, detectNode };
+      });
 
-      // Only proceed if we have reasonable confidence in the detected language.
-      if (nodeConfidence >= 0.6) {
-        const langAttribute = node.getAttribute('lang') ? primary(node.getAttribute('lang')) : '';
-        const selector = Utils.generateSelectorPath(node);
+      // Process the batch if it's full, or if we've reached the very last node.
+      if (pendingBatch.length >= batchSize || i === Elements.Found.Everything.length - 1) {
+        // Execute the batch concurrently.
+        const batchResults = await Promise.all(pendingBatch.map((task) => task()));
 
-        // 1. 'lang' attribute contradicts detected text.
-        if (langAttribute && langAttribute !== nodeLang) {
-          test = 'LANG_MISMATCH';
-          content = Lang.sprintf(
-            State.option.checks.LANG_MISMATCH.content || 'LANG_MISMATCH',
-            getLanguageLabel(nodeLang),
-            getLanguageLabel(langAttribute),
-            textString,
-          );
-          args = [nodeLang, langAttribute];
+        for (const result of batchResults) {
+          const nodeLang = primary(result.detectNode[0].detectedLanguage);
+          const nodeConfidence = result.detectNode[0].confidence;
 
-          // 2. No specific 'lang' attribute, but text contradicts page language.
-        } else if (!langAttribute && nodeLang !== declared) {
-          // Image alt text is different language.
-          if (isImage && node.alt) {
-            test = 'LANG_OF_PARTS_ALT';
-            content = Lang.sprintf(
-              State.option.checks.LANG_OF_PARTS_ALT.content || 'LANG_OF_PARTS_ALT',
-              getLanguageLabel(nodeLang),
-              getLanguageLabel(declared),
-              node.alt,
-            );
-            args = [nodeLang, declared, node.alt];
-          } else {
-            // Text node is different language.
-            test = 'LANG_OF_PARTS';
-            content = Lang.sprintf(
-              State.option.checks.LANG_OF_PARTS.content || 'LANG_OF_PARTS',
-              getLanguageLabel(declared),
-              getLanguageLabel(nodeLang),
-              textString,
-            );
-            args = [declared, nodeLang];
+          // Only proceed if we have reasonable confidence in the detected language.
+          if (nodeConfidence >= 0.6) {
+            const langAttribute = result.node.getAttribute('lang')
+              ? primary(result.node.getAttribute('lang'))
+              : '';
+            const selector = Utils.generateSelectorPath(result.node);
+
+            // 1. 'lang' attribute contradicts detected text.
+            if (langAttribute && langAttribute !== nodeLang) {
+              test = 'LANG_MISMATCH';
+              content = Lang.sprintf(
+                State.option.checks.LANG_MISMATCH.content || 'LANG_MISMATCH',
+                getLanguageLabel(nodeLang),
+                getLanguageLabel(langAttribute),
+                result.textString,
+              );
+              args = [nodeLang, langAttribute];
+
+              // 2. No specific 'lang' attribute, but text contradicts page language.
+            } else if (!langAttribute && nodeLang !== declared) {
+              if (result.isImage && result.node.alt) {
+                test = 'LANG_OF_PARTS_ALT';
+                content = Lang.sprintf(
+                  State.option.checks.LANG_OF_PARTS_ALT.content || 'LANG_OF_PARTS_ALT',
+                  getLanguageLabel(nodeLang),
+                  getLanguageLabel(declared),
+                  result.node.alt,
+                );
+                args = [nodeLang, declared, result.node.alt];
+              } else {
+                test = 'LANG_OF_PARTS';
+                content = Lang.sprintf(
+                  State.option.checks.LANG_OF_PARTS.content || 'LANG_OF_PARTS',
+                  getLanguageLabel(declared),
+                  getLanguageLabel(nodeLang),
+                  result.textString,
+                );
+                args = [declared, nodeLang];
+              }
+              // 3. No conflict detected.
+            } else {
+              continue;
+            }
+
+            // Set shared values and break out of the processing
+            element = result.node;
+            type = nodeConfidence >= 0.9 ? 'error' : 'warning';
+            dismiss = Utils.prepareDismissal(result.nodeText.slice(0, 256));
+            confidence = nodeConfidence;
+
+            setCache({
+              key: cacheKey,
+              test: test,
+              element: selector,
+              type: type,
+              args: args,
+              confidence: nodeConfidence,
+              textLength: pageText.length,
+              declared: declared,
+            });
+
+            violationFound = true;
+            break; // Break the results loop.
           }
-          // 3. No conflict detected.
-        } else {
-          continue;
         }
 
-        // Set shared values.
-        element = node;
-        type = nodeConfidence >= 0.9 ? 'error' : 'warning';
-        dismiss = Utils.prepareDismissal(nodeText.slice(0, 256));
-        confidence = nodeConfidence;
+        // Reset the batch.
+        pendingBatch = [];
 
-        // Cache the result.
-        setCache({
-          key: cacheKey,
-          test: test,
-          element: selector,
-          type: type,
-          args: args,
-          confidence: nodeConfidence,
-          textLength: pageText.length,
-          declared: declared,
-        });
-        break;
+        // Yield to the main thread to prevent UI freezing (macro-task).
+        await new Promise((resolve) => setTimeout(resolve, 0));
       }
     }
   }
@@ -334,6 +361,7 @@ export default async function checkPageLanguage() {
       cached: false,
       pageText: pageText.length,
       confidence: confidence,
+      time: `${(performance.now() - start).toFixed(2)}ms`,
     });
   }
 }

@@ -322,11 +322,8 @@ function downloadCSVTemplate() {
   link.setAttribute('download', `Sa11y_${meta.numericDate + fileNameTitle}.csv`);
   document.body.appendChild(link);
   link.click();
-
-  setTimeout(() => {
-    document.body.removeChild(link);
-    window.URL.revokeObjectURL(link.href);
-  }, 100);
+  link.href = '';
+  window.URL.revokeObjectURL(link.href);
 }
 
 let exportHTMLHandler;

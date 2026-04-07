@@ -3,6 +3,7 @@ import Lang from '../utils/lang';
 import { fontLookupAPCA } from './apca';
 import * as Contrast from './utils';
 import { convertToRGBA } from './convertColors';
+import * as Utils from '../utils/utils';
 
 /**
  * Inject contrast colour pickers into tooltip.
@@ -104,7 +105,7 @@ export function initializeContrastTools(container, contrastDetails) {
     }
 
     // Fallback to computed style.
-    const computed = getComputedStyle(contrastPreview).fontSize;
+    const computed = Utils.getCachedStyle(contrastPreview).fontSize;
     if (computed) {
       const match = computed.match(/([\d.]+)/);
       if (match) return parseFloat(match[1]);

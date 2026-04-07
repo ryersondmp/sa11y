@@ -1,5 +1,6 @@
 import { APCAcontrast, alphaBlend, fontLookupAPCA, sRGBtoY } from './apca';
 import { convertToRGBA } from './convertColors';
+import * as Utils from '../utils/utils';
 
 /**
  * Normalizes a given font weight to a numeric value. Maps keywords to their numeric equivalents.
@@ -48,7 +49,7 @@ export function getBackground($el, shadowDetection) {
       continue;
     }
 
-    const styles = getComputedStyle(targetEl);
+    const styles = Utils.getCachedStyle(targetEl);
 
     // Element has background image.
     const bgImage = styles.backgroundImage;
@@ -72,7 +73,7 @@ export function getBackground($el, shadowDetection) {
             continue;
           }
 
-          const parentStyles = getComputedStyle(parentEl);
+          const parentStyles = Utils.getCachedStyle(parentEl);
           const currentParentBg = parentStyles.backgroundColor;
 
           // Stop, valid colour found.
@@ -490,7 +491,7 @@ export function wcagAlgorithm(
       fontWeight,
       isLargeText,
       opacity,
-      textUnderline: getComputedStyle($el).textDecorationLine,
+      textUnderline: Utils.getCachedStyle($el).textDecorationLine,
     };
   }
   return null;
@@ -534,7 +535,7 @@ export function apcaAlgorithm(
       fontWeight,
       fontSize,
       opacity,
-      textUnderline: getComputedStyle($el).textDecorationLine,
+      textUnderline: Utils.getCachedStyle($el).textDecorationLine,
     };
   }
   return null;

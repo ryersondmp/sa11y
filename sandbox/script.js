@@ -40,6 +40,7 @@ const sa11y = new Sa11y({
   formLabelsPlugin: true,
   colourFilterPlugin: true,
   linksAdvancedPlugin: true,
+  imageWithinLightbox: '.lightbox',
 
   shadowComponents: '',
   autoDetectShadowComponents: true,

@@ -77,7 +77,7 @@ export default function checkQA() {
           $el.hasAttribute('aria-expanded') ||
           $el.hasAttribute('onclick') ||
           $el.hasAttribute('disabled') ||
-          !!$el.closest('nav, [role="navigation"]');
+          !!Utils.getCachedClosest($el, 'nav, [role="navigation"]');
 
         if ((href.startsWith('#') || href === '') && hasText && !ignored && !hasAttributes) {
           const targetId = href.substring(1);
@@ -290,14 +290,14 @@ export default function checkQA() {
     // Find large text as heading.
     const ignoreParents = 'h1, h2, h3, h4, h5, h6, [role="heading"][aria-level], blockquote, table';
     const computeLargeParagraphs = (p) => {
-      const size = getComputedStyle(p).fontSize.replace('px', '');
+      const size = parseFloat(Utils.getCachedStyle(p).fontSize);
       const getText = Utils.getText(p);
       const maybeSentence = getText.match(/[.;?!"]/) === null;
       const typicalHeadingLength = getText.length >= 4 && getText.length <= 120;
 
       if (
         size >= 24 &&
-        !p.closest(ignoreParents) &&
+        !Utils.getCachedClosest(p, ignoreParents) &&
         typicalHeadingLength &&
         maybeSentence &&
         !isPreviousElementAHeading(p)
@@ -318,7 +318,7 @@ export default function checkQA() {
         /^<\s*(?:strong|b)\b[^>]*>[\s\S]*?<\/\s*(?:strong|b)\s*>(?:<\s*\/?\s*br\s*>|$)/i.test(html);
 
       // Don't proceed if no match.
-      if (!likelyFakeHeading || p.closest(ignoreParents)) return;
+      if (!likelyFakeHeading || Utils.getCachedClosest(p, ignoreParents)) return;
 
       // Get fake heading text.
       const possibleHeading = p.querySelector('strong, b');
@@ -570,67 +570,73 @@ export default function checkQA() {
     });
   };
 
-  const computeStyle = ($el) => {
-    const style = getComputedStyle($el);
-    const { textDecorationLine, textAlign, fontSize } = style;
+  const checkUnderline = State.option.checks.QA_UNDERLINE;
+  const checkSmallText = State.option.checks.QA_SMALL_TEXT;
+  const checkJustify = State.option.checks.QA_JUSTIFY;
 
-    /* Check: Underlined text. */
-    const interactive =
+  if (checkUnderline || checkJustify || checkSmallText) {
+    const defaultSize = checkSmallText?.fontSize || 10;
+    const interactiveSelector =
       'a[href], button, abbr, [role="link"], [role="button"], [tabindex="0"], [onclick]';
-    if (
-      State.option.checks.QA_UNDERLINE &&
-      ($el.closest('u') || textDecorationLine === 'underline') &&
-      !$el.closest(interactive) &&
-      !$el.matches(interactive)
-    ) {
-      addUnderlineResult($el);
-    }
 
-    /* Check: Font size is greater than 0 and less than 10. */
-    const defaultSize = State.option.checks.QA_SMALL_TEXT.fontSize || 10;
-    const computedFontSize = parseFloat(fontSize);
+    // 3. Fast, allocation-free check for non-empty direct text nodes
+    const hasDirectText = (el) => {
+      let node = el.firstChild;
+      while (node) {
+        // nodeType 3 is a Text Node
+        if (node.nodeType === 3 && node.nodeValue.trim().length > 0) {
+          return true;
+        }
+        node = node.nextSibling;
+      }
+      return false;
+    };
 
-    // Compare with parent element's font size.
-    const parentFontSize = $el.parentElement
-      ? parseFloat(getComputedStyle($el.parentElement).fontSize)
-      : null;
-    const isInherited = parentFontSize === computedFontSize;
-
-    // Ensure the font size is specific to the element, not inherited.
-    const isSup = $el.closest('sup, sub') !== null;
-    const withinRange =
-      !isInherited && !isSup && computedFontSize > 1 && computedFontSize <= defaultSize;
-    if (State.option.checks.QA_SMALL_TEXT && withinRange) {
-      addSmallTextResult($el);
-    }
-
-    /* Check: Check if text is justify-aligned. */
-    const parentJustify = $el.parentElement ? getComputedStyle($el.parentElement).textAlign : null;
-    const justifyInherited = parentJustify === textAlign;
-    if (State.option.checks.QA_JUSTIFY && textAlign === 'justify' && !justifyInherited) {
-      addJustifyResult($el);
-    }
-  };
-
-  // Loop through all elements within the root area.
-  if (
-    State.option.checks.QA_UNDERLINE ||
-    State.option.checks.QA_JUSTIFY ||
-    State.option.checks.QA_SMALL_TEXT
-  ) {
+    // 4. Loop through elements
     for (let i = 0; i < Elements.Found.Everything.length; i++) {
       const $el = Elements.Found.Everything[i];
 
-      // Filter only text nodes.
-      const textString = Array.from($el.childNodes)
-        .filter((node) => node.nodeType === 3)
-        .map((node) => node.textContent)
-        .join('');
-      const text = textString.trim();
+      // Skip computing styles entirely if there's no text
+      if (!hasDirectText($el)) continue;
 
-      // Only if there's text!
-      if (text.length !== 0) {
-        computeStyle($el);
+      // Fetch styles using the cache
+      const style = Utils.getCachedStyle($el);
+      const parentStyle = Utils.getCachedStyle($el.parentElement);
+
+      /* Check: Underlined text */
+      if (checkUnderline) {
+        // Evaluate cheap style checks before triggering expensive closest traversals.
+        if (
+          (style.textDecorationLine === 'underline' || Utils.getCachedClosest($el, 'u')) &&
+          !$el.matches(interactiveSelector) &&
+          !Utils.getCachedClosest($el, interactiveSelector)
+        ) {
+          addUnderlineResult($el);
+        }
+      }
+
+      /* Check: Font size is greater than 0 and less than 10 */
+      if (checkSmallText) {
+        const computedFontSize = parseFloat(style.fontSize);
+
+        if (computedFontSize > 1 && computedFontSize <= defaultSize) {
+          const parentFontSize = parentStyle ? parseFloat(parentStyle.fontSize) : null;
+          const isInherited = parentFontSize === computedFontSize;
+
+          if (!isInherited && !Utils.getCachedClosest($el, 'sup, sub')) {
+            addSmallTextResult($el);
+          }
+        }
+      }
+
+      /* Check: Text is justify-aligned */
+      if (checkJustify && style.textAlign === 'justify') {
+        const parentJustify = parentStyle ? parentStyle.textAlign : null;
+        const justifyInherited = parentJustify === style.textAlign;
+
+        if (!justifyInherited) {
+          addJustifyResult($el);
+        }
       }
     }
   }

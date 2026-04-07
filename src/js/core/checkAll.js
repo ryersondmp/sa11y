@@ -28,6 +28,8 @@ export default async function checkAll(
   fixedRoots = State.option.fixedRoots,
 ) {
   try {
+    State.start = performance.now();
+
     // Initialize root areas to check.
     Constants.initializeRoot(desiredRoot, desiredReadabilityRoot, fixedRoots);
 
@@ -87,6 +89,6 @@ export default async function checkAll(
   } catch (error) {
     const consoleErrors = new ConsoleErrors(error);
     document.body.appendChild(consoleErrors);
-    throw Error(error);
+    throw error;
   }
 }

@@ -313,7 +313,7 @@ export default function checkDeveloper() {
   /* ********************************************************** */
   if (State.option.checks.UNCONTAINED_LI) {
     Elements.Found.Lists.forEach(($el) => {
-      if (!$el.closest('ul, ol, menu')) {
+      if (!Utils.getCachedClosest($el, 'ul, ol, menu')) {
         const text = Utils.getText($el);
         State.results.push({
           test: 'UNCONTAINED_LI',

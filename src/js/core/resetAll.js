@@ -7,11 +7,29 @@ import { removeExportListeners } from '../features/export-results';
 import { removeDismissListeners } from '../features/dismissals';
 import { resetColourFilters } from '../features/colour-filters';
 import { State, resetState } from './state';
+import { annotationButtons } from '../interface/annotations';
 
 /* *********************************************************** */
 /*  Reset all: Clears everything and resets the panel.         */
 /* *********************************************************** */
 export async function resetAll(restartPanel = true) {
+  // Reset various caches.
+  Utils.resetGetText();
+  Utils.resetStyleCache();
+  Utils.resetParentCache();
+
+  // Reset state.
+  resetState();
+
+  // Reset results array.
+  window.sa11yCheckComplete = null;
+
+  // Hard return if headless mode (everything below are UI based resets).
+  if (State.option.headless) return;
+
+  /* ************************************************************** */
+  /*  Visual or UI based resets.                                    */
+  /* ************************************************************** */
   Constants.Global.html.removeAttribute('data-sa11y-active');
 
   // Remove from page.
@@ -25,6 +43,7 @@ export async function resetAll(restartPanel = true) {
     ],
     'document',
   );
+  annotationButtons.length = 0;
 
   // Remove Sa11y anchor positioning markup (while preserving any existing anchors).
   if (Utils.supportsAnchorPositioning()) {
@@ -101,10 +120,4 @@ export async function resetAll(restartPanel = true) {
   if (restartPanel) {
     Constants.Panel.panel.classList.remove('active');
   }
-
-  // Reset cached getText();
-  Utils.resetGetText();
-
-  // Reset state.
-  resetState();
 }

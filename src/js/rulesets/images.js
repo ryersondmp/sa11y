@@ -102,8 +102,9 @@ export default function checkImages() {
       return;
     }
 
-    // If selectors passed via prop, it will treat that image as an unlinked image.
-    const link = $el.closest(
+    /* If selectors passed via prop, it will treat that image as an unlinked image. */
+    const link = Utils.getCachedClosest(
+      $el,
       State.option.imageWithinLightbox
         ? `a[href]:not(${State.option.imageWithinLightbox})`
         : 'a[href]',
@@ -214,7 +215,7 @@ export default function checkImages() {
     let decorative = rawAlt === '';
 
     // Figure elements.
-    const figure = $el.closest('figure');
+    const figure = Utils.getCachedClosest($el, 'figure');
     const figcaption = figure?.querySelector('figcaption');
     const figcaptionText = figcaption ? Utils.getText(figcaption) : '';
 
@@ -230,7 +231,7 @@ export default function checkImages() {
     // Decorative images.
     if (decorative) {
       const carouselSources = State.option.checks.IMAGE_DECORATIVE_CAROUSEL.sources;
-      const carousel = carouselSources ? $el.closest(carouselSources) : '';
+      const carousel = carouselSources ? Utils.getCachedClosest($el, carouselSources) : '';
       if (carousel) {
         const numberOfSlides = carousel.querySelectorAll('img');
         const rule =
@@ -517,7 +518,8 @@ export default function checkImages() {
         });
       }
     } else if (State.option.checks.IMAGE_PASS) {
-      if (!$el.closest('button, [role="button"]')) {
+      const button = Utils.getCachedClosest($el, 'button, [role="button"]');
+      if (!button) {
         // Image has alt text!
         State.results.push({
           test: 'IMAGE_PASS',

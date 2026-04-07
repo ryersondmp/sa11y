@@ -2,7 +2,7 @@ import { createAlert } from '../interface/alert';
 import Constants from '../utils/constants';
 import find from '../utils/find';
 import Lang from '../utils/lang';
-import { store } from '../utils/utils';
+import { store, getCachedClosest } from '../utils/utils';
 import checkAll from '../core/checkAll';
 import { resetAll } from '../core/resetAll';
 import { State } from '../core/state';
@@ -121,7 +121,7 @@ const dismissIssueButton = async (e) => {
       store.removeItem('sa11y-dismiss-item'); // Remove temporary storage item.
 
       // Remove tooltip.
-      const tooltip = dismissButton?.closest('[data-tippy-root]');
+      const tooltip = dismissButton ? getCachedClosest(dismissButton, '[data-tippy-root]') : null;
       if (tooltip) {
         setTimeout(() => {
           tooltip.remove();

@@ -38,7 +38,7 @@ export default function checkContrast() {
       if (!text) continue;
     }
 
-    const style = window.getComputedStyle($el);
+    const style = Utils.getCachedStyle($el);
 
     // Early exit for hidden elements.
     const opacity = parseFloat(style.opacity);
@@ -142,9 +142,9 @@ export default function checkContrast() {
     // Check if all nodes within the SVG have the same fill/stroke/opacity.
     let allSameColour = false;
     if (shapes.length) {
-      const ref = getComputedStyle(shapes[0]);
+      const ref = Utils.getCachedStyle(shapes[0]);
       allSameColour = Array.from(shapes).every((node) => {
-        const style = getComputedStyle(node);
+        const style = Utils.getCachedStyle(node);
         return (
           style.fill === ref.fill &&
           style.fillOpacity === ref.fillOpacity &&
@@ -157,7 +157,7 @@ export default function checkContrast() {
 
     // If simple SVG (single path) or complex SVG with same colour.
     if ((shapes.length === 1 || allSameColour) && complex.length === 0) {
-      const style = getComputedStyle(shapes[0]);
+      const style = Utils.getCachedStyle(shapes[0]);
       const { fill, stroke, strokeWidth, opacity } = style;
 
       // Get computed stroke width/convert % to number.
@@ -181,13 +181,13 @@ export default function checkContrast() {
       const hasFill = fill && fill !== 'none' && !fill.startsWith('url(');
       const resolvedFill =
         fill === 'currentColor'
-          ? convertToRGBA(getComputedStyle(shapes[0]).color, opacity)
+          ? convertToRGBA(Utils.getCachedStyle(shapes[0]).color, opacity)
           : convertToRGBA(fill, opacity);
 
       // Get resolved stroke colour.
       const resolvedStroke =
         stroke === 'currentColor'
-          ? convertToRGBA(getComputedStyle(shapes[0]).color, opacity)
+          ? convertToRGBA(Utils.getCachedStyle(shapes[0]).color, opacity)
           : convertToRGBA(stroke, opacity);
 
       // If supported colours and has background, we can calculate contrast.
@@ -273,7 +273,7 @@ export default function checkContrast() {
   // Check contrast of all placeholder elements.
   Elements.Found.Inputs.forEach(($el) => {
     if ($el.placeholder && $el.placeholder.length !== 0) {
-      const placeholder = getComputedStyle($el, '::placeholder');
+      const placeholder = Utils.getCachedStyle($el, '::placeholder');
       const pColor = convertToRGBA(placeholder.getPropertyValue('color'));
       const pSize = parseFloat(placeholder.fontSize);
       const pWeight = Contrast.normalizeFontWeight(placeholder.fontWeight);
@@ -351,7 +351,9 @@ export default function checkContrast() {
 
     // Annotation placement.
     const element =
-      $el.tagName === 'State.option' ? $el.closest('datalist, select, optgroup') : $el;
+      $el.tagName === 'State.option'
+        ? Utils.getCachedClosest($el, 'datalist, select, optgroup')
+        : $el;
 
     // Process text within element.
     const nodeText = Utils.fnIgnore(element, ['State.option:not(State.option:first-child)']);

@@ -114,7 +114,8 @@ export default async function updateResults() {
   if (!option.headless) syncUI();
 
   // 4. Dispatch custom event that stores the results array.
-  const detail = { results: State.results, page: window.location.pathname };
+  const duration = `${(performance.now() - State.start).toFixed(2)}ms`;
+  const detail = { results: State.results, page: window.location.pathname, time: duration };
   window.sa11yCheckComplete = detail;
   document.dispatchEvent(new CustomEvent('sa11y-check-complete', { detail }));
 }

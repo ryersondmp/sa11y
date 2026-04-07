@@ -142,7 +142,7 @@ export default function checkLabels() {
       }
 
       // Implicit label: <label>First name: <input type="text"/><label>
-      const closestLabel = $el.closest('label');
+      const closestLabel = Utils.getCachedClosest($el, 'label');
       const labelName = closestLabel ? computeAccessibleName(closestLabel) : '';
       if (closestLabel && labelName.length) return;
 
