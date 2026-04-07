@@ -2272,10 +2272,598 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
       Constants.Panel.panel.classList.add("has-page-issues");
     }
   }
+  const SA98G = {
+    mainTRC: 2.4,
+    sRco: 0.2126729,
+    sGco: 0.7151522,
+    sBco: 0.072175,
+    normBG: 0.56,
+    normTXT: 0.57,
+    revTXT: 0.62,
+    revBG: 0.65,
+    blkThrs: 0.022,
+    blkClmp: 1.414,
+    scaleBoW: 1.14,
+    scaleWoB: 1.14,
+    loBoWoffset: 0.027,
+    loWoBoffset: 0.027,
+    deltaYmin: 5e-4,
+    loClip: 0.1
+  };
+  function APCAcontrast(txtY, bgY, places = -1) {
+    const icp = [0, 1.1];
+    if (isNaN(txtY) || isNaN(bgY) || Math.min(txtY, bgY) < icp[0] || Math.max(txtY, bgY) > icp[1]) {
+      return 0;
+    }
+    let SAPC = 0;
+    let outputContrast = 0;
+    let polCat = "BoW";
+    txtY = txtY > SA98G.blkThrs ? txtY : txtY + Math.pow(SA98G.blkThrs - txtY, SA98G.blkClmp);
+    bgY = bgY > SA98G.blkThrs ? bgY : bgY + Math.pow(SA98G.blkThrs - bgY, SA98G.blkClmp);
+    if (Math.abs(bgY - txtY) < SA98G.deltaYmin) {
+      return 0;
+    }
+    if (bgY > txtY) {
+      SAPC = (Math.pow(bgY, SA98G.normBG) - Math.pow(txtY, SA98G.normTXT)) * SA98G.scaleBoW;
+      outputContrast = SAPC < SA98G.loClip ? 0 : SAPC - SA98G.loBoWoffset;
+    } else {
+      polCat = "WoB";
+      SAPC = (Math.pow(bgY, SA98G.revBG) - Math.pow(txtY, SA98G.revTXT)) * SA98G.scaleWoB;
+      outputContrast = SAPC > -0.1 ? 0 : SAPC + SA98G.loWoBoffset;
+    }
+    if (places < 0) {
+      return outputContrast * 100;
+    } else if (places == 0) {
+      return Math.round(Math.abs(outputContrast) * 100) + "<sub>" + polCat + "</sub>";
+    } else if (Number.isInteger(places)) {
+      return (outputContrast * 100).toFixed(places);
+    } else {
+      return 0;
+    }
+  }
+  function fontLookupAPCA(contrast, places = 2) {
+    const fontMatrixAscend = [
+      ["Lc", 100, 200, 300, 400, 500, 600, 700, 800, 900],
+      [0, 999, 999, 999, 999, 999, 999, 999, 999, 999],
+      [10, 999, 999, 999, 999, 999, 999, 999, 999, 999],
+      [15, 777, 777, 777, 777, 777, 777, 777, 777, 777],
+      [20, 777, 777, 777, 777, 777, 777, 777, 777, 777],
+      [25, 777, 777, 777, 120, 120, 108, 96, 96, 96],
+      [30, 777, 777, 120, 108, 108, 96, 72, 72, 72],
+      [35, 777, 120, 108, 96, 72, 60, 48, 48, 48],
+      [40, 120, 108, 96, 60, 48, 42, 32, 32, 32],
+      [45, 108, 96, 72, 42, 32, 28, 24, 24, 24],
+      [50, 96, 72, 60, 32, 28, 24, 21, 21, 21],
+      [55, 80, 60, 48, 28, 24, 21, 18, 18, 18],
+      [60, 72, 48, 42, 24, 21, 18, 16, 16, 18],
+      [65, 68, 46, 32, 21.75, 19, 17, 15, 16, 18],
+      [70, 64, 44, 28, 19.5, 18, 16, 14.5, 16, 18],
+      [75, 60, 42, 24, 18, 16, 15, 14, 16, 18],
+      [80, 56, 38.25, 23, 17.25, 15.81, 14.81, 14, 16, 18],
+      [85, 52, 34.5, 22, 16.5, 15.625, 14.625, 14, 16, 18],
+      [90, 48, 32, 21, 16, 15.5, 14.5, 14, 16, 18],
+      [95, 45, 28, 19.5, 15.5, 15, 14, 13.5, 16, 18],
+      [100, 42, 26.5, 18.5, 15, 14.5, 13.5, 13, 16, 18],
+      [105, 39, 25, 18, 14.5, 14, 13, 12, 16, 18],
+      [110, 36, 24, 18, 14, 13, 12, 11, 16, 18],
+      [115, 34.5, 22.5, 17.25, 12.5, 11.875, 11.25, 10.625, 14.5, 16.5],
+      [120, 33, 21, 16.5, 11, 10.75, 10.5, 10.25, 13, 15],
+      [125, 32, 20, 16, 10, 10, 10, 10, 12, 14]
+    ];
+    const fontDeltaAscend = [
+      ["∆Lc", 100, 200, 300, 400, 500, 600, 700, 800, 900],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [10, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [15, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [20, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [25, 0, 0, 0, 12, 12, 12, 24, 24, 24],
+      [30, 0, 0, 12, 12, 36, 36, 24, 24, 24],
+      [35, 0, 12, 12, 36, 24, 18, 16, 16, 16],
+      [40, 12, 12, 24, 18, 16, 14, 8, 8, 8],
+      [45, 12, 24, 12, 10, 4, 4, 3, 3, 3],
+      [50, 16, 12, 12, 4, 4, 3, 3, 3, 3],
+      [55, 8, 12, 6, 4, 3, 3, 2, 2, 0],
+      [60, 4, 2, 10, 2.25, 2, 1, 1, 0, 0],
+      [65, 4, 2, 4, 2.25, 1, 1, 0.5, 0, 0],
+      [70, 4, 2, 4, 1.5, 2, 1, 0.5, 0, 0],
+      [75, 4, 3.75, 1, 0.75, 0.188, 0.188, 0, 0, 0],
+      [80, 4, 3.75, 1, 0.75, 0.188, 0.188, 0, 0, 0],
+      [85, 4, 2.5, 1, 0.5, 0.125, 0.125, 0, 0, 0],
+      [90, 3, 4, 1.5, 0.5, 0.5, 0.5, 0.5, 0, 0],
+      [95, 3, 1.5, 1, 0.5, 0.5, 0.5, 0.5, 0, 0],
+      [100, 3, 1.5, 0.5, 0.5, 0.5, 0.5, 1, 0, 0],
+      [105, 3, 1, 0, 0.5, 1, 1, 1, 0, 0],
+      [110, 1.5, 1.5, 0.75, 1.5, 1.125, 0.75, 0.375, 1.5, 1.5],
+      [115, 1.5, 1.5, 0.75, 1.5, 1.125, 0.75, 0.375, 1.5, 1.5],
+      [120, 1, 1, 0.5, 1, 0.75, 0.5, 0.25, 1, 1],
+      [125, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    ];
+    const weightArray = [0, 100, 200, 300, 400, 500, 600, 700, 800, 900];
+    const weightArrayLen = weightArray.length;
+    let returnArray = [contrast.toFixed(places), 0, 0, 0, 0, 0, 0, 0, 0, 0];
+    returnArray.length;
+    let tempFont = 777;
+    contrast = Math.abs(contrast);
+    const factor = 0.2;
+    const index2 = contrast == 0 ? 1 : contrast * factor | 0;
+    let w = 0;
+    let scoreAdj = (contrast - fontMatrixAscend[index2][w]) * factor;
+    w++;
+    for (; w < weightArrayLen; w++) {
+      tempFont = fontMatrixAscend[index2][w];
+      if (tempFont > 400) {
+        returnArray[w] = tempFont;
+      } else if (contrast < 14.5) {
+        returnArray[w] = 999;
+      } else if (contrast < 29.5) {
+        returnArray[w] = 777;
+      } else {
+        tempFont > 24 ? returnArray[w] = Math.round(tempFont - fontDeltaAscend[index2][w] * scoreAdj) : returnArray[w] = tempFont - (2 * fontDeltaAscend[index2][w] * scoreAdj | 0) * 0.5;
+      }
+    }
+    return returnArray;
+  }
+  function sRGBtoY(rgb = [0, 0, 0]) {
+    function simpleExp(chan) {
+      return Math.pow(chan / 255, SA98G.mainTRC);
+    }
+    return SA98G.sRco * simpleExp(rgb[0]) + SA98G.sGco * simpleExp(rgb[1]) + SA98G.sBco * simpleExp(rgb[2]);
+  }
+  function alphaBlend(rgbaFG = [0, 0, 0, 1], rgbBG = [0, 0, 0], round2 = true) {
+    rgbaFG[3] = Math.max(Math.min(rgbaFG[3], 1), 0);
+    let compBlend = 1 - rgbaFG[3];
+    let rgbOut = [0, 0, 0, 1, true];
+    for (let i = 0; i < 3; i++) {
+      rgbOut[i] = rgbBG[i] * compBlend + rgbaFG[i] * rgbaFG[3];
+      if (round2) rgbOut[i] = Math.min(Math.round(rgbOut[i]), 255);
+    }
+    return rgbOut;
+  }
+  const maxCacheSize = 500;
+  const colorCache = /* @__PURE__ */ new Map();
+  let sharedContext = null;
+  function getSharedContext(colorSpace = "srgb") {
+    if (!sharedContext) {
+      if (typeof OffscreenCanvas !== "undefined") {
+        const canvas = new OffscreenCanvas(1, 1);
+        sharedContext = canvas.getContext("2d", { colorSpace, willReadFrequently: true });
+      } else {
+        const canvas = document.createElement("canvas");
+        canvas.width = 1;
+        canvas.height = 1;
+        sharedContext = canvas.getContext("2d", { willReadFrequently: true });
+      }
+    }
+    return sharedContext;
+  }
+  function setCache$1(key, value) {
+    if (colorCache.size >= maxCacheSize) {
+      const firstKey = colorCache.keys().next().value;
+      colorCache.delete(firstKey);
+    }
+    colorCache.set(key, value);
+  }
+  function convertToRGBA(color, opacity = 1) {
+    const cacheKey = `${color}_${opacity}`;
+    if (colorCache.has(cacheKey)) {
+      return colorCache.get(cacheKey);
+    }
+    let r;
+    let g;
+    let b;
+    let a = 1;
+    if (color.startsWith("#")) {
+      const hex = color.slice(1);
+      const len = hex.length;
+      if (len === 3) {
+        r = parseInt(hex[0] + hex[0], 16);
+        g = parseInt(hex[1] + hex[1], 16);
+        b = parseInt(hex[2] + hex[2], 16);
+      } else {
+        r = parseInt(hex.substring(0, 2), 16);
+        g = parseInt(hex.substring(2, 4), 16);
+        b = parseInt(hex.substring(4, 6), 16);
+      }
+    } else if (color.startsWith("rgb")) {
+      const values = color.match(/[\d.]+/g);
+      if (values) {
+        r = parseInt(values[0], 10);
+        g = parseInt(values[1], 10);
+        b = parseInt(values[2], 10);
+        a = values[3] !== void 0 ? parseFloat(values[3]) : 1;
+      }
+    } else {
+      const colorSpace = color.startsWith("color(display-p3") ? "display-p3" : "srgb";
+      const ctx = getSharedContext(colorSpace);
+      if (!ctx || color.startsWith("color(rec2020")) return "unsupported";
+      ctx.fillStyle = color;
+      ctx.fillRect(0, 0, 1, 1);
+      const imageData = ctx.getImageData(0, 0, 1, 1);
+      [r, g, b, a] = imageData.data;
+      a = a / 255;
+    }
+    const finalAlpha = opacity < 1 ? Number((a * opacity).toFixed(2)) : a;
+    const result = [r, g, b, finalAlpha];
+    setCache$1(cacheKey, result);
+    return result;
+  }
+  function memoize(fn, keyResolver) {
+    const cache = /* @__PURE__ */ new Map();
+    const memoized = (...args) => {
+      const key = keyResolver ? keyResolver(...args) : JSON.stringify(args);
+      if (cache.has(key)) {
+        return cache.get(key);
+      }
+      const result = fn.apply(this, args);
+      cache.set(key, result);
+      return result;
+    };
+    memoized.clear = () => {
+      cache.clear();
+    };
+    return memoized;
+  }
+  function resetContrastCaches() {
+    clearBackgroundCache();
+    if (getLuminance.clear) getLuminance.clear();
+    if (getAPCAValue.clear) getAPCAValue.clear();
+    if (calculateContrast.clear) calculateContrast.clear();
+    if (suggestColorWCAG.clear) suggestColorWCAG.clear();
+    if (suggestColorAPCA.clear) suggestColorAPCA.clear();
+    if (extractColorFromString.clear) extractColorFromString.clear();
+  }
+  function normalizeFontWeight(weight) {
+    const numericWeight = parseInt(weight, 10);
+    if (!Number.isNaN(numericWeight)) {
+      return numericWeight;
+    }
+    const weightMap = {
+      lighter: 100,
+      normal: 400,
+      bold: 700,
+      bolder: 900
+    };
+    return weightMap[weight] || 400;
+  }
+  let backgroundCache = /* @__PURE__ */ new WeakMap();
+  function getBackground($el, shadowDetection) {
+    if (backgroundCache.has($el)) {
+      return backgroundCache.get($el);
+    }
+    const getVisualParent = (node) => {
+      if (!node) return null;
+      if (shadowDetection) {
+        if (node.assignedSlot) return node.assignedSlot;
+        if (node instanceof ShadowRoot) return node.host;
+      }
+      return node.parentElement || node.parentNode;
+    };
+    let targetEl = $el;
+    let finalBackground = [255, 255, 255];
+    while (targetEl && (targetEl.nodeType === 1 || targetEl.nodeType === 11)) {
+      if (targetEl instanceof ShadowRoot) {
+        targetEl = targetEl.host;
+        continue;
+      }
+      const styles2 = getCachedStyle(targetEl);
+      const bgImage = styles2.backgroundImage;
+      if (bgImage && bgImage !== "none") {
+        finalBackground = { type: "image", value: bgImage };
+        break;
+      }
+      const bgColor = convertToRGBA(styles2.backgroundColor);
+      if (bgColor[3] !== 0 && bgColor !== "transparent") {
+        if (bgColor[3] < 1) {
+          let parentEl = getVisualParent(targetEl);
+          let parentBgColor = "rgba(255, 255, 255, 1)";
+          while (parentEl && (parentEl.nodeType === 1 || parentEl.nodeType === 11)) {
+            if (parentEl instanceof ShadowRoot) {
+              parentEl = parentEl.host;
+              continue;
+            }
+            const parentStyles = getCachedStyle(parentEl);
+            const currentParentBg = parentStyles.backgroundColor;
+            if (currentParentBg !== "rgba(0, 0, 0, 0)" && currentParentBg !== "transparent") {
+              parentBgColor = currentParentBg;
+              break;
+            }
+            parentEl = getVisualParent(parentEl);
+          }
+          if (parentBgColor === "rgba(0, 0, 0, 0)" || parentBgColor === "transparent") {
+            parentBgColor = "rgba(255, 255, 255, 1)";
+          }
+          const parentColor = convertToRGBA(parentBgColor);
+          finalBackground = alphaBlend(bgColor, parentColor);
+          break;
+        }
+        finalBackground = bgColor;
+        break;
+      }
+      if (targetEl.tagName === "HTML") {
+        finalBackground = [255, 255, 255];
+        break;
+      }
+      targetEl = getVisualParent(targetEl);
+    }
+    backgroundCache.set($el, finalBackground);
+    return finalBackground;
+  }
+  function clearBackgroundCache() {
+    backgroundCache = /* @__PURE__ */ new WeakMap();
+  }
+  const getLuminance = memoize(
+    function getLuminance2(color) {
+      const rgb = color.slice(0, 3).map((x) => {
+        const normalized = x / 255;
+        return normalized <= 0.03928 ? normalized / 12.92 : ((normalized + 0.055) / 1.055) ** 2.4;
+      });
+      return 0.2126 * rgb[0] + 0.7152 * rgb[1] + 0.0722 * rgb[2];
+    },
+    (color) => color.join(",")
+    // Key resolver: e.g., "255,255,255,1"
+  );
+  const getAPCAValue = memoize(
+    function getAPCAValue2(color, bg) {
+      const blendedColor = alphaBlend(color, bg).slice(0, 4);
+      const foreground = sRGBtoY(blendedColor);
+      const background = sRGBtoY(bg);
+      const ratio = APCAcontrast(foreground, background);
+      return { ratio, blendedColor };
+    },
+    (color, bg) => `${color.join(",")}|${bg.join(",")}`
+  );
+  function getWCAG2Ratio(l1, l2) {
+    const lighter = Math.max(l1, l2);
+    const darker = Math.min(l1, l2);
+    return (lighter + 0.05) / (darker + 0.05);
+  }
+  function brighten(color, amount) {
+    return color.map((value, index2) => {
+      if (index2 < 3) {
+        const newValue = Math.ceil(value + (255 - value) * amount);
+        return newValue >= 255 ? 255 : newValue;
+      }
+      return value;
+    });
+  }
+  function darken(color, amount) {
+    return color.map((value, index2) => {
+      if (index2 < 3) {
+        const newValue = Math.floor(value * (1 - amount));
+        return newValue <= 0 ? 0 : newValue;
+      }
+      return value;
+    });
+  }
+  function getHex(color) {
+    const [r, g, b] = color.map((value) => Math.min(255, Math.max(0, value)));
+    const hexR = r.toString(16).padStart(2, "0");
+    const hexG = g.toString(16).padStart(2, "0");
+    const hexB = b.toString(16).padStart(2, "0");
+    return `#${hexR}${hexG}${hexB}`;
+  }
+  function displayAPCAValue(value) {
+    return Math.abs(Number(value.toFixed(1)));
+  }
+  function displayWCAGRatio(value) {
+    const truncatedRatio = Math.trunc(value * 10) / 10;
+    const formattedRatio = Number.isInteger(truncatedRatio) ? truncatedRatio.toFixed(0) : truncatedRatio;
+    return `${formattedRatio}:1`;
+  }
+  function ratioToDisplay(value, contrastAlgorithm) {
+    return contrastAlgorithm === "APCA" ? displayAPCAValue(value) : displayWCAGRatio(value);
+  }
+  const calculateContrast = memoize(
+    function calculateContrast2(color, bg, contrastAlgorithm) {
+      let ratio;
+      const blendedColor = alphaBlend(color, bg).slice(0, 4);
+      if (contrastAlgorithm === "APCA") {
+        const foreground = sRGBtoY(blendedColor);
+        const background = sRGBtoY(bg);
+        ratio = APCAcontrast(foreground, background);
+      } else {
+        const foreground = getLuminance(blendedColor);
+        const background = getLuminance(bg);
+        ratio = getWCAG2Ratio(foreground, background);
+      }
+      return { ratio, blendedColor };
+    },
+    (color, bg, alg) => `${color.join(",")}|${bg.join(",")}|${alg}`
+  );
+  const suggestColorWCAG = memoize(
+    function suggestColorWCAG2(color, background, isLargeText, contrastAlgorithm) {
+      let minContrastRatio;
+      if (contrastAlgorithm === "AAA") {
+        minContrastRatio = isLargeText ? 4.5 : 7;
+      } else {
+        minContrastRatio = isLargeText ? 3 : 4.5;
+      }
+      const fgLuminance = getLuminance(color);
+      const bgLuminance = getLuminance(background);
+      const adjustMode = fgLuminance > bgLuminance ? getWCAG2Ratio(1, bgLuminance) > minContrastRatio : getWCAG2Ratio(0, bgLuminance) < minContrastRatio;
+      const adjustColor = (foregroundColor, amount, mode) => mode ? brighten(foregroundColor, amount) : darken(foregroundColor, amount);
+      let adjustedColor = color;
+      let lastValidColor = adjustedColor;
+      let contrastRatio = getWCAG2Ratio(fgLuminance, bgLuminance);
+      let bestContrast = contrastRatio;
+      let previousColor = color;
+      let step = 0.16;
+      const percentChange = 0.5;
+      const precision = 0.01;
+      let iterations = 0;
+      const maxIterations = 100;
+      while (step >= precision) {
+        iterations += 1;
+        if (iterations > maxIterations) {
+          return { color: null };
+        }
+        adjustedColor = adjustColor(adjustedColor, step, adjustMode);
+        const newLuminance = getLuminance(adjustedColor);
+        contrastRatio = getWCAG2Ratio(newLuminance, bgLuminance);
+        if (contrastRatio >= minContrastRatio) {
+          lastValidColor = contrastRatio <= bestContrast ? adjustedColor : lastValidColor;
+          bestContrast = contrastRatio;
+          adjustedColor = previousColor;
+          step *= percentChange;
+        }
+        previousColor = adjustedColor;
+      }
+      return { color: getHex(lastValidColor) };
+    },
+    (color, bg, isLargeText, alg) => `${color.join(",")}|${bg.join(",")}|${isLargeText}|${alg}`
+  );
+  const getOptimalAPCACombo = (background, fontWeight) => {
+    const contrastWithDark = getAPCAValue(background, [0, 0, 0, 1]);
+    const contrastWithLight = getAPCAValue(background, [255, 255, 255, 1]);
+    const isDarkBetter = Math.abs(contrastWithDark.ratio) > Math.abs(contrastWithLight.ratio);
+    const suggestedColor = isDarkBetter ? [0, 0, 0, 1] : [255, 255, 255, 1];
+    const bestContrastRatio = isDarkBetter ? contrastWithDark.ratio : contrastWithLight.ratio;
+    const newFontLookup = fontLookupAPCA(bestContrastRatio).slice(1);
+    const size = Math.ceil(newFontLookup[Math.floor(fontWeight / 100) - 1]);
+    return { suggestedColor, size };
+  };
+  const suggestColorAPCA = memoize(
+    function suggestColorAPCA2(color, background, fontWeight, fontSize) {
+      const graphicMinLc = 45;
+      const isGraphic = fontWeight == null || fontSize == null;
+      const bgLuminance = sRGBtoY(background);
+      const adjustColor = (foregroundColor, amount) => bgLuminance <= 0.179 ? brighten(foregroundColor, amount) : darken(foregroundColor, amount);
+      let adjustedColor = color;
+      let contrast = getAPCAValue(adjustedColor, background);
+      let { ratio } = contrast;
+      let bestTextCombo = null;
+      let bestContrast = ratio;
+      let lastValidColor = null;
+      let fontLookup;
+      let fontWeightIndex;
+      let minimumSizeRequired;
+      const passesText = () => {
+        fontLookup = fontLookupAPCA(ratio).slice(1);
+        fontWeightIndex = Math.min(
+          Math.max(Math.floor(fontWeight / 100) - 1, 0),
+          fontLookup.length - 1
+        );
+        minimumSizeRequired = fontLookup[fontWeightIndex];
+        return minimumSizeRequired <= fontSize && minimumSizeRequired !== 999 && minimumSizeRequired !== 777;
+      };
+      const passesGraphic = () => Math.abs(ratio) >= graphicMinLc;
+      if (!isGraphic) {
+        bestTextCombo = getOptimalAPCACombo(background, fontWeight);
+        if (bestTextCombo.size > fontSize) {
+          return {
+            color: getHex(bestTextCombo.suggestedColor),
+            size: bestTextCombo.size
+          };
+        }
+        if (passesText()) {
+          return { color: getHex(color), size: null };
+        }
+      } else if (passesGraphic()) {
+        return { color: getHex(color), size: null };
+      }
+      let previousColor = color;
+      let step = 0.16;
+      const percentChange = 0.5;
+      const precision = 0.01;
+      let iterations = 0;
+      const maxIterations = 50;
+      while (step >= precision && iterations < maxIterations) {
+        iterations += 1;
+        adjustedColor = adjustColor(adjustedColor, step);
+        contrast = getAPCAValue(adjustedColor, background);
+        ratio = contrast.ratio;
+        const passes = isGraphic ? passesGraphic() : passesText();
+        if (passes) {
+          if (Math.abs(ratio) <= Math.abs(bestContrast) || !lastValidColor) {
+            lastValidColor = adjustedColor;
+            bestContrast = ratio;
+          }
+          adjustedColor = previousColor;
+          step *= percentChange;
+        }
+        previousColor = adjustedColor;
+      }
+      if (lastValidColor) {
+        return { color: getHex(lastValidColor), size: null };
+      }
+      if (!isGraphic && bestTextCombo) {
+        return {
+          color: getHex(bestTextCombo.suggestedColor),
+          size: bestTextCombo.size
+        };
+      }
+      return { color: getHex(color), size: null };
+    },
+    (color, bg, weight, size) => `${color.join(",")}|${bg.join(",")}|${weight}|${size}`
+  );
+  function wcagAlgorithm($el, color, background, fontSize, fontWeight, opacity, contrastAlgorithm) {
+    const { ratio, blendedColor } = calculateContrast(color, background);
+    const isLargeText = fontSize >= 24 || fontSize >= 18.67 && fontWeight >= 700;
+    let hasLowContrast;
+    if (contrastAlgorithm === "AAA") {
+      hasLowContrast = isLargeText ? ratio < 4.5 : ratio < 7;
+    } else {
+      const hasLowContrastNormalText = ratio > 0 && ratio < 4.5;
+      hasLowContrast = isLargeText ? ratio < 3 : hasLowContrastNormalText;
+    }
+    if (hasLowContrast) {
+      return {
+        $el,
+        ratio: displayWCAGRatio(ratio),
+        color: blendedColor,
+        background,
+        fontSize,
+        fontWeight,
+        isLargeText,
+        opacity,
+        textUnderline: getCachedStyle($el).textDecorationLine
+      };
+    }
+    return null;
+  }
+  function apcaAlgorithm($el, color, background, fontSize, fontWeight, opacity, contrastAlgorithm) {
+    const { ratio, blendedColor } = calculateContrast(color, background, contrastAlgorithm);
+    const fontLookup = fontLookupAPCA(ratio).slice(1);
+    const fontWeightIndex = Math.floor(fontWeight / 100) - 1;
+    const minFontSize = fontLookup[fontWeightIndex];
+    if (fontSize < minFontSize) {
+      return {
+        $el,
+        ratio: displayAPCAValue(ratio),
+        color: blendedColor,
+        background,
+        fontWeight,
+        fontSize,
+        opacity,
+        textUnderline: getCachedStyle($el).textDecorationLine
+      };
+    }
+    return null;
+  }
+  function checkElementContrast($el, color, background, fontSize, fontWeight, opacity, contrastAlgorithm) {
+    const algorithm = contrastAlgorithm === "APCA" ? apcaAlgorithm : wcagAlgorithm;
+    return algorithm($el, color, background, fontSize, fontWeight, opacity, contrastAlgorithm);
+  }
+  const colorTokenPattern = /#(?:[\da-f]{3,4}|[\da-f]{6}|[\da-f]{8})\b|\b(?:rgb|hsl|lab|lch|oklab|oklch)a?\([^)]+\)|\b[a-z]+\b/gi;
+  const extractColorFromString = memoize(
+    function extractColorFromString2(cssValue) {
+      const tokens = cssValue.match(colorTokenPattern);
+      if (!tokens) return [];
+      const colors = [];
+      for (const token of tokens) {
+        if (/^[a-z]+$/i.test(token) && !CSS.supports("color", token)) continue;
+        const color = convertToRGBA(token);
+        if (color) colors.push(color);
+      }
+      return colors;
+    },
+    (cssValue) => cssValue
+  );
   async function resetAll(restartPanel = true) {
     resetGetText();
     resetStyleCache();
     resetParentCache();
+    resetContrastCaches();
     resetState();
     window.sa11yCheckComplete = null;
     if (State.option.headless) return;
@@ -5513,537 +6101,6 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
     render
   });
   const tooltipStyles = 'h1,h2,div,p,span,ol,ul,li,a,button,svg,strong,kbd,code{all:unset;box-sizing:border-box!important}div{display:block}:before,:after{all:unset}.tippy-box[data-animation=fade][data-state=hidden]{opacity:0}[data-tippy-root]{max-width:calc(100vw - 10px)}@media (forced-colors:active){[data-tippy-root]{border:2px solid #0000;border-radius:5px}}.tippy-arrow{color:#333;width:16px;height:16px}.tippy-arrow:before{content:"";border-style:solid;border-color:#0000;position:absolute}.tippy-box[data-placement^=top] .tippy-arrow{bottom:0}.tippy-box[data-placement^=top] .tippy-arrow:before{border-width:8px 8px 0;border-top-color:initial;transform-origin:top;bottom:-7px;left:0}.tippy-box[data-placement^=bottom] .tippy-arrow{top:0}.tippy-box[data-placement^=bottom] .tippy-arrow:before{border-width:0 8px 8px;border-bottom-color:initial;transform-origin:bottom;top:-7px;left:0}.tippy-box[data-placement^=left] .tippy-arrow{right:0}.tippy-box[data-placement^=left] .tippy-arrow:before{border-width:8px 0 8px 8px;border-left-color:initial;transform-origin:0;right:-7px}.tippy-box[data-placement^=right] .tippy-arrow{left:0}.tippy-box[data-placement^=right] .tippy-arrow:before{border-width:8px 8px 8px 0;border-right-color:initial;transform-origin:100%;left:-7px}.tippy-content{z-index:1;padding:5px 9px;position:relative}.tippy-box[data-theme~=sa11y-theme][role=tooltip]{box-sizing:border-box!important}.tippy-box[data-theme~=sa11y-theme][role=tooltip][data-animation=fade][data-state=hidden]{opacity:0}.tippy-box[data-theme~=sa11y-theme][role=tooltip][data-inertia][data-state=visible]{transition-timing-function:cubic-bezier(.54,1.5,.38,1.11)}[role=dialog]{text-align:start;word-wrap:break-word;min-width:300px}[role=tooltip]{text-align:center;min-width:185px}.tippy-box[data-theme~=sa11y-panel]{border:1px solid var(--sa11y-panel-bg-splitter);box-shadow:var(--sa11y-box-shadow)}.tippy-box[data-theme~=sa11y-theme]:not([data-theme~=sa11y-panel]){box-shadow:0 0 20px 4px #9aa1b126,0 4px 80px -8px #24282f40,0 4px 4px -2px #5b5e6926!important}.tippy-box[data-theme~=sa11y-theme]{font-family:var(--sa11y-font-face);font-size:var(--sa11y-normal-text);color:var(--sa11y-panel-primary);letter-spacing:normal;background-color:var(--sa11y-panel-bg);-webkit-font-smoothing:auto;border-radius:4px;outline:0;padding:8px;font-weight:400;line-height:22px;transition-property:transform,visibility,opacity;display:block;position:relative}.tippy-box[data-theme~=sa11y-theme] pre code{white-space:pre-wrap;display:block;overflow:auto}.tippy-box[data-theme~=sa11y-theme] code{font-family:monospace;font-size:calc(var(--sa11y-normal-text) - 1px);font-weight:500}.tippy-box[data-theme~=sa11y-theme] pre,.tippy-box[data-theme~=sa11y-theme] code,.tippy-box[data-theme~=sa11y-theme] kbd{color:var(--sa11y-panel-primary);letter-spacing:normal;background-color:var(--sa11y-panel-badge);-webkit-font-smoothing:auto;border-radius:3.2px;padding:1.6px 4.8px;line-height:22px}.tippy-box[data-theme~=sa11y-theme] .tippy-content{padding:5px 9px}.tippy-box[data-theme~=sa11y-theme] sub,.tippy-box[data-theme~=sa11y-theme] sup{font-size:var(--sa11y-small-text)}.tippy-box[data-theme~=sa11y-theme] ul{margin:0;margin-block:0;padding:0;position:relative}.tippy-box[data-theme~=sa11y-theme] li{margin:5px 10px 0 20px;padding-bottom:5px;display:list-item}.tippy-box[data-theme~=sa11y-theme] a{color:var(--sa11y-hyperlink);cursor:pointer;font-weight:500;text-decoration:underline}.tippy-box[data-theme~=sa11y-theme] a:hover,.tippy-box[data-theme~=sa11y-theme] a:focus{text-decoration:none}.tippy-box[data-theme~=sa11y-theme] .good .colour{font-weight:400}.tippy-box[data-theme~=sa11y-theme] strong{font-weight:600}.tippy-box[data-theme~=sa11y-theme] hr{background:var(--sa11y-panel-bg-splitter);opacity:1;border:none;height:1px;margin:10px 0;padding:0}.tippy-box[data-theme~=sa11y-theme] button.close-btn{margin-inline-start:10px;margin-bottom:10px}.tippy-box[data-theme~=sa11y-theme] button#suggest-size,.tippy-box[data-theme~=sa11y-theme] button#suggest{cursor:pointer;padding:.2rem;transition:background-color .2s,color .2s;position:relative}:is(.tippy-box[data-theme~=sa11y-theme] button#suggest-size,.tippy-box[data-theme~=sa11y-theme] button#suggest):after{content:"";position:absolute;inset:-10px -5px -14px}:is(.tippy-box[data-theme~=sa11y-theme] button#suggest-size,.tippy-box[data-theme~=sa11y-theme] button#suggest):hover,:is(.tippy-box[data-theme~=sa11y-theme] button#suggest-size,.tippy-box[data-theme~=sa11y-theme] button#suggest):focus-visible{color:#000!important;background-color:#fff!important}.tippy-box[data-theme~=sa11y-theme] .dismiss-group{margin-top:5px}.tippy-box[data-theme~=sa11y-theme] .dismiss-group button{margin:10px 5px 5px 0;color:var(--sa11y-panel-primary);cursor:pointer;background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-button-outline);border-radius:5px;margin-inline-end:15px;padding:4px 8px;display:inline-block}.tippy-box[data-theme~=sa11y-theme] .dismiss-group button:hover,.tippy-box[data-theme~=sa11y-theme] .dismiss-group button:focus{background:var(--sa11y-shortcut-hover)}.tippy-box[data-theme~=sa11y-theme] .good-icon{background:var(--sa11y-good-text);width:14px;height:14px;-webkit-mask:var(--sa11y-good-svg) center no-repeat;mask:var(--sa11y-good-svg) center no-repeat;margin-bottom:-2.5px;display:inline-block}.tippy-box[data-theme~=sa11y-theme] .link-icon{background:var(--sa11y-panel-primary);width:16px;height:16px;-webkit-mask:var(--sa11y-link-icon-svg) center no-repeat;mask:var(--sa11y-link-icon-svg) center no-repeat;margin-bottom:-3.5px;display:inline-block}.tippy-box[data-theme~=sa11y-theme] .error .badge{color:var(--sa11y-error-text);background:var(--sa11y-error)}.tippy-box[data-theme~=sa11y-theme] .error .colour{color:var(--sa11y-red-text)}.tippy-box[data-theme~=sa11y-theme] .error .link-icon{background:var(--sa11y-error-text)}.tippy-box[data-theme~=sa11y-theme] .warning .badge{color:var(--sa11y-panel-bg);background:var(--sa11y-yellow-text)}.tippy-box[data-theme~=sa11y-theme] .warning .colour{color:var(--sa11y-yellow-text)}.tippy-box[data-theme~=sa11y-theme] .warning .link-icon{background:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme][data-placement^=top] .tippy-arrow:before{border-top-color:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme][data-placement^=bottom] .tippy-arrow:before{border-bottom-color:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme][data-placement^=left] .tippy-arrow:before{border-left-color:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme][data-placement^=right] .tippy-arrow:before{border-right-color:var(--sa11y-panel-bg)}@media (forced-colors:active){.tippy-box[data-theme~=sa11y-theme][data-placement^=top] .tippy-arrow:before,.tippy-box[data-theme~=sa11y-theme][data-placement^=bottom] .tippy-arrow:before,.tippy-box[data-theme~=sa11y-theme][data-placement^=left] .tippy-arrow:before,.tippy-box[data-theme~=sa11y-theme][data-placement^=right] .tippy-arrow:before{forced-color-adjust:none}.tippy-box[data-theme~=sa11y-theme] .tippy-arrow{z-index:-1}}.tippy-box[data-theme~=sa11y-theme] a:focus,.tippy-box[data-theme~=sa11y-theme] input:focus,.tippy-box[data-theme~=sa11y-theme] button:focus,.tippy-box[data-theme~=sa11y-theme] button:active,.tippy-box[data-theme~=sa11y-theme] [tabindex="-1"]:focus{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}.tippy-box[data-theme~=sa11y-theme] input:focus:not(:focus-visible),.tippy-box[data-theme~=sa11y-theme] a:focus:not(:focus-visible),.tippy-box[data-theme~=sa11y-theme] button:focus:not(:focus-visible),.tippy-box[data-theme~=sa11y-theme] [tabindex="-1"]:focus:not(:focus-visible){box-shadow:none;outline:0}.tippy-box[data-theme~=sa11y-theme] a:focus-visible,.tippy-box[data-theme~=sa11y-theme] button:focus-visible,.tippy-box[data-theme~=sa11y-theme] input:focus-visible,.tippy-box[data-theme~=sa11y-theme] [tabindex="-1"]:focus-visible{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}@media screen and (forced-colors:active){.tippy-box[data-theme~=sa11y-theme] .error-icon,.tippy-box[data-theme~=sa11y-theme] .link-icon,.tippy-box[data-theme~=sa11y-theme] .hidden-icon{filter:invert()}.tippy-box[data-theme~=sa11y-theme] a:focus,.tippy-box[data-theme~=sa11y-theme] button:focus,.tippy-box[data-theme~=sa11y-theme] [tabindex="-1"]:focus{outline:3px solid #0000!important}}';
-  const SA98G = {
-    mainTRC: 2.4,
-    sRco: 0.2126729,
-    sGco: 0.7151522,
-    sBco: 0.072175,
-    normBG: 0.56,
-    normTXT: 0.57,
-    revTXT: 0.62,
-    revBG: 0.65,
-    blkThrs: 0.022,
-    blkClmp: 1.414,
-    scaleBoW: 1.14,
-    scaleWoB: 1.14,
-    loBoWoffset: 0.027,
-    loWoBoffset: 0.027,
-    deltaYmin: 5e-4,
-    loClip: 0.1
-  };
-  function APCAcontrast(txtY, bgY, places = -1) {
-    const icp = [0, 1.1];
-    if (isNaN(txtY) || isNaN(bgY) || Math.min(txtY, bgY) < icp[0] || Math.max(txtY, bgY) > icp[1]) {
-      return 0;
-    }
-    let SAPC = 0;
-    let outputContrast = 0;
-    let polCat = "BoW";
-    txtY = txtY > SA98G.blkThrs ? txtY : txtY + Math.pow(SA98G.blkThrs - txtY, SA98G.blkClmp);
-    bgY = bgY > SA98G.blkThrs ? bgY : bgY + Math.pow(SA98G.blkThrs - bgY, SA98G.blkClmp);
-    if (Math.abs(bgY - txtY) < SA98G.deltaYmin) {
-      return 0;
-    }
-    if (bgY > txtY) {
-      SAPC = (Math.pow(bgY, SA98G.normBG) - Math.pow(txtY, SA98G.normTXT)) * SA98G.scaleBoW;
-      outputContrast = SAPC < SA98G.loClip ? 0 : SAPC - SA98G.loBoWoffset;
-    } else {
-      polCat = "WoB";
-      SAPC = (Math.pow(bgY, SA98G.revBG) - Math.pow(txtY, SA98G.revTXT)) * SA98G.scaleWoB;
-      outputContrast = SAPC > -0.1 ? 0 : SAPC + SA98G.loWoBoffset;
-    }
-    if (places < 0) {
-      return outputContrast * 100;
-    } else if (places == 0) {
-      return Math.round(Math.abs(outputContrast) * 100) + "<sub>" + polCat + "</sub>";
-    } else if (Number.isInteger(places)) {
-      return (outputContrast * 100).toFixed(places);
-    } else {
-      return 0;
-    }
-  }
-  function fontLookupAPCA(contrast, places = 2) {
-    const fontMatrixAscend = [
-      ["Lc", 100, 200, 300, 400, 500, 600, 700, 800, 900],
-      [0, 999, 999, 999, 999, 999, 999, 999, 999, 999],
-      [10, 999, 999, 999, 999, 999, 999, 999, 999, 999],
-      [15, 777, 777, 777, 777, 777, 777, 777, 777, 777],
-      [20, 777, 777, 777, 777, 777, 777, 777, 777, 777],
-      [25, 777, 777, 777, 120, 120, 108, 96, 96, 96],
-      [30, 777, 777, 120, 108, 108, 96, 72, 72, 72],
-      [35, 777, 120, 108, 96, 72, 60, 48, 48, 48],
-      [40, 120, 108, 96, 60, 48, 42, 32, 32, 32],
-      [45, 108, 96, 72, 42, 32, 28, 24, 24, 24],
-      [50, 96, 72, 60, 32, 28, 24, 21, 21, 21],
-      [55, 80, 60, 48, 28, 24, 21, 18, 18, 18],
-      [60, 72, 48, 42, 24, 21, 18, 16, 16, 18],
-      [65, 68, 46, 32, 21.75, 19, 17, 15, 16, 18],
-      [70, 64, 44, 28, 19.5, 18, 16, 14.5, 16, 18],
-      [75, 60, 42, 24, 18, 16, 15, 14, 16, 18],
-      [80, 56, 38.25, 23, 17.25, 15.81, 14.81, 14, 16, 18],
-      [85, 52, 34.5, 22, 16.5, 15.625, 14.625, 14, 16, 18],
-      [90, 48, 32, 21, 16, 15.5, 14.5, 14, 16, 18],
-      [95, 45, 28, 19.5, 15.5, 15, 14, 13.5, 16, 18],
-      [100, 42, 26.5, 18.5, 15, 14.5, 13.5, 13, 16, 18],
-      [105, 39, 25, 18, 14.5, 14, 13, 12, 16, 18],
-      [110, 36, 24, 18, 14, 13, 12, 11, 16, 18],
-      [115, 34.5, 22.5, 17.25, 12.5, 11.875, 11.25, 10.625, 14.5, 16.5],
-      [120, 33, 21, 16.5, 11, 10.75, 10.5, 10.25, 13, 15],
-      [125, 32, 20, 16, 10, 10, 10, 10, 12, 14]
-    ];
-    const fontDeltaAscend = [
-      ["∆Lc", 100, 200, 300, 400, 500, 600, 700, 800, 900],
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [10, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [15, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [20, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [25, 0, 0, 0, 12, 12, 12, 24, 24, 24],
-      [30, 0, 0, 12, 12, 36, 36, 24, 24, 24],
-      [35, 0, 12, 12, 36, 24, 18, 16, 16, 16],
-      [40, 12, 12, 24, 18, 16, 14, 8, 8, 8],
-      [45, 12, 24, 12, 10, 4, 4, 3, 3, 3],
-      [50, 16, 12, 12, 4, 4, 3, 3, 3, 3],
-      [55, 8, 12, 6, 4, 3, 3, 2, 2, 0],
-      [60, 4, 2, 10, 2.25, 2, 1, 1, 0, 0],
-      [65, 4, 2, 4, 2.25, 1, 1, 0.5, 0, 0],
-      [70, 4, 2, 4, 1.5, 2, 1, 0.5, 0, 0],
-      [75, 4, 3.75, 1, 0.75, 0.188, 0.188, 0, 0, 0],
-      [80, 4, 3.75, 1, 0.75, 0.188, 0.188, 0, 0, 0],
-      [85, 4, 2.5, 1, 0.5, 0.125, 0.125, 0, 0, 0],
-      [90, 3, 4, 1.5, 0.5, 0.5, 0.5, 0.5, 0, 0],
-      [95, 3, 1.5, 1, 0.5, 0.5, 0.5, 0.5, 0, 0],
-      [100, 3, 1.5, 0.5, 0.5, 0.5, 0.5, 1, 0, 0],
-      [105, 3, 1, 0, 0.5, 1, 1, 1, 0, 0],
-      [110, 1.5, 1.5, 0.75, 1.5, 1.125, 0.75, 0.375, 1.5, 1.5],
-      [115, 1.5, 1.5, 0.75, 1.5, 1.125, 0.75, 0.375, 1.5, 1.5],
-      [120, 1, 1, 0.5, 1, 0.75, 0.5, 0.25, 1, 1],
-      [125, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-    ];
-    const weightArray = [0, 100, 200, 300, 400, 500, 600, 700, 800, 900];
-    const weightArrayLen = weightArray.length;
-    let returnArray = [contrast.toFixed(places), 0, 0, 0, 0, 0, 0, 0, 0, 0];
-    returnArray.length;
-    let tempFont = 777;
-    contrast = Math.abs(contrast);
-    const factor = 0.2;
-    const index2 = contrast == 0 ? 1 : contrast * factor | 0;
-    let w = 0;
-    let scoreAdj = (contrast - fontMatrixAscend[index2][w]) * factor;
-    w++;
-    for (; w < weightArrayLen; w++) {
-      tempFont = fontMatrixAscend[index2][w];
-      if (tempFont > 400) {
-        returnArray[w] = tempFont;
-      } else if (contrast < 14.5) {
-        returnArray[w] = 999;
-      } else if (contrast < 29.5) {
-        returnArray[w] = 777;
-      } else {
-        tempFont > 24 ? returnArray[w] = Math.round(tempFont - fontDeltaAscend[index2][w] * scoreAdj) : returnArray[w] = tempFont - (2 * fontDeltaAscend[index2][w] * scoreAdj | 0) * 0.5;
-      }
-    }
-    return returnArray;
-  }
-  function sRGBtoY(rgb = [0, 0, 0]) {
-    function simpleExp(chan) {
-      return Math.pow(chan / 255, SA98G.mainTRC);
-    }
-    return SA98G.sRco * simpleExp(rgb[0]) + SA98G.sGco * simpleExp(rgb[1]) + SA98G.sBco * simpleExp(rgb[2]);
-  }
-  function alphaBlend(rgbaFG = [0, 0, 0, 1], rgbBG = [0, 0, 0], round2 = true) {
-    rgbaFG[3] = Math.max(Math.min(rgbaFG[3], 1), 0);
-    let compBlend = 1 - rgbaFG[3];
-    let rgbOut = [0, 0, 0, 1, true];
-    for (let i = 0; i < 3; i++) {
-      rgbOut[i] = rgbBG[i] * compBlend + rgbaFG[i] * rgbaFG[3];
-      if (round2) rgbOut[i] = Math.min(Math.round(rgbOut[i]), 255);
-    }
-    return rgbOut;
-  }
-  const maxCacheSize = 500;
-  const colorCache = /* @__PURE__ */ new Map();
-  let sharedContext = null;
-  function getSharedContext(colorSpace = "srgb") {
-    if (!sharedContext) {
-      if (typeof OffscreenCanvas !== "undefined") {
-        const canvas = new OffscreenCanvas(1, 1);
-        sharedContext = canvas.getContext("2d", { colorSpace, willReadFrequently: true });
-      } else {
-        const canvas = document.createElement("canvas");
-        canvas.width = 1;
-        canvas.height = 1;
-        sharedContext = canvas.getContext("2d", { willReadFrequently: true });
-      }
-    }
-    return sharedContext;
-  }
-  function setCache$1(key, value) {
-    if (colorCache.size >= maxCacheSize) {
-      const firstKey = colorCache.keys().next().value;
-      colorCache.delete(firstKey);
-    }
-    colorCache.set(key, value);
-  }
-  function convertToRGBA(color, opacity = 1) {
-    const cacheKey = `${color}_${opacity}`;
-    if (colorCache.has(cacheKey)) {
-      return colorCache.get(cacheKey);
-    }
-    let r;
-    let g;
-    let b;
-    let a = 1;
-    if (color.startsWith("#")) {
-      const hex = color.slice(1);
-      const len = hex.length;
-      if (len === 3) {
-        r = parseInt(hex[0] + hex[0], 16);
-        g = parseInt(hex[1] + hex[1], 16);
-        b = parseInt(hex[2] + hex[2], 16);
-      } else {
-        r = parseInt(hex.substring(0, 2), 16);
-        g = parseInt(hex.substring(2, 4), 16);
-        b = parseInt(hex.substring(4, 6), 16);
-      }
-    } else if (color.startsWith("rgb")) {
-      const values = color.match(/[\d.]+/g);
-      if (values) {
-        r = parseInt(values[0], 10);
-        g = parseInt(values[1], 10);
-        b = parseInt(values[2], 10);
-        a = values[3] !== void 0 ? parseFloat(values[3]) : 1;
-      }
-    } else {
-      const colorSpace = color.startsWith("color(display-p3") ? "display-p3" : "srgb";
-      const ctx = getSharedContext(colorSpace);
-      if (!ctx || color.startsWith("color(rec2020")) return "unsupported";
-      ctx.fillStyle = color;
-      ctx.fillRect(0, 0, 1, 1);
-      const imageData = ctx.getImageData(0, 0, 1, 1);
-      [r, g, b, a] = imageData.data;
-      a = a / 255;
-    }
-    const finalAlpha = opacity < 1 ? Number((a * opacity).toFixed(2)) : a;
-    const result = [r, g, b, finalAlpha];
-    setCache$1(cacheKey, result);
-    return result;
-  }
-  function normalizeFontWeight(weight) {
-    const numericWeight = parseInt(weight, 10);
-    if (!Number.isNaN(numericWeight)) {
-      return numericWeight;
-    }
-    const weightMap = {
-      lighter: 100,
-      normal: 400,
-      bold: 700,
-      bolder: 900
-    };
-    return weightMap[weight] || 400;
-  }
-  function getBackground($el, shadowDetection) {
-    const getVisualParent = (node) => {
-      if (!node) return null;
-      if (shadowDetection) {
-        if (node.assignedSlot) return node.assignedSlot;
-        if (node instanceof ShadowRoot) return node.host;
-      }
-      return node.parentElement || node.parentNode;
-    };
-    let targetEl = $el;
-    while (targetEl && (targetEl.nodeType === 1 || targetEl.nodeType === 11)) {
-      if (targetEl instanceof ShadowRoot) {
-        targetEl = targetEl.host;
-        continue;
-      }
-      const styles2 = getCachedStyle(targetEl);
-      const bgImage = styles2.backgroundImage;
-      if (bgImage && bgImage !== "none") {
-        return { type: "image", value: bgImage };
-      }
-      const bgColor = convertToRGBA(styles2.backgroundColor);
-      if (bgColor[3] !== 0 && bgColor !== "transparent") {
-        if (bgColor[3] < 1) {
-          let parentEl = getVisualParent(targetEl);
-          let parentBgColor = "rgba(255, 255, 255, 1)";
-          while (parentEl && (parentEl.nodeType === 1 || parentEl.nodeType === 11)) {
-            if (parentEl instanceof ShadowRoot) {
-              parentEl = parentEl.host;
-              continue;
-            }
-            const parentStyles = getCachedStyle(parentEl);
-            const currentParentBg = parentStyles.backgroundColor;
-            if (currentParentBg !== "rgba(0, 0, 0, 0)" && currentParentBg !== "transparent") {
-              parentBgColor = currentParentBg;
-              break;
-            }
-            parentEl = getVisualParent(parentEl);
-          }
-          if (parentBgColor === "rgba(0, 0, 0, 0)" || parentBgColor === "transparent") {
-            parentBgColor = "rgba(255, 255, 255, 1)";
-          }
-          const parentColor = convertToRGBA(parentBgColor);
-          const blendedBG = alphaBlend(bgColor, parentColor);
-          return blendedBG;
-        }
-        return bgColor;
-      }
-      if (targetEl.tagName === "HTML") {
-        return [255, 255, 255];
-      }
-      targetEl = getVisualParent(targetEl);
-    }
-    return [255, 255, 255];
-  }
-  function getLuminance(color) {
-    const rgb = color.slice(0, 3).map((x) => {
-      const normalized = x / 255;
-      return normalized <= 0.03928 ? normalized / 12.92 : ((normalized + 0.055) / 1.055) ** 2.4;
-    });
-    return 0.2126 * rgb[0] + 0.7152 * rgb[1] + 0.0722 * rgb[2];
-  }
-  function getAPCAValue(color, bg) {
-    const blendedColor = alphaBlend(color, bg).slice(0, 4);
-    const foreground = sRGBtoY(blendedColor);
-    const background = sRGBtoY(bg);
-    const ratio = APCAcontrast(foreground, background);
-    return { ratio, blendedColor };
-  }
-  function getWCAG2Ratio(l1, l2) {
-    const lighter = Math.max(l1, l2);
-    const darker = Math.min(l1, l2);
-    return (lighter + 0.05) / (darker + 0.05);
-  }
-  function brighten(color, amount) {
-    return color.map((value, index2) => {
-      if (index2 < 3) {
-        const newValue = Math.ceil(value + (255 - value) * amount);
-        return newValue >= 255 ? 255 : newValue;
-      }
-      return value;
-    });
-  }
-  function darken(color, amount) {
-    return color.map((value, index2) => {
-      if (index2 < 3) {
-        const newValue = Math.floor(value * (1 - amount));
-        return newValue <= 0 ? 0 : newValue;
-      }
-      return value;
-    });
-  }
-  function getHex(color) {
-    const [r, g, b] = color.map((value) => Math.min(255, Math.max(0, value)));
-    const hexR = r.toString(16).padStart(2, "0");
-    const hexG = g.toString(16).padStart(2, "0");
-    const hexB = b.toString(16).padStart(2, "0");
-    return `#${hexR}${hexG}${hexB}`;
-  }
-  function displayAPCAValue(value) {
-    return Math.abs(Number(value.toFixed(1)));
-  }
-  function displayWCAGRatio(value) {
-    const truncatedRatio = Math.trunc(value * 10) / 10;
-    const formattedRatio = Number.isInteger(truncatedRatio) ? truncatedRatio.toFixed(0) : truncatedRatio;
-    return `${formattedRatio}:1`;
-  }
-  function ratioToDisplay(value, contrastAlgorithm) {
-    return contrastAlgorithm === "APCA" ? displayAPCAValue(value) : displayWCAGRatio(value);
-  }
-  function calculateContrast(color, bg, contrastAlgorithm) {
-    let ratio;
-    const blendedColor = alphaBlend(color, bg).slice(0, 4);
-    if (contrastAlgorithm === "APCA") {
-      const foreground = sRGBtoY(blendedColor);
-      const background = sRGBtoY(bg);
-      ratio = APCAcontrast(foreground, background);
-    } else {
-      const foreground = getLuminance(blendedColor);
-      const background = getLuminance(bg);
-      ratio = getWCAG2Ratio(foreground, background);
-    }
-    return { ratio, blendedColor };
-  }
-  function suggestColorWCAG(color, background, isLargeText, contrastAlgorithm) {
-    let minContrastRatio;
-    if (contrastAlgorithm === "AAA") {
-      minContrastRatio = isLargeText ? 4.5 : 7;
-    } else {
-      minContrastRatio = isLargeText ? 3 : 4.5;
-    }
-    const fgLuminance = getLuminance(color);
-    const bgLuminance = getLuminance(background);
-    const adjustMode = fgLuminance > bgLuminance ? getWCAG2Ratio(1, bgLuminance) > minContrastRatio : getWCAG2Ratio(0, bgLuminance) < minContrastRatio;
-    const adjustColor = (foregroundColor, amount, mode) => mode ? brighten(foregroundColor, amount) : darken(foregroundColor, amount);
-    let adjustedColor = color;
-    let lastValidColor = adjustedColor;
-    let contrastRatio = getWCAG2Ratio(fgLuminance, bgLuminance);
-    let bestContrast = contrastRatio;
-    let previousColor = color;
-    let step = 0.16;
-    const percentChange = 0.5;
-    const precision = 0.01;
-    let iterations = 0;
-    const maxIterations = 100;
-    while (step >= precision) {
-      iterations += 1;
-      if (iterations > maxIterations) {
-        return { color: null };
-      }
-      adjustedColor = adjustColor(adjustedColor, step, adjustMode);
-      const newLuminance = getLuminance(adjustedColor);
-      contrastRatio = getWCAG2Ratio(newLuminance, bgLuminance);
-      if (contrastRatio >= minContrastRatio) {
-        lastValidColor = contrastRatio <= bestContrast ? adjustedColor : lastValidColor;
-        bestContrast = contrastRatio;
-        adjustedColor = previousColor;
-        step *= percentChange;
-      }
-      previousColor = adjustedColor;
-    }
-    return { color: getHex(lastValidColor) };
-  }
-  const getOptimalAPCACombo = (background, fontWeight) => {
-    const contrastWithDark = getAPCAValue(background, [0, 0, 0, 1]);
-    const contrastWithLight = getAPCAValue(background, [255, 255, 255, 1]);
-    const isDarkBetter = Math.abs(contrastWithDark.ratio) > Math.abs(contrastWithLight.ratio);
-    const suggestedColor = isDarkBetter ? [0, 0, 0, 1] : [255, 255, 255, 1];
-    const bestContrastRatio = isDarkBetter ? contrastWithDark.ratio : contrastWithLight.ratio;
-    const newFontLookup = fontLookupAPCA(bestContrastRatio).slice(1);
-    const size = Math.ceil(newFontLookup[Math.floor(fontWeight / 100) - 1]);
-    return { suggestedColor, size };
-  };
-  function suggestColorAPCA(color, background, fontWeight, fontSize) {
-    const graphicMinLc = 45;
-    const isGraphic = fontWeight == null || fontSize == null;
-    const bgLuminance = sRGBtoY(background);
-    const adjustColor = (foregroundColor, amount) => bgLuminance <= 0.179 ? brighten(foregroundColor, amount) : darken(foregroundColor, amount);
-    let adjustedColor = color;
-    let contrast = getAPCAValue(adjustedColor, background);
-    let { ratio } = contrast;
-    let bestTextCombo = null;
-    let bestContrast = ratio;
-    let lastValidColor = null;
-    let fontLookup;
-    let fontWeightIndex;
-    let minimumSizeRequired;
-    const passesText = () => {
-      fontLookup = fontLookupAPCA(ratio).slice(1);
-      fontWeightIndex = Math.min(
-        Math.max(Math.floor(fontWeight / 100) - 1, 0),
-        fontLookup.length - 1
-      );
-      minimumSizeRequired = fontLookup[fontWeightIndex];
-      return minimumSizeRequired <= fontSize && minimumSizeRequired !== 999 && minimumSizeRequired !== 777;
-    };
-    const passesGraphic = () => Math.abs(ratio) >= graphicMinLc;
-    if (!isGraphic) {
-      bestTextCombo = getOptimalAPCACombo(background, fontWeight);
-      if (bestTextCombo.size > fontSize) {
-        return {
-          color: getHex(bestTextCombo.suggestedColor),
-          size: bestTextCombo.size
-        };
-      }
-      if (passesText()) {
-        return { color: getHex(color), size: null };
-      }
-    } else if (passesGraphic()) {
-      return { color: getHex(color), size: null };
-    }
-    let previousColor = color;
-    let step = 0.16;
-    const percentChange = 0.5;
-    const precision = 0.01;
-    let iterations = 0;
-    const maxIterations = 50;
-    while (step >= precision && iterations < maxIterations) {
-      iterations += 1;
-      adjustedColor = adjustColor(adjustedColor, step);
-      contrast = getAPCAValue(adjustedColor, background);
-      ratio = contrast.ratio;
-      const passes = isGraphic ? passesGraphic() : passesText();
-      if (passes) {
-        if (Math.abs(ratio) <= Math.abs(bestContrast) || !lastValidColor) {
-          lastValidColor = adjustedColor;
-          bestContrast = ratio;
-        }
-        adjustedColor = previousColor;
-        step *= percentChange;
-      }
-      previousColor = adjustedColor;
-    }
-    if (lastValidColor) {
-      return { color: getHex(lastValidColor), size: null };
-    }
-    if (!isGraphic && bestTextCombo) {
-      return {
-        color: getHex(bestTextCombo.suggestedColor),
-        size: bestTextCombo.size
-      };
-    }
-    return { color: getHex(color), size: null };
-  }
-  function wcagAlgorithm($el, color, background, fontSize, fontWeight, opacity, contrastAlgorithm) {
-    const { ratio, blendedColor } = calculateContrast(color, background);
-    const isLargeText = fontSize >= 24 || fontSize >= 18.67 && fontWeight >= 700;
-    let hasLowContrast;
-    if (contrastAlgorithm === "AAA") {
-      hasLowContrast = isLargeText ? ratio < 4.5 : ratio < 7;
-    } else {
-      const hasLowContrastNormalText = ratio > 0 && ratio < 4.5;
-      hasLowContrast = isLargeText ? ratio < 3 : hasLowContrastNormalText;
-    }
-    if (hasLowContrast) {
-      return {
-        $el,
-        ratio: displayWCAGRatio(ratio),
-        color: blendedColor,
-        background,
-        fontSize,
-        fontWeight,
-        isLargeText,
-        opacity,
-        textUnderline: getCachedStyle($el).textDecorationLine
-      };
-    }
-    return null;
-  }
-  function apcaAlgorithm($el, color, background, fontSize, fontWeight, opacity, contrastAlgorithm) {
-    const { ratio, blendedColor } = calculateContrast(color, background, contrastAlgorithm);
-    const fontLookup = fontLookupAPCA(ratio).slice(1);
-    const fontWeightIndex = Math.floor(fontWeight / 100) - 1;
-    const minFontSize = fontLookup[fontWeightIndex];
-    if (fontSize < minFontSize) {
-      return {
-        $el,
-        ratio: displayAPCAValue(ratio),
-        color: blendedColor,
-        background,
-        fontWeight,
-        fontSize,
-        opacity,
-        textUnderline: getCachedStyle($el).textDecorationLine
-      };
-    }
-    return null;
-  }
-  function checkElementContrast($el, color, background, fontSize, fontWeight, opacity, contrastAlgorithm) {
-    const algorithm = contrastAlgorithm === "APCA" ? apcaAlgorithm : wcagAlgorithm;
-    return algorithm($el, color, background, fontSize, fontWeight, opacity, contrastAlgorithm);
-  }
-  const colorTokenPattern = /#(?:[\da-f]{3,4}|[\da-f]{6}|[\da-f]{8})\b|\b(?:rgb|hsl|lab|lch|oklab|oklch)a?\([^)]+\)|\b[a-z]+\b/gi;
-  function extractColorFromString(cssValue) {
-    const tokens = cssValue.match(colorTokenPattern);
-    if (!tokens) return [];
-    const colors = [];
-    for (const token of tokens) {
-      if (/^[a-z]+$/i.test(token) && !CSS.supports("color", token)) continue;
-      const color = convertToRGBA(token);
-      if (color) colors.push(color);
-    }
-    return colors;
-  }
   function generateContrastTools(contrastDetails) {
     const { previewText, color, background, fontWeight, fontSize, ratio, textUnderline } = contrastDetails;
     const hasBackgroundColor = background && background.type !== "image";
@@ -6214,7 +6271,7 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
   }
   function generateColorSuggestion(contrastDetails) {
     const { color, background, fontWeight, fontSize, isLargeText, type, opacity } = contrastDetails;
-    if (!color || !background || background.type === "image" || !(type === "text" || type === "svg-error" || type === "input")) {
+    if (!color || !background || background.type === "image" || !(type === "text" || type === "svg-error" || type === "input" || type === "placeholder")) {
       return;
     }
     const suggested = Constants.Global.contrastAlgorithm === "APCA" ? suggestColorAPCA(color, background, fontWeight, fontSize) : suggestColorWCAG(

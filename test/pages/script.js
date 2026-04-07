@@ -39,9 +39,15 @@ const sa11y = new Sa11y({
 });
 
 /* Console all results */
+let count = 0;
+let total = 0;
 document.addEventListener('sa11y-check-complete', (e) => {
+  count++;
+  total += parseFloat(e.detail.time);
   console.log(e.detail);
+  console.log(`Running Average (${count} samples): ${(total / count).toFixed(2)}ms`);
 });
+
 
 /**
  * Custom checks via event listeners.

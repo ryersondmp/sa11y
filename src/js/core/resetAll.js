@@ -8,6 +8,7 @@ import { removeDismissListeners } from '../features/dismissals';
 import { resetColourFilters } from '../features/colour-filters';
 import { State, resetState } from './state';
 import { annotationButtons } from '../interface/annotations';
+import { resetContrastCaches } from '../contrast/utils';
 
 /* *********************************************************** */
 /*  Reset all: Clears everything and resets the panel.         */
@@ -17,6 +18,7 @@ export async function resetAll(restartPanel = true) {
   Utils.resetGetText();
   Utils.resetStyleCache();
   Utils.resetParentCache();
+  resetContrastCaches();
 
   // Reset state.
   resetState();

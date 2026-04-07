@@ -249,7 +249,7 @@ export function generateColorSuggestion(contrastDetails) {
     !color ||
     !background ||
     background.type === 'image' ||
-    !(type === 'text' || type === 'svg-error' || type === 'input')
+    !(type === 'text' || type === 'svg-error' || type === 'input' || type === 'placeholder')
   ) {
     return;
   }

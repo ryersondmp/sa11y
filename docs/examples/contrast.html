@@ -827,6 +827,10 @@
       langOfPartsPlugin: true,
       // contrastAlgorithm: 'APCA' // AA, AAA
     });
+
+    document.addEventListener('sa11y-check-complete', (e) => {
+      console.log(e.detail);
+    });
   </script>
   <!-- End of Sa11y-->
 
