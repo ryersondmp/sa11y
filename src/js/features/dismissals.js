@@ -57,11 +57,7 @@ export function initializeDismissals() {
   // Show dismiss button in panel.
   if (State.counts.dismissed) {
     Constants.Panel.dismissButton.classList.add('active');
-    Constants.Panel.dismissTooltip.innerText = Lang.sprintf(
-      'PANEL_DISMISS_BUTTON',
-      State.counts.dismissed,
-    );
-    State.panelTooltips.object.setContent(
+    Constants.Panel.dismissTooltip.appendChild(
       Lang.sprintf('PANEL_DISMISS_BUTTON', State.counts.dismissed),
     );
   } else {
@@ -80,8 +76,6 @@ const dismissIssueButton = async (e) => {
   // Get dismissed array from localStorage.
   let savedDismissKeys = JSON.parse(store.getItem('sa11y-dismissed-digest'));
   const dismissButton = e.target;
-  const dismissContainer = document.querySelector('sa11y-panel-tooltips');
-  dismissContainer.hidden = false;
 
   // Make sure event listener is attached to dismiss button.
   if (dismissButton.tagName === 'BUTTON' && dismissButton.hasAttribute('data-sa11y-dismiss')) {
@@ -137,8 +131,7 @@ const dismissIssueButton = async (e) => {
 
 /* 2. Restore hidden alerts on the CURRENT page only. */
 const restoreDismissButton = async () => {
-  const dismissContainer = document.querySelector('sa11y-panel-tooltips');
-  dismissContainer.hidden = true; // Prevent flash of tooltip.
+  State.panelTooltips.dismissTooltip.hide(); // Prevent flash of tooltip.
   const filtered = State.dismissedIssues.filter((item) => item.href !== window.location.pathname);
   store.setItem('sa11y-dismissed-digest', JSON.stringify(filtered));
   Constants.Panel.dismissButton.classList.remove('active');

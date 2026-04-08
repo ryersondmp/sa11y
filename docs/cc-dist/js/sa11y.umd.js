@@ -1081,7 +1081,7 @@
     const truncatedString = string.substring(0, maxLength).trimEnd();
     return string.length > maxLength ? `${truncatedString}...` : string;
   }
-  function debounce$2(callback, wait) {
+  function debounce(callback, wait) {
     let timeoutId = null;
     return (...args) => {
       window.clearTimeout(timeoutId);
@@ -1468,7 +1468,7 @@
     __proto__: null,
     addPulse,
     blobToBase64,
-    debounce: debounce$2,
+    debounce,
     dismissDigest,
     documentLoadingCheck,
     findVisibleParent,
@@ -2034,7 +2034,7 @@ ${JSON.stringify(State.option)}
     }
     dl.appendChild(rightCol);
     header.appendChild(dl);
-    const main2 = doc.createElement("main");
+    const main = doc.createElement("main");
     const listEntries = [
       [errors, "error"],
       [warnings, "warning"],
@@ -2042,13 +2042,13 @@ ${JSON.stringify(State.option)}
     ];
     for (const [issues, type] of listEntries) {
       const fragment = await generateList(issues, type);
-      if (fragment) main2.appendChild(fragment);
+      if (fragment) main.appendChild(fragment);
     }
     const footer = document.createElement("footer");
     const generatedBy = Lang.sprintf("GENERATED");
     footer.appendChild(generatedBy);
     doc.body.appendChild(header);
-    doc.body.appendChild(main2);
+    doc.body.appendChild(main);
     doc.body.appendChild(footer);
     return new XMLSerializer().serializeToString(doc);
   }
@@ -2959,11 +2959,7 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
     );
     if (State.counts.dismissed) {
       Constants.Panel.dismissButton.classList.add("active");
-      Constants.Panel.dismissTooltip.innerText = Lang.sprintf(
-        "PANEL_DISMISS_BUTTON",
-        State.counts.dismissed
-      );
-      State.panelTooltips.object.setContent(
+      Constants.Panel.dismissTooltip.appendChild(
         Lang.sprintf("PANEL_DISMISS_BUTTON", State.counts.dismissed)
       );
     } else {
@@ -3591,2516 +3587,7 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
       Constants.Panel.toggle.disabled = false;
     }
   }
-  var top = "top";
-  var bottom = "bottom";
-  var right = "right";
-  var left = "left";
-  var auto = "auto";
-  var basePlacements = [top, bottom, right, left];
-  var start = "start";
-  var end = "end";
-  var clippingParents = "clippingParents";
-  var viewport = "viewport";
-  var popper = "popper";
-  var reference = "reference";
-  var variationPlacements = /* @__PURE__ */ basePlacements.reduce(function(acc, placement) {
-    return acc.concat([placement + "-" + start, placement + "-" + end]);
-  }, []);
-  var placements = /* @__PURE__ */ [].concat(basePlacements, [auto]).reduce(function(acc, placement) {
-    return acc.concat([placement, placement + "-" + start, placement + "-" + end]);
-  }, []);
-  var beforeRead = "beforeRead";
-  var read = "read";
-  var afterRead = "afterRead";
-  var beforeMain = "beforeMain";
-  var main = "main";
-  var afterMain = "afterMain";
-  var beforeWrite = "beforeWrite";
-  var write = "write";
-  var afterWrite = "afterWrite";
-  var modifierPhases = [beforeRead, read, afterRead, beforeMain, main, afterMain, beforeWrite, write, afterWrite];
-  function getNodeName(element) {
-    return element ? (element.nodeName || "").toLowerCase() : null;
-  }
-  function getWindow(node) {
-    if (node == null) {
-      return window;
-    }
-    if (node.toString() !== "[object Window]") {
-      var ownerDocument = node.ownerDocument;
-      return ownerDocument ? ownerDocument.defaultView || window : window;
-    }
-    return node;
-  }
-  function isElement$1(node) {
-    var OwnElement = getWindow(node).Element;
-    return node instanceof OwnElement || node instanceof Element;
-  }
-  function isHTMLElement(node) {
-    var OwnElement = getWindow(node).HTMLElement;
-    return node instanceof OwnElement || node instanceof HTMLElement;
-  }
-  function isShadowRoot(node) {
-    if (typeof ShadowRoot === "undefined") {
-      return false;
-    }
-    var OwnElement = getWindow(node).ShadowRoot;
-    return node instanceof OwnElement || node instanceof ShadowRoot;
-  }
-  function applyStyles(_ref) {
-    var state = _ref.state;
-    Object.keys(state.elements).forEach(function(name) {
-      var style = state.styles[name] || {};
-      var attributes = state.attributes[name] || {};
-      var element = state.elements[name];
-      if (!isHTMLElement(element) || !getNodeName(element)) {
-        return;
-      }
-      Object.assign(element.style, style);
-      Object.keys(attributes).forEach(function(name2) {
-        var value = attributes[name2];
-        if (value === false) {
-          element.removeAttribute(name2);
-        } else {
-          element.setAttribute(name2, value === true ? "" : value);
-        }
-      });
-    });
-  }
-  function effect$2(_ref2) {
-    var state = _ref2.state;
-    var initialStyles = {
-      popper: {
-        position: state.options.strategy,
-        left: "0",
-        top: "0",
-        margin: "0"
-      },
-      arrow: {
-        position: "absolute"
-      },
-      reference: {}
-    };
-    Object.assign(state.elements.popper.style, initialStyles.popper);
-    state.styles = initialStyles;
-    if (state.elements.arrow) {
-      Object.assign(state.elements.arrow.style, initialStyles.arrow);
-    }
-    return function() {
-      Object.keys(state.elements).forEach(function(name) {
-        var element = state.elements[name];
-        var attributes = state.attributes[name] || {};
-        var styleProperties = Object.keys(state.styles.hasOwnProperty(name) ? state.styles[name] : initialStyles[name]);
-        var style = styleProperties.reduce(function(style2, property) {
-          style2[property] = "";
-          return style2;
-        }, {});
-        if (!isHTMLElement(element) || !getNodeName(element)) {
-          return;
-        }
-        Object.assign(element.style, style);
-        Object.keys(attributes).forEach(function(attribute) {
-          element.removeAttribute(attribute);
-        });
-      });
-    };
-  }
-  const applyStyles$1 = {
-    name: "applyStyles",
-    enabled: true,
-    phase: "write",
-    fn: applyStyles,
-    effect: effect$2,
-    requires: ["computeStyles"]
-  };
-  function getBasePlacement$1(placement) {
-    return placement.split("-")[0];
-  }
-  var max = Math.max;
-  var min = Math.min;
-  var round = Math.round;
-  function getUAString() {
-    var uaData = navigator.userAgentData;
-    if (uaData != null && uaData.brands && Array.isArray(uaData.brands)) {
-      return uaData.brands.map(function(item) {
-        return item.brand + "/" + item.version;
-      }).join(" ");
-    }
-    return navigator.userAgent;
-  }
-  function isLayoutViewport() {
-    return !/^((?!chrome|android).)*safari/i.test(getUAString());
-  }
-  function getBoundingClientRect(element, includeScale, isFixedStrategy) {
-    if (includeScale === void 0) {
-      includeScale = false;
-    }
-    if (isFixedStrategy === void 0) {
-      isFixedStrategy = false;
-    }
-    var clientRect = element.getBoundingClientRect();
-    var scaleX = 1;
-    var scaleY = 1;
-    if (includeScale && isHTMLElement(element)) {
-      scaleX = element.offsetWidth > 0 ? round(clientRect.width) / element.offsetWidth || 1 : 1;
-      scaleY = element.offsetHeight > 0 ? round(clientRect.height) / element.offsetHeight || 1 : 1;
-    }
-    var _ref = isElement$1(element) ? getWindow(element) : window, visualViewport = _ref.visualViewport;
-    var addVisualOffsets = !isLayoutViewport() && isFixedStrategy;
-    var x = (clientRect.left + (addVisualOffsets && visualViewport ? visualViewport.offsetLeft : 0)) / scaleX;
-    var y = (clientRect.top + (addVisualOffsets && visualViewport ? visualViewport.offsetTop : 0)) / scaleY;
-    var width = clientRect.width / scaleX;
-    var height = clientRect.height / scaleY;
-    return {
-      width,
-      height,
-      top: y,
-      right: x + width,
-      bottom: y + height,
-      left: x,
-      x,
-      y
-    };
-  }
-  function getLayoutRect(element) {
-    var clientRect = getBoundingClientRect(element);
-    var width = element.offsetWidth;
-    var height = element.offsetHeight;
-    if (Math.abs(clientRect.width - width) <= 1) {
-      width = clientRect.width;
-    }
-    if (Math.abs(clientRect.height - height) <= 1) {
-      height = clientRect.height;
-    }
-    return {
-      x: element.offsetLeft,
-      y: element.offsetTop,
-      width,
-      height
-    };
-  }
-  function contains(parent, child) {
-    var rootNode = child.getRootNode && child.getRootNode();
-    if (parent.contains(child)) {
-      return true;
-    } else if (rootNode && isShadowRoot(rootNode)) {
-      var next = child;
-      do {
-        if (next && parent.isSameNode(next)) {
-          return true;
-        }
-        next = next.parentNode || next.host;
-      } while (next);
-    }
-    return false;
-  }
-  function getComputedStyle$1(element) {
-    return getWindow(element).getComputedStyle(element);
-  }
-  function isTableElement(element) {
-    return ["table", "td", "th"].indexOf(getNodeName(element)) >= 0;
-  }
-  function getDocumentElement(element) {
-    return ((isElement$1(element) ? element.ownerDocument : (
-      // $FlowFixMe[prop-missing]
-      element.document
-    )) || window.document).documentElement;
-  }
-  function getParentNode(element) {
-    if (getNodeName(element) === "html") {
-      return element;
-    }
-    return (
-      // this is a quicker (but less type safe) way to save quite some bytes from the bundle
-      // $FlowFixMe[incompatible-return]
-      // $FlowFixMe[prop-missing]
-      element.assignedSlot || // step into the shadow DOM of the parent of a slotted node
-      element.parentNode || // DOM Element detected
-      (isShadowRoot(element) ? element.host : null) || // ShadowRoot detected
-      // $FlowFixMe[incompatible-call]: HTMLElement is a Node
-      getDocumentElement(element)
-    );
-  }
-  function getTrueOffsetParent(element) {
-    if (!isHTMLElement(element) || // https://github.com/popperjs/popper-core/issues/837
-    getComputedStyle$1(element).position === "fixed") {
-      return null;
-    }
-    return element.offsetParent;
-  }
-  function getContainingBlock(element) {
-    var isFirefox = /firefox/i.test(getUAString());
-    var isIE = /Trident/i.test(getUAString());
-    if (isIE && isHTMLElement(element)) {
-      var elementCss = getComputedStyle$1(element);
-      if (elementCss.position === "fixed") {
-        return null;
-      }
-    }
-    var currentNode = getParentNode(element);
-    if (isShadowRoot(currentNode)) {
-      currentNode = currentNode.host;
-    }
-    while (isHTMLElement(currentNode) && ["html", "body"].indexOf(getNodeName(currentNode)) < 0) {
-      var css = getComputedStyle$1(currentNode);
-      if (css.transform !== "none" || css.perspective !== "none" || css.contain === "paint" || ["transform", "perspective"].indexOf(css.willChange) !== -1 || isFirefox && css.willChange === "filter" || isFirefox && css.filter && css.filter !== "none") {
-        return currentNode;
-      } else {
-        currentNode = currentNode.parentNode;
-      }
-    }
-    return null;
-  }
-  function getOffsetParent(element) {
-    var window2 = getWindow(element);
-    var offsetParent = getTrueOffsetParent(element);
-    while (offsetParent && isTableElement(offsetParent) && getComputedStyle$1(offsetParent).position === "static") {
-      offsetParent = getTrueOffsetParent(offsetParent);
-    }
-    if (offsetParent && (getNodeName(offsetParent) === "html" || getNodeName(offsetParent) === "body" && getComputedStyle$1(offsetParent).position === "static")) {
-      return window2;
-    }
-    return offsetParent || getContainingBlock(element) || window2;
-  }
-  function getMainAxisFromPlacement(placement) {
-    return ["top", "bottom"].indexOf(placement) >= 0 ? "x" : "y";
-  }
-  function within(min$1, value, max$1) {
-    return max(min$1, min(value, max$1));
-  }
-  function withinMaxClamp(min2, value, max2) {
-    var v = within(min2, value, max2);
-    return v > max2 ? max2 : v;
-  }
-  function getFreshSideObject() {
-    return {
-      top: 0,
-      right: 0,
-      bottom: 0,
-      left: 0
-    };
-  }
-  function mergePaddingObject(paddingObject) {
-    return Object.assign({}, getFreshSideObject(), paddingObject);
-  }
-  function expandToHashMap(value, keys) {
-    return keys.reduce(function(hashMap, key) {
-      hashMap[key] = value;
-      return hashMap;
-    }, {});
-  }
-  var toPaddingObject = function toPaddingObject2(padding, state) {
-    padding = typeof padding === "function" ? padding(Object.assign({}, state.rects, {
-      placement: state.placement
-    })) : padding;
-    return mergePaddingObject(typeof padding !== "number" ? padding : expandToHashMap(padding, basePlacements));
-  };
-  function arrow(_ref) {
-    var _state$modifiersData$;
-    var state = _ref.state, name = _ref.name, options = _ref.options;
-    var arrowElement = state.elements.arrow;
-    var popperOffsets2 = state.modifiersData.popperOffsets;
-    var basePlacement = getBasePlacement$1(state.placement);
-    var axis = getMainAxisFromPlacement(basePlacement);
-    var isVertical = [left, right].indexOf(basePlacement) >= 0;
-    var len = isVertical ? "height" : "width";
-    if (!arrowElement || !popperOffsets2) {
-      return;
-    }
-    var paddingObject = toPaddingObject(options.padding, state);
-    var arrowRect = getLayoutRect(arrowElement);
-    var minProp = axis === "y" ? top : left;
-    var maxProp = axis === "y" ? bottom : right;
-    var endDiff = state.rects.reference[len] + state.rects.reference[axis] - popperOffsets2[axis] - state.rects.popper[len];
-    var startDiff = popperOffsets2[axis] - state.rects.reference[axis];
-    var arrowOffsetParent = getOffsetParent(arrowElement);
-    var clientSize = arrowOffsetParent ? axis === "y" ? arrowOffsetParent.clientHeight || 0 : arrowOffsetParent.clientWidth || 0 : 0;
-    var centerToReference = endDiff / 2 - startDiff / 2;
-    var min2 = paddingObject[minProp];
-    var max2 = clientSize - arrowRect[len] - paddingObject[maxProp];
-    var center = clientSize / 2 - arrowRect[len] / 2 + centerToReference;
-    var offset2 = within(min2, center, max2);
-    var axisProp = axis;
-    state.modifiersData[name] = (_state$modifiersData$ = {}, _state$modifiersData$[axisProp] = offset2, _state$modifiersData$.centerOffset = offset2 - center, _state$modifiersData$);
-  }
-  function effect$1(_ref2) {
-    var state = _ref2.state, options = _ref2.options;
-    var _options$element = options.element, arrowElement = _options$element === void 0 ? "[data-popper-arrow]" : _options$element;
-    if (arrowElement == null) {
-      return;
-    }
-    if (typeof arrowElement === "string") {
-      arrowElement = state.elements.popper.querySelector(arrowElement);
-      if (!arrowElement) {
-        return;
-      }
-    }
-    if (!contains(state.elements.popper, arrowElement)) {
-      return;
-    }
-    state.elements.arrow = arrowElement;
-  }
-  const arrow$1 = {
-    name: "arrow",
-    enabled: true,
-    phase: "main",
-    fn: arrow,
-    effect: effect$1,
-    requires: ["popperOffsets"],
-    requiresIfExists: ["preventOverflow"]
-  };
-  function getVariation(placement) {
-    return placement.split("-")[1];
-  }
-  var unsetSides = {
-    top: "auto",
-    right: "auto",
-    bottom: "auto",
-    left: "auto"
-  };
-  function roundOffsetsByDPR(_ref, win) {
-    var x = _ref.x, y = _ref.y;
-    var dpr = win.devicePixelRatio || 1;
-    return {
-      x: round(x * dpr) / dpr || 0,
-      y: round(y * dpr) / dpr || 0
-    };
-  }
-  function mapToStyles(_ref2) {
-    var _Object$assign2;
-    var popper2 = _ref2.popper, popperRect = _ref2.popperRect, placement = _ref2.placement, variation = _ref2.variation, offsets = _ref2.offsets, position = _ref2.position, gpuAcceleration = _ref2.gpuAcceleration, adaptive = _ref2.adaptive, roundOffsets = _ref2.roundOffsets, isFixed = _ref2.isFixed;
-    var _offsets$x = offsets.x, x = _offsets$x === void 0 ? 0 : _offsets$x, _offsets$y = offsets.y, y = _offsets$y === void 0 ? 0 : _offsets$y;
-    var _ref3 = typeof roundOffsets === "function" ? roundOffsets({
-      x,
-      y
-    }) : {
-      x,
-      y
-    };
-    x = _ref3.x;
-    y = _ref3.y;
-    var hasX = offsets.hasOwnProperty("x");
-    var hasY = offsets.hasOwnProperty("y");
-    var sideX = left;
-    var sideY = top;
-    var win = window;
-    if (adaptive) {
-      var offsetParent = getOffsetParent(popper2);
-      var heightProp = "clientHeight";
-      var widthProp = "clientWidth";
-      if (offsetParent === getWindow(popper2)) {
-        offsetParent = getDocumentElement(popper2);
-        if (getComputedStyle$1(offsetParent).position !== "static" && position === "absolute") {
-          heightProp = "scrollHeight";
-          widthProp = "scrollWidth";
-        }
-      }
-      offsetParent = offsetParent;
-      if (placement === top || (placement === left || placement === right) && variation === end) {
-        sideY = bottom;
-        var offsetY = isFixed && offsetParent === win && win.visualViewport ? win.visualViewport.height : (
-          // $FlowFixMe[prop-missing]
-          offsetParent[heightProp]
-        );
-        y -= offsetY - popperRect.height;
-        y *= gpuAcceleration ? 1 : -1;
-      }
-      if (placement === left || (placement === top || placement === bottom) && variation === end) {
-        sideX = right;
-        var offsetX = isFixed && offsetParent === win && win.visualViewport ? win.visualViewport.width : (
-          // $FlowFixMe[prop-missing]
-          offsetParent[widthProp]
-        );
-        x -= offsetX - popperRect.width;
-        x *= gpuAcceleration ? 1 : -1;
-      }
-    }
-    var commonStyles = Object.assign({
-      position
-    }, adaptive && unsetSides);
-    var _ref4 = roundOffsets === true ? roundOffsetsByDPR({
-      x,
-      y
-    }, getWindow(popper2)) : {
-      x,
-      y
-    };
-    x = _ref4.x;
-    y = _ref4.y;
-    if (gpuAcceleration) {
-      var _Object$assign;
-      return Object.assign({}, commonStyles, (_Object$assign = {}, _Object$assign[sideY] = hasY ? "0" : "", _Object$assign[sideX] = hasX ? "0" : "", _Object$assign.transform = (win.devicePixelRatio || 1) <= 1 ? "translate(" + x + "px, " + y + "px)" : "translate3d(" + x + "px, " + y + "px, 0)", _Object$assign));
-    }
-    return Object.assign({}, commonStyles, (_Object$assign2 = {}, _Object$assign2[sideY] = hasY ? y + "px" : "", _Object$assign2[sideX] = hasX ? x + "px" : "", _Object$assign2.transform = "", _Object$assign2));
-  }
-  function computeStyles(_ref5) {
-    var state = _ref5.state, options = _ref5.options;
-    var _options$gpuAccelerat = options.gpuAcceleration, gpuAcceleration = _options$gpuAccelerat === void 0 ? true : _options$gpuAccelerat, _options$adaptive = options.adaptive, adaptive = _options$adaptive === void 0 ? true : _options$adaptive, _options$roundOffsets = options.roundOffsets, roundOffsets = _options$roundOffsets === void 0 ? true : _options$roundOffsets;
-    var commonStyles = {
-      placement: getBasePlacement$1(state.placement),
-      variation: getVariation(state.placement),
-      popper: state.elements.popper,
-      popperRect: state.rects.popper,
-      gpuAcceleration,
-      isFixed: state.options.strategy === "fixed"
-    };
-    if (state.modifiersData.popperOffsets != null) {
-      state.styles.popper = Object.assign({}, state.styles.popper, mapToStyles(Object.assign({}, commonStyles, {
-        offsets: state.modifiersData.popperOffsets,
-        position: state.options.strategy,
-        adaptive,
-        roundOffsets
-      })));
-    }
-    if (state.modifiersData.arrow != null) {
-      state.styles.arrow = Object.assign({}, state.styles.arrow, mapToStyles(Object.assign({}, commonStyles, {
-        offsets: state.modifiersData.arrow,
-        position: "absolute",
-        adaptive: false,
-        roundOffsets
-      })));
-    }
-    state.attributes.popper = Object.assign({}, state.attributes.popper, {
-      "data-popper-placement": state.placement
-    });
-  }
-  const computeStyles$1 = {
-    name: "computeStyles",
-    enabled: true,
-    phase: "beforeWrite",
-    fn: computeStyles,
-    data: {}
-  };
-  var passive = {
-    passive: true
-  };
-  function effect(_ref) {
-    var state = _ref.state, instance = _ref.instance, options = _ref.options;
-    var _options$scroll = options.scroll, scroll = _options$scroll === void 0 ? true : _options$scroll, _options$resize = options.resize, resize = _options$resize === void 0 ? true : _options$resize;
-    var window2 = getWindow(state.elements.popper);
-    var scrollParents = [].concat(state.scrollParents.reference, state.scrollParents.popper);
-    if (scroll) {
-      scrollParents.forEach(function(scrollParent) {
-        scrollParent.addEventListener("scroll", instance.update, passive);
-      });
-    }
-    if (resize) {
-      window2.addEventListener("resize", instance.update, passive);
-    }
-    return function() {
-      if (scroll) {
-        scrollParents.forEach(function(scrollParent) {
-          scrollParent.removeEventListener("scroll", instance.update, passive);
-        });
-      }
-      if (resize) {
-        window2.removeEventListener("resize", instance.update, passive);
-      }
-    };
-  }
-  const eventListeners = {
-    name: "eventListeners",
-    enabled: true,
-    phase: "write",
-    fn: function fn() {
-    },
-    effect,
-    data: {}
-  };
-  var hash$1 = {
-    left: "right",
-    right: "left",
-    bottom: "top",
-    top: "bottom"
-  };
-  function getOppositePlacement(placement) {
-    return placement.replace(/left|right|bottom|top/g, function(matched) {
-      return hash$1[matched];
-    });
-  }
-  var hash = {
-    start: "end",
-    end: "start"
-  };
-  function getOppositeVariationPlacement(placement) {
-    return placement.replace(/start|end/g, function(matched) {
-      return hash[matched];
-    });
-  }
-  function getWindowScroll(node) {
-    var win = getWindow(node);
-    var scrollLeft = win.pageXOffset;
-    var scrollTop = win.pageYOffset;
-    return {
-      scrollLeft,
-      scrollTop
-    };
-  }
-  function getWindowScrollBarX(element) {
-    return getBoundingClientRect(getDocumentElement(element)).left + getWindowScroll(element).scrollLeft;
-  }
-  function getViewportRect(element, strategy) {
-    var win = getWindow(element);
-    var html = getDocumentElement(element);
-    var visualViewport = win.visualViewport;
-    var width = html.clientWidth;
-    var height = html.clientHeight;
-    var x = 0;
-    var y = 0;
-    if (visualViewport) {
-      width = visualViewport.width;
-      height = visualViewport.height;
-      var layoutViewport = isLayoutViewport();
-      if (layoutViewport || !layoutViewport && strategy === "fixed") {
-        x = visualViewport.offsetLeft;
-        y = visualViewport.offsetTop;
-      }
-    }
-    return {
-      width,
-      height,
-      x: x + getWindowScrollBarX(element),
-      y
-    };
-  }
-  function getDocumentRect(element) {
-    var _element$ownerDocumen;
-    var html = getDocumentElement(element);
-    var winScroll = getWindowScroll(element);
-    var body = (_element$ownerDocumen = element.ownerDocument) == null ? void 0 : _element$ownerDocumen.body;
-    var width = max(html.scrollWidth, html.clientWidth, body ? body.scrollWidth : 0, body ? body.clientWidth : 0);
-    var height = max(html.scrollHeight, html.clientHeight, body ? body.scrollHeight : 0, body ? body.clientHeight : 0);
-    var x = -winScroll.scrollLeft + getWindowScrollBarX(element);
-    var y = -winScroll.scrollTop;
-    if (getComputedStyle$1(body || html).direction === "rtl") {
-      x += max(html.clientWidth, body ? body.clientWidth : 0) - width;
-    }
-    return {
-      width,
-      height,
-      x,
-      y
-    };
-  }
-  function isScrollParent(element) {
-    var _getComputedStyle = getComputedStyle$1(element), overflow = _getComputedStyle.overflow, overflowX = _getComputedStyle.overflowX, overflowY = _getComputedStyle.overflowY;
-    return /auto|scroll|overlay|hidden/.test(overflow + overflowY + overflowX);
-  }
-  function getScrollParent(node) {
-    if (["html", "body", "#document"].indexOf(getNodeName(node)) >= 0) {
-      return node.ownerDocument.body;
-    }
-    if (isHTMLElement(node) && isScrollParent(node)) {
-      return node;
-    }
-    return getScrollParent(getParentNode(node));
-  }
-  function listScrollParents(element, list) {
-    var _element$ownerDocumen;
-    if (list === void 0) {
-      list = [];
-    }
-    var scrollParent = getScrollParent(element);
-    var isBody = scrollParent === ((_element$ownerDocumen = element.ownerDocument) == null ? void 0 : _element$ownerDocumen.body);
-    var win = getWindow(scrollParent);
-    var target = isBody ? [win].concat(win.visualViewport || [], isScrollParent(scrollParent) ? scrollParent : []) : scrollParent;
-    var updatedList = list.concat(target);
-    return isBody ? updatedList : (
-      // $FlowFixMe[incompatible-call]: isBody tells us target will be an HTMLElement here
-      updatedList.concat(listScrollParents(getParentNode(target)))
-    );
-  }
-  function rectToClientRect(rect) {
-    return Object.assign({}, rect, {
-      left: rect.x,
-      top: rect.y,
-      right: rect.x + rect.width,
-      bottom: rect.y + rect.height
-    });
-  }
-  function getInnerBoundingClientRect(element, strategy) {
-    var rect = getBoundingClientRect(element, false, strategy === "fixed");
-    rect.top = rect.top + element.clientTop;
-    rect.left = rect.left + element.clientLeft;
-    rect.bottom = rect.top + element.clientHeight;
-    rect.right = rect.left + element.clientWidth;
-    rect.width = element.clientWidth;
-    rect.height = element.clientHeight;
-    rect.x = rect.left;
-    rect.y = rect.top;
-    return rect;
-  }
-  function getClientRectFromMixedType(element, clippingParent, strategy) {
-    return clippingParent === viewport ? rectToClientRect(getViewportRect(element, strategy)) : isElement$1(clippingParent) ? getInnerBoundingClientRect(clippingParent, strategy) : rectToClientRect(getDocumentRect(getDocumentElement(element)));
-  }
-  function getClippingParents(element) {
-    var clippingParents2 = listScrollParents(getParentNode(element));
-    var canEscapeClipping = ["absolute", "fixed"].indexOf(getComputedStyle$1(element).position) >= 0;
-    var clipperElement = canEscapeClipping && isHTMLElement(element) ? getOffsetParent(element) : element;
-    if (!isElement$1(clipperElement)) {
-      return [];
-    }
-    return clippingParents2.filter(function(clippingParent) {
-      return isElement$1(clippingParent) && contains(clippingParent, clipperElement) && getNodeName(clippingParent) !== "body";
-    });
-  }
-  function getClippingRect(element, boundary, rootBoundary, strategy) {
-    var mainClippingParents = boundary === "clippingParents" ? getClippingParents(element) : [].concat(boundary);
-    var clippingParents2 = [].concat(mainClippingParents, [rootBoundary]);
-    var firstClippingParent = clippingParents2[0];
-    var clippingRect = clippingParents2.reduce(function(accRect, clippingParent) {
-      var rect = getClientRectFromMixedType(element, clippingParent, strategy);
-      accRect.top = max(rect.top, accRect.top);
-      accRect.right = min(rect.right, accRect.right);
-      accRect.bottom = min(rect.bottom, accRect.bottom);
-      accRect.left = max(rect.left, accRect.left);
-      return accRect;
-    }, getClientRectFromMixedType(element, firstClippingParent, strategy));
-    clippingRect.width = clippingRect.right - clippingRect.left;
-    clippingRect.height = clippingRect.bottom - clippingRect.top;
-    clippingRect.x = clippingRect.left;
-    clippingRect.y = clippingRect.top;
-    return clippingRect;
-  }
-  function computeOffsets(_ref) {
-    var reference2 = _ref.reference, element = _ref.element, placement = _ref.placement;
-    var basePlacement = placement ? getBasePlacement$1(placement) : null;
-    var variation = placement ? getVariation(placement) : null;
-    var commonX = reference2.x + reference2.width / 2 - element.width / 2;
-    var commonY = reference2.y + reference2.height / 2 - element.height / 2;
-    var offsets;
-    switch (basePlacement) {
-      case top:
-        offsets = {
-          x: commonX,
-          y: reference2.y - element.height
-        };
-        break;
-      case bottom:
-        offsets = {
-          x: commonX,
-          y: reference2.y + reference2.height
-        };
-        break;
-      case right:
-        offsets = {
-          x: reference2.x + reference2.width,
-          y: commonY
-        };
-        break;
-      case left:
-        offsets = {
-          x: reference2.x - element.width,
-          y: commonY
-        };
-        break;
-      default:
-        offsets = {
-          x: reference2.x,
-          y: reference2.y
-        };
-    }
-    var mainAxis = basePlacement ? getMainAxisFromPlacement(basePlacement) : null;
-    if (mainAxis != null) {
-      var len = mainAxis === "y" ? "height" : "width";
-      switch (variation) {
-        case start:
-          offsets[mainAxis] = offsets[mainAxis] - (reference2[len] / 2 - element[len] / 2);
-          break;
-        case end:
-          offsets[mainAxis] = offsets[mainAxis] + (reference2[len] / 2 - element[len] / 2);
-          break;
-      }
-    }
-    return offsets;
-  }
-  function detectOverflow(state, options) {
-    if (options === void 0) {
-      options = {};
-    }
-    var _options = options, _options$placement = _options.placement, placement = _options$placement === void 0 ? state.placement : _options$placement, _options$strategy = _options.strategy, strategy = _options$strategy === void 0 ? state.strategy : _options$strategy, _options$boundary = _options.boundary, boundary = _options$boundary === void 0 ? clippingParents : _options$boundary, _options$rootBoundary = _options.rootBoundary, rootBoundary = _options$rootBoundary === void 0 ? viewport : _options$rootBoundary, _options$elementConte = _options.elementContext, elementContext = _options$elementConte === void 0 ? popper : _options$elementConte, _options$altBoundary = _options.altBoundary, altBoundary = _options$altBoundary === void 0 ? false : _options$altBoundary, _options$padding = _options.padding, padding = _options$padding === void 0 ? 0 : _options$padding;
-    var paddingObject = mergePaddingObject(typeof padding !== "number" ? padding : expandToHashMap(padding, basePlacements));
-    var altContext = elementContext === popper ? reference : popper;
-    var popperRect = state.rects.popper;
-    var element = state.elements[altBoundary ? altContext : elementContext];
-    var clippingClientRect = getClippingRect(isElement$1(element) ? element : element.contextElement || getDocumentElement(state.elements.popper), boundary, rootBoundary, strategy);
-    var referenceClientRect = getBoundingClientRect(state.elements.reference);
-    var popperOffsets2 = computeOffsets({
-      reference: referenceClientRect,
-      element: popperRect,
-      placement
-    });
-    var popperClientRect = rectToClientRect(Object.assign({}, popperRect, popperOffsets2));
-    var elementClientRect = elementContext === popper ? popperClientRect : referenceClientRect;
-    var overflowOffsets = {
-      top: clippingClientRect.top - elementClientRect.top + paddingObject.top,
-      bottom: elementClientRect.bottom - clippingClientRect.bottom + paddingObject.bottom,
-      left: clippingClientRect.left - elementClientRect.left + paddingObject.left,
-      right: elementClientRect.right - clippingClientRect.right + paddingObject.right
-    };
-    var offsetData = state.modifiersData.offset;
-    if (elementContext === popper && offsetData) {
-      var offset2 = offsetData[placement];
-      Object.keys(overflowOffsets).forEach(function(key) {
-        var multiply = [right, bottom].indexOf(key) >= 0 ? 1 : -1;
-        var axis = [top, bottom].indexOf(key) >= 0 ? "y" : "x";
-        overflowOffsets[key] += offset2[axis] * multiply;
-      });
-    }
-    return overflowOffsets;
-  }
-  function computeAutoPlacement(state, options) {
-    if (options === void 0) {
-      options = {};
-    }
-    var _options = options, placement = _options.placement, boundary = _options.boundary, rootBoundary = _options.rootBoundary, padding = _options.padding, flipVariations = _options.flipVariations, _options$allowedAutoP = _options.allowedAutoPlacements, allowedAutoPlacements = _options$allowedAutoP === void 0 ? placements : _options$allowedAutoP;
-    var variation = getVariation(placement);
-    var placements$1 = variation ? flipVariations ? variationPlacements : variationPlacements.filter(function(placement2) {
-      return getVariation(placement2) === variation;
-    }) : basePlacements;
-    var allowedPlacements = placements$1.filter(function(placement2) {
-      return allowedAutoPlacements.indexOf(placement2) >= 0;
-    });
-    if (allowedPlacements.length === 0) {
-      allowedPlacements = placements$1;
-    }
-    var overflows = allowedPlacements.reduce(function(acc, placement2) {
-      acc[placement2] = detectOverflow(state, {
-        placement: placement2,
-        boundary,
-        rootBoundary,
-        padding
-      })[getBasePlacement$1(placement2)];
-      return acc;
-    }, {});
-    return Object.keys(overflows).sort(function(a, b) {
-      return overflows[a] - overflows[b];
-    });
-  }
-  function getExpandedFallbackPlacements(placement) {
-    if (getBasePlacement$1(placement) === auto) {
-      return [];
-    }
-    var oppositePlacement = getOppositePlacement(placement);
-    return [getOppositeVariationPlacement(placement), oppositePlacement, getOppositeVariationPlacement(oppositePlacement)];
-  }
-  function flip(_ref) {
-    var state = _ref.state, options = _ref.options, name = _ref.name;
-    if (state.modifiersData[name]._skip) {
-      return;
-    }
-    var _options$mainAxis = options.mainAxis, checkMainAxis = _options$mainAxis === void 0 ? true : _options$mainAxis, _options$altAxis = options.altAxis, checkAltAxis = _options$altAxis === void 0 ? true : _options$altAxis, specifiedFallbackPlacements = options.fallbackPlacements, padding = options.padding, boundary = options.boundary, rootBoundary = options.rootBoundary, altBoundary = options.altBoundary, _options$flipVariatio = options.flipVariations, flipVariations = _options$flipVariatio === void 0 ? true : _options$flipVariatio, allowedAutoPlacements = options.allowedAutoPlacements;
-    var preferredPlacement = state.options.placement;
-    var basePlacement = getBasePlacement$1(preferredPlacement);
-    var isBasePlacement = basePlacement === preferredPlacement;
-    var fallbackPlacements = specifiedFallbackPlacements || (isBasePlacement || !flipVariations ? [getOppositePlacement(preferredPlacement)] : getExpandedFallbackPlacements(preferredPlacement));
-    var placements2 = [preferredPlacement].concat(fallbackPlacements).reduce(function(acc, placement2) {
-      return acc.concat(getBasePlacement$1(placement2) === auto ? computeAutoPlacement(state, {
-        placement: placement2,
-        boundary,
-        rootBoundary,
-        padding,
-        flipVariations,
-        allowedAutoPlacements
-      }) : placement2);
-    }, []);
-    var referenceRect = state.rects.reference;
-    var popperRect = state.rects.popper;
-    var checksMap = /* @__PURE__ */ new Map();
-    var makeFallbackChecks = true;
-    var firstFittingPlacement = placements2[0];
-    for (var i = 0; i < placements2.length; i++) {
-      var placement = placements2[i];
-      var _basePlacement = getBasePlacement$1(placement);
-      var isStartVariation = getVariation(placement) === start;
-      var isVertical = [top, bottom].indexOf(_basePlacement) >= 0;
-      var len = isVertical ? "width" : "height";
-      var overflow = detectOverflow(state, {
-        placement,
-        boundary,
-        rootBoundary,
-        altBoundary,
-        padding
-      });
-      var mainVariationSide = isVertical ? isStartVariation ? right : left : isStartVariation ? bottom : top;
-      if (referenceRect[len] > popperRect[len]) {
-        mainVariationSide = getOppositePlacement(mainVariationSide);
-      }
-      var altVariationSide = getOppositePlacement(mainVariationSide);
-      var checks = [];
-      if (checkMainAxis) {
-        checks.push(overflow[_basePlacement] <= 0);
-      }
-      if (checkAltAxis) {
-        checks.push(overflow[mainVariationSide] <= 0, overflow[altVariationSide] <= 0);
-      }
-      if (checks.every(function(check) {
-        return check;
-      })) {
-        firstFittingPlacement = placement;
-        makeFallbackChecks = false;
-        break;
-      }
-      checksMap.set(placement, checks);
-    }
-    if (makeFallbackChecks) {
-      var numberOfChecks = flipVariations ? 3 : 1;
-      var _loop = function _loop2(_i2) {
-        var fittingPlacement = placements2.find(function(placement2) {
-          var checks2 = checksMap.get(placement2);
-          if (checks2) {
-            return checks2.slice(0, _i2).every(function(check) {
-              return check;
-            });
-          }
-        });
-        if (fittingPlacement) {
-          firstFittingPlacement = fittingPlacement;
-          return "break";
-        }
-      };
-      for (var _i = numberOfChecks; _i > 0; _i--) {
-        var _ret = _loop(_i);
-        if (_ret === "break") break;
-      }
-    }
-    if (state.placement !== firstFittingPlacement) {
-      state.modifiersData[name]._skip = true;
-      state.placement = firstFittingPlacement;
-      state.reset = true;
-    }
-  }
-  const flip$1 = {
-    name: "flip",
-    enabled: true,
-    phase: "main",
-    fn: flip,
-    requiresIfExists: ["offset"],
-    data: {
-      _skip: false
-    }
-  };
-  function getSideOffsets(overflow, rect, preventedOffsets) {
-    if (preventedOffsets === void 0) {
-      preventedOffsets = {
-        x: 0,
-        y: 0
-      };
-    }
-    return {
-      top: overflow.top - rect.height - preventedOffsets.y,
-      right: overflow.right - rect.width + preventedOffsets.x,
-      bottom: overflow.bottom - rect.height + preventedOffsets.y,
-      left: overflow.left - rect.width - preventedOffsets.x
-    };
-  }
-  function isAnySideFullyClipped(overflow) {
-    return [top, right, bottom, left].some(function(side) {
-      return overflow[side] >= 0;
-    });
-  }
-  function hide(_ref) {
-    var state = _ref.state, name = _ref.name;
-    var referenceRect = state.rects.reference;
-    var popperRect = state.rects.popper;
-    var preventedOffsets = state.modifiersData.preventOverflow;
-    var referenceOverflow = detectOverflow(state, {
-      elementContext: "reference"
-    });
-    var popperAltOverflow = detectOverflow(state, {
-      altBoundary: true
-    });
-    var referenceClippingOffsets = getSideOffsets(referenceOverflow, referenceRect);
-    var popperEscapeOffsets = getSideOffsets(popperAltOverflow, popperRect, preventedOffsets);
-    var isReferenceHidden = isAnySideFullyClipped(referenceClippingOffsets);
-    var hasPopperEscaped = isAnySideFullyClipped(popperEscapeOffsets);
-    state.modifiersData[name] = {
-      referenceClippingOffsets,
-      popperEscapeOffsets,
-      isReferenceHidden,
-      hasPopperEscaped
-    };
-    state.attributes.popper = Object.assign({}, state.attributes.popper, {
-      "data-popper-reference-hidden": isReferenceHidden,
-      "data-popper-escaped": hasPopperEscaped
-    });
-  }
-  const hide$1 = {
-    name: "hide",
-    enabled: true,
-    phase: "main",
-    requiresIfExists: ["preventOverflow"],
-    fn: hide
-  };
-  function distanceAndSkiddingToXY(placement, rects, offset2) {
-    var basePlacement = getBasePlacement$1(placement);
-    var invertDistance = [left, top].indexOf(basePlacement) >= 0 ? -1 : 1;
-    var _ref = typeof offset2 === "function" ? offset2(Object.assign({}, rects, {
-      placement
-    })) : offset2, skidding = _ref[0], distance = _ref[1];
-    skidding = skidding || 0;
-    distance = (distance || 0) * invertDistance;
-    return [left, right].indexOf(basePlacement) >= 0 ? {
-      x: distance,
-      y: skidding
-    } : {
-      x: skidding,
-      y: distance
-    };
-  }
-  function offset(_ref2) {
-    var state = _ref2.state, options = _ref2.options, name = _ref2.name;
-    var _options$offset = options.offset, offset2 = _options$offset === void 0 ? [0, 0] : _options$offset;
-    var data = placements.reduce(function(acc, placement) {
-      acc[placement] = distanceAndSkiddingToXY(placement, state.rects, offset2);
-      return acc;
-    }, {});
-    var _data$state$placement = data[state.placement], x = _data$state$placement.x, y = _data$state$placement.y;
-    if (state.modifiersData.popperOffsets != null) {
-      state.modifiersData.popperOffsets.x += x;
-      state.modifiersData.popperOffsets.y += y;
-    }
-    state.modifiersData[name] = data;
-  }
-  const offset$1 = {
-    name: "offset",
-    enabled: true,
-    phase: "main",
-    requires: ["popperOffsets"],
-    fn: offset
-  };
-  function popperOffsets(_ref) {
-    var state = _ref.state, name = _ref.name;
-    state.modifiersData[name] = computeOffsets({
-      reference: state.rects.reference,
-      element: state.rects.popper,
-      placement: state.placement
-    });
-  }
-  const popperOffsets$1 = {
-    name: "popperOffsets",
-    enabled: true,
-    phase: "read",
-    fn: popperOffsets,
-    data: {}
-  };
-  function getAltAxis(axis) {
-    return axis === "x" ? "y" : "x";
-  }
-  function preventOverflow(_ref) {
-    var state = _ref.state, options = _ref.options, name = _ref.name;
-    var _options$mainAxis = options.mainAxis, checkMainAxis = _options$mainAxis === void 0 ? true : _options$mainAxis, _options$altAxis = options.altAxis, checkAltAxis = _options$altAxis === void 0 ? false : _options$altAxis, boundary = options.boundary, rootBoundary = options.rootBoundary, altBoundary = options.altBoundary, padding = options.padding, _options$tether = options.tether, tether = _options$tether === void 0 ? true : _options$tether, _options$tetherOffset = options.tetherOffset, tetherOffset = _options$tetherOffset === void 0 ? 0 : _options$tetherOffset;
-    var overflow = detectOverflow(state, {
-      boundary,
-      rootBoundary,
-      padding,
-      altBoundary
-    });
-    var basePlacement = getBasePlacement$1(state.placement);
-    var variation = getVariation(state.placement);
-    var isBasePlacement = !variation;
-    var mainAxis = getMainAxisFromPlacement(basePlacement);
-    var altAxis = getAltAxis(mainAxis);
-    var popperOffsets2 = state.modifiersData.popperOffsets;
-    var referenceRect = state.rects.reference;
-    var popperRect = state.rects.popper;
-    var tetherOffsetValue = typeof tetherOffset === "function" ? tetherOffset(Object.assign({}, state.rects, {
-      placement: state.placement
-    })) : tetherOffset;
-    var normalizedTetherOffsetValue = typeof tetherOffsetValue === "number" ? {
-      mainAxis: tetherOffsetValue,
-      altAxis: tetherOffsetValue
-    } : Object.assign({
-      mainAxis: 0,
-      altAxis: 0
-    }, tetherOffsetValue);
-    var offsetModifierState = state.modifiersData.offset ? state.modifiersData.offset[state.placement] : null;
-    var data = {
-      x: 0,
-      y: 0
-    };
-    if (!popperOffsets2) {
-      return;
-    }
-    if (checkMainAxis) {
-      var _offsetModifierState$;
-      var mainSide = mainAxis === "y" ? top : left;
-      var altSide = mainAxis === "y" ? bottom : right;
-      var len = mainAxis === "y" ? "height" : "width";
-      var offset2 = popperOffsets2[mainAxis];
-      var min$1 = offset2 + overflow[mainSide];
-      var max$1 = offset2 - overflow[altSide];
-      var additive = tether ? -popperRect[len] / 2 : 0;
-      var minLen = variation === start ? referenceRect[len] : popperRect[len];
-      var maxLen = variation === start ? -popperRect[len] : -referenceRect[len];
-      var arrowElement = state.elements.arrow;
-      var arrowRect = tether && arrowElement ? getLayoutRect(arrowElement) : {
-        width: 0,
-        height: 0
-      };
-      var arrowPaddingObject = state.modifiersData["arrow#persistent"] ? state.modifiersData["arrow#persistent"].padding : getFreshSideObject();
-      var arrowPaddingMin = arrowPaddingObject[mainSide];
-      var arrowPaddingMax = arrowPaddingObject[altSide];
-      var arrowLen = within(0, referenceRect[len], arrowRect[len]);
-      var minOffset = isBasePlacement ? referenceRect[len] / 2 - additive - arrowLen - arrowPaddingMin - normalizedTetherOffsetValue.mainAxis : minLen - arrowLen - arrowPaddingMin - normalizedTetherOffsetValue.mainAxis;
-      var maxOffset = isBasePlacement ? -referenceRect[len] / 2 + additive + arrowLen + arrowPaddingMax + normalizedTetherOffsetValue.mainAxis : maxLen + arrowLen + arrowPaddingMax + normalizedTetherOffsetValue.mainAxis;
-      var arrowOffsetParent = state.elements.arrow && getOffsetParent(state.elements.arrow);
-      var clientOffset = arrowOffsetParent ? mainAxis === "y" ? arrowOffsetParent.clientTop || 0 : arrowOffsetParent.clientLeft || 0 : 0;
-      var offsetModifierValue = (_offsetModifierState$ = offsetModifierState == null ? void 0 : offsetModifierState[mainAxis]) != null ? _offsetModifierState$ : 0;
-      var tetherMin = offset2 + minOffset - offsetModifierValue - clientOffset;
-      var tetherMax = offset2 + maxOffset - offsetModifierValue;
-      var preventedOffset = within(tether ? min(min$1, tetherMin) : min$1, offset2, tether ? max(max$1, tetherMax) : max$1);
-      popperOffsets2[mainAxis] = preventedOffset;
-      data[mainAxis] = preventedOffset - offset2;
-    }
-    if (checkAltAxis) {
-      var _offsetModifierState$2;
-      var _mainSide = mainAxis === "x" ? top : left;
-      var _altSide = mainAxis === "x" ? bottom : right;
-      var _offset = popperOffsets2[altAxis];
-      var _len = altAxis === "y" ? "height" : "width";
-      var _min = _offset + overflow[_mainSide];
-      var _max = _offset - overflow[_altSide];
-      var isOriginSide = [top, left].indexOf(basePlacement) !== -1;
-      var _offsetModifierValue = (_offsetModifierState$2 = offsetModifierState == null ? void 0 : offsetModifierState[altAxis]) != null ? _offsetModifierState$2 : 0;
-      var _tetherMin = isOriginSide ? _min : _offset - referenceRect[_len] - popperRect[_len] - _offsetModifierValue + normalizedTetherOffsetValue.altAxis;
-      var _tetherMax = isOriginSide ? _offset + referenceRect[_len] + popperRect[_len] - _offsetModifierValue - normalizedTetherOffsetValue.altAxis : _max;
-      var _preventedOffset = tether && isOriginSide ? withinMaxClamp(_tetherMin, _offset, _tetherMax) : within(tether ? _tetherMin : _min, _offset, tether ? _tetherMax : _max);
-      popperOffsets2[altAxis] = _preventedOffset;
-      data[altAxis] = _preventedOffset - _offset;
-    }
-    state.modifiersData[name] = data;
-  }
-  const preventOverflow$1 = {
-    name: "preventOverflow",
-    enabled: true,
-    phase: "main",
-    fn: preventOverflow,
-    requiresIfExists: ["offset"]
-  };
-  function getHTMLElementScroll(element) {
-    return {
-      scrollLeft: element.scrollLeft,
-      scrollTop: element.scrollTop
-    };
-  }
-  function getNodeScroll(node) {
-    if (node === getWindow(node) || !isHTMLElement(node)) {
-      return getWindowScroll(node);
-    } else {
-      return getHTMLElementScroll(node);
-    }
-  }
-  function isElementScaled(element) {
-    var rect = element.getBoundingClientRect();
-    var scaleX = round(rect.width) / element.offsetWidth || 1;
-    var scaleY = round(rect.height) / element.offsetHeight || 1;
-    return scaleX !== 1 || scaleY !== 1;
-  }
-  function getCompositeRect(elementOrVirtualElement, offsetParent, isFixed) {
-    if (isFixed === void 0) {
-      isFixed = false;
-    }
-    var isOffsetParentAnElement = isHTMLElement(offsetParent);
-    var offsetParentIsScaled = isHTMLElement(offsetParent) && isElementScaled(offsetParent);
-    var documentElement = getDocumentElement(offsetParent);
-    var rect = getBoundingClientRect(elementOrVirtualElement, offsetParentIsScaled, isFixed);
-    var scroll = {
-      scrollLeft: 0,
-      scrollTop: 0
-    };
-    var offsets = {
-      x: 0,
-      y: 0
-    };
-    if (isOffsetParentAnElement || !isOffsetParentAnElement && !isFixed) {
-      if (getNodeName(offsetParent) !== "body" || // https://github.com/popperjs/popper-core/issues/1078
-      isScrollParent(documentElement)) {
-        scroll = getNodeScroll(offsetParent);
-      }
-      if (isHTMLElement(offsetParent)) {
-        offsets = getBoundingClientRect(offsetParent, true);
-        offsets.x += offsetParent.clientLeft;
-        offsets.y += offsetParent.clientTop;
-      } else if (documentElement) {
-        offsets.x = getWindowScrollBarX(documentElement);
-      }
-    }
-    return {
-      x: rect.left + scroll.scrollLeft - offsets.x,
-      y: rect.top + scroll.scrollTop - offsets.y,
-      width: rect.width,
-      height: rect.height
-    };
-  }
-  function order(modifiers) {
-    var map = /* @__PURE__ */ new Map();
-    var visited = /* @__PURE__ */ new Set();
-    var result = [];
-    modifiers.forEach(function(modifier) {
-      map.set(modifier.name, modifier);
-    });
-    function sort(modifier) {
-      visited.add(modifier.name);
-      var requires = [].concat(modifier.requires || [], modifier.requiresIfExists || []);
-      requires.forEach(function(dep) {
-        if (!visited.has(dep)) {
-          var depModifier = map.get(dep);
-          if (depModifier) {
-            sort(depModifier);
-          }
-        }
-      });
-      result.push(modifier);
-    }
-    modifiers.forEach(function(modifier) {
-      if (!visited.has(modifier.name)) {
-        sort(modifier);
-      }
-    });
-    return result;
-  }
-  function orderModifiers(modifiers) {
-    var orderedModifiers = order(modifiers);
-    return modifierPhases.reduce(function(acc, phase) {
-      return acc.concat(orderedModifiers.filter(function(modifier) {
-        return modifier.phase === phase;
-      }));
-    }, []);
-  }
-  function debounce$1(fn) {
-    var pending;
-    return function() {
-      if (!pending) {
-        pending = new Promise(function(resolve) {
-          Promise.resolve().then(function() {
-            pending = void 0;
-            resolve(fn());
-          });
-        });
-      }
-      return pending;
-    };
-  }
-  function mergeByName(modifiers) {
-    var merged = modifiers.reduce(function(merged2, current) {
-      var existing = merged2[current.name];
-      merged2[current.name] = existing ? Object.assign({}, existing, current, {
-        options: Object.assign({}, existing.options, current.options),
-        data: Object.assign({}, existing.data, current.data)
-      }) : current;
-      return merged2;
-    }, {});
-    return Object.keys(merged).map(function(key) {
-      return merged[key];
-    });
-  }
-  var DEFAULT_OPTIONS = {
-    placement: "bottom",
-    modifiers: [],
-    strategy: "absolute"
-  };
-  function areValidElements() {
-    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
-      args[_key] = arguments[_key];
-    }
-    return !args.some(function(element) {
-      return !(element && typeof element.getBoundingClientRect === "function");
-    });
-  }
-  function popperGenerator(generatorOptions) {
-    if (generatorOptions === void 0) {
-      generatorOptions = {};
-    }
-    var _generatorOptions = generatorOptions, _generatorOptions$def = _generatorOptions.defaultModifiers, defaultModifiers2 = _generatorOptions$def === void 0 ? [] : _generatorOptions$def, _generatorOptions$def2 = _generatorOptions.defaultOptions, defaultOptions2 = _generatorOptions$def2 === void 0 ? DEFAULT_OPTIONS : _generatorOptions$def2;
-    return function createPopper2(reference2, popper2, options) {
-      if (options === void 0) {
-        options = defaultOptions2;
-      }
-      var state = {
-        placement: "bottom",
-        orderedModifiers: [],
-        options: Object.assign({}, DEFAULT_OPTIONS, defaultOptions2),
-        modifiersData: {},
-        elements: {
-          reference: reference2,
-          popper: popper2
-        },
-        attributes: {},
-        styles: {}
-      };
-      var effectCleanupFns = [];
-      var isDestroyed = false;
-      var instance = {
-        state,
-        setOptions: function setOptions(setOptionsAction) {
-          var options2 = typeof setOptionsAction === "function" ? setOptionsAction(state.options) : setOptionsAction;
-          cleanupModifierEffects();
-          state.options = Object.assign({}, defaultOptions2, state.options, options2);
-          state.scrollParents = {
-            reference: isElement$1(reference2) ? listScrollParents(reference2) : reference2.contextElement ? listScrollParents(reference2.contextElement) : [],
-            popper: listScrollParents(popper2)
-          };
-          var orderedModifiers = orderModifiers(mergeByName([].concat(defaultModifiers2, state.options.modifiers)));
-          state.orderedModifiers = orderedModifiers.filter(function(m) {
-            return m.enabled;
-          });
-          runModifierEffects();
-          return instance.update();
-        },
-        // Sync update – it will always be executed, even if not necessary. This
-        // is useful for low frequency updates where sync behavior simplifies the
-        // logic.
-        // For high frequency updates (e.g. `resize` and `scroll` events), always
-        // prefer the async Popper#update method
-        forceUpdate: function forceUpdate() {
-          if (isDestroyed) {
-            return;
-          }
-          var _state$elements = state.elements, reference3 = _state$elements.reference, popper3 = _state$elements.popper;
-          if (!areValidElements(reference3, popper3)) {
-            return;
-          }
-          state.rects = {
-            reference: getCompositeRect(reference3, getOffsetParent(popper3), state.options.strategy === "fixed"),
-            popper: getLayoutRect(popper3)
-          };
-          state.reset = false;
-          state.placement = state.options.placement;
-          state.orderedModifiers.forEach(function(modifier) {
-            return state.modifiersData[modifier.name] = Object.assign({}, modifier.data);
-          });
-          for (var index2 = 0; index2 < state.orderedModifiers.length; index2++) {
-            if (state.reset === true) {
-              state.reset = false;
-              index2 = -1;
-              continue;
-            }
-            var _state$orderedModifie = state.orderedModifiers[index2], fn = _state$orderedModifie.fn, _state$orderedModifie2 = _state$orderedModifie.options, _options = _state$orderedModifie2 === void 0 ? {} : _state$orderedModifie2, name = _state$orderedModifie.name;
-            if (typeof fn === "function") {
-              state = fn({
-                state,
-                options: _options,
-                name,
-                instance
-              }) || state;
-            }
-          }
-        },
-        // Async and optimistically optimized update – it will not be executed if
-        // not necessary (debounced to run at most once-per-tick)
-        update: debounce$1(function() {
-          return new Promise(function(resolve) {
-            instance.forceUpdate();
-            resolve(state);
-          });
-        }),
-        destroy: function destroy() {
-          cleanupModifierEffects();
-          isDestroyed = true;
-        }
-      };
-      if (!areValidElements(reference2, popper2)) {
-        return instance;
-      }
-      instance.setOptions(options).then(function(state2) {
-        if (!isDestroyed && options.onFirstUpdate) {
-          options.onFirstUpdate(state2);
-        }
-      });
-      function runModifierEffects() {
-        state.orderedModifiers.forEach(function(_ref) {
-          var name = _ref.name, _ref$options = _ref.options, options2 = _ref$options === void 0 ? {} : _ref$options, effect2 = _ref.effect;
-          if (typeof effect2 === "function") {
-            var cleanupFn = effect2({
-              state,
-              name,
-              instance,
-              options: options2
-            });
-            var noopFn = function noopFn2() {
-            };
-            effectCleanupFns.push(cleanupFn || noopFn);
-          }
-        });
-      }
-      function cleanupModifierEffects() {
-        effectCleanupFns.forEach(function(fn) {
-          return fn();
-        });
-        effectCleanupFns = [];
-      }
-      return instance;
-    };
-  }
-  var defaultModifiers = [eventListeners, popperOffsets$1, computeStyles$1, applyStyles$1, offset$1, flip$1, preventOverflow$1, arrow$1, hide$1];
-  var createPopper = /* @__PURE__ */ popperGenerator({
-    defaultModifiers
-  });
-  var BOX_CLASS = "tippy-box";
-  var CONTENT_CLASS = "tippy-content";
-  var BACKDROP_CLASS = "tippy-backdrop";
-  var ARROW_CLASS = "tippy-arrow";
-  var SVG_ARROW_CLASS = "tippy-svg-arrow";
-  var TOUCH_OPTIONS = {
-    passive: true,
-    capture: true
-  };
-  var TIPPY_DEFAULT_APPEND_TO = function TIPPY_DEFAULT_APPEND_TO2() {
-    return document.body;
-  };
-  function getValueAtIndexOrReturn(value, index2, defaultValue) {
-    if (Array.isArray(value)) {
-      var v = value[index2];
-      return v == null ? Array.isArray(defaultValue) ? defaultValue[index2] : defaultValue : v;
-    }
-    return value;
-  }
-  function isType(value, type) {
-    var str = {}.toString.call(value);
-    return str.indexOf("[object") === 0 && str.indexOf(type + "]") > -1;
-  }
-  function invokeWithArgsOrReturn(value, args) {
-    return typeof value === "function" ? value.apply(void 0, args) : value;
-  }
-  function debounce(fn5, ms) {
-    if (ms === 0) {
-      return fn5;
-    }
-    var timeout;
-    return function(arg) {
-      clearTimeout(timeout);
-      timeout = setTimeout(function() {
-        fn5(arg);
-      }, ms);
-    };
-  }
-  function splitBySpaces(value) {
-    return value.split(/\s+/).filter(Boolean);
-  }
-  function normalizeToArray(value) {
-    return [].concat(value);
-  }
-  function pushIfUnique(arr, value) {
-    if (arr.indexOf(value) === -1) {
-      arr.push(value);
-    }
-  }
-  function unique(arr) {
-    return arr.filter(function(item, index2) {
-      return arr.indexOf(item) === index2;
-    });
-  }
-  function getBasePlacement(placement) {
-    return placement.split("-")[0];
-  }
-  function arrayFrom(value) {
-    return [].slice.call(value);
-  }
-  function removeUndefinedProps(obj) {
-    return Object.keys(obj).reduce(function(acc, key) {
-      if (obj[key] !== void 0) {
-        acc[key] = obj[key];
-      }
-      return acc;
-    }, {});
-  }
-  function div() {
-    return document.createElement("div");
-  }
-  function isElement(value) {
-    return ["Element", "Fragment"].some(function(type) {
-      return isType(value, type);
-    });
-  }
-  function isNodeList(value) {
-    return isType(value, "NodeList");
-  }
-  function isMouseEvent(value) {
-    return isType(value, "MouseEvent");
-  }
-  function isReferenceElement(value) {
-    return !!(value && value._tippy && value._tippy.reference === value);
-  }
-  function getArrayOfElements(value) {
-    if (isElement(value)) {
-      return [value];
-    }
-    if (isNodeList(value)) {
-      return arrayFrom(value);
-    }
-    if (Array.isArray(value)) {
-      return value;
-    }
-    return arrayFrom(document.querySelectorAll(value));
-  }
-  function setTransitionDuration(els, value) {
-    els.forEach(function(el2) {
-      if (el2) {
-        el2.style.transitionDuration = value + "ms";
-      }
-    });
-  }
-  function setVisibilityState(els, state) {
-    els.forEach(function(el2) {
-      if (el2) {
-        el2.setAttribute("data-state", state);
-      }
-    });
-  }
-  function getOwnerDocument(elementOrElements) {
-    var _element$ownerDocumen;
-    var _normalizeToArray = normalizeToArray(elementOrElements), element = _normalizeToArray[0];
-    return element != null && (_element$ownerDocumen = element.ownerDocument) != null && _element$ownerDocumen.body ? element.ownerDocument : document;
-  }
-  function isCursorOutsideInteractiveBorder(popperTreeData, event) {
-    var clientX = event.clientX, clientY = event.clientY;
-    return popperTreeData.every(function(_ref) {
-      var popperRect = _ref.popperRect, popperState = _ref.popperState, props = _ref.props;
-      var interactiveBorder = props.interactiveBorder;
-      var basePlacement = getBasePlacement(popperState.placement);
-      var offsetData = popperState.modifiersData.offset;
-      if (!offsetData) {
-        return true;
-      }
-      var topDistance = basePlacement === "bottom" ? offsetData.top.y : 0;
-      var bottomDistance = basePlacement === "top" ? offsetData.bottom.y : 0;
-      var leftDistance = basePlacement === "right" ? offsetData.left.x : 0;
-      var rightDistance = basePlacement === "left" ? offsetData.right.x : 0;
-      var exceedsTop = popperRect.top - clientY + topDistance > interactiveBorder;
-      var exceedsBottom = clientY - popperRect.bottom - bottomDistance > interactiveBorder;
-      var exceedsLeft = popperRect.left - clientX + leftDistance > interactiveBorder;
-      var exceedsRight = clientX - popperRect.right - rightDistance > interactiveBorder;
-      return exceedsTop || exceedsBottom || exceedsLeft || exceedsRight;
-    });
-  }
-  function updateTransitionEndListener(box, action, listener) {
-    var method = action + "EventListener";
-    ["transitionend", "webkitTransitionEnd"].forEach(function(event) {
-      box[method](event, listener);
-    });
-  }
-  function actualContains(parent, child) {
-    var target = child;
-    while (target) {
-      var _target$getRootNode;
-      if (parent.contains(target)) {
-        return true;
-      }
-      target = target.getRootNode == null ? void 0 : (_target$getRootNode = target.getRootNode()) == null ? void 0 : _target$getRootNode.host;
-    }
-    return false;
-  }
-  var currentInput = {
-    isTouch: false
-  };
-  var lastMouseMoveTime = 0;
-  function onDocumentTouchStart() {
-    if (currentInput.isTouch) {
-      return;
-    }
-    currentInput.isTouch = true;
-    if (window.performance) {
-      document.addEventListener("mousemove", onDocumentMouseMove);
-    }
-  }
-  function onDocumentMouseMove() {
-    var now = performance.now();
-    if (now - lastMouseMoveTime < 20) {
-      currentInput.isTouch = false;
-      document.removeEventListener("mousemove", onDocumentMouseMove);
-    }
-    lastMouseMoveTime = now;
-  }
-  function onWindowBlur() {
-    var activeElement = document.activeElement;
-    if (isReferenceElement(activeElement)) {
-      var instance = activeElement._tippy;
-      if (activeElement.blur && !instance.state.isVisible) {
-        activeElement.blur();
-      }
-    }
-  }
-  function bindGlobalEventListeners() {
-    document.addEventListener("touchstart", onDocumentTouchStart, TOUCH_OPTIONS);
-    window.addEventListener("blur", onWindowBlur);
-  }
-  var isBrowser = typeof window !== "undefined" && typeof document !== "undefined";
-  var isIE11 = isBrowser ? (
-    // @ts-ignore
-    !!window.msCrypto
-  ) : false;
-  var pluginProps = {
-    animateFill: false,
-    followCursor: false,
-    inlinePositioning: false,
-    sticky: false
-  };
-  var renderProps = {
-    allowHTML: false,
-    animation: "fade",
-    arrow: true,
-    content: "",
-    inertia: false,
-    maxWidth: 350,
-    role: "tooltip",
-    theme: "",
-    zIndex: 9999
-  };
-  var defaultProps = Object.assign({
-    appendTo: TIPPY_DEFAULT_APPEND_TO,
-    aria: {
-      content: "auto",
-      expanded: "auto"
-    },
-    delay: 0,
-    duration: [300, 250],
-    getReferenceClientRect: null,
-    hideOnClick: true,
-    ignoreAttributes: false,
-    interactive: false,
-    interactiveBorder: 2,
-    interactiveDebounce: 0,
-    moveTransition: "",
-    offset: [0, 10],
-    onAfterUpdate: function onAfterUpdate() {
-    },
-    onBeforeUpdate: function onBeforeUpdate() {
-    },
-    onCreate: function onCreate() {
-    },
-    onDestroy: function onDestroy() {
-    },
-    onHidden: function onHidden() {
-    },
-    onHide: function onHide() {
-    },
-    onMount: function onMount() {
-    },
-    onShow: function onShow() {
-    },
-    onShown: function onShown() {
-    },
-    onTrigger: function onTrigger() {
-    },
-    onUntrigger: function onUntrigger() {
-    },
-    onClickOutside: function onClickOutside() {
-    },
-    placement: "top",
-    plugins: [],
-    popperOptions: {},
-    render: null,
-    showOnCreate: false,
-    touch: true,
-    trigger: "mouseenter focus",
-    triggerTarget: null
-  }, pluginProps, renderProps);
-  var defaultKeys = Object.keys(defaultProps);
-  var setDefaultProps = function setDefaultProps2(partialProps) {
-    var keys = Object.keys(partialProps);
-    keys.forEach(function(key) {
-      defaultProps[key] = partialProps[key];
-    });
-  };
-  function getExtendedPassedProps(passedProps) {
-    var plugins = passedProps.plugins || [];
-    var pluginProps2 = plugins.reduce(function(acc, plugin) {
-      var name = plugin.name, defaultValue = plugin.defaultValue;
-      if (name) {
-        var _name;
-        acc[name] = passedProps[name] !== void 0 ? passedProps[name] : (_name = defaultProps[name]) != null ? _name : defaultValue;
-      }
-      return acc;
-    }, {});
-    return Object.assign({}, passedProps, pluginProps2);
-  }
-  function getDataAttributeProps(reference2, plugins) {
-    var propKeys = plugins ? Object.keys(getExtendedPassedProps(Object.assign({}, defaultProps, {
-      plugins
-    }))) : defaultKeys;
-    var props = propKeys.reduce(function(acc, key) {
-      var valueAsString = (reference2.getAttribute("data-tippy-" + key) || "").trim();
-      if (!valueAsString) {
-        return acc;
-      }
-      if (key === "content") {
-        acc[key] = valueAsString;
-      } else {
-        try {
-          acc[key] = JSON.parse(valueAsString);
-        } catch (e) {
-          acc[key] = valueAsString;
-        }
-      }
-      return acc;
-    }, {});
-    return props;
-  }
-  function evaluateProps(reference2, props) {
-    var out = Object.assign({}, props, {
-      content: invokeWithArgsOrReturn(props.content, [reference2])
-    }, props.ignoreAttributes ? {} : getDataAttributeProps(reference2, props.plugins));
-    out.aria = Object.assign({}, defaultProps.aria, out.aria);
-    out.aria = {
-      expanded: out.aria.expanded === "auto" ? props.interactive : out.aria.expanded,
-      content: out.aria.content === "auto" ? props.interactive ? null : "describedby" : out.aria.content
-    };
-    return out;
-  }
-  var innerHTML = function innerHTML2() {
-    return "innerHTML";
-  };
-  function dangerouslySetInnerHTML(element, html) {
-    element[innerHTML()] = html;
-  }
-  function createArrowElement(value) {
-    var arrow2 = div();
-    if (value === true) {
-      arrow2.className = ARROW_CLASS;
-    } else {
-      arrow2.className = SVG_ARROW_CLASS;
-      if (isElement(value)) {
-        arrow2.appendChild(value);
-      } else {
-        dangerouslySetInnerHTML(arrow2, value);
-      }
-    }
-    return arrow2;
-  }
-  function setContent(content, props) {
-    if (isElement(props.content)) {
-      dangerouslySetInnerHTML(content, "");
-      content.appendChild(props.content);
-    } else if (typeof props.content !== "function") {
-      if (props.allowHTML) {
-        dangerouslySetInnerHTML(content, props.content);
-      } else {
-        content.textContent = props.content;
-      }
-    }
-  }
-  function getChildren(popper2) {
-    var box = popper2.firstElementChild;
-    var boxChildren = arrayFrom(box.children);
-    return {
-      box,
-      content: boxChildren.find(function(node) {
-        return node.classList.contains(CONTENT_CLASS);
-      }),
-      arrow: boxChildren.find(function(node) {
-        return node.classList.contains(ARROW_CLASS) || node.classList.contains(SVG_ARROW_CLASS);
-      }),
-      backdrop: boxChildren.find(function(node) {
-        return node.classList.contains(BACKDROP_CLASS);
-      })
-    };
-  }
-  function render(instance) {
-    var popper2 = div();
-    var box = div();
-    box.className = BOX_CLASS;
-    box.setAttribute("data-state", "hidden");
-    box.setAttribute("tabindex", "-1");
-    var content = div();
-    content.className = CONTENT_CLASS;
-    content.setAttribute("data-state", "hidden");
-    setContent(content, instance.props);
-    popper2.appendChild(box);
-    box.appendChild(content);
-    onUpdate(instance.props, instance.props);
-    function onUpdate(prevProps, nextProps) {
-      var _getChildren = getChildren(popper2), box2 = _getChildren.box, content2 = _getChildren.content, arrow2 = _getChildren.arrow;
-      if (nextProps.theme) {
-        box2.setAttribute("data-theme", nextProps.theme);
-      } else {
-        box2.removeAttribute("data-theme");
-      }
-      if (typeof nextProps.animation === "string") {
-        box2.setAttribute("data-animation", nextProps.animation);
-      } else {
-        box2.removeAttribute("data-animation");
-      }
-      if (nextProps.inertia) {
-        box2.setAttribute("data-inertia", "");
-      } else {
-        box2.removeAttribute("data-inertia");
-      }
-      box2.style.maxWidth = typeof nextProps.maxWidth === "number" ? nextProps.maxWidth + "px" : nextProps.maxWidth;
-      if (nextProps.role) {
-        box2.setAttribute("role", nextProps.role);
-      } else {
-        box2.removeAttribute("role");
-      }
-      if (prevProps.content !== nextProps.content || prevProps.allowHTML !== nextProps.allowHTML) {
-        setContent(content2, instance.props);
-      }
-      if (nextProps.arrow) {
-        if (!arrow2) {
-          box2.appendChild(createArrowElement(nextProps.arrow));
-        } else if (prevProps.arrow !== nextProps.arrow) {
-          box2.removeChild(arrow2);
-          box2.appendChild(createArrowElement(nextProps.arrow));
-        }
-      } else if (arrow2) {
-        box2.removeChild(arrow2);
-      }
-    }
-    return {
-      popper: popper2,
-      onUpdate
-    };
-  }
-  render.$$tippy = true;
-  var idCounter = 1;
-  var mouseMoveListeners = [];
-  var mountedInstances = [];
-  function createTippy(reference2, passedProps) {
-    var props = evaluateProps(reference2, Object.assign({}, defaultProps, getExtendedPassedProps(removeUndefinedProps(passedProps))));
-    var showTimeout;
-    var hideTimeout;
-    var scheduleHideAnimationFrame;
-    var isVisibleFromClick = false;
-    var didHideDueToDocumentMouseDown = false;
-    var didTouchMove = false;
-    var ignoreOnFirstUpdate = false;
-    var lastTriggerEvent;
-    var currentTransitionEndListener;
-    var onFirstUpdate;
-    var listeners = [];
-    var debouncedOnMouseMove = debounce(onMouseMove, props.interactiveDebounce);
-    var currentTarget;
-    var id = idCounter++;
-    var popperInstance = null;
-    var plugins = unique(props.plugins);
-    var state = {
-      // Is the instance currently enabled?
-      isEnabled: true,
-      // Is the tippy currently showing and not transitioning out?
-      isVisible: false,
-      // Has the instance been destroyed?
-      isDestroyed: false,
-      // Is the tippy currently mounted to the DOM?
-      isMounted: false,
-      // Has the tippy finished transitioning in?
-      isShown: false
-    };
-    var instance = {
-      // properties
-      id,
-      reference: reference2,
-      popper: div(),
-      popperInstance,
-      props,
-      state,
-      plugins,
-      // methods
-      clearDelayTimeouts,
-      setProps,
-      setContent: setContent2,
-      show,
-      hide: hide2,
-      hideWithInteractivity,
-      enable,
-      disable,
-      unmount,
-      destroy
-    };
-    if (!props.render) {
-      return instance;
-    }
-    var _props$render = props.render(instance), popper2 = _props$render.popper, onUpdate = _props$render.onUpdate;
-    popper2.setAttribute("data-tippy-root", "");
-    popper2.id = "tippy-" + instance.id;
-    instance.popper = popper2;
-    reference2._tippy = instance;
-    popper2._tippy = instance;
-    var pluginsHooks = plugins.map(function(plugin) {
-      return plugin.fn(instance);
-    });
-    var hasAriaExpanded = reference2.hasAttribute("aria-expanded");
-    addListeners();
-    handleAriaExpandedAttribute();
-    handleStyles();
-    invokeHook("onCreate", [instance]);
-    if (props.showOnCreate) {
-      scheduleShow();
-    }
-    popper2.addEventListener("mouseenter", function() {
-      if (instance.props.interactive && instance.state.isVisible) {
-        instance.clearDelayTimeouts();
-      }
-    });
-    popper2.addEventListener("mouseleave", function() {
-      if (instance.props.interactive && instance.props.trigger.indexOf("mouseenter") >= 0) {
-        getDocument().addEventListener("mousemove", debouncedOnMouseMove);
-      }
-    });
-    return instance;
-    function getNormalizedTouchSettings() {
-      var touch = instance.props.touch;
-      return Array.isArray(touch) ? touch : [touch, 0];
-    }
-    function getIsCustomTouchBehavior() {
-      return getNormalizedTouchSettings()[0] === "hold";
-    }
-    function getIsDefaultRenderFn() {
-      var _instance$props$rende;
-      return !!((_instance$props$rende = instance.props.render) != null && _instance$props$rende.$$tippy);
-    }
-    function getCurrentTarget() {
-      return currentTarget || reference2;
-    }
-    function getDocument() {
-      var parent = getCurrentTarget().parentNode;
-      return parent ? getOwnerDocument(parent) : document;
-    }
-    function getDefaultTemplateChildren() {
-      return getChildren(popper2);
-    }
-    function getDelay(isShow) {
-      if (instance.state.isMounted && !instance.state.isVisible || currentInput.isTouch || lastTriggerEvent && lastTriggerEvent.type === "focus") {
-        return 0;
-      }
-      return getValueAtIndexOrReturn(instance.props.delay, isShow ? 0 : 1, defaultProps.delay);
-    }
-    function handleStyles(fromHide) {
-      if (fromHide === void 0) {
-        fromHide = false;
-      }
-      popper2.style.pointerEvents = instance.props.interactive && !fromHide ? "" : "none";
-      popper2.style.zIndex = "" + instance.props.zIndex;
-    }
-    function invokeHook(hook, args, shouldInvokePropsHook) {
-      if (shouldInvokePropsHook === void 0) {
-        shouldInvokePropsHook = true;
-      }
-      pluginsHooks.forEach(function(pluginHooks) {
-        if (pluginHooks[hook]) {
-          pluginHooks[hook].apply(pluginHooks, args);
-        }
-      });
-      if (shouldInvokePropsHook) {
-        var _instance$props;
-        (_instance$props = instance.props)[hook].apply(_instance$props, args);
-      }
-    }
-    function handleAriaContentAttribute() {
-      var aria = instance.props.aria;
-      if (!aria.content) {
-        return;
-      }
-      var attr = "aria-" + aria.content;
-      var id2 = popper2.id;
-      var nodes = normalizeToArray(instance.props.triggerTarget || reference2);
-      nodes.forEach(function(node) {
-        var currentValue = node.getAttribute(attr);
-        if (instance.state.isVisible) {
-          node.setAttribute(attr, currentValue ? currentValue + " " + id2 : id2);
-        } else {
-          var nextValue = currentValue && currentValue.replace(id2, "").trim();
-          if (nextValue) {
-            node.setAttribute(attr, nextValue);
-          } else {
-            node.removeAttribute(attr);
-          }
-        }
-      });
-    }
-    function handleAriaExpandedAttribute() {
-      if (hasAriaExpanded || !instance.props.aria.expanded) {
-        return;
-      }
-      var nodes = normalizeToArray(instance.props.triggerTarget || reference2);
-      nodes.forEach(function(node) {
-        if (instance.props.interactive) {
-          node.setAttribute("aria-expanded", instance.state.isVisible && node === getCurrentTarget() ? "true" : "false");
-        } else {
-          node.removeAttribute("aria-expanded");
-        }
-      });
-    }
-    function cleanupInteractiveMouseListeners() {
-      getDocument().removeEventListener("mousemove", debouncedOnMouseMove);
-      mouseMoveListeners = mouseMoveListeners.filter(function(listener) {
-        return listener !== debouncedOnMouseMove;
-      });
-    }
-    function onDocumentPress(event) {
-      if (currentInput.isTouch) {
-        if (didTouchMove || event.type === "mousedown") {
-          return;
-        }
-      }
-      var actualTarget = event.composedPath && event.composedPath()[0] || event.target;
-      if (instance.props.interactive && actualContains(popper2, actualTarget)) {
-        return;
-      }
-      if (normalizeToArray(instance.props.triggerTarget || reference2).some(function(el2) {
-        return actualContains(el2, actualTarget);
-      })) {
-        if (currentInput.isTouch) {
-          return;
-        }
-        if (instance.state.isVisible && instance.props.trigger.indexOf("click") >= 0) {
-          return;
-        }
-      } else {
-        invokeHook("onClickOutside", [instance, event]);
-      }
-      if (instance.props.hideOnClick === true) {
-        instance.clearDelayTimeouts();
-        instance.hide();
-        didHideDueToDocumentMouseDown = true;
-        setTimeout(function() {
-          didHideDueToDocumentMouseDown = false;
-        });
-        if (!instance.state.isMounted) {
-          removeDocumentPress();
-        }
-      }
-    }
-    function onTouchMove() {
-      didTouchMove = true;
-    }
-    function onTouchStart() {
-      didTouchMove = false;
-    }
-    function addDocumentPress() {
-      var doc = getDocument();
-      doc.addEventListener("mousedown", onDocumentPress, true);
-      doc.addEventListener("touchend", onDocumentPress, TOUCH_OPTIONS);
-      doc.addEventListener("touchstart", onTouchStart, TOUCH_OPTIONS);
-      doc.addEventListener("touchmove", onTouchMove, TOUCH_OPTIONS);
-    }
-    function removeDocumentPress() {
-      var doc = getDocument();
-      doc.removeEventListener("mousedown", onDocumentPress, true);
-      doc.removeEventListener("touchend", onDocumentPress, TOUCH_OPTIONS);
-      doc.removeEventListener("touchstart", onTouchStart, TOUCH_OPTIONS);
-      doc.removeEventListener("touchmove", onTouchMove, TOUCH_OPTIONS);
-    }
-    function onTransitionedOut(duration, callback) {
-      onTransitionEnd(duration, function() {
-        if (!instance.state.isVisible && popper2.parentNode && popper2.parentNode.contains(popper2)) {
-          callback();
-        }
-      });
-    }
-    function onTransitionedIn(duration, callback) {
-      onTransitionEnd(duration, callback);
-    }
-    function onTransitionEnd(duration, callback) {
-      var box = getDefaultTemplateChildren().box;
-      function listener(event) {
-        if (event.target === box) {
-          updateTransitionEndListener(box, "remove", listener);
-          callback();
-        }
-      }
-      if (duration === 0) {
-        return callback();
-      }
-      updateTransitionEndListener(box, "remove", currentTransitionEndListener);
-      updateTransitionEndListener(box, "add", listener);
-      currentTransitionEndListener = listener;
-    }
-    function on(eventType, handler, options) {
-      if (options === void 0) {
-        options = false;
-      }
-      var nodes = normalizeToArray(instance.props.triggerTarget || reference2);
-      nodes.forEach(function(node) {
-        node.addEventListener(eventType, handler, options);
-        listeners.push({
-          node,
-          eventType,
-          handler,
-          options
-        });
-      });
-    }
-    function addListeners() {
-      if (getIsCustomTouchBehavior()) {
-        on("touchstart", onTrigger2, {
-          passive: true
-        });
-        on("touchend", onMouseLeave, {
-          passive: true
-        });
-      }
-      splitBySpaces(instance.props.trigger).forEach(function(eventType) {
-        if (eventType === "manual") {
-          return;
-        }
-        on(eventType, onTrigger2);
-        switch (eventType) {
-          case "mouseenter":
-            on("mouseleave", onMouseLeave);
-            break;
-          case "focus":
-            on(isIE11 ? "focusout" : "blur", onBlurOrFocusOut);
-            break;
-          case "focusin":
-            on("focusout", onBlurOrFocusOut);
-            break;
-        }
-      });
-    }
-    function removeListeners() {
-      listeners.forEach(function(_ref) {
-        var node = _ref.node, eventType = _ref.eventType, handler = _ref.handler, options = _ref.options;
-        node.removeEventListener(eventType, handler, options);
-      });
-      listeners = [];
-    }
-    function onTrigger2(event) {
-      var _lastTriggerEvent;
-      var shouldScheduleClickHide = false;
-      if (!instance.state.isEnabled || isEventListenerStopped(event) || didHideDueToDocumentMouseDown) {
-        return;
-      }
-      var wasFocused = ((_lastTriggerEvent = lastTriggerEvent) == null ? void 0 : _lastTriggerEvent.type) === "focus";
-      lastTriggerEvent = event;
-      currentTarget = event.currentTarget;
-      handleAriaExpandedAttribute();
-      if (!instance.state.isVisible && isMouseEvent(event)) {
-        mouseMoveListeners.forEach(function(listener) {
-          return listener(event);
-        });
-      }
-      if (event.type === "click" && (instance.props.trigger.indexOf("mouseenter") < 0 || isVisibleFromClick) && instance.props.hideOnClick !== false && instance.state.isVisible) {
-        shouldScheduleClickHide = true;
-      } else {
-        scheduleShow(event);
-      }
-      if (event.type === "click") {
-        isVisibleFromClick = !shouldScheduleClickHide;
-      }
-      if (shouldScheduleClickHide && !wasFocused) {
-        scheduleHide(event);
-      }
-    }
-    function onMouseMove(event) {
-      var target = event.target;
-      var isCursorOverReferenceOrPopper = getCurrentTarget().contains(target) || popper2.contains(target);
-      if (event.type === "mousemove" && isCursorOverReferenceOrPopper) {
-        return;
-      }
-      var popperTreeData = getNestedPopperTree().concat(popper2).map(function(popper22) {
-        var _instance$popperInsta;
-        var instance2 = popper22._tippy;
-        var state2 = (_instance$popperInsta = instance2.popperInstance) == null ? void 0 : _instance$popperInsta.state;
-        if (state2) {
-          return {
-            popperRect: popper22.getBoundingClientRect(),
-            popperState: state2,
-            props
-          };
-        }
-        return null;
-      }).filter(Boolean);
-      if (isCursorOutsideInteractiveBorder(popperTreeData, event)) {
-        cleanupInteractiveMouseListeners();
-        scheduleHide(event);
-      }
-    }
-    function onMouseLeave(event) {
-      var shouldBail = isEventListenerStopped(event) || instance.props.trigger.indexOf("click") >= 0 && isVisibleFromClick;
-      if (shouldBail) {
-        return;
-      }
-      if (instance.props.interactive) {
-        instance.hideWithInteractivity(event);
-        return;
-      }
-      scheduleHide(event);
-    }
-    function onBlurOrFocusOut(event) {
-      if (instance.props.trigger.indexOf("focusin") < 0 && event.target !== getCurrentTarget()) {
-        return;
-      }
-      if (instance.props.interactive && event.relatedTarget && popper2.contains(event.relatedTarget)) {
-        return;
-      }
-      scheduleHide(event);
-    }
-    function isEventListenerStopped(event) {
-      return currentInput.isTouch ? getIsCustomTouchBehavior() !== event.type.indexOf("touch") >= 0 : false;
-    }
-    function createPopperInstance() {
-      destroyPopperInstance();
-      var _instance$props2 = instance.props, popperOptions = _instance$props2.popperOptions, placement = _instance$props2.placement, offset2 = _instance$props2.offset, getReferenceClientRect = _instance$props2.getReferenceClientRect, moveTransition = _instance$props2.moveTransition;
-      var arrow2 = getIsDefaultRenderFn() ? getChildren(popper2).arrow : null;
-      var computedReference = getReferenceClientRect ? {
-        getBoundingClientRect: getReferenceClientRect,
-        contextElement: getReferenceClientRect.contextElement || getCurrentTarget()
-      } : reference2;
-      var tippyModifier = {
-        name: "$$tippy",
-        enabled: true,
-        phase: "beforeWrite",
-        requires: ["computeStyles"],
-        fn: function fn5(_ref2) {
-          var state2 = _ref2.state;
-          if (getIsDefaultRenderFn()) {
-            var _getDefaultTemplateCh = getDefaultTemplateChildren(), box = _getDefaultTemplateCh.box;
-            ["placement", "reference-hidden", "escaped"].forEach(function(attr) {
-              if (attr === "placement") {
-                box.setAttribute("data-placement", state2.placement);
-              } else {
-                if (state2.attributes.popper["data-popper-" + attr]) {
-                  box.setAttribute("data-" + attr, "");
-                } else {
-                  box.removeAttribute("data-" + attr);
-                }
-              }
-            });
-            state2.attributes.popper = {};
-          }
-        }
-      };
-      var modifiers = [{
-        name: "offset",
-        options: {
-          offset: offset2
-        }
-      }, {
-        name: "preventOverflow",
-        options: {
-          padding: {
-            top: 2,
-            bottom: 2,
-            left: 5,
-            right: 5
-          }
-        }
-      }, {
-        name: "flip",
-        options: {
-          padding: 5
-        }
-      }, {
-        name: "computeStyles",
-        options: {
-          adaptive: !moveTransition
-        }
-      }, tippyModifier];
-      if (getIsDefaultRenderFn() && arrow2) {
-        modifiers.push({
-          name: "arrow",
-          options: {
-            element: arrow2,
-            padding: 3
-          }
-        });
-      }
-      modifiers.push.apply(modifiers, (popperOptions == null ? void 0 : popperOptions.modifiers) || []);
-      instance.popperInstance = createPopper(computedReference, popper2, Object.assign({}, popperOptions, {
-        placement,
-        onFirstUpdate,
-        modifiers
-      }));
-    }
-    function destroyPopperInstance() {
-      if (instance.popperInstance) {
-        instance.popperInstance.destroy();
-        instance.popperInstance = null;
-      }
-    }
-    function mount() {
-      var appendTo = instance.props.appendTo;
-      var parentNode;
-      var node = getCurrentTarget();
-      if (instance.props.interactive && appendTo === TIPPY_DEFAULT_APPEND_TO || appendTo === "parent") {
-        parentNode = node.parentNode;
-      } else {
-        parentNode = invokeWithArgsOrReturn(appendTo, [node]);
-      }
-      if (!parentNode.contains(popper2)) {
-        parentNode.appendChild(popper2);
-      }
-      instance.state.isMounted = true;
-      createPopperInstance();
-    }
-    function getNestedPopperTree() {
-      return arrayFrom(popper2.querySelectorAll("[data-tippy-root]"));
-    }
-    function scheduleShow(event) {
-      instance.clearDelayTimeouts();
-      if (event) {
-        invokeHook("onTrigger", [instance, event]);
-      }
-      addDocumentPress();
-      var delay = getDelay(true);
-      var _getNormalizedTouchSe = getNormalizedTouchSettings(), touchValue = _getNormalizedTouchSe[0], touchDelay = _getNormalizedTouchSe[1];
-      if (currentInput.isTouch && touchValue === "hold" && touchDelay) {
-        delay = touchDelay;
-      }
-      if (delay) {
-        showTimeout = setTimeout(function() {
-          instance.show();
-        }, delay);
-      } else {
-        instance.show();
-      }
-    }
-    function scheduleHide(event) {
-      instance.clearDelayTimeouts();
-      invokeHook("onUntrigger", [instance, event]);
-      if (!instance.state.isVisible) {
-        removeDocumentPress();
-        return;
-      }
-      if (instance.props.trigger.indexOf("mouseenter") >= 0 && instance.props.trigger.indexOf("click") >= 0 && ["mouseleave", "mousemove"].indexOf(event.type) >= 0 && isVisibleFromClick) {
-        return;
-      }
-      var delay = getDelay(false);
-      if (delay) {
-        hideTimeout = setTimeout(function() {
-          if (instance.state.isVisible) {
-            instance.hide();
-          }
-        }, delay);
-      } else {
-        scheduleHideAnimationFrame = requestAnimationFrame(function() {
-          instance.hide();
-        });
-      }
-    }
-    function enable() {
-      instance.state.isEnabled = true;
-    }
-    function disable() {
-      instance.hide();
-      instance.state.isEnabled = false;
-    }
-    function clearDelayTimeouts() {
-      clearTimeout(showTimeout);
-      clearTimeout(hideTimeout);
-      cancelAnimationFrame(scheduleHideAnimationFrame);
-    }
-    function setProps(partialProps) {
-      if (instance.state.isDestroyed) {
-        return;
-      }
-      invokeHook("onBeforeUpdate", [instance, partialProps]);
-      removeListeners();
-      var prevProps = instance.props;
-      var nextProps = evaluateProps(reference2, Object.assign({}, prevProps, removeUndefinedProps(partialProps), {
-        ignoreAttributes: true
-      }));
-      instance.props = nextProps;
-      addListeners();
-      if (prevProps.interactiveDebounce !== nextProps.interactiveDebounce) {
-        cleanupInteractiveMouseListeners();
-        debouncedOnMouseMove = debounce(onMouseMove, nextProps.interactiveDebounce);
-      }
-      if (prevProps.triggerTarget && !nextProps.triggerTarget) {
-        normalizeToArray(prevProps.triggerTarget).forEach(function(node) {
-          node.removeAttribute("aria-expanded");
-        });
-      } else if (nextProps.triggerTarget) {
-        reference2.removeAttribute("aria-expanded");
-      }
-      handleAriaExpandedAttribute();
-      handleStyles();
-      if (onUpdate) {
-        onUpdate(prevProps, nextProps);
-      }
-      if (instance.popperInstance) {
-        createPopperInstance();
-        getNestedPopperTree().forEach(function(nestedPopper) {
-          requestAnimationFrame(nestedPopper._tippy.popperInstance.forceUpdate);
-        });
-      }
-      invokeHook("onAfterUpdate", [instance, partialProps]);
-    }
-    function setContent2(content) {
-      instance.setProps({
-        content
-      });
-    }
-    function show() {
-      var isAlreadyVisible = instance.state.isVisible;
-      var isDestroyed = instance.state.isDestroyed;
-      var isDisabled = !instance.state.isEnabled;
-      var isTouchAndTouchDisabled = currentInput.isTouch && !instance.props.touch;
-      var duration = getValueAtIndexOrReturn(instance.props.duration, 0, defaultProps.duration);
-      if (isAlreadyVisible || isDestroyed || isDisabled || isTouchAndTouchDisabled) {
-        return;
-      }
-      if (getCurrentTarget().hasAttribute("disabled")) {
-        return;
-      }
-      invokeHook("onShow", [instance], false);
-      if (instance.props.onShow(instance) === false) {
-        return;
-      }
-      instance.state.isVisible = true;
-      if (getIsDefaultRenderFn()) {
-        popper2.style.visibility = "visible";
-      }
-      handleStyles();
-      addDocumentPress();
-      if (!instance.state.isMounted) {
-        popper2.style.transition = "none";
-      }
-      if (getIsDefaultRenderFn()) {
-        var _getDefaultTemplateCh2 = getDefaultTemplateChildren(), box = _getDefaultTemplateCh2.box, content = _getDefaultTemplateCh2.content;
-        setTransitionDuration([box, content], 0);
-      }
-      onFirstUpdate = function onFirstUpdate2() {
-        var _instance$popperInsta2;
-        if (!instance.state.isVisible || ignoreOnFirstUpdate) {
-          return;
-        }
-        ignoreOnFirstUpdate = true;
-        void popper2.offsetHeight;
-        popper2.style.transition = instance.props.moveTransition;
-        if (getIsDefaultRenderFn() && instance.props.animation) {
-          var _getDefaultTemplateCh3 = getDefaultTemplateChildren(), _box = _getDefaultTemplateCh3.box, _content = _getDefaultTemplateCh3.content;
-          setTransitionDuration([_box, _content], duration);
-          setVisibilityState([_box, _content], "visible");
-        }
-        handleAriaContentAttribute();
-        handleAriaExpandedAttribute();
-        pushIfUnique(mountedInstances, instance);
-        (_instance$popperInsta2 = instance.popperInstance) == null ? void 0 : _instance$popperInsta2.forceUpdate();
-        invokeHook("onMount", [instance]);
-        if (instance.props.animation && getIsDefaultRenderFn()) {
-          onTransitionedIn(duration, function() {
-            instance.state.isShown = true;
-            invokeHook("onShown", [instance]);
-          });
-        }
-      };
-      mount();
-    }
-    function hide2() {
-      var isAlreadyHidden = !instance.state.isVisible;
-      var isDestroyed = instance.state.isDestroyed;
-      var isDisabled = !instance.state.isEnabled;
-      var duration = getValueAtIndexOrReturn(instance.props.duration, 1, defaultProps.duration);
-      if (isAlreadyHidden || isDestroyed || isDisabled) {
-        return;
-      }
-      invokeHook("onHide", [instance], false);
-      if (instance.props.onHide(instance) === false) {
-        return;
-      }
-      instance.state.isVisible = false;
-      instance.state.isShown = false;
-      ignoreOnFirstUpdate = false;
-      isVisibleFromClick = false;
-      if (getIsDefaultRenderFn()) {
-        popper2.style.visibility = "hidden";
-      }
-      cleanupInteractiveMouseListeners();
-      removeDocumentPress();
-      handleStyles(true);
-      if (getIsDefaultRenderFn()) {
-        var _getDefaultTemplateCh4 = getDefaultTemplateChildren(), box = _getDefaultTemplateCh4.box, content = _getDefaultTemplateCh4.content;
-        if (instance.props.animation) {
-          setTransitionDuration([box, content], duration);
-          setVisibilityState([box, content], "hidden");
-        }
-      }
-      handleAriaContentAttribute();
-      handleAriaExpandedAttribute();
-      if (instance.props.animation) {
-        if (getIsDefaultRenderFn()) {
-          onTransitionedOut(duration, instance.unmount);
-        }
-      } else {
-        instance.unmount();
-      }
-    }
-    function hideWithInteractivity(event) {
-      getDocument().addEventListener("mousemove", debouncedOnMouseMove);
-      pushIfUnique(mouseMoveListeners, debouncedOnMouseMove);
-      debouncedOnMouseMove(event);
-    }
-    function unmount() {
-      if (instance.state.isVisible) {
-        instance.hide();
-      }
-      if (!instance.state.isMounted) {
-        return;
-      }
-      destroyPopperInstance();
-      getNestedPopperTree().forEach(function(nestedPopper) {
-        nestedPopper._tippy.unmount();
-      });
-      if (popper2.parentNode) {
-        popper2.parentNode.removeChild(popper2);
-      }
-      mountedInstances = mountedInstances.filter(function(i) {
-        return i !== instance;
-      });
-      instance.state.isMounted = false;
-      invokeHook("onHidden", [instance]);
-    }
-    function destroy() {
-      if (instance.state.isDestroyed) {
-        return;
-      }
-      instance.clearDelayTimeouts();
-      instance.unmount();
-      removeListeners();
-      delete reference2._tippy;
-      instance.state.isDestroyed = true;
-      invokeHook("onDestroy", [instance]);
-    }
-  }
-  function tippy(targets, optionalProps) {
-    if (optionalProps === void 0) {
-      optionalProps = {};
-    }
-    var plugins = defaultProps.plugins.concat(optionalProps.plugins || []);
-    bindGlobalEventListeners();
-    var passedProps = Object.assign({}, optionalProps, {
-      plugins
-    });
-    var elements = getArrayOfElements(targets);
-    var instances = elements.reduce(function(acc, reference2) {
-      var instance = reference2 && createTippy(reference2, passedProps);
-      if (instance) {
-        acc.push(instance);
-      }
-      return acc;
-    }, []);
-    return isElement(targets) ? instances[0] : instances;
-  }
-  tippy.defaultProps = defaultProps;
-  tippy.setDefaultProps = setDefaultProps;
-  tippy.currentInput = currentInput;
-  Object.assign({}, applyStyles$1, {
-    effect: function effect2(_ref) {
-      var state = _ref.state;
-      var initialStyles = {
-        popper: {
-          position: state.options.strategy,
-          left: "0",
-          top: "0",
-          margin: "0"
-        },
-        arrow: {
-          position: "absolute"
-        },
-        reference: {}
-      };
-      Object.assign(state.elements.popper.style, initialStyles.popper);
-      state.styles = initialStyles;
-      if (state.elements.arrow) {
-        Object.assign(state.elements.arrow.style, initialStyles.arrow);
-      }
-    }
-  });
-  tippy.setDefaultProps({
-    render
-  });
-  const tooltipStyles = 'h1,h2,div,p,span,ol,ul,li,a,button,svg,strong,kbd,code{all:unset;box-sizing:border-box!important}div{display:block}:before,:after{all:unset}.tippy-box[data-animation=fade][data-state=hidden]{opacity:0}[data-tippy-root]{max-width:calc(100vw - 10px)}@media (forced-colors:active){[data-tippy-root]{border:2px solid #0000;border-radius:5px}}.tippy-arrow{color:#333;width:16px;height:16px}.tippy-arrow:before{content:"";border-style:solid;border-color:#0000;position:absolute}.tippy-box[data-placement^=top] .tippy-arrow{bottom:0}.tippy-box[data-placement^=top] .tippy-arrow:before{border-width:8px 8px 0;border-top-color:initial;transform-origin:top;bottom:-7px;left:0}.tippy-box[data-placement^=bottom] .tippy-arrow{top:0}.tippy-box[data-placement^=bottom] .tippy-arrow:before{border-width:0 8px 8px;border-bottom-color:initial;transform-origin:bottom;top:-7px;left:0}.tippy-box[data-placement^=left] .tippy-arrow{right:0}.tippy-box[data-placement^=left] .tippy-arrow:before{border-width:8px 0 8px 8px;border-left-color:initial;transform-origin:0;right:-7px}.tippy-box[data-placement^=right] .tippy-arrow{left:0}.tippy-box[data-placement^=right] .tippy-arrow:before{border-width:8px 8px 8px 0;border-right-color:initial;transform-origin:100%;left:-7px}.tippy-content{z-index:1;padding:5px 9px;position:relative}.tippy-box[data-theme~=sa11y-theme][role=tooltip]{box-sizing:border-box!important}.tippy-box[data-theme~=sa11y-theme][role=tooltip][data-animation=fade][data-state=hidden]{opacity:0}.tippy-box[data-theme~=sa11y-theme][role=tooltip][data-inertia][data-state=visible]{transition-timing-function:cubic-bezier(.54,1.5,.38,1.11)}[role=dialog]{text-align:start;word-wrap:break-word;min-width:300px}[role=tooltip]{text-align:center;min-width:185px}.tippy-box[data-theme~=sa11y-panel]{border:1px solid var(--sa11y-panel-bg-splitter);box-shadow:var(--sa11y-box-shadow)}.tippy-box[data-theme~=sa11y-theme]:not([data-theme~=sa11y-panel]){box-shadow:0 0 20px 4px #9aa1b126,0 4px 80px -8px #24282f40,0 4px 4px -2px #5b5e6926!important}.tippy-box[data-theme~=sa11y-theme]{font-family:var(--sa11y-font-face);font-size:var(--sa11y-normal-text);color:var(--sa11y-panel-primary);letter-spacing:normal;background-color:var(--sa11y-panel-bg);-webkit-font-smoothing:auto;border-radius:4px;outline:0;padding:8px;font-weight:400;line-height:22px;transition-property:transform,visibility,opacity;display:block;position:relative}.tippy-box[data-theme~=sa11y-theme] pre code{white-space:pre-wrap;display:block;overflow:auto}.tippy-box[data-theme~=sa11y-theme] code{font-family:monospace;font-size:calc(var(--sa11y-normal-text) - 1px);font-weight:500}.tippy-box[data-theme~=sa11y-theme] pre,.tippy-box[data-theme~=sa11y-theme] code,.tippy-box[data-theme~=sa11y-theme] kbd{color:var(--sa11y-panel-primary);letter-spacing:normal;background-color:var(--sa11y-panel-badge);-webkit-font-smoothing:auto;border-radius:3.2px;padding:1.6px 4.8px;line-height:22px}.tippy-box[data-theme~=sa11y-theme] .tippy-content{padding:5px 9px}.tippy-box[data-theme~=sa11y-theme] sub,.tippy-box[data-theme~=sa11y-theme] sup{font-size:var(--sa11y-small-text)}.tippy-box[data-theme~=sa11y-theme] ul{margin:0;margin-block:0;padding:0;position:relative}.tippy-box[data-theme~=sa11y-theme] li{margin:5px 10px 0 20px;padding-bottom:5px;display:list-item}.tippy-box[data-theme~=sa11y-theme] a{color:var(--sa11y-hyperlink);cursor:pointer;font-weight:500;text-decoration:underline}.tippy-box[data-theme~=sa11y-theme] a:hover,.tippy-box[data-theme~=sa11y-theme] a:focus{text-decoration:none}.tippy-box[data-theme~=sa11y-theme] .good .colour{font-weight:400}.tippy-box[data-theme~=sa11y-theme] strong{font-weight:600}.tippy-box[data-theme~=sa11y-theme] hr{background:var(--sa11y-panel-bg-splitter);opacity:1;border:none;height:1px;margin:10px 0;padding:0}.tippy-box[data-theme~=sa11y-theme] button.close-btn{margin-inline-start:10px;margin-bottom:10px}.tippy-box[data-theme~=sa11y-theme] button#suggest-size,.tippy-box[data-theme~=sa11y-theme] button#suggest{cursor:pointer;padding:.2rem;transition:background-color .2s,color .2s;position:relative}:is(.tippy-box[data-theme~=sa11y-theme] button#suggest-size,.tippy-box[data-theme~=sa11y-theme] button#suggest):after{content:"";position:absolute;inset:-10px -5px -14px}:is(.tippy-box[data-theme~=sa11y-theme] button#suggest-size,.tippy-box[data-theme~=sa11y-theme] button#suggest):hover,:is(.tippy-box[data-theme~=sa11y-theme] button#suggest-size,.tippy-box[data-theme~=sa11y-theme] button#suggest):focus-visible{color:#000!important;background-color:#fff!important}.tippy-box[data-theme~=sa11y-theme] .dismiss-group{margin-top:5px}.tippy-box[data-theme~=sa11y-theme] .dismiss-group button{margin:10px 5px 5px 0;color:var(--sa11y-panel-primary);cursor:pointer;background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-button-outline);border-radius:5px;margin-inline-end:15px;padding:4px 8px;display:inline-block}.tippy-box[data-theme~=sa11y-theme] .dismiss-group button:hover,.tippy-box[data-theme~=sa11y-theme] .dismiss-group button:focus{background:var(--sa11y-shortcut-hover)}.tippy-box[data-theme~=sa11y-theme] .good-icon{background:var(--sa11y-good-text);width:14px;height:14px;-webkit-mask:var(--sa11y-good-svg) center no-repeat;mask:var(--sa11y-good-svg) center no-repeat;margin-bottom:-2.5px;display:inline-block}.tippy-box[data-theme~=sa11y-theme] .link-icon{background:var(--sa11y-panel-primary);width:16px;height:16px;-webkit-mask:var(--sa11y-link-icon-svg) center no-repeat;mask:var(--sa11y-link-icon-svg) center no-repeat;margin-bottom:-3.5px;display:inline-block}.tippy-box[data-theme~=sa11y-theme] .error .badge{color:var(--sa11y-error-text);background:var(--sa11y-error)}.tippy-box[data-theme~=sa11y-theme] .error .colour{color:var(--sa11y-red-text)}.tippy-box[data-theme~=sa11y-theme] .error .link-icon{background:var(--sa11y-error-text)}.tippy-box[data-theme~=sa11y-theme] .warning .badge{color:var(--sa11y-panel-bg);background:var(--sa11y-yellow-text)}.tippy-box[data-theme~=sa11y-theme] .warning .colour{color:var(--sa11y-yellow-text)}.tippy-box[data-theme~=sa11y-theme] .warning .link-icon{background:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme][data-placement^=top] .tippy-arrow:before{border-top-color:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme][data-placement^=bottom] .tippy-arrow:before{border-bottom-color:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme][data-placement^=left] .tippy-arrow:before{border-left-color:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme][data-placement^=right] .tippy-arrow:before{border-right-color:var(--sa11y-panel-bg)}@media (forced-colors:active){.tippy-box[data-theme~=sa11y-theme][data-placement^=top] .tippy-arrow:before,.tippy-box[data-theme~=sa11y-theme][data-placement^=bottom] .tippy-arrow:before,.tippy-box[data-theme~=sa11y-theme][data-placement^=left] .tippy-arrow:before,.tippy-box[data-theme~=sa11y-theme][data-placement^=right] .tippy-arrow:before{forced-color-adjust:none}.tippy-box[data-theme~=sa11y-theme] .tippy-arrow{z-index:-1}}.tippy-box[data-theme~=sa11y-theme] a:focus,.tippy-box[data-theme~=sa11y-theme] input:focus,.tippy-box[data-theme~=sa11y-theme] button:focus,.tippy-box[data-theme~=sa11y-theme] button:active,.tippy-box[data-theme~=sa11y-theme] [tabindex="-1"]:focus{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}.tippy-box[data-theme~=sa11y-theme] input:focus:not(:focus-visible),.tippy-box[data-theme~=sa11y-theme] a:focus:not(:focus-visible),.tippy-box[data-theme~=sa11y-theme] button:focus:not(:focus-visible),.tippy-box[data-theme~=sa11y-theme] [tabindex="-1"]:focus:not(:focus-visible){box-shadow:none;outline:0}.tippy-box[data-theme~=sa11y-theme] a:focus-visible,.tippy-box[data-theme~=sa11y-theme] button:focus-visible,.tippy-box[data-theme~=sa11y-theme] input:focus-visible,.tippy-box[data-theme~=sa11y-theme] [tabindex="-1"]:focus-visible{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}@media screen and (forced-colors:active){.tippy-box[data-theme~=sa11y-theme] .error-icon,.tippy-box[data-theme~=sa11y-theme] .link-icon,.tippy-box[data-theme~=sa11y-theme] .hidden-icon{filter:invert()}.tippy-box[data-theme~=sa11y-theme] a:focus,.tippy-box[data-theme~=sa11y-theme] button:focus,.tippy-box[data-theme~=sa11y-theme] [tabindex="-1"]:focus{outline:3px solid #0000!important}}';
+  const tooltipStyles = 'h1,h2,div,p,span,ol,ul,li,a,button,svg,strong,kbd,code{all:unset;box-sizing:border-box!important}div{display:block}:before,:after{all:unset}.tippy-box[data-animation=fade][data-state=hidden]{opacity:0}.tippy-box{max-width:375px}@media (forced-colors:active){[data-tippy-root]{border:2px solid #0000;border-radius:5px}}.tippy-arrow{background:inherit;visibility:hidden;width:8px;height:8px;position:absolute}.tippy-arrow:before{content:"";background:inherit;visibility:visible;width:8px;height:8px;position:absolute;transform:rotate(45deg)}.tippy-box[data-placement^=top]>.tippy-arrow{bottom:-4px}.tippy-box[data-placement^=bottom]>.tippy-arrow{top:-4px}.tippy-box[data-placement^=left]>.tippy-arrow{right:-4px}.tippy-box[data-placement^=right]>.tippy-arrow{left:-4px}.tippy-content{z-index:1;padding:5px 9px;position:relative}.sa11y-theme[role=tooltip]{box-sizing:border-box!important}.sa11y-theme[role=tooltip][data-animation=fade][data-state=hidden]{opacity:0}.sa11y-theme[role=tooltip][data-inertia][data-state=visible]{transition-timing-function:cubic-bezier(.54,1.5,.38,1.11)}[role=dialog]{text-align:start;word-wrap:break-word;min-width:300px}[role=tooltip]{text-align:center;min-width:185px;max-width:250px}.sa11y-panel{border:1px solid var(--sa11y-panel-bg-splitter);box-shadow:var(--sa11y-box-shadow)}.sa11y-theme:not(.sa11y-panel){box-shadow:0 0 20px 4px #9aa1b126,0 4px 80px -8px #24282f40,0 4px 4px -2px #5b5e6926!important}.sa11y-theme{font-family:var(--sa11y-font-face);font-size:var(--sa11y-normal-text);color:var(--sa11y-panel-primary);letter-spacing:normal;background-color:var(--sa11y-panel-bg);-webkit-font-smoothing:auto;border-radius:4px;outline:0;padding:8px;font-weight:400;line-height:22px;transition-property:transform,visibility,opacity;display:block;position:relative}.sa11y-theme pre code{white-space:pre-wrap;display:block;overflow:auto}.sa11y-theme code{font-family:monospace;font-size:calc(var(--sa11y-normal-text) - 1px);font-weight:500}.sa11y-theme pre,.sa11y-theme code,.sa11y-theme kbd{color:var(--sa11y-panel-primary);letter-spacing:normal;background-color:var(--sa11y-panel-badge);-webkit-font-smoothing:auto;border-radius:3.2px;padding:1.6px 4.8px;line-height:22px}.sa11y-theme .tippy-content{padding:5px 9px}.sa11y-theme sub,.sa11y-theme sup{font-size:var(--sa11y-small-text)}.sa11y-theme ul{margin:0;margin-block:0;padding:0;position:relative}.sa11y-theme li{margin:5px 10px 0 20px;padding-bottom:5px;display:list-item}.sa11y-theme a{color:var(--sa11y-hyperlink);cursor:pointer;font-weight:500;text-decoration:underline}.sa11y-theme a:hover,.sa11y-theme a:focus{text-decoration:none}.sa11y-theme .good .colour{font-weight:400}.sa11y-theme strong{font-weight:600}.sa11y-theme hr{background:var(--sa11y-panel-bg-splitter);opacity:1;border:none;height:1px;margin:10px 0;padding:0}.sa11y-theme button.close-btn{margin-inline-start:10px;margin-bottom:10px}.sa11y-theme button#suggest-size,.sa11y-theme button#suggest{cursor:pointer;padding:.2rem;transition:background-color .2s,color .2s;position:relative}:is(.sa11y-theme button#suggest-size,.sa11y-theme button#suggest):after{content:"";position:absolute;inset:-10px -5px -14px}:is(.sa11y-theme button#suggest-size,.sa11y-theme button#suggest):hover,:is(.sa11y-theme button#suggest-size,.sa11y-theme button#suggest):focus-visible{color:#000!important;background-color:#fff!important}.sa11y-theme .dismiss-group{margin-top:5px}.sa11y-theme .dismiss-group button{margin:10px 5px 5px 0;color:var(--sa11y-panel-primary);cursor:pointer;background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-button-outline);border-radius:5px;margin-inline-end:15px;padding:4px 8px;display:inline-block}.sa11y-theme .dismiss-group button:hover,.sa11y-theme .dismiss-group button:focus{background:var(--sa11y-shortcut-hover)}.sa11y-theme .good-icon{background:var(--sa11y-good-text);width:14px;height:14px;-webkit-mask:var(--sa11y-good-svg) center no-repeat;mask:var(--sa11y-good-svg) center no-repeat;margin-bottom:-2.5px;display:inline-block}.sa11y-theme .link-icon{background:var(--sa11y-panel-primary);width:16px;height:16px;-webkit-mask:var(--sa11y-link-icon-svg) center no-repeat;mask:var(--sa11y-link-icon-svg) center no-repeat;margin-bottom:-3.5px;display:inline-block}.sa11y-theme .error .badge{color:var(--sa11y-error-text);background:var(--sa11y-error)}.sa11y-theme .error .colour{color:var(--sa11y-red-text)}.sa11y-theme .error .link-icon{background:var(--sa11y-error-text)}.sa11y-theme .warning .badge{color:var(--sa11y-panel-bg);background:var(--sa11y-yellow-text)}.sa11y-theme .warning .colour{color:var(--sa11y-yellow-text)}.sa11y-theme .warning .link-icon{background:var(--sa11y-panel-bg)}.sa11y-theme[data-placement^=top] .tippy-arrow:before{border-top-color:var(--sa11y-panel-bg)}.sa11y-theme[data-placement^=bottom] .tippy-arrow:before{border-bottom-color:var(--sa11y-panel-bg)}.sa11y-theme[data-placement^=left] .tippy-arrow:before{border-left-color:var(--sa11y-panel-bg)}.sa11y-theme[data-placement^=right] .tippy-arrow:before{border-right-color:var(--sa11y-panel-bg)}@media (forced-colors:active){.sa11y-theme[data-placement^=top] .tippy-arrow:before,.sa11y-theme[data-placement^=bottom] .tippy-arrow:before,.sa11y-theme[data-placement^=left] .tippy-arrow:before,.sa11y-theme[data-placement^=right] .tippy-arrow:before{forced-color-adjust:none}.sa11y-theme .tippy-arrow{z-index:-1}}.sa11y-theme a:focus,.sa11y-theme input:focus,.sa11y-theme button:focus,.sa11y-theme button:active,.sa11y-theme [tabindex="-1"]:focus{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}.sa11y-theme input:focus:not(:focus-visible),.sa11y-theme a:focus:not(:focus-visible),.sa11y-theme button:focus:not(:focus-visible),.sa11y-theme [tabindex="-1"]:focus:not(:focus-visible){box-shadow:none;outline:0}.sa11y-theme a:focus-visible,.sa11y-theme button:focus-visible,.sa11y-theme input:focus-visible,.sa11y-theme [tabindex="-1"]:focus-visible{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}@media screen and (forced-colors:active){.sa11y-theme .error-icon,.sa11y-theme .link-icon,.sa11y-theme .hidden-icon{filter:invert()}.sa11y-theme a:focus,.sa11y-theme button:focus,.sa11y-theme [tabindex="-1"]:focus{outline:3px solid #0000!important}}';
   function generateContrastTools(contrastDetails) {
     const { previewText, color, background, fontWeight, fontSize, ratio, textUnderline } = contrastDetails;
     const hasBackgroundColor = background && background.type !== "image";
@@ -6343,192 +3830,1569 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
     }
     return adviceContainer;
   }
+  const sides = ["top", "right", "bottom", "left"];
+  const alignments = ["start", "end"];
+  const placements = /* @__PURE__ */ sides.reduce((acc, side) => acc.concat(side, side + "-" + alignments[0], side + "-" + alignments[1]), []);
+  const min = Math.min;
+  const max = Math.max;
+  const round = Math.round;
+  const createCoords = (v) => ({
+    x: v,
+    y: v
+  });
+  const oppositeSideMap = {
+    left: "right",
+    right: "left",
+    bottom: "top",
+    top: "bottom"
+  };
+  function clamp(start, value, end) {
+    return max(start, min(value, end));
+  }
+  function evaluate(value, param) {
+    return typeof value === "function" ? value(param) : value;
+  }
+  function getSide(placement) {
+    return placement.split("-")[0];
+  }
+  function getAlignment(placement) {
+    return placement.split("-")[1];
+  }
+  function getOppositeAxis(axis) {
+    return axis === "x" ? "y" : "x";
+  }
+  function getAxisLength(axis) {
+    return axis === "y" ? "height" : "width";
+  }
+  function getSideAxis(placement) {
+    const firstChar = placement[0];
+    return firstChar === "t" || firstChar === "b" ? "y" : "x";
+  }
+  function getAlignmentAxis(placement) {
+    return getOppositeAxis(getSideAxis(placement));
+  }
+  function getAlignmentSides(placement, rects, rtl) {
+    if (rtl === void 0) {
+      rtl = false;
+    }
+    const alignment = getAlignment(placement);
+    const alignmentAxis = getAlignmentAxis(placement);
+    const length = getAxisLength(alignmentAxis);
+    let mainAlignmentSide = alignmentAxis === "x" ? alignment === (rtl ? "end" : "start") ? "right" : "left" : alignment === "start" ? "bottom" : "top";
+    if (rects.reference[length] > rects.floating[length]) {
+      mainAlignmentSide = getOppositePlacement(mainAlignmentSide);
+    }
+    return [mainAlignmentSide, getOppositePlacement(mainAlignmentSide)];
+  }
+  function getExpandedPlacements(placement) {
+    const oppositePlacement = getOppositePlacement(placement);
+    return [getOppositeAlignmentPlacement(placement), oppositePlacement, getOppositeAlignmentPlacement(oppositePlacement)];
+  }
+  function getOppositeAlignmentPlacement(placement) {
+    return placement.includes("start") ? placement.replace("start", "end") : placement.replace("end", "start");
+  }
+  const lrPlacement = ["left", "right"];
+  const rlPlacement = ["right", "left"];
+  const tbPlacement = ["top", "bottom"];
+  const btPlacement = ["bottom", "top"];
+  function getSideList(side, isStart, rtl) {
+    switch (side) {
+      case "top":
+      case "bottom":
+        if (rtl) return isStart ? rlPlacement : lrPlacement;
+        return isStart ? lrPlacement : rlPlacement;
+      case "left":
+      case "right":
+        return isStart ? tbPlacement : btPlacement;
+      default:
+        return [];
+    }
+  }
+  function getOppositeAxisPlacements(placement, flipAlignment, direction, rtl) {
+    const alignment = getAlignment(placement);
+    let list = getSideList(getSide(placement), direction === "start", rtl);
+    if (alignment) {
+      list = list.map((side) => side + "-" + alignment);
+      if (flipAlignment) {
+        list = list.concat(list.map(getOppositeAlignmentPlacement));
+      }
+    }
+    return list;
+  }
+  function getOppositePlacement(placement) {
+    const side = getSide(placement);
+    return oppositeSideMap[side] + placement.slice(side.length);
+  }
+  function expandPaddingObject(padding) {
+    return {
+      top: 0,
+      right: 0,
+      bottom: 0,
+      left: 0,
+      ...padding
+    };
+  }
+  function getPaddingObject(padding) {
+    return typeof padding !== "number" ? expandPaddingObject(padding) : {
+      top: padding,
+      right: padding,
+      bottom: padding,
+      left: padding
+    };
+  }
+  function rectToClientRect(rect) {
+    const {
+      x,
+      y,
+      width,
+      height
+    } = rect;
+    return {
+      width,
+      height,
+      top: y,
+      left: x,
+      right: x + width,
+      bottom: y + height,
+      x,
+      y
+    };
+  }
+  function computeCoordsFromPlacement(_ref, placement, rtl) {
+    let {
+      reference,
+      floating
+    } = _ref;
+    const sideAxis = getSideAxis(placement);
+    const alignmentAxis = getAlignmentAxis(placement);
+    const alignLength = getAxisLength(alignmentAxis);
+    const side = getSide(placement);
+    const isVertical = sideAxis === "y";
+    const commonX = reference.x + reference.width / 2 - floating.width / 2;
+    const commonY = reference.y + reference.height / 2 - floating.height / 2;
+    const commonAlign = reference[alignLength] / 2 - floating[alignLength] / 2;
+    let coords;
+    switch (side) {
+      case "top":
+        coords = {
+          x: commonX,
+          y: reference.y - floating.height
+        };
+        break;
+      case "bottom":
+        coords = {
+          x: commonX,
+          y: reference.y + reference.height
+        };
+        break;
+      case "right":
+        coords = {
+          x: reference.x + reference.width,
+          y: commonY
+        };
+        break;
+      case "left":
+        coords = {
+          x: reference.x - floating.width,
+          y: commonY
+        };
+        break;
+      default:
+        coords = {
+          x: reference.x,
+          y: reference.y
+        };
+    }
+    switch (getAlignment(placement)) {
+      case "start":
+        coords[alignmentAxis] -= commonAlign * (rtl && isVertical ? -1 : 1);
+        break;
+      case "end":
+        coords[alignmentAxis] += commonAlign * (rtl && isVertical ? -1 : 1);
+        break;
+    }
+    return coords;
+  }
+  async function detectOverflow(state, options) {
+    var _await$platform$isEle;
+    if (options === void 0) {
+      options = {};
+    }
+    const {
+      x,
+      y,
+      platform: platform2,
+      rects,
+      elements,
+      strategy
+    } = state;
+    const {
+      boundary = "clippingAncestors",
+      rootBoundary = "viewport",
+      elementContext = "floating",
+      altBoundary = false,
+      padding = 0
+    } = evaluate(options, state);
+    const paddingObject = getPaddingObject(padding);
+    const altContext = elementContext === "floating" ? "reference" : "floating";
+    const element = elements[altBoundary ? altContext : elementContext];
+    const clippingClientRect = rectToClientRect(await platform2.getClippingRect({
+      element: ((_await$platform$isEle = await (platform2.isElement == null ? void 0 : platform2.isElement(element))) != null ? _await$platform$isEle : true) ? element : element.contextElement || await (platform2.getDocumentElement == null ? void 0 : platform2.getDocumentElement(elements.floating)),
+      boundary,
+      rootBoundary,
+      strategy
+    }));
+    const rect = elementContext === "floating" ? {
+      x,
+      y,
+      width: rects.floating.width,
+      height: rects.floating.height
+    } : rects.reference;
+    const offsetParent = await (platform2.getOffsetParent == null ? void 0 : platform2.getOffsetParent(elements.floating));
+    const offsetScale = await (platform2.isElement == null ? void 0 : platform2.isElement(offsetParent)) ? await (platform2.getScale == null ? void 0 : platform2.getScale(offsetParent)) || {
+      x: 1,
+      y: 1
+    } : {
+      x: 1,
+      y: 1
+    };
+    const elementClientRect = rectToClientRect(platform2.convertOffsetParentRelativeRectToViewportRelativeRect ? await platform2.convertOffsetParentRelativeRectToViewportRelativeRect({
+      elements,
+      rect,
+      offsetParent,
+      strategy
+    }) : rect);
+    return {
+      top: (clippingClientRect.top - elementClientRect.top + paddingObject.top) / offsetScale.y,
+      bottom: (elementClientRect.bottom - clippingClientRect.bottom + paddingObject.bottom) / offsetScale.y,
+      left: (clippingClientRect.left - elementClientRect.left + paddingObject.left) / offsetScale.x,
+      right: (elementClientRect.right - clippingClientRect.right + paddingObject.right) / offsetScale.x
+    };
+  }
+  const MAX_RESET_COUNT = 50;
+  const computePosition$1 = async (reference, floating, config) => {
+    const {
+      placement = "bottom",
+      strategy = "absolute",
+      middleware = [],
+      platform: platform2
+    } = config;
+    const platformWithDetectOverflow = platform2.detectOverflow ? platform2 : {
+      ...platform2,
+      detectOverflow
+    };
+    const rtl = await (platform2.isRTL == null ? void 0 : platform2.isRTL(floating));
+    let rects = await platform2.getElementRects({
+      reference,
+      floating,
+      strategy
+    });
+    let {
+      x,
+      y
+    } = computeCoordsFromPlacement(rects, placement, rtl);
+    let statefulPlacement = placement;
+    let resetCount = 0;
+    const middlewareData = {};
+    for (let i = 0; i < middleware.length; i++) {
+      const currentMiddleware = middleware[i];
+      if (!currentMiddleware) {
+        continue;
+      }
+      const {
+        name,
+        fn
+      } = currentMiddleware;
+      const {
+        x: nextX,
+        y: nextY,
+        data,
+        reset
+      } = await fn({
+        x,
+        y,
+        initialPlacement: placement,
+        placement: statefulPlacement,
+        strategy,
+        middlewareData,
+        rects,
+        platform: platformWithDetectOverflow,
+        elements: {
+          reference,
+          floating
+        }
+      });
+      x = nextX != null ? nextX : x;
+      y = nextY != null ? nextY : y;
+      middlewareData[name] = {
+        ...middlewareData[name],
+        ...data
+      };
+      if (reset && resetCount < MAX_RESET_COUNT) {
+        resetCount++;
+        if (typeof reset === "object") {
+          if (reset.placement) {
+            statefulPlacement = reset.placement;
+          }
+          if (reset.rects) {
+            rects = reset.rects === true ? await platform2.getElementRects({
+              reference,
+              floating,
+              strategy
+            }) : reset.rects;
+          }
+          ({
+            x,
+            y
+          } = computeCoordsFromPlacement(rects, statefulPlacement, rtl));
+        }
+        i = -1;
+      }
+    }
+    return {
+      x,
+      y,
+      placement: statefulPlacement,
+      strategy,
+      middlewareData
+    };
+  };
+  const arrow$1 = (options) => ({
+    name: "arrow",
+    options,
+    async fn(state) {
+      const {
+        x,
+        y,
+        placement,
+        rects,
+        platform: platform2,
+        elements,
+        middlewareData
+      } = state;
+      const {
+        element,
+        padding = 0
+      } = evaluate(options, state) || {};
+      if (element == null) {
+        return {};
+      }
+      const paddingObject = getPaddingObject(padding);
+      const coords = {
+        x,
+        y
+      };
+      const axis = getAlignmentAxis(placement);
+      const length = getAxisLength(axis);
+      const arrowDimensions = await platform2.getDimensions(element);
+      const isYAxis = axis === "y";
+      const minProp = isYAxis ? "top" : "left";
+      const maxProp = isYAxis ? "bottom" : "right";
+      const clientProp = isYAxis ? "clientHeight" : "clientWidth";
+      const endDiff = rects.reference[length] + rects.reference[axis] - coords[axis] - rects.floating[length];
+      const startDiff = coords[axis] - rects.reference[axis];
+      const arrowOffsetParent = await (platform2.getOffsetParent == null ? void 0 : platform2.getOffsetParent(element));
+      let clientSize = arrowOffsetParent ? arrowOffsetParent[clientProp] : 0;
+      if (!clientSize || !await (platform2.isElement == null ? void 0 : platform2.isElement(arrowOffsetParent))) {
+        clientSize = elements.floating[clientProp] || rects.floating[length];
+      }
+      const centerToReference = endDiff / 2 - startDiff / 2;
+      const largestPossiblePadding = clientSize / 2 - arrowDimensions[length] / 2 - 1;
+      const minPadding = min(paddingObject[minProp], largestPossiblePadding);
+      const maxPadding = min(paddingObject[maxProp], largestPossiblePadding);
+      const min$1 = minPadding;
+      const max2 = clientSize - arrowDimensions[length] - maxPadding;
+      const center = clientSize / 2 - arrowDimensions[length] / 2 + centerToReference;
+      const offset2 = clamp(min$1, center, max2);
+      const shouldAddOffset = !middlewareData.arrow && getAlignment(placement) != null && center !== offset2 && rects.reference[length] / 2 - (center < min$1 ? minPadding : maxPadding) - arrowDimensions[length] / 2 < 0;
+      const alignmentOffset = shouldAddOffset ? center < min$1 ? center - min$1 : center - max2 : 0;
+      return {
+        [axis]: coords[axis] + alignmentOffset,
+        data: {
+          [axis]: offset2,
+          centerOffset: center - offset2 - alignmentOffset,
+          ...shouldAddOffset && {
+            alignmentOffset
+          }
+        },
+        reset: shouldAddOffset
+      };
+    }
+  });
+  function getPlacementList(alignment, autoAlignment, allowedPlacements) {
+    const allowedPlacementsSortedByAlignment = alignment ? [...allowedPlacements.filter((placement) => getAlignment(placement) === alignment), ...allowedPlacements.filter((placement) => getAlignment(placement) !== alignment)] : allowedPlacements.filter((placement) => getSide(placement) === placement);
+    return allowedPlacementsSortedByAlignment.filter((placement) => {
+      if (alignment) {
+        return getAlignment(placement) === alignment || (autoAlignment ? getOppositeAlignmentPlacement(placement) !== placement : false);
+      }
+      return true;
+    });
+  }
+  const autoPlacement$1 = function(options) {
+    if (options === void 0) {
+      options = {};
+    }
+    return {
+      name: "autoPlacement",
+      options,
+      async fn(state) {
+        var _middlewareData$autoP, _middlewareData$autoP2, _placementsThatFitOnE;
+        const {
+          rects,
+          middlewareData,
+          placement,
+          platform: platform2,
+          elements
+        } = state;
+        const {
+          crossAxis = false,
+          alignment,
+          allowedPlacements = placements,
+          autoAlignment = true,
+          ...detectOverflowOptions
+        } = evaluate(options, state);
+        const placements$1 = alignment !== void 0 || allowedPlacements === placements ? getPlacementList(alignment || null, autoAlignment, allowedPlacements) : allowedPlacements;
+        const overflow = await platform2.detectOverflow(state, detectOverflowOptions);
+        const currentIndex = ((_middlewareData$autoP = middlewareData.autoPlacement) == null ? void 0 : _middlewareData$autoP.index) || 0;
+        const currentPlacement = placements$1[currentIndex];
+        if (currentPlacement == null) {
+          return {};
+        }
+        const alignmentSides = getAlignmentSides(currentPlacement, rects, await (platform2.isRTL == null ? void 0 : platform2.isRTL(elements.floating)));
+        if (placement !== currentPlacement) {
+          return {
+            reset: {
+              placement: placements$1[0]
+            }
+          };
+        }
+        const currentOverflows = [overflow[getSide(currentPlacement)], overflow[alignmentSides[0]], overflow[alignmentSides[1]]];
+        const allOverflows = [...((_middlewareData$autoP2 = middlewareData.autoPlacement) == null ? void 0 : _middlewareData$autoP2.overflows) || [], {
+          placement: currentPlacement,
+          overflows: currentOverflows
+        }];
+        const nextPlacement = placements$1[currentIndex + 1];
+        if (nextPlacement) {
+          return {
+            data: {
+              index: currentIndex + 1,
+              overflows: allOverflows
+            },
+            reset: {
+              placement: nextPlacement
+            }
+          };
+        }
+        const placementsSortedByMostSpace = allOverflows.map((d) => {
+          const alignment2 = getAlignment(d.placement);
+          return [d.placement, alignment2 && crossAxis ? (
+            // Check along the mainAxis and main crossAxis side.
+            d.overflows.slice(0, 2).reduce((acc, v) => acc + v, 0)
+          ) : (
+            // Check only the mainAxis.
+            d.overflows[0]
+          ), d.overflows];
+        }).sort((a, b) => a[1] - b[1]);
+        const placementsThatFitOnEachSide = placementsSortedByMostSpace.filter((d) => d[2].slice(
+          0,
+          // Aligned placements should not check their opposite crossAxis
+          // side.
+          getAlignment(d[0]) ? 2 : 3
+        ).every((v) => v <= 0));
+        const resetPlacement = ((_placementsThatFitOnE = placementsThatFitOnEachSide[0]) == null ? void 0 : _placementsThatFitOnE[0]) || placementsSortedByMostSpace[0][0];
+        if (resetPlacement !== placement) {
+          return {
+            data: {
+              index: currentIndex + 1,
+              overflows: allOverflows
+            },
+            reset: {
+              placement: resetPlacement
+            }
+          };
+        }
+        return {};
+      }
+    };
+  };
+  const flip$1 = function(options) {
+    if (options === void 0) {
+      options = {};
+    }
+    return {
+      name: "flip",
+      options,
+      async fn(state) {
+        var _middlewareData$arrow, _middlewareData$flip;
+        const {
+          placement,
+          middlewareData,
+          rects,
+          initialPlacement,
+          platform: platform2,
+          elements
+        } = state;
+        const {
+          mainAxis: checkMainAxis = true,
+          crossAxis: checkCrossAxis = true,
+          fallbackPlacements: specifiedFallbackPlacements,
+          fallbackStrategy = "bestFit",
+          fallbackAxisSideDirection = "none",
+          flipAlignment = true,
+          ...detectOverflowOptions
+        } = evaluate(options, state);
+        if ((_middlewareData$arrow = middlewareData.arrow) != null && _middlewareData$arrow.alignmentOffset) {
+          return {};
+        }
+        const side = getSide(placement);
+        const initialSideAxis = getSideAxis(initialPlacement);
+        const isBasePlacement = getSide(initialPlacement) === initialPlacement;
+        const rtl = await (platform2.isRTL == null ? void 0 : platform2.isRTL(elements.floating));
+        const fallbackPlacements = specifiedFallbackPlacements || (isBasePlacement || !flipAlignment ? [getOppositePlacement(initialPlacement)] : getExpandedPlacements(initialPlacement));
+        const hasFallbackAxisSideDirection = fallbackAxisSideDirection !== "none";
+        if (!specifiedFallbackPlacements && hasFallbackAxisSideDirection) {
+          fallbackPlacements.push(...getOppositeAxisPlacements(initialPlacement, flipAlignment, fallbackAxisSideDirection, rtl));
+        }
+        const placements2 = [initialPlacement, ...fallbackPlacements];
+        const overflow = await platform2.detectOverflow(state, detectOverflowOptions);
+        const overflows = [];
+        let overflowsData = ((_middlewareData$flip = middlewareData.flip) == null ? void 0 : _middlewareData$flip.overflows) || [];
+        if (checkMainAxis) {
+          overflows.push(overflow[side]);
+        }
+        if (checkCrossAxis) {
+          const sides2 = getAlignmentSides(placement, rects, rtl);
+          overflows.push(overflow[sides2[0]], overflow[sides2[1]]);
+        }
+        overflowsData = [...overflowsData, {
+          placement,
+          overflows
+        }];
+        if (!overflows.every((side2) => side2 <= 0)) {
+          var _middlewareData$flip2, _overflowsData$filter;
+          const nextIndex = (((_middlewareData$flip2 = middlewareData.flip) == null ? void 0 : _middlewareData$flip2.index) || 0) + 1;
+          const nextPlacement = placements2[nextIndex];
+          if (nextPlacement) {
+            const ignoreCrossAxisOverflow = checkCrossAxis === "alignment" ? initialSideAxis !== getSideAxis(nextPlacement) : false;
+            if (!ignoreCrossAxisOverflow || // We leave the current main axis only if every placement on that axis
+            // overflows the main axis.
+            overflowsData.every((d) => getSideAxis(d.placement) === initialSideAxis ? d.overflows[0] > 0 : true)) {
+              return {
+                data: {
+                  index: nextIndex,
+                  overflows: overflowsData
+                },
+                reset: {
+                  placement: nextPlacement
+                }
+              };
+            }
+          }
+          let resetPlacement = (_overflowsData$filter = overflowsData.filter((d) => d.overflows[0] <= 0).sort((a, b) => a.overflows[1] - b.overflows[1])[0]) == null ? void 0 : _overflowsData$filter.placement;
+          if (!resetPlacement) {
+            switch (fallbackStrategy) {
+              case "bestFit": {
+                var _overflowsData$filter2;
+                const placement2 = (_overflowsData$filter2 = overflowsData.filter((d) => {
+                  if (hasFallbackAxisSideDirection) {
+                    const currentSideAxis = getSideAxis(d.placement);
+                    return currentSideAxis === initialSideAxis || // Create a bias to the `y` side axis due to horizontal
+                    // reading directions favoring greater width.
+                    currentSideAxis === "y";
+                  }
+                  return true;
+                }).map((d) => [d.placement, d.overflows.filter((overflow2) => overflow2 > 0).reduce((acc, overflow2) => acc + overflow2, 0)]).sort((a, b) => a[1] - b[1])[0]) == null ? void 0 : _overflowsData$filter2[0];
+                if (placement2) {
+                  resetPlacement = placement2;
+                }
+                break;
+              }
+              case "initialPlacement":
+                resetPlacement = initialPlacement;
+                break;
+            }
+          }
+          if (placement !== resetPlacement) {
+            return {
+              reset: {
+                placement: resetPlacement
+              }
+            };
+          }
+        }
+        return {};
+      }
+    };
+  };
+  const originSides = /* @__PURE__ */ new Set(["left", "top"]);
+  async function convertValueToCoords(state, options) {
+    const {
+      placement,
+      platform: platform2,
+      elements
+    } = state;
+    const rtl = await (platform2.isRTL == null ? void 0 : platform2.isRTL(elements.floating));
+    const side = getSide(placement);
+    const alignment = getAlignment(placement);
+    const isVertical = getSideAxis(placement) === "y";
+    const mainAxisMulti = originSides.has(side) ? -1 : 1;
+    const crossAxisMulti = rtl && isVertical ? -1 : 1;
+    const rawValue = evaluate(options, state);
+    let {
+      mainAxis,
+      crossAxis,
+      alignmentAxis
+    } = typeof rawValue === "number" ? {
+      mainAxis: rawValue,
+      crossAxis: 0,
+      alignmentAxis: null
+    } : {
+      mainAxis: rawValue.mainAxis || 0,
+      crossAxis: rawValue.crossAxis || 0,
+      alignmentAxis: rawValue.alignmentAxis
+    };
+    if (alignment && typeof alignmentAxis === "number") {
+      crossAxis = alignment === "end" ? alignmentAxis * -1 : alignmentAxis;
+    }
+    return isVertical ? {
+      x: crossAxis * crossAxisMulti,
+      y: mainAxis * mainAxisMulti
+    } : {
+      x: mainAxis * mainAxisMulti,
+      y: crossAxis * crossAxisMulti
+    };
+  }
+  const offset$1 = function(options) {
+    if (options === void 0) {
+      options = 0;
+    }
+    return {
+      name: "offset",
+      options,
+      async fn(state) {
+        var _middlewareData$offse, _middlewareData$arrow;
+        const {
+          x,
+          y,
+          placement,
+          middlewareData
+        } = state;
+        const diffCoords = await convertValueToCoords(state, options);
+        if (placement === ((_middlewareData$offse = middlewareData.offset) == null ? void 0 : _middlewareData$offse.placement) && (_middlewareData$arrow = middlewareData.arrow) != null && _middlewareData$arrow.alignmentOffset) {
+          return {};
+        }
+        return {
+          x: x + diffCoords.x,
+          y: y + diffCoords.y,
+          data: {
+            ...diffCoords,
+            placement
+          }
+        };
+      }
+    };
+  };
+  const shift$1 = function(options) {
+    if (options === void 0) {
+      options = {};
+    }
+    return {
+      name: "shift",
+      options,
+      async fn(state) {
+        const {
+          x,
+          y,
+          placement,
+          platform: platform2
+        } = state;
+        const {
+          mainAxis: checkMainAxis = true,
+          crossAxis: checkCrossAxis = false,
+          limiter = {
+            fn: (_ref) => {
+              let {
+                x: x2,
+                y: y2
+              } = _ref;
+              return {
+                x: x2,
+                y: y2
+              };
+            }
+          },
+          ...detectOverflowOptions
+        } = evaluate(options, state);
+        const coords = {
+          x,
+          y
+        };
+        const overflow = await platform2.detectOverflow(state, detectOverflowOptions);
+        const crossAxis = getSideAxis(getSide(placement));
+        const mainAxis = getOppositeAxis(crossAxis);
+        let mainAxisCoord = coords[mainAxis];
+        let crossAxisCoord = coords[crossAxis];
+        if (checkMainAxis) {
+          const minSide = mainAxis === "y" ? "top" : "left";
+          const maxSide = mainAxis === "y" ? "bottom" : "right";
+          const min2 = mainAxisCoord + overflow[minSide];
+          const max2 = mainAxisCoord - overflow[maxSide];
+          mainAxisCoord = clamp(min2, mainAxisCoord, max2);
+        }
+        if (checkCrossAxis) {
+          const minSide = crossAxis === "y" ? "top" : "left";
+          const maxSide = crossAxis === "y" ? "bottom" : "right";
+          const min2 = crossAxisCoord + overflow[minSide];
+          const max2 = crossAxisCoord - overflow[maxSide];
+          crossAxisCoord = clamp(min2, crossAxisCoord, max2);
+        }
+        const limitedCoords = limiter.fn({
+          ...state,
+          [mainAxis]: mainAxisCoord,
+          [crossAxis]: crossAxisCoord
+        });
+        return {
+          ...limitedCoords,
+          data: {
+            x: limitedCoords.x - x,
+            y: limitedCoords.y - y,
+            enabled: {
+              [mainAxis]: checkMainAxis,
+              [crossAxis]: checkCrossAxis
+            }
+          }
+        };
+      }
+    };
+  };
+  function hasWindow() {
+    return typeof window !== "undefined";
+  }
+  function getNodeName(node) {
+    if (isNode(node)) {
+      return (node.nodeName || "").toLowerCase();
+    }
+    return "#document";
+  }
+  function getWindow(node) {
+    var _node$ownerDocument;
+    return (node == null || (_node$ownerDocument = node.ownerDocument) == null ? void 0 : _node$ownerDocument.defaultView) || window;
+  }
+  function getDocumentElement(node) {
+    var _ref;
+    return (_ref = (isNode(node) ? node.ownerDocument : node.document) || window.document) == null ? void 0 : _ref.documentElement;
+  }
+  function isNode(value) {
+    if (!hasWindow()) {
+      return false;
+    }
+    return value instanceof Node || value instanceof getWindow(value).Node;
+  }
+  function isElement(value) {
+    if (!hasWindow()) {
+      return false;
+    }
+    return value instanceof Element || value instanceof getWindow(value).Element;
+  }
+  function isHTMLElement(value) {
+    if (!hasWindow()) {
+      return false;
+    }
+    return value instanceof HTMLElement || value instanceof getWindow(value).HTMLElement;
+  }
+  function isShadowRoot(value) {
+    if (!hasWindow() || typeof ShadowRoot === "undefined") {
+      return false;
+    }
+    return value instanceof ShadowRoot || value instanceof getWindow(value).ShadowRoot;
+  }
+  function isOverflowElement(element) {
+    const {
+      overflow,
+      overflowX,
+      overflowY,
+      display
+    } = getComputedStyle$1(element);
+    return /auto|scroll|overlay|hidden|clip/.test(overflow + overflowY + overflowX) && display !== "inline" && display !== "contents";
+  }
+  function isTableElement(element) {
+    return /^(table|td|th)$/.test(getNodeName(element));
+  }
+  function isTopLayer(element) {
+    try {
+      if (element.matches(":popover-open")) {
+        return true;
+      }
+    } catch (_e) {
+    }
+    try {
+      return element.matches(":modal");
+    } catch (_e) {
+      return false;
+    }
+  }
+  const willChangeRe = /transform|translate|scale|rotate|perspective|filter/;
+  const containRe = /paint|layout|strict|content/;
+  const isNotNone = (value) => !!value && value !== "none";
+  let isWebKitValue;
+  function isContainingBlock(elementOrCss) {
+    const css = isElement(elementOrCss) ? getComputedStyle$1(elementOrCss) : elementOrCss;
+    return isNotNone(css.transform) || isNotNone(css.translate) || isNotNone(css.scale) || isNotNone(css.rotate) || isNotNone(css.perspective) || !isWebKit() && (isNotNone(css.backdropFilter) || isNotNone(css.filter)) || willChangeRe.test(css.willChange || "") || containRe.test(css.contain || "");
+  }
+  function getContainingBlock(element) {
+    let currentNode = getParentNode(element);
+    while (isHTMLElement(currentNode) && !isLastTraversableNode(currentNode)) {
+      if (isContainingBlock(currentNode)) {
+        return currentNode;
+      } else if (isTopLayer(currentNode)) {
+        return null;
+      }
+      currentNode = getParentNode(currentNode);
+    }
+    return null;
+  }
+  function isWebKit() {
+    if (isWebKitValue == null) {
+      isWebKitValue = typeof CSS !== "undefined" && CSS.supports && CSS.supports("-webkit-backdrop-filter", "none");
+    }
+    return isWebKitValue;
+  }
+  function isLastTraversableNode(node) {
+    return /^(html|body|#document)$/.test(getNodeName(node));
+  }
+  function getComputedStyle$1(element) {
+    return getWindow(element).getComputedStyle(element);
+  }
+  function getNodeScroll(element) {
+    if (isElement(element)) {
+      return {
+        scrollLeft: element.scrollLeft,
+        scrollTop: element.scrollTop
+      };
+    }
+    return {
+      scrollLeft: element.scrollX,
+      scrollTop: element.scrollY
+    };
+  }
+  function getParentNode(node) {
+    if (getNodeName(node) === "html") {
+      return node;
+    }
+    const result = (
+      // Step into the shadow DOM of the parent of a slotted node.
+      node.assignedSlot || // DOM Element detected.
+      node.parentNode || // ShadowRoot detected.
+      isShadowRoot(node) && node.host || // Fallback.
+      getDocumentElement(node)
+    );
+    return isShadowRoot(result) ? result.host : result;
+  }
+  function getNearestOverflowAncestor(node) {
+    const parentNode = getParentNode(node);
+    if (isLastTraversableNode(parentNode)) {
+      return node.ownerDocument ? node.ownerDocument.body : node.body;
+    }
+    if (isHTMLElement(parentNode) && isOverflowElement(parentNode)) {
+      return parentNode;
+    }
+    return getNearestOverflowAncestor(parentNode);
+  }
+  function getOverflowAncestors(node, list, traverseIframes) {
+    var _node$ownerDocument2;
+    if (list === void 0) {
+      list = [];
+    }
+    const scrollableAncestor = getNearestOverflowAncestor(node);
+    const isBody = scrollableAncestor === ((_node$ownerDocument2 = node.ownerDocument) == null ? void 0 : _node$ownerDocument2.body);
+    const win = getWindow(scrollableAncestor);
+    if (isBody) {
+      getFrameElement(win);
+      return list.concat(win, win.visualViewport || [], isOverflowElement(scrollableAncestor) ? scrollableAncestor : [], []);
+    } else {
+      return list.concat(scrollableAncestor, getOverflowAncestors(scrollableAncestor, []));
+    }
+  }
+  function getFrameElement(win) {
+    return win.parent && Object.getPrototypeOf(win.parent) ? win.frameElement : null;
+  }
+  function getCssDimensions(element) {
+    const css = getComputedStyle$1(element);
+    let width = parseFloat(css.width) || 0;
+    let height = parseFloat(css.height) || 0;
+    const hasOffset = isHTMLElement(element);
+    const offsetWidth = hasOffset ? element.offsetWidth : width;
+    const offsetHeight = hasOffset ? element.offsetHeight : height;
+    const shouldFallback = round(width) !== offsetWidth || round(height) !== offsetHeight;
+    if (shouldFallback) {
+      width = offsetWidth;
+      height = offsetHeight;
+    }
+    return {
+      width,
+      height,
+      $: shouldFallback
+    };
+  }
+  function unwrapElement(element) {
+    return !isElement(element) ? element.contextElement : element;
+  }
+  function getScale(element) {
+    const domElement = unwrapElement(element);
+    if (!isHTMLElement(domElement)) {
+      return createCoords(1);
+    }
+    const rect = domElement.getBoundingClientRect();
+    const {
+      width,
+      height,
+      $
+    } = getCssDimensions(domElement);
+    let x = ($ ? round(rect.width) : rect.width) / width;
+    let y = ($ ? round(rect.height) : rect.height) / height;
+    if (!x || !Number.isFinite(x)) {
+      x = 1;
+    }
+    if (!y || !Number.isFinite(y)) {
+      y = 1;
+    }
+    return {
+      x,
+      y
+    };
+  }
+  const noOffsets = /* @__PURE__ */ createCoords(0);
+  function getVisualOffsets(element) {
+    const win = getWindow(element);
+    if (!isWebKit() || !win.visualViewport) {
+      return noOffsets;
+    }
+    return {
+      x: win.visualViewport.offsetLeft,
+      y: win.visualViewport.offsetTop
+    };
+  }
+  function shouldAddVisualOffsets(element, isFixed, floatingOffsetParent) {
+    if (isFixed === void 0) {
+      isFixed = false;
+    }
+    if (!floatingOffsetParent || isFixed && floatingOffsetParent !== getWindow(element)) {
+      return false;
+    }
+    return isFixed;
+  }
+  function getBoundingClientRect(element, includeScale, isFixedStrategy, offsetParent) {
+    if (includeScale === void 0) {
+      includeScale = false;
+    }
+    if (isFixedStrategy === void 0) {
+      isFixedStrategy = false;
+    }
+    const clientRect = element.getBoundingClientRect();
+    const domElement = unwrapElement(element);
+    let scale = createCoords(1);
+    if (includeScale) {
+      if (offsetParent) {
+        if (isElement(offsetParent)) {
+          scale = getScale(offsetParent);
+        }
+      } else {
+        scale = getScale(element);
+      }
+    }
+    const visualOffsets = shouldAddVisualOffsets(domElement, isFixedStrategy, offsetParent) ? getVisualOffsets(domElement) : createCoords(0);
+    let x = (clientRect.left + visualOffsets.x) / scale.x;
+    let y = (clientRect.top + visualOffsets.y) / scale.y;
+    let width = clientRect.width / scale.x;
+    let height = clientRect.height / scale.y;
+    if (domElement) {
+      const win = getWindow(domElement);
+      const offsetWin = offsetParent && isElement(offsetParent) ? getWindow(offsetParent) : offsetParent;
+      let currentWin = win;
+      let currentIFrame = getFrameElement(currentWin);
+      while (currentIFrame && offsetParent && offsetWin !== currentWin) {
+        const iframeScale = getScale(currentIFrame);
+        const iframeRect = currentIFrame.getBoundingClientRect();
+        const css = getComputedStyle$1(currentIFrame);
+        const left = iframeRect.left + (currentIFrame.clientLeft + parseFloat(css.paddingLeft)) * iframeScale.x;
+        const top = iframeRect.top + (currentIFrame.clientTop + parseFloat(css.paddingTop)) * iframeScale.y;
+        x *= iframeScale.x;
+        y *= iframeScale.y;
+        width *= iframeScale.x;
+        height *= iframeScale.y;
+        x += left;
+        y += top;
+        currentWin = getWindow(currentIFrame);
+        currentIFrame = getFrameElement(currentWin);
+      }
+    }
+    return rectToClientRect({
+      width,
+      height,
+      x,
+      y
+    });
+  }
+  function getWindowScrollBarX(element, rect) {
+    const leftScroll = getNodeScroll(element).scrollLeft;
+    if (!rect) {
+      return getBoundingClientRect(getDocumentElement(element)).left + leftScroll;
+    }
+    return rect.left + leftScroll;
+  }
+  function getHTMLOffset(documentElement, scroll) {
+    const htmlRect = documentElement.getBoundingClientRect();
+    const x = htmlRect.left + scroll.scrollLeft - getWindowScrollBarX(documentElement, htmlRect);
+    const y = htmlRect.top + scroll.scrollTop;
+    return {
+      x,
+      y
+    };
+  }
+  function convertOffsetParentRelativeRectToViewportRelativeRect(_ref) {
+    let {
+      elements,
+      rect,
+      offsetParent,
+      strategy
+    } = _ref;
+    const isFixed = strategy === "fixed";
+    const documentElement = getDocumentElement(offsetParent);
+    const topLayer = elements ? isTopLayer(elements.floating) : false;
+    if (offsetParent === documentElement || topLayer && isFixed) {
+      return rect;
+    }
+    let scroll = {
+      scrollLeft: 0,
+      scrollTop: 0
+    };
+    let scale = createCoords(1);
+    const offsets = createCoords(0);
+    const isOffsetParentAnElement = isHTMLElement(offsetParent);
+    if (isOffsetParentAnElement || !isOffsetParentAnElement && !isFixed) {
+      if (getNodeName(offsetParent) !== "body" || isOverflowElement(documentElement)) {
+        scroll = getNodeScroll(offsetParent);
+      }
+      if (isOffsetParentAnElement) {
+        const offsetRect = getBoundingClientRect(offsetParent);
+        scale = getScale(offsetParent);
+        offsets.x = offsetRect.x + offsetParent.clientLeft;
+        offsets.y = offsetRect.y + offsetParent.clientTop;
+      }
+    }
+    const htmlOffset = documentElement && !isOffsetParentAnElement && !isFixed ? getHTMLOffset(documentElement, scroll) : createCoords(0);
+    return {
+      width: rect.width * scale.x,
+      height: rect.height * scale.y,
+      x: rect.x * scale.x - scroll.scrollLeft * scale.x + offsets.x + htmlOffset.x,
+      y: rect.y * scale.y - scroll.scrollTop * scale.y + offsets.y + htmlOffset.y
+    };
+  }
+  function getClientRects(element) {
+    return Array.from(element.getClientRects());
+  }
+  function getDocumentRect(element) {
+    const html = getDocumentElement(element);
+    const scroll = getNodeScroll(element);
+    const body = element.ownerDocument.body;
+    const width = max(html.scrollWidth, html.clientWidth, body.scrollWidth, body.clientWidth);
+    const height = max(html.scrollHeight, html.clientHeight, body.scrollHeight, body.clientHeight);
+    let x = -scroll.scrollLeft + getWindowScrollBarX(element);
+    const y = -scroll.scrollTop;
+    if (getComputedStyle$1(body).direction === "rtl") {
+      x += max(html.clientWidth, body.clientWidth) - width;
+    }
+    return {
+      width,
+      height,
+      x,
+      y
+    };
+  }
+  const SCROLLBAR_MAX = 25;
+  function getViewportRect(element, strategy) {
+    const win = getWindow(element);
+    const html = getDocumentElement(element);
+    const visualViewport = win.visualViewport;
+    let width = html.clientWidth;
+    let height = html.clientHeight;
+    let x = 0;
+    let y = 0;
+    if (visualViewport) {
+      width = visualViewport.width;
+      height = visualViewport.height;
+      const visualViewportBased = isWebKit();
+      if (!visualViewportBased || visualViewportBased && strategy === "fixed") {
+        x = visualViewport.offsetLeft;
+        y = visualViewport.offsetTop;
+      }
+    }
+    const windowScrollbarX = getWindowScrollBarX(html);
+    if (windowScrollbarX <= 0) {
+      const doc = html.ownerDocument;
+      const body = doc.body;
+      const bodyStyles = getComputedStyle(body);
+      const bodyMarginInline = doc.compatMode === "CSS1Compat" ? parseFloat(bodyStyles.marginLeft) + parseFloat(bodyStyles.marginRight) || 0 : 0;
+      const clippingStableScrollbarWidth = Math.abs(html.clientWidth - body.clientWidth - bodyMarginInline);
+      if (clippingStableScrollbarWidth <= SCROLLBAR_MAX) {
+        width -= clippingStableScrollbarWidth;
+      }
+    } else if (windowScrollbarX <= SCROLLBAR_MAX) {
+      width += windowScrollbarX;
+    }
+    return {
+      width,
+      height,
+      x,
+      y
+    };
+  }
+  function getInnerBoundingClientRect(element, strategy) {
+    const clientRect = getBoundingClientRect(element, true, strategy === "fixed");
+    const top = clientRect.top + element.clientTop;
+    const left = clientRect.left + element.clientLeft;
+    const scale = isHTMLElement(element) ? getScale(element) : createCoords(1);
+    const width = element.clientWidth * scale.x;
+    const height = element.clientHeight * scale.y;
+    const x = left * scale.x;
+    const y = top * scale.y;
+    return {
+      width,
+      height,
+      x,
+      y
+    };
+  }
+  function getClientRectFromClippingAncestor(element, clippingAncestor, strategy) {
+    let rect;
+    if (clippingAncestor === "viewport") {
+      rect = getViewportRect(element, strategy);
+    } else if (clippingAncestor === "document") {
+      rect = getDocumentRect(getDocumentElement(element));
+    } else if (isElement(clippingAncestor)) {
+      rect = getInnerBoundingClientRect(clippingAncestor, strategy);
+    } else {
+      const visualOffsets = getVisualOffsets(element);
+      rect = {
+        x: clippingAncestor.x - visualOffsets.x,
+        y: clippingAncestor.y - visualOffsets.y,
+        width: clippingAncestor.width,
+        height: clippingAncestor.height
+      };
+    }
+    return rectToClientRect(rect);
+  }
+  function hasFixedPositionAncestor(element, stopNode) {
+    const parentNode = getParentNode(element);
+    if (parentNode === stopNode || !isElement(parentNode) || isLastTraversableNode(parentNode)) {
+      return false;
+    }
+    return getComputedStyle$1(parentNode).position === "fixed" || hasFixedPositionAncestor(parentNode, stopNode);
+  }
+  function getClippingElementAncestors(element, cache) {
+    const cachedResult = cache.get(element);
+    if (cachedResult) {
+      return cachedResult;
+    }
+    let result = getOverflowAncestors(element, []).filter((el2) => isElement(el2) && getNodeName(el2) !== "body");
+    let currentContainingBlockComputedStyle = null;
+    const elementIsFixed = getComputedStyle$1(element).position === "fixed";
+    let currentNode = elementIsFixed ? getParentNode(element) : element;
+    while (isElement(currentNode) && !isLastTraversableNode(currentNode)) {
+      const computedStyle = getComputedStyle$1(currentNode);
+      const currentNodeIsContaining = isContainingBlock(currentNode);
+      if (!currentNodeIsContaining && computedStyle.position === "fixed") {
+        currentContainingBlockComputedStyle = null;
+      }
+      const shouldDropCurrentNode = elementIsFixed ? !currentNodeIsContaining && !currentContainingBlockComputedStyle : !currentNodeIsContaining && computedStyle.position === "static" && !!currentContainingBlockComputedStyle && (currentContainingBlockComputedStyle.position === "absolute" || currentContainingBlockComputedStyle.position === "fixed") || isOverflowElement(currentNode) && !currentNodeIsContaining && hasFixedPositionAncestor(element, currentNode);
+      if (shouldDropCurrentNode) {
+        result = result.filter((ancestor) => ancestor !== currentNode);
+      } else {
+        currentContainingBlockComputedStyle = computedStyle;
+      }
+      currentNode = getParentNode(currentNode);
+    }
+    cache.set(element, result);
+    return result;
+  }
+  function getClippingRect(_ref) {
+    let {
+      element,
+      boundary,
+      rootBoundary,
+      strategy
+    } = _ref;
+    const elementClippingAncestors = boundary === "clippingAncestors" ? isTopLayer(element) ? [] : getClippingElementAncestors(element, this._c) : [].concat(boundary);
+    const clippingAncestors = [...elementClippingAncestors, rootBoundary];
+    const firstRect = getClientRectFromClippingAncestor(element, clippingAncestors[0], strategy);
+    let top = firstRect.top;
+    let right = firstRect.right;
+    let bottom = firstRect.bottom;
+    let left = firstRect.left;
+    for (let i = 1; i < clippingAncestors.length; i++) {
+      const rect = getClientRectFromClippingAncestor(element, clippingAncestors[i], strategy);
+      top = max(rect.top, top);
+      right = min(rect.right, right);
+      bottom = min(rect.bottom, bottom);
+      left = max(rect.left, left);
+    }
+    return {
+      width: right - left,
+      height: bottom - top,
+      x: left,
+      y: top
+    };
+  }
+  function getDimensions(element) {
+    const {
+      width,
+      height
+    } = getCssDimensions(element);
+    return {
+      width,
+      height
+    };
+  }
+  function getRectRelativeToOffsetParent(element, offsetParent, strategy) {
+    const isOffsetParentAnElement = isHTMLElement(offsetParent);
+    const documentElement = getDocumentElement(offsetParent);
+    const isFixed = strategy === "fixed";
+    const rect = getBoundingClientRect(element, true, isFixed, offsetParent);
+    let scroll = {
+      scrollLeft: 0,
+      scrollTop: 0
+    };
+    const offsets = createCoords(0);
+    function setLeftRTLScrollbarOffset() {
+      offsets.x = getWindowScrollBarX(documentElement);
+    }
+    if (isOffsetParentAnElement || !isOffsetParentAnElement && !isFixed) {
+      if (getNodeName(offsetParent) !== "body" || isOverflowElement(documentElement)) {
+        scroll = getNodeScroll(offsetParent);
+      }
+      if (isOffsetParentAnElement) {
+        const offsetRect = getBoundingClientRect(offsetParent, true, isFixed, offsetParent);
+        offsets.x = offsetRect.x + offsetParent.clientLeft;
+        offsets.y = offsetRect.y + offsetParent.clientTop;
+      } else if (documentElement) {
+        setLeftRTLScrollbarOffset();
+      }
+    }
+    if (isFixed && !isOffsetParentAnElement && documentElement) {
+      setLeftRTLScrollbarOffset();
+    }
+    const htmlOffset = documentElement && !isOffsetParentAnElement && !isFixed ? getHTMLOffset(documentElement, scroll) : createCoords(0);
+    const x = rect.left + scroll.scrollLeft - offsets.x - htmlOffset.x;
+    const y = rect.top + scroll.scrollTop - offsets.y - htmlOffset.y;
+    return {
+      x,
+      y,
+      width: rect.width,
+      height: rect.height
+    };
+  }
+  function isStaticPositioned(element) {
+    return getComputedStyle$1(element).position === "static";
+  }
+  function getTrueOffsetParent(element, polyfill) {
+    if (!isHTMLElement(element) || getComputedStyle$1(element).position === "fixed") {
+      return null;
+    }
+    if (polyfill) {
+      return polyfill(element);
+    }
+    let rawOffsetParent = element.offsetParent;
+    if (getDocumentElement(element) === rawOffsetParent) {
+      rawOffsetParent = rawOffsetParent.ownerDocument.body;
+    }
+    return rawOffsetParent;
+  }
+  function getOffsetParent(element, polyfill) {
+    const win = getWindow(element);
+    if (isTopLayer(element)) {
+      return win;
+    }
+    if (!isHTMLElement(element)) {
+      let svgOffsetParent = getParentNode(element);
+      while (svgOffsetParent && !isLastTraversableNode(svgOffsetParent)) {
+        if (isElement(svgOffsetParent) && !isStaticPositioned(svgOffsetParent)) {
+          return svgOffsetParent;
+        }
+        svgOffsetParent = getParentNode(svgOffsetParent);
+      }
+      return win;
+    }
+    let offsetParent = getTrueOffsetParent(element, polyfill);
+    while (offsetParent && isTableElement(offsetParent) && isStaticPositioned(offsetParent)) {
+      offsetParent = getTrueOffsetParent(offsetParent, polyfill);
+    }
+    if (offsetParent && isLastTraversableNode(offsetParent) && isStaticPositioned(offsetParent) && !isContainingBlock(offsetParent)) {
+      return win;
+    }
+    return offsetParent || getContainingBlock(element) || win;
+  }
+  const getElementRects = async function(data) {
+    const getOffsetParentFn = this.getOffsetParent || getOffsetParent;
+    const getDimensionsFn = this.getDimensions;
+    const floatingDimensions = await getDimensionsFn(data.floating);
+    return {
+      reference: getRectRelativeToOffsetParent(data.reference, await getOffsetParentFn(data.floating), data.strategy),
+      floating: {
+        x: 0,
+        y: 0,
+        width: floatingDimensions.width,
+        height: floatingDimensions.height
+      }
+    };
+  };
+  function isRTL(element) {
+    return getComputedStyle$1(element).direction === "rtl";
+  }
+  const platform = {
+    convertOffsetParentRelativeRectToViewportRelativeRect,
+    getDocumentElement,
+    getClippingRect,
+    getOffsetParent,
+    getElementRects,
+    getClientRects,
+    getDimensions,
+    getScale,
+    isElement,
+    isRTL
+  };
+  const offset = offset$1;
+  const autoPlacement = autoPlacement$1;
+  const shift = shift$1;
+  const flip = flip$1;
+  const arrow = arrow$1;
+  const computePosition = (reference, floating, options) => {
+    const cache = /* @__PURE__ */ new Map();
+    const mergedOptions = {
+      platform,
+      ...options
+    };
+    const platformWithCache = {
+      ...mergedOptions.platform,
+      _c: cache
+    };
+    return computePosition$1(reference, floating, {
+      ...mergedOptions,
+      platform: platformWithCache
+    });
+  };
+  let activeInstance = null;
+  function setupFloatingUI(reference, options) {
+    const {
+      appendTo,
+      content,
+      onShow,
+      onHide,
+      theme,
+      placement,
+      offset: offsetVal,
+      interactive,
+      role
+    } = options;
+    let popper = null;
+    const hide = () => {
+      if (popper?.parentNode) {
+        if (onHide) onHide({ reference, popper });
+        popper.remove();
+        popper = null;
+        if (activeInstance === hide) activeInstance = null;
+      }
+    };
+    const updatePosition = () => {
+      if (!popper) return;
+      const arrowEl = popper.querySelector(".tippy-arrow");
+      const middleware = [offset(offsetVal)];
+      if (placement === "auto" || placement === "auto-start" || placement === "auto-end") {
+        middleware.push(
+          autoPlacement({
+            alignment: placement.split("-")[1] || null,
+            padding: 5
+          })
+        );
+      } else {
+        middleware.push(
+          flip({
+            padding: 5,
+            fallbackPlacements: ["bottom", "right", "left"]
+          })
+        );
+      }
+      middleware.push(shift({ padding: 5 }), arrow({ element: arrowEl }));
+      computePosition(reference, popper, {
+        placement: placement?.includes("auto") ? void 0 : placement,
+        middleware
+      }).then(({ x, y, placement: finalPlacement, middlewareData }) => {
+        Object.assign(popper.style, { left: `${x}px`, top: `${y}px` });
+        if (middlewareData.arrow) {
+          const { x: ax, y: ay } = middlewareData.arrow;
+          const side = { top: "bottom", right: "left", bottom: "top", left: "right" }[finalPlacement.split("-")[0]];
+          Object.assign(arrowEl.style, {
+            left: ax != null ? `${ax}px` : "",
+            top: ay != null ? `${ay}px` : "",
+            [side]: "-4px"
+          });
+        }
+        popper.setAttribute("data-placement", finalPlacement);
+      });
+    };
+    const show = (eventType) => {
+      if (activeInstance && activeInstance !== hide) activeInstance();
+      if (popper) return;
+      popper = document.createElement("div");
+      popper.className = `tippy-box ${theme || ""}`;
+      popper.setAttribute("role", role || "tooltip");
+      popper.style.cssText = `position: absolute; z-index: 2147483645; left: 0; top: 0;`;
+      popper.innerHTML = `<div class="tippy-content"></div><div class="tippy-arrow"></div>`;
+      const contentEl = popper.querySelector(".tippy-content");
+      const actualContent = typeof content === "function" ? content(reference) : content;
+      if (actualContent instanceof Node) {
+        contentEl.appendChild(actualContent);
+      } else {
+        contentEl.innerHTML = actualContent;
+      }
+      appendTo.appendChild(popper);
+      activeInstance = hide;
+      updatePosition();
+      if (onShow) onShow({ reference, popper, hide, eventType });
+    };
+    reference.addEventListener("mouseenter", () => !popper && show("mouseenter"));
+    reference.addEventListener("mouseleave", () => {
+      if (!popper || popper.getAttribute("data-trigger") === "click") return;
+      if (interactive) {
+        setTimeout(() => {
+          if (!popper?.matches(":hover") && !reference.matches(":hover")) hide();
+        }, 100);
+      } else hide();
+    });
+    reference.addEventListener("click", (e) => {
+      e.stopPropagation();
+      if (popper && popper.getAttribute("data-trigger") === "click") {
+        hide();
+      } else {
+        if (!popper) show("click");
+        popper.setAttribute("data-trigger", "click");
+      }
+    });
+    return { show, hide, popper: () => popper };
+  }
   class AnnotationTooltips extends HTMLElement {
     connectedCallback() {
       const shadowRoot = this.attachShadow({ mode: "open" });
       const style = document.createElement("style");
       style.textContent = tooltipStyles + sharedStyles;
       shadowRoot.appendChild(style);
-      const template = State.results;
-      const annotations = tippy(annotationButtons, {
-        interactive: true,
-        trigger: "mouseenter click",
-        hideOnClick: false,
-        arrow: true,
-        offset: [0, 8],
-        delay: [0, 400],
-        maxWidth: 375,
-        theme: "sa11y-theme",
-        placement: "auto-start",
-        content(reference2) {
-          const id = reference2.getRootNode().host.getAttribute("data-sa11y-annotation");
-          const result = template.find((item) => String(item.id) === String(id));
-          if (!result) return null;
-          const { element, finalContent, contrastDetails } = result;
-          if (!element) return;
-          const wrapper = document.createElement("div");
-          const closeBtn = document.createElement("button");
-          closeBtn.type = "button";
-          closeBtn.className = "close-btn close-tooltip";
-          closeBtn.setAttribute("aria-label", Lang._("ALERT_CLOSE"));
-          const contentBody = document.createElement("div");
-          contentBody.className = "sa11y-content-body";
-          wrapper.append(closeBtn, contentBody);
-          const body = wrapper.querySelector(".sa11y-content-body");
-          if (finalContent instanceof Node) body.appendChild(finalContent);
-          else if (finalContent) body.textContent = finalContent;
-          if (contrastDetails) {
-            const contrastDiv = document.createElement("div");
-            contrastDiv.setAttribute("data-sa11y-contrast-details", "");
-            const target = body.querySelector(".dismiss-group");
-            target ? target.before(contrastDiv) : body.append(contrastDiv);
-          }
-          return wrapper;
-        },
-        allowHTML: true,
-        role: "dialog",
-        aria: {
-          content: null,
-          expanded: "auto"
-        },
-        appendTo: shadowRoot,
-        zIndex: 2147483645,
-        onShow(instance) {
-          if (!instance?.popper) return;
-          if (Array.isArray(annotations)) {
-            annotations.forEach((popper2) => {
-              if (popper2 !== instance) popper2.hide();
-            });
-          }
-          const host = instance.reference.getRootNode().host;
-          if (host) host.setAttribute("data-sa11y-opened", "");
-          const closeButton = instance.popper.querySelector(".close-btn");
-          const closeButtonHandler = () => {
-            instance.hide();
-            instance.reference.focus();
-          };
-          if (closeButton) closeButton.addEventListener("click", closeButtonHandler);
-          const escapeListener = (event) => {
-            if (event.key === "Escape") {
-              instance.hide();
-              instance.reference.focus();
+      annotationButtons.forEach((btn) => {
+        setupFloatingUI(btn, {
+          interactive: true,
+          offset: 8,
+          theme: "sa11y-theme",
+          placement: "auto-start",
+          appendTo: shadowRoot,
+          role: "dialog",
+          content: (ref) => {
+            const host = ref.getRootNode().host;
+            const id = host.getAttribute("data-sa11y-annotation");
+            const result = State.results.find((item) => String(item.id) === String(id));
+            if (!result) return null;
+            const wrapper = document.createElement("div");
+            wrapper.innerHTML = `<button type="button" class="close-btn close-tooltip" aria-label="${Lang._("ALERT_CLOSE")}"></button><div class="sa11y-content-body"></div>`;
+            const body = wrapper.querySelector(".sa11y-content-body");
+            if (result.finalContent instanceof Node) {
+              body.appendChild(result.finalContent);
+            } else {
+              body.textContent = result.finalContent;
             }
-          };
-          instance.popper.addEventListener("keydown", escapeListener);
-          const rawId = host?.getAttribute("data-sa11y-annotation");
-          const results = window.sa11yCheckComplete?.results || [];
-          const issueObject = results.find((issue) => String(issue.id) === String(rawId));
-          instance.popper.setAttribute("lang", Lang._("LANG_CODE"));
-          instance.popper.className = issueObject.type;
-          if (!instance.popper.hasAttribute("contrast-tools-initialized")) {
-            const contrastDetails = issueObject?.contrastDetails;
-            if (contrastDetails) {
-              const container = instance.popper.querySelector("[data-sa11y-contrast-details]");
+            let contrastDiv = body.querySelector("[data-sa11y-contrast-details]");
+            if (result.contrastDetails && !contrastDiv) {
+              contrastDiv = document.createElement("div");
+              contrastDiv.setAttribute("data-sa11y-contrast-details", "");
+              const tools = generateContrastTools(result.contrastDetails);
+              contrastDiv.appendChild(tools);
+              const suggestion = generateColorSuggestion(result.contrastDetails);
+              if (suggestion) contrastDiv.appendChild(suggestion);
+              const target = body.querySelector(".dismiss-group");
+              target ? target.before(contrastDiv) : body.append(contrastDiv);
+            }
+            return wrapper;
+          },
+          onShow: ({ reference, popper, hide, eventType }) => {
+            const host = reference.getRootNode().host;
+            host?.setAttribute("data-sa11y-opened", "");
+            const rawId = host?.getAttribute("data-sa11y-annotation");
+            const issueObject = State.results.find((i) => String(i.id) === String(rawId));
+            popper.setAttribute("lang", Lang._("LANG_CODE"));
+            if (issueObject) popper.classList.add(issueObject.type);
+            if (issueObject?.contrastDetails && !popper.hasAttribute("contrast-tools-initialized")) {
+              initializeContrastTools(popper, issueObject.contrastDetails);
+              popper.setAttribute("contrast-tools-initialized", "true");
+            }
+            const closeBtn = popper.querySelector(".close-btn");
+            const handleClose = () => {
+              hide();
+              reference.focus();
+            };
+            closeBtn?.addEventListener("click", handleClose);
+            const esc = (e) => e.key === "Escape" && handleClose();
+            document.addEventListener("keydown", esc, { once: true });
+            if (!popper.hasAttribute("contrast-tools-initialized") && issueObject?.contrastDetails) {
+              const container = popper.querySelector("[data-sa11y-contrast-details]");
               if (container) {
-                const tools = generateContrastTools(contrastDetails);
-                container.appendChild(tools);
-                initializeContrastTools(instance.popper, contrastDetails);
-                const suggestion = generateColorSuggestion(contrastDetails);
-                if (suggestion) {
-                  container.appendChild(suggestion);
-                }
-                instance.popper.setAttribute("contrast-tools-initialized", "true");
+                container.appendChild(generateContrastTools(issueObject.contrastDetails));
+                initializeContrastTools(popper, issueObject.contrastDetails);
+                const suggestion = generateColorSuggestion(issueObject.contrastDetails);
+                if (suggestion) container.appendChild(suggestion);
+                popper.setAttribute("contrast-tools-initialized", "true");
               }
             }
-          }
-          const handleMouseDown = (event) => {
-            if (event.target.matches('input[type="color"]')) {
-              instance.reference.click();
-              instance.popper.removeEventListener("mousedown", handleMouseDown);
+            if (eventType === "click") {
+              requestAnimationFrame(() => {
+                closeBtn?.focus();
+                trapFocus(popper);
+              });
             }
-          };
-          instance.popper.addEventListener("mousedown", handleMouseDown);
-          instance.setProps({
-            onHidden() {
-              if (closeButton) closeButton.removeEventListener("click", closeButtonHandler);
-              instance.popper.removeEventListener("keydown", escapeListener);
-              instance.popper.removeEventListener("mousedown", handleMouseDown);
-              if (host) host.removeAttribute("data-sa11y-opened");
-            }
-          });
-        },
-        onTrigger(instance, event) {
-          if (event.type === "click") {
-            requestAnimationFrame(() => {
-              const closeBtn = instance.popper.querySelector(".close-btn");
-              if (closeBtn) {
-                closeBtn.focus();
-                trapFocus(instance.popper);
-              }
-            });
+          },
+          onHide: ({ reference }) => {
+            reference.getRootNode().host?.removeAttribute("data-sa11y-opened");
           }
-        },
-        onHide(instance) {
-          const host = instance.reference.getRootNode().host;
-          if (host) {
-            host.removeAttribute("data-sa11y-opened");
-          }
-        }
+        });
       });
     }
   }
   class PanelTooltips extends HTMLElement {
     connectedCallback() {
-      const tooltipOptions = (shadowRoot2) => ({
-        allowHTML: true,
-        delay: [500, 0],
-        trigger: "mouseenter focusin",
-        arrow: true,
-        placement: "top",
-        theme: "sa11y-theme sa11y-panel",
-        role: "tooltip",
-        aria: {
-          content: null,
-          expanded: null
-        },
-        appendTo: shadowRoot2,
-        zIndex: 2147483645
-      });
       const shadowRoot = this.attachShadow({ mode: "open" });
       const style = document.createElement("style");
       style.textContent = tooltipStyles + sharedStyles;
       shadowRoot.appendChild(style);
-      const keyboardShortcut2 = navigator.userAgent.indexOf("Mac") !== -1 ? '<span class="kbd">Option</span> + <span class="kbd">S</span>' : '<span class="kbd">Alt</span> + <span class="kbd">S</span>';
-      tippy(Constants.Panel.skipButton, {
-        ...tooltipOptions(shadowRoot),
-        offset: [0, 8],
-        maxWidth: 200,
-        content: `${Lang._("SKIP_TO_ISSUE")} &raquo; <br> ${keyboardShortcut2}`
+      const baseOptions = {
+        appendTo: shadowRoot,
+        offset: 8,
+        theme: "sa11y-theme sa11y-panel",
+        placement: "top"
+      };
+      const shortcut = navigator.userAgent.includes("Mac") ? "Option + S" : "Alt + S";
+      setupFloatingUI(Constants.Panel.skipButton, {
+        ...baseOptions,
+        content: `${Lang._("SKIP_TO_ISSUE")} &raquo; <br> <span class="kbd">${shortcut}</span>`
       });
-      this.object = tippy(Constants.Panel.dismissButton, {
-        offset: [0, 8],
-        maxWidth: 200,
-        ...tooltipOptions(shadowRoot)
+      this.dismissTooltip = setupFloatingUI(Constants.Panel.dismissButton, {
+        ...baseOptions,
+        content: () => Lang.sprintf("PANEL_DISMISS_BUTTON", State.counts.dismissed)
       });
-      if (State.option.developerPlugin) {
-        const infoIcon = Constants.Panel.developerItem?.querySelector(".info-icon");
-        if (infoIcon) {
-          tippy(infoIcon, {
-            ...tooltipOptions(shadowRoot),
-            triggerTarget: [Constants.Panel.developerItem],
-            offset: [0, 10],
-            maxWidth: 250,
-            content: Lang._("DEVELOPER_DESC")
-          });
+      const plugins = [
+        { key: "developerPlugin", item: Constants.Panel.developerItem, lang: "DEVELOPER_DESC" },
+        { key: "readabilityPlugin", item: Constants.Panel.readabilityItem, lang: "READABILITY_DESC" }
+      ];
+      plugins.forEach((p) => {
+        if (State.option[p.key]) {
+          const icon = p.item?.querySelector(".info-icon");
+          if (icon) setupFloatingUI(icon, { ...baseOptions, content: Lang._(p.lang) });
         }
-      }
-      if (State.option.readabilityPlugin) {
-        const infoIcon = Constants.Panel.readabilityItem?.querySelector(".info-icon");
-        if (infoIcon) {
-          tippy(infoIcon, {
-            ...tooltipOptions(shadowRoot),
-            triggerTarget: [Constants.Panel.readabilityItem],
-            offset: [0, 10],
-            maxWidth: 250,
-            content: Lang._("READABILITY_DESC")
-          });
-        }
-      }
+      });
     }
   }
   const STORAGE_KEY = "sa11y-lang-detection";
@@ -6590,7 +5454,7 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
     }
   };
   async function checkPageLanguage() {
-    const start2 = performance.now();
+    const start = performance.now();
     if (!State.option.langOfPartsPlugin) return;
     if (!await getLanguageDetector()) return;
     if (!State.option.langOfPartsCache) store.removeItem(STORAGE_KEY);
@@ -6782,7 +5646,7 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
         cached: false,
         pageText: pageText.length,
         confidence,
-        time: `${(performance.now() - start2).toFixed(2)}ms`
+        time: `${(performance.now() - start).toFixed(2)}ms`
       });
     }
   }
@@ -9500,7 +8364,7 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
   function detectPageChanges() {
     if (State.option.detectSPArouting === true) {
       let url2 = window.location.href;
-      const checkURL = debounce$2(async () => {
+      const checkURL = debounce(async () => {
         if (url2 !== window.location.href) {
           if (store.getItem("sa11y-panel") === "Closed" || !store.getItem("sa11y-panel")) {
             checkAll();

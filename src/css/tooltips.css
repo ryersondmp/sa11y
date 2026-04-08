@@ -32,91 +32,66 @@ div {
 /*      Base styling of Tippy.js         */
 /* ************************************* */
 
-.tippy-box[data-animation="fade"][data-state="hidden"] {
+[data-animation="fade"][data-state="hidden"] {
   opacity: 0;
 }
 
-[data-tippy-root] {
-  max-width: calc(100vw - 10px);
+.sa11y-theme {
+  max-width: 375px;
 }
 
 /* High contrast mode. */
 @media (forced-colors: active) {
-  [data-tippy-root] {
+
+  [role="dialog"],
+  [role="tooltip"] {
     border: 2px solid transparent;
     border-radius: 5px;
   }
 }
 
-.tippy-arrow {
-  width: 16px;
-  height: 16px;
-  color: #333;
-
-  &::before {
-    position: absolute;
-    content: "";
-    border-color: transparent;
-    border-style: solid;
-  }
+.arrow {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: inherit;
+  visibility: hidden;
 }
 
-.tippy-box[data-placement^="top"] .tippy-arrow {
-  bottom: 0;
+.arrow::before {
+  content: "";
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: inherit;
+  visibility: visible;
+  transform: rotate(45deg);
 }
 
-.tippy-box[data-placement^="top"] .tippy-arrow::before {
-  bottom: -7px;
-  left: 0;
-  border-width: 8px 8px 0;
-  border-top-color: initial;
-  transform-origin: center top;
+/* Placement-specific adjustments */
+[data-placement^="top"]>.arrow {
+  bottom: -4px;
 }
 
-.tippy-box[data-placement^="bottom"] .tippy-arrow {
-  top: 0;
+[data-placement^="bottom"]>.arrow {
+  top: -4px;
 }
 
-.tippy-box[data-placement^="bottom"] .tippy-arrow::before {
-  top: -7px;
-  left: 0;
-  border-width: 0 8px 8px;
-  border-bottom-color: initial;
-  transform-origin: center bottom;
+[data-placement^="left"]>.arrow {
+  right: -4px;
 }
 
-.tippy-box[data-placement^="left"] .tippy-arrow {
-  right: 0;
+[data-placement^="right"]>.arrow {
+  left: -4px;
 }
 
-.tippy-box[data-placement^="left"] .tippy-arrow::before {
-  right: -7px;
-  border-width: 8px 0 8px 8px;
-  border-left-color: initial;
-  transform-origin: center left;
-}
-
-.tippy-box[data-placement^="right"] .tippy-arrow {
-  left: 0;
-}
-
-.tippy-box[data-placement^="right"] .tippy-arrow::before {
-  left: -7px;
-  border-width: 8px 8px 8px 0;
-  border-right-color: initial;
-  transform-origin: center right;
-}
-
-.tippy-content {
+.content {
   position: relative;
   z-index: 1;
   padding: 5px 9px;
 }
 
-/* ************************************* */
-/*        Custom theme for Sa11y         */
-/* ************************************* */
-.tippy-box[data-theme~="sa11y-theme"][role="tooltip"] {
+[role="tooltip"] {
   box-sizing: border-box !important;
 
   &[data-animation="fade"][data-state="hidden"] {
@@ -137,17 +112,18 @@ div {
 
 [role="tooltip"] {
   min-width: 185px;
+  max-width: 250px;
   text-align: center;
 }
 
 /* More visible panel tooltips. */
-.tippy-box[data-theme~="sa11y-panel"] {
+.sa11y-panel {
   border: 1px solid var(--sa11y-panel-bg-splitter);
   box-shadow: var(--sa11y-box-shadow);
 }
 
 /* Annotation tooltip boxshadows. */
-.tippy-box[data-theme~="sa11y-theme"]:not([data-theme~="sa11y-panel"]) {
+.sa11y-theme:not(.sa11y-panel) {
   box-shadow:
     0 0 20px 4px rgb(154 161 177 / 15%),
     0 4px 80px -8px rgb(36 40 47 / 25%),
@@ -155,7 +131,7 @@ div {
 }
 
 /* Tooltip content */
-.tippy-box[data-theme~="sa11y-theme"] {
+.sa11y-theme {
   position: relative;
   display: block;
   padding: 8px;
@@ -193,10 +169,6 @@ div {
     background-color: var(--sa11y-panel-badge);
     border-radius: 3.2px;
     -webkit-font-smoothing: auto;
-  }
-
-  .tippy-content {
-    padding: 5px 9px;
   }
 
   sub,
@@ -351,31 +323,32 @@ div {
   /* ************************************* */
   /*                Arrows                 */
   /* ************************************* */
-  &[data-placement^="top"] .tippy-arrow::before {
+  &[data-placement^="top"] .arrow::before {
     border-top-color: var(--sa11y-panel-bg);
   }
 
-  &[data-placement^="bottom"] .tippy-arrow::before {
+  &[data-placement^="bottom"] .arrow::before {
     border-bottom-color: var(--sa11y-panel-bg);
   }
 
-  &[data-placement^="left"] .tippy-arrow::before {
+  &[data-placement^="left"] .arrow::before {
     border-left-color: var(--sa11y-panel-bg);
   }
 
-  &[data-placement^="right"] .tippy-arrow::before {
+  &[data-placement^="right"] .arrow::before {
     border-right-color: var(--sa11y-panel-bg);
   }
 
   @media (forced-colors: active) {
-    &[data-placement^="top"] .tippy-arrow::before,
-    &[data-placement^="bottom"] .tippy-arrow::before,
-    &[data-placement^="left"] .tippy-arrow::before,
-    &[data-placement^="right"] .tippy-arrow::before {
+
+    &[data-placement^="top"] .arrow::before,
+    &[data-placement^="bottom"] .arrow::before,
+    &[data-placement^="left"] .arrow::before,
+    &[data-placement^="right"] .arrow::before {
       forced-color-adjust: none;
     }
 
-    .tippy-arrow {
+    .arrow {
       z-index: -1;
     }
   }
@@ -383,7 +356,8 @@ div {
 
 /* Tooltip focus styles */
 /* A) Default styles */
-.tippy-box[data-theme~="sa11y-theme"] {
+.sa11y-theme {
+
   a:focus,
   input:focus,
   button:focus,
@@ -395,7 +369,8 @@ div {
 }
 
 /* B) Remove default focus styles for mouse users ONLY if :focus-visible is supported. */
-.tippy-box[data-theme~="sa11y-theme"] {
+.sa11y-theme {
+
   input:focus:not(:focus-visible),
   a:focus:not(:focus-visible),
   button:focus:not(:focus-visible),
@@ -406,7 +381,8 @@ div {
 }
 
 /* C) :focus-visible supported */
-.tippy-box[data-theme~="sa11y-theme"] {
+.sa11y-theme {
+
   a:focus-visible,
   button:focus-visible,
   input:focus-visible,
@@ -418,7 +394,8 @@ div {
 
 /* High contrast focus styles */
 @media screen and (forced-colors: active) {
-  .tippy-box[data-theme~="sa11y-theme"] {
+  .sa11y-theme {
+
     .error-icon,
     .link-icon,
     .hidden-icon {
@@ -430,5 +407,21 @@ div {
     [tabindex="-1"]:focus {
       outline: transparent solid 3px !important;
     }
+  }
+}
+
+/* Fade in animation */
+.sa11y-theme {
+  animation: fade-in 0.15s ease-out forwards;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
