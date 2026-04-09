@@ -5803,6 +5803,7 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
       console.error("Sa11y: Error saving cache.", e);
     }
   };
+  const nonLatinRegex = /[^\p{Script=Latin}\p{M}\p{Z}\p{P}\p{N}\p{S}\p{C}]/u;
   async function checkPageLanguage() {
     const start = performance.now();
     if (!State.option.langOfPartsPlugin) return;
@@ -5898,15 +5899,16 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
         });
         return;
       }
-      const batchSize = 20;
-      let pendingBatch = [];
-      let violationFound = false;
       for (let i = 0; i < Elements.Found.Everything.length; i++) {
-        if (violationFound) break;
         const node = Elements.Found.Everything[i];
         const isImage = node.nodeName === "IMG";
-        if (!isImage && (!node.textContent || node.textContent.length < 30)) {
-          continue;
+        if (!isImage) {
+          if (!node.textContent) continue;
+          const isShort = node.textContent.length < 30;
+          const hasNonEnglish = nonLatinRegex.test(node.textContent);
+          if (isShort && !hasNonEnglish) {
+            continue;
+          }
         }
         let textString = "";
         if (isImage) {
@@ -5915,71 +5917,60 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
           textString = Array.from(node.childNodes).filter((child) => child.nodeType === Node.TEXT_NODE).map((child) => child.textContent).join(" ");
         }
         const nodeText = normalizeString(textString);
-        if (nodeText.length <= 30) continue;
-        pendingBatch.push(async () => {
-          const detectNode = await detector.detect(nodeText);
-          return { node, nodeText, textString, isImage, detectNode };
-        });
-        if (pendingBatch.length >= batchSize || i === Elements.Found.Everything.length - 1) {
-          const batchResults = await Promise.all(pendingBatch.map((task) => task()));
-          for (const result of batchResults) {
-            const nodeLang = primary(result.detectNode[0].detectedLanguage);
-            const nodeConfidence = result.detectNode[0].confidence;
-            if (nodeConfidence >= 0.6) {
-              const langAttribute = result.node.getAttribute("lang") ? primary(result.node.getAttribute("lang")) : "";
-              const selector = generateSelectorPath(result.node);
-              if (langAttribute && langAttribute !== nodeLang) {
-                test = "LANG_MISMATCH";
-                content = Lang.sprintf(
-                  State.option.checks.LANG_MISMATCH.content || "LANG_MISMATCH",
-                  getLanguageLabel(nodeLang),
-                  getLanguageLabel(langAttribute),
-                  result.textString
-                );
-                args = [nodeLang, langAttribute];
-              } else if (!langAttribute && nodeLang !== declared) {
-                if (result.isImage && result.node.alt) {
-                  test = "LANG_OF_PARTS_ALT";
-                  content = Lang.sprintf(
-                    State.option.checks.LANG_OF_PARTS_ALT.content || "LANG_OF_PARTS_ALT",
-                    getLanguageLabel(nodeLang),
-                    getLanguageLabel(declared),
-                    result.node.alt
-                  );
-                  args = [nodeLang, declared, result.node.alt];
-                } else {
-                  test = "LANG_OF_PARTS";
-                  content = Lang.sprintf(
-                    State.option.checks.LANG_OF_PARTS.content || "LANG_OF_PARTS",
-                    getLanguageLabel(declared),
-                    getLanguageLabel(nodeLang),
-                    result.textString
-                  );
-                  args = [declared, nodeLang];
-                }
-              } else {
-                continue;
-              }
-              element = result.node;
-              type = nodeConfidence >= 0.9 ? "error" : "warning";
-              dismiss = prepareDismissal(result.nodeText.slice(0, 256));
-              confidence = nodeConfidence;
-              setCache({
-                key: cacheKey,
-                test,
-                element: selector,
-                type,
-                args,
-                confidence: nodeConfidence,
-                textLength: pageText.length,
-                declared
-              });
-              violationFound = true;
-              break;
+        if (nodeText.length <= 30 && !nonLatinRegex.test(nodeText)) continue;
+        const detectNode = await detector.detect(nodeText);
+        const nodeLang = primary(detectNode[0].detectedLanguage);
+        const nodeConfidence = detectNode[0].confidence;
+        if (nodeConfidence >= 0.6) {
+          const langAttribute = node.getAttribute("lang") ? primary(node.getAttribute("lang")) : "";
+          const selector = generateSelectorPath(node);
+          if (langAttribute && langAttribute !== nodeLang) {
+            test = "LANG_MISMATCH";
+            content = Lang.sprintf(
+              State.option.checks.LANG_MISMATCH.content || "LANG_MISMATCH",
+              getLanguageLabel(nodeLang),
+              getLanguageLabel(langAttribute),
+              textString
+            );
+            args = [nodeLang, langAttribute];
+          } else if (!langAttribute && nodeLang !== declared) {
+            if (isImage && node.alt) {
+              test = "LANG_OF_PARTS_ALT";
+              content = Lang.sprintf(
+                State.option.checks.LANG_OF_PARTS_ALT.content || "LANG_OF_PARTS_ALT",
+                getLanguageLabel(nodeLang),
+                getLanguageLabel(declared),
+                node.alt
+              );
+              args = [nodeLang, declared, node.alt];
+            } else {
+              test = "LANG_OF_PARTS";
+              content = Lang.sprintf(
+                State.option.checks.LANG_OF_PARTS.content || "LANG_OF_PARTS",
+                getLanguageLabel(declared),
+                getLanguageLabel(nodeLang),
+                textString
+              );
+              args = [declared, nodeLang];
             }
+          } else {
+            continue;
           }
-          pendingBatch = [];
-          await new Promise((resolve) => setTimeout(resolve, 0));
+          element = node;
+          type = nodeConfidence >= 0.9 ? "error" : "warning";
+          dismiss = prepareDismissal(nodeText.slice(0, 256));
+          confidence = nodeConfidence;
+          setCache({
+            key: cacheKey,
+            test,
+            element: selector,
+            type,
+            args,
+            confidence: nodeConfidence,
+            textLength: pageText.length,
+            declared
+          });
+          break;
         }
       }
     }
