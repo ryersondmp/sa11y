@@ -303,7 +303,7 @@ const Constants = (function myConstants() {
     Exclusions.Contrast = [
       'link',
       'hr',
-      'State.option',
+      'option',
       'audio',
       'audio *',
       'video',
