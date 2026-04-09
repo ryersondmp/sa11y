@@ -1,8 +1,6 @@
-import Constants from '../utils/constants';
 import Elements from '../utils/elements';
 import Lang from '../utils/lang';
 import * as Utils from '../utils/utils';
-import { computeAccessibleName } from '../utils/computeAccessibleName';
 import { State } from '../core/state';
 
 export default function checkQA() {
@@ -51,129 +49,6 @@ export default function checkQA() {
       }
     });
   }
-
-  /* ************************************************************** */
-  /*  Warning: Additional link checks.                              */
-  /* ************************************************************** */
-  Elements.Found.Links.forEach(($el) => {
-    if ($el.hasAttribute('href')) {
-      const href = $el.getAttribute('href');
-      const accName = Utils.removeWhitespace(
-        computeAccessibleName($el, Constants.Exclusions.LinkSpan),
-      );
-
-      // Has file extension.
-      const hasExtension = $el.matches(Constants.Global.documentSources);
-      const hasPDF = $el.matches('a[href$=".pdf"], a[href*=".pdf?"]');
-
-      // Check for broken same-page links and missing interactive semantics.
-      if (State.option.checks.QA_IN_PAGE_LINK || State.option.checks.LINK_MAYBE_BUTTON) {
-        const hasText = Utils.getText($el).length !== 0;
-        const ignored = $el.ariaHidden === 'true' && $el.getAttribute('tabindex') === '-1';
-
-        const hasAttributes =
-          $el.hasAttribute('role') ||
-          $el.hasAttribute('aria-haspopup') ||
-          $el.hasAttribute('aria-expanded') ||
-          $el.hasAttribute('onclick') ||
-          $el.hasAttribute('disabled') ||
-          !!Utils.getCachedClosest($el, 'nav, [role="navigation"]');
-
-        if ((href.startsWith('#') || href === '') && hasText && !ignored && !hasAttributes) {
-          const targetId = href.substring(1);
-          const ariaControls = $el.getAttribute('aria-controls');
-          const decoded = targetId ? decodeURIComponent(targetId) : '';
-          const encoded = targetId ? encodeURIComponent(targetId) : '';
-          const targetElement =
-            targetId &&
-            (document.getElementById(targetId) ||
-              (ariaControls && document.getElementById(ariaControls)) ||
-              (decoded !== targetId && document.getElementById(decoded)) ||
-              (encoded !== targetId && document.getElementById(encoded)) ||
-              document.querySelector(`a[name="${CSS.escape(targetId)}"]`));
-
-          // If reference ID doesn't exist (Target failed)
-          if (!targetElement) {
-            let isFauxButton = false;
-
-            // 1. Broken same page link AND most likely a button!
-            if (State.option.checks.LINK_MAYBE_BUTTON) {
-              const keywords = Lang._('POTENTIAL_UI_ELEMENTS');
-              const matchedKeyword = keywords.find((word) => accName.toLowerCase().includes(word));
-              if (matchedKeyword && accName.length <= 15) {
-                isFauxButton = true;
-                State.results.push({
-                  test: 'LINK_MAYBE_BUTTON',
-                  element: $el,
-                  type: State.option.checks.LINK_MAYBE_BUTTON.type || 'error',
-                  content: Lang.sprintf(
-                    State.option.checks.LINK_MAYBE_BUTTON.content || 'LINK_MAYBE_BUTTON',
-                    matchedKeyword,
-                    accName,
-                  ),
-                  args: [matchedKeyword, accName],
-                  inline: true,
-                  dismiss: Utils.prepareDismissal(`LINK_MAYBE_BUTTON_${matchedKeyword}`),
-                  dismissAll: State.option.checks.LINK_MAYBE_BUTTON.dismissAll
-                    ? 'LINK_MAYBE_BUTTON'
-                    : false,
-                  developer: State.option.checks.LINK_MAYBE_BUTTON.developer || true,
-                });
-              }
-            }
-
-            // 2. Mostly likely broken same-page link.
-            if (State.option.checks.QA_IN_PAGE_LINK && !isFauxButton) {
-              State.results.push({
-                test: 'QA_IN_PAGE_LINK',
-                element: $el,
-                type: State.option.checks.QA_IN_PAGE_LINK.type || 'error',
-                content: Lang.sprintf(
-                  State.option.checks.QA_IN_PAGE_LINK.content || 'QA_IN_PAGE_LINK',
-                  targetId,
-                  accName,
-                ),
-                args: [targetId, accName],
-                inline: true,
-                dismiss: Utils.prepareDismissal(`QA_IN_PAGE_LINK ${href}`),
-                dismissAll: State.option.checks.QA_IN_PAGE_LINK.dismissAll
-                  ? 'QA_IN_PAGE_LINK'
-                  : false,
-                developer: State.option.checks.QA_IN_PAGE_LINK.developer || false,
-              });
-            }
-          }
-        }
-      }
-
-      // Manually inspect documents & PDF for accessibility.
-      if (State.option.checks.QA_DOCUMENT && hasExtension) {
-        State.results.push({
-          test: 'QA_DOCUMENT',
-          element: $el,
-          type: State.option.checks.QA_DOCUMENT.type || 'warning',
-          content: Lang.sprintf(State.option.checks.QA_DOCUMENT.content || 'QA_DOCUMENT', accName),
-          args: [accName],
-          inline: true,
-          dismiss: Utils.prepareDismissal(`QA_DOCUMENT ${href}`),
-          dismissAll: State.option.checks.QA_DOCUMENT.dismissAll ? 'QA_DOCUMENT' : false,
-          developer: State.option.checks.QA_DOCUMENT.developer || false,
-        });
-      } else if (State.option.checks.QA_PDF && hasPDF) {
-        State.results.push({
-          test: 'QA_PDF',
-          element: $el,
-          type: State.option.checks.QA_PDF.type || 'warning',
-          content: Lang.sprintf(State.option.checks.QA_PDF.content || 'QA_PDF', accName),
-          args: [accName],
-          inline: true,
-          dismiss: Utils.prepareDismissal(`QA_PDF ${href}`),
-          dismissAll: State.option.checks.QA_PDF.dismissAll ? 'QA_PDF' : false,
-          developer: State.option.checks.QA_PDF.developer || false,
-        });
-      }
-    }
-  });
 
   /* *************************************************************** */
   /*  Warning: Find blockquotes used as headers.                     */

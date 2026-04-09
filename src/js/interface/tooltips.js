@@ -10,7 +10,15 @@ import Lang from '../utils/lang';
 import { annotationButtons } from './annotations';
 import { State } from '../core/state';
 import * as Utils from '../utils/utils';
-import { computePosition, autoPlacement, shift, flip, offset, arrow, autoUpdate } from '@floating-ui/dom';
+import {
+  computePosition,
+  autoPlacement,
+  shift,
+  flip,
+  offset,
+  arrow,
+  autoUpdate,
+} from '@floating-ui/dom';
 
 // Singleton management.
 let activeInstance = null;
@@ -60,15 +68,19 @@ function setupFloatingUI(references, options) {
     const middleware = [offset(offsetVal)];
 
     if (placement === 'auto' || placement === 'auto-start' || placement === 'auto-end') {
-      middleware.push(autoPlacement({
-        alignment: placement.split('-')[1] || null,
-        padding: 5,
-      }));
+      middleware.push(
+        autoPlacement({
+          alignment: placement.split('-')[1] || null,
+          padding: 5,
+        }),
+      );
     } else {
-      middleware.push(flip({
-        padding: 5,
-        fallbackPlacements: ['bottom', 'right', 'left'],
-      }));
+      middleware.push(
+        flip({
+          padding: 5,
+          fallbackPlacements: ['bottom', 'right', 'left'],
+        }),
+      );
     }
 
     middleware.push(shift({ padding: 5 }), arrow({ element: arrowEl }));
@@ -136,7 +148,7 @@ function setupFloatingUI(references, options) {
       if (interactive) {
         setTimeout(() => {
           // Check if mouse is hovering over ANY of the triggers or the popper itself.
-          const isOverAnyTarget = targets.some(t => t.matches(':hover'));
+          const isOverAnyTarget = targets.some((t) => t.matches(':hover'));
           if (!popper?.matches(':hover') && !isOverAnyTarget) {
             hide();
           }

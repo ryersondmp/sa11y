@@ -383,7 +383,7 @@ export default {
       'The visible text for this element appears to be different than the accessible name, which may cause confusion for assistive technologies users. Please review: <hr> <strong {B}>Text</strong> <strong {C}>%(TEXT)</strong> <hr> <strong {B}>Accessible Name</strong> <strong {C}>%(TEXT)</strong>',
     LINK_MAYBE_BUTTON: 'This link has an invalid target, and the accessible name contains the word "<strong {C}>%(NAME)</strong>". This suggests that this might not be a link at all, and instead controls some scripted behaviour on the page. To fix, replace the link with an <a href="https://www.w3.org/WAI/ARIA/apg/patterns/button/">accessible button</a>, or correct the link\'s destination. <hr> <strong {B}>Accessible Name</strong> <strong {C}>%(TEXT)</strong> <hr> <strong>Tip!</strong> Assistive technologies treat buttons and links differently. Using the correct HTML element ensures users know which keyboard shortcuts to use and what action will trigger.',
     POTENTIAL_UI_ELEMENTS: [
-      'menu', 'close', 'toggle', 'open', 'expand', 'collapse', 'next', 'previous', 'play', 'pause', 'submenu', 'show', 'hide', 'dropdown', 'back', 'forward', 'skip', 'submit', 'cancel', 'save', 'edit', 'delete', 'remove', 'search', 'filter', 'sort', 'stop', 'mute', 'unmute', 'fullscreen', 'minimize', 'maximize',
+      'menu', 'close', 'toggle', 'open', 'expand', 'collapse', 'next', 'previous', 'play', 'pause', 'submenu', 'show', 'hide', 'dropdown', 'back', 'forward', 'skip', 'submit', 'cancel', 'save', 'edit', 'delete', 'remove', 'search', 'filter', 'sort', 'stop', 'mute', 'unmute', 'fullscreen', 'minimize', 'maximize', 'slide', 'modal',
     ],
 
     // Tables

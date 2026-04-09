@@ -2967,8 +2967,6 @@ let dismissHandler;
 const dismissIssueButton = async (e) => {
   let savedDismissKeys = JSON.parse(store.getItem("sa11y-dismissed-digest"));
   const dismissButton = e.target;
-  const dismissContainer = document.querySelector("sa11y-panel-tooltips");
-  dismissContainer.hidden = false;
   if (dismissButton.tagName === "BUTTON" && dismissButton.hasAttribute("data-sa11y-dismiss")) {
     const dismissItem = parseInt(dismissButton.getAttribute("data-sa11y-dismiss"), 10);
     const issue = State.results.find(($el) => $el.id === dismissItem);
@@ -3002,8 +3000,7 @@ const dismissIssueButton = async (e) => {
   }
 };
 const restoreDismissButton = async () => {
-  const dismissContainer = document.querySelector("sa11y-panel-tooltips");
-  dismissContainer.hidden = true;
+  State.panelTooltips.dismissTooltip.hide();
   const filtered = State.dismissedIssues.filter((item) => item.href !== window.location.pathname);
   store.setItem("sa11y-dismissed-digest", JSON.stringify(filtered));
   Constants.Panel.dismissButton.classList.remove("active");
@@ -3583,7 +3580,7 @@ function enabled() {
     Constants.Panel.toggle.disabled = false;
   }
 }
-const tooltipStyles = 'h1,h2,div,p,span,ol,ul,li,a,button,svg,strong,kbd,code{all:unset;box-sizing:border-box!important}div{display:block}:before,:after{all:unset}.tippy-box[data-animation=fade][data-state=hidden]{opacity:0}.tippy-box{max-width:375px}@media (forced-colors:active){[data-tippy-root]{border:2px solid #0000;border-radius:5px}}.tippy-arrow{background:inherit;visibility:hidden;width:8px;height:8px;position:absolute}.tippy-arrow:before{content:"";background:inherit;visibility:visible;width:8px;height:8px;position:absolute;transform:rotate(45deg)}.tippy-box[data-placement^=top]>.tippy-arrow{bottom:-4px}.tippy-box[data-placement^=bottom]>.tippy-arrow{top:-4px}.tippy-box[data-placement^=left]>.tippy-arrow{right:-4px}.tippy-box[data-placement^=right]>.tippy-arrow{left:-4px}.tippy-content{z-index:1;padding:5px 9px;position:relative}.sa11y-theme[role=tooltip]{box-sizing:border-box!important}.sa11y-theme[role=tooltip][data-animation=fade][data-state=hidden]{opacity:0}.sa11y-theme[role=tooltip][data-inertia][data-state=visible]{transition-timing-function:cubic-bezier(.54,1.5,.38,1.11)}[role=dialog]{text-align:start;word-wrap:break-word;min-width:300px}[role=tooltip]{text-align:center;min-width:185px;max-width:250px}.sa11y-panel{border:1px solid var(--sa11y-panel-bg-splitter);box-shadow:var(--sa11y-box-shadow)}.sa11y-theme:not(.sa11y-panel){box-shadow:0 0 20px 4px #9aa1b126,0 4px 80px -8px #24282f40,0 4px 4px -2px #5b5e6926!important}.sa11y-theme{font-family:var(--sa11y-font-face);font-size:var(--sa11y-normal-text);color:var(--sa11y-panel-primary);letter-spacing:normal;background-color:var(--sa11y-panel-bg);-webkit-font-smoothing:auto;border-radius:4px;outline:0;padding:8px;font-weight:400;line-height:22px;transition-property:transform,visibility,opacity;display:block;position:relative}.sa11y-theme pre code{white-space:pre-wrap;display:block;overflow:auto}.sa11y-theme code{font-family:monospace;font-size:calc(var(--sa11y-normal-text) - 1px);font-weight:500}.sa11y-theme pre,.sa11y-theme code,.sa11y-theme kbd{color:var(--sa11y-panel-primary);letter-spacing:normal;background-color:var(--sa11y-panel-badge);-webkit-font-smoothing:auto;border-radius:3.2px;padding:1.6px 4.8px;line-height:22px}.sa11y-theme .tippy-content{padding:5px 9px}.sa11y-theme sub,.sa11y-theme sup{font-size:var(--sa11y-small-text)}.sa11y-theme ul{margin:0;margin-block:0;padding:0;position:relative}.sa11y-theme li{margin:5px 10px 0 20px;padding-bottom:5px;display:list-item}.sa11y-theme a{color:var(--sa11y-hyperlink);cursor:pointer;font-weight:500;text-decoration:underline}.sa11y-theme a:hover,.sa11y-theme a:focus{text-decoration:none}.sa11y-theme .good .colour{font-weight:400}.sa11y-theme strong{font-weight:600}.sa11y-theme hr{background:var(--sa11y-panel-bg-splitter);opacity:1;border:none;height:1px;margin:10px 0;padding:0}.sa11y-theme button.close-btn{margin-inline-start:10px;margin-bottom:10px}.sa11y-theme button#suggest-size,.sa11y-theme button#suggest{cursor:pointer;padding:.2rem;transition:background-color .2s,color .2s;position:relative}:is(.sa11y-theme button#suggest-size,.sa11y-theme button#suggest):after{content:"";position:absolute;inset:-10px -5px -14px}:is(.sa11y-theme button#suggest-size,.sa11y-theme button#suggest):hover,:is(.sa11y-theme button#suggest-size,.sa11y-theme button#suggest):focus-visible{color:#000!important;background-color:#fff!important}.sa11y-theme .dismiss-group{margin-top:5px}.sa11y-theme .dismiss-group button{margin:10px 5px 5px 0;color:var(--sa11y-panel-primary);cursor:pointer;background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-button-outline);border-radius:5px;margin-inline-end:15px;padding:4px 8px;display:inline-block}.sa11y-theme .dismiss-group button:hover,.sa11y-theme .dismiss-group button:focus{background:var(--sa11y-shortcut-hover)}.sa11y-theme .good-icon{background:var(--sa11y-good-text);width:14px;height:14px;-webkit-mask:var(--sa11y-good-svg) center no-repeat;mask:var(--sa11y-good-svg) center no-repeat;margin-bottom:-2.5px;display:inline-block}.sa11y-theme .link-icon{background:var(--sa11y-panel-primary);width:16px;height:16px;-webkit-mask:var(--sa11y-link-icon-svg) center no-repeat;mask:var(--sa11y-link-icon-svg) center no-repeat;margin-bottom:-3.5px;display:inline-block}.sa11y-theme .error .badge{color:var(--sa11y-error-text);background:var(--sa11y-error)}.sa11y-theme .error .colour{color:var(--sa11y-red-text)}.sa11y-theme .error .link-icon{background:var(--sa11y-error-text)}.sa11y-theme .warning .badge{color:var(--sa11y-panel-bg);background:var(--sa11y-yellow-text)}.sa11y-theme .warning .colour{color:var(--sa11y-yellow-text)}.sa11y-theme .warning .link-icon{background:var(--sa11y-panel-bg)}.sa11y-theme[data-placement^=top] .tippy-arrow:before{border-top-color:var(--sa11y-panel-bg)}.sa11y-theme[data-placement^=bottom] .tippy-arrow:before{border-bottom-color:var(--sa11y-panel-bg)}.sa11y-theme[data-placement^=left] .tippy-arrow:before{border-left-color:var(--sa11y-panel-bg)}.sa11y-theme[data-placement^=right] .tippy-arrow:before{border-right-color:var(--sa11y-panel-bg)}@media (forced-colors:active){.sa11y-theme[data-placement^=top] .tippy-arrow:before,.sa11y-theme[data-placement^=bottom] .tippy-arrow:before,.sa11y-theme[data-placement^=left] .tippy-arrow:before,.sa11y-theme[data-placement^=right] .tippy-arrow:before{forced-color-adjust:none}.sa11y-theme .tippy-arrow{z-index:-1}}.sa11y-theme a:focus,.sa11y-theme input:focus,.sa11y-theme button:focus,.sa11y-theme button:active,.sa11y-theme [tabindex="-1"]:focus{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}.sa11y-theme input:focus:not(:focus-visible),.sa11y-theme a:focus:not(:focus-visible),.sa11y-theme button:focus:not(:focus-visible),.sa11y-theme [tabindex="-1"]:focus:not(:focus-visible){box-shadow:none;outline:0}.sa11y-theme a:focus-visible,.sa11y-theme button:focus-visible,.sa11y-theme input:focus-visible,.sa11y-theme [tabindex="-1"]:focus-visible{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}@media screen and (forced-colors:active){.sa11y-theme .error-icon,.sa11y-theme .link-icon,.sa11y-theme .hidden-icon{filter:invert()}.sa11y-theme a:focus,.sa11y-theme button:focus,.sa11y-theme [tabindex="-1"]:focus{outline:3px solid #0000!important}}';
+const tooltipStyles = 'h1,h2,div,p,span,ol,ul,li,a,button,svg,strong,kbd,code{all:unset;box-sizing:border-box!important}div{display:block}:before,:after{all:unset}[data-animation=fade][data-state=hidden]{opacity:0}.sa11y-theme{max-width:375px}@media (forced-colors:active){[role=dialog],[role=tooltip]{border:2px solid #0000;border-radius:5px}}.arrow{background:inherit;visibility:hidden;width:8px;height:8px;position:absolute}.arrow:before{content:"";background:inherit;visibility:visible;width:8px;height:8px;position:absolute;transform:rotate(45deg)}[data-placement^=top]>.arrow{bottom:-4px}[data-placement^=bottom]>.arrow{top:-4px}[data-placement^=left]>.arrow{right:-4px}[data-placement^=right]>.arrow{left:-4px}.content{z-index:1;padding:5px 9px;position:relative}[role=tooltip]{box-sizing:border-box!important}[role=tooltip][data-animation=fade][data-state=hidden]{opacity:0}[role=tooltip][data-inertia][data-state=visible]{transition-timing-function:cubic-bezier(.54,1.5,.38,1.11)}[role=dialog]{text-align:start;word-wrap:break-word;min-width:300px}[role=tooltip]{text-align:center;min-width:185px;max-width:250px}.sa11y-panel{border:1px solid var(--sa11y-panel-bg-splitter);box-shadow:var(--sa11y-box-shadow)}.sa11y-theme:not(.sa11y-panel){box-shadow:0 0 20px 4px #9aa1b126,0 4px 80px -8px #24282f40,0 4px 4px -2px #5b5e6926!important}.sa11y-theme{font-family:var(--sa11y-font-face);font-size:var(--sa11y-normal-text);color:var(--sa11y-panel-primary);letter-spacing:normal;background-color:var(--sa11y-panel-bg);-webkit-font-smoothing:auto;border-radius:4px;outline:0;padding:8px;font-weight:400;line-height:22px;transition-property:transform,visibility,opacity;display:block;position:relative}.sa11y-theme pre code{white-space:pre-wrap;display:block;overflow:auto}.sa11y-theme code{font-family:monospace;font-size:calc(var(--sa11y-normal-text) - 1px);font-weight:500}.sa11y-theme pre,.sa11y-theme code,.sa11y-theme kbd{color:var(--sa11y-panel-primary);letter-spacing:normal;background-color:var(--sa11y-panel-badge);-webkit-font-smoothing:auto;border-radius:3.2px;padding:1.6px 4.8px;line-height:22px}.sa11y-theme sub,.sa11y-theme sup{font-size:var(--sa11y-small-text)}.sa11y-theme ul{margin:0;margin-block:0;padding:0;position:relative}.sa11y-theme li{margin:5px 10px 0 20px;padding-bottom:5px;display:list-item}.sa11y-theme a{color:var(--sa11y-hyperlink);cursor:pointer;font-weight:500;text-decoration:underline}.sa11y-theme a:hover,.sa11y-theme a:focus{text-decoration:none}.sa11y-theme .good .colour{font-weight:400}.sa11y-theme strong{font-weight:600}.sa11y-theme hr{background:var(--sa11y-panel-bg-splitter);opacity:1;border:none;height:1px;margin:10px 0;padding:0}.sa11y-theme button.close-btn{margin-inline-start:10px;margin-bottom:10px}.sa11y-theme button#suggest-size,.sa11y-theme button#suggest{cursor:pointer;padding:.2rem;transition:background-color .2s,color .2s;position:relative}:is(.sa11y-theme button#suggest-size,.sa11y-theme button#suggest):after{content:"";position:absolute;inset:-10px -5px -14px}:is(.sa11y-theme button#suggest-size,.sa11y-theme button#suggest):hover,:is(.sa11y-theme button#suggest-size,.sa11y-theme button#suggest):focus-visible{color:#000!important;background-color:#fff!important}.sa11y-theme .dismiss-group{margin-top:5px}.sa11y-theme .dismiss-group button{margin:10px 5px 5px 0;color:var(--sa11y-panel-primary);cursor:pointer;background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-button-outline);border-radius:5px;margin-inline-end:15px;padding:4px 8px;display:inline-block}.sa11y-theme .dismiss-group button:hover,.sa11y-theme .dismiss-group button:focus{background:var(--sa11y-shortcut-hover)}.sa11y-theme .good-icon{background:var(--sa11y-good-text);width:14px;height:14px;-webkit-mask:var(--sa11y-good-svg) center no-repeat;mask:var(--sa11y-good-svg) center no-repeat;margin-bottom:-2.5px;display:inline-block}.sa11y-theme .link-icon{background:var(--sa11y-panel-primary);width:16px;height:16px;-webkit-mask:var(--sa11y-link-icon-svg) center no-repeat;mask:var(--sa11y-link-icon-svg) center no-repeat;margin-bottom:-3.5px;display:inline-block}.sa11y-theme .error .badge{color:var(--sa11y-error-text);background:var(--sa11y-error)}.sa11y-theme .error .colour{color:var(--sa11y-red-text)}.sa11y-theme .error .link-icon{background:var(--sa11y-error-text)}.sa11y-theme .warning .badge{color:var(--sa11y-panel-bg);background:var(--sa11y-yellow-text)}.sa11y-theme .warning .colour{color:var(--sa11y-yellow-text)}.sa11y-theme .warning .link-icon{background:var(--sa11y-panel-bg)}.sa11y-theme[data-placement^=top] .arrow:before{border-top-color:var(--sa11y-panel-bg)}.sa11y-theme[data-placement^=bottom] .arrow:before{border-bottom-color:var(--sa11y-panel-bg)}.sa11y-theme[data-placement^=left] .arrow:before{border-left-color:var(--sa11y-panel-bg)}.sa11y-theme[data-placement^=right] .arrow:before{border-right-color:var(--sa11y-panel-bg)}@media (forced-colors:active){.sa11y-theme[data-placement^=top] .arrow:before,.sa11y-theme[data-placement^=bottom] .arrow:before,.sa11y-theme[data-placement^=left] .arrow:before,.sa11y-theme[data-placement^=right] .arrow:before{forced-color-adjust:none}.sa11y-theme .arrow{z-index:-1}}.sa11y-theme a:focus,.sa11y-theme input:focus,.sa11y-theme button:focus,.sa11y-theme button:active,.sa11y-theme [tabindex="-1"]:focus{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}.sa11y-theme input:focus:not(:focus-visible),.sa11y-theme a:focus:not(:focus-visible),.sa11y-theme button:focus:not(:focus-visible),.sa11y-theme [tabindex="-1"]:focus:not(:focus-visible){box-shadow:none;outline:0}.sa11y-theme a:focus-visible,.sa11y-theme button:focus-visible,.sa11y-theme input:focus-visible,.sa11y-theme [tabindex="-1"]:focus-visible{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}@media screen and (forced-colors:active){.sa11y-theme .error-icon,.sa11y-theme .link-icon,.sa11y-theme .hidden-icon{filter:invert()}.sa11y-theme a:focus,.sa11y-theme button:focus,.sa11y-theme [tabindex="-1"]:focus{outline:3px solid #0000!important}}.sa11y-theme{animation:.15s ease-out forwards fade-in}@keyframes fade-in{0%{opacity:0}to{opacity:1;transform:translateY(0)}}';
 function generateContrastTools(contrastDetails) {
   const { previewText, color, background, fontWeight, fontSize, ratio, textUnderline } = contrastDetails;
   const hasBackgroundColor = background && background.type !== "image";
@@ -3832,6 +3829,7 @@ const placements = /* @__PURE__ */ sides.reduce((acc, side) => acc.concat(side, 
 const min = Math.min;
 const max = Math.max;
 const round = Math.round;
+const floor = Math.floor;
 const createCoords = (v) => ({
   x: v,
   y: v
@@ -4699,14 +4697,17 @@ function getOverflowAncestors(node, list, traverseIframes) {
   if (list === void 0) {
     list = [];
   }
+  if (traverseIframes === void 0) {
+    traverseIframes = true;
+  }
   const scrollableAncestor = getNearestOverflowAncestor(node);
   const isBody = scrollableAncestor === ((_node$ownerDocument2 = node.ownerDocument) == null ? void 0 : _node$ownerDocument2.body);
   const win = getWindow(scrollableAncestor);
   if (isBody) {
-    getFrameElement(win);
-    return list.concat(win, win.visualViewport || [], isOverflowElement(scrollableAncestor) ? scrollableAncestor : [], []);
+    const frameElement = getFrameElement(win);
+    return list.concat(win, win.visualViewport || [], isOverflowElement(scrollableAncestor) ? scrollableAncestor : [], frameElement && traverseIframes ? getOverflowAncestors(frameElement) : []);
   } else {
-    return list.concat(scrollableAncestor, getOverflowAncestors(scrollableAncestor, []));
+    return list.concat(scrollableAncestor, getOverflowAncestors(scrollableAncestor, [], traverseIframes));
   }
 }
 function getFrameElement(win) {
@@ -4990,7 +4991,7 @@ function getClippingElementAncestors(element, cache) {
   if (cachedResult) {
     return cachedResult;
   }
-  let result = getOverflowAncestors(element, []).filter((el2) => isElement(el2) && getNodeName(el2) !== "body");
+  let result = getOverflowAncestors(element, [], false).filter((el2) => isElement(el2) && getNodeName(el2) !== "body");
   let currentContainingBlockComputedStyle = null;
   const elementIsFixed = getComputedStyle$1(element).position === "fixed";
   let currentNode = elementIsFixed ? getParentNode(element) : element;
@@ -5156,6 +5157,153 @@ const platform = {
   isElement,
   isRTL
 };
+function rectsAreEqual(a, b) {
+  return a.x === b.x && a.y === b.y && a.width === b.width && a.height === b.height;
+}
+function observeMove(element, onMove) {
+  let io = null;
+  let timeoutId;
+  const root = getDocumentElement(element);
+  function cleanup() {
+    var _io;
+    clearTimeout(timeoutId);
+    (_io = io) == null || _io.disconnect();
+    io = null;
+  }
+  function refresh(skip, threshold) {
+    if (skip === void 0) {
+      skip = false;
+    }
+    if (threshold === void 0) {
+      threshold = 1;
+    }
+    cleanup();
+    const elementRectForRootMargin = element.getBoundingClientRect();
+    const {
+      left,
+      top,
+      width,
+      height
+    } = elementRectForRootMargin;
+    if (!skip) {
+      onMove();
+    }
+    if (!width || !height) {
+      return;
+    }
+    const insetTop = floor(top);
+    const insetRight = floor(root.clientWidth - (left + width));
+    const insetBottom = floor(root.clientHeight - (top + height));
+    const insetLeft = floor(left);
+    const rootMargin = -insetTop + "px " + -insetRight + "px " + -insetBottom + "px " + -insetLeft + "px";
+    const options = {
+      rootMargin,
+      threshold: max(0, min(1, threshold)) || 1
+    };
+    let isFirstUpdate = true;
+    function handleObserve(entries) {
+      const ratio = entries[0].intersectionRatio;
+      if (ratio !== threshold) {
+        if (!isFirstUpdate) {
+          return refresh();
+        }
+        if (!ratio) {
+          timeoutId = setTimeout(() => {
+            refresh(false, 1e-7);
+          }, 1e3);
+        } else {
+          refresh(false, ratio);
+        }
+      }
+      if (ratio === 1 && !rectsAreEqual(elementRectForRootMargin, element.getBoundingClientRect())) {
+        refresh();
+      }
+      isFirstUpdate = false;
+    }
+    try {
+      io = new IntersectionObserver(handleObserve, {
+        ...options,
+        // Handle <iframe>s
+        root: root.ownerDocument
+      });
+    } catch (_e) {
+      io = new IntersectionObserver(handleObserve, options);
+    }
+    io.observe(element);
+  }
+  refresh(true);
+  return cleanup;
+}
+function autoUpdate(reference, floating, update, options) {
+  if (options === void 0) {
+    options = {};
+  }
+  const {
+    ancestorScroll = true,
+    ancestorResize = true,
+    elementResize = typeof ResizeObserver === "function",
+    layoutShift = typeof IntersectionObserver === "function",
+    animationFrame = false
+  } = options;
+  const referenceEl = unwrapElement(reference);
+  const ancestors = ancestorScroll || ancestorResize ? [...referenceEl ? getOverflowAncestors(referenceEl) : [], ...floating ? getOverflowAncestors(floating) : []] : [];
+  ancestors.forEach((ancestor) => {
+    ancestorScroll && ancestor.addEventListener("scroll", update, {
+      passive: true
+    });
+    ancestorResize && ancestor.addEventListener("resize", update);
+  });
+  const cleanupIo = referenceEl && layoutShift ? observeMove(referenceEl, update) : null;
+  let reobserveFrame = -1;
+  let resizeObserver = null;
+  if (elementResize) {
+    resizeObserver = new ResizeObserver((_ref) => {
+      let [firstEntry] = _ref;
+      if (firstEntry && firstEntry.target === referenceEl && resizeObserver && floating) {
+        resizeObserver.unobserve(floating);
+        cancelAnimationFrame(reobserveFrame);
+        reobserveFrame = requestAnimationFrame(() => {
+          var _resizeObserver;
+          (_resizeObserver = resizeObserver) == null || _resizeObserver.observe(floating);
+        });
+      }
+      update();
+    });
+    if (referenceEl && !animationFrame) {
+      resizeObserver.observe(referenceEl);
+    }
+    if (floating) {
+      resizeObserver.observe(floating);
+    }
+  }
+  let frameId;
+  let prevRefRect = animationFrame ? getBoundingClientRect(reference) : null;
+  if (animationFrame) {
+    frameLoop();
+  }
+  function frameLoop() {
+    const nextRefRect = getBoundingClientRect(reference);
+    if (prevRefRect && !rectsAreEqual(prevRefRect, nextRefRect)) {
+      update();
+    }
+    prevRefRect = nextRefRect;
+    frameId = requestAnimationFrame(frameLoop);
+  }
+  update();
+  return () => {
+    var _resizeObserver2;
+    ancestors.forEach((ancestor) => {
+      ancestorScroll && ancestor.removeEventListener("scroll", update);
+      ancestorResize && ancestor.removeEventListener("resize", update);
+    });
+    cleanupIo == null || cleanupIo();
+    (_resizeObserver2 = resizeObserver) == null || _resizeObserver2.disconnect();
+    resizeObserver = null;
+    if (animationFrame) {
+      cancelAnimationFrame(frameId);
+    }
+  };
+}
 const offset = offset$1;
 const autoPlacement = autoPlacement$1;
 const shift = shift$1;
@@ -5177,7 +5325,7 @@ const computePosition = (reference, floating, options) => {
   });
 };
 let activeInstance = null;
-function setupFloatingUI(reference, options) {
+function setupFloatingUI(references, options) {
   const {
     appendTo,
     content,
@@ -5187,12 +5335,21 @@ function setupFloatingUI(reference, options) {
     placement,
     offset: offsetVal,
     interactive,
+    allowHTML = false,
+    clickTrigger = true,
     role
   } = options;
+  const targets = Array.isArray(references) ? references : [references];
+  const mainReference = targets[0];
   let popper = null;
+  let cleanup = null;
   const hide = () => {
     if (popper?.parentNode) {
-      if (onHide) onHide({ reference, popper });
+      if (cleanup) {
+        cleanup();
+        cleanup = null;
+      }
+      if (onHide) onHide({ reference: mainReference, popper });
       popper.remove();
       popper = null;
       if (activeInstance === hide) activeInstance = null;
@@ -5200,7 +5357,7 @@ function setupFloatingUI(reference, options) {
   };
   const updatePosition = () => {
     if (!popper) return;
-    const arrowEl = popper.querySelector(".tippy-arrow");
+    const arrowEl = popper.querySelector(".arrow");
     const middleware = [offset(offsetVal)];
     if (placement === "auto" || placement === "auto-start" || placement === "auto-end") {
       middleware.push(
@@ -5218,7 +5375,7 @@ function setupFloatingUI(reference, options) {
       );
     }
     middleware.push(shift({ padding: 5 }), arrow({ element: arrowEl }));
-    computePosition(reference, popper, {
+    computePosition(mainReference, popper, {
       placement: placement?.includes("auto") ? void 0 : placement,
       middleware
     }).then(({ x, y, placement: finalPlacement, middlewareData }) => {
@@ -5239,38 +5396,53 @@ function setupFloatingUI(reference, options) {
     if (activeInstance && activeInstance !== hide) activeInstance();
     if (popper) return;
     popper = document.createElement("div");
-    popper.className = `tippy-box ${theme || ""}`;
+    popper.className = `${theme || ""}`;
     popper.setAttribute("role", role || "tooltip");
     popper.style.cssText = `position: absolute; z-index: 2147483645; left: 0; top: 0;`;
-    popper.innerHTML = `<div class="tippy-content"></div><div class="tippy-arrow"></div>`;
-    const contentEl = popper.querySelector(".tippy-content");
-    const actualContent = typeof content === "function" ? content(reference) : content;
+    popper.innerHTML = `<div class="content"></div><div class="arrow"></div>`;
+    const contentEl = popper.querySelector(".content");
+    const actualContent = typeof content === "function" ? content(mainReference) : content;
     if (actualContent instanceof Node) {
       contentEl.appendChild(actualContent);
-    } else {
+    } else if (allowHTML) {
       contentEl.innerHTML = actualContent;
+    } else {
+      contentEl.textContent = actualContent;
     }
     appendTo.appendChild(popper);
     activeInstance = hide;
-    updatePosition();
-    if (onShow) onShow({ reference, popper, hide, eventType });
+    cleanup = autoUpdate(mainReference, popper, updatePosition);
+    requestAnimationFrame(() => {
+      if (popper) popper.classList.add("visible");
+    });
+    if (onShow) onShow({ reference: mainReference, popper, hide, eventType });
   };
-  reference.addEventListener("mouseenter", () => !popper && show("mouseenter"));
-  reference.addEventListener("mouseleave", () => {
-    if (!popper || popper.getAttribute("data-trigger") === "click") return;
-    if (interactive) {
-      setTimeout(() => {
-        if (!popper?.matches(":hover") && !reference.matches(":hover")) hide();
-      }, 100);
-    } else hide();
-  });
-  reference.addEventListener("click", (e) => {
-    e.stopPropagation();
-    if (popper && popper.getAttribute("data-trigger") === "click") {
-      hide();
-    } else {
-      if (!popper) show("click");
-      popper.setAttribute("data-trigger", "click");
+  targets.forEach((target) => {
+    target.addEventListener("mouseenter", () => !popper && show("mouseenter"));
+    target.addEventListener("mouseleave", () => {
+      const isPersistent = clickTrigger && popper?.getAttribute("data-trigger") === "click";
+      if (!popper || isPersistent) return;
+      if (interactive) {
+        setTimeout(() => {
+          const isOverAnyTarget = targets.some((t) => t.matches(":hover"));
+          if (!popper?.matches(":hover") && !isOverAnyTarget) {
+            hide();
+          }
+        }, 100);
+      } else {
+        hide();
+      }
+    });
+    if (clickTrigger) {
+      target.addEventListener("click", (e) => {
+        e.stopPropagation();
+        if (popper && popper.getAttribute("data-trigger") === "click") {
+          hide();
+        } else {
+          if (!popper) show("click");
+          popper.setAttribute("data-trigger", "click");
+        }
+      });
     }
   });
   return { show, hide, popper: () => popper };
@@ -5334,16 +5506,6 @@ class AnnotationTooltips extends HTMLElement {
           closeBtn?.addEventListener("click", handleClose);
           const esc = (e) => e.key === "Escape" && handleClose();
           document.addEventListener("keydown", esc, { once: true });
-          if (!popper.hasAttribute("contrast-tools-initialized") && issueObject?.contrastDetails) {
-            const container = popper.querySelector("[data-sa11y-contrast-details]");
-            if (container) {
-              container.appendChild(generateContrastTools(issueObject.contrastDetails));
-              initializeContrastTools(popper, issueObject.contrastDetails);
-              const suggestion = generateColorSuggestion(issueObject.contrastDetails);
-              if (suggestion) container.appendChild(suggestion);
-              popper.setAttribute("contrast-tools-initialized", "true");
-            }
-          }
           if (eventType === "click") {
             requestAnimationFrame(() => {
               closeBtn?.focus();
@@ -5368,7 +5530,10 @@ class PanelTooltips extends HTMLElement {
       appendTo: shadowRoot,
       offset: 8,
       theme: "sa11y-theme sa11y-panel",
-      placement: "top"
+      placement: "top",
+      clickTrigger: false,
+      allowHTML: true
+      // Safe: No user supplied content here.
     };
     const shortcut = navigator.userAgent.includes("Mac") ? "Option + S" : "Alt + S";
     setupFloatingUI(Constants.Panel.skipButton, {
@@ -5379,16 +5544,20 @@ class PanelTooltips extends HTMLElement {
       ...baseOptions,
       content: () => Lang.sprintf("PANEL_DISMISS_BUTTON", State.counts.dismissed)
     });
-    const plugins = [
-      { key: "developerPlugin", item: Constants.Panel.developerItem, lang: "DEVELOPER_DESC" },
-      { key: "readabilityPlugin", item: Constants.Panel.readabilityItem, lang: "READABILITY_DESC" }
-    ];
-    plugins.forEach((p) => {
-      if (State.option[p.key]) {
-        const icon = p.item?.querySelector(".info-icon");
-        if (icon) setupFloatingUI(icon, { ...baseOptions, content: Lang._(p.lang) });
-      }
-    });
+    const devIcon = Constants.Panel.developerItem?.querySelector(".info-icon");
+    if (State.option.developerPlugin && devIcon) {
+      this.devTooltip = setupFloatingUI([devIcon, Constants.Panel.developerItem], {
+        ...baseOptions,
+        content: Lang._("DEVELOPER_DESC")
+      });
+    }
+    const readIcon = Constants.Panel.readabilityItem?.querySelector(".info-icon");
+    if (State.option.readabilityPlugin && readIcon) {
+      this.readTooltip = setupFloatingUI([readIcon, Constants.Panel.readabilityItem], {
+        ...baseOptions,
+        content: Lang._("READABILITY_DESC")
+      });
+    }
   }
 }
 const STORAGE_KEY = "sa11y-lang-detection";
@@ -6732,6 +6901,88 @@ function checkLinkText() {
         }
       }
     }
+    const hasExtension = $el.matches(Constants.Global.documentSources);
+    const hasPDF = $el.matches('a[href$=".pdf"], a[href*=".pdf?"]');
+    if (State.option.checks.QA_DOCUMENT && hasExtension) {
+      State.results.push({
+        test: "QA_DOCUMENT",
+        element: $el,
+        type: State.option.checks.QA_DOCUMENT.type || "warning",
+        content: Lang.sprintf(State.option.checks.QA_DOCUMENT.content || "QA_DOCUMENT", linkText),
+        args: [linkText],
+        inline: true,
+        dismiss: prepareDismissal(`QA_DOCUMENT ${href}`),
+        dismissAll: State.option.checks.QA_DOCUMENT.dismissAll ? "QA_DOCUMENT" : false,
+        developer: State.option.checks.QA_DOCUMENT.developer || false
+      });
+    } else if (State.option.checks.QA_PDF && hasPDF) {
+      State.results.push({
+        test: "QA_PDF",
+        element: $el,
+        type: State.option.checks.QA_PDF.type || "warning",
+        content: Lang.sprintf(State.option.checks.QA_PDF.content || "QA_PDF", linkText),
+        args: [linkText],
+        inline: true,
+        dismiss: prepareDismissal(`QA_PDF ${href}`),
+        dismissAll: State.option.checks.QA_PDF.dismissAll ? "QA_PDF" : false,
+        developer: State.option.checks.QA_PDF.developer || false
+      });
+    }
+    if (State.option.checks.QA_IN_PAGE_LINK || State.option.checks.LINK_MAYBE_BUTTON) {
+      const hasText = getText($el).length !== 0;
+      const ignored = ariaHidden && negativeTabindex;
+      const hasAttributes = $el.hasAttribute("role") || $el.hasAttribute("aria-haspopup") || $el.hasAttribute("aria-expanded") || $el.hasAttribute("onclick") || $el.hasAttribute("disabled") || !!getCachedClosest($el, 'nav, [role="navigation"]');
+      const hrefValue = $el.getAttribute("href");
+      if ((!hrefValue || hrefValue.startsWith("#")) && hasText && !ignored && !hasAttributes) {
+        const targetId = hrefValue.substring(1);
+        const ariaControls = $el.getAttribute("aria-controls");
+        const decoded = targetId ? decodeURIComponent(targetId) : "";
+        const encoded = targetId ? encodeURIComponent(targetId) : "";
+        const targetElement = targetId && (document.getElementById(targetId) || ariaControls && document.getElementById(ariaControls) || decoded !== targetId && document.getElementById(decoded) || encoded !== targetId && document.getElementById(encoded) || document.querySelector(`a[name="${CSS.escape(targetId)}"]`));
+        if (!targetElement) {
+          let isFauxButton = false;
+          if (State.option.checks.LINK_MAYBE_BUTTON) {
+            const keywords = Lang._("POTENTIAL_UI_ELEMENTS");
+            const matchedKeyword = keywords.find((word) => accName.toLowerCase().includes(word));
+            if (matchedKeyword && accName.length <= 15) {
+              isFauxButton = true;
+              State.results.push({
+                test: "LINK_MAYBE_BUTTON",
+                element: $el,
+                type: State.option.checks.LINK_MAYBE_BUTTON.type || "error",
+                content: Lang.sprintf(
+                  State.option.checks.LINK_MAYBE_BUTTON.content || "LINK_MAYBE_BUTTON",
+                  matchedKeyword,
+                  accName
+                ),
+                args: [matchedKeyword, accName],
+                inline: true,
+                dismiss: prepareDismissal(`LINK_MAYBE_BUTTON_${matchedKeyword}`),
+                dismissAll: State.option.checks.LINK_MAYBE_BUTTON.dismissAll ? "LINK_MAYBE_BUTTON" : false,
+                developer: State.option.checks.LINK_MAYBE_BUTTON.developer || true
+              });
+            }
+          }
+          if (State.option.checks.QA_IN_PAGE_LINK && !isFauxButton) {
+            State.results.push({
+              test: "QA_IN_PAGE_LINK",
+              element: $el,
+              type: State.option.checks.QA_IN_PAGE_LINK.type || "error",
+              content: Lang.sprintf(
+                State.option.checks.QA_IN_PAGE_LINK.content || "QA_IN_PAGE_LINK",
+                targetId,
+                accName
+              ),
+              args: [targetId, accName],
+              inline: true,
+              dismiss: prepareDismissal(`QA_IN_PAGE_LINK ${href}`),
+              dismissAll: State.option.checks.QA_IN_PAGE_LINK.dismissAll ? "QA_IN_PAGE_LINK" : false,
+              developer: State.option.checks.QA_IN_PAGE_LINK.developer || false
+            });
+          }
+        }
+      }
+    }
   });
 }
 function checkContrast() {
@@ -7574,95 +7825,6 @@ function checkQA() {
       }
     });
   }
-  Elements.Found.Links.forEach(($el) => {
-    if ($el.hasAttribute("href")) {
-      const href = $el.getAttribute("href");
-      const accName = removeWhitespace(
-        computeAccessibleName($el, Constants.Exclusions.LinkSpan)
-      );
-      const hasExtension = $el.matches(Constants.Global.documentSources);
-      const hasPDF = $el.matches('a[href$=".pdf"], a[href*=".pdf?"]');
-      if (State.option.checks.QA_IN_PAGE_LINK || State.option.checks.LINK_MAYBE_BUTTON) {
-        const hasText = getText($el).length !== 0;
-        const ignored = $el.ariaHidden === "true" && $el.getAttribute("tabindex") === "-1";
-        const hasAttributes = $el.hasAttribute("role") || $el.hasAttribute("aria-haspopup") || $el.hasAttribute("aria-expanded") || $el.hasAttribute("onclick") || $el.hasAttribute("disabled") || !!getCachedClosest($el, 'nav, [role="navigation"]');
-        if ((href.startsWith("#") || href === "") && hasText && !ignored && !hasAttributes) {
-          const targetId = href.substring(1);
-          const ariaControls = $el.getAttribute("aria-controls");
-          const decoded = targetId ? decodeURIComponent(targetId) : "";
-          const encoded = targetId ? encodeURIComponent(targetId) : "";
-          const targetElement = targetId && (document.getElementById(targetId) || ariaControls && document.getElementById(ariaControls) || decoded !== targetId && document.getElementById(decoded) || encoded !== targetId && document.getElementById(encoded) || document.querySelector(`a[name="${CSS.escape(targetId)}"]`));
-          if (!targetElement) {
-            let isFauxButton = false;
-            if (State.option.checks.LINK_MAYBE_BUTTON) {
-              const keywords = Lang._("POTENTIAL_UI_ELEMENTS");
-              const matchedKeyword = keywords.find((word) => accName.toLowerCase().includes(word));
-              if (matchedKeyword && accName.length <= 15) {
-                isFauxButton = true;
-                State.results.push({
-                  test: "LINK_MAYBE_BUTTON",
-                  element: $el,
-                  type: State.option.checks.LINK_MAYBE_BUTTON.type || "error",
-                  content: Lang.sprintf(
-                    State.option.checks.LINK_MAYBE_BUTTON.content || "LINK_MAYBE_BUTTON",
-                    matchedKeyword,
-                    accName
-                  ),
-                  args: [matchedKeyword, accName],
-                  inline: true,
-                  dismiss: prepareDismissal(`LINK_MAYBE_BUTTON_${matchedKeyword}`),
-                  dismissAll: State.option.checks.LINK_MAYBE_BUTTON.dismissAll ? "LINK_MAYBE_BUTTON" : false,
-                  developer: State.option.checks.LINK_MAYBE_BUTTON.developer || true
-                });
-              }
-            }
-            if (State.option.checks.QA_IN_PAGE_LINK && !isFauxButton) {
-              State.results.push({
-                test: "QA_IN_PAGE_LINK",
-                element: $el,
-                type: State.option.checks.QA_IN_PAGE_LINK.type || "error",
-                content: Lang.sprintf(
-                  State.option.checks.QA_IN_PAGE_LINK.content || "QA_IN_PAGE_LINK",
-                  targetId,
-                  accName
-                ),
-                args: [targetId, accName],
-                inline: true,
-                dismiss: prepareDismissal(`QA_IN_PAGE_LINK ${href}`),
-                dismissAll: State.option.checks.QA_IN_PAGE_LINK.dismissAll ? "QA_IN_PAGE_LINK" : false,
-                developer: State.option.checks.QA_IN_PAGE_LINK.developer || false
-              });
-            }
-          }
-        }
-      }
-      if (State.option.checks.QA_DOCUMENT && hasExtension) {
-        State.results.push({
-          test: "QA_DOCUMENT",
-          element: $el,
-          type: State.option.checks.QA_DOCUMENT.type || "warning",
-          content: Lang.sprintf(State.option.checks.QA_DOCUMENT.content || "QA_DOCUMENT", accName),
-          args: [accName],
-          inline: true,
-          dismiss: prepareDismissal(`QA_DOCUMENT ${href}`),
-          dismissAll: State.option.checks.QA_DOCUMENT.dismissAll ? "QA_DOCUMENT" : false,
-          developer: State.option.checks.QA_DOCUMENT.developer || false
-        });
-      } else if (State.option.checks.QA_PDF && hasPDF) {
-        State.results.push({
-          test: "QA_PDF",
-          element: $el,
-          type: State.option.checks.QA_PDF.type || "warning",
-          content: Lang.sprintf(State.option.checks.QA_PDF.content || "QA_PDF", accName),
-          args: [accName],
-          inline: true,
-          dismiss: prepareDismissal(`QA_PDF ${href}`),
-          dismissAll: State.option.checks.QA_PDF.dismissAll ? "QA_PDF" : false,
-          developer: State.option.checks.QA_PDF.developer || false
-        });
-      }
-    }
-  });
   if (State.option.checks.QA_BLOCKQUOTE) {
     Elements.Found.Blockquotes.forEach(($el) => {
       const text = getText($el);

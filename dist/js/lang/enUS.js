@@ -310,7 +310,9 @@ const enUS = {
       "unmute",
       "fullscreen",
       "minimize",
-      "maximize"
+      "maximize",
+      "slide",
+      "modal"
     ],
     // Tables
     TABLES_MISSING_HEADINGS: 'Missing table headers! Accessible tables need HTML markup that indicates header cells and data cells which defines their relationship. This information provides context to people who use assistive technology. Tables should be used for tabular data only. <hr> Learn more about <a href="https://www.w3.org/WAI/tutorials/tables/">accessible tables.</a>',

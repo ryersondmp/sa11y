@@ -42,7 +42,6 @@ div {
 
 /* High contrast mode. */
 @media (forced-colors: active) {
-
   [role="dialog"],
   [role="tooltip"] {
     border: 2px solid transparent;
@@ -69,19 +68,19 @@ div {
 }
 
 /* Placement-specific adjustments */
-[data-placement^="top"]>.arrow {
+[data-placement^="top"] > .arrow {
   bottom: -4px;
 }
 
-[data-placement^="bottom"]>.arrow {
+[data-placement^="bottom"] > .arrow {
   top: -4px;
 }
 
-[data-placement^="left"]>.arrow {
+[data-placement^="left"] > .arrow {
   right: -4px;
 }
 
-[data-placement^="right"]>.arrow {
+[data-placement^="right"] > .arrow {
   left: -4px;
 }
 
@@ -340,7 +339,6 @@ div {
   }
 
   @media (forced-colors: active) {
-
     &[data-placement^="top"] .arrow::before,
     &[data-placement^="bottom"] .arrow::before,
     &[data-placement^="left"] .arrow::before,
@@ -357,7 +355,6 @@ div {
 /* Tooltip focus styles */
 /* A) Default styles */
 .sa11y-theme {
-
   a:focus,
   input:focus,
   button:focus,
@@ -370,7 +367,6 @@ div {
 
 /* B) Remove default focus styles for mouse users ONLY if :focus-visible is supported. */
 .sa11y-theme {
-
   input:focus:not(:focus-visible),
   a:focus:not(:focus-visible),
   button:focus:not(:focus-visible),
@@ -382,7 +378,6 @@ div {
 
 /* C) :focus-visible supported */
 .sa11y-theme {
-
   a:focus-visible,
   button:focus-visible,
   input:focus-visible,
@@ -395,7 +390,6 @@ div {
 /* High contrast focus styles */
 @media screen and (forced-colors: active) {
   .sa11y-theme {
-
     .error-icon,
     .link-icon,
     .hidden-icon {
