@@ -5,120 +5,78 @@ import { State } from '../core/state';
 
 const Elements = (function myElements() {
   const Found = {};
-  function initializeElements() {
-    // Since 4.0.0: For performance, we filter elements instead of dozens of querySelectors on the DOM.
-    Found.Everything = find('*', 'root', Constants.Exclusions.Sa11yElements);
 
-    Found.Contrast = Found.Everything.filter(($el) => {
-      const matchesSelector = Constants.Exclusions.Contrast.some((exclusion) =>
-        $el.matches(exclusion),
-      );
-      return !matchesSelector && !Constants.Exclusions.Contrast.includes($el);
-    });
+  // ── Contrast exclusion tiers (built once per initializeElements call) ──
 
-    Found.Images = Found.Everything.filter(
-      ($el) =>
-        $el.tagName === 'IMG' &&
-        !Constants.Exclusions.Images.some((selector) => $el.matches(selector)),
-    );
+  // Tier 1: tags to skip entirely (O(1) Set lookup)
+  const contrastExcludedTags = new Set([
+    'AUDIO', 'VIDEO', 'IFRAME', 'SVG', 'SCRIPT', 'STYLE', 'NOSCRIPT',
+    'TEMPLATE', 'HEAD', 'TITLE', 'META', 'BASE', 'DATALIST', 'PROGRESS',
+    'METER', 'LINK', 'HR', 'OPTION',
+  ]);
 
-    Found.Links = Found.Everything.filter(
-      ($el) =>
-        ($el.tagName === 'A' || $el.tagName === 'a') &&
-        $el.hasAttribute('href') &&
-        !$el.matches('[role="button"]') && // Exclude links with [role="button"]
-        !Constants.Exclusions.Links.some((selector) => $el.matches(selector)),
-    );
+  // Tier 2: ancestor selector for `tag *` patterns (one .closest() call)
+  const contrastAncestorSelector = 'audio,video,meter,progress,datalist,head,svg';
 
-    // We want headings from the entire document for the Page Outline.
-    Found.Headings = find(
-      'h1, h2, h3, h4, h5, h6, [role="heading"][aria-level]',
-      State.option.ignoreContentOutsideRoots || State.option.fixedRoots ? 'root' : 'document',
-      Constants.Exclusions.Headings,
-    );
-    Found.HeadingOne = find(
-      'h1, [role="heading"][aria-level="1"]',
-      State.option.ignoreContentOutsideRoots || State.option.fixedRoots ? 'root' : 'document',
-      Constants.Exclusions.Headings,
-    );
+  // Tier 3: attribute/complex selectors — built dynamically per init
+  let contrastAttrSelector = '';
 
-    Found.HeadingOverrideStart = new WeakMap();
-    Found.HeadingOverrideEnd = new WeakMap();
-    if (State.option.initialHeadingLevel) {
-      State.option.initialHeadingLevel.forEach((section) => {
-        const headingsInSection = find(
-          `${section.selector} :is(h1,h2,h3,h4,h5,h6,[aria-role=heading][aria-level])`,
-          State.option.ignoreContentOutsideRoots || State.option.fixedRoots ? 'root' : 'document',
-          Constants.Exclusions.Headings,
-        );
-        if (headingsInSection.length > 0) {
-          Found.HeadingOverrideStart.set(headingsInSection[0], section.previousHeading);
-          Found.HeadingOverrideEnd.set(headingsInSection.pop(), section.previousHeading);
-        }
-      });
+  function buildContrastAttrSelector() {
+    const base = ['input[type="color"]', 'input[type="range"]'];
+    if (State.option.contrastIgnore) {
+      const userSelectors = State.option.contrastIgnore
+        .split(',')
+        .map((s) => s.trim())
+        .flatMap((s) => [s, `${s} *`]);
+      base.push(...userSelectors);
     }
+    contrastAttrSelector = base.join(',');
+  }
 
-    // Excluded via headerIgnore.
-    Found.ExcludedHeadings = Found.Headings.filter((heading) =>
-      Constants.Exclusions.Headings.some((exclusion) => heading.matches(exclusion)),
-    );
+  // ── Lazy getters for expensive computations ──
 
-    // Excluded via outlineIgnore.
-    Found.ExcludedOutlineHeadings = Found.Headings.filter((heading) =>
-      Constants.Exclusions.Outline.some((exclusion) => heading.matches(exclusion)),
-    );
+  let _pageTextComputed = false;
+  let _pageTextValue = null;
+  let _readabilityComputed = false;
+  let _readabilityValue = null;
 
-    // Merge both headerIgnore and outlineIgnore.
-    Found.OutlineIgnore = Elements.Found.ExcludedOutlineHeadings.concat(
-      Elements.Found.ExcludedHeadings,
-    );
+  Object.defineProperty(Found, 'pageText', {
+    get() {
+      if (!_pageTextComputed) {
+        _pageTextValue = computePageText();
+        _pageTextComputed = true;
+      }
+      return _pageTextValue;
+    },
+    set(val) {
+      _pageTextValue = val;
+      _pageTextComputed = true;
+    },
+    configurable: true,
+    enumerable: true,
+  });
 
-    // Quality assurance module.
-    Found.Paragraphs = Found.Everything.filter(
-      ($el) =>
-        $el.tagName === 'P' &&
-        !Constants.Exclusions.Paragraphs.some((selector) => $el.matches(selector)),
-    );
+  Object.defineProperty(Found, 'Readability', {
+    get() {
+      if (!_readabilityComputed) {
+        _readabilityValue = computeReadabilityText();
+        _readabilityComputed = true;
+      }
+      return _readabilityValue;
+    },
+    set(val) {
+      _readabilityValue = val;
+      _readabilityComputed = true;
+    },
+    configurable: true,
+    enumerable: true,
+  });
 
-    Found.Lists = Found.Everything.filter(($el) => $el.tagName === 'LI');
-
-    Found.Blockquotes = Found.Everything.filter(($el) => $el.tagName === 'BLOCKQUOTE');
-
-    Found.Tables = Found.Everything.filter(
-      ($el) =>
-        $el.tagName === 'TABLE' &&
-        !$el.matches('[role="presentation"]') &&
-        !$el.matches('[role="none"]'),
-    );
-
-    Found.StrongItalics = Found.Everything.filter(($el) => ['STRONG', 'EM'].includes($el.tagName));
-
-    Found.Subscripts = Found.Everything.filter(($el) => ['SUP', 'SUB'].includes($el.tagName));
-
-    const badLinkSources = State.option.checks.QA_BAD_LINK.sources;
-    Found.CustomErrorLinks = badLinkSources.length
-      ? Found.Links.filter(($el) =>
-          badLinkSources.split(',').some((selector) => $el.matches(selector.trim())),
-        )
-      : [];
-
-    // Readability.
-    const readabilityExclusions = ($el) =>
-      Constants.Root.Readability.some((rootEl) => rootEl.contains($el)) &&
-      !Constants.Exclusions.Readability.some((selector) => $el.matches(selector));
-
-    Found.Readability = [
-      ...Found.Paragraphs.filter(readabilityExclusions),
-      ...Found.Lists.filter(readabilityExclusions),
-    ]
-      .map(($el) => Utils.getText(Utils.fnIgnore($el)))
-      .filter(Boolean);
-
-    // For language detection.
+  function computePageText() {
     const elementSet = new Set(Found.Everything);
-    Found.pageText = Found.Everything.filter(($el) => {
+    return Found.Everything.filter(($el) => {
       if ($el instanceof HTMLImageElement) return true;
-      // Prevent duplication
+      // Prevent duplication: skip if any ancestor is also in the set.
       let parent = $el.parentElement;
       while (parent) {
         if (elementSet.has(parent)) return false;
@@ -136,61 +94,311 @@ const Elements = (function myElements() {
             .map((n) => n.textContent)
             .join(' ');
         } else {
-          // We want to exclude all elements with a 'lang' attribute when we do the initial language confidence check.
+          // Exclude elements with a 'lang' attribute for initial language confidence check.
           const clone = $el.cloneNode(true);
           if (clone.querySelectorAll) {
             const nestedLangNodes = clone.querySelectorAll('[lang]');
             for (const node of nestedLangNodes) node.remove();
           }
-
           text = Utils.getText(Utils.fnIgnore(clone));
         }
         return Utils.normalizeString(text);
       })
       .filter(Boolean);
+  }
 
-    // Developer checks.
-    const nestedSources =
-      State.option.checks.QA_NESTED_COMPONENTS.sources || '[role="tablist"], details';
-    Found.NestedComponents = nestedSources
-      ? Found.Everything.filter(($el) => $el.matches(nestedSources))
+  function computeReadabilityText() {
+    const readabilityExclusions = ($el) =>
+      Constants.Root.Readability.some((rootEl) => rootEl.contains($el)) &&
+      !Constants.Exclusions.Readability.some((selector) => $el.matches(selector));
+
+    return [
+      ...Found.Paragraphs.filter(readabilityExclusions),
+      ...Found.Lists.filter(readabilityExclusions),
+    ]
+      .map(($el) => Utils.getText(Utils.fnIgnore($el)))
+      .filter(Boolean);
+  }
+
+  // ── Main initialization ──────────────────────────────────────────
+
+  function initializeElements() {
+    // Reset lazy caches.
+    _pageTextComputed = false;
+    _pageTextValue = null;
+    _readabilityComputed = false;
+    _readabilityValue = null;
+
+    // Build dynamic Contrast attribute selector for this run.
+    buildContrastAttrSelector();
+
+    // Pre-split badLinkSources (currently splits per-element inside filter).
+    const badLinkSourcesRaw = State.option.checks.QA_BAD_LINK.sources;
+    const badLinkSelectors = badLinkSourcesRaw.length
+      ? badLinkSourcesRaw.split(',').map((s) => s.trim())
       : [];
 
-    Found.TabIndex = Found.Everything.filter(
+    const nestedSources =
+      State.option.checks.QA_NESTED_COMPONENTS.sources || '[role="tablist"], details';
+
+    // Single DOM query for all elements.
+    Found.Everything = find('*', 'root', Constants.Exclusions.Sa11yElements);
+
+    // ── Single-pass classification ──
+    // Instead of 16+ separate .filter() passes, classify in one loop.
+    Found.Images = [];
+    Found.Links = [];
+    Found.Paragraphs = [];
+    Found.Lists = [];
+    Found.Blockquotes = [];
+    Found.Tables = [];
+    Found.StrongItalics = [];
+    Found.Subscripts = [];
+    Found.Buttons = [];
+    Found.Inputs = [];
+    Found.Labels = [];
+    Found.iframes = [];
+    Found.Svg = [];
+    Found.Contrast = [];
+    Found.TabIndex = [];
+    Found.NestedComponents = [];
+    Found.CustomErrorLinks = [];
+
+    for (let i = 0; i < Found.Everything.length; i++) {
+      const $el = Found.Everything[i];
+      const tag = $el.tagName;
+
+      // tagName-based classification
+      switch (tag) {
+        case 'IMG':
+          if (!Constants.Exclusions.Images.some((s) => $el.matches(s)))
+            Found.Images.push($el);
+          break;
+        case 'A': // HTML anchor
+        case 'a': // SVG anchor (lowercase in SVG namespace)
+          if (
+            $el.hasAttribute('href') &&
+            !$el.matches('[role="button"]') &&
+            !Constants.Exclusions.Links.some((s) => $el.matches(s))
+          ) {
+            Found.Links.push($el);
+            // Check custom error link sources while we have the link.
+            if (
+              badLinkSelectors.length > 0 &&
+              badLinkSelectors.some((s) => $el.matches(s))
+            ) {
+              Found.CustomErrorLinks.push($el);
+            }
+          }
+          break;
+        case 'P':
+          if (!Constants.Exclusions.Paragraphs.some((s) => $el.matches(s)))
+            Found.Paragraphs.push($el);
+          break;
+        case 'LI':
+          Found.Lists.push($el);
+          break;
+        case 'BLOCKQUOTE':
+          Found.Blockquotes.push($el);
+          break;
+        case 'TABLE':
+          if (!$el.matches('[role="presentation"],[role="none"]'))
+            Found.Tables.push($el);
+          break;
+        case 'STRONG':
+        case 'EM':
+          Found.StrongItalics.push($el);
+          break;
+        case 'SUP':
+        case 'SUB':
+          Found.Subscripts.push($el);
+          break;
+        case 'BUTTON':
+          Found.Buttons.push($el);
+          break;
+        case 'INPUT':
+        case 'SELECT':
+        case 'TEXTAREA':
+        case 'METER':
+        case 'PROGRESS':
+          Found.Inputs.push($el);
+          break;
+        case 'LABEL':
+          Found.Labels.push($el);
+          break;
+        case 'IFRAME':
+        case 'AUDIO':
+        case 'VIDEO':
+          Found.iframes.push($el);
+          break;
+        case 'svg':
+          Found.Svg.push($el);
+          break;
+      }
+
+      // Cross-cutting: [role="button"] on non-BUTTON elements
+      if (tag !== 'BUTTON' && $el.matches('[role="button"]'))
+        Found.Buttons.push($el);
+
+      // Cross-cutting: tabindex
+      if ($el.hasAttribute('tabindex')) {
+        const ti = $el.getAttribute('tabindex');
+        if (ti !== '0' && !ti.startsWith('-'))
+          Found.TabIndex.push($el);
+      }
+
+      // Cross-cutting: NestedComponents
+      if (nestedSources && $el.matches(nestedSources))
+        Found.NestedComponents.push($el);
+
+      // Cross-cutting: Contrast (tiered exclusion)
+      // Original code also had `!Constants.Exclusions.Contrast.includes($el)`
+      // which compared DOM elements against a string array (always false).
+      // If runtime element exclusion is needed, use a WeakSet<Element> instead.
+      if (!contrastExcludedTags.has(tag)) {
+        if (!$el.closest(contrastAncestorSelector)) {
+          if (!contrastAttrSelector || !$el.matches(contrastAttrSelector)) {
+            Found.Contrast.push($el);
+          }
+        }
+      }
+    }
+
+    // ── Headings (separate find — may use 'document' scope) ──
+    const headingScope =
+      State.option.ignoreContentOutsideRoots || State.option.fixedRoots ? 'root' : 'document';
+
+    Found.Headings = find(
+      'h1, h2, h3, h4, h5, h6, [role="heading"][aria-level]',
+      headingScope,
+      Constants.Exclusions.Headings,
+    );
+
+    // Derive HeadingOne from Headings instead of a separate DOM query.
+    Found.HeadingOne = Found.Headings.filter(
       ($el) =>
-        $el.hasAttribute('tabindex') &&
-        $el.getAttribute('tabindex') !== '0' &&
-        !$el.getAttribute('tabindex').startsWith('-'),
+        $el.tagName === 'H1' ||
+        ($el.matches('[role="heading"]') && $el.getAttribute('aria-level') === '1'),
     );
 
-    Found.Svg = Found.Everything.filter(($el) => $el.tagName === 'svg');
+    Found.HeadingOverrideStart = new WeakMap();
+    Found.HeadingOverrideEnd = new WeakMap();
+    if (State.option.initialHeadingLevel) {
+      State.option.initialHeadingLevel.forEach((section) => {
+        const headingsInSection = find(
+          `${section.selector} :is(h1,h2,h3,h4,h5,h6,[aria-role=heading][aria-level])`,
+          headingScope,
+          Constants.Exclusions.Headings,
+        );
+        if (headingsInSection.length > 0) {
+          Found.HeadingOverrideStart.set(headingsInSection[0], section.previousHeading);
+          Found.HeadingOverrideEnd.set(headingsInSection.pop(), section.previousHeading);
+        }
+      });
+    }
 
-    Found.Buttons = Found.Everything.filter(
-      ($el) => $el.tagName === 'BUTTON' || $el.matches('[role="button"]'),
-    );
+    // Single pass for heading exclusions (replaces 2 separate .filter() calls).
+    Found.ExcludedHeadings = [];
+    Found.ExcludedOutlineHeadings = [];
+    for (const heading of Found.Headings) {
+      if (Constants.Exclusions.Headings.some((ex) => heading.matches(ex)))
+        Found.ExcludedHeadings.push(heading);
+      if (Constants.Exclusions.Outline.some((ex) => heading.matches(ex)))
+        Found.ExcludedOutlineHeadings.push(heading);
+    }
+    Found.OutlineIgnore = Found.ExcludedOutlineHeadings.concat(Found.ExcludedHeadings);
 
-    Found.Inputs = Found.Everything.filter(($el) =>
-      ['INPUT', 'SELECT', 'TEXTAREA', 'METER', 'PROGRESS'].includes($el.tagName),
-    );
+    // ── iframes sub-classification (single pass, replaces 4 .filter() calls) ──
+    Found.Videos = [];
+    Found.Audio = [];
+    Found.Visualizations = [];
+    Found.EmbeddedContent = [];
+    for (const $el of Found.iframes) {
+      let matched = false;
+      if ($el.matches(Constants.Global.VideoSources)) {
+        Found.Videos.push($el);
+        matched = true;
+      }
+      if ($el.matches(Constants.Global.AudioSources)) {
+        Found.Audio.push($el);
+        matched = true;
+      }
+      if ($el.matches(Constants.Global.VisualizationSources)) {
+        Found.Visualizations.push($el);
+        matched = true;
+      }
+      if (!matched) {
+        Found.EmbeddedContent.push($el);
+      }
+    }
 
-    Found.Labels = Found.Everything.filter(($el) => $el.tagName === 'LABEL');
-
-    // iFrames.
-    Found.iframes = Found.Everything.filter(($el) =>
-      ['IFRAME', 'AUDIO', 'VIDEO'].includes($el.tagName),
-    );
-    Found.Videos = Found.iframes.filter(($el) => $el.matches(Constants.Global.VideoSources));
-    Found.Audio = Found.iframes.filter(($el) => $el.matches(Constants.Global.AudioSources));
-    Found.Visualizations = Found.iframes.filter(($el) =>
-      $el.matches(Constants.Global.VisualizationSources),
-    );
-    Found.EmbeddedContent = Found.iframes.filter(
-      ($el) => !$el.matches(Constants.Global.AllEmbeddedContent),
-    );
-
-    // Query select <HTML> given that the lang may change on an SPA.
+    // Query <html> for lang attribute (may change on SPA navigation).
     const html = document.querySelector('html');
     Found.Language = html.getAttribute('lang')?.trim();
+  }
+
+  // ── Filter-only initialization (used by split configuration) ──
+  // Computes only the subset of collections needed for the onlyForFilter
+  // path in buildElementList. Always uses 'root' heading scope (intentional —
+  // the filter path applies content-area-specific options).
+
+  function initializeFilterElements() {
+    buildContrastAttrSelector();
+
+    Found.Everything = find('*', 'root', Constants.Exclusions.Sa11yElements);
+
+    Found.Images = [];
+    Found.Links = [];
+    Found.Contrast = [];
+
+    for (let i = 0; i < Found.Everything.length; i++) {
+      const $el = Found.Everything[i];
+      const tag = $el.tagName;
+
+      switch (tag) {
+        case 'IMG':
+          if (!Constants.Exclusions.Images.some((s) => $el.matches(s)))
+            Found.Images.push($el);
+          break;
+        case 'A':
+        case 'a':
+          if (
+            $el.hasAttribute('href') &&
+            !$el.matches('[role="button"]') &&
+            !Constants.Exclusions.Links.some((s) => $el.matches(s))
+          ) {
+            Found.Links.push($el);
+          }
+          break;
+      }
+
+      // Contrast (same tiered exclusion as full init)
+      if (!contrastExcludedTags.has(tag)) {
+        if (!$el.closest(contrastAncestorSelector)) {
+          if (!contrastAttrSelector || !$el.matches(contrastAttrSelector)) {
+            Found.Contrast.push($el);
+          }
+        }
+      }
+    }
+
+    // Headings — always 'root' scope for filter path.
+    Found.Headings = find(
+      'h1, h2, h3, h4, h5, h6, [role="heading"][aria-level]',
+      'root',
+      Constants.Exclusions.Headings,
+    );
+
+    // Single-pass heading exclusions.
+    Found.ExcludedHeadings = [];
+    Found.ExcludedOutlineHeadings = [];
+    for (const heading of Found.Headings) {
+      if (Constants.Exclusions.Headings.some((ex) => heading.matches(ex)))
+        Found.ExcludedHeadings.push(heading);
+      if (Constants.Exclusions.Outline.some((ex) => heading.matches(ex)))
+        Found.ExcludedOutlineHeadings.push(heading);
+    }
+    Found.OutlineIgnore = Found.ExcludedOutlineHeadings.concat(Found.ExcludedHeadings);
   }
 
   /* ************* */
@@ -206,6 +414,7 @@ const Elements = (function myElements() {
 
   return {
     initializeElements,
+    initializeFilterElements,
     Found,
     initializeAnnotations,
     Annotations,
