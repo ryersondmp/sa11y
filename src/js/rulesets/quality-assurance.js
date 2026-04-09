@@ -1,8 +1,6 @@
-import Constants from '../utils/constants';
 import Elements from '../utils/elements';
 import Lang from '../utils/lang';
 import * as Utils from '../utils/utils';
-import { computeAccessibleName } from '../utils/computeAccessibleName';
 import { State } from '../core/state';
 
 export default function checkQA() {

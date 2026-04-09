@@ -13,10 +13,11 @@ const sa11y = new Sa11y({
   delayCheck: 500,
   videoContent: 'youtube.com, vimeo.com, yuja.com, panopto.com, torontomu.ca',
   headerIgnore: '.ignore-this-heading',
-  headerIgnoreStrings: /\(AnchorJS\)/gi,
-  contrastIgnore: '.card-footer *, #player *',
+  headerIgnoreSpan: '.headerIgnoreSpan',
+  headerIgnoreStrings: ['(Anchor)'],
+  contrastIgnore: '.card-footer *, #player *, .sr-only',
   containerIgnore: 'footer',
-  linkIgnoreStrings: ['(External link)', '(ignore me)'],
+  linkIgnoreStrings: ['(External link)', '(ignore me)', 'JKXLSKSK'],
   linkIgnoreSpan: '.sr-only-example, .link-purpose',
   detectSPArouting: true,
   headless: false,
@@ -31,6 +32,9 @@ const sa11y = new Sa11y({
     'This image has an empty alt attribute; its file name is',
     'Esta imagen tiene un atributo alt vacío; its file name is'
   ],
+  imageIgnore: '.ignore-img',
+  linkIgnore: '.ignore-link',
+  linkIgnoreSpan: '.ignore-span',
   extraPlaceholderStopWords: 'untitled',
   editImageURLofCMS: '../docs/examples/assets/',
   // showHinPageOutline: true,
@@ -41,7 +45,6 @@ const sa11y = new Sa11y({
   colourFilterPlugin: true,
   linksAdvancedPlugin: true,
   imageWithinLightbox: '.lightbox',
-
   shadowComponents: '',
   autoDetectShadowComponents: true,
   panelPosition: 'bottom-left', // invalid value, should default to right.

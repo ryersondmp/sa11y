@@ -6,21 +6,29 @@ import { State } from '../core/state';
 const Elements = (function myElements() {
   const Found = {};
 
-  // ── Contrast exclusion tiers (built once per initializeElements call) ──
-
-  // Tier 1: tags to skip entirely (O(1) Set lookup)
+  // Contrast exclusion tiers.
   const contrastExcludedTags = new Set([
-    'AUDIO', 'VIDEO', 'IFRAME', 'SVG', 'SCRIPT', 'STYLE', 'NOSCRIPT',
-    'TEMPLATE', 'HEAD', 'TITLE', 'META', 'BASE', 'DATALIST', 'PROGRESS',
-    'METER', 'LINK', 'HR', 'OPTION',
+    'AUDIO',
+    'VIDEO',
+    'IFRAME',
+    'SVG',
+    'SCRIPT',
+    'STYLE',
+    'NOSCRIPT',
+    'TEMPLATE',
+    'HEAD',
+    'TITLE',
+    'META',
+    'BASE',
+    'DATALIST',
+    'PROGRESS',
+    'METER',
+    'LINK',
+    'HR',
+    'OPTION',
   ]);
-
-  // Tier 2: ancestor selector for `tag *` patterns (one .closest() call)
   const contrastAncestorSelector = 'audio,video,meter,progress,datalist,head,svg';
-
-  // Tier 3: attribute/complex selectors — built dynamically per init
   let contrastAttrSelector = '';
-
   function buildContrastAttrSelector() {
     const base = ['input[type="color"]', 'input[type="range"]'];
     if (State.option.contrastIgnore) {
@@ -33,8 +41,7 @@ const Elements = (function myElements() {
     contrastAttrSelector = base.join(',');
   }
 
-  // ── Lazy getters for expensive computations ──
-
+  // Lazy getters for expensive computations:
   let _pageTextComputed = false;
   let _pageTextValue = null;
   let _readabilityComputed = false;
@@ -111,7 +118,6 @@ const Elements = (function myElements() {
     const readabilityExclusions = ($el) =>
       Constants.Root.Readability.some((rootEl) => rootEl.contains($el)) &&
       !Constants.Exclusions.Readability.some((selector) => $el.matches(selector));
-
     return [
       ...Found.Paragraphs.filter(readabilityExclusions),
       ...Found.Lists.filter(readabilityExclusions),
@@ -120,8 +126,7 @@ const Elements = (function myElements() {
       .filter(Boolean);
   }
 
-  // ── Main initialization ──────────────────────────────────────────
-
+  // Main initialization
   function initializeElements() {
     // Reset lazy caches.
     _pageTextComputed = false;
@@ -132,7 +137,7 @@ const Elements = (function myElements() {
     // Build dynamic Contrast attribute selector for this run.
     buildContrastAttrSelector();
 
-    // Pre-split badLinkSources (currently splits per-element inside filter).
+    // Pre-split QA bad link sources.
     const badLinkSourcesRaw = State.option.checks.QA_BAD_LINK.sources;
     const badLinkSelectors = badLinkSourcesRaw.length
       ? badLinkSourcesRaw.split(',').map((s) => s.trim())
@@ -144,8 +149,7 @@ const Elements = (function myElements() {
     // Single DOM query for all elements.
     Found.Everything = find('*', 'root', Constants.Exclusions.Sa11yElements);
 
-    // ── Single-pass classification ──
-    // Instead of 16+ separate .filter() passes, classify in one loop.
+    // Initialize arrays.
     Found.Images = [];
     Found.Links = [];
     Found.Paragraphs = [];
@@ -164,15 +168,13 @@ const Elements = (function myElements() {
     Found.NestedComponents = [];
     Found.CustomErrorLinks = [];
 
+    // Iterate on Found.Everything based on tag name.
     for (let i = 0; i < Found.Everything.length; i++) {
       const $el = Found.Everything[i];
       const tag = $el.tagName;
-
-      // tagName-based classification
       switch (tag) {
         case 'IMG':
-          if (!Constants.Exclusions.Images.some((s) => $el.matches(s)))
-            Found.Images.push($el);
+          if (!Constants.Exclusions.Images.some((s) => $el.matches(s))) Found.Images.push($el);
           break;
         case 'A': // HTML anchor
         case 'a': // SVG anchor (lowercase in SVG namespace)
@@ -183,10 +185,7 @@ const Elements = (function myElements() {
           ) {
             Found.Links.push($el);
             // Check custom error link sources while we have the link.
-            if (
-              badLinkSelectors.length > 0 &&
-              badLinkSelectors.some((s) => $el.matches(s))
-            ) {
+            if (badLinkSelectors.length > 0 && badLinkSelectors.some((s) => $el.matches(s))) {
               Found.CustomErrorLinks.push($el);
             }
           }
@@ -202,8 +201,7 @@ const Elements = (function myElements() {
           Found.Blockquotes.push($el);
           break;
         case 'TABLE':
-          if (!$el.matches('[role="presentation"],[role="none"]'))
-            Found.Tables.push($el);
+          if (!$el.matches('[role="presentation"],[role="none"]')) Found.Tables.push($el);
           break;
         case 'STRONG':
         case 'EM':
@@ -237,26 +235,20 @@ const Elements = (function myElements() {
       }
 
       // Cross-cutting: [role="button"] on non-BUTTON elements
-      if (tag !== 'BUTTON' && $el.matches('[role="button"]'))
-        Found.Buttons.push($el);
+      if (tag !== 'BUTTON' && $el.matches('[role="button"]')) Found.Buttons.push($el);
 
       // Cross-cutting: tabindex
       if ($el.hasAttribute('tabindex')) {
         const ti = $el.getAttribute('tabindex');
-        if (ti !== '0' && !ti.startsWith('-'))
-          Found.TabIndex.push($el);
+        if (ti !== '0' && !ti.startsWith('-')) Found.TabIndex.push($el);
       }
 
-      // Cross-cutting: NestedComponents
-      if (nestedSources && $el.matches(nestedSources))
-        Found.NestedComponents.push($el);
+      // Cross-cutting: Nested components.
+      if (nestedSources && $el.matches(nestedSources)) Found.NestedComponents.push($el);
 
-      // Cross-cutting: Contrast (tiered exclusion)
-      // Original code also had `!Constants.Exclusions.Contrast.includes($el)`
-      // which compared DOM elements against a string array (always false).
-      // If runtime element exclusion is needed, use a WeakSet<Element> instead.
+      // Cross-cutting: Contrast (tiered exclusion).
       if (!contrastExcludedTags.has(tag)) {
-        if (!$el.closest(contrastAncestorSelector)) {
+        if (!Utils.getCachedClosest($el, contrastAncestorSelector)) {
           if (!contrastAttrSelector || !$el.matches(contrastAttrSelector)) {
             Found.Contrast.push($el);
           }
@@ -264,7 +256,7 @@ const Elements = (function myElements() {
       }
     }
 
-    // ── Headings (separate find — may use 'document' scope) ──
+    // Headings
     const headingScope =
       State.option.ignoreContentOutsideRoots || State.option.fixedRoots ? 'root' : 'document';
 
@@ -308,7 +300,7 @@ const Elements = (function myElements() {
     }
     Found.OutlineIgnore = Found.ExcludedOutlineHeadings.concat(Found.ExcludedHeadings);
 
-    // ── iframes sub-classification (single pass, replaces 4 .filter() calls) ──
+    // Embedded content.
     Found.Videos = [];
     Found.Audio = [];
     Found.Visualizations = [];
@@ -337,16 +329,10 @@ const Elements = (function myElements() {
     Found.Language = html.getAttribute('lang')?.trim();
   }
 
-  // ── Filter-only initialization (used by split configuration) ──
-  // Computes only the subset of collections needed for the onlyForFilter
-  // path in buildElementList. Always uses 'root' heading scope (intentional —
-  // the filter path applies content-area-specific options).
-
+  // Initialize.
   function initializeFilterElements() {
     buildContrastAttrSelector();
-
     Found.Everything = find('*', 'root', Constants.Exclusions.Sa11yElements);
-
     Found.Images = [];
     Found.Links = [];
     Found.Contrast = [];
@@ -357,8 +343,7 @@ const Elements = (function myElements() {
 
       switch (tag) {
         case 'IMG':
-          if (!Constants.Exclusions.Images.some((s) => $el.matches(s)))
-            Found.Images.push($el);
+          if (!Constants.Exclusions.Images.some((s) => $el.matches(s))) Found.Images.push($el);
           break;
         case 'A':
         case 'a':
@@ -374,7 +359,7 @@ const Elements = (function myElements() {
 
       // Contrast (same tiered exclusion as full init)
       if (!contrastExcludedTags.has(tag)) {
-        if (!$el.closest(contrastAncestorSelector)) {
+        if (!Utils.getCachedClosest($el, contrastAncestorSelector)) {
           if (!contrastAttrSelector || !$el.matches(contrastAttrSelector)) {
             Found.Contrast.push($el);
           }
@@ -382,7 +367,7 @@ const Elements = (function myElements() {
       }
     }
 
-    // Headings — always 'root' scope for filter path.
+    // Headings.
     Found.Headings = find(
       'h1, h2, h3, h4, h5, h6, [role="heading"][aria-level]',
       'root',

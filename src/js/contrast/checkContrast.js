@@ -351,9 +351,7 @@ export default function checkContrast() {
 
     // Annotation placement.
     const element =
-      $el.tagName === 'OPTION'
-        ? Utils.getCachedClosest($el, 'datalist, select, optgroup')
-        : $el;
+      $el.tagName === 'OPTION' ? Utils.getCachedClosest($el, 'datalist, select, optgroup') : $el;
 
     // Process text within element.
     const nodeText = Utils.fnIgnore(element, ['option:not(option:first-child)']);

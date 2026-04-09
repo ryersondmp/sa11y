@@ -642,7 +642,7 @@
       Exclusions.Contrast = [
         "link",
         "hr",
-        "State.option",
+        "option",
         "audio",
         "audio *",
         "video",
@@ -1535,78 +1535,75 @@
       });
     }
   }
-  const Elements = /* @__PURE__ */ (function myElements() {
+  const Elements = (function myElements() {
     const Found = {};
-    function initializeElements() {
-      Found.Everything = find("*", "root", Constants.Exclusions.Sa11yElements);
-      Found.Contrast = Found.Everything.filter(($el) => {
-        const matchesSelector = Constants.Exclusions.Contrast.some(
-          (exclusion) => $el.matches(exclusion)
-        );
-        return !matchesSelector && !Constants.Exclusions.Contrast.includes($el);
-      });
-      Found.Images = Found.Everything.filter(
-        ($el) => $el.tagName === "IMG" && !Constants.Exclusions.Images.some((selector) => $el.matches(selector))
-      );
-      Found.Links = Found.Everything.filter(
-        ($el) => ($el.tagName === "A" || $el.tagName === "a") && $el.hasAttribute("href") && !$el.matches('[role="button"]') && // Exclude links with [role="button"]
-        !Constants.Exclusions.Links.some((selector) => $el.matches(selector))
-      );
-      Found.Headings = find(
-        'h1, h2, h3, h4, h5, h6, [role="heading"][aria-level]',
-        State.option.ignoreContentOutsideRoots || State.option.fixedRoots ? "root" : "document",
-        Constants.Exclusions.Headings
-      );
-      Found.HeadingOne = find(
-        'h1, [role="heading"][aria-level="1"]',
-        State.option.ignoreContentOutsideRoots || State.option.fixedRoots ? "root" : "document",
-        Constants.Exclusions.Headings
-      );
-      Found.HeadingOverrideStart = /* @__PURE__ */ new WeakMap();
-      Found.HeadingOverrideEnd = /* @__PURE__ */ new WeakMap();
-      if (State.option.initialHeadingLevel) {
-        State.option.initialHeadingLevel.forEach((section) => {
-          const headingsInSection = find(
-            `${section.selector} :is(h1,h2,h3,h4,h5,h6,[aria-role=heading][aria-level])`,
-            State.option.ignoreContentOutsideRoots || State.option.fixedRoots ? "root" : "document",
-            Constants.Exclusions.Headings
-          );
-          if (headingsInSection.length > 0) {
-            Found.HeadingOverrideStart.set(headingsInSection[0], section.previousHeading);
-            Found.HeadingOverrideEnd.set(headingsInSection.pop(), section.previousHeading);
-          }
-        });
+    const contrastExcludedTags = /* @__PURE__ */ new Set([
+      "AUDIO",
+      "VIDEO",
+      "IFRAME",
+      "SVG",
+      "SCRIPT",
+      "STYLE",
+      "NOSCRIPT",
+      "TEMPLATE",
+      "HEAD",
+      "TITLE",
+      "META",
+      "BASE",
+      "DATALIST",
+      "PROGRESS",
+      "METER",
+      "LINK",
+      "HR",
+      "OPTION"
+    ]);
+    const contrastAncestorSelector = "audio,video,meter,progress,datalist,head,svg";
+    let contrastAttrSelector = "";
+    function buildContrastAttrSelector() {
+      const base = ['input[type="color"]', 'input[type="range"]'];
+      if (State.option.contrastIgnore) {
+        const userSelectors = State.option.contrastIgnore.split(",").map((s) => s.trim()).flatMap((s) => [s, `${s} *`]);
+        base.push(...userSelectors);
       }
-      Found.ExcludedHeadings = Found.Headings.filter(
-        (heading) => Constants.Exclusions.Headings.some((exclusion) => heading.matches(exclusion))
-      );
-      Found.ExcludedOutlineHeadings = Found.Headings.filter(
-        (heading) => Constants.Exclusions.Outline.some((exclusion) => heading.matches(exclusion))
-      );
-      Found.OutlineIgnore = Elements.Found.ExcludedOutlineHeadings.concat(
-        Elements.Found.ExcludedHeadings
-      );
-      Found.Paragraphs = Found.Everything.filter(
-        ($el) => $el.tagName === "P" && !Constants.Exclusions.Paragraphs.some((selector) => $el.matches(selector))
-      );
-      Found.Lists = Found.Everything.filter(($el) => $el.tagName === "LI");
-      Found.Blockquotes = Found.Everything.filter(($el) => $el.tagName === "BLOCKQUOTE");
-      Found.Tables = Found.Everything.filter(
-        ($el) => $el.tagName === "TABLE" && !$el.matches('[role="presentation"]') && !$el.matches('[role="none"]')
-      );
-      Found.StrongItalics = Found.Everything.filter(($el) => ["STRONG", "EM"].includes($el.tagName));
-      Found.Subscripts = Found.Everything.filter(($el) => ["SUP", "SUB"].includes($el.tagName));
-      const badLinkSources = State.option.checks.QA_BAD_LINK.sources;
-      Found.CustomErrorLinks = badLinkSources.length ? Found.Links.filter(
-        ($el) => badLinkSources.split(",").some((selector) => $el.matches(selector.trim()))
-      ) : [];
-      const readabilityExclusions = ($el) => Constants.Root.Readability.some((rootEl) => rootEl.contains($el)) && !Constants.Exclusions.Readability.some((selector) => $el.matches(selector));
-      Found.Readability = [
-        ...Found.Paragraphs.filter(readabilityExclusions),
-        ...Found.Lists.filter(readabilityExclusions)
-      ].map(($el) => getText(fnIgnore($el))).filter(Boolean);
+      contrastAttrSelector = base.join(",");
+    }
+    let _pageTextComputed = false;
+    let _pageTextValue = null;
+    let _readabilityComputed = false;
+    let _readabilityValue = null;
+    Object.defineProperty(Found, "pageText", {
+      get() {
+        if (!_pageTextComputed) {
+          _pageTextValue = computePageText();
+          _pageTextComputed = true;
+        }
+        return _pageTextValue;
+      },
+      set(val) {
+        _pageTextValue = val;
+        _pageTextComputed = true;
+      },
+      configurable: true,
+      enumerable: true
+    });
+    Object.defineProperty(Found, "Readability", {
+      get() {
+        if (!_readabilityComputed) {
+          _readabilityValue = computeReadabilityText();
+          _readabilityComputed = true;
+        }
+        return _readabilityValue;
+      },
+      set(val) {
+        _readabilityValue = val;
+        _readabilityComputed = true;
+      },
+      configurable: true,
+      enumerable: true
+    });
+    function computePageText() {
       const elementSet = new Set(Found.Everything);
-      Found.pageText = Found.Everything.filter(($el) => {
+      return Found.Everything.filter(($el) => {
         if ($el instanceof HTMLImageElement) return true;
         let parent = $el.parentElement;
         while (parent) {
@@ -1630,32 +1627,215 @@
         }
         return normalizeString(text);
       }).filter(Boolean);
+    }
+    function computeReadabilityText() {
+      const readabilityExclusions = ($el) => Constants.Root.Readability.some((rootEl) => rootEl.contains($el)) && !Constants.Exclusions.Readability.some((selector) => $el.matches(selector));
+      return [
+        ...Found.Paragraphs.filter(readabilityExclusions),
+        ...Found.Lists.filter(readabilityExclusions)
+      ].map(($el) => getText(fnIgnore($el))).filter(Boolean);
+    }
+    function initializeElements() {
+      _pageTextComputed = false;
+      _pageTextValue = null;
+      _readabilityComputed = false;
+      _readabilityValue = null;
+      buildContrastAttrSelector();
+      const badLinkSourcesRaw = State.option.checks.QA_BAD_LINK.sources;
+      const badLinkSelectors = badLinkSourcesRaw.length ? badLinkSourcesRaw.split(",").map((s) => s.trim()) : [];
       const nestedSources = State.option.checks.QA_NESTED_COMPONENTS.sources || '[role="tablist"], details';
-      Found.NestedComponents = Found.Everything.filter(($el) => $el.matches(nestedSources));
-      Found.TabIndex = Found.Everything.filter(
-        ($el) => $el.hasAttribute("tabindex") && $el.getAttribute("tabindex") !== "0" && !$el.getAttribute("tabindex").startsWith("-")
+      Found.Everything = find("*", "root", Constants.Exclusions.Sa11yElements);
+      Found.Images = [];
+      Found.Links = [];
+      Found.Paragraphs = [];
+      Found.Lists = [];
+      Found.Blockquotes = [];
+      Found.Tables = [];
+      Found.StrongItalics = [];
+      Found.Subscripts = [];
+      Found.Buttons = [];
+      Found.Inputs = [];
+      Found.Labels = [];
+      Found.iframes = [];
+      Found.Svg = [];
+      Found.Contrast = [];
+      Found.TabIndex = [];
+      Found.NestedComponents = [];
+      Found.CustomErrorLinks = [];
+      for (let i = 0; i < Found.Everything.length; i++) {
+        const $el = Found.Everything[i];
+        const tag = $el.tagName;
+        switch (tag) {
+          case "IMG":
+            if (!Constants.Exclusions.Images.some((s) => $el.matches(s))) Found.Images.push($el);
+            break;
+          case "A":
+          // HTML anchor
+          case "a":
+            if ($el.hasAttribute("href") && !$el.matches('[role="button"]') && !Constants.Exclusions.Links.some((s) => $el.matches(s))) {
+              Found.Links.push($el);
+              if (badLinkSelectors.length > 0 && badLinkSelectors.some((s) => $el.matches(s))) {
+                Found.CustomErrorLinks.push($el);
+              }
+            }
+            break;
+          case "P":
+            if (!Constants.Exclusions.Paragraphs.some((s) => $el.matches(s)))
+              Found.Paragraphs.push($el);
+            break;
+          case "LI":
+            Found.Lists.push($el);
+            break;
+          case "BLOCKQUOTE":
+            Found.Blockquotes.push($el);
+            break;
+          case "TABLE":
+            if (!$el.matches('[role="presentation"],[role="none"]')) Found.Tables.push($el);
+            break;
+          case "STRONG":
+          case "EM":
+            Found.StrongItalics.push($el);
+            break;
+          case "SUP":
+          case "SUB":
+            Found.Subscripts.push($el);
+            break;
+          case "BUTTON":
+            Found.Buttons.push($el);
+            break;
+          case "INPUT":
+          case "SELECT":
+          case "TEXTAREA":
+          case "METER":
+          case "PROGRESS":
+            Found.Inputs.push($el);
+            break;
+          case "LABEL":
+            Found.Labels.push($el);
+            break;
+          case "IFRAME":
+          case "AUDIO":
+          case "VIDEO":
+            Found.iframes.push($el);
+            break;
+          case "svg":
+            Found.Svg.push($el);
+            break;
+        }
+        if (tag !== "BUTTON" && $el.matches('[role="button"]')) Found.Buttons.push($el);
+        if ($el.hasAttribute("tabindex")) {
+          const ti = $el.getAttribute("tabindex");
+          if (ti !== "0" && !ti.startsWith("-")) Found.TabIndex.push($el);
+        }
+        if ($el.matches(nestedSources)) Found.NestedComponents.push($el);
+        if (!contrastExcludedTags.has(tag)) {
+          if (!getCachedClosest($el, contrastAncestorSelector)) {
+            if (!contrastAttrSelector || !$el.matches(contrastAttrSelector)) {
+              Found.Contrast.push($el);
+            }
+          }
+        }
+      }
+      const headingScope = State.option.ignoreContentOutsideRoots || State.option.fixedRoots ? "root" : "document";
+      Found.Headings = find(
+        'h1, h2, h3, h4, h5, h6, [role="heading"][aria-level]',
+        headingScope,
+        Constants.Exclusions.Headings
       );
-      Found.Svg = Found.Everything.filter(($el) => $el.tagName === "svg");
-      Found.Buttons = Found.Everything.filter(
-        ($el) => $el.tagName === "BUTTON" || $el.matches('[role="button"]')
+      Found.HeadingOne = Found.Headings.filter(
+        ($el) => $el.tagName === "H1" || $el.matches('[role="heading"]') && $el.getAttribute("aria-level") === "1"
       );
-      Found.Inputs = Found.Everything.filter(
-        ($el) => ["INPUT", "SELECT", "TEXTAREA", "METER", "PROGRESS"].includes($el.tagName)
-      );
-      Found.Labels = Found.Everything.filter(($el) => $el.tagName === "LABEL");
-      Found.iframes = Found.Everything.filter(
-        ($el) => ["IFRAME", "AUDIO", "VIDEO"].includes($el.tagName)
-      );
-      Found.Videos = Found.iframes.filter(($el) => $el.matches(Constants.Global.VideoSources));
-      Found.Audio = Found.iframes.filter(($el) => $el.matches(Constants.Global.AudioSources));
-      Found.Visualizations = Found.iframes.filter(
-        ($el) => $el.matches(Constants.Global.VisualizationSources)
-      );
-      Found.EmbeddedContent = Found.iframes.filter(
-        ($el) => !$el.matches(Constants.Global.AllEmbeddedContent)
-      );
+      Found.HeadingOverrideStart = /* @__PURE__ */ new WeakMap();
+      Found.HeadingOverrideEnd = /* @__PURE__ */ new WeakMap();
+      if (State.option.initialHeadingLevel) {
+        State.option.initialHeadingLevel.forEach((section) => {
+          const headingsInSection = find(
+            `${section.selector} :is(h1,h2,h3,h4,h5,h6,[aria-role=heading][aria-level])`,
+            headingScope,
+            Constants.Exclusions.Headings
+          );
+          if (headingsInSection.length > 0) {
+            Found.HeadingOverrideStart.set(headingsInSection[0], section.previousHeading);
+            Found.HeadingOverrideEnd.set(headingsInSection.pop(), section.previousHeading);
+          }
+        });
+      }
+      Found.ExcludedHeadings = [];
+      Found.ExcludedOutlineHeadings = [];
+      for (const heading of Found.Headings) {
+        if (Constants.Exclusions.Headings.some((ex) => heading.matches(ex)))
+          Found.ExcludedHeadings.push(heading);
+        if (Constants.Exclusions.Outline.some((ex) => heading.matches(ex)))
+          Found.ExcludedOutlineHeadings.push(heading);
+      }
+      Found.OutlineIgnore = Found.ExcludedOutlineHeadings.concat(Found.ExcludedHeadings);
+      Found.Videos = [];
+      Found.Audio = [];
+      Found.Visualizations = [];
+      Found.EmbeddedContent = [];
+      for (const $el of Found.iframes) {
+        let matched = false;
+        if ($el.matches(Constants.Global.VideoSources)) {
+          Found.Videos.push($el);
+          matched = true;
+        }
+        if ($el.matches(Constants.Global.AudioSources)) {
+          Found.Audio.push($el);
+          matched = true;
+        }
+        if ($el.matches(Constants.Global.VisualizationSources)) {
+          Found.Visualizations.push($el);
+          matched = true;
+        }
+        if (!matched) {
+          Found.EmbeddedContent.push($el);
+        }
+      }
       const html = document.querySelector("html");
       Found.Language = html.getAttribute("lang")?.trim();
+    }
+    function initializeFilterElements() {
+      buildContrastAttrSelector();
+      Found.Everything = find("*", "root", Constants.Exclusions.Sa11yElements);
+      Found.Images = [];
+      Found.Links = [];
+      Found.Contrast = [];
+      for (let i = 0; i < Found.Everything.length; i++) {
+        const $el = Found.Everything[i];
+        const tag = $el.tagName;
+        switch (tag) {
+          case "IMG":
+            if (!Constants.Exclusions.Images.some((s) => $el.matches(s))) Found.Images.push($el);
+            break;
+          case "A":
+          case "a":
+            if ($el.hasAttribute("href") && !$el.matches('[role="button"]') && !Constants.Exclusions.Links.some((s) => $el.matches(s))) {
+              Found.Links.push($el);
+            }
+            break;
+        }
+        if (!contrastExcludedTags.has(tag)) {
+          if (!getCachedClosest($el, contrastAncestorSelector)) {
+            if (!contrastAttrSelector || !$el.matches(contrastAttrSelector)) {
+              Found.Contrast.push($el);
+            }
+          }
+        }
+      }
+      Found.Headings = find(
+        'h1, h2, h3, h4, h5, h6, [role="heading"][aria-level]',
+        "root",
+        Constants.Exclusions.Headings
+      );
+      Found.ExcludedHeadings = [];
+      Found.ExcludedOutlineHeadings = [];
+      for (const heading of Found.Headings) {
+        if (Constants.Exclusions.Headings.some((ex) => heading.matches(ex)))
+          Found.ExcludedHeadings.push(heading);
+        if (Constants.Exclusions.Outline.some((ex) => heading.matches(ex)))
+          Found.ExcludedOutlineHeadings.push(heading);
+      }
+      Found.OutlineIgnore = Found.ExcludedOutlineHeadings.concat(Found.ExcludedHeadings);
     }
     const Annotations2 = {};
     function initializeAnnotations() {
@@ -1666,6 +1846,7 @@
     }
     return {
       initializeElements,
+      initializeFilterElements,
       Found,
       initializeAnnotations,
       Annotations: Annotations2
@@ -6936,9 +7117,9 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
         const hasText = getText($el).length !== 0;
         const ignored = ariaHidden && negativeTabindex;
         const hasAttributes = $el.hasAttribute("role") || $el.hasAttribute("aria-haspopup") || $el.hasAttribute("aria-expanded") || $el.hasAttribute("onclick") || $el.hasAttribute("disabled") || !!getCachedClosest($el, 'nav, [role="navigation"]');
-        const hrefValue = $el.getAttribute("href");
-        if ((!hrefValue || hrefValue.startsWith("#")) && hasText && !ignored && !hasAttributes) {
-          const targetId = hrefValue.substring(1);
+        const rawHref = $el.getAttribute("href");
+        if ((!rawHref || rawHref.startsWith("#")) && hasText && !ignored && !hasAttributes) {
+          const targetId = rawHref.substring(1);
           const ariaControls = $el.getAttribute("aria-controls");
           const decoded = targetId ? decodeURIComponent(targetId) : "";
           const encoded = targetId ? encodeURIComponent(targetId) : "";
@@ -7224,8 +7405,8 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
     processedResults.forEach((item) => {
       const { $el, ratio } = item;
       const updatedItem = item;
-      const element = $el.tagName === "State.option" ? getCachedClosest($el, "datalist, select, optgroup") : $el;
-      const nodeText = fnIgnore(element, ["State.option:not(State.option:first-child)"]);
+      const element = $el.tagName === "OPTION" ? getCachedClosest($el, "datalist, select, optgroup") : $el;
+      const nodeText = fnIgnore(element, ["option:not(option:first-child)"]);
       const text = getText(nodeText);
       const truncatedText = truncateString(text, 80);
       let previewText;

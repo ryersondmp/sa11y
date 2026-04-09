@@ -628,10 +628,10 @@ export default function checkLinkText() {
         !!Utils.getCachedClosest($el, 'nav, [role="navigation"]');
 
       // We need non-normalized href value for this test.
-      const hrefValue = $el.getAttribute('href');
+      const rawHref = $el.getAttribute('href');
 
-      if ((!hrefValue || hrefValue.startsWith('#')) && hasText && !ignored && !hasAttributes) {
-        const targetId = hrefValue.substring(1);
+      if ((!rawHref || rawHref.startsWith('#')) && hasText && !ignored && !hasAttributes) {
+        const targetId = rawHref.substring(1);
         const ariaControls = $el.getAttribute('aria-controls');
         const decoded = targetId ? decodeURIComponent(targetId) : '';
         const encoded = targetId ? encodeURIComponent(targetId) : '';
