@@ -355,7 +355,7 @@ export default {
 
     // Meta checks
     META_LANG:
-      'Idioma da página não declarado! Por favor <a href="https://www.w3.org/International/questions/qa-html-language-declarations">declare o idioma na etiqueta HTML.</a>',
+      'Idioma da página não declarado! Por favor <a href="https://www.w3.org/International/questions/qa-html-language-declarations.pt-br.html">declare o idioma na etiqueta HTML.</a>',
     META_TITLE:
       'Título da página em falta! Forneça um <a href="https://developer.mozilla.org/pt-pt/docs/Web/HTML/Element/title">título da página.</a>',
     META_SCALABLE:
@@ -364,7 +364,7 @@ export default {
       'Certifique-se de que o parâmetro <code>maximum-scale</code> na <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">meta tag do viewport</a> não seja inferior a 2.',
     META_REFRESH: 'A página não deve atualizar automaticamente usando uma meta tag.',
     META_LANG_SUGGEST: 'O seguinte código de idioma <code>%(CODE)</code> não é válido. Queria dizer <code>%(CODE)</code>?',
-    META_LANG_VALID: 'O código de idioma da página <code>%(CODE)</code> não é válido. Por favor, <a href="https://www.w3.org/International/questions/qa-html-language-declarations">declare um idioma válido na etiqueta HTML.</a>',
+    META_LANG_VALID: 'O código de idioma para este elemento não é válido. Para corrigir, substitua o atributo lang por um código de idioma válido. <hr> <strong {B}>Elemento</strong> <code>&lt;%(ELEMENT) lang="%(CODE)"&gt;</code> <hr> Saiba mais sobre a <a href="https://www.w3.org/International/questions/qa-html-language-declarations.pt-br.html">declaração de idioma em HTML.</a>',
 
     // Buttons
     BTN_EMPTY: 'O botão está sem um nome acessível que descreva o seu propósito.',
@@ -422,7 +422,7 @@ export default {
       'Nenhuma combinação acessível pode ser encontrada apenas alterando a cor do texto. Tente alterar a cor do fundo.',
 
     // Page language
-    PAGE_LANG_CONFIDENCE: 'Mais de metade do texto nesta página parece estar em %(LIKELY_LANG), mas o idioma declarado da página é %(PAGE_LANG). Considere atualizar o <a href="https://www.w3.org/International/questions/qa-html-language-declarations">idioma declarado da página</a> para corresponder ao conteúdo.',
+    PAGE_LANG_CONFIDENCE: 'Mais de metade do texto nesta página parece estar em %(LIKELY_LANG), mas o idioma declarado da página é %(PAGE_LANG). Considere atualizar o <a href="https://www.w3.org/International/questions/qa-html-language-declarations.pt-br.html">idioma declarado da página</a> para corresponder ao conteúdo.',
     LANG_OF_PARTS: 'O idioma da página foi declarado como %(PAGE_LANG), mas este conteúdo parece estar em %(LIKELY_LANG). Certifique-se de que o conteúdo está marcado adequadamente.',
     LANG_MISMATCH: 'Este conteúdo parece estar em %(DETECTED_LANG), no entanto, foi marcado como %(WRONG_LANG).',
     LANG_OF_PARTS_ALT: 'Este texto alternativo parece estar em %(LIKELY_LANG), mas o idioma da página foi declarado como %(PAGE_LANG). Certifique-se de que o texto alternativo está no mesmo idioma que o resto da página. <hr> {ALT} <strong {C}>%(ALT)</strong>',

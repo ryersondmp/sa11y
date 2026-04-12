@@ -267,7 +267,7 @@
       META_MAX: 'Varmista, että <code>maximum-scale</code>-parametri <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">meta tagissa</a> ei ole alle 2.',
       META_REFRESH: "Sivua ei tule päivittää automaattisesti meta-tagin avulla.",
       META_LANG_SUGGEST: "Seuraava kielikoodi <code>%(CODE)</code> ei ole kelvollinen. Tarkoititko <code>%(CODE)</code>?",
-      META_LANG_VALID: 'Sivun kielikoodi <code>%(CODE)</code> ei ole kelvollinen. Ole hyvä ja <a href="https://www.w3.org/International/questions/qa-html-language-declarations">ilmoita kelvollinen kieli HTML-tagissa.</a>',
+      META_LANG_VALID: 'Tämän elementin kielikoodi ei ole kelvollinen. Korjaa ongelma korvaamalla lang-attribuutti kelvollisella kielikoodilla. <hr> <strong {B}>Elementti</strong> <code>&lt;%(ELEMENT) lang="%(CODE)"&gt;</code> <hr> Lue lisää <a href="https://www.w3.org/International/questions/qa-html-language-declarations">kielen määrittämisestä HTML-koodissa.</a>',
       // Buttons
       BTN_EMPTY: "Painikkeesta puuttuu saavutettava nimi, joka kuvaisi sen tarkoitusta.",
       BTN_EMPTY_LABELLEDBY: "Painikkeessa on <code>aria-labelledby</code>-arvo, joka on tyhjä tai ei vastaa toisen elementin <code>id</code>-arvoa sivulla.",

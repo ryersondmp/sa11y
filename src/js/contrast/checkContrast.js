@@ -43,11 +43,19 @@ export default function checkContrast() {
     // Early exit for hidden elements.
     const opacity = parseFloat(style.opacity);
     const fontSize = parseFloat(style.fontSize);
-    if ($el.disabled || opacity === 0 || fontSize === 0 || Utils.isElementHidden($el)) continue;
+    if (opacity === 0 || fontSize === 0 || Utils.isElementHidden($el)) continue;
     if (Utils.isScreenReaderOnly($el)) continue;
 
-    // Ignore decorative seperators, e.g. breadcrumbs and navigation seperators.
-    if (text.length === 1 && '|/\\'.includes(text)) continue;
+    // Disabled elements.
+    const isDisabled = (node) =>
+      node &&
+      (node.matches?.(':disabled') ||
+        node.disabled ||
+        node.getAttribute?.('aria-disabled') === 'true');
+    if (isDisabled($el) || isDisabled(Utils.getCachedClosest($el, 'label')?.control)) continue;
+
+    // Skip if the text contains absolutely no letters or numbers.
+    if (!checkInputs && !/[\p{L}\p{N}]/u.test(text)) continue;
 
     // Expensive calculations only after we know the element is visible and has content.
     const color = convertToRGBA(style.color, opacity);

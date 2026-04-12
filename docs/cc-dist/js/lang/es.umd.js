@@ -266,13 +266,13 @@
       UNCONTAINED_LI: "Todos los elementos de lista <code>&lt;li&gt;</code> deben colocarse dentro de elementos <code>&lt;ul&gt;</code> desordenados o <code>&lt;ol&gt;</code> ordenados. Esta estructura ayuda a los lectores de pantalla a anunciar la lista y sus elementos con precisión.",
       TABINDEX_ATTR: "El elemento no debe tener un atributo <code>tabindex</code> mayor que 0.",
       // Meta checks
-      META_LANG: '¡Idioma de la página no declarado! <a href="https://www.w3.org/International/questions/qa-html-language-declarations">declare el idioma en la etiqueta HTML.</a>',
+      META_LANG: '¡Idioma de la página no declarado! <a href="https://www.w3.org/International/questions/qa-html-language-declarations.es.html">declare el idioma en la etiqueta HTML.</a>',
       META_TITLE: '¡Falta el título de la página! Proporcione un <a href="https://developer.mozilla.org/es/docs/Web/HTML/Element/title">título de página.</a>',
       META_SCALABLE: 'Elimine el parámetro <code>user-scalable="no"</code> en la <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">meta etiqueta del viewport</a> para permitir el zoom.',
       META_MAX: 'Asegúrese de que el parámetro <code>maximum-scale</code> en la <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">meta etiqueta del viewport</a> no sea inferior a 2.',
       META_REFRESH: "La página no debería actualizarse automáticamente utilizando una etiqueta meta.",
       META_LANG_SUGGEST: "El siguiente código de idioma <code>%(CODE)</code> no es válido. ¿Quiso decir <code>%(CODE)</code>?",
-      META_LANG_VALID: 'El código de idioma de la página <code>%(CODE)</code> no es válido. Por favor, <a href="https://www.w3.org/International/questions/qa-html-language-declarations">declare un idioma válido en la etiqueta HTML.</a>',
+      META_LANG_VALID: 'El código de idioma para este elemento no es válido. Para solucionarlo, reemplace el atributo lang con un código de idioma válido. <hr> <strong {B}>Elemento</strong> <code>&lt;%(ELEMENT) lang="%(CODE)"&gt;</code> <hr> Obtenga más información sobre cómo <a href="https://www.w3.org/International/questions/qa-html-language-declarations.es.html">declarar el idioma en HTML.</a>',
       // Buttons
       BTN_EMPTY: "El botón carece de un nombre accesible que describa su propósito.",
       BTN_EMPTY_LABELLEDBY: "El botón tiene un valor de <code>aria-labelledby</code> que está vacío o no coincide con el valor de <code>id</code> de otro elemento en la página.",
@@ -307,7 +307,7 @@
       BG: "Fondo",
       NO_SUGGESTION: "No se puede encontrar una combinación accesible cambiando solo el color del texto. Intente cambiar el color de fondo.",
       // Page language
-      PAGE_LANG_CONFIDENCE: 'Más de la mitad del texto de esta página parece estar en %(LIKELY_LANG), pero el idioma declarado de la página es %(PAGE_LANG). Considere actualizar el <a href="https://www.w3.org/International/questions/qa-html-language-declarations">idioma declarado de la página</a> para que coincida con el contenido.',
+      PAGE_LANG_CONFIDENCE: 'Más de la mitad del texto de esta página parece estar en %(LIKELY_LANG), pero el idioma declarado de la página es %(PAGE_LANG). Considere actualizar el <a href="https://www.w3.org/International/questions/qa-html-language-declarations.es.html">idioma declarado de la página</a> para que coincida con el contenido.',
       LANG_OF_PARTS: "El idioma de la página se declaró como %(PAGE_LANG), pero este contenido parece estar en %(LIKELY_LANG). Asegúrese de que el contenido esté etiquetado adecuadamente.",
       LANG_MISMATCH: "Este contenido parece estar en %(DETECTED_LANG), sin embargo, fue etiquetado como %(WRONG_LANG).",
       LANG_OF_PARTS_ALT: "Este texto alternativo parece estar en %(LIKELY_LANG), pero el idioma de la página se declaró como %(PAGE_LANG). Asegúrese de que el texto alternativo esté en el mismo idioma que el resto de la página. <hr> {ALT} <strong {C}>%(ALT)</strong>",

@@ -92,13 +92,16 @@ export default function checkImages() {
   /*  Loop through all images  */
   /* ************************* */
   Elements.Found.Images.forEach(($el) => {
-    const rawAlt =
-      computeAriaLabel($el) === 'noAria' ? $el.getAttribute('alt') : computeAriaLabel($el);
+    const alt =
+      computeAriaLabel($el) === 'noAria'
+        ? ($el.getAttribute('alt') ?? $el.getAttribute('title'))
+        : computeAriaLabel($el);
     const ariaHidden = $el?.getAttribute('aria-hidden') === 'true';
     const presentationRole = $el?.getAttribute('role') === 'presentation';
+    const noneRole = $el.getAttribute('role') === 'none';
 
     // Ignore tracking pixels without explicit aria-hidden or nullified alt.
-    if ($el.height < 2 && $el.width < 2 && (Utils.isElementHidden($el) || rawAlt === '')) {
+    if ($el.height < 2 && $el.width < 2 && (Utils.isElementHidden($el) || alt === '')) {
       return;
     }
 
@@ -149,10 +152,10 @@ export default function checkImages() {
     /** **************** */
     /*  ALT IS MISSING   */
     /* ***************** */
-    if (rawAlt === null) {
+    if (alt === null) {
       if (link) {
         const hasAriaHiddenOrPresentationRole =
-          linkTextLength > 0 && (ariaHidden || presentationRole);
+          linkTextLength > 0 && (ariaHidden || presentationRole || noneRole);
         if (!hasAriaHiddenOrPresentationRole) {
           const rule =
             linkTextLength === 0
@@ -190,12 +193,12 @@ export default function checkImages() {
     /** *************** */
     /*  HAS ALT TEXT    */
     /* **************** */
-    const altText = Utils.removeWhitespace(rawAlt);
+    const altText = Utils.removeWhitespace(alt);
     const hasAria = $el.getAttribute('aria-label') || $el.getAttribute('aria-labelledby');
 
     // If aria-label or aria-labelledby returns empty or invalid.
     if (State.option.checks.MISSING_ALT) {
-      if (hasAria && rawAlt === '') {
+      if (hasAria && alt === '') {
         State.results.push({
           test: 'MISSING_ALT',
           element: $el,
@@ -212,7 +215,7 @@ export default function checkImages() {
     /* ************** */
     /*  DECORATIVE    */
     /* ************** */
-    let decorative = rawAlt === '';
+    let decorative = alt === '';
 
     // Figure elements.
     const figure = Utils.getCachedClosest($el, 'figure');
@@ -225,7 +228,7 @@ export default function checkImages() {
 
     // If alt text starts with a very specific string provided via props.
     if (!decorative && State.option.altPlaceholder.length) {
-      decorative = rawAlt.match(altPlaceholderPattern)?.[0];
+      decorative = alt.match(altPlaceholderPattern)?.[0];
     }
 
     // Decorative images.
@@ -307,7 +310,7 @@ export default function checkImages() {
       ? State.option.checks.LINK_ALT_UNPRONOUNCEABLE
       : State.option.checks.ALT_UNPRONOUNCEABLE;
     if (unpronounceable) {
-      if (rawAlt.replace(/"|'|\?|\.|-|\s+/g, '') === '' && linkTextLength === 0) {
+      if (alt.replace(/"|'|\?|\.|-|\s+/g, '') === '' && linkTextLength === 0) {
         const conditional = link ? 'LINK_ALT_UNPRONOUNCEABLE' : 'ALT_UNPRONOUNCEABLE';
         State.results.push({
           test: conditional,
@@ -356,7 +359,7 @@ export default function checkImages() {
           type: rule.type || 'error',
           content: Lang.sprintf(rule.content || conditional, error[0], altText),
           args: [error[0], altText],
-          dismiss: Utils.prepareDismissal(`${conditional + src + rawAlt}`),
+          dismiss: Utils.prepareDismissal(`${conditional + src + alt}`),
           dismissAll: rule.dismissAll ? conditional : false,
           developer: rule.developer || false,
         });
@@ -374,7 +377,7 @@ export default function checkImages() {
           type: rule.type || 'error',
           content: Lang.sprintf(rule.content || conditional, altText),
           args: [altText],
-          dismiss: Utils.prepareDismissal(`${conditional + src + rawAlt}`),
+          dismiss: Utils.prepareDismissal(`${conditional + src + alt}`),
           dismissAll: rule.dismissAll ? conditional : false,
           developer: rule.developer || false,
         });
@@ -390,14 +393,14 @@ export default function checkImages() {
           type: rule.type || 'warning',
           content: Lang.sprintf(rule.content || conditional, error[1], altText),
           args: [error[1], altText],
-          dismiss: Utils.prepareDismissal(`${conditional + src + rawAlt}`),
+          dismiss: Utils.prepareDismissal(`${conditional + src + alt}`),
           dismissAll: rule.dismissAll ? conditional : false,
           developer: rule.developer || false,
         });
       }
     } else if (
       isBadFilename ||
-      (maybeBadAlt && isTooLongSingleWord.test(rawAlt) && containsNonAlphaChar)
+      (maybeBadAlt && isTooLongSingleWord.test(alt) && containsNonAlphaChar)
     ) {
       // Alt text is a single word greater than 15 characters that is potentially auto-generated.
       const rule = link
@@ -411,7 +414,7 @@ export default function checkImages() {
           type: rule.type || 'error',
           content: Lang.sprintf(rule.content || conditional, altText),
           args: [altText],
-          dismiss: Utils.prepareDismissal(`${conditional + src + rawAlt}`),
+          dismiss: Utils.prepareDismissal(`${conditional + src + alt}`),
           dismissAll: rule.dismissAll ? conditional : false,
           developer: rule.developer || false,
         });
@@ -428,12 +431,12 @@ export default function checkImages() {
           type: rule.type || 'warning',
           content: Lang.sprintf(rule.content || conditional, altText),
           args: [altText],
-          dismiss: Utils.prepareDismissal(`${conditional}WARNING${src + rawAlt} `),
+          dismiss: Utils.prepareDismissal(`${conditional}WARNING${src + alt} `),
           dismissAll: rule.dismissAll ? conditional : false,
           developer: rule.developer || false,
         });
       }
-    } else if (link ? rawAlt.length > maxAltCharactersLinks : rawAlt.length > maxAltCharacters) {
+    } else if (link ? alt.length > maxAltCharactersLinks : alt.length > maxAltCharacters) {
       // Alt is too long.
       const rule = link
         ? State.option.checks.LINK_IMAGE_LONG_ALT
@@ -444,9 +447,9 @@ export default function checkImages() {
           test: conditional,
           element: $el,
           type: rule.type || 'warning',
-          content: Lang.sprintf(rule.content || conditional, rawAlt.length, altText),
-          args: [rawAlt.length, altText],
-          dismiss: Utils.prepareDismissal(`${conditional + src + rawAlt}`),
+          content: Lang.sprintf(rule.content || conditional, alt.length, altText),
+          args: [alt.length, altText],
+          dismiss: Utils.prepareDismissal(`${conditional + src + alt}`),
           dismissAll: rule.dismissAll ? conditional : false,
           developer: rule.developer || false,
         });
@@ -477,14 +480,14 @@ export default function checkImages() {
           type: rule.type || 'warning',
           content: rule.content ? Lang.sprintf(rule.content, altText, accName) : tooltip,
           args: [altText, accName],
-          dismiss: Utils.prepareDismissal(`${conditional + src + rawAlt}`),
+          dismiss: Utils.prepareDismissal(`${conditional + src + alt}`),
           dismissAll: rule.dismissAll ? conditional : false,
           developer: rule.developer || false,
         });
       }
     } else if (figure) {
       // Figure element has same alt and caption text.
-      const duplicate = !!figcaption && figcaptionText.toLowerCase() === rawAlt.toLowerCase();
+      const duplicate = !!figcaption && figcaptionText.toLowerCase() === alt.toLowerCase();
       if (duplicate) {
         if (State.option.checks.IMAGE_FIGURE_DUPLICATE_ALT) {
           State.results.push({
@@ -512,7 +515,7 @@ export default function checkImages() {
           type: State.option.checks.IMAGE_PASS.type || 'good',
           content: Lang.sprintf(State.option.checks.IMAGE_PASS.content || 'IMAGE_PASS', altText),
           args: [altText],
-          dismiss: Utils.prepareDismissal(`IMAGE_PASS FIGURE ${src + rawAlt}`),
+          dismiss: Utils.prepareDismissal(`IMAGE_PASS FIGURE ${src + alt}`),
           dismissAll: State.option.checks.IMAGE_PASS.dismissAll ? 'IMAGE_PASS' : false,
           developer: State.option.checks.IMAGE_PASS.developer || false,
         });
@@ -527,7 +530,7 @@ export default function checkImages() {
           type: State.option.checks.IMAGE_PASS.type || 'good',
           content: Lang.sprintf(State.option.checks.IMAGE_PASS.content || 'IMAGE_PASS', altText),
           args: [altText],
-          dismiss: Utils.prepareDismissal(`IMAGE_PASS ${src + rawAlt}`),
+          dismiss: Utils.prepareDismissal(`IMAGE_PASS ${src + alt}`),
           dismissAll: State.option.checks.IMAGE_PASS.dismissAll ? 'IMAGE_PASS' : false,
           developer: State.option.checks.IMAGE_PASS.developer || false,
         });
@@ -538,7 +541,10 @@ export default function checkImages() {
     /*  DUPLICATE ALT & TITLE.  */
     /* ************************ */
     const titleAttr = $el.getAttribute('title');
-    if (titleAttr?.toLowerCase() === rawAlt.toLowerCase()) {
+    if (
+      $el.getAttribute('alt') &&
+      $el.getAttribute('alt')?.toLowerCase() === titleAttr?.toLowerCase()
+    ) {
       if (State.option.checks.DUPLICATE_TITLE) {
         State.results.push({
           test: 'DUPLICATE_TITLE',
@@ -546,7 +552,7 @@ export default function checkImages() {
           type: State.option.checks.DUPLICATE_TITLE.type || 'warning',
           content: Lang.sprintf(State.option.checks.DUPLICATE_TITLE.content || 'DUPLICATE_TITLE'),
           inline: true,
-          dismiss: Utils.prepareDismissal(`DUPLICATE_TITLE ${rawAlt}`),
+          dismiss: Utils.prepareDismissal(`DUPLICATE_TITLE ${alt}`),
           dismissAll: State.option.checks.DUPLICATE_TITLE.dismissAll ? 'DUPLICATE_TITLE' : false,
           developer: State.option.checks.DUPLICATE_TITLE.developer || false,
         });

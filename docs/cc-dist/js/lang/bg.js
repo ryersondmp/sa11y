@@ -266,7 +266,7 @@ const bg = {
     META_MAX: 'Уверете се, че параметърът <code>maximum-scale</code> в <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">meta таг на изгледа</a> не е по-малък от 2.',
     META_REFRESH: "Страницата не трябва да се обновява автоматично с помощта на meta таг.",
     META_LANG_SUGGEST: "Следният езиков код <code>%(CODE)</code> не е валиден. Имахте предвид <code>%(CODE)</code>?",
-    META_LANG_VALID: 'Езиковият код на страницата <code>%(CODE)</code> не е валиден. Моля, <a href="https://www.w3.org/International/questions/qa-html-language-declarations">обявете валиден език в HTML тага.</a>',
+    META_LANG_VALID: 'Езиковият код за този елемент не е валиден. За да поправите това, заменете атрибута lang с валиден езиков код. <hr> <strong {B}>Елемент</strong> <code>&lt;%(ELEMENT) lang="%(CODE)"&gt;</code> <hr> Научете повече за <a href="https://www.w3.org/International/questions/qa-html-language-declarations">декларирането на език в HTML.</a>',
     // Buttons
     BTN_EMPTY: "Бутонът няма достъпно име, което да описва неговата цел.",
     BTN_EMPTY_LABELLEDBY: "Бутонът има стойност <code>aria-labelledby</code>, която е празна или не съответства на стойността на <code>id</code> на друг елемент на страницата.",

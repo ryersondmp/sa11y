@@ -280,7 +280,7 @@
       META_MAX: 'Zorg ervoor dat de parameter <code>maximum-scale</code> in de <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">meta-tag van het viewport</a> niet kleiner is dan 2.',
       META_REFRESH: "De pagina mag niet automatisch verversen met behulp van een meta-tag.",
       META_LANG_SUGGEST: "De volgende taalcode <code>%(CODE)</code> is niet geldig. Bedoelde u <code>%(CODE)</code>?",
-      META_LANG_VALID: 'De taalcode van de pagina <code>%(CODE)</code> is niet geldig. <a href="https://www.w3.org/International/questions/qa-html-language-declarations">Declareer een geldige taal in de HTML-tag.</a>',
+      META_LANG_VALID: 'De taalcode voor dit element is niet geldig. Vervang het lang-attribuut door een geldige taalcode om dit op te lossen. <hr> <strong {B}>Element</strong> <code>&lt;%(ELEMENT) lang="%(CODE)"&gt;</code> <hr> Lees meer over het <a href="https://www.w3.org/International/questions/qa-html-language-declarations">declareren van taal in HTML.</a>',
       // Buttons
       BTN_EMPTY: "De knop mist een toegankelijke naam die het doel beschrijft.",
       BTN_EMPTY_LABELLEDBY: "De knop heeft een <code>aria-labelledby</code> waarde die leeg is of niet overeenkomt met de <code>id</code> waarde van een ander element op de pagina.",

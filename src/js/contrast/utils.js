@@ -538,8 +538,16 @@ export function wcagAlgorithm(
   const { ratio, blendedColor } = calculateContrast(color, background);
   const isLargeText = fontSize >= 24 || (fontSize >= 18.67 && fontWeight >= 700);
 
+  // Misc exceptions.
+  const tagName = $el.tagName.toLowerCase();
+  const isCloseIcon = /^[x×✕✖✗✘]$/i.test($el.textContent);
+  const isCloseButton = (tagName === 'button' || tagName === 'a') && isCloseIcon;
+
+  // Evaluate.
   let hasLowContrast;
-  if (contrastAlgorithm === 'AAA') {
+  if (isCloseButton) {
+    hasLowContrast = ratio > 0 && ratio < 3;
+  } else if (contrastAlgorithm === 'AAA') {
     hasLowContrast = isLargeText ? ratio < 4.5 : ratio < 7;
   } else {
     const hasLowContrastNormalText = ratio > 0 && ratio < 4.5;

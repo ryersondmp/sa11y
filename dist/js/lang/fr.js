@@ -263,13 +263,13 @@ const fr = {
     UNCONTAINED_LI: "Tous les éléments de liste <code>&lt;li&gt;</code> doivent être placés à l'intérieur des éléments <code>&lt;ul&gt;</code> non ordonnés ou <code>&lt;ol&gt;</code> ordonnés. Cette structure aide les lecteurs d'écran à annoncer la liste et ses éléments avec précision.",
     TABINDEX_ATTR: "L'élément ne doit pas avoir un attribut <code>tabindex</code> supérieur à 0.",
     // Meta checks
-    META_LANG: 'La langue de la page n’est pas indiquée ! Veuillez <a href="https://www.w3.org/International/questions/qa-html-language-declarations.fr">indiquer la langue sur la balise HTML.</a>',
+    META_LANG: 'La langue de la page n’est pas indiquée ! Veuillez <a href="https://www.w3.org/International/questions/qa-html-language-declarations.fr.html">indiquer la langue sur la balise HTML.</a>',
     META_TITLE: 'Titre de la page manquant ! Veuillez fournir un <a href="https://developer.mozilla.org/fr/docs/Web/HTML/Element/title">titre de page.</a>',
     META_SCALABLE: 'Supprimez le paramètre <code>user-scalable="no"</code> dans la <a href="https://developer.mozilla.org/fr/docs/Web/HTML/Viewport_meta_tag">balise meta viewport</a> pour permettre le zoom.',
     META_MAX: `Assurez-vous que le paramètre <code>maximum-scale</code> dans la <a href="https://developer.mozilla.org/fr/docs/Web/HTML/Viewport_meta_tag">balise meta viewport</a> n'est pas inférieur à 2.`,
     META_REFRESH: "La page ne doit pas se rafraîchir automatiquement en utilisant une balise meta.",
     META_LANG_SUGGEST: "Le code de langue suivant <code>%(CODE)</code> n'est pas valide. Vouliez-vous dire <code>%(CODE)</code>?",
-    META_LANG_VALID: `Le code de langue de la page <code>%(CODE)</code> n'est pas valide. Veuillez <a href="https://www.w3.org/International/questions/qa-html-language-declarations">déclarer une langue valide sur la balise HTML.</a>`,
+    META_LANG_VALID: `Le code de langue pour cet élément n'est pas valide. Pour corriger cela, remplacez l'attribut lang par un code de langue valide. <hr> <strong {B}>Élément</strong> <code>&lt;%(ELEMENT) lang="%(CODE)"&gt;</code> <hr> En savoir plus sur la <a href="https://www.w3.org/International/questions/qa-html-language-declarations.fr.html">déclaration de la langue en HTML.</a>`,
     // Buttons
     BTN_EMPTY: "Le bouton manque d’un nom accessible qui décrit son objectif.",
     BTN_EMPTY_LABELLEDBY: "Le bouton a une valeur <code>aria-labelledby</code> qui est vide ou ne correspond pas à la valeur <code>id</code> d’un autre élément sur la page.",
@@ -304,7 +304,7 @@ const fr = {
     BG: "Arrière-plan",
     NO_SUGGESTION: "Aucune combinaison accessible ne peut être trouvée en modifiant uniquement la couleur du texte. Essayez de modifier la couleur de l'arrière-plan.",
     // Page language
-    PAGE_LANG_CONFIDENCE: `Plus de la moitié du texte de cette page semble être en %(LIKELY_LANG), mais la langue déclarée de la page est %(PAGE_LANG). Envisagez de mettre à jour la <a href="https://www.w3.org/International/questions/qa-html-language-declarations">langue déclarée de la page</a> pour qu'elle corresponde au contenu.`,
+    PAGE_LANG_CONFIDENCE: `Plus de la moitié du texte de cette page semble être en %(LIKELY_LANG), mais la langue déclarée de la page est %(PAGE_LANG). Envisagez de mettre à jour la <a href="https://www.w3.org/International/questions/qa-html-language-declarations.fr.html">langue déclarée de la page</a> pour qu'elle corresponde au contenu.`,
     LANG_OF_PARTS: "La langue de la page a été déclarée comme %(PAGE_LANG), mais ce contenu semble être en %(LIKELY_LANG). Assurez-vous que le contenu est balisé de manière appropriée.",
     LANG_MISMATCH: "Ce contenu semble être en %(DETECTED_LANG), cependant, il a été balisé comme %(WRONG_LANG).",
     LANG_OF_PARTS_ALT: "Ce texte alternatif semble être en %(LIKELY_LANG), mais la langue de la page a été déclarée comme %(PAGE_LANG). Assurez-vous que le texte alternatif est dans la même langue que le reste de la page. <hr> {ALT} <strong {C}>%(ALT)</strong>",

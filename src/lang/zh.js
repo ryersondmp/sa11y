@@ -347,7 +347,7 @@ export default {
 
     // Meta checks
     META_LANG:
-      '页面语言未声明!请<a href="https://www.w3.org/International/questions/qa-html-language-declarations">在HTML标签上声明语言。</a>',
+      '页面语言未声明!请<a href="https://www.w3.org/International/questions/qa-html-language-declarations.zh-hans.html">在HTML标签上声明语言。</a>',
     META_TITLE:
       '缺少页面标题!请提供一个<a href="https://developer.mozilla.org/zh/docs/Web/HTML/Element/title">页面标题。</a>',
     META_SCALABLE:
@@ -356,7 +356,7 @@ export default {
       '确保<a href="https://developer.mozilla.org/zh-CN/docs/Web/HTML/Viewport_meta_tag">视口元标签</a>中的 <code>maximum-scale</code> 参数不少于 2。',
     META_REFRESH: '页面不应使用 meta 标签自动刷新。',
     META_LANG_SUGGEST: '以下语言代码 <code>%(CODE)</code> 无效。您是指 <code>%(CODE)</code> 吗？',
-    META_LANG_VALID: '页面语言代码 <code>%(CODE)</code> 无效。请在 <a href="https://www.w3.org/International/questions/qa-html-language-declarations">HTML 标签中声明有效的语言。</a>',
+    META_LANG_VALID: '此元素的语言代码无效。要修复此问题，请将 lang 属性替换为有效的语言代码。 <hr> <strong {B}>元素</strong> <code>&lt;%(ELEMENT) lang="%(CODE)"&gt;</code> <hr> 了解有关 <a href="https://www.w3.org/International/questions/qa-html-language-declarations.zh-hans.html">在 HTML 中声明语言</a> 的更多信息。',
 
     // Buttons
     BTN_EMPTY: '按钮缺少一个描述其用途的可访问名称。',
@@ -402,7 +402,7 @@ export default {
     NO_SUGGESTION: '仅更改文本颜色无法找到可访问的组合。请尝试更改背景颜色。',
 
     // Page language
-    PAGE_LANG_CONFIDENCE: '此页面超过一半的文本似乎是 %(LIKELY_LANG)，但声明的页面语言为 %(PAGE_LANG)。请考虑更新 <a href="https://www.w3.org/International/questions/qa-html-language-declarations">声明的页面语言</a> 以匹配内容。',
+    PAGE_LANG_CONFIDENCE: '此页面超过一半的文本似乎是 %(LIKELY_LANG)，但声明的页面语言为 %(PAGE_LANG)。请考虑更新 <a href="https://www.w3.org/International/questions/qa-html-language-declarations.zh-hans.html">声明的页面语言</a> 以匹配内容。',
     LANG_OF_PARTS: '页面语言声明为 %(PAGE_LANG)，但此内容似乎是 %(LIKELY_LANG)。请确保内容已正确标记。',
     LANG_MISMATCH: '此内容似乎是 %(DETECTED_LANG)，但被标记为 %(WRONG_LANG)。',
     LANG_OF_PARTS_ALT: '此替代文本似乎是 %(LIKELY_LANG)，但页面语言声明为 %(PAGE_LANG)。请确保替代文本与页面其他部分的语言一致。<hr> {ALT} <strong {C}>%(ALT)</strong>',

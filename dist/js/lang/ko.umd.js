@@ -272,7 +272,7 @@
       META_MAX: '<a href="https://developer.mozilla.org/ko/docs/Web/HTML/Viewport_meta_tag">뷰포트 메타 태그</a>에서 <code>maximum-scale</code> 매개변수가 2보다 작지 않도록 하십시오.',
       META_REFRESH: "페이지는 메타 태그를 사용하여 자동으로 새로고침되지 않아야 합니다.",
       META_LANG_SUGGEST: "다음 언어 코드 <code>%(CODE)</code>가 유효하지 않습니다. <code>%(CODE)</code>를 의미하셨나요?",
-      META_LANG_VALID: '페이지 언어 코드 <code>%(CODE)</code>가 유효하지 않습니다. <a href="https://www.w3.org/International/questions/qa-html-language-declarations">HTML 태그에 유효한 언어를 선언해 주세요.</a>',
+      META_LANG_VALID: '이 요소의 언어 코드가 유효하지 않습니다. 문제를 해결하려면 lang 속성을 유효한 언어 코드로 교체하세요. <hr> <strong {B}>요소</strong> <code>&lt;%(ELEMENT) lang="%(CODE)"&gt;</code> <hr> <a href="https://www.w3.org/International/questions/qa-html-language-declarations">HTML에서 언어 선언</a>에 대해 자세히 알아보세요.',
       // Buttons
       BTN_EMPTY: "버튼에 그 목적을 설명하는 접근 가능한 이름이 없습니다.",
       BTN_EMPTY_LABELLEDBY: "버튼에 비어 있는 <code>aria-labelledby</code> 값이 있거나, 페이지의 다른 요소의 <code>id</code> 값과 일치하지 않습니다.",

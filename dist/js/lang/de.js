@@ -308,13 +308,13 @@ const de = {
     UNCONTAINED_LI: "Alle <code>&lt;li&gt;</code> Listenelemente müssen innerhalb von <code>&lt;ul&gt;</code> ungeordneten oder <code>&lt;ol&gt;</code> geordneten Elementen platziert werden. Diese Struktur hilft Bildschirmlesern, die Liste und ihre Elemente genau anzukündigen.",
     TABINDEX_ATTR: "Das Element sollte kein <code>tabindex</code>-Attribut größer als 0 haben.",
     // Meta checks
-    META_LANG: 'Seitensprache nicht angegeben! Bitte <a href="https://www.w3.org/International/questions/qa-html-language-declarations">deklariere die Sprache im HTML-Tag.</a>',
+    META_LANG: 'Seitensprache nicht angegeben! Bitte <a href="https://www.w3.org/International/questions/qa-html-language-declarations.de.html">deklariere die Sprache im HTML-Tag.</a>',
     META_TITLE: 'Seitentitel fehlt! Bitte gib einen <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/title">Seitentitel</a> an.',
     META_SCALABLE: 'Entfernen Sie den Parameter <code>user-scalable="no"</code> im <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">Viewport-Meta-Tag</a>, um das Zoomen zu ermöglichen.',
     META_MAX: 'Stellen Sie sicher, dass der Parameter <code>maximum-scale</code> im <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">Viewport-Meta-Tag</a> nicht kleiner als 2 ist.',
     META_REFRESH: "Die Seite sollte nicht automatisch mithilfe eines Meta-Tags aktualisiert werden.",
     META_LANG_SUGGEST: "Der folgende Sprachcode <code>%(CODE)</code> ist ungültig. Meinten Sie <code>%(CODE)</code>?",
-    META_LANG_VALID: 'Der Sprachcode der Seite <code>%(CODE)</code> ist ungültig. Bitte <a href="https://www.w3.org/International/questions/qa-html-language-declarations">deklarieren Sie eine gültige Sprache im HTML-Tag.</a>',
+    META_LANG_VALID: 'Der Sprachcode für dieses Element ist ungültig. Um dies zu beheben, ersetzen Sie das lang-Attribut durch einen gültigen Sprachcode. <hr> <strong {B}>Element</strong> <code>&lt;%(ELEMENT) lang="%(CODE)"&gt;</code> <hr> Erfahren Sie mehr über die <a href="https://www.w3.org/International/questions/qa-html-language-declarations.de.html">Sprachdeklaration in HTML.</a>',
     // Buttons
     BTN_EMPTY: "Der Schaltfläche fehlt ein zugänglicher Name, der ihren Zweck beschreibt.",
     BTN_EMPTY_LABELLEDBY: "Die Schaltfläche hat einen <code>aria-labelledby</code>-Wert, der leer ist oder nicht mit dem <code>id</code>-Wert eines anderen Elements auf der Seite übereinstimmt.",
@@ -349,7 +349,7 @@ const de = {
     BG: "Hintergrund",
     NO_SUGGESTION: "Es kann keine barrierefreie Kombination durch Ändern der Textfarbe gefunden werden. Versuchen Sie, die Hintergrundfarbe zu ändern.",
     // Page language
-    PAGE_LANG_CONFIDENCE: 'Mehr als die Hälfte des Textes auf dieser Seite scheint in %(LIKELY_LANG) zu sein, aber die deklarierte Seitensprache ist %(PAGE_LANG). Erwägen Sie, die <a href="https://www.w3.org/International/questions/qa-html-language-declarations">deklarierte Seitensprache</a> so zu aktualisieren, dass sie dem Inhalt entspricht.',
+    PAGE_LANG_CONFIDENCE: 'Mehr als die Hälfte des Textes auf dieser Seite scheint in %(LIKELY_LANG) zu sein, aber die deklarierte Seitensprache ist %(PAGE_LANG). Erwägen Sie, die <a href="https://www.w3.org/International/questions/qa-html-language-declarations.de.html">deklarierte Seitensprache</a> so zu aktualisieren, dass sie dem Inhalt entspricht.',
     LANG_OF_PARTS: "Die Seitensprache wurde als %(PAGE_LANG) deklariert, aber dieser Inhalt scheint in %(LIKELY_LANG) zu sein. Stellen Sie sicher, dass der Inhalt entsprechend gekennzeichnet ist.",
     LANG_MISMATCH: "Dieser Inhalt scheint in %(DETECTED_LANG) zu sein, wurde jedoch als %(WRONG_LANG) gekennzeichnet.",
     LANG_OF_PARTS_ALT: "Dieser Alternativtext scheint in %(LIKELY_LANG) zu sein, aber die Seitensprache wurde als %(PAGE_LANG) deklariert. Stellen Sie sicher, dass der Alternativtext in derselben Sprache wie der Rest der Seite verfasst ist. <hr> {ALT} <strong {C}>%(ALT)</strong>",

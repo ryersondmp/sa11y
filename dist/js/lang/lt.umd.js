@@ -271,7 +271,7 @@
       META_MAX: 'Įsitikinkite, kad <code>maximum-scale</code> parametras <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">meta žymos vaizde</a> nėra mažesnis nei 2.',
       META_REFRESH: "Puslapis neturėtų automatiškai atsinaujinti naudojant meta žymę.",
       META_LANG_SUGGEST: "Šis kalbos kodas <code>%(CODE)</code> yra negaliojantis. Ar turėjote omenyje <code>%(CODE)</code>?",
-      META_LANG_VALID: 'Puslapio kalbos kodas <code>%(CODE)</code> yra negaliojantis. Prašome <a href="https://www.w3.org/International/questions/qa-html-language-declarations">deklaruoti galiojančią kalbą HTML žymoje.</a>',
+      META_LANG_VALID: 'Šio elemento kalbos kodas negalioja. Norėdami tai ištaisyti, pakeiskite lang atributą galiojančiu kalbos kodu. <hr> <strong {B}>Elementas</strong> <code>&lt;%(ELEMENT) lang="%(CODE)"&gt;</code> <hr> Sužinokite daugiau apie <a href="https://www.w3.org/International/questions/qa-html-language-declarations">kalbos deklaravimą HTML.</a>',
       // Buttons
       BTN_EMPTY: "Mygtukas neturi prieinamo pavadinimo, kuris apibūdina jo paskirtį.",
       BTN_EMPTY_LABELLEDBY: "Mygtukas turi <code>aria-labelledby</code> vertę, kuri yra tuščia arba nesutampa su kito puslapio elemento <code>id</code> verte.",

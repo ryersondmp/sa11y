@@ -132,6 +132,7 @@ export function annotate(issue) {
 
     // Append to Page Issues.
     const listItem = document.createElement('li');
+    listItem.classList.add([type]);
     const heading = document.createElement('h3');
     heading.textContent = issueLabel;
     listItem.appendChild(heading);
@@ -139,7 +140,7 @@ export function annotate(issue) {
 
     // Debug mode.
     if (State.option.unitTestMode) {
-      const test = Lang.sprintf('<strong>Test ID:</strong> <code>%(TEST)</code>', issue.test);
+      const test = Lang.sprintf('<hr><strong>Test ID:</strong> <code>%(TEST)</code>', issue.test);
       listItem.append(test);
     }
 

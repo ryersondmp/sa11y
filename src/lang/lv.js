@@ -369,7 +369,7 @@ export default {
       'Pārliecinieties, ka parametrs <code>maximum-scale</code> <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">meta atzīmē</a> nav mazāks par 2.',
     META_REFRESH: 'Lapai nedrīkst automātiski atsvaidzināt, izmantojot meta tagu.',
     META_LANG_SUGGEST: 'Šis valodas kods <code>%(CODE)</code> nav derīgs. Vai jūs domājāt <code>%(CODE)</code>?',
-    META_LANG_VALID: 'Lapas valodas kods <code>%(CODE)</code> nav derīgs. Lūdzu, <a href="https://www.w3.org/International/questions/qa-html-language-declarations">deklarējiet derīgu valodu HTML tagā.</a>',
+    META_LANG_VALID: 'Šī elementa valodas kods nav derīgs. Lai to labotu, aizstājiet lang atribūtu ar derīgu valodas kodu. <hr> <strong {B}>Elements</strong> <code>&lt;%(ELEMENT) lang="%(CODE)"&gt;</code> <hr> Uzziniet vairāk par <a href="https://www.w3.org/International/questions/qa-html-language-declarations">valodas deklarēšanu HTML.</a>',
 
     // Buttons
     BTN_EMPTY: 'Poga ir bez pieejama nosaukuma, kas apraksta tās mērķi.',

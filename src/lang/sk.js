@@ -365,7 +365,7 @@ export default {
       'Uistite sa, že parameter <code>maximum-scale</code> v <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">meta značke zobrazenia</a> nie je menší ako 2.',
     META_REFRESH: 'Stránka by sa nemala automaticky obnovovať pomocou meta značky.',
     META_LANG_SUGGEST: 'Nasledujúci kód jazyka <code>%(CODE)</code> nie je platný. Mysleli ste <code>%(CODE)</code>?',
-    META_LANG_VALID: 'Kód jazyka stránky <code>%(CODE)</code> nie je platný. Prosím <a href="https://www.w3.org/International/questions/qa-html-language-declarations">deklarujte platný jazyk v HTML tagu.</a>',
+    META_LANG_VALID: 'Kód jazyka pre tento prvok nie je platný. Ak to chcete napraviť, nahraďte atribút lang platným kódom jazyka. <hr> <strong {B}>Prvok</strong> <code>&lt;%(ELEMENT) lang="%(CODE)"&gt;</code> <hr> Ďalšie informácie o <a href="https://www.w3.org/International/questions/qa-html-language-declarations">deklarovaní jazyka v HTML.</a>',
 
     // Buttons
     BTN_EMPTY: 'Tlačidlu chýba prístupné meno, ktoré popisuje jeho účel.',

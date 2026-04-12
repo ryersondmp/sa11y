@@ -48,8 +48,10 @@ const sa11y = new Sa11y({
   shadowComponents: '',
   autoDetectShadowComponents: true,
   panelPosition: 'bottom-left', // invalid value, should default to right.
+  unitTestMode: true,
   ignoreByTest: {
     QA_FAKE_HEADING: 'p.ignore strong',
+    LINK_STOPWORD: '.mnbvcxz',
   },
   checks: {
     QA_BAD_LINK: {

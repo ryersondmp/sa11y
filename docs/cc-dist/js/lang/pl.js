@@ -268,7 +268,7 @@ const pl = {
     META_MAX: 'Upewnij się, że parametr <code>maximum-scale</code> w <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">meta tagu widoku</a> nie jest mniejszy niż 2.',
     META_REFRESH: "Strona nie powinna automatycznie odświeżać się przy użyciu meta tagu.",
     META_LANG_SUGGEST: "Następujący kod języka <code>%(CODE)</code> jest nieprawidłowy. Czy chodziło o <code>%(CODE)</code>?",
-    META_LANG_VALID: 'Kod języka strony <code>%(CODE)</code> jest nieprawidłowy. Proszę <a href="https://www.w3.org/International/questions/qa-html-language-declarations">zadeklarować prawidłowy język w tagu HTML.</a>',
+    META_LANG_VALID: 'Kod języka dla tego elementu jest nieprawidłowy. Aby to naprawić, zastąp atrybut lang prawidłowym kodem języka. <hr> <strong {B}>Element</strong> <code>&lt;%(ELEMENT) lang="%(CODE)"&gt;</code> <hr> Dowiedz się więcej o <a href="https://www.w3.org/International/questions/qa-html-language-declarations">deklarowaniu języka w HTML.</a>',
     // Buttons
     BTN_EMPTY: "Przycisk nie ma dostępnej nazwy opisującej jego cel.",
     BTN_EMPTY_LABELLEDBY: "Przycisk ma wartość <code>aria-labelledby</code>, która jest pusta lub nie pasuje do wartości <code>id</code> innego elementu na stronie.",

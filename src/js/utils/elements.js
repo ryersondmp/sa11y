@@ -167,12 +167,22 @@ const Elements = (function myElements() {
     Found.TabIndex = [];
     Found.NestedComponents = [];
     Found.CustomErrorLinks = [];
+    Found.LangTags = [];
 
     // Iterate on Found.Everything based on tag name.
     for (let i = 0; i < Found.Everything.length; i++) {
       const $el = Found.Everything[i];
       const tag = $el.tagName;
       switch (tag) {
+        case 'DIV': {
+          const role = $el.getAttribute('role')?.trim().toLowerCase();
+          if (role === 'img') {
+            if (!Constants.Exclusions.Images.some((s) => $el.matches(s))) {
+              Found.Images.push($el);
+            }
+          }
+          break;
+        }
         case 'IMG':
           if (!Constants.Exclusions.Images.some((s) => $el.matches(s))) Found.Images.push($el);
           break;
@@ -211,9 +221,13 @@ const Elements = (function myElements() {
         case 'SUB':
           Found.Subscripts.push($el);
           break;
-        case 'BUTTON':
-          Found.Buttons.push($el);
+        case 'BUTTON': {
+          const isDecorative = $el.matches('[role="none"], [role="presentation"]');
+          const isNeutralized = $el.hasAttribute('disabled') || $el.getAttribute('tabindex') < 0;
+          if (!Utils.isElementHidden($el) && !(isDecorative && isNeutralized))
+            Found.Buttons.push($el);
           break;
+        }
         case 'INPUT':
         case 'SELECT':
         case 'TEXTAREA':
@@ -253,6 +267,11 @@ const Elements = (function myElements() {
             Found.Contrast.push($el);
           }
         }
+      }
+
+      // Cross-cutting: lang attributes.
+      if ($el.hasAttribute('lang')) {
+        Found.LangTags.push($el);
       }
     }
 
@@ -325,8 +344,8 @@ const Elements = (function myElements() {
     }
 
     // Query <html> for lang attribute (may change on SPA navigation).
-    const html = document.querySelector('html');
-    Found.Language = html.getAttribute('lang')?.trim();
+    Found.html = document.querySelector('html');
+    Found.Language = Found.html.getAttribute('lang')?.trim();
   }
 
   // Initialize.

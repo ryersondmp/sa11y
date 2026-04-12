@@ -262,7 +262,7 @@ const ta = {
     META_LANG: "பக்கத்தின் மொழி அறிவிக்கப்படவில்லை! HTML அடையாளமிடலில் மொழியை அறிவிக்கவும்.",
     META_REFRESH: "பக்கம் தானாகவே புதுப்பிக்கப்படக்கூடாது.",
     META_LANG_SUGGEST: "பின்வரும் குறியீடு  <code>%(CODE)</code> செல்லாதது. நீங்கள் எழுத விரும்பியது இதுவா <code>%(CODE)</code>?",
-    META_LANG_VALID: 'பக்கத்தின் மொழிக் குறியீடு <code>%(CODE)</code> செல்லாதது. தயவுசெய்து <a href="https://www.w3.org/International/questions/qa-html-language-declarations"> HTML அடையாளமிடலில் செல்லுபடியாகும் ஒரு மொழியை அறிவியுங்கள்.</a>',
+    META_LANG_VALID: 'இந்த உறுப்பிற்கான மொழிக் குறியீடு செல்லுபடியாகாது. இதைச் சரிசெய்ய, lang பண்புக்கூற்றைச் (attribute) சரியான மொழிக் குறியீடாக மாற்றவும். <hr> <strong {B}>உறுப்பு</strong> <code>&lt;%(ELEMENT) lang="%(CODE)"&gt;</code> <hr> HTML-இல் <a href="https://www.w3.org/International/questions/qa-html-language-declarations">மொழியை அறிவிப்பது பற்றி மேலும் அறிக.</a>',
     // Buttons
     BTN_EMPTY: "பயன்படுத்தும்படி ஆக்கப்பட்ட பெயர் பட்டனில் விடுபட்டுள்ளது.",
     BTN_EMPTY_LABELLEDBY: "<code>aria-labelledby</code> மதிப்பு எந்த அடையாள மதிப்போடு பொருந்தவில்லை.",

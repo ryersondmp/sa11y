@@ -367,7 +367,7 @@ const Constants = (function myConstants() {
 
     // Ignore specific images.
     Exclusions.Images = [
-      'img[role="presentation"]:not(a img[role="presentation"]), img[aria-hidden="true"]:not(a img[aria-hidden="true"])',
+      'img[role="presentation"]:not(a img[role="presentation"]), img[aria-hidden="true"]:not(a img[aria-hidden="true"]), img[role="none"]:not(a img[role="none"])',
     ];
     if (State.option.imageIgnore) {
       Exclusions.Images = State.option.imageIgnore

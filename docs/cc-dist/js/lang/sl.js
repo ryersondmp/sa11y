@@ -268,7 +268,7 @@ const sl = {
     META_MAX: 'Poskrbite, da parameter <code>maximum-scale</code> v <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">meta oznaki pogleda</a> ni manjši od 2.',
     META_REFRESH: "Stran se ne sme samodejno osveževati z uporabo meta oznake.",
     META_LANG_SUGGEST: "Naslednja jezikovna koda <code>%(CODE)</code> ni veljavna. Ali ste mislili <code>%(CODE)</code>?",
-    META_LANG_VALID: 'Jezikovna koda strani <code>%(CODE)</code> ni veljavna. Prosimo, <a href="https://www.w3.org/International/questions/qa-html-language-declarations">deklarirajte veljaven jezik v oznaki HTML.</a>',
+    META_LANG_VALID: 'Jezikovna koda za ta element ni veljavna. Če želite to popraviti, zamenjajte atribut lang z veljavno jezikovno kodo. <hr> <strong {B}>Element</strong> <code>&lt;%(ELEMENT) lang="%(CODE)"&gt;</code> <hr> Preberite več o <a href="https://www.w3.org/International/questions/qa-html-language-declarations">deklariranju jezika v HTML.</a>',
     // Buttons
     BTN_EMPTY: "Gumb nima dostopnega imena, ki bi opisovalo njegov namen.",
     BTN_EMPTY_LABELLEDBY: "Gumb ima vrednost <code>aria-labelledby</code>, ki je prazna ali se ne ujema z vrednostjo <code>id</code> drugega elementa na strani.",

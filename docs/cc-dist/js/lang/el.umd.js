@@ -270,7 +270,7 @@
       META_MAX: 'Βεβαιωθείτε ότι η παράμετρος <code>maximum-scale</code> στην <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">ετικέτα meta του viewport</a> δεν είναι μικρότερη από 2.',
       META_REFRESH: "Η σελίδα δεν πρέπει να ανανεώνεται αυτόματα χρησιμοποιώντας μια ετικέτα meta.",
       META_LANG_SUGGEST: "Ο ακόλουθος κωδικός γλώσσας <code>%(CODE)</code> δεν είναι έγκυρος. Μήπως εννοούσατε <code>%(CODE)</code>;",
-      META_LANG_VALID: 'Ο κωδικός γλώσσας της σελίδας <code>%(CODE)</code> δεν είναι έγκυρος. Παρακαλούμε <a href="https://www.w3.org/International/questions/qa-html-language-declarations">δηλώστε μια έγκυρη γλώσσα στην ετικέτα HTML.</a>',
+      META_LANG_VALID: 'Ο κωδικός γλώσσας για αυτό το στοιχείο δεν είναι έγκυρος. Για να το διορθώσετε, αντικαταστήστε το χαρακτηριστικό lang με έναν έγκυρο κωδικό γλώσσας. <hr> <strong {B}>Στοιχείο</strong> <code>&lt;%(ELEMENT) lang="%(CODE)"&gt;</code> <hr> Μάθετε περισσότερα για τη <a href="https://www.w3.org/International/questions/qa-html-language-declarations">δήλωση γλώσσας στην HTML.</a>',
       // Buttons
       BTN_EMPTY: "Το κουμπί δεν έχει ένα προσβάσιμο όνομα που να περιγράφει τον σκοπό του.",
       BTN_EMPTY_LABELLEDBY: "Το κουμπί έχει τιμή <code>aria-labelledby</code> που είναι κενή ή δεν αντιστοιχεί στην τιμή <code>id</code> ενός άλλου στοιχείου στη σελίδα.",

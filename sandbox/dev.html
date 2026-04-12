@@ -47,6 +47,166 @@
   </header>
   <main>
 
+    <p style="color: #000; font-size:14pt; font-weight:700; background: #666;">
+      Some text in English
+    </p>
+
+    <p style="color: #000; background: #666;">中文网</p>
+    <p style="color: #000; background: #666;">
+      ----=====++++++++___________***********%%%%%%%%%%%±±±±@@@@@@@@
+    </p>
+
+    <fieldset disabled style="color:#888; background: white;">
+      <label>
+        My name
+        <input />
+      </label>
+    </fieldset>
+
+    <p
+      style="background: #fff; color: #666; text-shadow: #aaa 2px 2px 4px, #aaa -2px 2px 4px, #aaa 2px -2px 4px, #aaa -2px -2px 4px;">
+      Some text in a human language
+    </p>
+
+    <hr>
+    <button style="color: #666; background-color: #000" aria-label="Close">X</button>
+    <hr>
+    <label id="my_pets_name" style="color:#888; background: white;">
+      My pet's name
+    </label>
+    <div role="textbox" aria-labelledby="my_pets_name" aria-disabled="true"
+      style="height:20px; width:100px; border:1px solid black;">
+      test
+    </div>
+
+    <hr>
+
+    <div role="button" style="color: #777; background: #EEE;" aria-disabled="true">something</div>
+
+    <hr>
+
+    <label style="color:#cbcbcb; background: white;">
+      My name
+      <input type="text" disabled />
+    </label>
+
+    <hr>
+
+    See [<a href="https://act-rules.github.io/" role="doc-biblioref"><img
+        src="https://github.com/act-rules/act-rules.github.io/blob/develop/test-assets/shared/act-logo.png"
+        alt="" /></a>]
+
+    <hr>
+
+    <p lang="i-lux">Lëtzebuerg ass e Land an Europa.</p>
+
+    <p lang="eng">I love ACT rules!</p>
+
+    <div lang="invalid">
+      <img src="/WAI/content-assets/wcag-act-rules/test-assets/shared/fireworks.jpg" alt="Fireworks over Paris" />
+    </div>
+
+    <article lang="en">
+      <div lang="invalid">
+        They wandered into a strange Tiki bar on the edge of the small beach town.
+      </div>
+    </article>
+
+    <article lang="English">
+      <p style="position: absolute; top: -9999px">
+        They wandered into a strange Tiki bar on the edge of the small beach town.
+      </p>
+    </article>
+
+    <article lang="english">
+      <p aria-hidden="true">
+        They wandered into a strange Tiki bar on the edge of the small beach town.
+      </p>
+    </article>
+
+    <article lang="  ">
+      They wandered into a strange Tiki bar on the edge of the small beach town.
+    </article>
+
+    <article lang="#!">
+      They wandered into a strange Tiki bar on the edge of the small beach town.
+    </article>
+
+    <article lang="dutch">
+      Zij liepen een vreemde Tiki bar binnen, aan de rand van een dorpje aan het strand.
+    </article>
+
+    <div id="nothing-select-rolenone">
+      <select role="none" disabled>
+        <option value="volvo">Volvo</option>
+        <option value="saab">Saab</option>
+        <option value="opel">Opel</option>
+      </select>
+    </div>
+
+    <div id="error-act">
+      <h1><img src="https://www.w3.org/WAI/content-assets/wcag-act-rules/test-assets/shared/act-logo.png"
+          alt="ACT rules" role="presentation" />
+      </h1>
+    </div>
+    <hr>
+    <h2>Heading has non-empty accessible name (role=presentation on image)</h2>
+    <div id="error-act-2">
+      <h1><img src="https://www.w3.org/WAI/content-assets/wcag-act-rules/test-assets/shared/act-logo.png"
+          alt="ACT rules" role="presentation" />
+      </h1>
+    </div>
+
+    <h2>Button with role=none and negative tabindex</h2>
+    <div id="nothing-role-tabindex-neg"><button role="none" tabindex="-5"></button></div>
+
+    <h2>Button with role=none and disabled</h2>
+    <div id="nothing-rolenone-disabled"><button role="none" disabled></button></div>
+
+    <h2>Button with only role=none</h2>
+    <div id="error-role-btn"><button role="none"></button></div>
+
+    <h2>Explicitely hidden button</h2>
+    <div id="nothing-hidden-btn"><button style="display: none;"></button></div>
+
+    <h2>Input type image with no accName</h2>
+    <div id="error-input-alt">
+      <input type="image" src="https://www.w3.org/WAI/content-assets/wcag-act-rules/test-assets/shared/w3c-logo.pn"
+        aria-labelledby="non-existing" />
+    </div>
+
+    <h2>Image made with div[role="img"] with no accName</h2>
+    <div id="error-alt-div">
+      <div role="img"
+        style="width:72px; height:48px; background-image: url(https://www.w3.org/WAI/content-assets/wcag-act-rules/test-assets/shared/w3c-logo.png)">
+      </div>
+    </div>
+
+    <h2>title attribute, but no alt</h2>
+    <div id="pass-title-fallback">
+      <img title="W3C logo" src="../docs/examples/assets/placeholder.svg" />
+    </div>
+
+    <h2>role="none"</h2>
+    <div id="nothing">
+      <img role="none" src="../docs/examples/assets/placeholder.svg" />
+    </div>
+
+    <hr>
+    <h2>Testing ignores</h2>
+    <h6 class="ignore-this-heading">asds</h6>
+    <img class="ignore-img" src="../docs/github-banner.png" />
+    <p class="sr-only" style="color:pink">Lorem ipsum dolor, sit amet consectetur adipisicing elit. Porro architecto
+      iure doloribus
+      reprehenderit dolor velit quae, quam in magnam eum ex vel esse autem dolore inventore dolores, ipsa possimus
+      numquam.</p>
+    <a href="#" class="ignore-link">Learn more</a>
+    <a href="https://www.example.com?sxxss">learn more <span class="ignore-span"
+        style="background:darkblue;color:white">something</span></a>
+    <a href="https://www.example.com?sxxss">learn more JKXLSKSK</a>
+    <h3>This will be ignored in outline: <span class="headerIgnoreSpan">something</span></h3>
+    <h3>This will be ignored in outline via string match: (Anchor)</h3>
+    <hr>
 
     <div class="slider-nav">
       <a href="#" class="slide">1</a>
@@ -445,7 +605,7 @@
       </p>
     </div>
 
-    <div id="error">
+    <div id="error-grad">
       <p class="gradient-3 grd">
         Broken colour codes.
       </p>

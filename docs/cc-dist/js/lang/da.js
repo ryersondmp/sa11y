@@ -268,7 +268,7 @@ const da = {
     META_MAX: 'Sørg for, at parameteren <code>maximum-scale</code> i <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">viewport meta-taggen</a> ikke er mindre end 2.',
     META_REFRESH: "Siden bør ikke automatisk opdatere ved hjælp af et meta-tag.",
     META_LANG_SUGGEST: "Følgende sprogkode <code>%(CODE)</code> er ikke gyldig. Ment du <code>%(CODE)</code>?",
-    META_LANG_VALID: 'Sidens sprogkode <code>%(CODE)</code> er ikke gyldig. Venligst <a href="https://www.w3.org/International/questions/qa-html-language-declarations">erklær et gyldigt sprog på HTML-tagget.</a>',
+    META_LANG_VALID: 'Sprogkoden for dette element er ikke gyldig. For at løse det skal lang-attributten erstattes med en gyldig sprogkode. <hr> <strong {B}>Element</strong> <code>&lt;%(ELEMENT) lang="%(CODE)"&gt;</code> <hr> Lær mere om <a href="https://www.w3.org/International/questions/qa-html-language-declarations">erklæring af sprog i HTML.</a>',
     // Buttons
     BTN_EMPTY: "Knappen mangler et tilgængeligt navn, der beskriver dens formål.",
     BTN_EMPTY_LABELLEDBY: "Knappen har en <code>aria-labelledby</code> værdi, der er tom eller ikke stemmer overens med <code>id</code> værdien af et andet element på siden.",

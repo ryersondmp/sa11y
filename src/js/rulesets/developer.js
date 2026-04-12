@@ -7,35 +7,54 @@ import { State } from '../core/state';
 
 export default function checkDeveloper() {
   /* *************************************************************** */
-  /*  Error: Missing or invalid language tag.                        */
+  /* Error: Missing or invalid language tag.                        */
   /* *************************************************************** */
-  const report = (key, ...args) => {
+  const report = (key, $el, ...args) => {
     const rule = State.option.checks[key];
     if (!rule) return;
-    State.results.push({
+    const result = {
       test: key,
       type: rule.type || 'error',
       content: Lang.sprintf(rule.content || key, ...args),
       args: [...args],
       dismiss: Utils.prepareDismissal(key),
       developer: rule.developer || true,
-    });
+    };
+
+    if ($el) {
+      result.element = $el;
+    }
+    State.results.push(result);
   };
 
-  // 1. Check if missing.
+  // 1. Check Document Language (from the <html> tag).
   if (!Elements.Found.Language) {
-    report('META_LANG');
+    report('META_LANG', null);
   } else {
     const { valid, suggest } = Utils.validateLang(Elements.Found.Language, Lang._('LANG_CODE'));
     if (!valid) {
-      // 2. Suggest valid (en_us to en-us).
       if (suggest) {
-        report('META_LANG_SUGGEST', Elements.Found.Language, suggest);
+        report('META_LANG_SUGGEST', null, Elements.Found.Language, suggest);
       } else {
-        // 3. Not valid at all.
-        report('META_LANG_VALID', Elements.Found.Language);
+        report('META_LANG_VALID', null, 'html', Elements.Found.Language);
       }
     }
+  }
+
+  // 2. Validate all [lang] attributes.
+  if (Elements.Found.LangTags && Elements.Found.LangTags.length > 0) {
+    Elements.Found.LangTags.forEach(($el) => {
+      const rawLang = $el.getAttribute('lang');
+      const langValue = rawLang.trim();
+      const { valid, suggest } = Utils.validateLang(langValue, Lang._('LANG_CODE'));
+      if (!valid) {
+        if (suggest) {
+          report('META_LANG_SUGGEST', $el, langValue, suggest);
+        } else {
+          report('META_LANG_VALID', $el, $el.tagName.toLowerCase(), langValue);
+        }
+      }
+    });
   }
 
   /* *************************************************************** */
@@ -102,14 +121,17 @@ export default function checkDeveloper() {
   /*  Page shouldn't automatically refresh.     */
   /* ****************************************** */
   if (State.option.checks.META_REFRESH) {
-    const metaRefresh = document.querySelector('meta[http-equiv="refresh"]');
-    if (metaRefresh) {
+    const actuallyRefreshes = Array.from(
+      document.querySelectorAll('meta[http-equiv="refresh" i]'),
+    ).some((tag) => parseInt(tag.getAttribute('content'), 10) > 0);
+    if (actuallyRefreshes) {
+      const option = State.option.checks.META_REFRESH;
       State.results.push({
         test: 'META_REFRESH',
-        type: State.option.checks.META_REFRESH.type || 'error',
-        content: Lang.sprintf(State.option.checks.META_REFRESH.content || 'META_REFRESH'),
+        type: option.type || 'error',
+        content: Lang.sprintf(option.content || 'META_REFRESH'),
         dismiss: Utils.prepareDismissal('META_REFRESH'),
-        developer: State.option.checks.META_REFRESH.developer || true,
+        developer: option.developer ?? true,
       });
     }
   }
@@ -190,6 +212,9 @@ export default function checkDeveloper() {
     State.option.checks.LABEL_IN_NAME
   ) {
     Elements.Found.Buttons.forEach(($el) => {
+      // Ignore explicitly hidden.
+      // if (Utils.isElementHidden($el)) return;
+
       const accName = computeAccessibleName($el);
       const buttonText = accName.replace(/'|"|-|\.|\s+/g, '').toLowerCase();
       const textContent = Utils.getText($el);

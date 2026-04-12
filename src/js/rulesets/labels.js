@@ -19,7 +19,6 @@ export default function checkLabels() {
       const inputName = Utils.removeWhitespace(computeName);
 
       // Get attributes.
-      const alt = $el.getAttribute('alt');
       const type = $el.getAttribute('type');
       const hasTitle = $el.getAttribute('title');
       const hasAria = $el.getAttribute('aria-label') || $el.getAttribute('aria-labelledby');
@@ -31,12 +30,7 @@ export default function checkLabels() {
 
       // Error: Input with type="image" without accessible name or alt.
       if (type === 'image') {
-        if (
-          State.option.checks.LABELS_MISSING_IMAGE_INPUT &&
-          (!alt || alt.trim() === '') &&
-          !hasAria &&
-          !hasTitle
-        ) {
+        if (State.option.checks.LABELS_MISSING_IMAGE_INPUT && inputName === '') {
           State.results.push({
             test: 'LABELS_MISSING_IMAGE_INPUT',
             element: $el,

@@ -174,11 +174,13 @@ export const computeAccessibleName = (element, exclusions = [], recursing = 0) =
     }
 
     switch (node.tagName) {
-      case 'IMG':
-        if (node.hasAttribute('alt') && node.role !== 'presentation') {
+      case 'IMG': {
+        const role = node.getAttribute('role');
+        if (node.hasAttribute('alt') && role !== 'presentation' && role !== 'none') {
           and(node.getAttribute('alt'));
         }
         break;
+      }
       case 'SVG':
         if (node.role === 'img' || node.role === 'graphics-document') {
           and(computeAriaLabel(node));

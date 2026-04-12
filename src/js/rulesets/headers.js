@@ -49,7 +49,7 @@ export default function checkHeaders() {
       const image = $el.querySelector('img');
       if (image) {
         const alt = image?.getAttribute('alt');
-        if (image && (!alt || alt.trim() === '')) {
+        if (image && (!alt || alt.trim() === '' || accName === '')) {
           if (State.option.checks.HEADING_EMPTY_WITH_IMAGE) {
             test = 'HEADING_EMPTY_WITH_IMAGE';
             type = State.option.checks.HEADING_EMPTY_WITH_IMAGE.type || 'error';

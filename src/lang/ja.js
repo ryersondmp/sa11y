@@ -402,7 +402,7 @@ export default {
       '<a href="https://developer.mozilla.org/ja/docs/Web/HTML/Viewport_meta_tag">ビューポートのメタタグ</a>の <code>maximum-scale</code> パラメータが 2 未満でないことを確認してください。',
     META_REFRESH: 'ページはメタタグを使用して自動的に更新されるべきではありません。',
     META_LANG_SUGGEST: '次の言語コード <code>%(CODE)</code> は無効です。もしかして <code>%(CODE)</code> ですか？',
-    META_LANG_VALID: 'ページの言語コード <code>%(CODE)</code> は無効です。<a href="https://www.w3.org/International/questions/qa-html-language-declarations">HTMLタグで有効な言語を宣言してください。</a>',
+    META_LANG_VALID: 'この要素の言語コードが有効ではありません。修正するには、lang 属性を有効な言語コードに置き換えてください。 <hr> <strong {B}>要素</strong> <code>&lt;%(ELEMENT) lang="%(CODE)"&gt;</code> <hr> <a href="https://www.w3.org/International/questions/qa-html-language-declarations">HTML での言語宣言</a>の詳細をご覧ください。',
 
     // Buttons
     BTN_EMPTY: 'ボタンにはその目的を説明するアクセシブルな名前がありません。',

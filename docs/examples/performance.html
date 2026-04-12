@@ -17665,8 +17665,18 @@
   <script>
     Sa11y.Lang.addI18n(Sa11yLangEn.strings);
     const sa11y = new Sa11y.Sa11y({
-      langOfPartsCache: 1,
-      langOfPartsPlugin: true,
+      // autoDetectShadowComponents: true,
+      // langOfPartsCache: 1,
+      // langOfPartsPlugin: true,
+    });
+
+    let count = 0;
+    let total = 0;
+    document.addEventListener('sa11y-check-complete', (e) => {
+      count++;
+      total += parseFloat(e.detail.time);
+      console.log(e.detail);
+      console.log(`Running Average (${count} samples): ${(total / count).toFixed(2)}ms`);
     });
   </script>
   <!-- End of Sa11y-->

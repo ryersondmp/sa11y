@@ -364,7 +364,7 @@ export default {
       'Veenduge, et parameeter <code>maximum-scale</code> <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">meta sildi vaatest</a> ei oleks väiksem kui 2.',
     META_REFRESH: 'Lehte ei tohiks automaatselt värskendada, kasutades meta-silti.',
     META_LANG_SUGGEST: 'Järgmine keelekood <code>%(CODE)</code> ei ole kehtiv. Kas mõtlesite <code>%(CODE)</code>?',
-    META_LANG_VALID: 'Lehe keelekood <code>%(CODE)</code> ei ole kehtiv. Palun <a href="https://www.w3.org/International/questions/qa-html-language-declarations">deklareerige HTML-märgendis kehtiv keel.</a>',
+    META_LANG_VALID: 'Selle elemendi keelekood ei ole kehtiv. Parandamiseks asendage lang-atribuut kehtiva keelekoodiga. <hr> <strong {B}>Element</strong> <code>&lt;%(ELEMENT) lang="%(CODE)"&gt;</code> <hr> Lisateave <a href="https://www.w3.org/International/questions/qa-html-language-declarations">keele deklareerimise kohta HTML-is.</a>',
 
     // Buttons
     BTN_EMPTY: 'Nupul puudub ligipääsetav nimi, mis kirjeldaks selle eesmärki.',
