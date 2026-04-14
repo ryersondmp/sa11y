@@ -224,7 +224,7 @@ export default {
     LINK_DOI:
       'Untuk halaman web atau sumber daya yang hanya tersedia secara online, <a href="https://apastyle.apa.org/style-grammar-guidelines/paper-format/accessibility/urls#:~:text=descriptive%20links">Panduan Gaya APA</a> merekomendasikan penggunaan pranala deskriptif dengan membungkus URL atau DOI karya di sekeliling judulnya. URL yang lebih panjang dan kurang dapat dipahami yang digunakan sebagai teks tautan mungkin sulit dipahami saat diakses dengan teknologi bantu.',
     LINK_NEW_TAB:
-      'Tautan terbuka di tab atau jendela baru tanpa peringatan. Hal ini dapat membingungkan, terutama bagi orang yang mengalami kesulitan dalam memahami konten visual. Kedua, tidak selalu merupakan praktik yang baik untuk mengontrol pengalaman seseorang atau membuat keputusan untuk mereka. Tunjukkan bahwa tautan akan terbuka di jendela baru di dalam teks tautan. <hr> <strong>Tip!</strong> Pelajari praktik terbaik: <a href="https://www.nngroup.com/articles/new-browser-windows-and-tabs/">membuka tautan di jendela dan tab peramban baru</a>.',
+      'Tautan terbuka di tab atau jendela baru tanpa peringatan. Hal ini dapat membingungkan, terutama bagi orang yang mengalami kesulitan dalam memahami konten visual. Kedua, tidak selalu merupakan praktik yang baik untuk mengontrol pengalaman seseorang atau membuat keputusan untuk mereka. Tunjukkan bahwa tautan akan terbuka di jendela baru di dalam teks tautan. <hr> <strong>Tip!</strong> Pelajari praktik terbaik: <a href="https://www.nngroup.com/articles/new-browser-windows-and-tabs/">membuka tautan di jendela dan tab peramban baru.</a>',
     LINK_FILE_EXT:
       'Tautan mengarah ke PDF atau file yang dapat diunduh (mis. MP3, Zip, Word Doc) tanpa peringatan. Tunjukkan jenis file di dalam teks tautan. Jika file berukuran besar, pertimbangkan untuk menyertakan ukuran file tersebut. <hr> <strong>Contoh:</strong> Laporan Eksekutif (PDF, 3MB)',
     LINK_IDENTICAL_NAME: 'Beberapa tautan di halaman ini menggunakan teks yang sama tetapi mengarah ke tempat yang berbeda. Hal ini dapat membingungkan pengguna teknologi asistif. Untuk memperbaikinya, buatlah teks tautan ini lebih deskriptif.',
@@ -342,8 +342,7 @@ export default {
     ACC_NAME: '<strong {B}>Nama yang dapat diakses</strong> <strong {C}>%(TEXT)</strong>',
     ACC_NAME_TIP:
       '<hr><strong>Tips!</strong> "Nama yang dapat diakses" adalah label akhir yang dikomunikasikan kepada orang-orang yang menggunakan teknologi bantuan dan dihitung oleh ARIA. Ini membantu mereka memahami tujuan tautan atau tombol.',
-    HIDDEN_FOCUSABLE:
-      'Tautan atau tombol memiliki <code>aria-hidden=&quot;true&quot;</code> namun masih bisa difokuskan melalui keyboard. Jika Anda berniat untuk menyembunyikan tautan atau tombol duplikat, tambahkan juga <code>tabindex=&quot;-1&quot;</code>. Jika tidak, <code>aria-hidden=&quot;true&quot;</code> tidak boleh digunakan pada elemen yang bisa menerima fokus. <hr> Pelajari lebih lanjut tentang <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">atribut aria-hidden.</a>',
+    HIDDEN_FOCUSABLE: 'Elemen ini dapat menerima fokus keyboard, tetapi disembunyikan dari pembaca layar oleh atribut <code>aria-hidden="true"</code> (pada dirinya sendiri atau wadah induk). Untuk memperbaikinya, hapus atribut aria-hidden atau hapus elemen dari urutan tab. <hr> <strong {B}>Elemen</strong> <pre><code>%(EL)</code></pre> <hr> Pelajari lebih lanjut tentang <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">atribut aria-hidden.</a>',
 
     // Developer
     DUPLICATE_ID:

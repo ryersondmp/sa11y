@@ -349,8 +349,7 @@ export default {
     ACC_NAME: "<strong {B}>Доступне ім'я</strong> <strong {C}>%(TEXT)</strong>",
     ACC_NAME_TIP:
       '<hr><strong>Порада!</strong> "Доступна назва" - це остаточна мітка, яка передається людям, які використовують допоміжні технології, і яка обчислюється ARIA. Це допомагає їм зрозуміти мету посилання або кнопки.',
-    HIDDEN_FOCUSABLE:
-      'Посилання або кнопка мають <code>aria-hidden=&quot;true&quot;</code>, але все одно можуть отримувати фокус через клавіатуру. Якщо ви хочете приховати дубльоване посилання або кнопку, додайте також <code>tabindex=&quot;-1&quot;</code>. В іншому випадку атрибут <code>aria-hidden=&quot;true&quot;</code> не слід використовувати на елементах, які можуть отримати фокус. <hr> Дізнайтеся більше про <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">атрибут aria-hidden.</a>',
+    HIDDEN_FOCUSABLE: 'Цей елемент може отримувати фокус клавіатури, але прихований від зчитувачів екрана за допомогою атрибута <code>aria-hidden="true"</code> (на самому собі або на батьківському контейнері). Щоб виправити це, видаліть атрибут aria-hidden або видаліть елемент із порядку табуляції. <hr> <strong {B}>Елемент</strong> <pre><code>%(EL)</code></pre> <hr> Дізнайтеся більше про <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">атрибут aria-hidden.</a>',
 
     // Developer
     DUPLICATE_ID:

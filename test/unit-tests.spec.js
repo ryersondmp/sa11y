@@ -549,7 +549,7 @@ test.describe('Sa11y Unit Tests', () => {
 
   test('Linked image has aria-hidden, but still focusable', async () => {
     const issue = await checkTooltip(
-      page, 'error-hyperlinked-image-aria-hidden-focusable', 'still keyboard focusable.',
+      page, 'error-hyperlinked-image-aria-hidden-focusable', 'This element can receive keyboard focus, but is hidden from screen readers',
     );
     expect(issue).toBe(true);
   });
@@ -910,7 +910,7 @@ test.describe('Sa11y Unit Tests', () => {
 
   test('Links with aria-hidden, but focusable', async () => {
     const issue = await checkTooltip(
-      page, 'error-link-aria-hidden-focusable', 'still keyboard focusable',
+      page, 'error-link-aria-hidden-focusable', 'This element can receive keyboard focus, but is hidden from screen readers',
     );
     expect(issue).toBe(true);
   });
@@ -1489,7 +1489,7 @@ test.describe('Sa11y Unit Tests', () => {
 
   test('Button has aria-hidden but still focusable', async () => {
     const issue = await checkTooltip(
-      page, 'error-button-ariahidden', 'Link or button has aria-hidden',
+      page, 'error-button-ariahidden', 'This element can receive keyboard focus, but is hidden from screen readers',
     );
     expect(issue).toBe(true);
   });

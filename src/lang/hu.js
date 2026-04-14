@@ -306,7 +306,7 @@ export default {
     EMBED_MISSING_TITLE:
       'A beágyazott tartalomhoz hozzáférhető névre van szükség, amely leírja annak tartalmát. Kérjük, adjon meg egyedi <code>title</code> vagy <code>aria-label</code> attribútumot az <code>iframe</code> elemen. További információkért látogasson el ide: <a href="https://web.dev/learn/accessibility/more-html#iframes">iFrame-ek.</a>',
     EMBED_GENERAL:
-      'Beágyazott tartalom ellenőrzése nem lehetséges. Kérjük, győződjön meg róla, hogy a képek alt szöveggel, a videók felirattal, a szöveg megfelelő kontraszttal és az interaktív komponensek <a href="https://webaim.org/techniques/keyboard/">billentyűzettel elérhetőek</a>.',
+      'Beágyazott tartalom ellenőrzése nem lehetséges. Kérjük, győződjön meg róla, hogy a képek alt szöveggel, a videók felirattal, a szöveg megfelelő kontraszttal és az interaktív komponensek <a href="https://webaim.org/techniques/keyboard/">billentyűzettel elérhetőek.</a>',
     EMBED_UNFOCUSABLE:
       'Azoknak a <code>&lt;iframe&gt;</code>-nek, amelyek nem fókuszálható elemekkel rendelkeznek, nem kell <code>tabindex="-1"</code> tulajdonságot rendelni. A beágyazott tartalom nem lesz billentyűzettel elérhető.',
 
@@ -317,7 +317,7 @@ export default {
     QA_STRONG_ITALICS:
       'A vastag és dőlt betűs címkéknek szemantikai jelentésük van, és <strong>nem</strong> szabad egész bekezdések kiemelésére használni őket. A félkövérrel kiemelt szöveget egy szó vagy kifejezés erős <strong>kiemelésére</strong> kell használni. A dőlt betűt a tulajdonnevek (pl. könyv- és cikkcímek), idegen szavak, idézőjelek kiemelésére kell használni. A hosszú idézeteket blokkidézetként kell formázni.',
     QA_PDF:
-      'Nem lehet ellenőrizni a PDF-ek hozzáférhetőségét. A PDF-ek webes tartalomnak minősülnek, és azokat is hozzáférhetővé kell tenni. A PDF-ek gyakran tartalmaznak problémákat a képernyőolvasót használók (hiányzó szerkezeti címkék vagy hiányzó űrlapmező-címkék) és a gyengén látók (a szöveg nagyításkor nem folyik vissza) számára. <ul><li>Ha ez egy űrlap, fontolja meg egy hozzáférhető HTML űrlap használatát alternatívaként.</li><li>Ha ez egy dokumentum, fontolja meg a weboldallá alakítását.</li></ul>Máskülönben ellenőrizze a <a href="https://helpx.adobe.com/acrobat/using/create-verify-pdf-accessibility.html">PDF hozzáférhetőségét az Acrobat DC-ben.</a>Megközelíthetőségét az <a href="https://helpx.adobe.com/acrobat/using/create-verify-pdf-accessibility.html">PDF-ben.</a>.',
+      'Nem lehet ellenőrizni a PDF-ek hozzáférhetőségét. A PDF-ek webes tartalomnak minősülnek, és azokat is hozzáférhetővé kell tenni. A PDF-ek gyakran tartalmaznak problémákat a képernyőolvasót használók (hiányzó szerkezeti címkék vagy hiányzó űrlapmező-címkék) és a gyengén látók (a szöveg nagyításkor nem folyik vissza) számára. <ul><li>Ha ez egy űrlap, fontolja meg egy hozzáférhető HTML űrlap használatát alternatívaként.</li><li>Ha ez egy dokumentum, fontolja meg a weboldallá alakítását.</li></ul>Máskülönben ellenőrizze a <a href="https://helpx.adobe.com/acrobat/using/create-verify-pdf-accessibility.html">PDF hozzáférhetőségét az Acrobat DC-ben.</a>Megközelíthetőségét az <a href="https://helpx.adobe.com/acrobat/using/create-verify-pdf-accessibility.html">PDF-ben.</a>',
     QA_DOCUMENT:
       'Nem lehet ellenőrizni a dokumentum hozzáférhetőségét. A hivatkozott dokumentumok webes tartalomnak minősülnek, és azokat is hozzáférhetővé kell tenni. Kérjük, kézzel ellenőrizze a dokumentumot. <ul><li>Tegye hozzáférhetőbbé <a href="https://support.google.com/docs/answer/6199477?hl=hu">Google Workspace dokumentumát vagy prezentációját.</a></li><li>Tegye hozzáférhetőbbé <a href="https://support.microsoft.com/hu/office/create-accessible-office-documents-868ecfcd-4f00-4224-b881-a65537a7c155">Office-dokumentumait.</a></li></ul>',
     QA_BLOCKQUOTE:
@@ -344,8 +344,7 @@ export default {
     ACC_NAME: '<strong {B}>Hozzáférhető név</strong> <strong {C}>%(TEXT)</strong>',
     ACC_NAME_TIP:
       '<hr> <strong>Tippek!</strong> A "hozzáférhető név" az a végső címke, amelyet a segédeszközöket használó embereknek kommunikálnak, és amelyet az ARIA számít. Ez segít nekik megérteni a hivatkozás vagy gomb célját.',
-    HIDDEN_FOCUSABLE:
-      'A hivatkozás vagy a gomb <code>aria-hidden=&quot;true&quot;</code>, de még mindig elérhető a billentyűzettel. Ha egy duplikált hivatkozást vagy gombot szeretne elrejteni, adjon hozzá egy <code>tabindex=&quot;-1&quot;</code> értéket is. Ellenkező esetben az <code>aria-hidden=&quot;true&quot;</code> nem használható olyan elemeknél, amelyek fókuszt kaphatnak. <hr> További információ a <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">aria-hidden attribútumról.</a>',
+    HIDDEN_FOCUSABLE: 'Ez az elem kaphat billentyűzet-fókuszt, de a képernyőolvasók elől rejtve van egy <code>aria-hidden="true"</code> attribútummal (önmagán vagy egy szülő konténeren). A javításhoz távolítsa el az aria-hidden attribútumot, vagy vegye ki az elemet a tabulátor-sorrendből. <hr> <strong {B}>Elem</strong> <pre><code>%(EL)</code></pre> <hr> Tudjon meg többet az <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">aria-hidden attribútumról.</a>',
 
     // Developer
     DUPLICATE_ID:

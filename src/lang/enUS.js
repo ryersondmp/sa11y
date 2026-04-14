@@ -150,6 +150,12 @@ export default {
       'view our',
       'website',
       'article',
+      'article',
+      'go',
+      'workshop',
+      'plain text',
+      'html',
+      'this product',
     ],
     CLICK: ['click'],
     NEW_WINDOW_PHRASES: [
@@ -347,8 +353,7 @@ export default {
     ACC_NAME: '<strong {B}>Accessible Name</strong> <strong {C}>%(TEXT)</strong>',
     ACC_NAME_TIP:
       '<hr><strong>Tip!</strong> The "accessible name" is the final label that gets communicated to people who use assistive technology. This helps them understand the link or button\'s purpose.',
-    HIDDEN_FOCUSABLE:
-      'Link or button has <code>aria-hidden=&quot;true&quot;</code> but is still keyboard focusable. If you are intending to hide a duplicate link or button, add <code>tabindex=&quot;-1&quot;</code> as well. Otherwise, <code>aria-hidden=&quot;true&quot;</code> should not be used on elements that can receive focus. <hr> Learn more about the <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">aria-hidden attribute.</a>',
+    HIDDEN_FOCUSABLE: 'This element can receive keyboard focus, but is hidden from screen readers by an <code>aria-hidden="true"</code> attribute (on itself or a parent container). To fix, either remove the aria-hidden attribute or remove the element from the tab order. <hr> <strong {B}>Element</strong> <pre><code>%(EL)</code></pre> <hr> Learn more about the <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">aria-hidden attribute.</a>',
 
     // Developer checks
     DUPLICATE_ID:

@@ -443,7 +443,7 @@ const Constants = /* @__PURE__ */ (function myConstants() {
       reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
     }
     Global.scrollBehaviour = !reducedMotion || reducedMotion.matches ? "auto" : "smooth";
-    Global.langDirection = Global.html.getAttribute("dir") === "rtl" ? "rtl" : "ltr";
+    Global.langDirection = Global.html.getAttribute("dir")?.trim()?.toLowerCase() === "rtl" ? "rtl" : "ltr";
     const documentSources = State.option.checks.QA_DOCUMENT.sources;
     const defaultDocumentSources = 'a[href$=".doc"], a[href$=".docx"], a[href*=".doc?"], a[href*=".docx?"], a[href$=".ppt"], a[href$=".pptx"], a[href*=".ppt?"], a[href*=".pptx?"], a[href^="https://drive.google.com/file"], a[href^="https://docs.google."], a[href^="https://sway."]';
     if (documentSources) {
@@ -609,7 +609,7 @@ const Constants = /* @__PURE__ */ (function myConstants() {
         "pt"
       ];
       const langCode = Lang._("LANG_CODE").substring(0, 2);
-      const pageLang = Constants.Global.html.getAttribute("lang")?.toLowerCase().substring(0, 2);
+      const pageLang = Constants.Global.html.getAttribute("lang")?.trim()?.toLowerCase().substring(0, 2);
       Readability.Lang = langCode;
       const isSupported = pageLang && supported.includes(pageLang) && supported.includes(langCode);
       Readability.Plugin = Boolean(isSupported);
@@ -682,7 +682,7 @@ const Constants = /* @__PURE__ */ (function myConstants() {
     if (State.option.imageIgnore) {
       Exclusions.Images = State.option.imageIgnore.split(",").map(($el) => $el.trim()).concat(Exclusions.Images);
     }
-    Exclusions.Links = [".anchorjs-link"];
+    Exclusions.Links = [".anchorjs-link", '[aria-hidden="true"][tabindex^="-"]'];
     if (State.option.linkIgnore) {
       Exclusions.Links = State.option.linkIgnore.split(",").map(($el) => $el.trim()).concat(Exclusions.Links);
     }
@@ -773,7 +773,31 @@ function isScreenReaderOnly(element) {
   return parseFloat(style.fontSize) < 2;
 }
 function isElementHidden(element) {
-  return element.hidden || getCachedStyle(element).getPropertyValue("display") === "none";
+  if (element.hidden) return true;
+  const styles2 = getCachedStyle(element);
+  return styles2.getPropertyValue("display") === "none" || styles2.getPropertyValue("visibility") === "hidden";
+}
+function isAriaHidden($el) {
+  if (!$el || typeof $el.getAttribute !== "function") return false;
+  return $el.getAttribute("aria-hidden")?.trim().toLowerCase() === "true";
+}
+function isPresentational($el) {
+  if (!$el || typeof $el.getAttribute !== "function") return false;
+  const roleAttr = $el.getAttribute("role");
+  if (!roleAttr) return false;
+  return roleAttr.toLowerCase().split(/\s+/).some((role) => role === "presentation" || role === "none");
+}
+function isNegativeTabindex($el) {
+  return $el && $el.tabIndex < 0;
+}
+function isHiddenAndUnfocusable($el) {
+  return (isPresentational($el) || isAriaHidden($el)) && isNegativeTabindex($el);
+}
+function isDisabled($el) {
+  if (!$el || typeof $el.getAttribute !== "function") return false;
+  const isNativeDisabled = $el.hasAttribute("disabled") || $el.disabled === true;
+  const isAriaDisabled = $el.getAttribute("aria-disabled")?.trim().toLowerCase() === "true";
+  return isNativeDisabled || isAriaDisabled;
 }
 function isElementVisuallyHiddenOrHidden(element) {
   if (element.offsetWidth === 0 && element.offsetHeight === 0 || element.clientHeight === 1 && element.clientWidth === 1) {
@@ -1347,7 +1371,7 @@ function isVisibleTextInAccName($el, accName, exclusions = [], linkIgnoreStrings
   const emojiRegex = /[\p{Emoji_Presentation}\p{Extended_Pictographic}]/gu;
   let visibleText = text.replace(emojiRegex, "");
   visibleText = removeWhitespace(visibleText).toLowerCase();
-  if (visibleText === "x") {
+  if (/^[x×✕✖✗✘]$/i.test(visibleText)) {
     return false;
   }
   return visibleText.length !== 0 && !accName.toLowerCase().includes(visibleText);
@@ -1478,8 +1502,13 @@ const Utils = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.definePropert
   getNextSibling,
   getText,
   initRovingTabindex,
+  isAriaHidden,
+  isDisabled,
   isElementHidden,
   isElementVisuallyHiddenOrHidden,
+  isHiddenAndUnfocusable,
+  isNegativeTabindex,
+  isPresentational,
   isScreenReaderOnly,
   isScrollable,
   isVisibleTextInAccName,
@@ -1659,84 +1688,85 @@ const Elements = (function myElements() {
     Found.NestedComponents = [];
     Found.CustomErrorLinks = [];
     Found.LangTags = [];
+    const imageRoles = /* @__PURE__ */ new Set(["img", "graphics-document", "graphics-symbol", "graphics-object"]);
     for (let i = 0; i < Found.Everything.length; i++) {
       const $el = Found.Everything[i];
       const tag = $el.tagName;
-      switch (tag) {
-        case "DIV": {
-          const role = $el.getAttribute("role")?.trim().toLowerCase();
-          if (role === "img") {
-            if (!Constants.Exclusions.Images.some((s) => $el.matches(s))) {
-              Found.Images.push($el);
-            }
-          }
-          break;
+      const role = $el.getAttribute("role")?.trim().toLowerCase();
+      let handledByRole = false;
+      if (role) {
+        if (imageRoles.has(role) && !Constants.Exclusions.Images.some((s) => $el.matches(s))) {
+          Found.Images.push($el);
+          handledByRole = true;
+        } else if (role === "link" && !Constants.Exclusions.Links.some((s) => $el.matches(s))) {
+          Found.Links.push($el);
+          handledByRole = true;
+        } else if (role === "button") {
+          Found.Buttons.push($el);
+          handledByRole = true;
         }
-        case "IMG":
-          if (!Constants.Exclusions.Images.some((s) => $el.matches(s))) Found.Images.push($el);
-          break;
-        case "A":
-        // HTML anchor
-        case "a":
-          if ($el.hasAttribute("href") && !$el.matches('[role="button"]') && !Constants.Exclusions.Links.some((s) => $el.matches(s))) {
-            Found.Links.push($el);
-            if (badLinkSelectors.length > 0 && badLinkSelectors.some((s) => $el.matches(s))) {
-              Found.CustomErrorLinks.push($el);
+      }
+      if (!handledByRole) {
+        switch (tag) {
+          case "IMG":
+            if (!Constants.Exclusions.Images.some((s) => $el.matches(s))) Found.Images.push($el);
+            break;
+          case "A":
+          // HTML anchor
+          case "a":
+            if ($el.hasAttribute("href") && !$el.matches('[role="button"]') && !Constants.Exclusions.Links.some((s) => $el.matches(s))) {
+              Found.Links.push($el);
+              if (badLinkSelectors.length > 0 && badLinkSelectors.some((s) => $el.matches(s))) {
+                Found.CustomErrorLinks.push($el);
+              }
             }
-          }
-          break;
-        case "P":
-          if (!Constants.Exclusions.Paragraphs.some((s) => $el.matches(s)))
-            Found.Paragraphs.push($el);
-          break;
-        case "LI":
-          Found.Lists.push($el);
-          break;
-        case "BLOCKQUOTE":
-          Found.Blockquotes.push($el);
-          break;
-        case "TABLE":
-          if (!$el.matches('[role="presentation"],[role="none"]')) Found.Tables.push($el);
-          break;
-        case "STRONG":
-        case "EM":
-          Found.StrongItalics.push($el);
-          break;
-        case "SUP":
-        case "SUB":
-          Found.Subscripts.push($el);
-          break;
-        case "BUTTON": {
-          const isDecorative = $el.matches('[role="none"], [role="presentation"]');
-          const isNeutralized = $el.hasAttribute("disabled") || $el.getAttribute("tabindex") < 0;
-          if (!isElementHidden($el) && !(isDecorative && isNeutralized))
+            break;
+          case "P":
+            if (!Constants.Exclusions.Paragraphs.some((s) => $el.matches(s)))
+              Found.Paragraphs.push($el);
+            break;
+          case "LI":
+            Found.Lists.push($el);
+            break;
+          case "BLOCKQUOTE":
+            Found.Blockquotes.push($el);
+            break;
+          case "TABLE":
+            if (!$el.matches('[role="presentation"],[role="none"]')) Found.Tables.push($el);
+            break;
+          case "STRONG":
+          case "EM":
+            Found.StrongItalics.push($el);
+            break;
+          case "SUP":
+          case "SUB":
+            Found.Subscripts.push($el);
+            break;
+          case "BUTTON": {
             Found.Buttons.push($el);
-          break;
+            break;
+          }
+          case "INPUT":
+          case "SELECT":
+          case "TEXTAREA":
+          case "METER":
+          case "PROGRESS":
+            Found.Inputs.push($el);
+            break;
+          case "LABEL":
+            Found.Labels.push($el);
+            break;
+          case "IFRAME":
+          case "AUDIO":
+          case "VIDEO":
+            Found.iframes.push($el);
+            break;
+          case "svg":
+            Found.Svg.push($el);
+            break;
         }
-        case "INPUT":
-        case "SELECT":
-        case "TEXTAREA":
-        case "METER":
-        case "PROGRESS":
-          Found.Inputs.push($el);
-          break;
-        case "LABEL":
-          Found.Labels.push($el);
-          break;
-        case "IFRAME":
-        case "AUDIO":
-        case "VIDEO":
-          Found.iframes.push($el);
-          break;
-        case "svg":
-          Found.Svg.push($el);
-          break;
       }
-      if (tag !== "BUTTON" && $el.matches('[role="button"]')) Found.Buttons.push($el);
-      if ($el.hasAttribute("tabindex")) {
-        const ti = $el.getAttribute("tabindex");
-        if (ti !== "0" && !ti.startsWith("-")) Found.TabIndex.push($el);
-      }
+      if ($el.hasAttribute("tabindex") && $el.tabIndex > 0) Found.TabIndex.push($el);
       if ($el.matches(nestedSources)) Found.NestedComponents.push($el);
       if (!contrastExcludedTags.has(tag)) {
         if (!getCachedClosest($el, contrastAncestorSelector)) {
@@ -2438,7 +2468,7 @@ function annotate(issue) {
     buttonWrapper.appendChild(button);
     annotationButtons.push(button);
     const insertBefore = State.option.insertAnnotationBefore ? `, ${State.option.insertAnnotationBefore}` : "";
-    const location = getCachedClosest(element, `a, button, [role="link"], [role="button"] ${insertBefore}`) || element;
+    const location = getCachedClosest(element, `a, svg, button, [role="link"], [role="button"] ${insertBefore}`) || element;
     location.insertAdjacentElement(position, annotation);
     annotation.shadowRoot.appendChild(buttonWrapper);
     const ignoredElements = State.option.ignoreHiddenOverflow ? State.option.ignoreHiddenOverflow.split(",").flatMap((selector) => [...document.querySelectorAll(selector)]) : [];
@@ -6195,9 +6225,6 @@ function checkImages() {
   };
   Elements.Found.Images.forEach(($el) => {
     const alt = computeAriaLabel($el) === "noAria" ? $el.getAttribute("alt") ?? $el.getAttribute("title") : computeAriaLabel($el);
-    const ariaHidden = $el?.getAttribute("aria-hidden") === "true";
-    const presentationRole = $el?.getAttribute("role") === "presentation";
-    const noneRole = $el.getAttribute("role") === "none";
     if ($el.height < 2 && $el.width < 2 && (isElementHidden($el) || alt === "")) {
       return;
     }
@@ -6205,30 +6232,16 @@ function checkImages() {
       $el,
       State.option.imageWithinLightbox ? `a[href]:not(${State.option.imageWithinLightbox})` : "a[href]"
     );
+    if (isHiddenAndUnfocusable(link)) return;
     const src = $el.getAttribute("src") ? $el.getAttribute("src").split("?")[0] : $el.getAttribute("srcset");
     const linkText = link ? fnIgnore(link, Constants.Exclusions.LinkSpan).textContent.replace(
       linkIgnoreStringPattern,
       ""
     ) : "";
     const linkTextLength = removeWhitespace(linkText).length;
-    if (link && link.getAttribute("aria-hidden") === "true") {
-      const unfocusable = link.getAttribute("tabindex") === "-1";
-      if (State.option.checks.HIDDEN_FOCUSABLE && !unfocusable) {
-        State.results.push({
-          test: "HIDDEN_FOCUSABLE",
-          element: $el,
-          type: State.option.checks.HIDDEN_FOCUSABLE.type || "error",
-          content: Lang.sprintf(State.option.checks.HIDDEN_FOCUSABLE.content || "HIDDEN_FOCUSABLE"),
-          dismiss: prepareDismissal(`HIDDEN_FOCUSABLE ${src}`),
-          dismissAll: State.option.checks.HIDDEN_FOCUSABLE.dismissAll ? "LINK_HIDDEN_FOCUSABLE" : false,
-          developer: State.option.checks.HIDDEN_FOCUSABLE.developer || true
-        });
-      }
-      return;
-    }
     if (alt === null) {
       if (link) {
-        const hasAriaHiddenOrPresentationRole = linkTextLength > 0 && (ariaHidden || presentationRole || noneRole);
+        const hasAriaHiddenOrPresentationRole = linkTextLength > 0 && (isPresentational($el) || isAriaHidden($el));
         if (!hasAriaHiddenOrPresentationRole) {
           const rule = linkTextLength === 0 ? State.option.checks.MISSING_ALT_LINK : State.option.checks.MISSING_ALT_LINK_HAS_TEXT;
           const conditional = linkTextLength === 0 ? "MISSING_ALT_LINK" : "MISSING_ALT_LINK_HAS_TEXT";
@@ -6524,8 +6537,8 @@ function checkImages() {
         });
       }
     }
-    const titleAttr = $el.getAttribute("title");
-    if ($el.getAttribute("alt") && $el.getAttribute("alt")?.toLowerCase() === titleAttr?.toLowerCase()) {
+    const title = $el.getAttribute("title");
+    if (title !== null && title.trim().toLowerCase() === $el.getAttribute("alt")?.trim().toLowerCase()) {
       if (State.option.checks.DUPLICATE_TITLE) {
         State.results.push({
           test: "DUPLICATE_TITLE",
@@ -6724,11 +6737,9 @@ function checkLinkText() {
   const ignorePattern = generateRegexString(State.option.linkIgnoreStrings);
   const seen = {};
   Elements.Found.Links.forEach(($el) => {
-    const href = standardizeHref($el);
+    const href = $el.href ? standardizeHref($el) : "";
     const titleAttr = $el.getAttribute("title");
-    const ariaHidden = $el.getAttribute("aria-hidden") === "true";
-    const negativeTabindex = $el.getAttribute("tabindex") === "-1";
-    const targetBlank = $el.getAttribute("target")?.toLowerCase() === "_blank";
+    const targetBlank = $el.getAttribute("target")?.trim()?.toLowerCase() === "_blank";
     const ariaLabel = $el.getAttribute("aria-label");
     const ariaLabelledby = $el.getAttribute("aria-labelledby");
     const childLabelledby = !ariaLabelledby ? $el.querySelector("[aria-labelledby]") : null;
@@ -6748,26 +6759,6 @@ function checkLinkText() {
     const containsFileTypePhrases = lowercaseLinkText.match(fileTypeRegex)?.[0] || textContent.match(fileTypeRegex)?.[0];
     const fileTypeMatch = $el.matches(cssFileTypeSelectors);
     if (!$el.querySelector("img")) {
-      if (ariaHidden) {
-        if (!negativeTabindex) {
-          if (State.option.checks.HIDDEN_FOCUSABLE) {
-            State.results.push({
-              test: "HIDDEN_FOCUSABLE",
-              element: $el,
-              type: State.option.checks.HIDDEN_FOCUSABLE.type || "error",
-              content: Lang.sprintf(
-                State.option.checks.HIDDEN_FOCUSABLE.content || "HIDDEN_FOCUSABLE"
-              ),
-              inline: true,
-              position: "afterend",
-              dismiss: prepareDismissal(`HIDDEN_FOCUSABLE ${strippedLinkText}`),
-              dismissAll: State.option.checks.HIDDEN_FOCUSABLE.dismissAll ? "LINK_HIDDEN_FOCUSABLE" : false,
-              developer: State.option.checks.HIDDEN_FOCUSABLE.developer || true
-            });
-          }
-        }
-        return;
-      }
       if (hasAria && linkText.length !== 0) {
         const excludeSpan = fnIgnore($el, Constants.Exclusions.LinkSpan);
         const visibleLinkText = getText(excludeSpan).replace(ignorePattern, "");
@@ -7035,7 +7026,7 @@ function checkLinkText() {
     }
     if (strippedLinkText.length !== 0) {
       if (seen[strippedLinkText] && !seen[href]) {
-        const ignored = $el.ariaHidden === "true" && $el.getAttribute("tabindex") === "-1";
+        const ignored = isHiddenAndUnfocusable($el);
         const hasAttributes = $el.hasAttribute("role") || $el.hasAttribute("disabled");
         const condition = linkText.toLowerCase() !== textContentIgnoredStrings.toLowerCase();
         const diffAccName = condition ? `<hr> ${Lang._("ACC_NAME")}` : `<hr> ${Lang._("LINK_TEXT")}`;
@@ -7128,7 +7119,7 @@ function checkLinkText() {
     }
     if (State.option.checks.QA_IN_PAGE_LINK || State.option.checks.LINK_MAYBE_BUTTON) {
       const hasText = getText($el).length !== 0;
-      const ignored = ariaHidden && negativeTabindex;
+      const ignored = isHiddenAndUnfocusable($el);
       const hasAttributes = $el.hasAttribute("role") || $el.hasAttribute("aria-haspopup") || $el.hasAttribute("aria-expanded") || $el.hasAttribute("onclick") || $el.hasAttribute("disabled") || !!getCachedClosest($el, 'nav, [role="navigation"]');
       const rawHref = $el.getAttribute("href");
       if ((!rawHref || rawHref.startsWith("#")) && hasText && !ignored && !hasAttributes) {
@@ -7207,8 +7198,8 @@ function checkContrast() {
     const fontSize = parseFloat(style.fontSize);
     if (opacity === 0 || fontSize === 0 || isElementHidden($el)) continue;
     if (isScreenReaderOnly($el)) continue;
-    const isDisabled = (node) => node && (node.matches?.(":disabled") || node.disabled || node.getAttribute?.("aria-disabled") === "true");
-    if (isDisabled($el) || isDisabled(getCachedClosest($el, "label")?.control)) continue;
+    const isDisabled2 = (node) => node && (node.matches?.(":disabled") || node.disabled || node.getAttribute?.("aria-disabled") === "true");
+    if (isDisabled2($el) || isDisabled2(getCachedClosest($el, "label")?.control)) continue;
     if (!checkInputs && !/[\p{L}\p{N}]/u.test(text)) continue;
     const color = convertToRGBA(style.color, opacity);
     const getFontWeight = style.fontWeight;
@@ -7584,10 +7575,8 @@ function checkContrast() {
 function checkLabels() {
   if (State.option.formLabelsPlugin) {
     Elements.Found.Inputs.forEach(($el) => {
-      const ariaHidden = $el.getAttribute("aria-hidden") === "true";
-      const negativeTabindex = $el.getAttribute("tabindex") === "-1";
-      const hidden = isElementHidden($el);
-      if (hidden || ariaHidden && negativeTabindex) return;
+      if (isElementHidden($el) || isHiddenAndUnfocusable($el) || isPresentational($el) && isDisabled($el))
+        return;
       const computeName = computeAccessibleName($el);
       const inputName = removeWhitespace(computeName);
       const type = $el.getAttribute("type");
@@ -7919,15 +7908,11 @@ function checkEmbeddedContent() {
     });
   }
   Elements.Found.iframes.forEach(($el) => {
-    const presentation = ["presentation", "none"].includes($el.getAttribute("role"));
-    const hidden = isElementHidden($el);
     const videoAudio = $el.tagName === "VIDEO" || $el.tagName === "AUDIO";
-    const ariaHidden = $el.getAttribute("aria-hidden") === "true";
-    const negativeTabindex = $el.getAttribute("tabindex") === "-1";
-    if (hidden || videoAudio || ariaHidden && negativeTabindex || presentation) {
+    if (isElementHidden($el) || videoAudio || isHiddenAndUnfocusable($el) || isPresentational($el)) {
       return;
     }
-    if (negativeTabindex) {
+    if (isNegativeTabindex($el)) {
       if (State.option.checks.EMBED_UNFOCUSABLE) {
         State.results.push({
           test: "EMBED_UNFOCUSABLE",
@@ -7964,16 +7949,8 @@ function checkEmbeddedContent() {
   });
   if (State.option.checks.EMBED_GENERAL) {
     Elements.Found.EmbeddedContent.forEach(($el) => {
-      const presentation = ["presentation", "none"].includes($el.getAttribute("role"));
-      const ariaHidden = $el.getAttribute("aria-hidden") === "true";
-      const negativeTabindex = $el.getAttribute("tabindex") === "-1";
-      const hidden = isElementHidden($el);
-      if (hidden || ariaHidden && negativeTabindex || presentation) {
-        return;
-      }
-      if ($el.tagName === "VIDEO" || $el.tagName === "AUDIO") {
-        return;
-      }
+      if (isElementHidden($el) || isHiddenAndUnfocusable($el)) return;
+      if ($el.tagName === "VIDEO" || $el.tagName === "AUDIO") return;
       State.results.push({
         test: "EMBED_GENERAL",
         element: $el,
@@ -8430,8 +8407,7 @@ function checkDeveloper() {
   }
   if (Elements.Found.LangTags && Elements.Found.LangTags.length > 0) {
     Elements.Found.LangTags.forEach(($el) => {
-      const rawLang = $el.getAttribute("lang");
-      const langValue = rawLang.trim();
+      const langValue = $el.getAttribute("lang")?.trim();
       const { valid, suggest } = validateLang(langValue, Lang._("LANG_CODE"));
       if (!valid) {
         if (suggest) {
@@ -8554,33 +8530,13 @@ function checkDeveloper() {
   }
   if (State.option.checks.BTN_EMPTY || State.option.checks.BTN_EMPTY_LABELLEDBY || State.option.checks.BTN_LABEL || State.option.checks.HIDDEN_FOCUSABLE || State.option.checks.LABEL_IN_NAME) {
     Elements.Found.Buttons.forEach(($el) => {
+      if (isHiddenAndUnfocusable($el) || isElementHidden($el) || isPresentational($el) && isDisabled($el))
+        return;
       const accName = computeAccessibleName($el);
       const buttonText = accName.replace(/'|"|-|\.|\s+/g, "").toLowerCase();
       const textContent = getText($el);
       const hasAria = $el.querySelector(":scope [aria-labelledby], :scope [aria-label]") || $el.getAttribute("aria-labelledby") || $el.getAttribute("aria-label");
       const hasAriaLabelledby = $el.querySelector(":scope [aria-labelledby]") || $el.getAttribute("aria-labelledby");
-      const ariaHidden = $el.getAttribute("aria-hidden") === "true";
-      const negativeTabindex = $el.getAttribute("tabindex") === "-1";
-      if (ariaHidden) {
-        if (!negativeTabindex) {
-          if (State.option.checks.HIDDEN_FOCUSABLE) {
-            State.results.push({
-              test: "HIDDEN_FOCUSABLE",
-              element: $el,
-              type: State.option.checks.HIDDEN_FOCUSABLE.type || "error",
-              content: Lang.sprintf(
-                State.option.checks.HIDDEN_FOCUSABLE.content || "HIDDEN_FOCUSABLE"
-              ),
-              dismiss: prepareDismissal(
-                `HIDDEN_FOCUSABLE ${$el.tagName + $el.id + $el.className + accName}`
-              ),
-              dismissAll: State.option.checks.HIDDEN_FOCUSABLE.dismissAll ? "BTN_HIDDEN_FOCUSABLE" : false,
-              developer: State.option.checks.HIDDEN_FOCUSABLE.developer || true
-            });
-          }
-        }
-        return;
-      }
       if (buttonText.length === 0) {
         if (State.option.checks.BTN_EMPTY_LABELLEDBY && hasAriaLabelledby) {
           State.results.push({
@@ -8681,6 +8637,41 @@ function checkDeveloper() {
         dismissAll: State.option.checks.TABINDEX_ATTR.dismissAll ? "TABINDEX_ATTR" : false,
         developer: State.option.checks.TABINDEX_ATTR.developer || true
       });
+    });
+  }
+  if (State.option.checks.HIDDEN_FOCUSABLE) {
+    const focusableElements = [
+      ...Elements.Found.Links || [],
+      ...Elements.Found.Buttons || [],
+      ...Elements.Found.Inputs || [],
+      ...Elements.Found.TabIndex || []
+    ];
+    const flaggedForAriaHidden = /* @__PURE__ */ new Set();
+    focusableElements.forEach(($el) => {
+      if (flaggedForAriaHidden.has($el)) return;
+      if ($el.hasAttribute("disabled")) return;
+      if (isNegativeTabindex($el)) return;
+      if (isElementHidden($el)) return;
+      const hiddenContainer = getCachedClosest($el, '[aria-hidden="true"]');
+      if (hiddenContainer) {
+        const outerHTML = truncateString($el.outerHTML, 100);
+        State.results.push({
+          test: "HIDDEN_FOCUSABLE",
+          element: $el,
+          type: State.option.checks.HIDDEN_FOCUSABLE.type || "error",
+          content: Lang.sprintf(
+            State.option.checks.HIDDEN_FOCUSABLE.content || "HIDDEN_FOCUSABLE",
+            outerHTML
+          ),
+          args: [outerHTML],
+          dismiss: prepareDismissal(
+            `HIDDEN_FOCUSABLE ${$el.tagName + $el.id + $el.className}`
+          ),
+          dismissAll: State.option.checks.HIDDEN_FOCUSABLE.dismissAll ? "HIDDEN_FOCUSABLE" : false,
+          developer: State.option.checks.HIDDEN_FOCUSABLE.developer || true
+        });
+        flaggedForAriaHidden.add($el);
+      }
     });
   }
   return State.results;

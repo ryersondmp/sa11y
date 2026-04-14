@@ -69,17 +69,18 @@ export default function checkEmbeddedContent() {
   /* Error: Check all iFrames for a missing accessible name. */
   Elements.Found.iframes.forEach(($el) => {
     // Ignore hidden elements and video/audio.
-    const presentation = ['presentation', 'none'].includes($el.getAttribute('role'));
-    const hidden = Utils.isElementHidden($el);
     const videoAudio = $el.tagName === 'VIDEO' || $el.tagName === 'AUDIO';
-    const ariaHidden = $el.getAttribute('aria-hidden') === 'true';
-    const negativeTabindex = $el.getAttribute('tabindex') === '-1';
-    if (hidden || videoAudio || (ariaHidden && negativeTabindex) || presentation) {
+    if (
+      Utils.isElementHidden($el) ||
+      videoAudio ||
+      Utils.isHiddenAndUnfocusable($el) ||
+      Utils.isPresentational($el)
+    ) {
       return;
     }
 
     // Warning if element only has negative tabindex (without aria-hidden). Axe rulecheck.
-    if (negativeTabindex) {
+    if (Utils.isNegativeTabindex($el)) {
       if (State.option.checks.EMBED_UNFOCUSABLE) {
         State.results.push({
           test: 'EMBED_UNFOCUSABLE',
@@ -124,19 +125,11 @@ export default function checkEmbeddedContent() {
   /* Warning: for all iFrames (except video, audio, or data visualizations). */
   if (State.option.checks.EMBED_GENERAL) {
     Elements.Found.EmbeddedContent.forEach(($el) => {
-      // Ignore hidden elements.
-      const presentation = ['presentation', 'none'].includes($el.getAttribute('role'));
-      const ariaHidden = $el.getAttribute('aria-hidden') === 'true';
-      const negativeTabindex = $el.getAttribute('tabindex') === '-1';
-      const hidden = Utils.isElementHidden($el);
-      if (hidden || (ariaHidden && negativeTabindex) || presentation) {
-        return;
-      }
+      // Ignore explicitly hidden elements.
+      if (Utils.isElementHidden($el) || Utils.isHiddenAndUnfocusable($el)) return;
 
       // Ignore video & audio elements.
-      if ($el.tagName === 'VIDEO' || $el.tagName === 'AUDIO') {
-        return;
-      }
+      if ($el.tagName === 'VIDEO' || $el.tagName === 'AUDIO') return;
 
       State.results.push({
         test: 'EMBED_GENERAL',

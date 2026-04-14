@@ -344,8 +344,7 @@ export default {
     ACC_NAME: '<strong {B}>Dostępna nazwa</strong> <strong {C}>%(TEXT)</strong>',
     ACC_NAME_TIP:
       '<hr><strong>Wskazówka!</strong> "Dostępna nazwa" to ostateczna etykieta, która jest przekazywana osobom korzystającym z technologii wspomagających i jest obliczana przez ARIA. Pomaga to im zrozumieć cel linku lub przycisku.',
-    HIDDEN_FOCUSABLE:
-      'Link lub przycisk ma atrybut <code>aria-hidden=&quot;true&quot;</code>, ale wciąż może być uzyskany za pomocą klawiatury. Jeśli zamierzasz ukryć zduplikowany link lub przycisk, dodaj również <code>tabindex=&quot;-1&quot;</code>. W przeciwnym razie atrybut <code>aria-hidden=&quot;true&quot;</code> nie powinien być używany dla elementów, które mogą otrzymać fokus. <hr> Dowiedz się więcej o <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">atrybucie aria-hidden.</a>',
+    HIDDEN_FOCUSABLE: 'Ten element może przyjąć fokus klawiatury, ale jest ukryty przed czytnikami ekranu za pomocą atrybutu <code>aria-hidden="true"</code> (na nim samym lub kontenerze nadrzędnym). Aby to naprawić, usuń atrybut aria-hidden lub usuń element z kolejności tabulacji. <hr> <strong {B}>Element</strong> <pre><code>%(EL)</code></pre> <hr> Dowiedz się więcej o <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">atrybucie aria-hidden.</a>',
 
     // Developer
     DUPLICATE_ID:

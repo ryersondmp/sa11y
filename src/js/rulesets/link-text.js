@@ -82,11 +82,9 @@ export default function checkLinkText() {
   const seen = {};
   Elements.Found.Links.forEach(($el) => {
     // Attributes.
-    const href = Utils.standardizeHref($el);
+    const href = $el.href ? Utils.standardizeHref($el) : '';
     const titleAttr = $el.getAttribute('title');
-    const ariaHidden = $el.getAttribute('aria-hidden') === 'true';
-    const negativeTabindex = $el.getAttribute('tabindex') === '-1';
-    const targetBlank = $el.getAttribute('target')?.toLowerCase() === '_blank';
+    const targetBlank = $el.getAttribute('target')?.trim()?.toLowerCase() === '_blank';
 
     // Get ARIA attributes: caches attributes and uses short-circuit logic to prevent redundant DOM queries.
     const ariaLabel = $el.getAttribute('aria-label');
@@ -126,31 +124,6 @@ export default function checkLinkText() {
      * Don't overlap with Alt Text module.
      */
     if (!$el.querySelector('img')) {
-      // Has aria-hidden.
-      if (ariaHidden) {
-        if (!negativeTabindex) {
-          // If negative tabindex.
-          if (State.option.checks.HIDDEN_FOCUSABLE) {
-            State.results.push({
-              test: 'HIDDEN_FOCUSABLE',
-              element: $el,
-              type: State.option.checks.HIDDEN_FOCUSABLE.type || 'error',
-              content: Lang.sprintf(
-                State.option.checks.HIDDEN_FOCUSABLE.content || 'HIDDEN_FOCUSABLE',
-              ),
-              inline: true,
-              position: 'afterend',
-              dismiss: Utils.prepareDismissal(`HIDDEN_FOCUSABLE ${strippedLinkText}`),
-              dismissAll: State.option.checks.HIDDEN_FOCUSABLE.dismissAll
-                ? 'LINK_HIDDEN_FOCUSABLE'
-                : false,
-              developer: State.option.checks.HIDDEN_FOCUSABLE.developer || true,
-            });
-          }
-        }
-        return;
-      }
-
       /**
        * Links with ARIA
        */
@@ -504,7 +477,7 @@ export default function checkLinkText() {
     if (strippedLinkText.length !== 0) {
       // Links with identical accessible names have equivalent purpose.
       if (seen[strippedLinkText] && !seen[href]) {
-        const ignored = $el.ariaHidden === 'true' && $el.getAttribute('tabindex') === '-1';
+        const ignored = Utils.isHiddenAndUnfocusable($el);
         const hasAttributes = $el.hasAttribute('role') || $el.hasAttribute('disabled');
         const condition = linkText.toLowerCase() !== textContentIgnoredStrings.toLowerCase();
         const diffAccName = condition
@@ -618,7 +591,7 @@ export default function checkLinkText() {
     // Check for broken same-page links and missing interactive semantics.
     if (State.option.checks.QA_IN_PAGE_LINK || State.option.checks.LINK_MAYBE_BUTTON) {
       const hasText = Utils.getText($el).length !== 0;
-      const ignored = ariaHidden && negativeTabindex;
+      const ignored = Utils.isHiddenAndUnfocusable($el);
       const hasAttributes =
         $el.hasAttribute('role') ||
         $el.hasAttribute('aria-haspopup') ||

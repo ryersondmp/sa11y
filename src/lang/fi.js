@@ -192,7 +192,7 @@ export default {
     HEADING_FIRST:
       'Sivun ensimmäisen otsikon tulisi yleensä olla Otsikko 1 tai Otsikko 2. Otsikon 1 tulisi olla pääsisältöosion alku, ja se on pääotsikko, joka kuvaa sivun yleistä tarkoitusta. Lue lisää <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">Otsikon rakenteesta.</a>',
     HEADING_MISSING_ONE:
-      'Puuttuva otsikko 1. Otsikon 1 pitäisi olla pääsisältöalueen alku, ja se on pääotsikko, joka kuvaa sivun yleistä tarkoitusta. Lue lisää <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">Ohjeiden rakenne.</a>.',
+      'Puuttuva otsikko 1. Otsikon 1 pitäisi olla pääsisältöalueen alku, ja se on pääotsikko, joka kuvaa sivun yleistä tarkoitusta. Lue lisää <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">Ohjeiden rakenne.</a>',
     HEADING_EMPTY_WITH_IMAGE:
       'Otsikossa ei ole tekstiä, mutta se sisältää kuvan. Jos tämä ei ole otsikko, muuta sen muotoa <strong {C}>Otsikko %(level)</strong> muotoon <strong>Normaali</strong> tai <strong>Kappale</strong>. Muussa tapauksessa, lisää alt-teksti kuvaan, jos se ei ole koristeellinen.',
     PANEL_HEADING_MISSING_ONE: 'Otsikko 1 puuttuu!',
@@ -301,7 +301,7 @@ export default {
     EMBED_MISSING_TITLE:
       'Sulautettu sisältö edellyttää sen sisältöä kuvaavaa nimeä. Anna <code>iframe</code>-elementille yksilöllinen <code>title</code>- tai <code>aria-label</code>-attribuutti. Lisätietoja <a href="https://web.dev/learn/accessibility/more-html#iframes">iFrameista.</a>',
     EMBED_GENERAL:
-      'Upotetun sisällön tarkistaminen ei onnistu. Varmista, että kuvissa on alt-teksti, videoissa on kuvateksti, tekstissä on riittävä kontrasti ja vuorovaikutteiset komponentit ovat <a href="https://webaim.org/techniques/keyboard/">näppäimistöllä käytettävissä.</a>.',
+      'Upotetun sisällön tarkistaminen ei onnistu. Varmista, että kuvissa on alt-teksti, videoissa on kuvateksti, tekstissä on riittävä kontrasti ja vuorovaikutteiset komponentit ovat <a href="https://webaim.org/techniques/keyboard/">näppäimistöllä käytettävissä.</a>',
     EMBED_UNFOCUSABLE:
       '<code>&lt;iframe&gt;</code> jossa ei ole fokusointikelpoisia elementtejä, ei pitäisi olla <code>tabindex="-1"</code>. Upotettu sisältö ei ole näppäimistöllä saavutettavissa.',
 
@@ -320,7 +320,7 @@ export default {
     QA_FAKE_HEADING:
       'Onko tämä otsikko? <strong {C}>%(TEXT)</strong> <hr> Lihavoitu tai suuri tekstirivi saattaa näyttää otsikolta, mutta ruudunlukuohjelmaa käyttävä ei voi todeta sitä tärkeäksi tai siirtyä sen sisältöön. Lihavoidun tai ison tekstin ei pitäisi koskaan korvata semanttisia otsikoita (otsikot 2-6).',
     QA_FAKE_LIST:
-      'Yritätkö luoda luettelon? Mahdollinen luettelokohde löytyi: <strong {C}>%(firstPrefix)</strong> <hr> Varmista, että käytät semanttisia luetteloita käyttämällä sen sijaan luettelopainikkeita tai numeromuotoilupainikkeita. Kun käytät semanttista luetteloa, avustavat teknologiat pystyvät välittämään tietoja, kuten kohteiden kokonaismäärän ja kunkin kohteen suhteellisen sijainnin luettelossa. Lisätietoja <a href="https://www.w3.org/WAI/tutorials/page-structure/content/#lists">semanttisista luetteloista.</a>.',
+      'Yritätkö luoda luettelon? Mahdollinen luettelokohde löytyi: <strong {C}>%(firstPrefix)</strong> <hr> Varmista, että käytät semanttisia luetteloita käyttämällä sen sijaan luettelopainikkeita tai numeromuotoilupainikkeita. Kun käytät semanttista luetteloa, avustavat teknologiat pystyvät välittämään tietoja, kuten kohteiden kokonaismäärän ja kunkin kohteen suhteellisen sijainnin luettelossa. Lisätietoja <a href="https://www.w3.org/WAI/tutorials/page-structure/content/#lists">semanttisista luetteloista.</a>',
     QA_UPPERCASE:
       'Löytyi kaikki suuraakkoset. Jotkin ruudunlukuohjelmat saattavat tulkita isokirjaimellisen tekstin lyhenteeksi ja lukea jokaisen kirjaimen erikseen. Lisäksi joidenkin ihmisten mielestä isokirjaimet ovat vaikeampia lukea, ja ne voivat antaa vaikutelman huutamisesta.',
     QA_UNDERLINE:
@@ -339,8 +339,7 @@ export default {
     LINK_TEXT: '<strong {B}>Linkkiteksti</strong> <strong {C}>%(TEXT)</strong>',
     ACC_NAME_TIP:
       '<hr> <strong>Vinkki!</strong> "Saavutettava nimi" on lopullinen etiketti, joka viestitään apuvälineitä käyttävien henkilöiden kanssa ja joka lasketaan ARIA:n avulla. Tämä auttaa heitä ymmärtämään linkin tai painikkeen tarkoituksen.',
-    HIDDEN_FOCUSABLE:
-      'Linkillä tai painikkeella on <code>aria-hidden=&quot;true&quot;</code>, mutta se on edelleen näppäimistöllä käytettävissä. Jos aiot piilottaa kaksoislinkin tai -painikkeen, lisää myös <code>tabindex=&quot;-1&quot;</code>. Muuten <code>aria-hidden=&quot;true&quot;</code> -määritettä ei tulisi käyttää elementeissä, jotka voivat vastaanottaa fokuksen. <hr> Lue lisää <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">aria-hidden-attribuutista.</a>',
+    HIDDEN_FOCUSABLE: 'Tämä elementti voi vastaanottaa näppäimistön kohdistuksen, mutta se on piilotettu ruudunlukuohjelmilta <code>aria-hidden="true"</code>-attribuutilla (joko elementissä itsessään tai sen isäntäsäiliössä). Korjaa ongelma joko poistamalla aria-hidden-attribuutti tai poistamalla elementti sarkainjärjestyksestä (tab order). <hr> <strong {B}>Elementti</strong> <pre><code>%(EL)</code></pre> <hr> Lue lisää <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">aria-hidden-attribuutista.</a>',
 
     // Developer
     DUPLICATE_ID:
@@ -354,7 +353,7 @@ export default {
     META_LANG:
       'Sivun kieltä ei ole ilmoitettu! Ole hyvä ja <a href="https://www.w3.org/International/questions/qa-html-language-declarations">ilmoita kieli HTML-tagissa.</a>',
     META_TITLE:
-      'Sivun otsikko puuttuu! Anna <a href="https://developer.mozilla.org/fi/docs/Web/HTML/Element/title">sivun otsikko.</a>.',
+      'Sivun otsikko puuttuu! Anna <a href="https://developer.mozilla.org/fi/docs/Web/HTML/Element/title">sivun otsikko.</a>',
     META_SCALABLE:
       'Poista parametri <code>user-scalable="no"</code> <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">meta tagista</a> zoomauksen mahdollistamiseksi.',
     META_MAX:
@@ -379,7 +378,7 @@ export default {
 
     // Tables
     TABLES_MISSING_HEADINGS:
-      'Puuttuvat taulukkootsikot! Esteettömät taulukot tarvitsevat HTML-merkintää, joka osoittaa otsikkosolut ja datasolut, jotka määrittelevät niiden välisen suhteen. Tämä tieto antaa kontekstin ihmisille, jotka käyttävät apuvälineteknologiaa. Taulukoita tulisi käyttää vain taulukkomuotoiseen tietoon. <hr> Lisätietoja <a href="https://www.w3.org/WAI/tutorials/tables/">saavutettavista taulukoista.</a>.',
+      'Puuttuvat taulukkootsikot! Esteettömät taulukot tarvitsevat HTML-merkintää, joka osoittaa otsikkosolut ja datasolut, jotka määrittelevät niiden välisen suhteen. Tämä tieto antaa kontekstin ihmisille, jotka käyttävät apuvälineteknologiaa. Taulukoita tulisi käyttää vain taulukkomuotoiseen tietoon. <hr> Lisätietoja <a href="https://www.w3.org/WAI/tutorials/tables/">saavutettavista taulukoista.</a>',
     TABLES_SEMANTIC_HEADING:
       'Semanttisia otsikoita, kuten Heading 2 tai Heading 3, tulisi käyttää vain sisällön osioissa; <strong>ei</strong> HTML-taulukoissa. Ilmoita taulukkootsikot sen sijaan <code>&lt;th&gt;</code>-elementillä. <hr> Lisätietoja <a href="https://www.w3.org/WAI/tutorials/tables/">saavutettavista taulukoista.</a>',
     TABLES_EMPTY_HEADING:

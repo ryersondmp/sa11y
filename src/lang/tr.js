@@ -345,8 +345,7 @@ export default {
     ACC_NAME: '<strong {B}>Erişilebilir ad</strong> <strong {C}>%(TEXT)</strong>',
     ACC_NAME_TIP:
       '<hr><strong>İpucu!</strong> "Erişilebilir ad", yardımcı teknolojiyi kullanan kişilere iletilen son etikettir ve ARIA tarafından hesaplanır. Bu, bağlantının veya düğmenin amacını anlamalarına yardımcı olur.',
-    HIDDEN_FOCUSABLE:
-      'Bağlantı veya düğme <code>aria-hidden=&quot;true&quot;</code> değerine sahip ancak hâlâ klavye ile odaklanabilir durumda. Bir kopya bağlantı veya düğmeyi gizlemeyi düşünüyorsanız, <code>tabindex=&quot;-1&quot;</code> ekleyin. Aksi takdirde, odak alabilen öğelerde <code>aria-hidden=&quot;true&quot;</code> kullanılmamalıdır. <hr> <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">aria-hidden özelliği</a> hakkında daha fazla bilgi edinin.',
+    HIDDEN_FOCUSABLE: 'Bu öğe klavye odağı alabilir, ancak <code>aria-hidden="true"</code> özniteliği (kendi üzerinde veya üst kapsayıcıda) nedeniyle ekran okuyuculardan gizlenmiştir. Düzeltmek için aria-hidden özniteliğini kaldırın veya öğeyi sekme sırasından çıkarın. <hr> <strong {B}>Öğe</strong> <pre><code>%(EL)</code></pre> <hr> <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">aria-hidden özniteliği</a> hakkında daha fazla bilgi edinin.',
 
     // Developer
     DUPLICATE_ID:

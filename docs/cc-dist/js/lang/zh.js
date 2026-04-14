@@ -257,7 +257,7 @@ const zh = {
     LINK_TEXT: "<strong {B}>链接文本</strong> <strong {C}>%(TEXT)</strong>",
     ACC_NAME: "<strong {B}>可访问名称</strong> <strong {C}>%(TEXT)</strong>",
     ACC_NAME_TIP: "<hr> <strong>提示！</strong> “可访问名称”是传达给使用辅助技术的人的最终标签，并由 ARIA 计算。这有助于他们理解链接或按钮的目的。",
-    HIDDEN_FOCUSABLE: '链接或按钮已设置 <code>aria-hidden=&quot;true&quot;</code>，但仍然可以通过键盘聚焦。如果您打算隐藏重复的链接或按钮，请添加 <code>tabindex=&quot;-1&quot;</code>。否则，不应在可以接收焦点的元素上使用 <code>aria-hidden=&quot;true&quot;</code>。了解更多关于 <a href="https://developer.mozilla.org/zh-CH/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">aria-hidden 属性</a>。',
+    HIDDEN_FOCUSABLE: '此元素可以接收键盘焦点，但由于 <code>aria-hidden="true"</code> 属性（在自身或父级容器上），它对屏幕阅读器是隐藏的。要修复此问题，请移除 aria-hidden 属性，或将该元素从 Tab 键顺序中移除。 <hr> <strong {B}>元素</strong> <pre><code>%(EL)</code></pre> <hr> 了解有关 <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">aria-hidden 属性</a> 的更多信息。',
     // Developer
     DUPLICATE_ID: "发现<strong>重复的ID</strong>。众所周知, 当辅助技术试图与内容互动时, 重复的ID错误会给辅助技术带来问题。请删除或更改以下ID. <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>",
     UNCONTAINED_LI: "所有 <code>&lt;li&gt;</code> 列表项必须放置在 <code>&lt;ul&gt;</code> 无序列表或 <code>&lt;ol&gt;</code> 有序列表元素内部。这个结构帮助屏幕阅读器准确地读取列表及其项。",

@@ -9,10 +9,12 @@ export default function checkLabels() {
   if (State.option.formLabelsPlugin) {
     Elements.Found.Inputs.forEach(($el) => {
       // Ignore completely hidden elements.
-      const ariaHidden = $el.getAttribute('aria-hidden') === 'true';
-      const negativeTabindex = $el.getAttribute('tabindex') === '-1';
-      const hidden = Utils.isElementHidden($el);
-      if (hidden || (ariaHidden && negativeTabindex)) return;
+      if (
+        Utils.isElementHidden($el) ||
+        Utils.isHiddenAndUnfocusable($el) ||
+        (Utils.isPresentational($el) && Utils.isDisabled($el))
+      )
+        return;
 
       // Compute accessible name on input.
       const computeName = computeAccessibleName($el);

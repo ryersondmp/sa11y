@@ -96,9 +96,6 @@ export default function checkImages() {
       computeAriaLabel($el) === 'noAria'
         ? ($el.getAttribute('alt') ?? $el.getAttribute('title'))
         : computeAriaLabel($el);
-    const ariaHidden = $el?.getAttribute('aria-hidden') === 'true';
-    const presentationRole = $el?.getAttribute('role') === 'presentation';
-    const noneRole = $el.getAttribute('role') === 'none';
 
     // Ignore tracking pixels without explicit aria-hidden or nullified alt.
     if ($el.height < 2 && $el.width < 2 && (Utils.isElementHidden($el) || alt === '')) {
@@ -112,6 +109,9 @@ export default function checkImages() {
         ? `a[href]:not(${State.option.imageWithinLightbox})`
         : 'a[href]',
     );
+
+    // Explicitly hidden.
+    if (Utils.isHiddenAndUnfocusable(link)) return;
 
     // Image's source for key.
     const src = $el.getAttribute('src')
@@ -127,35 +127,13 @@ export default function checkImages() {
       : '';
     const linkTextLength = Utils.removeWhitespace(linkText).length;
 
-    /** ******************** */
-    /*  HIDDEN BUT FOCUSABE  */
-    /* ********************* */
-    if (link && link.getAttribute('aria-hidden') === 'true') {
-      // If linked image has aria-hidden, but is still focusable.
-      const unfocusable = link.getAttribute('tabindex') === '-1';
-      if (State.option.checks.HIDDEN_FOCUSABLE && !unfocusable) {
-        State.results.push({
-          test: 'HIDDEN_FOCUSABLE',
-          element: $el,
-          type: State.option.checks.HIDDEN_FOCUSABLE.type || 'error',
-          content: Lang.sprintf(State.option.checks.HIDDEN_FOCUSABLE.content || 'HIDDEN_FOCUSABLE'),
-          dismiss: Utils.prepareDismissal(`HIDDEN_FOCUSABLE ${src}`),
-          dismissAll: State.option.checks.HIDDEN_FOCUSABLE.dismissAll
-            ? 'LINK_HIDDEN_FOCUSABLE'
-            : false,
-          developer: State.option.checks.HIDDEN_FOCUSABLE.developer || true,
-        });
-      }
-      return;
-    }
-
     /** **************** */
     /*  ALT IS MISSING   */
     /* ***************** */
     if (alt === null) {
       if (link) {
         const hasAriaHiddenOrPresentationRole =
-          linkTextLength > 0 && (ariaHidden || presentationRole || noneRole);
+          linkTextLength > 0 && (Utils.isPresentational($el) || Utils.isAriaHidden($el));
         if (!hasAriaHiddenOrPresentationRole) {
           const rule =
             linkTextLength === 0
@@ -540,10 +518,10 @@ export default function checkImages() {
     /* ************************ */
     /*  DUPLICATE ALT & TITLE.  */
     /* ************************ */
-    const titleAttr = $el.getAttribute('title');
+    const title = $el.getAttribute('title');
     if (
-      $el.getAttribute('alt') &&
-      $el.getAttribute('alt')?.toLowerCase() === titleAttr?.toLowerCase()
+      title !== null &&
+      title.trim().toLowerCase() === $el.getAttribute('alt')?.trim().toLowerCase()
     ) {
       if (State.option.checks.DUPLICATE_TITLE) {
         State.results.push({

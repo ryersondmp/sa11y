@@ -305,7 +305,7 @@ export default {
     EMBED_MISSING_TITLE:
       'Varjatud sisu vajab juurdepääsetavat nime, mis kirjeldab selle sisu. Andke <code>iframe</code> elemendile <code>tiitle</code> või <code>aria-label</code> atribuut unikaalne <code>tiitle</code> või <code>aria-label</code>. Lisateave <a href="https://web.dev/learn/accessibility/more-html#iframes">iFrame\'i kohta.</a>',
     EMBED_GENERAL:
-      'Ei saa kontrollida varjatud sisu. Palun veenduge, et piltidel on alt-tekst, videote pealkirjad, tekst on piisavalt kontrastne ja interaktiivsed komponendid on <a href="https://webaim.org/techniques/keyboard/">tahvlile juurdepääsetavad.</a>.',
+      'Ei saa kontrollida varjatud sisu. Palun veenduge, et piltidel on alt-tekst, videote pealkirjad, tekst on piisavalt kontrastne ja interaktiivsed komponendid on <a href="https://webaim.org/techniques/keyboard/">tahvlile juurdepääsetavad.</a>',
     EMBED_UNFOCUSABLE:
       '<code>&lt;iframe&gt;</code> koos fookustamata elementidega ei tohiks olla <code>tabindex="-1"</code>. Manustatud sisu ei ole klaviatuuriga juurdepääsetav.',
 
@@ -316,7 +316,7 @@ export default {
     QA_STRONG_ITALICS:
       'Paks ja kursiivne märgistus on semantilise tähendusega ja neid ei tohiks <strong>ei</strong> kasutada tervete lõigete esiletõstmiseks. Häälestatud teksti tuleks kasutada selleks, et rõhutada sõna või fraasi tugevalt <strong>kõrge</strong>. Kursiivkirjas tuleks kasutada pärisnimede (st raamatute ja artiklite pealkirjade), võõrsõnade, jutumärkide esiletõstmiseks. Pikad tsitaadid tuleks vormistada plokktsitaatidena.',
     QA_PDF:
-      'Ei saa kontrollida PDF-failide juurdepääsetavust. PDF-failid loetakse veebisisuks ja need tuleb samuti juurdepääsetavaks muuta. PDF-failid sisaldavad sageli probleeme inimeste jaoks, kes kasutavad ekraanilugejaid (puuduvad struktuurilised märgised või vormiväljade märgised) ja inimeste jaoks, kellel on vaegnägemine (tekst ei voola suurendatud kujul tagasi). <ul><li>Kui tegemist on vormiga, kaaluge alternatiivina ligipääsetava HTML-vormi kasutamist.</li><li>Kui tegemist on dokumendiga, kaaluge selle teisendamist veebileheks.</li></ul> Muudel juhtudel kontrollige <a href="https://helpx.adobe.com/acrobat/using/create-verify-pdf-accessibility.html">PDF-i ligipääsetavust Acrobat DC-s.</a>.',
+      'Ei saa kontrollida PDF-failide juurdepääsetavust. PDF-failid loetakse veebisisuks ja need tuleb samuti juurdepääsetavaks muuta. PDF-failid sisaldavad sageli probleeme inimeste jaoks, kes kasutavad ekraanilugejaid (puuduvad struktuurilised märgised või vormiväljade märgised) ja inimeste jaoks, kellel on vaegnägemine (tekst ei voola suurendatud kujul tagasi). <ul><li>Kui tegemist on vormiga, kaaluge alternatiivina ligipääsetava HTML-vormi kasutamist.</li><li>Kui tegemist on dokumendiga, kaaluge selle teisendamist veebileheks.</li></ul> Muudel juhtudel kontrollige <a href="https://helpx.adobe.com/acrobat/using/create-verify-pdf-accessibility.html">PDF-i ligipääsetavust Acrobat DC-s.</a>',
     QA_DOCUMENT:
       'Ei saa kontrollida dokumendi juurdepääsetavust. Lingitud dokumente loetakse veebisisuks ja need tuleb samuti juurdepääsetavaks muuta. Palun vaadake see dokument käsitsi üle. <ul><li>Muuta oma <a href="https://support.google.com/docs/answer/6199477?hl=et">Google Workspace\'i dokument või esitlus ligipääsetavamaks.</a></li></li><li>Muuta oma <a href="https://support.microsoft.com/et/office/create-accessible-office-documents-868ecfcd-4f00-4224-b881-a65537a7c155">Office\'i dokumendid ligipääsetavamaks.</a></li></ul>',
     QA_BLOCKQUOTE:
@@ -343,8 +343,7 @@ export default {
     LINK_TEXT: '<strong {B}>Lingi tekst</strong> <strong {C}>%(TEXT)</strong>',
     ACC_NAME_TIP:
       '<hr><strong>Nõuanne!</strong> "Ligipääsetav nimi" on lõplik silt, mis edastatakse abivahendeid kasutavatele inimestele ja mille arvutamine toimub ARIA kaudu. See aitab neil mõista lingi või nupu eesmärki.',
-    HIDDEN_FOCUSABLE:
-      'Link või nupp on <code>aria-hidden=&quot;true&quot;</code>, kuid on endiselt klaviatuurilt fookustatav. Kui kavatsete peita dubleeritud lingi või nupu, lisage ka <code>tabindex=&quot;-1&quot;</code>. Vastasel juhul ei tohiks <code>aria-hidden=&quot;true&quot;</code> kasutada elementidel, mis saavad fookust. <hr> Lisateave <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">aria-hidden atribuudi kohta.</a>',
+    HIDDEN_FOCUSABLE: 'See element võib saada klaviatuuri fookuse, kuid on ekraanilugejate eest peidetud atribuudiga <code>aria-hidden="true"</code> (kas elemendil endal või selle ülemkonteineril). Parandamiseks eemaldage atribuut aria-hidden või eemaldage element tabulaatori järjekorrast. <hr> <strong {B}>Element</strong> <pre><code>%(EL)</code></pre> <hr> Lisateave <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">atribuudi aria-hidden kohta.</a>',
 
     // Developer
     DUPLICATE_ID:
@@ -357,7 +356,7 @@ export default {
     META_LANG:
       'Lehekülje keel ei ole deklareeritud! Palun <a href="https://www.w3.org/International/questions/qa-html-language-declarations">deklareerige keel HTML-sildil.</a>',
     META_TITLE:
-      'Puudub lehekülje pealkiri! Palun sisestage <a href="https://developer.mozilla.org/et/docs/Web/HTML/Element/title">lehe pealkiri.</a>.',
+      'Puudub lehekülje pealkiri! Palun sisestage <a href="https://developer.mozilla.org/et/docs/Web/HTML/Element/title">lehe pealkiri.</a>',
     META_SCALABLE:
       'Eemaldage parameeter <code>user-scalable="no"</code> <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">meta sildi vaatest</a>, et lubada suumimist.',
     META_MAX:

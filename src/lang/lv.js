@@ -198,9 +198,9 @@ export default {
     HEADING_LONG:
       'Virsraksts ir garš! Virsraksti jāizmanto, lai sakārtotu saturu un izteiktu struktūru. Tām jābūt īsām, informatīvām un unikālām. Lūdzu, lai virsraksti būtu īsāki par %(MAX_LENGTH) rakstzīmēm (ne garāki par vienu teikumu). <hr> <strong {C}>%(HEADING_LENGTH) Rakstzīmes</strong>',
     HEADING_FIRST:
-      'Pirmais virsraksts lapā parasti ir 1. vai 2. virsraksts. Ar 1. virsrakstu jāsāk galvenā satura sadaļa, un tas ir galvenais virsraksts, kas raksturo lapas vispārējo mērķi. Uzziniet vairāk par <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">Galveno virsrakstu struktūru</a>.',
+      'Pirmais virsraksts lapā parasti ir 1. vai 2. virsraksts. Ar 1. virsrakstu jāsāk galvenā satura sadaļa, un tas ir galvenais virsraksts, kas raksturo lapas vispārējo mērķi. Uzziniet vairāk par <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">Galveno virsrakstu struktūru.</a>',
     HEADING_MISSING_ONE:
-      'Trūkst 1. virsraksta. 1. virsrakstam jābūt galvenā satura laukuma sākumam, un tas ir galvenais virsraksts, kas apraksta lapas vispārējo mērķi. Uzziniet vairāk par <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">Galveno struktūru</a>.',
+      'Trūkst 1. virsraksta. 1. virsrakstam jābūt galvenā satura laukuma sākumam, un tas ir galvenais virsraksts, kas apraksta lapas vispārējo mērķi. Uzziniet vairāk par <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">Galveno struktūru.</a>',
     HEADING_EMPTY_WITH_IMAGE:
       'Virsrakstā nav teksta, bet ir attēls. Ja tas nav virsraksts, mainiet tā formātu no <strong {C}>Virsraksts %(level)</strong> uz <strong>Normāls</strong> vai <strong>Apakšsadaļa</strong>. Pretējā gadījumā pievienojiet attēlam alt tekstu, ja tas nav dekoratīvs.',
     PANEL_HEADING_MISSING_ONE: 'Trūkst 1. pozīcijas!',
@@ -229,7 +229,7 @@ export default {
     LINK_DOI:
       'Tīmekļa lapām vai tikai tiešsaistes resursiem <a href="https://apastyle.apa.org/style-grammar-guidelines/paper-format/accessibility/urls#:~:text=descriptive%20links">APA stila rokasgrāmatā</a> ir ieteikts izmantot aprakstošas saites, ap darba virsrakstu aptinot tā URL vai DOI. Garākus, mazāk saprotamus URL, kas tiek izmantoti kā saites teksts, var būt grūti saprast, kad tiem piekļūst ar palīgtehnoloģiju palīdzību.',
     LINK_NEW_TAB:
-      'Saite atveras jaunā cilnē vai logā bez brīdinājuma. Tas var radīt apjukumu, jo īpaši cilvēkiem, kuriem ir grūtības uztvert vizuālo saturu. Otrkārt, ne vienmēr ir laba prakse kontrolēt kāda cilvēka pieredzi vai pieņemt lēmumus viņa vietā. Norādiet, ka saite atveras jaunā logā, saites tekstā. <hr> <strong>Padoms!</strong> Apgūstiet labāko praksi: <a href="https://www.nngroup.com/articles/new-browser-windows-and-tabs/">atvērt saites jaunos pārlūkprogrammas logos un cilnēs</a>.',
+      'Saite atveras jaunā cilnē vai logā bez brīdinājuma. Tas var radīt apjukumu, jo īpaši cilvēkiem, kuriem ir grūtības uztvert vizuālo saturu. Otrkārt, ne vienmēr ir laba prakse kontrolēt kāda cilvēka pieredzi vai pieņemt lēmumus viņa vietā. Norādiet, ka saite atveras jaunā logā, saites tekstā. <hr> <strong>Padoms!</strong> Apgūstiet labāko praksi: <a href="https://www.nngroup.com/articles/new-browser-windows-and-tabs/">atvērt saites jaunos pārlūkprogrammas logos un cilnēs.</a>',
     LINK_FILE_EXT:
       'Saite norāda uz PDF vai lejupielādējamu failu (piemēram, MP3, Zip, Word Doc) bez brīdinājuma. Saites tekstā norādiet faila veidu. Ja tas ir liels fails, apsveriet iespēju norādīt faila lielumu. <hr> <strong>Piemērs:</strong> Vadības ziņojums (PDF, 3 MB).',
     LINK_IDENTICAL_NAME: 'Vairākas saites šajā lapā izmanto vienu un to pašu tekstu, bet norāda uz dažādām vietām. Tas var radīt neskaidrības asistenttehnoloģiju lietotājiem. Lai to labotu, padariet šīs saites tekstu aprakstošāku.',
@@ -270,7 +270,7 @@ export default {
     LINK_IMAGE_ALT_AND_TEXT:
       'Attēla saitē ir <strong>gan alt teksts, gan apkārt esošais saites teksts.</strong> Ja šis attēls ir dekoratīvs un tiek izmantots kā funkcionāla saite uz citu lapu, apsveriet iespēju atzīmēt attēlu kā dekoratīvu vai nulles tekstu - pietiek ar apkārtējo saites tekstu. <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong> <hr> <strong {B}>Pieejamais nosaukums</strong> {L} <strong {B}>%(TEXT)</strong>',
     IMAGE_FIGURE_DECORATIVE:
-      'Attēls ir atzīmēts kā <strong>dekoratīvs</strong>, un palīgtehnoloģijas to ignorēs. <hr> Lai gan ir sniegts <strong>uzraksts</strong>, vairumā gadījumu attēlam ir jābūt arī alt tekstam. <ul><li>Alttekstam būtu jāsniedz īss attēlā redzamā apraksts.</li><li>Parakstā parasti būtu jāsniedz konteksts, lai sasaistītu attēlu ar apkārtējo saturu vai pievērstu uzmanību kādai konkrētai informācijai.</li></ul> Uzziniet vairāk: <a href="https://thoughtbot.com/blog/alt-vs-figcaption#the-figcaption-element">alt versus figcaption.</a>.',
+      'Attēls ir atzīmēts kā <strong>dekoratīvs</strong>, un palīgtehnoloģijas to ignorēs. <hr> Lai gan ir sniegts <strong>uzraksts</strong>, vairumā gadījumu attēlam ir jābūt arī alt tekstam. <ul><li>Alttekstam būtu jāsniedz īss attēlā redzamā apraksts.</li><li>Parakstā parasti būtu jāsniedz konteksts, lai sasaistītu attēlu ar apkārtējo saturu vai pievērstu uzmanību kādai konkrētai informācijai.</li></ul> Uzziniet vairāk: <a href="https://thoughtbot.com/blog/alt-vs-figcaption#the-figcaption-element">alt versus figcaption.</a>',
     IMAGE_FIGURE_DUPLICATE_ALT:
       'Neizmantojiet tieši tos pašus vārdus gan alt, gan virsraksta tekstā. Ekrānlasītāji informāciju paziņos divreiz. <ul><li>Alt tekstā būtu īsi jāapraksta, kas ir attēlā.</li><li>Papildinājumā parasti būtu jāsniedz konteksts, lai attēls būtu saistīts ar apkārtējo saturu, vai jāpievērš uzmanība kādai konkrētai informācijai.</li></ul> Uzziniet vairāk: <a href="https://thoughtbot.com/blog/alt-vs-figcaption#the-figcaption-element">alt versus figcaption.</a> <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
     IMAGE_DECORATIVE:
@@ -289,7 +289,7 @@ export default {
     LABELS_MISSING_IMAGE_INPUT:
       'Attēla pogai trūkst alt teksta. Lūdzu, pievienojiet alt tekstu, lai nodrošinātu pieejamu nosaukumu. Piemēram: Piemēram, <em>Meklēšana</em> vai <em>Nosūtīt</em>.',
     LABELS_INPUT_RESET:
-      'Atiestatīšanas pogas <strong>nevajadzētu izmantot, ja vien tas nav īpaši nepieciešams, jo tās var viegli aktivizēt kļūdas pēc. <hr> <strong>Tip!</strong> Uzziniet, kāpēc <a href="https://www.nngroup.com/articles/reset-and-cancel-buttons/">Pārtraukšanas un atcelšanas pogas rada lietojamības problēmas</a>.',
+      'Atiestatīšanas pogas <strong>nevajadzētu izmantot, ja vien tas nav īpaši nepieciešams, jo tās var viegli aktivizēt kļūdas pēc. <hr> <strong>Tip!</strong> Uzziniet, kāpēc <a href="https://www.nngroup.com/articles/reset-and-cancel-buttons/">Pārtraukšanas un atcelšanas pogas rada lietojamības problēmas.</a>',
     LABELS_ARIA_LABEL_INPUT:
       'Ievadei ir pieejams nosaukums, tomēr pārliecinieties, ka ir redzams arī marķējums. <hr> <strong {B}>Pieejamais nosaukums</strong> <strong {C}>%(TEXT)</strong>',
     LABELS_NO_FOR_ATTRIBUTE:
@@ -305,11 +305,11 @@ export default {
     EMBED_AUDIO:
       'Lūdzu, nodrošiniet <strong>transkriptu visiem podkāstiem.</strong> Transkriptu nodrošināšana audio saturam ir obligāta A līmeņa prasība. Transkripcijas palīdz cilvēkiem, kuri ir nedzirdīgi vai vājdzirdīgi, taču tās var būt noderīgas ikvienam. Apsveriet iespēju transkriptu izvietot zem vai akordeona panelī.',
     EMBED_DATA_VIZ:
-      'Šādi datu vizualizācijas logrīki bieži rada problēmas cilvēkiem, kuri navigācijai izmanto tastatūru vai ekrāna lasītāju, un var radīt ievērojamas grūtības cilvēkiem ar vāju redzi vai krāsu aklumu. Ieteicams to pašu informāciju sniegt alternatīvā (teksta vai tabulas) formātā zem logrīka. <hr> Uzziniet vairāk par <a href="https://www.w3.org/WAI/tutorials/images/complex">sarežģītiem attēliem</a>.',
+      'Šādi datu vizualizācijas logrīki bieži rada problēmas cilvēkiem, kuri navigācijai izmanto tastatūru vai ekrāna lasītāju, un var radīt ievērojamas grūtības cilvēkiem ar vāju redzi vai krāsu aklumu. Ieteicams to pašu informāciju sniegt alternatīvā (teksta vai tabulas) formātā zem logrīka. <hr> Uzziniet vairāk par <a href="https://www.w3.org/WAI/tutorials/images/complex">sarežģītiem attēliem.</a>',
     EMBED_MISSING_TITLE:
       'Iegultajam saturam ir nepieciešams pieejams nosaukums, kas raksturo tā saturu. Lūdzu, norādiet unikālu <code>title</code> vai <code>aria-label</code> atribūtu elementā <code>iframe</code>. Uzziniet vairāk par <a href="https://web.dev/learn/accessibility/more-html#iframes">iFrame.</a>',
     EMBED_GENERAL:
-      'Nevar pārbaudīt iegulto saturu. Lūdzu, pārliecinieties, ka attēliem ir alt teksts, videoklipiem ir uzraksti, tekstam ir pietiekams kontrasts un interaktīvie komponenti ir <a href="https://webaim.org/techniques/keyboard/">pieejami no tastatūras.</a>.',
+      'Nevar pārbaudīt iegulto saturu. Lūdzu, pārliecinieties, ka attēliem ir alt teksts, videoklipiem ir uzraksti, tekstam ir pietiekams kontrasts un interaktīvie komponenti ir <a href="https://webaim.org/techniques/keyboard/">pieejami no tastatūras.</a>',
     EMBED_UNFOCUSABLE:
       '<code>&lt;iframe&gt;</code> ar neuzmanāmiem elementiem nevajadzētu būt <code>tabindex="-1"</code>. Iegultais saturs nebūs pieejams ar tastatūru.',
 
@@ -347,8 +347,7 @@ export default {
     ACC_NAME: '<strong {B}>Pieejamais nosaukums</strong> <strong {C}>%(TEXT)</strong>',
     ACC_NAME_TIP:
       '<hr><strong>Ieteikums!</strong> "Pieejamais nosaukums" ir galīgā etiķete, kas tiek sazināta ar cilvēkiem, kuri izmanto palīgtehnoloģijas, un kuru aprēķina ARIA. Tas palīdz viņiem saprast saites vai pogas mērķi.',
-    HIDDEN_FOCUSABLE:
-      'Saites vai pogas atribūtam ir <code>aria-hidden=&quot;true&quot;</code>, bet tas ir joprojām fokusējams no tastatūras. Ja jūs vēlaties paslēpt dublējošu saiti vai pogu, pievienojiet arī <code>tabindex=&quot;-1&quot;</code>. Pretējā gadījumā <code>aria-hidden=&quot;true&quot;</code> nedrīkst izmantot elementiem, kas var saņemt fokusu. <hr> Uzziniet vairāk par <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">aria-hidden atribūtu.</a>',
+    HIDDEN_FOCUSABLE: 'Šis elements var saņemt tastatūras fokusu, taču tas ir paslēpts no ekrāna lasītājiem ar <code>aria-hidden="true"</code> atribūtu (pašam elementam vai vecākā konteineram). Lai to labotu, noņemiet aria-hidden atribūtu vai noņemiet elementu no tabulēšanas secības. <hr> <strong {B}>Elements</strong> <pre><code>%(EL)</code></pre> <hr> Uzziniet vairāk par <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">aria-hidden atribūtu.</a>',
 
     // Developer
     DUPLICATE_ID:
@@ -387,11 +386,11 @@ export default {
 
     // Tables
     TABLES_MISSING_HEADINGS:
-      'Trūkst tabulu virsrakstu! Pieejamām tabulām ir nepieciešama HTML iezīmēšana, kas norāda virsrakstu šūnas un datu šūnas, kas nosaka to savstarpējo saistību. Šī informācija nodrošina kontekstu cilvēkiem, kuri izmanto palīgtehnoloģijas. Tabulas jāizmanto tikai tabulas datiem. <hr> Uzziniet vairāk par <a href="https://www.w3.org/WAI/tutorials/tables/">pieejamām tabulām</a>.',
+      'Trūkst tabulu virsrakstu! Pieejamām tabulām ir nepieciešama HTML iezīmēšana, kas norāda virsrakstu šūnas un datu šūnas, kas nosaka to savstarpējo saistību. Šī informācija nodrošina kontekstu cilvēkiem, kuri izmanto palīgtehnoloģijas. Tabulas jāizmanto tikai tabulas datiem. <hr> Uzziniet vairāk par <a href="https://www.w3.org/WAI/tutorials/tables/">pieejamām tabulām.</a>',
     TABLES_SEMANTIC_HEADING:
-      'Semantiskos virsrakstus, piemēram, Heading 2 vai Heading 3, drīkst izmantot tikai satura sadaļās; <strong>ne</strong> HTML tabulās. Tabulu virsrakstus norādiet, izmantojot elementu <code>&lt;th&gt;</code>. <hr> Uzziniet vairāk par <a href="https://www.w3.org/WAI/tutorials/tables/">pieejamām tabulām</a>.',
+      'Semantiskos virsrakstus, piemēram, Heading 2 vai Heading 3, drīkst izmantot tikai satura sadaļās; <strong>ne</strong> HTML tabulās. Tabulu virsrakstus norādiet, izmantojot elementu <code>&lt;th&gt;</code>. <hr> Uzziniet vairāk par <a href="https://www.w3.org/WAI/tutorials/tables/">pieejamām tabulām.</a>',
     TABLES_EMPTY_HEADING:
-      'Atrasta tukša tabulas galvene! Tabulu galvenēm <strong>nevajadzētu būt tukšām. Ir svarīgi norādīt rindu un/vai kolonnu galvenes, lai atspoguļotu to saistību. Šī informācija sniedz kontekstu cilvēkiem, kuri izmanto palīgtehnoloģijas. Paturiet prātā, ka tabulas jāizmanto tikai tabulārajiem datiem. <hr> Uzziniet vairāk par <a href="https://www.w3.org/WAI/tutorials/tables/">pieejamām tabulām</a>.',
+      'Atrasta tukša tabulas galvene! Tabulu galvenēm <strong>nevajadzētu būt tukšām. Ir svarīgi norādīt rindu un/vai kolonnu galvenes, lai atspoguļotu to saistību. Šī informācija sniedz kontekstu cilvēkiem, kuri izmanto palīgtehnoloģijas. Paturiet prātā, ka tabulas jāizmanto tikai tabulārajiem datiem. <hr> Uzziniet vairāk par <a href="https://www.w3.org/WAI/tutorials/tables/">pieejamām tabulām.</a>',
 
     // Contrast
     CONTRAST_NORMAL: 'Normāla izmēra tekstam jābūt ar kontrasta attiecību vismaz %(RATIO).',

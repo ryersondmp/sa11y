@@ -59,7 +59,71 @@ export function isScreenReaderOnly(element) {
  * @returns {boolean} 'true' if the element is hidden (display: none).
  */
 export function isElementHidden(element) {
-  return element.hidden || getCachedStyle(element).getPropertyValue('display') === 'none';
+  if (element.hidden) return true;
+  const styles = getCachedStyle(element);
+  return (
+    styles.getPropertyValue('display') === 'none' ||
+    styles.getPropertyValue('visibility') === 'hidden'
+  );
+}
+
+/**
+ * Checks if an element is explicitly hidden from screen readers.
+ * Safely handles whitespace and case variations.
+ * @param {HTMLElement|Element} $el - The DOM element to evaluate.
+ * @returns {boolean} True if aria-hidden is "true".
+ */
+export function isAriaHidden($el) {
+  if (!$el || typeof $el.getAttribute !== 'function') return false;
+  return $el.getAttribute('aria-hidden')?.trim().toLowerCase() === 'true';
+}
+
+/**
+ * Checks if an element's semantics have been neutralized.
+ * Handles space-separated role lists (e.g., role="none presentation").
+ * @param {HTMLElement|Element} $el - The DOM element to evaluate.
+ * @returns {boolean} True if role includes "presentation" or "none".
+ */
+export function isPresentational($el) {
+  if (!$el || typeof $el.getAttribute !== 'function') return false;
+  const roleAttr = $el.getAttribute('role');
+  if (!roleAttr) return false;
+  return roleAttr
+    .toLowerCase()
+    .split(/\s+/)
+    .some((role) => role === 'presentation' || role === 'none');
+}
+
+/**
+ * Checks if an element is removed from sequential keyboard navigation.
+ * Uses the native DOM property for faster, safer numerical evaluation.
+ * @param {HTMLElement|Element} $el - The DOM element to evaluate.
+ * @returns {boolean} True if tabindex is negative.
+ */
+export function isNegativeTabindex($el) {
+  return $el && $el.tabIndex < 0;
+}
+
+/**
+ * Determines if an element is properly neutralized for both AT and keyboard users.
+ * Composes the individual utility functions for clean, reusable logic.
+ * @param {HTMLElement|Element} $el - The DOM element to evaluate.
+ * @returns {boolean} True if (role is presentation/none OR aria-hidden is true) AND tabindex is negative.
+ */
+export function isHiddenAndUnfocusable($el) {
+  return (isPresentational($el) || isAriaHidden($el)) && isNegativeTabindex($el);
+}
+
+/**
+ * Determines if an element is disabled natively or via ARIA.
+ * @param {HTMLElement|Element} $el - The DOM element to evaluate.
+ * @returns {boolean} True if the element has a disabled attribute/property or aria-disabled="true".
+ */
+export function isDisabled($el) {
+  if (!$el || typeof $el.getAttribute !== 'function') return false;
+  const isNativeDisabled = $el.hasAttribute('disabled') || $el.disabled === true;
+  const isAriaDisabled = $el.getAttribute('aria-disabled')?.trim().toLowerCase() === 'true';
+  return isNativeDisabled || isAriaDisabled;
 }
 
 /**
@@ -935,7 +999,7 @@ export function isVisibleTextInAccName($el, accName, exclusions = [], linkIgnore
   visibleText = removeWhitespace(visibleText).toLowerCase();
 
   // If visible text is just an x character, ignore.
-  if (visibleText === 'x') {
+  if (/^[x×✕✖✗✘]$/i.test(visibleText)) {
     return false;
   }
 

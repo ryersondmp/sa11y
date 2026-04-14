@@ -342,8 +342,7 @@ export default {
     ACC_NAME: '<strong {B}>Nome accessibile</strong> <strong {C}>%(TEXT)</strong>',
     ACC_NAME_TIP:
       '<hr><strong>Consiglio!</strong> Il "nome accessibile" è l\'etichetta finale comunicata alle persone che utilizzano tecnologie assistive e viene calcolata da ARIA. Questo aiuta a comprendere lo scopo del collegamento o del pulsante.',
-    HIDDEN_FOCUSABLE:
-      'Il link o il pulsante ha <code>aria-hidden=&quot;true&quot;</code> ma è ancora focalizzabile con la tastiera. Se intendi nascondere un link o un pulsante duplicato, aggiungi anche <code>tabindex=&quot;-1&quot;</code>. In caso contrario, <code>aria-hidden=&quot;true&quot;</code> non dovrebbe essere utilizzato su elementi che possono ricevere il focus. <hr> Scopri di più sull\' <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">attributo aria-hidden.</a>',
+    HIDDEN_FOCUSABLE: 'Questo elemento può ricevere il focus della tastiera, ma è nascosto agli screen reader da un attributo <code>aria-hidden="true"</code> (su se stesso o su un contenitore genitore). Per risolvere il problema, rimuovi l\'attributo aria-hidden o rimuovi l\'elemento dall\'ordine di tabulazione. <hr> <strong {B}>Elemento</strong> <pre><code>%(EL)</code></pre> <hr> Ulteriori informazioni sull\'<a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">attributo aria-hidden.</a>',
 
     // Developer
     DUPLICATE_ID:

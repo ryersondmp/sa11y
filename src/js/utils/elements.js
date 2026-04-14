@@ -169,93 +169,96 @@ const Elements = (function myElements() {
     Found.CustomErrorLinks = [];
     Found.LangTags = [];
 
+    const imageRoles = new Set(['img', 'graphics-document', 'graphics-symbol', 'graphics-object']);
+
     // Iterate on Found.Everything based on tag name.
     for (let i = 0; i < Found.Everything.length; i++) {
       const $el = Found.Everything[i];
       const tag = $el.tagName;
-      switch (tag) {
-        case 'DIV': {
-          const role = $el.getAttribute('role')?.trim().toLowerCase();
-          if (role === 'img') {
-            if (!Constants.Exclusions.Images.some((s) => $el.matches(s))) {
-              Found.Images.push($el);
-            }
-          }
-          break;
+      const role = $el.getAttribute('role')?.trim().toLowerCase();
+      let handledByRole = false;
+
+      // Role overrides.
+      if (role) {
+        if (imageRoles.has(role) && !Constants.Exclusions.Images.some((s) => $el.matches(s))) {
+          Found.Images.push($el);
+          handledByRole = true;
+        } else if (role === 'link' && !Constants.Exclusions.Links.some((s) => $el.matches(s))) {
+          Found.Links.push($el);
+          handledByRole = true;
+        } else if (role === 'button') {
+          Found.Buttons.push($el);
+          handledByRole = true;
         }
-        case 'IMG':
-          if (!Constants.Exclusions.Images.some((s) => $el.matches(s))) Found.Images.push($el);
-          break;
-        case 'A': // HTML anchor
-        case 'a': // SVG anchor (lowercase in SVG namespace)
-          if (
-            $el.hasAttribute('href') &&
-            !$el.matches('[role="button"]') &&
-            !Constants.Exclusions.Links.some((s) => $el.matches(s))
-          ) {
-            Found.Links.push($el);
-            // Check custom error link sources while we have the link.
-            if (badLinkSelectors.length > 0 && badLinkSelectors.some((s) => $el.matches(s))) {
-              Found.CustomErrorLinks.push($el);
-            }
-          }
-          break;
-        case 'P':
-          if (!Constants.Exclusions.Paragraphs.some((s) => $el.matches(s)))
-            Found.Paragraphs.push($el);
-          break;
-        case 'LI':
-          Found.Lists.push($el);
-          break;
-        case 'BLOCKQUOTE':
-          Found.Blockquotes.push($el);
-          break;
-        case 'TABLE':
-          if (!$el.matches('[role="presentation"],[role="none"]')) Found.Tables.push($el);
-          break;
-        case 'STRONG':
-        case 'EM':
-          Found.StrongItalics.push($el);
-          break;
-        case 'SUP':
-        case 'SUB':
-          Found.Subscripts.push($el);
-          break;
-        case 'BUTTON': {
-          const isDecorative = $el.matches('[role="none"], [role="presentation"]');
-          const isNeutralized = $el.hasAttribute('disabled') || $el.getAttribute('tabindex') < 0;
-          if (!Utils.isElementHidden($el) && !(isDecorative && isNeutralized))
-            Found.Buttons.push($el);
-          break;
-        }
-        case 'INPUT':
-        case 'SELECT':
-        case 'TEXTAREA':
-        case 'METER':
-        case 'PROGRESS':
-          Found.Inputs.push($el);
-          break;
-        case 'LABEL':
-          Found.Labels.push($el);
-          break;
-        case 'IFRAME':
-        case 'AUDIO':
-        case 'VIDEO':
-          Found.iframes.push($el);
-          break;
-        case 'svg':
-          Found.Svg.push($el);
-          break;
       }
 
-      // Cross-cutting: [role="button"] on non-BUTTON elements
-      if (tag !== 'BUTTON' && $el.matches('[role="button"]')) Found.Buttons.push($el);
+      if (!handledByRole) {
+        switch (tag) {
+          case 'IMG':
+            if (!Constants.Exclusions.Images.some((s) => $el.matches(s))) Found.Images.push($el);
+            break;
+          case 'A': // HTML anchor
+          case 'a': // SVG anchor (lowercase in SVG namespace)
+            if (
+              $el.hasAttribute('href') &&
+              !$el.matches('[role="button"]') &&
+              !Constants.Exclusions.Links.some((s) => $el.matches(s))
+            ) {
+              Found.Links.push($el);
+              // Check custom error link sources while we have the link.
+              if (badLinkSelectors.length > 0 && badLinkSelectors.some((s) => $el.matches(s))) {
+                Found.CustomErrorLinks.push($el);
+              }
+            }
+            break;
+          case 'P':
+            if (!Constants.Exclusions.Paragraphs.some((s) => $el.matches(s)))
+              Found.Paragraphs.push($el);
+            break;
+          case 'LI':
+            Found.Lists.push($el);
+            break;
+          case 'BLOCKQUOTE':
+            Found.Blockquotes.push($el);
+            break;
+          case 'TABLE':
+            if (!$el.matches('[role="presentation"],[role="none"]')) Found.Tables.push($el);
+            break;
+          case 'STRONG':
+          case 'EM':
+            Found.StrongItalics.push($el);
+            break;
+          case 'SUP':
+          case 'SUB':
+            Found.Subscripts.push($el);
+            break;
+          case 'BUTTON': {
+            Found.Buttons.push($el);
+            break;
+          }
+          case 'INPUT':
+          case 'SELECT':
+          case 'TEXTAREA':
+          case 'METER':
+          case 'PROGRESS':
+            Found.Inputs.push($el);
+            break;
+          case 'LABEL':
+            Found.Labels.push($el);
+            break;
+          case 'IFRAME':
+          case 'AUDIO':
+          case 'VIDEO':
+            Found.iframes.push($el);
+            break;
+          case 'svg':
+            Found.Svg.push($el);
+            break;
+        }
+      }
 
       // Cross-cutting: tabindex
-      if ($el.hasAttribute('tabindex')) {
-        const ti = $el.getAttribute('tabindex');
-        if (ti !== '0' && !ti.startsWith('-')) Found.TabIndex.push($el);
-      }
+      if ($el.hasAttribute('tabindex') && $el.tabIndex > 0) Found.TabIndex.push($el);
 
       // Cross-cutting: Nested components.
       if (nestedSources && $el.matches(nestedSources)) Found.NestedComponents.push($el);

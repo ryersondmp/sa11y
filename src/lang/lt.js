@@ -304,7 +304,7 @@ export default {
     EMBED_DATA_VIZ:
       'Tokie duomenų vizualizavimo valdikliai dažnai kelia problemų žmonėms, kurie naudojasi klaviatūra arba ekrano skaitytuvu, ir gali kelti didelių sunkumų silpnaregiams arba spalvinio aklumo žmonėms. Rekomenduojama tą pačią informaciją pateikti alternatyviu (teksto arba lentelės) formatu po valdikliu. <hr> Sužinokite daugiau apie <a href="https://www.w3.org/WAI/tutorials/images/complex">sudėtingus vaizdus.</a>',
     EMBED_MISSING_TITLE:
-      'Įterptajam turiniui reikalingas prieinamas pavadinimas, apibūdinantis jo turinį. Elemente <code>iframe</code> nurodykite unikalų <code>title</code> arba <code>aria-label</code> atributą. Sužinokite daugiau apie <a href="https://web.dev/learn/accessibility/more-html#iframes">iRėmus.</a>.',
+      'Įterptajam turiniui reikalingas prieinamas pavadinimas, apibūdinantis jo turinį. Elemente <code>iframe</code> nurodykite unikalų <code>title</code> arba <code>aria-label</code> atributą. Sužinokite daugiau apie <a href="https://web.dev/learn/accessibility/more-html#iframes">iRėmus.</a>',
     EMBED_GENERAL:
       'Nepavyksta patikrinti įterpto turinio. Įsitikinkite, kad paveikslėliuose yra "alt" tekstas, vaizdo įrašuose - antraštės, tekstas pakankamai kontrastingas, o interaktyvūs komponentai yra <a href="https://webaim.org/techniques/keyboard/">prieinami klaviatūra.</a>',
     EMBED_UNFOCUSABLE:
@@ -325,7 +325,7 @@ export default {
     QA_FAKE_HEADING:
       'Ar tai antraštė? <strong {C}>%(TEXT)</strong> <hr> Paryškinto ar didelio teksto eilutė gali atrodyti kaip antraštė, tačiau ekrano skaitytuvu besinaudojantis žmogus negali pasakyti, kad ji yra svarbi, arba pereiti prie jos turinio. Paryškintas ar didelis tekstas niekada neturėtų pakeisti semantinių antraščių (nuo 2 iki 6 antraštės).',
     QA_FAKE_LIST:
-      'Ar bandote sudaryti sąrašą? Rastas galimas sąrašo elementas: <strong {C}>%(firstPrefix)</strong> <hr> Įsitikinkite, kad naudojate semantinius sąrašus, vietoj jų naudodami kulkų arba skaičių formatavimo mygtukus. Naudojant semantinį sąrašą pagalbinės technologijos gali perteikti tokią informaciją, kaip bendras elementų skaičius ir kiekvieno elemento santykinė padėtis sąraše. Sužinokite daugiau apie <a href="https://www.w3.org/WAI/tutorials/page-structure/content/#lists">semantinius sąrašus.</a>.',
+      'Ar bandote sudaryti sąrašą? Rastas galimas sąrašo elementas: <strong {C}>%(firstPrefix)</strong> <hr> Įsitikinkite, kad naudojate semantinius sąrašus, vietoj jų naudodami kulkų arba skaičių formatavimo mygtukus. Naudojant semantinį sąrašą pagalbinės technologijos gali perteikti tokią informaciją, kaip bendras elementų skaičius ir kiekvieno elemento santykinė padėtis sąraše. Sužinokite daugiau apie <a href="https://www.w3.org/WAI/tutorials/page-structure/content/#lists">semantinius sąrašus.</a>',
     QA_UPPERCASE:
       'Rastos visos didžiosios raidės. Kai kurie ekrano skaitytuvai tekstą visomis didžiosiomis raidėmis gali interpretuoti kaip akronimą ir skaityti kiekvieną raidę atskirai. Be to, kai kurie žmonės mano, kad visos didžiosios raidės yra sunkiau įskaitomos, ir tai gali sudaryti šauksmo įspūdį.',
     QA_UNDERLINE:
@@ -344,8 +344,7 @@ export default {
     ACC_NAME: '<strong {B}>Prieinamas pavadinimas</strong> <strong {C}>%(TEXT)</strong>',
     ACC_NAME_TIP:
       '<hr><strong>Patarimas!</strong> "Prieinamas pavadinimas" yra galutinis etiketas, kuris perduodamas žmonėms, naudojantiems pagalbines technologijas, ir skaičiuojamas ARIA. Tai padeda jiems suprasti nuorodos ar mygtuko tikslą.',
-    HIDDEN_FOCUSABLE:
-      'Saites vai pogas atribūtam ir <code>aria-hidden=&quot;true&quot;</code>, bet tas ir joprojām fokusējams no tastatūras. Ja jūs vēlaties paslēpt dublējošu saiti vai pogu, pievienojiet arī <code>tabindex=&quot;-1&quot;</code>. Pretējā gadījumā <code>aria-hidden=&quot;true&quot;</code> nedrīkst izmantot elementiem, kas var saņemt fokusu. <hr> Uzziniet vairāk par <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">aria-hidden atribūtu.</a>',
+    HIDDEN_FOCUSABLE: 'Šis elementas gali gauti klaviatūros fokusavimą, tačiau jis yra paslėptas nuo ekrano skaitytuvų naudojant <code>aria-hidden="true"</code> atributą (pačiame elemente arba tėviniame konteineryje). Norėdami tai ištaisyti, pašalinkite atributą aria-hidden arba pašalinkite elementą iš tabuliavimo tvarkos. <hr> <strong {B}>Elementas</strong> <pre><code>%(EL)</code></pre> <hr> Sužinokite daugiau apie <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">atributą aria-hidden.</a>',
 
     // Developer
     DUPLICATE_ID:

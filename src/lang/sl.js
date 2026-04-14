@@ -344,8 +344,7 @@ export default {
     ACC_NAME: '<strong {B}>Dostopno ime</strong> <strong {C}>%(TEXT)</strong>',
     ACC_NAME_TIP:
       '<hr> <strong>Nasvet!</strong> "Dostopno ime" je končna oznaka, ki se sporoča ljudem, ki uporabljajo pripomočke, in se izračuna z ARIA. To jim pomaga razumeti namen povezave ali gumba.',
-    HIDDEN_FOCUSABLE:
-      'Povezava ali gumb ima <code>aria-hidden=&quot;true&quot;</code>, vendar je še vedno dostopen s tipkovnico. Če nameravate skriti podvojeno povezavo ali gumb, dodajte tudi <code>tabindex=&quot;-1&quot;</code>. V nasprotnem primeru se <code>aria-hidden=&quot;true&quot;</code> ne sme uporabljati na elementih, ki lahko prejmejo fokus. <hr> Več o <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">atributu aria-hidden.</a>',
+    HIDDEN_FOCUSABLE: 'Ta element lahko prejme fokus tipkovnice, vendar je skrit pred bralniki zaslona z atributom <code>aria-hidden="true"</code> (na sebi ali na nadrejenem vsebniku). Če želite to popraviti, odstranite atribut aria-hidden ali odstranite element iz vrstnega reda zavihkov. <hr> <strong {B}>Element</strong> <pre><code>%(EL)</code></pre> <hr> Preberite več o <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">atributu aria-hidden.</a>',
 
     // Developer
     DUPLICATE_ID:

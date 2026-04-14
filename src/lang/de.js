@@ -390,8 +390,7 @@ export default {
     ACC_NAME: '<strong {B}>Zugänglicher Name</strong> <strong {C}>%(TEXT)</strong>',
     ACC_NAME_TIP:
       '<hr> <strong>Hinweis!</strong> Der "zugängliche Name" ist das endgültige Etikett, das an Personen kommuniziert wird, die Hilfstechnologien verwenden. Dies hilft ihnen, den Zweck des Links oder der Schaltfläche zu verstehen.',
-    HIDDEN_FOCUSABLE:
-      'Der Link oder die Schaltfläche hat <code>aria-hidden=&quot;true&quot;</code>, ist jedoch weiterhin über die Tastatur fokussierbar. Wenn Sie beabsichtigen, einen doppelten Link oder eine Schaltfläche zu verstecken, fügen Sie auch <code>tabindex=&quot;-1&quot;</code> hinzu. Andernfalls sollte <code>aria-hidden=&quot;true&quot;</code> nicht bei fokussierbaren Elementen verwendet werden. <hr> Erfahren Sie mehr über das <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">aria-hidden-Attribut.</a>',
+    HIDDEN_FOCUSABLE: 'Dieses Element kann den Tastaturfokus erhalten, ist aber durch ein <code>aria-hidden="true"</code>-Attribut (bei sich selbst oder einem übergeordneten Container) vor Screenreadern verborgen. Um dies zu beheben, entfernen Sie entweder das aria-hidden-Attribut oder entfernen Sie das Element aus der Tab-Reihenfolge. <hr> <strong {B}>Element</strong> <pre><code>%(EL)</code></pre> <hr> Erfahren Sie mehr über das <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">aria-hidden-Attribut.</a>',
 
     // Developer
     DUPLICATE_ID:

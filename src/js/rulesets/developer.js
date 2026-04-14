@@ -44,8 +44,7 @@ export default function checkDeveloper() {
   // 2. Validate all [lang] attributes.
   if (Elements.Found.LangTags && Elements.Found.LangTags.length > 0) {
     Elements.Found.LangTags.forEach(($el) => {
-      const rawLang = $el.getAttribute('lang');
-      const langValue = rawLang.trim();
+      const langValue = $el.getAttribute('lang')?.trim();
       const { valid, suggest } = Utils.validateLang(langValue, Lang._('LANG_CODE'));
       if (!valid) {
         if (suggest) {
@@ -212,8 +211,13 @@ export default function checkDeveloper() {
     State.option.checks.LABEL_IN_NAME
   ) {
     Elements.Found.Buttons.forEach(($el) => {
-      // Ignore explicitly hidden.
-      // if (Utils.isElementHidden($el)) return;
+      // Explicitly hidden.
+      if (
+        Utils.isHiddenAndUnfocusable($el) ||
+        Utils.isElementHidden($el) ||
+        (Utils.isPresentational($el) && Utils.isDisabled($el))
+      )
+        return;
 
       const accName = computeAccessibleName($el);
       const buttonText = accName.replace(/'|"|-|\.|\s+/g, '').toLowerCase();
@@ -226,32 +230,6 @@ export default function checkDeveloper() {
         $el.getAttribute('aria-label');
       const hasAriaLabelledby =
         $el.querySelector(':scope [aria-labelledby]') || $el.getAttribute('aria-labelledby');
-      const ariaHidden = $el.getAttribute('aria-hidden') === 'true';
-      const negativeTabindex = $el.getAttribute('tabindex') === '-1';
-
-      // Button has aria-hidden but is still focusable.
-      if (ariaHidden) {
-        if (!negativeTabindex) {
-          if (State.option.checks.HIDDEN_FOCUSABLE) {
-            State.results.push({
-              test: 'HIDDEN_FOCUSABLE',
-              element: $el,
-              type: State.option.checks.HIDDEN_FOCUSABLE.type || 'error',
-              content: Lang.sprintf(
-                State.option.checks.HIDDEN_FOCUSABLE.content || 'HIDDEN_FOCUSABLE',
-              ),
-              dismiss: Utils.prepareDismissal(
-                `HIDDEN_FOCUSABLE ${$el.tagName + $el.id + $el.className + accName}`,
-              ),
-              dismissAll: State.option.checks.HIDDEN_FOCUSABLE.dismissAll
-                ? 'BTN_HIDDEN_FOCUSABLE'
-                : false,
-              developer: State.option.checks.HIDDEN_FOCUSABLE.developer || true,
-            });
-          }
-        }
-        return;
-      }
 
       // Button doesn't have an accessible name.
       if (buttonText.length === 0) {
@@ -371,6 +349,46 @@ export default function checkDeveloper() {
         dismissAll: State.option.checks.TABINDEX_ATTR.dismissAll ? 'TABINDEX_ATTR' : false,
         developer: State.option.checks.TABINDEX_ATTR.developer || true,
       });
+    });
+  }
+
+  /* *************************************************************** */
+  /* Error: Focusable content hidden from screen readers.            */
+  /* *************************************************************** */
+  if (State.option.checks.HIDDEN_FOCUSABLE) {
+    const focusableElements = [
+      ...(Elements.Found.Links || []),
+      ...(Elements.Found.Buttons || []),
+      ...(Elements.Found.Inputs || []),
+      ...(Elements.Found.TabIndex || []),
+    ];
+    const flaggedForAriaHidden = new Set();
+    focusableElements.forEach(($el) => {
+      if (flaggedForAriaHidden.has($el)) return;
+      if ($el.hasAttribute('disabled')) return;
+      if (Utils.isNegativeTabindex($el)) return;
+      if (Utils.isElementHidden($el)) return;
+
+      const hiddenContainer = Utils.getCachedClosest($el, '[aria-hidden="true"]');
+      if (hiddenContainer) {
+        const outerHTML = Utils.truncateString($el.outerHTML, 100);
+        State.results.push({
+          test: 'HIDDEN_FOCUSABLE',
+          element: $el,
+          type: State.option.checks.HIDDEN_FOCUSABLE.type || 'error',
+          content: Lang.sprintf(
+            State.option.checks.HIDDEN_FOCUSABLE.content || 'HIDDEN_FOCUSABLE',
+            outerHTML,
+          ),
+          args: [outerHTML],
+          dismiss: Utils.prepareDismissal(
+            `HIDDEN_FOCUSABLE ${$el.tagName + $el.id + $el.className}`,
+          ),
+          dismissAll: State.option.checks.HIDDEN_FOCUSABLE.dismissAll ? 'HIDDEN_FOCUSABLE' : false,
+          developer: State.option.checks.HIDDEN_FOCUSABLE.developer || true,
+        });
+        flaggedForAriaHidden.add($el);
+      }
     });
   }
 

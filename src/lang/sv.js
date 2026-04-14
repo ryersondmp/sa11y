@@ -362,8 +362,7 @@ export default {
     ACC_NAME: '<strong {B}>Tillgängligt namn</strong> <strong {C}>%(TEXT)</strong>',
     ACC_NAME_TIP:
       '<hr><strong>Tips!</strong> "Tillgängligt namn" är den slutliga etiketten som kommuniceras till personer som använder hjälpmedel och beräknas av ARIA. Detta hjälper dem att förstå syftet med länken eller knappen.',
-    HIDDEN_FOCUSABLE:
-      'Länken eller knappen har <code>aria-hidden=&quot;true&quot;</code>, men kan fortfarande fokuseras med hjälp av tangentbordet. Om du avser att dölja en duplicerad länk eller knapp, lägg även till <code>tabindex=&quot;-1&quot;</code>. Annars bör <code>aria-hidden=&quot;true&quot;</code> inte användas på element som kan ta emot fokus. <hr> Läs mer om <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">aria-hidden-attributet.</a>',
+    HIDDEN_FOCUSABLE: 'Det här elementet kan ta emot tangentbordsfokus, men är dolt för skärmläsare genom attributet <code>aria-hidden="true"</code> (på sig självt eller en överordnad behållare). För att åtgärda detta, ta antingen bort attributet aria-hidden eller ta bort elementet från tabbordningen. <hr> <strong {B}>Element</strong> <pre><code>%(EL)</code></pre> <hr> Läs mer om <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">attributet aria-hidden.</a>',
 
     // Developer
     DUPLICATE_ID:

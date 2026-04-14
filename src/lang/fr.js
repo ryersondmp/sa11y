@@ -346,8 +346,7 @@ export default {
     ACC_NAME: '<strong {B}>Nom accessible</strong> <strong {C}>%(TEXT)</strong>',
     ACC_NAME_TIP:
       '<hr><strong>Astuce !</strong> Le "nom accessible" est l\'étiquette finale qui est communiquée aux personnes utilisant des technologies d\'assistance et qui est calculée par ARIA. Cela les aide à comprendre le but du lien ou du bouton.',
-    HIDDEN_FOCUSABLE:
-      'Le lien ou le bouton a <code>aria-hidden=&quot;true&quot;</code> mais reste accessible via le clavier. Si vous avez l\'intention de masquer un lien ou un bouton dupliqué, ajoutez également<code>tabindex=&quot;-1&quot;</code>. Sinon, <code>aria-hidden=&quot;true&quot;</code> ne doit pas être utilisé sur des éléments pouvant recevoir le focus. <hr> En savoir plus sur l\' <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">attribut aria-hidden.</a>',
+    HIDDEN_FOCUSABLE: 'Cet élément peut recevoir le focus du clavier, mais il est masqué pour les lecteurs d\'écran par un attribut <code>aria-hidden="true"</code> (sur lui-même ou sur un conteneur parent). Pour corriger cela, supprimez l\'attribut aria-hidden ou supprimez l\'élément de l\'ordre de tabulation. <hr> <strong {B}>Élément</strong> <pre><code>%(EL)</code></pre> <hr> En savoir plus sur l\'<a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">attribut aria-hidden.</a>',
 
     // Developer
     DUPLICATE_ID:

@@ -28,7 +28,8 @@ const Constants = (function myConstants() {
     Global.scrollBehaviour = !reducedMotion || reducedMotion.matches ? 'auto' : 'smooth';
 
     // i18n
-    Global.langDirection = Global.html.getAttribute('dir') === 'rtl' ? 'rtl' : 'ltr';
+    Global.langDirection =
+      Global.html.getAttribute('dir')?.trim()?.toLowerCase() === 'rtl' ? 'rtl' : 'ltr';
 
     // Check for document types.
     const documentSources = State.option.checks.QA_DOCUMENT.sources;
@@ -258,7 +259,11 @@ const Constants = (function myConstants() {
         'pt',
       ];
       const langCode = Lang._('LANG_CODE').substring(0, 2);
-      const pageLang = Constants.Global.html.getAttribute('lang')?.toLowerCase().substring(0, 2);
+      const pageLang = Constants.Global.html
+        .getAttribute('lang')
+        ?.trim()
+        ?.toLowerCase()
+        .substring(0, 2);
 
       // Set the language property.
       Readability.Lang = langCode;
@@ -377,7 +382,7 @@ const Constants = (function myConstants() {
     }
 
     // Ignore specific links
-    Exclusions.Links = ['.anchorjs-link'];
+    Exclusions.Links = ['.anchorjs-link', '[aria-hidden="true"][tabindex^="-"]'];
     if (State.option.linkIgnore) {
       Exclusions.Links = State.option.linkIgnore
         .split(',')

@@ -345,8 +345,7 @@ export default {
     ACC_NAME: '<strong {B}>Tilgængeligt navn</strong> <strong {C}>%(TEXT)</strong>',
     ACC_NAME_TIP:
       '<hr><strong>Tip!</strong> "Tilgængeligt navn" er den endelige etiket, der kommunikeres til personer, der bruger hjælpemidler. Dette hjælper dem med at forstå formålet med linket eller knappen.',
-    HIDDEN_FOCUSABLE:
-      'Link eller knap har <code>aria-hidden=&quot;true&quot;</code>, men kan stadig fokuseres med tastaturet. Hvis du ønsker at skjule et duplikeret link eller en knap, skal du også tilføje <code>tabindex=&quot;-1&quot;</code>. Ellers bør <code>aria-hidden=&quot;true&quot;</code> ikke bruges på elementer, der kan modtage fokus. <hr> Læs mere om <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">aria-hidden-attributten.</a>',
+    HIDDEN_FOCUSABLE: 'Dette element kan modtage tastaturfokus, men er skjult for skærmlæsere af en <code>aria-hidden="true"</code>-attribut (på sig selv eller en overordnet container). For at løse det skal du enten fjerne aria-hidden-attributten eller fjerne elementet fra tabulatorrækkefølgen. <hr> <strong {B}>Element</strong> <pre><code>%(EL)</code></pre> <hr> Lær mere om <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">aria-hidden-attributten.</a>',
 
     // Developer
     DUPLICATE_ID:

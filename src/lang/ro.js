@@ -197,9 +197,9 @@ export default {
     HEADING_LONG:
       'Capul este lung! Titlurile trebuie utilizate pentru a organiza conținutul și a transmite structura. Acestea trebuie să fie scurte, informative și unice. Vă rugăm să păstrați titlurile la mai puțin de %(MAX_LENGTH) de caractere (nu mai mult de o propoziție). <hr> <strong {B}>%(HEADING_LENGTH) Caractere</strong>',
     HEADING_FIRST:
-      'Primul titlu de pe o pagină trebuie să fie, de obicei, un titlu 1 sau 2. Titlul 1 ar trebui să fie începutul secțiunii principale de conținut și este titlul principal care descrie scopul general al paginii. Aflați mai multe despre <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">Structura titlurilor.</a>.',
+      'Primul titlu de pe o pagină trebuie să fie, de obicei, un titlu 1 sau 2. Titlul 1 ar trebui să fie începutul secțiunii principale de conținut și este titlul principal care descrie scopul general al paginii. Aflați mai multe despre <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">Structura titlurilor.</a>',
     HEADING_MISSING_ONE:
-      'Lipsește titlul 1. Titlul 1 ar trebui să fie începutul zonei principale de conținut și este titlul principal care descrie scopul general al paginii. Aflați mai multe despre <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">Structura titlurilor.</a>.',
+      'Lipsește titlul 1. Titlul 1 ar trebui să fie începutul zonei principale de conținut și este titlul principal care descrie scopul general al paginii. Aflați mai multe despre <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">Structura titlurilor.</a>',
     HEADING_EMPTY_WITH_IMAGE:
       'Rubrica nu are text, dar conține o imagine. Dacă acesta nu este un titlu, schimbați-i formatul din <strong {C}>Antet %(level)</strong> în <strong>Normal</strong> sau <strong>Paragraf</strong>. În caz contrar, vă rugăm să adăugați text alt la imagine, dacă aceasta nu este decorativă.',
     PANEL_HEADING_MISSING_ONE: 'Lipsește rubrica 1!',
@@ -228,7 +228,7 @@ export default {
     LINK_DOI:
       'În cazul paginilor web sau al resurselor exclusiv online, <a href="https://apastyle.apa.org/style-grammar-guidelines/paper-format/accessibility/urls#:~:text=descriptive%20links">ghidul APA Style</a> recomandă utilizarea de linkuri descriptive prin includerea URL-ului sau DOI-ului lucrării în jurul titlului acesteia. URL-urile mai lungi și mai puțin inteligibile folosite ca text de link ar putea fi dificil de înțeles atunci când sunt accesate cu ajutorul tehnologiei de asistență.',
     LINK_NEW_TAB:
-      'Legătura se deschide într-o fereastră sau într-un tab nou fără avertisment. Acest lucru poate fi dezorientant, în special pentru persoanele care au dificultăți în perceperea conținutului vizual. În al doilea rând, nu este întotdeauna o practică bună să controlați experiența unei persoane sau să luați decizii în locul ei. Indicați că link-ul se deschide într-o fereastră nouă în textul linkului<hr><strong>Tip!</strong> Învățați cele mai bune practici: <a href="https://www.nngroup.com/articles/new-browser-windows-and-tabs/">deschiderea linkurilor în ferestre și file noi de browser.</a>.',
+      'Legătura se deschide într-o fereastră sau într-un tab nou fără avertisment. Acest lucru poate fi dezorientant, în special pentru persoanele care au dificultăți în perceperea conținutului vizual. În al doilea rând, nu este întotdeauna o practică bună să controlați experiența unei persoane sau să luați decizii în locul ei. Indicați că link-ul se deschide într-o fereastră nouă în textul linkului<hr><strong>Tip!</strong> Învățați cele mai bune practici: <a href="https://www.nngroup.com/articles/new-browser-windows-and-tabs/">deschiderea linkurilor în ferestre și file noi de browser.</a>',
     LINK_FILE_EXT:
       'Legătura trimite la un fișier PDF sau la un fișier descărcabil (de exemplu, MP3, Zip, Word Doc) fără avertisment. Indicați tipul de fișier în textul linkului. Dacă este un fișier de mari dimensiuni, luați în considerare posibilitatea de a include dimensiunea fișierului. <hr> <strong>Exemplu:</strong> Raport executiv (PDF, 3MB)',
     LINK_IDENTICAL_NAME: 'Mai multe linkuri de pe această pagină folosesc același text, dar indică locuri diferite. Acest lucru poate crea confuzie pentru utilizatorii de tehnologii de asistență. Pentru a remedia problema, faceți textul acestui link mai descriptiv.',
@@ -304,11 +304,11 @@ export default {
     EMBED_AUDIO:
       'Vă rugăm să vă asigurați că furnizați o <strong>transcriere pentru toate podcasturile.</strong> Furnizarea de transcrieri pentru conținutul audio este o cerință obligatorie de nivel A. Transcrierile vin în sprijinul persoanelor cu deficiențe de auz sau cu deficiențe de auz, dar pot fi benefice pentru toată lumea. Luați în considerare plasarea transcrierii mai jos sau în cadrul unui panou acordeon.',
     EMBED_DATA_VIZ:
-      'Widgeturile de vizualizare a datelor de acest tip sunt adesea problematice pentru persoanele care utilizează o tastatură sau un cititor de ecran pentru a naviga și pot prezenta dificultăți semnificative pentru persoanele cu vedere slabă sau daltonism. Se recomandă să furnizați aceleași informații într-un format alternativ (text sau tabel) sub widget. <hr> Aflați mai multe despre <a href="https://www.w3.org/WAI/tutorials/images/complex">imagini complexe.</a>.',
+      'Widgeturile de vizualizare a datelor de acest tip sunt adesea problematice pentru persoanele care utilizează o tastatură sau un cititor de ecran pentru a naviga și pot prezenta dificultăți semnificative pentru persoanele cu vedere slabă sau daltonism. Se recomandă să furnizați aceleași informații într-un format alternativ (text sau tabel) sub widget. <hr> Aflați mai multe despre <a href="https://www.w3.org/WAI/tutorials/images/complex">imagini complexe.</a>',
     EMBED_MISSING_TITLE:
       'Conținutul încorporat necesită un nume accesibil care să descrie conținutul său. Vă rugăm să furnizați un atribut unic <code>title</code> sau <code>aria-label</code> pe elementul <code>iframe</code>. Aflați mai multe despre <a href="https://web.dev/learn/accessibility/more-html#iframes">iFrames.</a>',
     EMBED_GENERAL:
-      'Nu se poate verifica conținutul încorporat. Vă rugăm să vă asigurați că imaginile au text alt, videoclipurile au legende, textul are un contrast suficient, iar componentele interactive sunt <a href="https://webaim.org/techniques/keyboard/">accesibile la tastatură.</a>.',
+      'Nu se poate verifica conținutul încorporat. Vă rugăm să vă asigurați că imaginile au text alt, videoclipurile au legende, textul are un contrast suficient, iar componentele interactive sunt <a href="https://webaim.org/techniques/keyboard/">accesibile la tastatură.</a>',
     EMBED_UNFOCUSABLE:
       '<code>&lt;iframe&gt;</code> cu elemente nefocalizabile nu ar trebui să aibă <code>tabindex="-1"</code>. Conținutul încorporat nu va fi accesibil prin tastatură.',
 
@@ -346,8 +346,7 @@ export default {
     ACC_NAME: '<strong {B}>Numele accesibil</strong> <strong {C}>%(TEXT)</strong>',
     ACC_NAME_TIP:
       '<hr><strong>Sfat!</strong> "Numele accesibil" este eticheta finală care este comunicată persoanelor care utilizează tehnologii de asistență și este calculată de ARIA. Acest lucru le ajută să înțeleagă scopul legăturii sau butonului.',
-    HIDDEN_FOCUSABLE:
-      'Linkul sau butonul are atributul <code>aria-hidden=&quot;true&quot;</code>, dar este poate fi totuși accesat folosind tastatura. Dacă intenționați să ascundeți un link sau un buton duplicat, adăugați și <code>tabindex=&quot;-1&quot;</code>. În caz contrar, <code>aria-hidden=&quot;true&quot;</code> nu ar trebui să fie utilizat pe elemente care pot primi focus. <hr> Aflați mai multe despre <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">atributul aria-hidden.</a>',
+    HIDDEN_FOCUSABLE: 'Acest element poate primi focalizarea tastaturii, dar este ascuns cititoarelor de ecran printr-un atribut <code>aria-hidden="true"</code> (pe el însuși sau pe un container părinte). Pentru a remedia problema, fie eliminați atributul aria-hidden, fie eliminați elementul din ordinea de tabulare. <hr> <strong {B}>Element</strong> <pre><code>%(EL)</code></pre> <hr> Aflați mai multe despre <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">atributul aria-hidden.</a>',
 
     // Developer
     DUPLICATE_ID:

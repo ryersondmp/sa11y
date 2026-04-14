@@ -304,7 +304,7 @@ export default {
     LINK_IMAGE_ALT_AND_TEXT:
       '画像リンクには<strong>altテキストと周囲のリンクテキストの両方が含まれています。</strong> この画像が装飾用であり、他のページへの機能的なリンクとして使用されている場合は、画像を装飾用としてマークすることを検討してください。周囲のリンクテキストで十分です。<hr> {ALT} <strong {C}>%(ALT_TEXT)</strong> <hr> <strong {B}>アクセシブル名</strong> {L} <strong {C}>%(TEXT)</strong>',
     IMAGE_FIGURE_DECORATIVE:
-      '画像が<strong>装飾用</strong>としてマークされ、支援技術によって無視されます。<hr> キャプションが提供されていますが、ほとんどの場合、画像にはaltテキストも必要です。<ul><li>altテキストは画像の内容を簡潔に説明する必要があります。</li><li>キャプションは通常、画像を周囲のコンテンツに関連付けるための文脈を提供したり、特定の情報に注意を払ったりするために使用されます。</li></ul>詳細はこちら：<a href="https://thoughtbot.com/blog/alt-vs-figcaption#the-figcaption-element">altとfigcaptionの比較</a>。',
+      '画像が<strong>装飾用</strong>としてマークされ、支援技術によって無視されます。<hr> キャプションが提供されていますが、ほとんどの場合、画像にはaltテキストも必要です。<ul><li>altテキストは画像の内容を簡潔に説明する必要があります。</li><li>キャプションは通常、画像を周囲のコンテンツに関連付けるための文脈を提供したり、特定の情報に注意を払ったりするために使用されます。</li></ul>詳細はこちら：<a href="https://thoughtbot.com/blog/alt-vs-figcaption#the-figcaption-element">altとfigcaptionの比較。</a>',
     IMAGE_FIGURE_DUPLICATE_ALT:
       'altとキャプションテキストにはまったく同じ単語を使用しないでください。スクリーンリーダーは情報を二重に発表します。<ul><li>altテキストは画像の内容を簡潔に説明する必要があります。</li><li>キャプションは通常、画像を周囲のコンテンツに関連付けるための文脈を提供したり、特定の情報に注意を払ったりするために使用されます。</li></ul>詳細はこちら：<a href="https://thoughtbot.com/blog/alt-vs-figcaption#the-figcaption-element">altとfigcaptionの比較</a> <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
     IMAGE_DECORATIVE:
@@ -381,8 +381,7 @@ export default {
     ACC_NAME: '<strong {B}>アクセシブル名</strong> <strong {C}>%(TEXT)</strong>',
     ACC_NAME_TIP:
       '<hr><strong>ヒント!</strong> "アクセシブル名"は、支援技術を使用する人々に伝えられる最終的なラベルであり、ARIAによって計算されます。これにより、リンクやボタンの目的を理解するのに役立ちます。',
-    HIDDEN_FOCUSABLE:
-      'リンクやボタンに <code>aria-hidden=&quot;true&quot;</code> が設定されていますが、キーボードでフォーカス可能です。重複したリンクやボタンを非表示にする場合は、<code>tabindex=&quot;-1&quot;</code> も追加してください。それ以外の場合、フォーカスを受け取ることができる要素に <code>aria-hidden=&quot;true&quot;</code> を使用してはいけません。<hr> <a href="https://developer.mozilla.org/ja/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">aria-hidden 属性について</a>詳しく知る。',
+    HIDDEN_FOCUSABLE: 'この要素はキーボードフォーカスを受け取ることができますが、<code>aria-hidden="true"</code> 属性（自身または親コンテナにある）によってスクリーンリーダーから隠されています。修正するには、aria-hidden 属性を削除するか、要素をタブ順序から削除してください。 <hr> <strong {B}>要素</strong> <pre><code>%(EL)</code></pre> <hr> <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">aria-hidden 属性</a>の詳細をご覧ください。',
 
     // Developer
     DUPLICATE_ID:

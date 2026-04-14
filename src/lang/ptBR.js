@@ -341,8 +341,7 @@ export default {
     ACC_NAME: '<strong {B}>Nome acessível</strong> <strong {C}>%(TEXT)</strong>',
     ACC_NAME_TIP:
       '<hr><strong>Dica!</strong> O "nome acessível" é o rótulo final que é comunicado às pessoas que usam tecnologia assistiva e é calculado pelo ARIA. Isso ajuda a entender o propósito do link ou botão.',
-    HIDDEN_FOCUSABLE:
-      'O link ou botão tem <code>aria-hidden=&quot;true&quot;</code>, mas ainda é focável pelo teclado. Se você pretende ocultar um link ou botão duplicado, adicione também <code>tabindex=&quot;-1&quot;</code>. Caso contrário, <code>aria-hidden=&quot;true&quot;</code> não deve ser usado em elementos que podem receber foco. <hr> Saiba mais sobre o <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">atributo aria-hidden.</a>',
+    HIDDEN_FOCUSABLE: 'Este elemento pode receber foco do teclado, mas está oculto para leitores de tela por um atributo <code>aria-hidden="true"</code> (nele mesmo ou em um contêiner pai). Para corrigir, remova o atributo aria-hidden ou remova o elemento da ordem de tabulação. <hr> <strong {B}>Elemento</strong> <pre><code>%(EL)</code></pre> <hr> Saiba mais sobre o <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">atributo aria-hidden.</a>',
 
     // Developer
     DUPLICATE_ID:
