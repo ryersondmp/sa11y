@@ -17,6 +17,12 @@
         cursor: pointer;
         display: inline;
       }
+
+      @media print {
+        main a[href]:after {
+          content: " (" attr(href) ")";
+        }
+      }
     </style>
     <button id="clear-sa11y-storage">
       Clear Sa11y local storage for testing
@@ -46,6 +52,185 @@
     </script>
   </header>
   <main>
+
+    <a role='sds' href="https://www.w3.org/WAI"><img
+        src="/WAI/content-assets/wcag-act-rules/test-assets/shared/w3c-logo.png" title=""></a>
+
+    <hr>
+
+    <p style="color: #aaa; background: #fff;" id="p"></p>
+    <script>
+      const shadowRoot = document.getElementById('p').attachShadow({ mode: 'open' });
+      shadowRoot.innerHTML = 'Some text in English';
+    </script>
+
+
+    <p style="color: #333; background: #FFF;">
+      Helvetica is a widely used sans-serif typeface developed in 1957 by Max Miedinger and Eduard Hoffmann.
+    </p>
+
+    <p style="font-family: helvetica; background: #EEE; color: #555;">
+      The quick brown fox jumps over the lazy dog.
+    </p>
+
+    <hr>
+
+    <svg xmlns="http://www.w3.org/2000/svg">
+      <circle role="graphics-symbol" cx="50" cy="50" r="40" stroke="green" stroke-width="4" fill="yellow"></circle>
+    </svg>
+    <hr>
+    <svg xmlns="http://www.w3.org/2000/svg" role="img">
+      <title></title>
+      <circle cx="50" cy="50" r="40" fill="yellow"></circle>
+    </svg>
+
+    <hr>
+
+    <svg xmlns="http://www.w3.org/2000/svg" role="img">
+      <circle cx="50" cy="50" r="40" stroke="green" stroke-width="4" fill="yellow"></circle>
+    </svg>
+
+    <hr>
+
+
+    <div role="menu" hidden="">
+      <button role="menuitem">
+        <img src="/WAI/content-assets/wcag-act-rules/test-assets/shared/file.svg" alt="">
+      </button>
+    </div>
+
+    <hr>
+
+    <div role="menu" class="offscreen">
+      <button role="menuitem">
+        <img src="/WAI/content-assets/wcag-act-rules/test-assets/shared/file.svg" alt="">
+      </button>
+    </div>
+
+    <hr>
+
+    <div role="menu">
+      <button role="menuitem">
+        <img src="/WAI/content-assets/wcag-act-rules/test-assets/shared/file.svg" alt="">
+      </button>
+    </div>
+
+    <hr>
+
+    <table>
+      <thead>
+        <tr>
+          <td role="columnheader" id="header1">Projects</td>
+          <td role="columnheader" id="header2">Objective</td>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td headers="header1">15%</td>
+          <td headers="header2">10%</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <hr>
+
+    <table role="heading" aria-level="1">
+      <tbody>
+        <tr>
+          <td id="self" headers="self">World</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <hr>
+
+    <table>
+      <tbody>
+        <tr>
+          <td>
+            <span id="headerProject">Projects</span>
+          </td>
+          <td>
+            <span id="headerObjective">Objective</span>
+          </td>
+        </tr>
+        <tr>
+          <td headers="headerProject">
+            15%
+          </td>
+          <td headers="headerObjective">
+            10%
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <hr>
+    <table>
+      <tbody>
+        <tr>
+          <th>Event Type</th>
+        </tr>
+        <tr>
+          <td id="headerBday" headers="headerBday">
+            Birthday
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <hr>
+    <table>
+      <tbody>
+        <tr>
+          <th id="headerOfColumn1">Projects</th>
+          <th id="headerOfColumn2">Objective</th>
+        </tr>
+        <tr>
+          <td headers="headOfColumn1">15%</td>
+          <td headers="headOfColumn2">10%</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <hr>
+
+    <table>
+      <thead>
+        <tr>
+          <td role="columnheader" id="header1">Projects</td>
+          <td role="columnheader" id="header2">Objective</td>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td headers="header1">15%</td>
+          <td headers="header2">10%</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <hr>
+    <div aria-hidden="true">
+      <a href="/" on="something()"
+        class="somethingMaybeTesting1234adlknsdLoremIpsumsdasd ;jdkjasdl kjsd klajsdkl jlkasdj kljsdl">Linkypoo</a>
+    </div>
+
+    <hr>
+
+    <svg xmlns="http://www.w3.org/2000/svg" x="0" y="0">
+      <a href="#main">
+        <text x="20" y="20">
+          Go
+        </text>
+      </a>
+    </svg>
+
+    <hr>
+    <h2>Explicitely hidden button</h2>
+    <button style="display:none"></button>
+
+    <hr>
 
     <p style="color: #000; font-size:14pt; font-weight:700; background: #666;">
       Some text in English

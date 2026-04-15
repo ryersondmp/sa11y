@@ -387,6 +387,7 @@ export default {
       '제목 2 또는 제목 3과 같은 시맨틱 제목은 콘텐츠 섹션에만 사용해야 하며, HTML 표에는 <strong>이 아닌</strong>을 사용해야 합니다. 대신 <code>&lt;th&gt;</code> 요소를 사용하여 표 제목을 표시하세요. <hr> <a href="https://www.w3.org/WAI/tutorials/tables/">액세스 가능한 표에 대해 자세히 알아보기.</a>',
     TABLES_EMPTY_HEADING:
       '빈 테이블 헤더가 발견되었습니다! 테이블 헤더는 비어 있으면 안 됩니다. 행 및/또는 열 머리글을 지정하여 관계를 전달하는 것이 중요합니다. 이 정보는 보조 기술을 사용하는 사람들에게 맥락을 제공합니다. 표는 표 형식의 데이터에만 사용해야 한다는 점에 유의하세요. <hr> <a href="https://www.w3.org/WAI/tutorials/tables/">액세스 가능한 테이블에 대해 자세히 알아보기.</a>',
+    TABLES_INVALID_HEADERS_REF: '<code>headers</code> 속성에 유효하지 않은 참조가 포함되어 있습니다: <strong {C}>%(VALUE)</strong>. 동일한 테이블 내의 유효한 헤더 셀 ID를 참조해야 합니다. <hr> <a href="https://www.w3.org/WAI/WCAG22/Techniques/html/H43">데이터 테이블에서 id 및 headers 속성을 사용하여 데이터 셀을 헤더 셀과 연결하는 방법</a>에 대해 자세히 알아보세요.',
 
     // Contrast
     CONTRAST_NORMAL: '일반 크기의 텍스트는 최소 %(RATIO) 대비 비율을 가져야 합니다.',

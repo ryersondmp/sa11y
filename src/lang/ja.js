@@ -424,6 +424,7 @@ export default {
       '見出し2や見出し3などのセマンティックな見出しは、コンテンツのセクションにのみ使用すべきです。HTMLテーブルでは<strong>使用しないでください</strong>。代わりに<code>&lt;th&gt;</code>要素を使用してテーブルの見出しを示します。<hr> <a href="https://www.w3.org/WAI/tutorials/tables/">アクセシブルなテーブル</a>について詳しく学びます。',
     TABLES_EMPTY_HEADING:
       '空のテーブルヘッダーが見つかりました！テーブルヘッダーは<strong>空にしてはいけません</strong>。行や列のヘッダーを指定して関係性を伝えることが重要です。これにより、支援技術を使用する人々にコンテキストが提供されます。テーブルは表形式のデータのみに使用する必要があります。<hr> <a href="https://www.w3.org/WAI/tutorials/tables/">アクセシブルなテーブル</a>について詳しく学びます。',
+    TABLES_INVALID_HEADERS_REF: '<code>headers</code> 属性に無効な参照が含まれています: <strong {C}>%(VALUE)</strong>。同じテーブル内の有効なヘッダーセルの ID を参照する必要があります。 <hr> <a href="https://www.w3.org/WAI/WCAG22/Techniques/html/H43">データテーブルで id 属性と headers 属性を使用してデータセルとヘッダーセルを関連付ける方法</a>の詳細をご覧ください。',
 
     // Contrast
     CONTRAST_NORMAL: '標準サイズのテキストは、少なくとも %(RATIO) のコントラスト比が必要です。',

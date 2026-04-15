@@ -45,7 +45,7 @@ const sa11y = new Sa11y({
   colourFilterPlugin: true,
   linksAdvancedPlugin: true,
   imageWithinLightbox: '.lightbox',
-  shadowComponents: '',
+  // shadowComponents: '',
   autoDetectShadowComponents: true,
   panelPosition: 'bottom-left', // invalid value, should default to right.
   unitTestMode: true,

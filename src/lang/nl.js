@@ -395,6 +395,7 @@ export default {
       'Semantische koppen zoals Kop 2 of Kop 3 mogen alleen worden gebruikt voor gedeelten van de inhoud; <strong>niet</strong> in HTML-tabellen. Geef tabelkoppen aan met het <code>&lt;th&gt;</code>-element. <hr> Meer informatie over <a href="https://www.w3.org/WAI/tutorials/tables/">toegankelijke tabellen.</a>',
     TABLES_EMPTY_HEADING:
       'Lege tabelheader gevonden! Tabelkoppen mogen <strong>nooit</strong> leeg zijn. Het is belangrijk om rij- en/of kolomkoppen aan te geven om hun relatie duidelijk te maken. Deze informatie geeft context aan mensen die ondersteunende technologie gebruiken. Houd in gedachten dat tabellen alleen mogen worden gebruikt voor gegevens in tabelvorm. <hr> Meer informatie over <a href="https://www.w3.org/WAI/tutorials/tables/">toegankelijke tabellen.</a>',
+    TABLES_INVALID_HEADERS_REF: 'Het <code>headers</code>-attribuut bevat een ongeldige verwijzing: <strong {C}>%(VALUE)</strong>. Het moet verwijzen naar de ID van een geldige kopcel binnen dezelfde tabel. <hr> Lees meer over het <a href="https://www.w3.org/WAI/WCAG22/Techniques/html/H43">gebruiken van id- en headers-attributen om datacellen te koppelen aan kopcellen in datatabellen.</a>',
 
     // Contrast
     CONTRAST_NORMAL:

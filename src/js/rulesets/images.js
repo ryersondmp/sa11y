@@ -211,6 +211,10 @@ export default function checkImages() {
 
     // Decorative images.
     if (decorative) {
+      // Don't flag decorative images within a button.
+      if (Utils.getCachedClosest($el, `button, [role='button']`)) return;
+
+      // Continue...
       const carouselSources = State.option.checks.IMAGE_DECORATIVE_CAROUSEL.sources;
       const carousel = carouselSources ? Utils.getCachedClosest($el, carouselSources) : '';
       if (carousel) {

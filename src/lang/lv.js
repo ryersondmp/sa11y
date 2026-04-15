@@ -391,6 +391,7 @@ export default {
       'Semantiskos virsrakstus, piemēram, Heading 2 vai Heading 3, drīkst izmantot tikai satura sadaļās; <strong>ne</strong> HTML tabulās. Tabulu virsrakstus norādiet, izmantojot elementu <code>&lt;th&gt;</code>. <hr> Uzziniet vairāk par <a href="https://www.w3.org/WAI/tutorials/tables/">pieejamām tabulām.</a>',
     TABLES_EMPTY_HEADING:
       'Atrasta tukša tabulas galvene! Tabulu galvenēm <strong>nevajadzētu būt tukšām. Ir svarīgi norādīt rindu un/vai kolonnu galvenes, lai atspoguļotu to saistību. Šī informācija sniedz kontekstu cilvēkiem, kuri izmanto palīgtehnoloģijas. Paturiet prātā, ka tabulas jāizmanto tikai tabulārajiem datiem. <hr> Uzziniet vairāk par <a href="https://www.w3.org/WAI/tutorials/tables/">pieejamām tabulām.</a>',
+    TABLES_INVALID_HEADERS_REF: 'Atribūts <code>headers</code> satur nederīgu atsauci: <strong {C}>%(VALUE)</strong>. Tam ir jānorāda uz derīgas galvenes šūnas ID tajā pašā tabulā. <hr> Uzziniet vairāk par <a href="https://www.w3.org/WAI/WCAG22/Techniques/html/H43">id un headers atribūtu izmantošanu, lai piesaistītu datu šūnas galvenes šūnām datu tabulās.</a>',
 
     // Contrast
     CONTRAST_NORMAL: 'Normāla izmēra tekstam jābūt ar kontrasta attiecību vismaz %(RATIO).',

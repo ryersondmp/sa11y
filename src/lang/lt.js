@@ -387,6 +387,7 @@ export default {
       'Semantinės antraštės, pavyzdžiui, Heading 2 arba Heading 3, turėtų būti naudojamos tik turinio skyriams; <strong>ne</strong> HTML lentelėse. Vietoj to lentelių antraštes nurodykite naudodami elementą <code>&lt;th&gt;</code>. <hr> Sužinokite daugiau apie <a href="https://www.w3.org/WAI/tutorials/tables/">prieinamas lenteles.</a>',
     TABLES_EMPTY_HEADING:
       'Rasta tuščia lentelės antraštė! Lentelės antraštės <strong>niekada</strong> neturėtų būti tuščios. Svarbu nurodyti eilučių ir (arba) stulpelių antraštes, kad būtų išreikštas jų ryšys. Ši informacija suteikia kontekstą žmonėms, kurie naudojasi pagalbinėmis technologijomis. Atminkite, kad lentelės turėtų būti naudojamos tik lentelėms su lentelių duomenimis. <hr> Sužinokite daugiau apie <a href="https://www.w3.org/WAI/tutorials/tables/">prieinamas lenteles.</a>',
+    TABLES_INVALID_HEADERS_REF: '<code>headers</code> attribute yra neteisinga nuoroda: <strong {C}>%(VALUE)</strong>. Jis turi nurodyti galiojančio antraštės langelio ID toje pačioje lentelėje. <hr> Sužinokite daugiau apie <a href="https://www.w3.org/WAI/WCAG22/Techniques/html/H43">id ir headers atributų naudojimą duomenų langeliams susieti su antraštės langeliais duomenų lentelėse.</a>',
 
     // Contrast
     CONTRAST_NORMAL: 'Normalus dydžio tekstas turėtų turėti bent %(RATIO) kontrasto santykį.',

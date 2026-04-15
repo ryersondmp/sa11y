@@ -387,6 +387,7 @@ export default {
       'Semantične naslove, kot sta Heading 2 ali Heading 3, lahko uporabljate samo za dele vsebine; <strong>ne</strong> v tabelah HTML. Namesto tega naslove tabel označite z elementom <code>&lt;th&gt;</code>. <hr> Preberite več o <a href="https://www.w3.org/WAI/tutorials/tables/">dostopnih tabelah.</a>',
     TABLES_EMPTY_HEADING:
       'Najden je prazen naglavni del tabele! Glave tabel ne smejo biti nikoli prazne. Pomembno je, da označite glave vrstic in/ali stolpcev in tako izrazite njihovo povezanost. Te informacije zagotavljajo kontekst za osebe, ki uporabljajo podporno tehnologijo. Ne pozabite, da je treba tabele uporabljati samo za tabelarične podatke. <hr> Preberite več o <a href="https://www.w3.org/WAI/tutorials/tables/">dostopnih tabelah.</a>',
+    TABLES_INVALID_HEADERS_REF: 'Atribut <code>headers</code> vsebuje neveljavno sklic: <strong {C}>%(VALUE)</strong>. Sklicevati se mora na ID veljavne celice glave v isti tabeli. <hr> Preberite več o <a href="https://www.w3.org/WAI/WCAG22/Techniques/html/H43">uporabi atributov id in headers za povezovanje podatkovnih celic s celicami glave v podatkovnih tabelah.</a>',
 
     // Contrast
     CONTRAST_NORMAL: 'Besedilo običajne velikosti mora imeti kontrastno razmerje vsaj %(RATIO).',

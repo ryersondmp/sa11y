@@ -216,6 +216,7 @@ const defaultOptions = {
     TABLES_MISSING_HEADINGS: true,
     TABLES_SEMANTIC_HEADING: true,
     TABLES_EMPTY_HEADING: true,
+    TABLES_INVALID_HEADERS_REF: true,
     QA_FAKE_HEADING: true,
     QA_FAKE_LIST: true,
     QA_UPPERCASE: true,

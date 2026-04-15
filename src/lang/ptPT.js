@@ -386,6 +386,7 @@ export default {
       'Os títulos semânticos, como o Título 2 ou o Título 3, só devem ser utilizados para secções de conteúdo; <strong>não</strong> em tabelas HTML. Em vez disso, indique os cabeçalhos da tabela usando o elemento <code>&lt;th&gt;</code>. <hr> Saiba mais sobre <a href="https://www.w3.org/WAI/tutorials/tables/">tabelas acessíveis.</a>',
     TABLES_EMPTY_HEADING:
       'Encontrado um cabeçalho de tabela vazio! Os cabeçalhos de tabela <strong>nunca</strong> devem estar vazios. É importante designar os cabeçalhos de linha e/ou coluna para transmitir a sua relação. Esta informação fornece contexto às pessoas que utilizam tecnologia de assistência. Lembre-se de que as tabelas devem ser usadas apenas para dados tabulares. <hr> Saiba mais sobre <a href="https://www.w3.org/WAI/tutorials/tables/">tabelas acessíveis.</a>',
+    TABLES_INVALID_HEADERS_REF: 'O atributo <code>headers</code> contém uma referência inválida: <strong {C}>%(VALUE)</strong>. Deve referenciar o ID de uma célula de cabeçalho válida na mesma tabela. <hr> Saiba mais sobre a <a href="https://www.w3.org/WAI/WCAG22/Techniques/html/H43">utilização dos atributos id e headers para associar células de dados a células de cabeçalho em tabelas de dados.</a>',
 
     // Contrast
     CONTRAST_NORMAL:

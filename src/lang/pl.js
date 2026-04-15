@@ -387,6 +387,7 @@ export default {
       'Nagłówki semantyczne, takie jak nagłówek H2 lub nagłówek H3, powinny być używane tylko w odniesieniu do sekcji treści; <strong>nie</strong> w tabelach HTML. Zamiast tego należy wskazać nagłówki tabeli przy użyciu elementu <strong>th</strong>. <hr> Dowiedz się więcej o <a href="https://www.w3.org/WAI/tutorials/tables/">dostępnych tabelach.</a>',
     TABLES_EMPTY_HEADING:
       'Wykryto pusty nagłówek tabeli! Nagłówki tabel <em>nigdy</em> nie powinny być puste. Ważne jest, aby wyznaczyć nagłówki wierszy i/lub kolumn, aby przekazać ich relację. Informacje te zapewniają kontekst osobom korzystającym z technologii wspomagających. Należy pamiętać, że tabele powinny być używane tylko dla danych tabelarycznych. <hr> Dowiedz się więcej o <a href="https://www.w3.org/WAI/tutorials/tables/">dostępnych tabelach.</a>',
+    TABLES_INVALID_HEADERS_REF: 'Atrybut <code>headers</code> zawiera nieprawidłowe odwołanie: <strong {C}>%(VALUE)</strong>. Musi on odnosić się do identyfikatora ID prawidłowej komórki nagłówka w tej samej tabeli. <hr> Dowiedz się więcej o <a href="https://www.w3.org/WAI/WCAG22/Techniques/html/H43">używaniu atrybutów id i headers do kojarzenia komórek danych z komórkami nagłówka w tabelach danych.</a>',
 
     // Contrast
     CONTRAST_NORMAL:

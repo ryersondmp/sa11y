@@ -478,7 +478,7 @@ export default function checkLinkText() {
       // Links with identical accessible names have equivalent purpose.
       if (seen[strippedLinkText] && !seen[href]) {
         const ignored = Utils.isHiddenAndUnfocusable($el);
-        const hasAttributes = $el.hasAttribute('role') || $el.hasAttribute('disabled');
+        const hasAttributes = $el.hasAttribute('role') || Utils.isDisabled($el);
         const condition = linkText.toLowerCase() !== textContentIgnoredStrings.toLowerCase();
         const diffAccName = condition
           ? `<hr> ${Lang._('ACC_NAME')}`
@@ -597,7 +597,7 @@ export default function checkLinkText() {
         $el.hasAttribute('aria-haspopup') ||
         $el.hasAttribute('aria-expanded') ||
         $el.hasAttribute('onclick') ||
-        $el.hasAttribute('disabled') ||
+        Utils.isDisabled($el) ||
         !!Utils.getCachedClosest($el, 'nav, [role="navigation"]');
 
       // We need non-normalized href value for this test.

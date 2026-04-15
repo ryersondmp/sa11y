@@ -212,6 +212,7 @@ const defaultOptions = {
     TABLES_MISSING_HEADINGS: true,
     TABLES_SEMANTIC_HEADING: true,
     TABLES_EMPTY_HEADING: true,
+    TABLES_INVALID_HEADERS_REF: true,
     QA_FAKE_HEADING: true,
     QA_FAKE_LIST: true,
     QA_UPPERCASE: true,
@@ -2468,7 +2469,7 @@ function annotate(issue) {
     buttonWrapper.appendChild(button);
     annotationButtons.push(button);
     const insertBefore = State.option.insertAnnotationBefore ? `, ${State.option.insertAnnotationBefore}` : "";
-    const location = getCachedClosest(element, `a, svg, button, [role="link"], [role="button"] ${insertBefore}`) || element;
+    const location = getCachedClosest(element, "svg") || getCachedClosest(element, `a, button, [role="link"], [role="button"] ${insertBefore}`) || element;
     location.insertAdjacentElement(position, annotation);
     annotation.shadowRoot.appendChild(buttonWrapper);
     const ignoredElements = State.option.ignoreHiddenOverflow ? State.option.ignoreHiddenOverflow.split(",").flatMap((selector) => [...document.querySelectorAll(selector)]) : [];
@@ -6296,6 +6297,7 @@ function checkImages() {
       decorative = alt.match(altPlaceholderPattern)?.[0];
     }
     if (decorative) {
+      if (getCachedClosest($el, `button, [role='button']`)) return;
       const carouselSources = State.option.checks.IMAGE_DECORATIVE_CAROUSEL.sources;
       const carousel = carouselSources ? getCachedClosest($el, carouselSources) : "";
       if (carousel) {
@@ -7027,7 +7029,7 @@ function checkLinkText() {
     if (strippedLinkText.length !== 0) {
       if (seen[strippedLinkText] && !seen[href]) {
         const ignored = isHiddenAndUnfocusable($el);
-        const hasAttributes = $el.hasAttribute("role") || $el.hasAttribute("disabled");
+        const hasAttributes = $el.hasAttribute("role") || isDisabled($el);
         const condition = linkText.toLowerCase() !== textContentIgnoredStrings.toLowerCase();
         const diffAccName = condition ? `<hr> ${Lang._("ACC_NAME")}` : `<hr> ${Lang._("LINK_TEXT")}`;
         const variable = condition ? linkText : textContentIgnoredStrings;
@@ -7120,7 +7122,7 @@ function checkLinkText() {
     if (State.option.checks.QA_IN_PAGE_LINK || State.option.checks.LINK_MAYBE_BUTTON) {
       const hasText = getText($el).length !== 0;
       const ignored = isHiddenAndUnfocusable($el);
-      const hasAttributes = $el.hasAttribute("role") || $el.hasAttribute("aria-haspopup") || $el.hasAttribute("aria-expanded") || $el.hasAttribute("onclick") || $el.hasAttribute("disabled") || !!getCachedClosest($el, 'nav, [role="navigation"]');
+      const hasAttributes = $el.hasAttribute("role") || $el.hasAttribute("aria-haspopup") || $el.hasAttribute("aria-expanded") || $el.hasAttribute("onclick") || isDisabled($el) || !!getCachedClosest($el, 'nav, [role="navigation"]');
       const rawHref = $el.getAttribute("href");
       if ((!rawHref || rawHref.startsWith("#")) && hasText && !ignored && !hasAttributes) {
         const targetId = rawHref.substring(1);
@@ -7198,8 +7200,8 @@ function checkContrast() {
     const fontSize = parseFloat(style.fontSize);
     if (opacity === 0 || fontSize === 0 || isElementHidden($el)) continue;
     if (isScreenReaderOnly($el)) continue;
-    const isDisabled2 = (node) => node && (node.matches?.(":disabled") || node.disabled || node.getAttribute?.("aria-disabled") === "true");
-    if (isDisabled2($el) || isDisabled2(getCachedClosest($el, "label")?.control)) continue;
+    if (isDisabled($el) || isDisabled(getCachedClosest($el, "label")?.control))
+      continue;
     if (!checkInputs && !/[\p{L}\p{N}]/u.test(text)) continue;
     const color = convertToRGBA(style.color, opacity);
     const getFontWeight = style.fontWeight;
@@ -8019,55 +8021,90 @@ function checkQA() {
     });
   }
   Elements.Found.Tables.forEach(($el) => {
-    if (isElementHidden($el) === false) {
-      const tableHeaders = $el.querySelectorAll("th");
-      const semanticHeadings = $el.querySelectorAll("h1, h2, h3, h4, h5, h6");
-      const firstRow = $el.querySelector("tr") ? $el.querySelector("tr").innerHTML : $el.innerHTML;
-      if (State.option.checks.TABLES_MISSING_HEADINGS && tableHeaders.length === 0) {
-        State.results.push({
-          test: "TABLES_MISSING_HEADINGS",
-          element: $el,
-          type: State.option.checks.TABLES_MISSING_HEADINGS.type || "error",
-          content: Lang.sprintf(
-            State.option.checks.TABLES_MISSING_HEADINGS.content || "TABLES_MISSING_HEADINGS"
-          ),
-          dismiss: prepareDismissal(`TABLES_MISSING_HEADINGS ${firstRow}`),
-          dismissAll: State.option.checks.TABLES_MISSING_HEADINGS.dismissAll ? "TABLES_MISSING_HEADINGS" : false,
-          developer: State.option.checks.TABLES_MISSING_HEADINGS.developer || false
-        });
-      }
-      if (State.option.checks.TABLES_SEMANTIC_HEADING && semanticHeadings.length > 0) {
-        semanticHeadings.forEach((heading) => {
-          State.results.push({
-            test: "TABLES_SEMANTIC_HEADING",
-            element: heading,
-            type: State.option.checks.TABLES_SEMANTIC_HEADING.type || "error",
-            content: Lang.sprintf(
-              State.option.checks.TABLES_SEMANTIC_HEADING.content || "TABLES_SEMANTIC_HEADING"
-            ),
-            dismiss: prepareDismissal(`TABLES_SEMANTIC_HEADING ${firstRow}`),
-            dismissAll: State.option.checks.TABLES_SEMANTIC_HEADING.dismissAll ? "TABLES_SEMANTIC_HEADING" : false,
-            developer: State.option.checks.TABLES_SEMANTIC_HEADING.developer || false
-          });
-        });
-      }
-      tableHeaders.forEach((th) => {
-        if (State.option.checks.TABLES_EMPTY_HEADING && th.textContent.trim().length === 0) {
-          State.results.push({
-            test: "TABLES_EMPTY_HEADING",
-            element: th,
-            type: State.option.checks.TABLES_EMPTY_HEADING.type || "error",
-            content: Lang.sprintf(
-              State.option.checks.TABLES_EMPTY_HEADING.content || "TABLES_EMPTY_HEADING"
-            ),
-            position: "afterbegin",
-            dismiss: prepareDismissal(`TABLES_EMPTY_HEADING ${firstRow}`),
-            dismissAll: State.option.checks.TABLES_EMPTY_HEADING.dismissAll ? "TABLES_EMPTY_HEADING" : false,
-            developer: State.option.checks.TABLES_EMPTY_HEADING.developer || false
-          });
+    if (isElementHidden($el)) return;
+    const role = $el.getAttribute("role")?.trim().toLowerCase();
+    if (role && !["table", "grid", "treegrid"].includes(role)) return;
+    const tableHeaders = $el.querySelectorAll('th, [role="columnheader"]');
+    const semanticHeadings = $el.querySelectorAll("h1, h2, h3, h4, h5, h6");
+    const firstRow = $el.querySelector("tr") ? $el.querySelector("tr").innerHTML : $el.innerHTML;
+    const invalidIds = [];
+    const cellsWithHeaders = $el.querySelectorAll("[headers]");
+    cellsWithHeaders.forEach((cell) => {
+      const headersAttr = cell.getAttribute("headers");
+      const headerIds = headersAttr.trim().split(/\s+/);
+      headerIds.forEach((id) => {
+        const referencedElement = $el.querySelector(`#${id}`);
+        const doesNotExist = !referencedElement;
+        const isNotInTable = referencedElement && !$el.contains(referencedElement);
+        let isNotHeader = true;
+        if (referencedElement) {
+          const tagName = referencedElement.tagName.toLowerCase();
+          const role2 = referencedElement.getAttribute("role")?.trim().toLowerCase();
+          if (tagName === "th" || role2 === "rowheader" || role2 === "columnheader")
+            isNotHeader = false;
         }
+        if (doesNotExist || isNotInTable || isNotHeader) invalidIds.push(id);
+      });
+    });
+    if (State.option.checks.TABLES_INVALID_HEADERS_REF && invalidIds.length > 0) {
+      State.results.push({
+        test: "TABLES_INVALID_HEADERS_REF",
+        element: $el,
+        type: State.option.checks.TABLES_INVALID_HEADERS_REF.type || "error",
+        content: Lang.sprintf(
+          State.option.checks.TABLES_INVALID_HEADERS_REF.content || "TABLES_INVALID_HEADERS_REF",
+          invalidIds.join(", ")
+        ),
+        args: [invalidIds.join(", ")],
+        dismiss: prepareDismissal(`TABLES_INVALID_HEADERS_REF ${firstRow}`),
+        dismissAll: State.option.checks.TABLES_INVALID_HEADERS_REF.dismissAll ? "TABLES_INVALID_HEADERS_REF" : false,
+        developer: State.option.checks.TABLES_INVALID_HEADERS_REF.developer || true
       });
     }
+    if (State.option.checks.TABLES_MISSING_HEADINGS && tableHeaders.length === 0) {
+      State.results.push({
+        test: "TABLES_MISSING_HEADINGS",
+        element: $el,
+        type: State.option.checks.TABLES_MISSING_HEADINGS.type || "error",
+        content: Lang.sprintf(
+          State.option.checks.TABLES_MISSING_HEADINGS.content || "TABLES_MISSING_HEADINGS"
+        ),
+        dismiss: prepareDismissal(`TABLES_MISSING_HEADINGS ${firstRow}`),
+        dismissAll: State.option.checks.TABLES_MISSING_HEADINGS.dismissAll ? "TABLES_MISSING_HEADINGS" : false,
+        developer: State.option.checks.TABLES_MISSING_HEADINGS.developer || false
+      });
+    }
+    if (State.option.checks.TABLES_SEMANTIC_HEADING && semanticHeadings.length > 0) {
+      semanticHeadings.forEach((heading) => {
+        State.results.push({
+          test: "TABLES_SEMANTIC_HEADING",
+          element: heading,
+          type: State.option.checks.TABLES_SEMANTIC_HEADING.type || "error",
+          content: Lang.sprintf(
+            State.option.checks.TABLES_SEMANTIC_HEADING.content || "TABLES_SEMANTIC_HEADING"
+          ),
+          dismiss: prepareDismissal(`TABLES_SEMANTIC_HEADING ${firstRow}`),
+          dismissAll: State.option.checks.TABLES_SEMANTIC_HEADING.dismissAll ? "TABLES_SEMANTIC_HEADING" : false,
+          developer: State.option.checks.TABLES_SEMANTIC_HEADING.developer || false
+        });
+      });
+    }
+    tableHeaders.forEach((th) => {
+      if (State.option.checks.TABLES_EMPTY_HEADING && th.textContent.trim().length === 0) {
+        State.results.push({
+          test: "TABLES_EMPTY_HEADING",
+          element: th,
+          type: State.option.checks.TABLES_EMPTY_HEADING.type || "error",
+          content: Lang.sprintf(
+            State.option.checks.TABLES_EMPTY_HEADING.content || "TABLES_EMPTY_HEADING"
+          ),
+          position: "afterbegin",
+          dismiss: prepareDismissal(`TABLES_EMPTY_HEADING ${firstRow}`),
+          dismissAll: State.option.checks.TABLES_EMPTY_HEADING.dismissAll ? "TABLES_EMPTY_HEADING" : false,
+          developer: State.option.checks.TABLES_EMPTY_HEADING.developer || false
+        });
+      }
+    });
   });
   if (State.option.checks.QA_FAKE_HEADING) {
     const addResult = (element, text) => {
@@ -8649,9 +8686,8 @@ function checkDeveloper() {
     const flaggedForAriaHidden = /* @__PURE__ */ new Set();
     focusableElements.forEach(($el) => {
       if (flaggedForAriaHidden.has($el)) return;
-      if ($el.hasAttribute("disabled")) return;
-      if (isNegativeTabindex($el)) return;
-      if (isElementHidden($el)) return;
+      if (isDisabled($el) || isNegativeTabindex($el) || isElementHidden($el))
+        return;
       const hiddenContainer = getCachedClosest($el, '[aria-hidden="true"]');
       if (hiddenContainer) {
         const outerHTML = truncateString($el.outerHTML, 100);

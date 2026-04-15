@@ -387,6 +387,7 @@ export default {
       'Sémantické nadpisy, ako napríklad Nadpis 2 alebo Nadpis 3, by sa mali používať len pre časti obsahu; <strong>nie</strong> v tabuľkách HTML. Namiesto toho označte nadpisy tabuliek pomocou prvku <code>&lt;th&gt;</code>. <hr> Ďalšie informácie o <a href="https://www.w3.org/WAI/tutorials/tables/">prístupných tabuľkách.</a>',
     TABLES_EMPTY_HEADING:
       'Nájdené prázdne záhlavie tabuľky! Hlavičky tabuliek by <strong>nikdy</strong> nemali byť prázdne. Je dôležité označiť záhlavia riadkov a/alebo stĺpcov, aby sa vyjadril ich vzťah. Tieto informácie poskytujú kontext ľuďom, ktorí používajú asistenčné technológie. Majte na pamäti, že tabuľky by sa mali používať len pre tabuľkové údaje. <hr> Ďalšie informácie o <a href="https://www.w3.org/WAI/tutorials/tables/">prístupných tabuľkách.</a>',
+    TABLES_INVALID_HEADERS_REF: 'Atribút <code>headers</code> obsahuje neplatný odkaz: <strong {C}>%(VALUE)</strong>. Musí odkazovať na ID platnej bunky hlavičky v rámci tej istej tabuľky. <hr> Ďalšie informácie o <a href="https://www.w3.org/WAI/WCAG22/Techniques/html/H43">používaní atribútov id a headers na priradenie dátových buniek k bunkám hlavičky v dátových tabuľkách.</a>',
 
     // Contrast
     CONTRAST_NORMAL: 'Text normálnej veľkosti by mal mať kontrastný pomer aspoň %(RATIO).',

@@ -365,9 +365,8 @@ export default function checkDeveloper() {
     const flaggedForAriaHidden = new Set();
     focusableElements.forEach(($el) => {
       if (flaggedForAriaHidden.has($el)) return;
-      if ($el.hasAttribute('disabled')) return;
-      if (Utils.isNegativeTabindex($el)) return;
-      if (Utils.isElementHidden($el)) return;
+      if (Utils.isDisabled($el) || Utils.isNegativeTabindex($el) || Utils.isElementHidden($el))
+        return;
 
       const hiddenContainer = Utils.getCachedClosest($el, '[aria-hidden="true"]');
       if (hiddenContainer) {

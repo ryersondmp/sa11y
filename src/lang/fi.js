@@ -383,6 +383,7 @@ export default {
       'Semanttisia otsikoita, kuten Heading 2 tai Heading 3, tulisi käyttää vain sisällön osioissa; <strong>ei</strong> HTML-taulukoissa. Ilmoita taulukkootsikot sen sijaan <code>&lt;th&gt;</code>-elementillä. <hr> Lisätietoja <a href="https://www.w3.org/WAI/tutorials/tables/">saavutettavista taulukoista.</a>',
     TABLES_EMPTY_HEADING:
       'Tyhjä taulukkootsikko löytyi! Taulukkootsikoiden ei pitäisi <strong>ei koskaan</strong> olla tyhjiä. On tärkeää nimetä rivi- ja/tai sarakeotsikot, jotta niiden välinen suhde välittyy. Nämä tiedot tarjoavat kontekstin ihmisille, jotka käyttävät apuvälineteknologiaa. Muista, että taulukoita tulisi käyttää vain taulukkomuotoisiin tietoihin. <hr> Lisätietoja <a href="https://www.w3.org/WAI/tutorials/tables/">saavutettavista taulukoista.</a>',
+    TABLES_INVALID_HEADERS_REF: '<code>headers</code>-attribuutti sisältää virheellisen viittauksen: <strong {C}>%(VALUE)</strong>. Sen on viitattava kelvollisen otsikkosolun tunnukseen (ID) samassa taulukossa. <hr> Lue lisää <a href="https://www.w3.org/WAI/WCAG22/Techniques/html/H43">id- ja headers-attribuuttien käytöstä tietosolujen yhdistämiseksi otsikkosoluihin tietotaulukoissa.</a>',
 
     // Contrast
     CONTRAST_NORMAL: 'Normaalikokoisen tekstin tulee olla vähintään %(RATIO) kontrastisuhde.',

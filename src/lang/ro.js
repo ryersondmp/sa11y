@@ -389,6 +389,7 @@ export default {
       'Titlurile semantice, cum ar fi Heading 2 sau Heading 3, ar trebui utilizate numai pentru secțiuni de conținut; <strong>nu</strong> în tabelele HTML. Indicați titlurile de tabel folosind în schimb elementul <code>&lt;th&gt;</code>. <hr> Aflați mai multe despre <a href="https://www.w3.org/WAI/tutorials/tables/">tablouri accesibile.</a>',
     TABLES_EMPTY_HEADING:
       'S-a găsit un antet de tabel gol! Anteturile de tabel nu ar trebui să fie <strong>niciodată</strong> goale. Este important să se desemneze antetele de rând și/sau de coloană pentru a transmite relația dintre ele. Aceste informații oferă context persoanelor care utilizează tehnologia de asistență. Vă rugăm să rețineți că tabelele trebuie utilizate numai pentru date tabelare. <hr> Aflați mai multe despre <a href="https://www.w3.org/WAI/tutorials/tables/">tablouri accesibile.</a>',
+    TABLES_INVALID_HEADERS_REF: 'Atributul <code>headers</code> conține o referință nevalidă: <strong {C}>%(VALUE)</strong>. Acesta trebuie să facă referire la ID-ul unei celule antet valide din același tabel. <hr> Aflați mai multe despre <a href="https://www.w3.org/WAI/WCAG22/Techniques/html/H43">utilizarea atributelor id și headers pentru a asocia celulele de date cu celulele antet în tabelele de date.</a>',
 
     // Contrast
     CONTRAST_NORMAL:

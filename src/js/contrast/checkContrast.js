@@ -47,12 +47,8 @@ export default function checkContrast() {
     if (Utils.isScreenReaderOnly($el)) continue;
 
     // Disabled elements.
-    const isDisabled = (node) =>
-      node &&
-      (node.matches?.(':disabled') ||
-        node.disabled ||
-        node.getAttribute?.('aria-disabled') === 'true');
-    if (isDisabled($el) || isDisabled(Utils.getCachedClosest($el, 'label')?.control)) continue;
+    if (Utils.isDisabled($el) || Utils.isDisabled(Utils.getCachedClosest($el, 'label')?.control))
+      continue;
 
     // Skip if the text contains absolutely no letters or numbers.
     if (!checkInputs && !/[\p{L}\p{N}]/u.test(text)) continue;

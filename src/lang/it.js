@@ -385,6 +385,7 @@ export default {
       'Le intestazioni semantiche come Heading 2 o Heading 3 devono essere utilizzate solo per le sezioni di contenuto; <strong>non</strong> nelle tabelle HTML. Indicare le intestazioni delle tabelle utilizzando invece l\'elemento <code>&lt;th&gt;</code>. <hr> Per saperne di più su <a href="https://www.w3.org/WAI/tutorials/tables/">tabelle accessibili.</a>',
     TABLES_EMPTY_HEADING:
       'Trovato un\'intestazione di tabella vuota! Le intestazioni delle tabelle non devono mai essere vuote. È importante designare le intestazioni di riga e/o di colonna per indicare la loro relazione. Queste informazioni forniscono un contesto alle persone che utilizzano tecnologie assistive. Tenete presente che le tabelle devono essere utilizzate solo per i dati tabellari. <hr> Per saperne di più su <a href="https://www.w3.org/WAI/tutorials/tables/">tabelle accessibili.</a>',
+    TABLES_INVALID_HEADERS_REF: 'L\'attributo <code>headers</code> contiene un riferimento non valido: <strong {C}>%(VALUE)</strong>. Deve fare riferimento all\'ID di una cella di intestazione valida all\'interno della stessa tabella. <hr> Ulteriori informazioni sull\'<a href="https://www.w3.org/WAI/WCAG22/Techniques/html/H43">uso degli attributi id e headers per associare le celle di dati alle celle di intestazione nelle tabelle di dati.</a>',
 
     // Contrast
     CONTRAST_NORMAL:

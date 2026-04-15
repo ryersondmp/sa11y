@@ -377,6 +377,7 @@ export default {
       '语义标题, 如Heading 2或Heading 3, 只能用于内容的章节；<strong>不能</strong>用于HTML表格。使用<code>&lt;th&gt;</code>元素来表示表格的标题。<hr> 了解更多关于<a href="https://www.w3.org/WAI/tutorials/tables/">可访问的表格。</a>',
     TABLES_EMPTY_HEADING:
       '发现空的表头!表头应该<strong>永远不会</strong>是空的。指定行和/或列的标题以表达它们的关系是很重要的。这一信息为使用辅助技术的人提供了背景。请记住, 表格应该只用于表格式数据。<hr> 了解更多关于<a href="https://www.w3.org/WAI/tutorials/tables/">可访问的表格。</a>',
+    TABLES_INVALID_HEADERS_REF: '<code>headers</code> 属性包含无效引用：<strong {C}>%(VALUE)</strong>。它必须引用同一表格中有效表头单元格的 ID。 <hr> 了解有关 <a href="https://www.w3.org/WAI/WCAG22/Techniques/html/H43">在数据表中使用 id 和 headers 属性将数据单元格与表头单元格相关联</a> 的更多信息。',
 
     // Contrast
     CONTRAST_NORMAL: '普通大小的文本应至少具有 %(RATIO) 的对比度。',

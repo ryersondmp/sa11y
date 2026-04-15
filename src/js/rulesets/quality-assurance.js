@@ -75,62 +75,109 @@ export default function checkQA() {
   /*  Errors: Check HTML tables for issues.                          */
   /* *************************************************************** */
   Elements.Found.Tables.forEach(($el) => {
-    if (Utils.isElementHidden($el) === false) {
-      const tableHeaders = $el.querySelectorAll('th');
-      const semanticHeadings = $el.querySelectorAll('h1, h2, h3, h4, h5, h6');
-      const firstRow = $el.querySelector('tr') ? $el.querySelector('tr').innerHTML : $el.innerHTML;
+    // Ignore explicitly hidden tables.
+    if (Utils.isElementHidden($el)) return;
 
-      if (State.option.checks.TABLES_MISSING_HEADINGS && tableHeaders.length === 0) {
-        State.results.push({
-          test: 'TABLES_MISSING_HEADINGS',
-          element: $el,
-          type: State.option.checks.TABLES_MISSING_HEADINGS.type || 'error',
-          content: Lang.sprintf(
-            State.option.checks.TABLES_MISSING_HEADINGS.content || 'TABLES_MISSING_HEADINGS',
-          ),
-          dismiss: Utils.prepareDismissal(`TABLES_MISSING_HEADINGS ${firstRow}`),
-          dismissAll: State.option.checks.TABLES_MISSING_HEADINGS.dismissAll
-            ? 'TABLES_MISSING_HEADINGS'
-            : false,
-          developer: State.option.checks.TABLES_MISSING_HEADINGS.developer || false,
-        });
-      }
-      if (State.option.checks.TABLES_SEMANTIC_HEADING && semanticHeadings.length > 0) {
-        semanticHeadings.forEach((heading) => {
-          State.results.push({
-            test: 'TABLES_SEMANTIC_HEADING',
-            element: heading,
-            type: State.option.checks.TABLES_SEMANTIC_HEADING.type || 'error',
-            content: Lang.sprintf(
-              State.option.checks.TABLES_SEMANTIC_HEADING.content || 'TABLES_SEMANTIC_HEADING',
-            ),
-            dismiss: Utils.prepareDismissal(`TABLES_SEMANTIC_HEADING ${firstRow}`),
-            dismissAll: State.option.checks.TABLES_SEMANTIC_HEADING.dismissAll
-              ? 'TABLES_SEMANTIC_HEADING'
-              : false,
-            developer: State.option.checks.TABLES_SEMANTIC_HEADING.developer || false,
-          });
-        });
-      }
-      tableHeaders.forEach((th) => {
-        if (State.option.checks.TABLES_EMPTY_HEADING && th.textContent.trim().length === 0) {
-          State.results.push({
-            test: 'TABLES_EMPTY_HEADING',
-            element: th,
-            type: State.option.checks.TABLES_EMPTY_HEADING.type || 'error',
-            content: Lang.sprintf(
-              State.option.checks.TABLES_EMPTY_HEADING.content || 'TABLES_EMPTY_HEADING',
-            ),
-            position: 'afterbegin',
-            dismiss: Utils.prepareDismissal(`TABLES_EMPTY_HEADING ${firstRow}`),
-            dismissAll: State.option.checks.TABLES_EMPTY_HEADING.dismissAll
-              ? 'TABLES_EMPTY_HEADING'
-              : false,
-            developer: State.option.checks.TABLES_EMPTY_HEADING.developer || false,
-          });
+    // If overridden semantics.
+    const role = $el.getAttribute('role')?.trim().toLowerCase();
+    if (role && !['table', 'grid', 'treegrid'].includes(role)) return;
+
+    // Otherwise query headers.
+    const tableHeaders = $el.querySelectorAll('th, [role="columnheader"]');
+    const semanticHeadings = $el.querySelectorAll('h1, h2, h3, h4, h5, h6');
+    const firstRow = $el.querySelector('tr') ? $el.querySelector('tr').innerHTML : $el.innerHTML;
+
+    // Check for valid 'headers' references.
+    const invalidIds = [];
+    const cellsWithHeaders = $el.querySelectorAll('[headers]');
+    cellsWithHeaders.forEach((cell) => {
+      const headersAttr = cell.getAttribute('headers');
+      const headerIds = headersAttr.trim().split(/\s+/);
+      headerIds.forEach((id) => {
+        const referencedElement = $el.querySelector(`#${id}`);
+        const doesNotExist = !referencedElement;
+        const isNotInTable = referencedElement && !$el.contains(referencedElement);
+        let isNotHeader = true;
+        if (referencedElement) {
+          const tagName = referencedElement.tagName.toLowerCase();
+          const role = referencedElement.getAttribute('role')?.trim().toLowerCase();
+          if (tagName === 'th' || role === 'rowheader' || role === 'columnheader')
+            isNotHeader = false;
         }
+        if (doesNotExist || isNotInTable || isNotHeader) invalidIds.push(id);
+      });
+    });
+
+    if (State.option.checks.TABLES_INVALID_HEADERS_REF && invalidIds.length > 0) {
+      State.results.push({
+        test: 'TABLES_INVALID_HEADERS_REF',
+        element: $el,
+        type: State.option.checks.TABLES_INVALID_HEADERS_REF.type || 'error',
+        content: Lang.sprintf(
+          State.option.checks.TABLES_INVALID_HEADERS_REF.content || 'TABLES_INVALID_HEADERS_REF',
+          invalidIds.join(', '),
+        ),
+        args: [invalidIds.join(', ')],
+        dismiss: Utils.prepareDismissal(`TABLES_INVALID_HEADERS_REF ${firstRow}`),
+        dismissAll: State.option.checks.TABLES_INVALID_HEADERS_REF.dismissAll
+          ? 'TABLES_INVALID_HEADERS_REF'
+          : false,
+        developer: State.option.checks.TABLES_INVALID_HEADERS_REF.developer || true,
       });
     }
+
+    if (State.option.checks.TABLES_MISSING_HEADINGS && tableHeaders.length === 0) {
+      State.results.push({
+        test: 'TABLES_MISSING_HEADINGS',
+        element: $el,
+        type: State.option.checks.TABLES_MISSING_HEADINGS.type || 'error',
+        content: Lang.sprintf(
+          State.option.checks.TABLES_MISSING_HEADINGS.content || 'TABLES_MISSING_HEADINGS',
+        ),
+        dismiss: Utils.prepareDismissal(`TABLES_MISSING_HEADINGS ${firstRow}`),
+        dismissAll: State.option.checks.TABLES_MISSING_HEADINGS.dismissAll
+          ? 'TABLES_MISSING_HEADINGS'
+          : false,
+        developer: State.option.checks.TABLES_MISSING_HEADINGS.developer || false,
+      });
+    }
+
+    if (State.option.checks.TABLES_SEMANTIC_HEADING && semanticHeadings.length > 0) {
+      semanticHeadings.forEach((heading) => {
+        State.results.push({
+          test: 'TABLES_SEMANTIC_HEADING',
+          element: heading,
+          type: State.option.checks.TABLES_SEMANTIC_HEADING.type || 'error',
+          content: Lang.sprintf(
+            State.option.checks.TABLES_SEMANTIC_HEADING.content || 'TABLES_SEMANTIC_HEADING',
+          ),
+          dismiss: Utils.prepareDismissal(`TABLES_SEMANTIC_HEADING ${firstRow}`),
+          dismissAll: State.option.checks.TABLES_SEMANTIC_HEADING.dismissAll
+            ? 'TABLES_SEMANTIC_HEADING'
+            : false,
+          developer: State.option.checks.TABLES_SEMANTIC_HEADING.developer || false,
+        });
+      });
+    }
+
+    tableHeaders.forEach((th) => {
+      if (State.option.checks.TABLES_EMPTY_HEADING && th.textContent.trim().length === 0) {
+        State.results.push({
+          test: 'TABLES_EMPTY_HEADING',
+          element: th,
+          type: State.option.checks.TABLES_EMPTY_HEADING.type || 'error',
+          content: Lang.sprintf(
+            State.option.checks.TABLES_EMPTY_HEADING.content || 'TABLES_EMPTY_HEADING',
+          ),
+          position: 'afterbegin',
+          dismiss: Utils.prepareDismissal(`TABLES_EMPTY_HEADING ${firstRow}`),
+          dismissAll: State.option.checks.TABLES_EMPTY_HEADING.dismissAll
+            ? 'TABLES_EMPTY_HEADING'
+            : false,
+          developer: State.option.checks.TABLES_EMPTY_HEADING.developer || false,
+        });
+      }
+    });
   });
 
   /* ****************************************************************** */

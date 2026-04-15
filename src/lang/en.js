@@ -150,9 +150,6 @@ export default {
       'article',
       'go',
       'workshop',
-      'plain text',
-      'html',
-      'this product',
     ],
     CLICK: ['click'],
     NEW_WINDOW_PHRASES: [
@@ -397,6 +394,7 @@ export default {
       'Semantic headings such as Heading 2 or Heading 3 should only be used for sections of content; <strong>not</strong> in HTML tables. Indicate table headings using the <code>&lt;th&gt;</code> element instead. <hr> Learn more about <a href="https://www.w3.org/WAI/tutorials/tables/">accessible tables.</a>',
     TABLES_EMPTY_HEADING:
       'Empty table header found! Table headers should <strong>never</strong> be empty. It is important to designate row and/or column headers to convey their relationship. This information provides context to people who use assistive technology. Please keep in mind that tables should be used for tabular data only. <hr> Learn more about <a href="https://www.w3.org/WAI/tutorials/tables/">accessible tables.</a>',
+    TABLES_INVALID_HEADERS_REF: 'The <code>headers</code> attribute contains an invalid reference: <strong {C}>%(VALUE)</strong>. It must reference the ID of a valid header cell within the same table. <hr> Learn more about <a href="https://www.w3.org/WAI/WCAG22/Techniques/html/H43">using id and headers attributes to associate data cells with header cells in data tables.</a>',
 
     // Contrast
     CONTRAST_NORMAL: 'Normal-sized text should have at least a %(RATIO) ratio.',
