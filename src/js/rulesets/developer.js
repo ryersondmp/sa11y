@@ -340,6 +340,7 @@ export default function checkDeveloper() {
   /* ****************************************** */
   if (State.option.checks.TABINDEX_ATTR) {
     Elements.Found.TabIndex.forEach(($el) => {
+      if ($el.tabIndex <= 0) return;
       State.results.push({
         test: 'TABINDEX_ATTR',
         element: $el,
@@ -356,14 +357,8 @@ export default function checkDeveloper() {
   /* Error: Focusable content hidden from screen readers.            */
   /* *************************************************************** */
   if (State.option.checks.HIDDEN_FOCUSABLE) {
-    const focusableElements = [
-      ...(Elements.Found.Links || []),
-      ...(Elements.Found.Buttons || []),
-      ...(Elements.Found.Inputs || []),
-      ...(Elements.Found.TabIndex || []),
-    ];
     const flaggedForAriaHidden = new Set();
-    focusableElements.forEach(($el) => {
+    Elements.Found.Focusable.forEach(($el) => {
       if (flaggedForAriaHidden.has($el)) return;
       if (Utils.isDisabled($el) || Utils.isNegativeTabindex($el) || Utils.isElementHidden($el))
         return;

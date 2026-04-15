@@ -1771,7 +1771,7 @@
               break;
           }
         }
-        if ($el.hasAttribute("tabindex") && $el.tabIndex > 0) Found.TabIndex.push($el);
+        if ($el.hasAttribute("tabindex") && $el.tabIndex >= 0) Found.TabIndex.push($el);
         if ($el.matches(nestedSources)) Found.NestedComponents.push($el);
         if (!contrastExcludedTags.has(tag)) {
           if (!getCachedClosest($el, contrastAncestorSelector)) {
@@ -1841,6 +1841,12 @@
       }
       Found.html = document.querySelector("html");
       Found.Language = Found.html.getAttribute("lang")?.trim();
+      Found.Focusable = [
+        ...Elements.Found.Links || [],
+        ...Elements.Found.Buttons || [],
+        ...Elements.Found.Inputs || [],
+        ...Elements.Found.TabIndex || []
+      ];
     }
     function initializeFilterElements() {
       buildContrastAttrSelector();
@@ -7204,7 +7210,7 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
       const fontSize = parseFloat(style.fontSize);
       if (opacity === 0 || fontSize === 0 || isElementHidden($el)) continue;
       if (isScreenReaderOnly($el)) continue;
-      if (isDisabled($el) || isDisabled(getCachedClosest($el, "label")?.control))
+      if (isDisabled($el) || isDisabled(getCachedClosest($el, "label")?.control) || isDisabled(getCachedClosest($el, "fieldset")) || isDisabled(getCachedClosest($el, '[role="group"]')))
         continue;
       if (!checkInputs && !/[\p{L}\p{N}]/u.test(text)) continue;
       const color = convertToRGBA(style.color, opacity);
@@ -8669,6 +8675,7 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
     }
     if (State.option.checks.TABINDEX_ATTR) {
       Elements.Found.TabIndex.forEach(($el) => {
+        if ($el.tabIndex <= 0) return;
         State.results.push({
           test: "TABINDEX_ATTR",
           element: $el,
@@ -8681,14 +8688,8 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
       });
     }
     if (State.option.checks.HIDDEN_FOCUSABLE) {
-      const focusableElements = [
-        ...Elements.Found.Links || [],
-        ...Elements.Found.Buttons || [],
-        ...Elements.Found.Inputs || [],
-        ...Elements.Found.TabIndex || []
-      ];
       const flaggedForAriaHidden = /* @__PURE__ */ new Set();
-      focusableElements.forEach(($el) => {
+      Elements.Found.Focusable.forEach(($el) => {
         if (flaggedForAriaHidden.has($el)) return;
         if (isDisabled($el) || isNegativeTabindex($el) || isElementHidden($el))
           return;

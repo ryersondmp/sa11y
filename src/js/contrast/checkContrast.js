@@ -47,7 +47,12 @@ export default function checkContrast() {
     if (Utils.isScreenReaderOnly($el)) continue;
 
     // Disabled elements.
-    if (Utils.isDisabled($el) || Utils.isDisabled(Utils.getCachedClosest($el, 'label')?.control))
+    if (
+      Utils.isDisabled($el) ||
+      Utils.isDisabled(Utils.getCachedClosest($el, 'label')?.control) ||
+      Utils.isDisabled(Utils.getCachedClosest($el, 'fieldset')) ||
+      Utils.isDisabled(Utils.getCachedClosest($el, '[role="group"]'))
+    )
       continue;
 
     // Skip if the text contains absolutely no letters or numbers.

@@ -258,7 +258,7 @@ const Elements = (function myElements() {
       }
 
       // Cross-cutting: tabindex
-      if ($el.hasAttribute('tabindex') && $el.tabIndex > 0) Found.TabIndex.push($el);
+      if ($el.hasAttribute('tabindex') && $el.tabIndex >= 0) Found.TabIndex.push($el);
 
       // Cross-cutting: Nested components.
       if (nestedSources && $el.matches(nestedSources)) Found.NestedComponents.push($el);
@@ -349,6 +349,14 @@ const Elements = (function myElements() {
     // Query <html> for lang attribute (may change on SPA navigation).
     Found.html = document.querySelector('html');
     Found.Language = Found.html.getAttribute('lang')?.trim();
+
+    // All focusable elements.
+    Found.Focusable = [
+      ...(Elements.Found.Links || []),
+      ...(Elements.Found.Buttons || []),
+      ...(Elements.Found.Inputs || []),
+      ...(Elements.Found.TabIndex || []),
+    ];
   }
 
   // Initialize.
