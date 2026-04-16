@@ -280,7 +280,7 @@ const en = {
     BTN_TIP: ' Learn how to make an <a href="https://www.sarasoueidan.com/blog/accessible-icon-buttons/">accessible button.</a>',
     BTN_ROLE_IN_NAME: 'Do not include the word "button" in the name of a button. Screen readers already convey the role of an element in addition to its name. <hr> <strong {B}>Accessible Name</strong> <strong {C}>%(TEXT)</strong>',
     LABEL_IN_NAME: "The visible text for this element appears to be different than the accessible name, which may cause confusion for assistive technologies users. Please review: <hr> <strong {B}>Text</strong> <strong {C}>%(TEXT)</strong> <hr> <strong {B}>Accessible Name</strong> <strong {C}>%(TEXT)</strong>",
-    LINK_MAYBE_BUTTON: `This link has an invalid target, and the accessible name contains the word "<strong {C}>%(NAME)</strong>". This suggests that this might not be a link at all, and instead controls some scripted behaviour on the page. To fix, replace the link with an <a href="https://www.w3.org/WAI/ARIA/apg/patterns/button/">accessible button</a>, or correct the link's destination. <hr> <strong {B}>Accessible Name</strong> <strong {C}>%(TEXT)</strong> <hr> <strong>Tip!</strong> Assistive technologies treat buttons and links differently. Using the correct HTML element ensures users know which keyboard shortcuts to use and what action will trigger.`,
+    LINK_MAYBE_BUTTON: `This link has an invalid target. Although the accessible name or its attributes suggests that this might not be a link at all, and instead controls some scripted behaviour on the page. To fix, replace the link with an <a href="https://www.w3.org/WAI/ARIA/apg/patterns/button/">accessible button</a>, or correct the link's destination. <hr> <strong {B}>Accessible Name</strong> <strong {C}>%(TEXT)</strong> <hr> <strong>Tip!</strong> Assistive technologies treat buttons and links differently. Using the correct HTML element ensures users know which keyboard shortcuts to use and what action will trigger.`,
     POTENTIAL_UI_ELEMENTS: [
       "menu",
       "close",
@@ -289,6 +289,7 @@ const en = {
       "expand",
       "collapse",
       "next",
+      "prev",
       "previous",
       "play",
       "pause",

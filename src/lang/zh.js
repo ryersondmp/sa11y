@@ -367,7 +367,7 @@ export default {
     BTN_ROLE_IN_NAME: '不要在按钮的名称中包含“按钮”一词。屏幕阅读器已经会传达元素的角色和名称。',
     LABEL_IN_NAME:
       '此元素的可见文本似乎与可访问名称不同，可能会对辅助技术用户造成混淆。请检查：<hr> <strong {B}>文本</strong> <strong {C}>%(TEXT)</strong> <hr> <strong {B}>可访问名称</strong> <strong {C}>%(TEXT)</strong>',
-    LINK_MAYBE_BUTTON: '此链接的目标无效，其辅助名称包含单词“<strong>%(NAME)</strong>”。这表明它可能根本不是链接，而是控制页面上的某些脚本行为。要修复此问题，请将链接替换为 <a href="https://www.w3.org/WAI/ARIA/apg/patterns/button/">无障碍按钮</a>，或纠正链接的目标地址。 <hr> <strong>提示！</strong> 辅助技术对按钮和链接的处理方式不同。使用正确的 HTML 元素可确保用户了解应使用的键盘快捷键以及将触发的操作。',
+    LINK_MAYBE_BUTTON: '此链接的目标无效。虽然可访问名称或其属性表明这可能根本不是链接，而是控制页面上的某些脚本行为。要修复此问题，请将链接替换为 <a href="https://www.w3.org/WAI/ARIA/apg/patterns/button/">可访问按钮</a>，或纠正链接的目的地。 <hr> <strong {B}>可访问名称</strong> <strong {C}>%(TEXT)</strong> <hr> <strong>提示！</strong> 辅助技术处理按钮和链接的方式不同。使用正确的 HTML 元素可确保用户知道应使用哪些键盘快捷键以及将触发什么操作。',
     POTENTIAL_UI_ELEMENTS: ['菜单', '关闭', '切换', '打开', '展开', '折叠', '下一步', '上一步', '播放', '暂停', '子菜单', '显示', '隐藏', '下拉', '返回', '前进', '跳过', '提交', '取消', '保存', '编辑', '删除', '移除', '搜索', '筛选', '排序', '停止', '静音', '取消静音', '全屏', '最小化', '最大化'],
 
     // Tables

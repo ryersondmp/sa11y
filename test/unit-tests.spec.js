@@ -1119,7 +1119,7 @@ test.describe('Sa11y Unit Tests', () => {
 
   test('Link used as button without roles (a href=#)', async () => {
     const issue = await checkTooltip(
-      page, 'error-broken-same-page', 'This link has an invalid target, and the accessible name contains the word',
+      page, 'error-broken-same-page', 'This link has an invalid target. Although the accessible name or its attributes suggests',
     );
     expect(issue).toBe(true);
   });

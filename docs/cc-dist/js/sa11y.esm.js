@@ -679,7 +679,7 @@ const Constants = /* @__PURE__ */ (function myConstants() {
     Exclusions.HeaderSpan = State.option.headerIgnoreSpan ? State.option.headerIgnoreSpan.split(",").map(($el) => $el.trim()) : [];
     Exclusions.Outline = State.option.outlineIgnore ? State.option.outlineIgnore.split(",").map(($el) => $el.trim()) : [];
     Exclusions.Images = [
-      'img[role="presentation"]:not(a img[role="presentation"]), img[aria-hidden="true"]:not(a img[aria-hidden="true"]), img[role="none"]:not(a img[role="none"])'
+      'img[role="presentation"]:not(a img[role="presentation"]), img[aria-hidden="true"]:not(a img[aria-hidden="true"]), img[role="none"]:not(a img[role="none"]), [aria-hidden="true"][role="img"]'
     ];
     if (State.option.imageIgnore) {
       Exclusions.Images = State.option.imageIgnore.split(",").map(($el) => $el.trim()).concat(Exclusions.Images);
@@ -7159,7 +7159,10 @@ function checkLinkText() {
           if (State.option.checks.LINK_MAYBE_BUTTON) {
             const keywords = Lang._("POTENTIAL_UI_ELEMENTS");
             const matchedKeyword = keywords.find((word) => accName.toLowerCase().includes(word));
-            if (matchedKeyword && accName.length <= 15) {
+            const isSlide = Object.keys($el.dataset).some(
+              (key) => key.toLowerCase().includes("slide")
+            );
+            if ((matchedKeyword || isSlide) && accName.length <= 15) {
               isFauxButton = true;
               State.results.push({
                 test: "LINK_MAYBE_BUTTON",
@@ -7167,10 +7170,9 @@ function checkLinkText() {
                 type: State.option.checks.LINK_MAYBE_BUTTON.type || "error",
                 content: Lang.sprintf(
                   State.option.checks.LINK_MAYBE_BUTTON.content || "LINK_MAYBE_BUTTON",
-                  matchedKeyword,
                   accName
                 ),
-                args: [matchedKeyword, accName],
+                args: [accName],
                 inline: true,
                 dismiss: prepareDismissal(`LINK_MAYBE_BUTTON_${matchedKeyword}`),
                 dismissAll: State.option.checks.LINK_MAYBE_BUTTON.dismissAll ? "LINK_MAYBE_BUTTON" : false,

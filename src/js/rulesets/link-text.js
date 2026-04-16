@@ -624,7 +624,10 @@ export default function checkLinkText() {
           if (State.option.checks.LINK_MAYBE_BUTTON) {
             const keywords = Lang._('POTENTIAL_UI_ELEMENTS');
             const matchedKeyword = keywords.find((word) => accName.toLowerCase().includes(word));
-            if (matchedKeyword && accName.length <= 15) {
+            const isSlide = Object.keys($el.dataset).some((key) =>
+              key.toLowerCase().includes('slide'),
+            );
+            if ((matchedKeyword || isSlide) && accName.length <= 15) {
               isFauxButton = true;
               State.results.push({
                 test: 'LINK_MAYBE_BUTTON',
@@ -632,10 +635,9 @@ export default function checkLinkText() {
                 type: State.option.checks.LINK_MAYBE_BUTTON.type || 'error',
                 content: Lang.sprintf(
                   State.option.checks.LINK_MAYBE_BUTTON.content || 'LINK_MAYBE_BUTTON',
-                  matchedKeyword,
                   accName,
                 ),
-                args: [matchedKeyword, accName],
+                args: [accName],
                 inline: true,
                 dismiss: Utils.prepareDismissal(`LINK_MAYBE_BUTTON_${matchedKeyword}`),
                 dismissAll: State.option.checks.LINK_MAYBE_BUTTON.dismissAll

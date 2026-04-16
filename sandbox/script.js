@@ -41,7 +41,7 @@ const sa11y = new Sa11y({
   readabilityPlugin: 1,
   contrastPlugin: true,
   // contrastAlgorithm: 'APCA',
-  formLabelsPlugin: true,
+  // formLabelsPlugin: false,
   colourFilterPlugin: true,
   linksAdvancedPlugin: true,
   imageWithinLightbox: '.lightbox',
