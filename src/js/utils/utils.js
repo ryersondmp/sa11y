@@ -882,7 +882,7 @@ export function generateElementPreview(issueObject, convertBase64 = false) {
   const createCodeFallback = () => {
     const pre = document.createElement('pre');
     const code = document.createElement('code');
-    code.textContent = truncateString(issueObject.htmlPath, 400);
+    code.textContent = truncateString(issueObject.htmlPath, 150);
     pre.appendChild(code);
     return pre;
   };
@@ -891,7 +891,7 @@ export function generateElementPreview(issueObject, convertBase64 = false) {
     const text = getText(element);
     if (text.length > 0) {
       const span = document.createElement('span');
-      span.textContent = truncateString(text, 100);
+      span.textContent = truncateString(text, 150);
       return span;
     }
     return createCodeFallback();
@@ -905,7 +905,7 @@ export function generateElementPreview(issueObject, convertBase64 = false) {
       if (text.length > 1 && element.href && !element.hasAttribute('role')) {
         const anchor = document.createElement('a');
         anchor.href = sanitizeURL(element.href);
-        anchor.textContent = truncateString(text, 100);
+        anchor.textContent = truncateString(text, 150);
         return anchor;
       }
       return createCodeFallback();
