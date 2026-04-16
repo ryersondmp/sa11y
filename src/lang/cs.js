@@ -296,6 +296,7 @@ export default {
       'K tomuto vstupu není přiřazen žádný štítek. Přidejte prosím k tomuto vstupu <code>id</code> a ke štítku přidejte odpovídající atribut <code>for</code>.',
     LABELS_PLACEHOLDER:
       'Zmizelé texty pro zástupné znaky ztěžují lidem zapamatování, jaké informace patří do pole, a identifikaci a opravu problémů s validací. Místo toho zvažte použití trvale viditelné nápovědy před polem formuláře. <hr> Přečtěte si více: <a href="https://www.nngroup.com/articles/form-design-placeholders/">Zástupné znaky v polích formulářů jsou škodlivé.</a>',
+    ARIA_INPUT_FIELD_NAME: 'Vstupní nebo přepínací pole ARIA postrádá přístupný název. Chcete-li to napravit, zadejte platný atribut <code>aria-labelledby</code>, <code>aria-label</code> nebo <code>title</code>. Pokud je vstup přepínatelný (např. zaškrtávací políčko, přepínač, rádio), problém vyřeší také přidání viditelného vnitřního textu. <hr> <strong {B}>Prvek</strong> <pre><code>%(EL)</code></pre>',
 
     // Embedded content
     EMBED_VIDEO:
@@ -343,8 +344,7 @@ export default {
     // Shared
     LINK_TEXT: '<strong {B}>Text odkazu</strong> <strong {C}>%(TEXT)</strong>',
     ACC_NAME: '<strong {B}>Přístupné jméno</strong> <strong {C}>%(TEXT)</strong>',
-    ACC_NAME_TIP:
-      '<hr><strong>Tip!</strong> "Přístupné jméno" je konečný štítek, který je komunikován lidem používajícím asistenční technologie. To jim pomáhá pochopit účel odkazu nebo tlačítka.',
+    ACC_NAME_TIP: '<hr><strong>Tip!</strong> „Přístupný název“ je konečný popisek, který se sděluje lidem používajícím asistivní technologie. Pomáhá jim pochopit účel prvku.',
     HIDDEN_FOCUSABLE: 'Tento prvek může přijmout klávesový fokus, ale je skryt před čtečkami obrazovky atributem <code>aria-hidden="true"</code> (na sobě nebo na nadřazeném kontejneru). Chcete-li to napravit, buď odstraňte atribut aria-hidden, nebo prvek odstraňte z pořadí tabulátoru. <hr> <strong {B}>Prvek</strong> <pre><code>%(EL)</code></pre> <hr> Další informace o <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">atributu aria-hidden.</a>',
 
     // Developer

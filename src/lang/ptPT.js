@@ -294,6 +294,7 @@ export default {
       'Não existe uma etiqueta associada a esta entrada. Adicione um <code>id</code> a esta entrada e adicione um atributo <code>for</code> correspondente à etiqueta.',
     LABELS_PLACEHOLDER:
       'O texto de espaço reservado que desaparece torna difícil para as pessoas lembrarem-se de que informações pertencem a um campo e torna difícil identificar e corrigir erros. Em vez disso, considere usar uma dica permanentemente visível antes do campo do formulário. <hr> Saiba mais: <a href="https://www.nngroup.com/articles/form-design-placeholders/">Os espaços reservados nos campos de formulário são prejudiciais.</a>',
+    ARIA_INPUT_FIELD_NAME: 'O campo de entrada ou alternância ARIA não possui um nome acessível. Para corrigir, forneça um atributo <code>aria-labelledby</code>, <code>aria-label</code> ou <code>title</code> válido. Se a entrada for comutável (por exemplo, caixa de seleção, interruptor, rádio), a adição de texto interno visível também resolverá o problema. <hr> <strong {B}>Elemento</strong> <pre><code>%(EL)</code></pre>',
 
     // Embedded content
     EMBED_VIDEO:
@@ -341,8 +342,7 @@ export default {
     // Shared
     LINK_TEXT: '<strong {B}>Texto da ligação</strong> <strong {C}>%(TEXT)</strong>',
     ACC_NAME: '<strong {B}>Nome acessível</strong> <strong {C}>%(TEXT)</strong>',
-    ACC_NAME_TIP:
-      '<hr><strong>Dica!</strong> O "nome acessível" é o rótulo final que é comunicado às pessoas que utilizam tecnologia assistiva e é calculado pelo ARIA. Isso ajuda a compreender o propósito do link ou botão.',
+    ACC_NAME_TIP: '<hr><strong>Dica!</strong> O "nome acessível" é o rótulo final comunicado às pessoas que utilizam tecnologias de apoio. Isto ajuda-as a compreender o objetivo do elemento.',
     HIDDEN_FOCUSABLE: 'Este elemento pode receber foco do teclado, mas está oculto para leitores de ecrã por um atributo <code>aria-hidden="true"</code> (nele próprio ou num contentor pai). Para corrigir, remova o atributo aria-hidden ou remova o elemento da ordem de tabulação. <hr> <strong {B}>Elemento</strong> <pre><code>%(EL)</code></pre> <hr> Saiba mais sobre o <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">atributo aria-hidden.</a>',
 
     // Developer

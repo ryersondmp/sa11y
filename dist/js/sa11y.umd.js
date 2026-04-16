@@ -186,6 +186,7 @@
       LABELS_NO_FOR_ATTRIBUTE: true,
       LABELS_PLACEHOLDER: true,
       LABELS_ARIA_LABEL_INPUT: true,
+      ARIA_INPUT_FIELD_NAME: true,
       // Embedded content checks
       EMBED_AUDIO: {
         sources: ""
@@ -1694,6 +1695,20 @@
       Found.CustomErrorLinks = [];
       Found.LangTags = [];
       const imageRoles = /* @__PURE__ */ new Set(["img", "graphics-document", "graphics-symbol", "graphics-object"]);
+      const ariaInputRoles = /* @__PURE__ */ new Set([
+        "textbox",
+        "searchbox",
+        "checkbox",
+        "radio",
+        "switch",
+        "slider",
+        "spinbutton",
+        "combobox",
+        "listbox",
+        "menuitemcheckbox",
+        "menuitemradio",
+        "radiogroup"
+      ]);
       for (let i = 0; i < Found.Everything.length; i++) {
         const $el = Found.Everything[i];
         const tag = $el.tagName;
@@ -1708,6 +1723,9 @@
             handledByRole = true;
           } else if (role === "button") {
             Found.Buttons.push($el);
+            handledByRole = true;
+          } else if (ariaInputRoles.has(role)) {
+            Found.Inputs.push($el);
             handledByRole = true;
           }
         }
@@ -7594,6 +7612,8 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
         const type = $el.getAttribute("type");
         const hasTitle = $el.getAttribute("title");
         const hasAria = $el.getAttribute("aria-label") || $el.getAttribute("aria-labelledby");
+        const nativeTags = ["INPUT", "TEXTAREA", "SELECT", "METER", "PROGRESS"];
+        const isNativeInput = nativeTags.includes($el.tagName.toUpperCase());
         if (type === "submit" || type === "button" || type === "hidden") {
           return;
         }
@@ -7643,6 +7663,34 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
             developer: State.option.checks.LABELS_PLACEHOLDER.developer || true
           });
         }
+        if (State.option.checks.ARIA_INPUT_FIELD_NAME && !isNativeInput) {
+          const toggles = [
+            "checkbox",
+            "menu",
+            "menuitemcheckbox",
+            "menuitemradio",
+            "radio",
+            "radiogroup",
+            "switch"
+          ];
+          const role = $el.getAttribute("role")?.trim().toLowerCase() || "";
+          const toggleRole = toggles.includes(role);
+          if (toggleRole && inputName.length !== 0) return;
+          if (inputName.length === 0) {
+            const outerHTML = truncateString($el.outerHTML, 100);
+            State.results.push({
+              test: "ARIA_INPUT_FIELD_NAME",
+              element: $el,
+              type: State.option.checks.ARIA_INPUT_FIELD_NAME.type || "error",
+              content: State.option.checks.ARIA_INPUT_FIELD_NAME.content ? Lang.sprintf(State.option.checks.ARIA_INPUT_FIELD_NAME.content) : Lang.sprintf(Lang._("ARIA_INPUT_FIELD_NAME") + Lang._("ACC_NAME_TIP"), outerHTML),
+              args: [outerHTML],
+              dismiss: prepareDismissal(`ARIA_INPUT_FIELD_NAME ${outerHTML}`),
+              dismissAll: State.option.checks.ARIA_INPUT_FIELD_NAME.dismissAll ? "ARIA_INPUT_FIELD_NAME" : false,
+              developer: State.option.checks.ARIA_INPUT_FIELD_NAME.developer || true
+            });
+            return;
+          }
+        }
         if (hasAria || hasTitle) {
           if (inputName.length === 0) {
             if (State.option.checks.LABELS_MISSING_LABEL) {
@@ -7680,9 +7728,11 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
           }
           return;
         }
-        const closestLabel = getCachedClosest($el, "label");
-        const labelName = closestLabel ? computeAccessibleName(closestLabel) : "";
-        if (closestLabel && labelName.length) return;
+        if (isNativeInput) {
+          const closestLabel = getCachedClosest($el, "label");
+          const labelName = closestLabel ? computeAccessibleName(closestLabel) : "";
+          if (closestLabel && labelName.length || hasPlaceholder) return;
+        }
         const id = $el.getAttribute("id");
         if (id) {
           const hasMatchingLabel = Elements.Found.Labels.some(
@@ -8859,7 +8909,7 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
       </li>` : "";
       const colourFilterPlugin = State.option.colourFilterPlugin ? `
       <li id="colour-filter-item">
-        <label id="colour-filter-mode" for="colour-filter">${Lang._("COLOUR_FILTER")}</label>
+        <label id="colour-filter-mode" for="colour-filter-select">${Lang._("COLOUR_FILTER")}</label>
         <div class="select-dropdown">
           <select id="colour-filter-select">
             <option value="0">${Lang._("OFF")}</option>

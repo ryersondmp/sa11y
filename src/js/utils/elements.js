@@ -170,6 +170,20 @@ const Elements = (function myElements() {
     Found.LangTags = [];
 
     const imageRoles = new Set(['img', 'graphics-document', 'graphics-symbol', 'graphics-object']);
+    const ariaInputRoles = new Set([
+      'textbox',
+      'searchbox',
+      'checkbox',
+      'radio',
+      'switch',
+      'slider',
+      'spinbutton',
+      'combobox',
+      'listbox',
+      'menuitemcheckbox',
+      'menuitemradio',
+      'radiogroup',
+    ]);
 
     // Iterate on Found.Everything based on tag name.
     for (let i = 0; i < Found.Everything.length; i++) {
@@ -188,6 +202,9 @@ const Elements = (function myElements() {
           handledByRole = true;
         } else if (role === 'button') {
           Found.Buttons.push($el);
+          handledByRole = true;
+        } else if (ariaInputRoles.has(role)) {
+          Found.Inputs.push($el);
           handledByRole = true;
         }
       }

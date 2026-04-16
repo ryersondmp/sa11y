@@ -250,6 +250,7 @@
       LABELS_NO_FOR_ATTRIBUTE: "Det finns ingen etikett associerad med detta inmatningsfält. Lägg till ett <code>for</code>-attribut till etiketten som matchar <code>id</code> för detta inmatningsfält. <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>",
       LABELS_MISSING_LABEL: "Det finns ingen etikett associerad med detta inmatningsfält. Vänligen lägg till ett <code>id</code> till denna inmatning och lägg till ett matchande <code>for</code>-attribut till etiketten.",
       LABELS_PLACEHOLDER: 'Försvinnande platshållartext gör det svårt för människor att komma ihåg vilken information som tillhör ett fält och gör det utmanande att identifiera och åtgärda fel. Överväg istället att använda en permanent synlig hint före formulärfältet. <hr> Läs mer: <a href="https://www.nngroup.com/articles/form-design-placeholders/">Platshållare i formulärfält är skadliga.</a>',
+      ARIA_INPUT_FIELD_NAME: "ARIA-inmatningsfält eller växlingsfält saknar ett tillgängligt namn. För att åtgärda detta, ange ett giltigt <code>aria-labelledby</code>-, <code>aria-label</code>- eller <code>title</code>-attribut. Om inmatningen är växlingsbar (t.ex. kryssruta, strömbrytare, radioknapp) löser även synlig inre text detta. <hr> <strong {B}>Element</strong> <pre><code>%(EL)</code></pre>",
       // Embedded content
       EMBED_VIDEO: "Se till att <strong>alla videor har undertexter.</strong> Att tillhandahålla textning för allt ljud- och videoinnehåll är ett obligatoriskt krav för nivå A. Bildtexter stöder personer som är D/döva eller hörselskada.",
       EMBED_AUDIO: "Se till att tillhandahålla en <strong>transkription för alla poddsändningar.</strong> Att tillhandahålla transkriptioner för ljudinnehåll är ett obligatoriskt krav för nivå A. Avskrifter stöder personer som är D/döva eller hörselskada, men kan gynna alla. Överväg att placera utskriften under poddsändingen eller i en dragspelspanel.",
@@ -275,7 +276,7 @@
       // Shared
       LINK_TEXT: "<strong {B}>Länktext</strong> <strong {C}>%(TEXT)</strong>",
       ACC_NAME: "<strong {B}>Tillgängligt namn</strong> <strong {C}>%(TEXT)</strong>",
-      ACC_NAME_TIP: '<hr><strong>Tips!</strong> "Tillgängligt namn" är den slutliga etiketten som kommuniceras till personer som använder hjälpmedel och beräknas av ARIA. Detta hjälper dem att förstå syftet med länken eller knappen.',
+      ACC_NAME_TIP: '<hr><strong>Tips!</strong> Det "tillgängliga namnet" är den slutliga etiketten som kommuniceras till personer som använder hjälpmedel. Detta hjälper dem att förstå elementets syfte.',
       HIDDEN_FOCUSABLE: 'Det här elementet kan ta emot tangentbordsfokus, men är dolt för skärmläsare genom attributet <code>aria-hidden="true"</code> (på sig självt eller en överordnad behållare). För att åtgärda detta, ta antingen bort attributet aria-hidden eller ta bort elementet från tabbordningen. <hr> <strong {B}>Element</strong> <pre><code>%(EL)</code></pre> <hr> Läs mer om <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">attributet aria-hidden.</a>',
       // Developer
       DUPLICATE_ID: "Hittade <strong>duplicerat ID</strong>. Dubbletterade ID:n är kända för att orsaka problem för hjälpmedelsverktyg när de försöker interagera med innehåll. Ta bort eller ändra följande ID. <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>",

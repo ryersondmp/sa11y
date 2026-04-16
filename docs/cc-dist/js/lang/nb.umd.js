@@ -231,6 +231,7 @@
       LABELS_NO_FOR_ATTRIBUTE: "Det er ingen etikett knyttet til denne inndataen. Legg til et <code>for</code>-attributt i etiketten som samsvarer med <code>id</code> for denne inndataen. <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>",
       LABELS_MISSING_LABEL: "Det er ingen etikett knyttet til denne inndataen. Legg til et <code>id</code> til denne inndataen, og legg til et matchende <code>for</code>-attributt til etiketten.",
       LABELS_PLACEHOLDER: 'Forsvinner plassholdertekst gjør det vanskelig for folk å huske hvilken informasjon som hører til et felt, og gjør det utfordrende å identifisere og korrigere feil. Vurder i stedet å bruke et permanent synlig hint før skjema feltet. <hr> Lær mer: <a href="https://www.nngroup.com/articles/form-design-placeholders/">Plassholdere i skjema felt er skadelige.</a>',
+      ARIA_INPUT_FIELD_NAME: "ARIA-innfeltet eller bryterfeltet mangler et tilgjengelig navn. For å fikse dette, må du oppgi et gyldig <code>aria-labelledby</code>-, <code>aria-label</code>- eller <code>title</code>-attributt. Hvis inndataene kan veksles (f.eks. avmerkingsboks, bryter, radioknapp), vil det å legge til synlig indre tekst også løse dette. <hr> <strong {B}>Element</strong> <pre><code>%(EL)</code></pre>",
       // Embedded content
       EMBED_VIDEO: "Sørg for at <strong>alle videoer er tekstet.</strong> Det er et obligatorisk nivå A-krav at alt lyd- og videoinnhold er tekstet. Teksting er til hjelp for personer som er døve eller har nedsatt hørsel.",
       EMBED_AUDIO: "Sørg for å levere en <strong>utskrift for alle podcaster.</strong> Det er et obligatorisk nivå A-krav å levere utskrifter for lydinnhold. Transkripsjoner er til hjelp for døve og hørselshemmede, men kan være til nytte for alle. Vurder å plassere transkripsjonen nedenfor eller i et trekkspillpanel.",
@@ -256,7 +257,7 @@
       // Shared
       LINK_TEXT: "<strong {B}>Lenketekst</strong> <strong {C}>%(TEXT)</strong>",
       ACC_NAME: "<strong {B}>Tilgjengelig navn</strong> <strong {C}>%(TEXT)</strong>",
-      ACC_NAME_TIP: '<hr><strong>Tips!</strong> "Tilgjengelig navn" er den endelige etiketten som kommuniseres til personer som bruker hjelpemidler, og beregnes av ARIA. Dette hjelper dem med å forstå formålet med lenken eller knappen.',
+      ACC_NAME_TIP: '<hr><strong>Tips!</strong> Det "tilgjengelige navnet" er den endelige etiketten som kommuniseres til folk som bruker hjelpemidler. Dette hjelper dem med å forstå formålet med elementet.',
       HIDDEN_FOCUSABLE: 'Dette elementet kan motta tastaturfokus, men er skjult for skjermlesere med et <code>aria-hidden="true"</code>-attributt (på seg selv eller en overordnet beholder). For å fikse dette, må du enten fjerne aria-hidden-attributtet eller fjerne elementet fra tabulatorrekkefølgen. <hr> <strong {B}>Element</strong> <pre><code>%(EL)</code></pre> <hr> Lær mer om <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">attributtet aria-hidden.</a>',
       // Developer
       DUPLICATE_ID: "Fant <strong>duplisert ID</strong>. Feil med dupliserte ID-er er kjent for å forårsake problemer for hjelpeteknologier når de prøver å samhandle med innhold. Vennligst fjern eller endre følgende ID. <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>",

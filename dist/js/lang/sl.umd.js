@@ -234,6 +234,7 @@
       LABELS_NO_FOR_ATTRIBUTE: "S tem vnosom ni povezana nobena oznaka. Dodajte atribut <code>for</code> oznaki, ki ustreza <code>id</code> tega vnosa. <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>",
       LABELS_MISSING_LABEL: "S tem vnosom ni povezana nobena oznaka. Dodajte <code>id</code> temu vnosu in dodajte ustrezen atribut <code>for</code> oznaki.",
       LABELS_PLACEHOLDER: 'Izginjajoči tekst zavor se težko spomni, katera informacija spada v polje in otežuje ugotavljanje in popravljanje napak. Namesto tega razmislite o uporabi trajno vidnega namiga pred poljem obrazca. <hr> Več informacij: <a href="https://www.nngroup.com/articles/form-design-placeholders/">Zavori v obrazcih so škodljivi.</a>',
+      ARIA_INPUT_FIELD_NAME: "Vnosno ali preklopno polje ARIA nima dostopnega imena. Če želite to popraviti, navedite veljaven atribut <code>aria-labelledby</code>, <code>aria-label</code> ali <code>title</code>. Če je vnos preklopen (npr. potrditveno polje, stikalo, radio), bo težavo rešilo tudi dodajanje vidnega notranjega besedila. <hr> <strong {B}>Element</strong> <pre><code>%(EL)</code></pre>",
       // Embedded content
       EMBED_VIDEO: "Poskrbite, da bodo <strong>vsi videoposnetki opremljeni s podnapisi.</strong> Zagotavljanje podnapisov za vse zvočne in video vsebine je obvezna zahteva na ravni A. Podnapisi so v pomoč gluhim in naglušnim osebam.",
       EMBED_AUDIO: "Za vse podcaste zagotovite <strong>prepis.</strong> Zagotavljanje prepisov za zvočne vsebine je obvezna zahteva na ravni A. Prepisi so v pomoč gluhim in naglušnim osebam, koristijo pa lahko vsem. Razmislite o tem, da bi prepis umestili pod ali v akordno ploščo.",
@@ -259,7 +260,7 @@
       // Shared
       LINK_TEXT: "<strong {B}>Besedilo povezave</strong> <strong {C}>%(TEXT)</strong>",
       ACC_NAME: "<strong {B}>Dostopno ime</strong> <strong {C}>%(TEXT)</strong>",
-      ACC_NAME_TIP: '<hr> <strong>Nasvet!</strong> "Dostopno ime" je končna oznaka, ki se sporoča ljudem, ki uporabljajo pripomočke, in se izračuna z ARIA. To jim pomaga razumeti namen povezave ali gumba.',
+      ACC_NAME_TIP: "<hr><strong>Nasvet!</strong> »Dostopno ime« je končna oznaka, ki se sporoči ljudem, ki uporabljajo podporno tehnologijo. To jim pomaga razumeti namen elementa.",
       HIDDEN_FOCUSABLE: 'Ta element lahko prejme fokus tipkovnice, vendar je skrit pred bralniki zaslona z atributom <code>aria-hidden="true"</code> (na sebi ali na nadrejenem vsebniku). Če želite to popraviti, odstranite atribut aria-hidden ali odstranite element iz vrstnega reda zavihkov. <hr> <strong {B}>Element</strong> <pre><code>%(EL)</code></pre> <hr> Preberite več o <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">atributu aria-hidden.</a>',
       // Developer
       DUPLICATE_ID: "Najden <strong>podvojen ID</strong>. Znano je, da napake z dvojnim ID povzročajo težave podpornim tehnologijam, ko poskušajo sodelovati z vsebino. Prosimo, odstranite ali spremenite naslednji ID. <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>",

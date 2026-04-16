@@ -232,6 +232,7 @@
       LABELS_NO_FOR_ATTRIBUTE: "Selle sisendiga ei ole seotud mingit märgistust. Lisage sildile <code>for</code> atribuut, mis vastab selle sisendi <code>id</code>. <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>",
       LABELS_MISSING_LABEL: "Selle sisendiga ei ole seotud mingit märgistust. Palun lisage sellele sisendile <code>id</code> ja lisage sildile vastav <code>for</code> atribuut.",
       LABELS_PLACEHOLDER: 'Kaduv tekstiväli teeb inimestele raskeks meeles pidada, milline teave kuulub väljale, ja tuvastada ning parandada valideerimisega seotud probleeme. Selle asemel kaaluge pidevalt nähtava vihje kasutamist enne vormivälja. <hr> Lisateavet leiate: <a href="https://www.nngroup.com/articles/form-design-placeholders/">Vormiväljade kohatäidised on kahjulikud.</a>',
+      ARIA_INPUT_FIELD_NAME: "ARIA sisestus- või lülitusväljal puudub juurdepääsetav nimi. Parandamiseks määrake kehtiv <code>aria-labelledby</code>, <code>aria-label</code> või <code>title</code> atribuut. Kui sisend on lülitatav (nt märkeruut, lüliti, raadionupp), lahendab selle ka nähtava sise-teksti lisamine. <hr> <strong {B}>Element</strong> <pre><code>%(EL)</code></pre>",
       // Embedded content
       EMBED_VIDEO: "Palun veenduge, et <strong>kõik millisel videol on kinnised subtiitrid.</strong> Kogu heli- ja videosisu puhul on subtiitrite esitamine kohustuslik A-taseme nõue. Üleskirjutused toetavad kurte ja vaegkuuljaid inimesi, kes on kurdid või vaegkuuljad.",
       EMBED_AUDIO: "Veenduge, et kõigi podcastide kohta esitatakse <strong>transkriptsioon.</strong> Audiosisu transkriptsiooni esitamine on kohustuslik A-taseme nõue. Transkriptsioonid toetavad kurte ja vaegkuuljaid, kuid neist on kasu kõigile. Kaaluge transkriptsiooni paigutamist allapoole või akordionpaneeli sisse.",
@@ -257,7 +258,7 @@
       // Shared
       ACC_NAME: "<strong {B}>Ligipääsetav nimi</strong> <strong {C}>%(TEXT)</strong>",
       LINK_TEXT: "<strong {B}>Lingi tekst</strong> <strong {C}>%(TEXT)</strong>",
-      ACC_NAME_TIP: '<hr><strong>Nõuanne!</strong> "Ligipääsetav nimi" on lõplik silt, mis edastatakse abivahendeid kasutavatele inimestele ja mille arvutamine toimub ARIA kaudu. See aitab neil mõista lingi või nupu eesmärki.',
+      ACC_NAME_TIP: '<hr><strong>Vihje!</strong> "Kättesaadav nimi" on lõplik silt, mis edastatakse abitehnoloogiat kasutavatele inimestele. See aitab neil mõista elemendi eesmärki.',
       HIDDEN_FOCUSABLE: 'See element võib saada klaviatuuri fookuse, kuid on ekraanilugejate eest peidetud atribuudiga <code>aria-hidden="true"</code> (kas elemendil endal või selle ülemkonteineril). Parandamiseks eemaldage atribuut aria-hidden või eemaldage element tabulaatori järjekorrast. <hr> <strong {B}>Element</strong> <pre><code>%(EL)</code></pre> <hr> Lisateave <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">atribuudi aria-hidden kohta.</a>',
       // Developer
       DUPLICATE_ID: "Leiti <strong>korduv ID</strong>. Teadaolevalt põhjustavad dubleeritud ID-vead probleeme tugitehnoloogiatele, kui need üritavad sisuga suhelda. Palun eemaldage või muutke järgmine ID. <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>",

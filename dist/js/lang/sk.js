@@ -229,6 +229,7 @@ const sk = {
     LABELS_NO_FOR_ATTRIBUTE: "K tomuto vstupu nie je priradený žiadny štítok. Pridajte atribút <code>for</code> k štítku, ktorý sa zhoduje s <code>id</code> tohto vstupu. <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>",
     LABELS_MISSING_LABEL: "K tomuto vstupu nie je priradený žiadny štítok. Prosím, pridajte <code>id</code> k tomuto vstupu a pridajte zodpovedajúci atribút <code>for</code> k štítku.",
     LABELS_PLACEHOLDER: 'Zmiznutie textu zástupcu sťažuje ľuďom pamätať si, aké informácie patrí do poľa, a sťažuje identifikáciu a opravu chýb. Namiesto toho zvážte použitie trvalo viditeľnej nápovedy pred formulárovým poľom. <hr> Viac informácií: <a href="https://www.nngroup.com/articles/form-design-placeholders/">Zástupcovia v poľách formulára sú škodliví.</a>',
+    ARIA_INPUT_FIELD_NAME: "Vstupné alebo prepínacie pole ARIA postráda prístupný názov. Ak to chcete napraviť, zadajte platný atribút <code>aria-labelledby</code>, <code>aria-label</code> alebo <code>title</code>. Ak je vstup prepínateľný (napr. zaškrtávacie políčko, prepínač, rádio), problém vyrieši aj pridanie viditeľného vnútorného textu. <hr> <strong {B}>Prvok</strong> <pre><code>%(EL)</code></pre>",
     // Embedded content
     EMBED_VIDEO: "Uistite sa, že <strong>všetky videá majú skryté titulky.</strong> Poskytovanie titulkov pre všetok zvukový a obrazový obsah je povinnou požiadavkou úrovne A. Titulky podporujú osoby s poruchou sluchu alebo nepočujúce osoby.",
     EMBED_AUDIO: "Zabezpečte <strong>prepis všetkých podcastov.</strong> Poskytovanie prepisov zvukového obsahu je povinnou požiadavkou úrovne A. Prepisy podporujú ľudí s poruchou sluchu alebo nepočujúcich, ale môžu byť prínosom pre všetkých. Zvážte umiestnenie prepisu pod alebo v rámci akordeónového panelu.",
@@ -254,7 +255,7 @@ const sk = {
     // Shared
     LINK_TEXT: "<strong {B}>Text odkazu</strong> <strong {C}>%(TEXT)</strong>",
     ACC_NAME: "<strong {B}>Prístupné meno</strong> <strong {C}>%(TEXT)</strong>",
-    ACC_NAME_TIP: '<hr><strong>Tip!</strong> "Prístupné meno" je konečná nálepka, ktorá sa komunikuje ľuďom používajúcim asistenčné technológie a ktorá sa počíta pomocou ARIA. Pomáha im to pochopiť účel odkazu alebo tlačidla.',
+    ACC_NAME_TIP: "<hr><strong>Tip!</strong> „Prístupný názov“ je konečný popis, ktorý sa oznamuje ľuďom používajúcim asistívne technológie. Pomáha im to pochopiť účel prvku.",
     HIDDEN_FOCUSABLE: 'Tento prvok môže prijať klávesový fokus, ale je skrytý pred čítačkami obrazovky atribútom <code>aria-hidden="true"</code> (na sebe alebo na nadradenom kontajneri). Ak to chcete napraviť, buď odstráňte atribút aria-hidden, alebo prvok odstráňte z poradia tabulátora. <hr> <strong {B}>Prvok</strong> <pre><code>%(EL)</code></pre> <hr> Ďalšie informácie o <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">atribúte aria-hidden.</a>',
     // Developer
     DUPLICATE_ID: "Nájdené <strong>duplicitné ID</strong>. Je známe, že chyby duplicitného ID spôsobujú problémy asistenčným technológiám pri pokusoch o interakciu s obsahom. Odstráňte alebo zmeňte nasledujúce ID. <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>",

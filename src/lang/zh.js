@@ -287,6 +287,7 @@ export default {
       '没有与此输入相关的标签。请为这个输入添加一个<code>id</code>, 并为标签添加一个匹配的<code>for</code>属性。',
     LABELS_PLACEHOLDER:
       '消失的占位符文本使人们很难记住哪些信息属于某个字段，并使识别和纠正错误变得具有挑战性。相反，请考虑在表单字段之前使用永久可见的提示。<hr> 了解更多信息：<a href="https://www.nngroup.com/articles/form-design-placeholders/">表单字段中的占位符是有害的。</a>',
+    ARIA_INPUT_FIELD_NAME: 'ARIA 输入或切换字段缺少可访问名称。要修复此问题，请提供有效的 <code>aria-labelledby</code>、<code>aria-label</code> 或 <code>title</code> 属性。如果输入是可切换的（例如：复选框、开关、单选按钮），添加可见的内部文本也将解决此问题。 <hr> <strong {B}>元素</strong> <pre><code>%(EL)</code></pre>',
 
     // Embedded content
     EMBED_VIDEO:
@@ -333,8 +334,7 @@ export default {
     // Shared
     LINK_TEXT: '<strong {B}>链接文本</strong> <strong {C}>%(TEXT)</strong>',
     ACC_NAME: '<strong {B}>可访问名称</strong> <strong {C}>%(TEXT)</strong>',
-    ACC_NAME_TIP:
-      '<hr> <strong>提示！</strong> “可访问名称”是传达给使用辅助技术的人的最终标签，并由 ARIA 计算。这有助于他们理解链接或按钮的目的。',
+    ACC_NAME_TIP: '<hr><strong>提示！</strong>“可访问名称”是传达给使用辅助技术的人员的最终标签。这有助于他们了解该元素的用途。',
     HIDDEN_FOCUSABLE: '此元素可以接收键盘焦点，但由于 <code>aria-hidden="true"</code> 属性（在自身或父级容器上），它对屏幕阅读器是隐藏的。要修复此问题，请移除 aria-hidden 属性，或将该元素从 Tab 键顺序中移除。 <hr> <strong {B}>元素</strong> <pre><code>%(EL)</code></pre> <hr> 了解有关 <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">aria-hidden 属性</a> 的更多信息。',
 
     // Developer

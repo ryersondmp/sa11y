@@ -225,6 +225,7 @@ const fi = {
     LABELS_NO_FOR_ATTRIBUTE: "Tähän syötteeseen ei liity nimikettä. Lisää <code>for</code>-attribuutti labeliin, joka vastaa tämän syötteen <code>id</code>:tä. <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>",
     LABELS_MISSING_LABEL: "Tähän syötteeseen ei liity nimikettä. Lisää tälle syötteelle <code>id</code> ja lisää labeliin vastaava <code>for</code>-attribuutti.",
     LABELS_PLACEHOLDER: 'Katoava paikkateksti ansiosta ihmisten on vaikeaa muistaa, mitä tietoa kenttään kuuluu, sekä tunnistaa ja korjata validointiongelmia. Sen sijaan harkitse pysyvän näkyvän vihjeen käyttöä ennen lomakekenttää. <hr> Lue lisää: <a href="https://www.nngroup.com/articles/form-design-placeholders/">Paikkamerkit lomakekentissä ovat haitallisia.</a>',
+    ARIA_INPUT_FIELD_NAME: "ARIA-syöttö- tai kytkinkentältä puuttuu esteetön nimi. Korjaa ongelma antamalla kelvollinen <code>aria-labelledby</code>-, <code>aria-label</code>- tai <code>title</code>-attribuutti. Jos syöte on kytkettävä (esim. valintaruutu, kytkin, valintapainike), myös näkyvän sisäisen tekstin lisääminen ratkaisee tämän. <hr> <strong {B}>Elementti</strong> <pre><code>%(EL)</code></pre>",
     // Embedded content
     EMBED_VIDEO: "Varmista, että <strong>kaikissa videoissa on kuvatekstit.</strong> Kaiken ääni- ja videosisällön tekstittäminen on pakollinen A-tason vaatimus. Kuvatekstit tukevat kuuroja ja huonokuuloisia.",
     EMBED_AUDIO: "Varmista, että kaikista podcasteista toimitetaan <strong>käännös.</strong> Äänisisällön käännösten toimittaminen on pakollinen tason A vaatimus. Jäljennökset tukevat kuuroja ja huonokuuloisia, mutta niistä on hyötyä kaikille. Harkitse transkriptin sijoittamista alapuolelle tai harmonikkapaneeliin.",
@@ -250,7 +251,7 @@ const fi = {
     // Shared
     ACC_NAME: "<strong {B}>Saavutettava nimi</strong> <strong {C}>%(TEXT)</strong>",
     LINK_TEXT: "<strong {B}>Linkkiteksti</strong> <strong {C}>%(TEXT)</strong>",
-    ACC_NAME_TIP: '<hr> <strong>Vinkki!</strong> "Saavutettava nimi" on lopullinen etiketti, joka viestitään apuvälineitä käyttävien henkilöiden kanssa ja joka lasketaan ARIA:n avulla. Tämä auttaa heitä ymmärtämään linkin tai painikkeen tarkoituksen.',
+    ACC_NAME_TIP: '<hr><strong>Vinkki!</strong> "Esteetön nimi" on lopullinen nimi, joka välitetään avustavaa teknologiaa käyttäville henkilöille. Se auttaa heitä ymmärtämään elementin tarkoituksen.',
     HIDDEN_FOCUSABLE: 'Tämä elementti voi vastaanottaa näppäimistön kohdistuksen, mutta se on piilotettu ruudunlukuohjelmilta <code>aria-hidden="true"</code>-attribuutilla (joko elementissä itsessään tai sen isäntäsäiliössä). Korjaa ongelma joko poistamalla aria-hidden-attribuutti tai poistamalla elementti sarkainjärjestyksestä (tab order). <hr> <strong {B}>Elementti</strong> <pre><code>%(EL)</code></pre> <hr> Lue lisää <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">aria-hidden-attribuutista.</a>',
     // Developer
     DUPLICATE_ID: "Löytyi <strong>kaksoistunniste</strong>. Kaksoistunnusvirheiden tiedetään aiheuttavan ongelmia avustaville teknologioille, kun ne yrittävät toimia vuorovaikutuksessa sisällön kanssa. Poista tai vaihda seuraava ID. <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>",

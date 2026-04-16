@@ -293,6 +293,7 @@ export default {
       'Tidak ada label yang terkait dengan input ini. Tambahkan <code>id</code> ke input ini, dan tambahkan atribut <code>untuk</code> yang sesuai ke label.',
     LABELS_PLACEHOLDER:
       'Teks placeholder yang menghilang menyulitkan orang untuk mengingat informasi apa yang harus ada di dalam kolom dan untuk mengidentifikasi serta memperbaiki masalah validasi. Sebagai gantinya, pertimbangkan untuk menggunakan petunjuk yang selalu terlihat sebelum kolom formulir. <hr> Pelajari lebih lanjut: <a href="https://www.nngroup.com/articles/form-design-placeholders/">Placeholder di kolom formulir itu berbahaya.</a>',
+    ARIA_INPUT_FIELD_NAME: 'Input ARIA atau bidang sakelar tidak memiliki nama yang dapat diakses. Untuk memperbaikinya, berikan atribut <code>aria-labelledby</code>, <code>aria-label</code>, или <code>title</code> yang valid. Jika input dapat dialihkan (misalnya, kotak centang, sakelar, radio), menambahkan teks bagian dalam yang terlihat juga akan mengatasi masalah ini. <hr> <strong {B}>Elemen</strong> <pre><code>%(EL)</code></pre>',
 
     // Embedded content
     EMBED_VIDEO:
@@ -340,8 +341,7 @@ export default {
     // Shared
     LINK_TEXT: '<strong {B}>Teks tautan</strong> <strong {C}>%(TEXT)</strong>',
     ACC_NAME: '<strong {B}>Nama yang dapat diakses</strong> <strong {C}>%(TEXT)</strong>',
-    ACC_NAME_TIP:
-      '<hr><strong>Tips!</strong> "Nama yang dapat diakses" adalah label akhir yang dikomunikasikan kepada orang-orang yang menggunakan teknologi bantuan dan dihitung oleh ARIA. Ini membantu mereka memahami tujuan tautan atau tombol.',
+    ACC_NAME_TIP: '<hr><strong>Tips!</strong> "Nama yang dapat diakses" adalah label akhir yang dikomunikasikan kepada orang yang menggunakan teknologi bantu. Ini membantu mereka memahami tujuan elemen tersebut.',
     HIDDEN_FOCUSABLE: 'Elemen ini dapat menerima fokus keyboard, tetapi disembunyikan dari pembaca layar oleh atribut <code>aria-hidden="true"</code> (pada dirinya sendiri atau wadah induk). Untuk memperbaikinya, hapus atribut aria-hidden atau hapus elemen dari urutan tab. <hr> <strong {B}>Elemen</strong> <pre><code>%(EL)</code></pre> <hr> Pelajari lebih lanjut tentang <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">atribut aria-hidden.</a>',
 
     // Developer

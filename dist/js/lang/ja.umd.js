@@ -271,6 +271,7 @@
       LABELS_NO_FOR_ATTRIBUTE: "この入力フィールドに関連付けられたラベルがありません。この入力フィールドのラベルに一致する<code>for</code>属性を追加してください。 <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>",
       LABELS_MISSING_LABEL: "この入力フィールドに関連付けられたラベルがありません。この入力フィールドに<code>id</code>を追加し、ラベルに一致する<code>for</code>属性を追加してください。",
       LABELS_PLACEHOLDER: '消えるプレースホルダー テキストは、人々がフィールドに何の情報が属しているかを思い出すのを難しくし、検証の問題を特定して修正するのを困難にします。代わりに、フォームフィールドの前に常に表示されるヒントを使用することを検討してください。 <hr> 詳細はこちら: <a href="https://www.nngroup.com/articles/form-design-placeholders/">フォームフィールドのプレースホルダーは有害です。</a>',
+      ARIA_INPUT_FIELD_NAME: "ARIA 入力フィールドまたはトグルフィールドにアクセシブルな名前がありません。修正するには、有効な <code>aria-labelledby</code>、<code>aria-label</code>、または <code>title</code> 属性を指定してください。入力が切り替え可能な場合（チェックボックス、スイッチ、ラジオボタンなど）、表示可能な内部テキストを追加することでも解決します。 <hr> <strong {B}>要素</strong> <pre><code>%(EL)</code></pre>",
       // Embedded content
       EMBED_VIDEO: "すべての動画に<strong>字幕を表示してください。</strong> 音声および動画コンテンツのすべてに字幕を提供することは、必須のレベルAの要件です。字幕は、聴覚障害者や難聴者をサポートします。",
       EMBED_AUDIO: "すべてのポッドキャストに<strong>トランスクリプトを提供してください。</strong> 音声コンテンツのすべてにトランスクリプトを提供することは、必須のレベルAの要件です。トランスクリプトは、聴覚障害者や難聴者をサポートしますが、誰にでも利益をもたらすことがあります。トランスクリプトを下部に配置するか、アコーディオンパネル内に配置することを検討してください。",
@@ -296,7 +297,7 @@
       // Shared
       LINK_TEXT: "<strong {B}>リンクテキスト</strong> <strong {C}>%(TEXT)</strong>",
       ACC_NAME: "<strong {B}>アクセシブル名</strong> <strong {C}>%(TEXT)</strong>",
-      ACC_NAME_TIP: '<hr><strong>ヒント!</strong> "アクセシブル名"は、支援技術を使用する人々に伝えられる最終的なラベルであり、ARIAによって計算されます。これにより、リンクやボタンの目的を理解するのに役立ちます。',
+      ACC_NAME_TIP: "<hr><strong>ヒント！</strong>「アクセシブルな名前」とは、支援技術を使用するユーザーに伝えられる最終的なラベルのことです。これにより、ユーザーは要素の目的を理解できます。",
       HIDDEN_FOCUSABLE: 'この要素はキーボードフォーカスを受け取ることができますが、<code>aria-hidden="true"</code> 属性（自身または親コンテナにある）によってスクリーンリーダーから隠されています。修正するには、aria-hidden 属性を削除するか、要素をタブ順序から削除してください。 <hr> <strong {B}>要素</strong> <pre><code>%(EL)</code></pre> <hr> <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">aria-hidden 属性</a>の詳細をご覧ください。',
       // Developer
       DUPLICATE_ID: "重複した<strong>IDが見つかりました</strong>。重複したIDは、支援技術がコンテンツとの相互作用を試みる際に問題を引き起こすことが知られています。次のIDを削除または変更してください。<hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>",

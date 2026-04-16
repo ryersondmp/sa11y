@@ -230,6 +230,7 @@ const pl = {
     LABELS_NO_FOR_ATTRIBUTE: "Z tym polem input nie jest skojarzona żadna etykieta (label). Dodaj atrybut <code>for</code> do etykiety z wartością <code>id</code>  pasującą do <code>id</code> tego pola. <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>",
     LABELS_MISSING_LABEL: "Z tym polem input nie jest skojarzona żadna etykieta (label). Dodaj do tego pola danych <code>id</code> i dodaj pasujący atrybut <code>for</code> do etykiety.",
     LABELS_PLACEHOLDER: 'Znikający tekst zastępczy utrudnia ludziom zapamiętanie, jakie informacje powinny znaleźć się w polu, a także utrudnia identyfikację i poprawę błędów. Zamiast tego rozważ użycie trwale widocznej wskazówki przed polem formularza. <hr> Dowiedz się więcej: <a href="https://www.nngroup.com/articles/form-design-placeholders/">Zastępniki w polach formularzy są szkodliwe.</a>',
+    ARIA_INPUT_FIELD_NAME: "Pole wejściowe lub przełącznik ARIA nie ma nazwy dostępnej. Aby to naprawić, podaj prawidłowy atrybut <code>aria-labelledby</code>, <code>aria-label</code> lub <code>title</code>. Jeśli pole jest przełączalne (np. pole wyboru, przełącznik, przycisk radiowy), dodanie widocznego tekstu wewnętrznego również rozwiąże ten problem. <hr> <strong {B}>Element</strong> <pre><code>%(EL)</code></pre>",
     // Embedded content
     EMBED_VIDEO: "Upewnij się, że <strong>wszystkie filmy mają napisy rozszerzone.</strong> Zapewnianie napisów rozszerzonych dla wszystkich treści audio i wideo jest obowiązkowym wymogiem poziomu A. Napisy mają na celu wspieranie osób Głuchych i słabosłyszących.",
     EMBED_AUDIO: "Upewnij się, że istnieje <strong>transkrypcja dla wszystkich nagrań dźwiękowych.</strong> Zapewnianie transkrypcji treści audio jest obowiązkowym wymogiem poziomu A. Transkrypcje mają na celu wspieranie osób Głuchych i słabosłyszących, ale każdy może z nich skorzystać. Rozważ umieszczenie transkrypcji poniżej lub w panelu akordeonowym.",
@@ -255,7 +256,7 @@ const pl = {
     // Shared
     LINK_TEXT: "<strong {B}>Tekst linku</strong> <strong {C}>%(TEXT)</strong>",
     ACC_NAME: "<strong {B}>Dostępna nazwa</strong> <strong {C}>%(TEXT)</strong>",
-    ACC_NAME_TIP: '<hr><strong>Wskazówka!</strong> "Dostępna nazwa" to ostateczna etykieta, która jest przekazywana osobom korzystającym z technologii wspomagających i jest obliczana przez ARIA. Pomaga to im zrozumieć cel linku lub przycisku.',
+    ACC_NAME_TIP: "<hr><strong>Wskazówka!</strong> „Nazwa dostępna” to ostateczna etykieta przekazywana osobom korzystającym z technologii wspomagających. Pomaga im to zrozumieć cel elementu.",
     HIDDEN_FOCUSABLE: 'Ten element może przyjąć fokus klawiatury, ale jest ukryty przed czytnikami ekranu za pomocą atrybutu <code>aria-hidden="true"</code> (na nim samym lub kontenerze nadrzędnym). Aby to naprawić, usuń atrybut aria-hidden lub usuń element z kolejności tabulacji. <hr> <strong {B}>Element</strong> <pre><code>%(EL)</code></pre> <hr> Dowiedz się więcej o <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">atrybucie aria-hidden.</a>',
     // Developer
     DUPLICATE_ID: "Znaleziono <strong>duplikat ID</strong>. Wiadomo, że błędy zduplikowanego ID powodują problemy dla technologii pomocniczych podczas próby interakcji z treścią. Usuń lub zmień następujący ID. <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>",

@@ -297,6 +297,7 @@ export default {
       'Nu există nicio etichetă asociată cu această intrare. Vă rugăm să adăugați un <code>id</code> la această intrare și să adăugați un atribut <code>for</code> corespunzător etichetei.',
     LABELS_PLACEHOLDER:
       'Textul temporar de tip placeholder face dificil pentru oameni să își amintească ce informații aparțin unui câmp și face provocatoare identificarea și corectarea greșelilor. În schimb, considerați utilizarea unui indiciu permanent vizibil înainte de câmpul formularului. <hr> Aflați mai multe: <a href="https://www.nngroup.com/articles/form-design-placeholders/">Placeholders în câmpurile de formular sunt dăunătoare.</a>',
+    ARIA_INPUT_FIELD_NAME: 'Câmpul de introducere sau comutare ARIA nu are un nume accesibil. Pentru a remedia problema, furnizați un atribut <code>aria-labelledby</code>, <code>aria-label</code> sau <code>title</code> valid. Dacă intrarea este comutabilă (de exemplu, casetă de selectare, comutator, buton radio), adăugarea unui text intern vizibil va rezolva, de asemenea, problema. <hr> <strong {B}>Element</strong> <pre><code>%(EL)</code></pre>',
 
     // Embedded content
     EMBED_VIDEO:
@@ -344,8 +345,7 @@ export default {
     // Shared
     LINK_TEXT: '<strong {B}>Text link</strong> <strong {C}>%(TEXT)</strong>',
     ACC_NAME: '<strong {B}>Numele accesibil</strong> <strong {C}>%(TEXT)</strong>',
-    ACC_NAME_TIP:
-      '<hr><strong>Sfat!</strong> "Numele accesibil" este eticheta finală care este comunicată persoanelor care utilizează tehnologii de asistență și este calculată de ARIA. Acest lucru le ajută să înțeleagă scopul legăturii sau butonului.',
+    ACC_NAME_TIP: '<hr><strong>Sfat!</strong> „Numele accesibil” este eticheta finală care este comunicată persoanelor care utilizează tehnologii de asistență. Acest lucru îi ajută să înțeleagă scopul elementului.',
     HIDDEN_FOCUSABLE: 'Acest element poate primi focalizarea tastaturii, dar este ascuns cititoarelor de ecran printr-un atribut <code>aria-hidden="true"</code> (pe el însuși sau pe un container părinte). Pentru a remedia problema, fie eliminați atributul aria-hidden, fie eliminați elementul din ordinea de tabulare. <hr> <strong {B}>Element</strong> <pre><code>%(EL)</code></pre> <hr> Aflați mai multe despre <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">atributul aria-hidden.</a>',
 
     // Developer

@@ -25,6 +25,10 @@ export default function checkLabels() {
       const hasTitle = $el.getAttribute('title');
       const hasAria = $el.getAttribute('aria-label') || $el.getAttribute('aria-labelledby');
 
+      // Native input?
+      const nativeTags = ['INPUT', 'TEXTAREA', 'SELECT', 'METER', 'PROGRESS'];
+      const isNativeInput = nativeTags.includes($el.tagName.toUpperCase());
+
       // Pass: Ignore if it's a submit or hidden button.
       if (type === 'submit' || type === 'button' || type === 'hidden') {
         return;
@@ -89,6 +93,44 @@ export default function checkLabels() {
         });
       }
 
+      // ARIA role based input without an accessible name.
+      if (State.option.checks.ARIA_INPUT_FIELD_NAME && !isNativeInput) {
+        const toggles = [
+          'checkbox',
+          'menu',
+          'menuitemcheckbox',
+          'menuitemradio',
+          'radio',
+          'radiogroup',
+          'switch',
+        ];
+        const role = $el.getAttribute('role')?.trim().toLowerCase() || '';
+        const toggleRole = toggles.includes(role);
+
+        // If it's a toggle AND it has an accessible name (like inner text), it passes.
+        if (toggleRole && inputName.length !== 0) return;
+
+        // If it has no accessible name (applies to both toggles and standard inputs).
+        if (inputName.length === 0) {
+          const outerHTML = Utils.truncateString($el.outerHTML, 100);
+          State.results.push({
+            test: 'ARIA_INPUT_FIELD_NAME',
+            element: $el,
+            type: State.option.checks.ARIA_INPUT_FIELD_NAME.type || 'error',
+            content: State.option.checks.ARIA_INPUT_FIELD_NAME.content
+              ? Lang.sprintf(State.option.checks.ARIA_INPUT_FIELD_NAME.content)
+              : Lang.sprintf(Lang._('ARIA_INPUT_FIELD_NAME') + Lang._('ACC_NAME_TIP'), outerHTML),
+            args: [outerHTML],
+            dismiss: Utils.prepareDismissal(`ARIA_INPUT_FIELD_NAME ${outerHTML}`),
+            dismissAll: State.option.checks.ARIA_INPUT_FIELD_NAME.dismissAll
+              ? 'ARIA_INPUT_FIELD_NAME'
+              : false,
+            developer: State.option.checks.ARIA_INPUT_FIELD_NAME.developer || true,
+          });
+          return;
+        }
+      }
+
       // Uses ARIA or title attribute. Warn them to ensure there's a visible label.
       if (hasAria || hasTitle) {
         if (inputName.length === 0) {
@@ -138,9 +180,12 @@ export default function checkLabels() {
       }
 
       // Implicit label: <label>First name: <input type="text"/><label>
-      const closestLabel = Utils.getCachedClosest($el, 'label');
-      const labelName = closestLabel ? computeAccessibleName(closestLabel) : '';
-      if (closestLabel && labelName.length) return;
+      // Only allow implicit label & placeholder checks for native inputs.
+      if (isNativeInput) {
+        const closestLabel = Utils.getCachedClosest($el, 'label');
+        const labelName = closestLabel ? computeAccessibleName(closestLabel) : '';
+        if ((closestLabel && labelName.length) || hasPlaceholder) return;
+      }
 
       // Error: Matching for and id attribute?
       const id = $el.getAttribute('id');

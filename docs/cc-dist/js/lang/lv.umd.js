@@ -236,6 +236,7 @@
       LABELS_NO_FOR_ATTRIBUTE: "Šim ievadam nav piesaistīta etiķete. Pievienojiet <code>for</code> atribūtu etiķetei, kas atbilst šīs ievades <code>id</code>. <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>",
       LABELS_MISSING_LABEL: "Šim ievadam nav piesaistīta etiķete. Lūdzu, pievienojiet šim ievadam <code>id</code> un pievienojiet etiķetei atbilstošu atribūtu <code>for</code>.",
       LABELS_PLACEHOLDER: 'Izšķirošais vietturis teksts apgrūtina cilvēkiem atcerēties, kāda informācija pieder laukam, un noteikt un labot validācijas problēmas. Tā vietā apsveriet iespēju izmantot pastāvīgi redzamu norādi pirms veidlapas lauka. <hr> Uzziniet vairāk: <a href="https://www.nngroup.com/articles/form-design-placeholders/">Vietturis veidlapu laukos ir kaitīgs.</a>',
+      ARIA_INPUT_FIELD_NAME: "ARIA ievades vai pārslēgšanas laukam trūkst pieejama nosaukuma. Lai to labotu, norādiet derīgu <code>aria-labelledby</code>, <code>aria-label</code> vai <code>title</code> atribūtu. Ja ievade ir pārslēdzama (piemēram, izvēles rūtiņa, slēdzis, radio poga), redzama iekšējā teksta pievienošana arī atrisinās šo problēmu. <hr> <strong {B}>Elements</strong> <pre><code>%(EL)</code></pre>",
       // Embedded content
       EMBED_VIDEO: "Lūdzu, pārliecinieties, ka <strong>visiem videoklipiem ir slēptie titri.</strong> Visu audio un video materiālu titru nodrošināšana ir obligāta A līmeņa prasība. Titri palīdz cilvēkiem, kuri ir nedzirdīgi vai vājdzirdīgi.",
       EMBED_AUDIO: "Lūdzu, nodrošiniet <strong>transkriptu visiem podkāstiem.</strong> Transkriptu nodrošināšana audio saturam ir obligāta A līmeņa prasība. Transkripcijas palīdz cilvēkiem, kuri ir nedzirdīgi vai vājdzirdīgi, taču tās var būt noderīgas ikvienam. Apsveriet iespēju transkriptu izvietot zem vai akordeona panelī.",
@@ -261,7 +262,7 @@
       // Shared
       LINK_TEXT: "<strong {B}>Saites teksts</strong> <strong {C}>%(TEXT)</strong>",
       ACC_NAME: "<strong {B}>Pieejamais nosaukums</strong> <strong {C}>%(TEXT)</strong>",
-      ACC_NAME_TIP: '<hr><strong>Ieteikums!</strong> "Pieejamais nosaukums" ir galīgā etiķete, kas tiek sazināta ar cilvēkiem, kuri izmanto palīgtehnoloģijas, un kuru aprēķina ARIA. Tas palīdz viņiem saprast saites vai pogas mērķi.',
+      ACC_NAME_TIP: '<hr><strong>Padoms!</strong> "Pieejamais nosaukums" ir galīgā etiķete, kas tiek nodota cilvēkiem, kuri izmanto palīgtehnoloģijas. Tas palīdz viņiem saprast elementa mērķi.',
       HIDDEN_FOCUSABLE: 'Šis elements var saņemt tastatūras fokusu, taču tas ir paslēpts no ekrāna lasītājiem ar <code>aria-hidden="true"</code> atribūtu (pašam elementam vai vecākā konteineram). Lai to labotu, noņemiet aria-hidden atribūtu vai noņemiet elementu no tabulēšanas secības. <hr> <strong {B}>Elements</strong> <pre><code>%(EL)</code></pre> <hr> Uzziniet vairāk par <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">aria-hidden atribūtu.</a>',
       // Developer
       DUPLICATE_ID: "Atrasts <strong>duplicate ID</strong>. Ir zināms, ka dubultā ID kļūdas rada problēmas palīgtehnoloģijām, kad tās mēģina mijiedarboties ar saturu. Lūdzu, noņemiet vai mainiet šādu ID. <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>",

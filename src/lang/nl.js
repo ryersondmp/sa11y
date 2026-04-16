@@ -303,6 +303,7 @@ export default {
       'Er is geen label gekoppeld aan deze ingang. Voeg een <code>id</code> toe aan deze invoer en voeg een overeenkomend <code>for</code> attribuut toe aan het label.',
     LABELS_PLACEHOLDER:
       'Verdwijnen van placeholdertekst maakt het moeilijk voor mensen om te onthouden welke informatie in een veld thuishoort en maakt het uitdagend om fouten te identificeren en te corrigeren. Overweeg in plaats daarvan om een permanent zichtbare hint voor het formulier veld te gebruiken. <hr> Leer meer: <a href="https://www.nngroup.com/articles/form-design-placeholders/">Plaatsvervangers in formulier velden zijn schadelijk.</a>',
+    ARIA_INPUT_FIELD_NAME: 'ARIA-invoerveld of schakelveld mist een toegankelijke naam. Om dit op te lossen, moet u een geldig <code>aria-labelledby</code>, <code>aria-label</code> of <code>title</code> attribuut opgeven. Als de invoer schakelbaar is (bijv. selectievakje, schakelaar, keuzerondje), lost het toevoegen van zichtbare innerlijke tekst dit ook op. <hr> <strong {B}>Element</strong> <pre><code>%(EL)</code></pre>',
 
     // Embedded content
     EMBED_VIDEO:
@@ -350,8 +351,7 @@ export default {
     // Shared
     LINK_TEXT: '<strong {B}>Linktekst</strong> <strong {C}>%(TEXT)</strong>',
     ACC_NAME: '<strong {B}>Toegankelijk naam</strong> <strong {C}>%(TEXT)</strong>',
-    ACC_NAME_TIP:
-      '<hr><strong>Tip!</strong> De "toegankelijke naam" is het uiteindelijke label dat wordt gecommuniceerd aan mensen die gebruik maken van ondersteunende technologie. Dit helpt hen om het doel van de link of knop te begrijpen.',
+    ACC_NAME_TIP: '<hr><strong>Tip!</strong> De "toegankelijke naam" is het definitieve label dat wordt gecommuniceerd naar mensen die ondersteunende technologie gebruiken. Dit helpt hen het doel van het element te begrijpen.',
     HIDDEN_FOCUSABLE: 'Dit element kan toetsenbordfocus ontvangen, maar is verborgen voor schermlezers door een <code>aria-hidden="true"</code> attribuut (op zichzelf of een bovenliggende container). Om dit op te lossen, verwijdert u het aria-hidden attribuut of verwijdert u het element uit de tabvolgorde. <hr> <strong {B}>Element</strong> <pre><code>%(EL)</code></pre> <hr> Lees meer over het <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">aria-hidden attribuut.</a>',
 
     // Developer

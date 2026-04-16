@@ -341,6 +341,7 @@ export default {
       'Dieser Eingabe ist kein Label zugeordnet. Bitte füge dieser Eingabe eine <code>id</code> hinzu und füge dem Label ein passendes <code>for</code>-Attribut hinzu.',
     LABELS_PLACEHOLDER:
       'Verschwindender Platzhaltertext erschwert es den Menschen, sich daran zu erinnern, welche Informationen in ein Feld gehören, und Probleme mit der Validierung zu identifizieren und zu beheben. Erwägen Sie stattdessen, einen dauerhaft sichtbaren Hinweis vor dem Formularfeld zu verwenden. <hr> Erfahren Sie mehr: <a href="https://www.nngroup.com/articles/form-design-placeholders/">Platzhalter in Formularfeldern sind schädlich.</a>',
+    ARIA_INPUT_FIELD_NAME: 'Dem ARIA-Eingabe- oder Umschaltfeld fehlt ein barrierefreier Name. Um dies zu beheben, geben Sie ein gültiges Attribut <code>aria-labelledby</code>, <code>aria-label</code> oder <code>title</code> an. Wenn die Eingabe umschaltbar е (z. B. Checkbox, Switch, Radiobutton), löst das Hinzufügen von sichtbarem innerem Text dieses Problem ebenfalls. <hr> <strong {B}>Element</strong> <pre><code>%(EL)</code></pre>',
 
     // Embedded content
     EMBED_VIDEO:
@@ -388,8 +389,7 @@ export default {
     // Shared
     LINK_TEXT: '<strong {B}>Linktext</strong> <strong {C}>%(TEXT)</strong>',
     ACC_NAME: '<strong {B}>Zugänglicher Name</strong> <strong {C}>%(TEXT)</strong>',
-    ACC_NAME_TIP:
-      '<hr> <strong>Hinweis!</strong> Der "zugängliche Name" ist das endgültige Etikett, das an Personen kommuniziert wird, die Hilfstechnologien verwenden. Dies hilft ihnen, den Zweck des Links oder der Schaltfläche zu verstehen.',
+    ACC_NAME_TIP: '<hr><strong>Tipp!</strong> Der „barrierefreie Name“ ist die endgültige Bezeichnung, die an Personen übermittelt wird, die unterstützende Technologien verwenden. Dies hilft ihnen, den Zweck des Elements zu verstehen.',
     HIDDEN_FOCUSABLE: 'Dieses Element kann den Tastaturfokus erhalten, ist aber durch ein <code>aria-hidden="true"</code>-Attribut (bei sich selbst oder einem übergeordneten Container) vor Screenreadern verborgen. Um dies zu beheben, entfernen Sie entweder das aria-hidden-Attribut oder entfernen Sie das Element aus der Tab-Reihenfolge. <hr> <strong {B}>Element</strong> <pre><code>%(EL)</code></pre> <hr> Erfahren Sie mehr über das <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">aria-hidden-Attribut.</a>',
 
     // Developer

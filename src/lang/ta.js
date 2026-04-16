@@ -292,6 +292,7 @@ export default {
       'கொடுக்கும் தகவல் விவரமிடல் தொடர்புப்படுத்தப்படவில்லை. அடையாளத்தைச் சேர்த்து விவரமிடலுடன் பொருந்தக்கூடிய பண்புக்கூறைச் சேர்க்கவும்.',
     LABELS_PLACEHOLDER:
       'நிரப்பப்படுமிட வாசகத்தை மறைப்பது சரிபார்ப்பு சிக்கல்களை அடையாளம் கண்டு சரிசெய்வதை மக்களுக்குக் கடினமாக்குகிறது. <a href="https://www.nngroup.com/articles/form-design-placeholders/">மேலும் அறிக.</a>',
+    ARIA_INPUT_FIELD_NAME: 'ARIA உள்ளீடு (input) அல்லது நிலைமாற்றி (toggle) புலத்திற்கு அணுகக்கூடிய பெயர் (accessible name) இல்லை. இதைச் சரிசெய்ய, முறையான <code>aria-labelledby</code>, <code>aria-label</code> அல்லது <code>title</code> பண்புக்கூற்றை வழங்கவும். உள்ளீடு மாற்றக்கூடியதாக இருந்தால் (உதாரணமாக: செக்பாக்ஸ், ஸ்விட்ச், ரேடியோ பட்டன்), புலப்படும் உள் உரை (visible inner text) சேர்ப்பதும் இந்தச் சிக்கலைத் தீர்க்கும். <hr> <strong {B}>உறுப்பு</strong> <pre><code>%(EL)</code></pre>',
 
     // Embedded Content
     EMBED_VIDEO:
@@ -339,8 +340,7 @@ export default {
     // Shared
     LINK_TEXT: '<strong {B}>இணைப்பு உரை</strong> <strong {C}>%(TEXT)</strong>',
     ACC_NAME: '<strong {B}>பயன்படுத்தும்படி ஆக்கப்பட்ட பெயர்</strong> <strong {C}>%(TEXT)</strong>',
-    ACC_NAME_TIP:
-      '<hr> <strong>துணுக்கு!</strong> "பயன்படுத்தும்படியாக்கப்பட்ட பெயர்" என்பது உதவி தொழில்நுட்ப நபர்களுக்குத் தெரிவிக்கப்படும் இறுதி விவரமிடலாகும்.',
+    ACC_NAME_TIP: '<hr><strong>குறிப்பு!</strong> "அணுகக்கூடிய பெயர்" (accessible name) என்பது உதவித் தொழில்நுட்பங்களைப் பயன்படுத்துபவர்களுக்குத் தெரிவிக்கப்படும் இறுதி லேபிள் ஆகும். இது உறுப்பின் நோக்கத்தைப் புரிந்துகொள்ள அவர்களுக்கு உதவுகிறது.',
     HIDDEN_FOCUSABLE: 'இந்த உறுப்பிற்கு விசைப்பலகை மூலம் ஃபோகஸ் (keyboard focus) செய்ய முடியும், ஆனால் <code>aria-hidden="true"</code> எனும் பண்புக்கூறு காரணமாக (இந்த உறுப்பிலோ அல்லது அதன் பெற்றோர் கண்டெய்னரிலோ இருப்பதால்) திரை வாசிப்பான்களிடமிருந்து (screen readers) மறைக்கப்பட்டுள்ளது. இதைச் சரிசெய்ய, aria-hidden பண்புக்கூற்றை நீக்கவும் அல்லது டேப் வரிசையில் (tab order) இருந்து இந்த உறுப்பை நீக்கவும். <hr> <strong {B}>உறுப்பு</strong> <pre><code>%(EL)</code></pre> <hr> <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">aria-hidden பண்புக்கூறு</a> பற்றி மேலும் அறிக.',
 
     // Developer Checks

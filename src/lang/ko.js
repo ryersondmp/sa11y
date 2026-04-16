@@ -295,6 +295,7 @@ export default {
       '이 입력과 연결된 레이블이 없습니다. 이 입력에 <code>아이디</code>를 추가하고 레이블에 일치하는 <code>용</code> 속성을 추가하세요.',
     LABELS_PLACEHOLDER:
       '사라지는 자리 표시자 텍스트는 사람들이 필드에 어떤 정보가 들어가야 하는지 기억하는 데 어려움을 주며 유효성 검사 문제를 식별하고 수정하기 어렵게 만듭니다. 대신, 양식 필드 앞에 항상 표시되는 힌트를 사용하는 것을 고려하십시오. <hr> 자세히 알아보세요: <a href="https://www.nngroup.com/articles/form-design-placeholders/">양식 필드의 자리 표시자는 유해합니다.</a>',
+    ARIA_INPUT_FIELD_NAME: 'ARIA 입력 또는 토글 필드에 액세스 가능한 이름이 누락되었습니다. 문제를 해결하려면 유효한 <code>aria-labelledby</code>, <code>aria-label</code> 또는 <code>title</code> 속성을 제공하세요. 입력이 토글 가능한 경우(예: 체크박스, 스위치, 라디오 버튼) 시각적인 내부 텍스트를 추가해도 이 문제가 해결됩니다. <hr> <strong {B}>요소</strong> <pre><code>%(EL)</code></pre>',
 
     // Embedded content
     EMBED_VIDEO:
@@ -342,8 +343,7 @@ export default {
     // Shared
     LINK_TEXT: '<strong {B}>링크 텍스트</strong> <strong {C}>%(TEXT)</strong>',
     ACC_NAME: '<strong {B}>접근 가능한 이름</strong> <strong {C}>%(TEXT)</strong>',
-    ACC_NAME_TIP:
-      '<hr><strong>팁!</strong> "접근 가능한 이름"은 보조 기술을 사용하는 사람들에게 전달되는 최종 레이블이며 ARIA에 의해 계산됩니다. 이를 통해 링크 또는 버튼의 목적을 이해하는 데 도움이 됩니다.',
+    ACC_NAME_TIP: '<hr><strong>팁!</strong> "액세스 가능한 이름"은 보조 기술을 사용하는 사람들에게 전달되는 최종 레이블입니다. 이는 그들이 요소의 목적을 이해하는 데 도움이 됩니다.',
     HIDDEN_FOCUSABLE: '이 요소는 키보드 포커스를 받을 수 있지만, 자신 또는 상위 컨테이너의 <code>aria-hidden="true"</code> 속성으로 인해 스크린 리더에서 숨겨져 있습니다. 문제를 해결하려면 aria-hidden 속성을 제거하거나 탭 순서에서 요소를 제거하세요. <hr> <strong {B}>요소</strong> <pre><code>%(EL)</code></pre> <hr> <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">aria-hidden 속성</a>에 대해 자세히 알아보세요.',
 
     // Developer

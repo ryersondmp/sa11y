@@ -55,7 +55,7 @@ export default class ControlPanel extends HTMLElement {
     const colourFilterPlugin = State.option.colourFilterPlugin
       ? `
       <li id="colour-filter-item">
-        <label id="colour-filter-mode" for="colour-filter">${Lang._('COLOUR_FILTER')}</label>
+        <label id="colour-filter-mode" for="colour-filter-select">${Lang._('COLOUR_FILTER')}</label>
         <div class="select-dropdown">
           <select id="colour-filter-select">
             <option value="0">${Lang._('OFF')}</option>
