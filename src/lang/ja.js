@@ -424,7 +424,7 @@ export default {
       '見出し2や見出し3などのセマンティックな見出しは、コンテンツのセクションにのみ使用すべきです。HTMLテーブルでは<strong>使用しないでください</strong>。代わりに<code>&lt;th&gt;</code>要素を使用してテーブルの見出しを示します。<hr> <a href="https://www.w3.org/WAI/tutorials/tables/">アクセシブルなテーブル</a>について詳しく学びます。',
     TABLES_EMPTY_HEADING:
       '空のテーブルヘッダーが見つかりました！テーブルヘッダーは<strong>空にしてはいけません</strong>。行や列のヘッダーを指定して関係性を伝えることが重要です。これにより、支援技術を使用する人々にコンテキストが提供されます。テーブルは表形式のデータのみに使用する必要があります。<hr> <a href="https://www.w3.org/WAI/tutorials/tables/">アクセシブルなテーブル</a>について詳しく学びます。',
-    TABLES_INVALID_HEADERS_REF: '<code>headers</code> 属性に無効な参照が含まれています: <strong {C}>%(VALUE)</strong>。同じテーブル内の有効なヘッダーセルの ID を参照する必要があります。 <hr> <a href="https://www.w3.org/WAI/WCAG22/Techniques/html/H43">データテーブルで id 属性と headers 属性を使用してデータセルとヘッダーセルを関連付ける方法</a>の詳細をご覧ください。',
+    TABLES_INVALID_HEADERS_REF: 'このテーブルは特定のデータセルを特定のヘッダーセルに関連付けようとしていますが、ヘッダー ID が見つかりません。各 <code>headers</code> 属性が、同じテーブル内のヘッダーセルの ID と一致していることを確認してください。 <hr> <strong {B}>ヘッダー</strong> <code>%(VALUE)</code> <hr> <strong>ヒント！</strong> データセルとヘッダーセルを関連付けるために <a href="https://www.w3.org/WAI/WCAG22/Techniques/html/H43">手動で ID 参照を使用する</a> 方法は、複雑で壊れやすくなります。可能であれば、複雑なデータは単純なヘッダー行と列を持つ小さなテーブルに分割してください。',
 
     // Contrast
     CONTRAST_NORMAL: '標準サイズのテキストは、少なくとも %(RATIO) のコントラスト比が必要です。',

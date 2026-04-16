@@ -26,6 +26,7 @@ imageOutlineTemplate.innerHTML = `
  */
 const generateEditLinkElement = (image) => {
   const { src } = image.element;
+  if (!src) return;
 
   const urlExclusions = State.option.ignoreEditImageURL.some((ignore) => src.includes(ignore));
   const classExclusions = State.option.ignoreEditImageClass.some((ignore) =>
@@ -133,7 +134,20 @@ export default function generateImageOutline() {
       const altTextContainer = clone.querySelector('.alt-text-container');
 
       // Set image source.
-      img.src = source;
+      const handleFallback = () => {
+        const fallback = document.createElement('span');
+        fallback.className = 'image-icon';
+        img.replaceWith(fallback);
+      };
+      if (!source) {
+        handleFallback();
+      } else {
+        img.src = source;
+        img.onload = () => {
+          if (img.naturalWidth <= 1 || img.naturalHeight <= 1) handleFallback();
+        };
+        img.onerror = handleFallback;
+      }
 
       // Build badges.
       let badgesHTML = '';
