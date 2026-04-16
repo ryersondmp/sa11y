@@ -324,12 +324,10 @@
       let transString = this._(string);
       transString = this.prepHTML(transString);
       const el2 = document.createElement("div");
-      const p = document.createElement("p");
-      p.innerHTML = transString;
-      el2.appendChild(p);
+      el2.innerHTML = transString;
       if (args?.length) {
         args.forEach((_arg, index2) => {
-          p.innerHTML = p.innerHTML.replace(/%\([a-zA-Z_]+\)/, `<span data-arg='${index2}'></span>`);
+          el2.innerHTML = el2.innerHTML.replace(/%\([a-zA-Z_]+\)/, `<span data-arg='${index2}'></span>`);
         });
         args.forEach((arg, index2) => {
           const replacement = el2.querySelector(`[data-arg="${index2}"]`);

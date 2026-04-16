@@ -11,14 +11,12 @@ const Lang = {
     let transString = this._(string);
     transString = this.prepHTML(transString);
     const el = document.createElement('div');
-    const p = document.createElement('p');
-    p.innerHTML = transString;
-    el.appendChild(p);
+    el.innerHTML = transString;
 
     // Replace placeholders with span markers.
     if (args?.length) {
       args.forEach((_arg, index) => {
-        p.innerHTML = p.innerHTML.replace(/%\([a-zA-Z_]+\)/, `<span data-arg='${index}'></span>`);
+        el.innerHTML = el.innerHTML.replace(/%\([a-zA-Z_]+\)/, `<span data-arg='${index}'></span>`);
       });
 
       // Inject the actual values as textContent.
