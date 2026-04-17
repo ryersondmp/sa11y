@@ -164,6 +164,7 @@ const runBuild = async (config) => {
     { input: 'dev.js', name: 'Sa11yDevBookmarklet', file: 'dev.js' },
     { input: 'apca.js', name: 'Sa11yLangBookmarkletAPCA', file: 'apca.js' },
     { input: 'unminified.js', name: 'Sa11yLangBookmarkletUnminified', file: 'unminified.js' },
+    { input: 'v2-lang-detect.js', name: 'Sa11yLangDetectionBookmarklet', file: 'v2-lang-detect.js' },
   ];
 
   for (const b of bookmarklets) {
