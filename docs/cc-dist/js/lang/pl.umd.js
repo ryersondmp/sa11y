@@ -13,6 +13,7 @@
       WARNING: "Ostrzeżenie",
       WARNINGS: "Ostrzeżenia",
       GOOD: "Dobrze",
+      REVIEW: "Przegląd",
       ON: "Wł",
       OFF: "Wył",
       ALERT_TEXT: "Alert",
@@ -43,7 +44,7 @@
       MISSING_ROOT: "Sprawdzono dostępność całej strony, ponieważ obszar docelowy nie istnieje: <code>%(root)</code>",
       MISSING_READABILITY_ROOT: "Ocena czytelności opiera się na obszarze treści <code>%(fallback)</code>, ponieważ docelowy obszar <code>%(root)</code> nie istnieje.",
       SKIP_TO_PAGE_ISSUES: "Przejdź do problemów ze stroną",
-      CONSOLE_ERROR: 'Przepraszamy, ale wystąpił problem z narzędziem do sprawdzania ułatwień dostępu na tej stronie. Czy możesz <a href="%(link)">zgłosić to za pomocą tego formularza</a> lub na <a href="%(link)">GitHub</a>?',
+      CONSOLE_ERROR: 'Przepraszamy, ale wystąpił problem z narzędziem do sprawdzania ułatwień dostępu na tej stronie. Czy możesz <a href="https://forms.gle/sjzK9XykETaoqZv99">zgłosić to za pomocą tego formularza</a> lub na <a href="https://github.com/ryersondmp/sa11y/issues/new?title=Bug%20report">GitHub</a>?',
       APPEARANCE: "Wygląd",
       MOVE_PANEL: "Przenieś panel",
       HIDDEN: "Ukryty",
@@ -58,7 +59,7 @@
       PAGE_TITLE: "Tytuł strony",
       RESULTS: "Wyniki",
       EXPORT_RESULTS: "Eksportuj wyniki",
-      GENERATED: "Wyniki wygenerowane za pomocą %(tool).",
+      GENERATED: 'Wyniki wygenerowane za pomocą <a href="https://sa11y.netlify.app">Sa11y.</a>',
       PREVIEW: "Podgląd",
       ELEMENT: "Element",
       PATH: "Ścieżka",
@@ -148,7 +149,8 @@
         "zobacz",
         "zobacz naszą",
         "stronę",
-        "witrynę"
+        "witrynę",
+        "artykuł"
       ],
       CLICK: ["click", "kliknięcie"],
       NEW_WINDOW_PHRASES: ["zewnętrzny", "nowa karta", "nowe okno", "pop-up", "pop up"],
@@ -198,7 +200,8 @@
       LINK_DOI: 'W przypadku stron internetowych lub zasobów dostępnych tylko online, przewodnik <a href="https://apastyle.apa.org/style-grammar-guidelines/paper-format/accessibility/urls#:~:text=descriptive%20links">APA Style</a> zaleca stosowanie linków opisowych poprzez zawijanie adresu URL lub DOI pracy wokół jej tytułu. Dłuższe, mniej zrozumiałe adresy URL używane jako tekst linku mogą być trudne do zrozumienia podczas korzystania z technologii wspomagającej.',
       LINK_NEW_TAB: 'Łącze otwiera się na nowej karcie lub w oknie bez ostrzeżenia. Może to być dezorientujące, szczególnie dla osób, które mają problemy z&nbsp;odbiorem treści wizualnych. Ponadto, nie zawsze dobrym zwyczajem jest kontrolowanie czyichś doświadczeń lub podejmowanie decyzji za kogoś. Wskaż w tekście łącza, że łącze otwiera się w nowym oknie. <hr> <strong>Porada!</strong> Poznaj najlepsze praktyki: <a href="https://www.nngroup.com/articles/new-browser-windows-and-tabs/">otwieranie łączy w nowych oknach i kartach przeglądarki.</a>',
       LINK_FILE_EXT: "Łącze wskazuje  bez ostrzeżenia na plik PDF lub plik do pobrania (np. MP3, zip, doc). Wskaż typ pliku w tekście łącza. Jeśli jest to duży plik, rozważ podanie jego rozmiaru. <hr> <strong>Przykład:</strong> Raport końcowy (PDF, 3MB)",
-      LINK_IDENTICAL_NAME: "Łącze ma identyczny tekst jak inne łącze, choć wskazuje na inną stronę. Wiele łączy z takim samym tekstem może powodować zamieszanie u osób korzystających z czytników ekranu. <strong>Rozważ nadanie poniższemu łączu bardziej opisowego charakteru, aby odróżnić je od innych łączy.</strong> <hr> <strong {B}>Dostępna nazwa</strong> <strong {C}>%(TEXT)</strong>",
+      LINK_IDENTICAL_NAME: "Wiele linków na tej stronie używa tego samego tekstu, ale prowadzi do różnych miejsc. Może to wprowadzać w błąd użytkowników technologii wspomagających. Aby to naprawić, nadaj temu linkowi bardziej opisowy tekst.",
+      LINK_UNPRONOUNCEABLE: "Tekst linku zawiera tylko symbole. Jeśli uważasz, że ten link jest błędem wynikającym z kopiowania/wklejania, rozważ jego usunięcie.",
       // Images
       ALT_UNPRONOUNCEABLE: "Tekst alternatywny zawiera tylko niewymawialne symbole i/lub spacje. Czytniki ekranu ogłoszą obraz, a następnie zatrzymają się. Jeśli obraz jest dekoracyjny, upewnij się, że w tekście alternatywnym nie ma spacji. <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>",
       LINK_ALT_UNPRONOUNCEABLE: "Tekst alternatywny w tym połączonym obrazie zawiera tylko niewymawialne symbole i/lub spacje. Czytniki ekranu ogłoszą obraz, a następnie zatrzymają się. Upewnij się, że tekst alternatywny opisuje cel linku. <hr> {L} {ALT} <strong {C}>%(ALT_TEXT)</strong>",
@@ -231,6 +234,7 @@
       LABELS_NO_FOR_ATTRIBUTE: "Z tym polem input nie jest skojarzona żadna etykieta (label). Dodaj atrybut <code>for</code> do etykiety z wartością <code>id</code>  pasującą do <code>id</code> tego pola. <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>",
       LABELS_MISSING_LABEL: "Z tym polem input nie jest skojarzona żadna etykieta (label). Dodaj do tego pola danych <code>id</code> i dodaj pasujący atrybut <code>for</code> do etykiety.",
       LABELS_PLACEHOLDER: 'Znikający tekst zastępczy utrudnia ludziom zapamiętanie, jakie informacje powinny znaleźć się w polu, a także utrudnia identyfikację i poprawę błędów. Zamiast tego rozważ użycie trwale widocznej wskazówki przed polem formularza. <hr> Dowiedz się więcej: <a href="https://www.nngroup.com/articles/form-design-placeholders/">Zastępniki w polach formularzy są szkodliwe.</a>',
+      ARIA_INPUT_FIELD_NAME: "Pole wejściowe lub przełącznik ARIA nie ma nazwy dostępnej. Aby to naprawić, podaj prawidłowy atrybut <code>aria-labelledby</code>, <code>aria-label</code> lub <code>title</code>. Jeśli pole jest przełączalne (np. pole wyboru, przełącznik, przycisk radiowy), dodanie widocznego tekstu wewnętrznego również rozwiąże ten problem. <hr> <strong {B}>Element</strong> <pre><code>%(EL)</code></pre>",
       // Embedded content
       EMBED_VIDEO: "Upewnij się, że <strong>wszystkie filmy mają napisy rozszerzone.</strong> Zapewnianie napisów rozszerzonych dla wszystkich treści audio i wideo jest obowiązkowym wymogiem poziomu A. Napisy mają na celu wspieranie osób Głuchych i słabosłyszących.",
       EMBED_AUDIO: "Upewnij się, że istnieje <strong>transkrypcja dla wszystkich nagrań dźwiękowych.</strong> Zapewnianie transkrypcji treści audio jest obowiązkowym wymogiem poziomu A. Transkrypcje mają na celu wspieranie osób Głuchych i słabosłyszących, ale każdy może z nich skorzystać. Rozważ umieszczenie transkrypcji poniżej lub w panelu akordeonowym.",
@@ -240,7 +244,7 @@
       EMBED_UNFOCUSABLE: '&lt;code&gt;&lt;iframe&gt;&lt;/code&gt; z elementami, które można wybrać, nie powinno mieć <code>tabindex="-1"</code>. Osadzona zawartość nie będzie dostępna za pomocą klawiatury.',
       // Quality assurance
       QA_BAD_LINK: "Podejrzane łącze. Łącze wydaje się wskazywać środowisko programistyczne. <hr> {L} <strong {C}>%(LINK)</strong>",
-      QA_IN_PAGE_LINK: "Uszkodzony link na tej samej stronie. Cel linku nie odpowiada żadnemu elementowi na tej stronie.",
+      QA_IN_PAGE_LINK: "Uszkodzony link wewnątrzstronicowy. Ten link próbuje prowadzić do sekcji strony, której nie można znaleźć. Aby to naprawit, upewnij się, że link pasuje do identyfikatora <code>id</code> elementu, do którego chcesz przejść.",
       QA_STRONG_ITALICS: "Znaczniki pogrubienia i kursywy mają znaczenie semantyczne i <strong>nie powinny</strong> być używane do wyróżniania całych akapitów. Pogrubiony tekst powinien być używany w celu <strong>silnego podkreślenia słowa lub frazy</strong>. Kursywa powinna być używana do wyróżnienia nazw własnych (np. tytułów książek i artykułów), wyrazów obcych, cytatów. Długie cytaty powinny być sformatowane jako blockquote.",
       QA_PDF: 'Nie można sprawdzić dostępności pliku PDF. Pliki PDF są uważane za treści internetowe i muszą być również dostępne. Pliki PDF często powodują problemy dla osób korzystających z&nbsp;czytników ekranu (brakujące znaczniki strukturalne lub etykiety pól formularzy) oraz dla osób słabowidzących (tekst nie jest ponownie wyświetlany po powiększeniu). <ul><li>Jeśli jest to formularz, rozważ użycie dostępnego formularza HTML jako alternatywy</li><li>Jeśli jest to dokument, rozważ przekonwertowanie go na stronę internetową.</li></ul> W przeciwnym razie <a href="https://helpx.adobe.com/acrobat/using/create-verify-pdf-accessibility.html">sprawdź plik pod kątem dostępności w programie Acrobat DC.</a>',
       QA_DOCUMENT: 'Nie można sprawdzić dokumentu pod kątem dostępności. Powiązane dokumenty są uważane za treści internetowe i również muszą być dostępne. Sprawdź ten dokument ręcznie. <ul><li>Zwiększ dostępność <a href="https://support.google.com/docs/answer/6199477?hl=pl">dokumentu lub prezentacji Google Workspace.</a></li><li>Zwiększ dostępność <a href="https://support.microsoft.com/pl-pl/office/create-accessible-office-documents-868ecfcd-4f00-4224-b881-a65537a7c155">dokumentów pakietu Office.</a></li></ul>',
@@ -254,9 +258,10 @@
       QA_JUSTIFY: "Unikaj stosowania wyjustowanego tekstu, który jest wyrównany zarówno do lewego, jak i prawego marginesu. Może to być trudne do odczytania dla niektórych osób ze względu na nierówne odstępy między słowami. Używaj tekstu wyrównanego do lewej strony dla lepszej czytelności.",
       QA_SMALL_TEXT: "Mały tekst jest trudniejszy do odczytania, szczególnie dla osób słabowidzących. Aby zapewnić lepszą czytelność, unikaj używania czcionek mniejszych niż domyślne.",
       // Shared
-      ACC_NAME: "<strong {B}>Dostępna nazwa</strong> %(TEXT)",
-      ACC_NAME_TIP: '<hr><strong>Wskazówka!</strong> "Dostępna nazwa" to ostateczna etykieta, która jest przekazywana osobom korzystającym z technologii wspomagających i jest obliczana przez ARIA. Pomaga to im zrozumieć cel linku lub przycisku.',
-      HIDDEN_FOCUSABLE: 'Link lub przycisk ma atrybut <code>aria-hidden=&quot;true&quot;</code>, ale wciąż może być uzyskany za pomocą klawiatury. Jeśli zamierzasz ukryć zduplikowany link lub przycisk, dodaj również <code>tabindex=&quot;-1&quot;</code>. W przeciwnym razie atrybut <code>aria-hidden=&quot;true&quot;</code> nie powinien być używany dla elementów, które mogą otrzymać fokus. <hr> Dowiedz się więcej o <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">atrybucie aria-hidden.</a>',
+      LINK_TEXT: "<strong {B}>Tekst linku</strong> <strong {C}>%(TEXT)</strong>",
+      ACC_NAME: "<strong {B}>Dostępna nazwa</strong> <strong {C}>%(TEXT)</strong>",
+      ACC_NAME_TIP: "<hr><strong>Wskazówka!</strong> „Nazwa dostępna” to ostateczna etykieta przekazywana osobom korzystającym z technologii wspomagających. Pomaga im to zrozumieć cel elementu.",
+      HIDDEN_FOCUSABLE: 'Ten element może przyjąć fokus klawiatury, ale jest ukryty przed czytnikami ekranu za pomocą atrybutu <code>aria-hidden="true"</code> (na nim samym lub kontenerze nadrzędnym). Aby to naprawić, usuń atrybut aria-hidden lub usuń element z kolejności tabulacji. <hr> <strong {B}>Element</strong> <pre><code>%(EL)</code></pre> <hr> Dowiedz się więcej o <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">atrybucie aria-hidden.</a>',
       // Developer
       DUPLICATE_ID: "Znaleziono <strong>duplikat ID</strong>. Wiadomo, że błędy zduplikowanego ID powodują problemy dla technologii pomocniczych podczas próby interakcji z treścią. Usuń lub zmień następujący ID. <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>",
       UNCONTAINED_LI: "Wszystkie elementy listy <code>&lt;li&gt;</code> muszą być umieszczone wewnątrz elementów <code>&lt;ul&gt;</code> nieuporządkowanych lub <code>&lt;ol&gt;</code> uporządkowanych. Ta struktura pomaga czytnikom ekranu dokładnie ogłaszać listę i jej elementy.",
@@ -267,17 +272,22 @@
       META_SCALABLE: 'Usuń parametr <code>user-scalable="no"</code> w <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">meta tagu widoku</a>, aby umożliwić powiększanie.',
       META_MAX: 'Upewnij się, że parametr <code>maximum-scale</code> w <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">meta tagu widoku</a> nie jest mniejszy niż 2.',
       META_REFRESH: "Strona nie powinna automatycznie odświeżać się przy użyciu meta tagu.",
+      META_LANG_SUGGEST: "Następujący kod języka <code>%(CODE)</code> jest nieprawidłowy. Czy chodziło o <code>%(CODE)</code>?",
+      META_LANG_VALID: 'Kod języka dla tego elementu jest nieprawidłowy. Aby to naprawić, zastąp atrybut lang prawidłowym kodem języka. <hr> <strong {B}>Element</strong> <code>&lt;%(ELEMENT) lang="%(CODE)"&gt;</code> <hr> Dowiedz się więcej o <a href="https://www.w3.org/International/questions/qa-html-language-declarations">deklarowaniu języka w HTML.</a>',
       // Buttons
       BTN_EMPTY: "Przycisk nie ma dostępnej nazwy opisującej jego cel.",
       BTN_EMPTY_LABELLEDBY: "Przycisk ma wartość <code>aria-labelledby</code>, która jest pusta lub nie pasuje do wartości <code>id</code> innego elementu na stronie.",
       BTN: "przycisk",
       BTN_TIP: 'Dowiedz się, jak utworzyć <a href="https://www.sarasoueidan.com/blog/accessible-icon-buttons/">dostępny przycisk.</a>',
       BTN_ROLE_IN_NAME: "Nie włączaj słowa „przycisk” w nazwie przycisku. Czytniki ekranowe już podają rolę elementu oprócz jego nazwy.",
-      LABEL_IN_NAME: "Widoczny tekst tego elementu wydaje się różnić od dostępnej nazwy, co może wprowadzać w błąd użytkowników technologii wspomagających. Sprawdź: <hr> <strong {B}>Dostępna nazwa</strong> <strong {C}>%(TEXT)</strong>",
+      LABEL_IN_NAME: "Widoczny tekst tego elementu wydaje się różnić od dostępnej nazwy, co może wprowadzać w błąd użytkowników technologii wspomagających. Sprawdź: <hr> <strong {B}>Tekst</strong> <strong {C}>%(TEXT)</strong> <hr> <strong {B}>Dostępna nazwa</strong> <strong {C}>%(TEXT)</strong>",
+      LINK_MAYBE_BUTTON: 'Ten link ma nieprawidłowy cel. Chociaż nazwa dostępna lub jej atrybuty sugerują, że może to w ogóle nie być link, a zamiast tego kontroluje on pewne zachowanie skryptowe na stronie. Aby to naprawić, zastąp link <a href="https://www.w3.org/WAI/ARIA/apg/patterns/button/">dostępnym przyciskiem</a> lub popraw cel linku. <hr> <strong {B}>Nazwa dostępna</strong> <strong {C}>%(TEXT)</strong> <hr> <strong>Wskazówka!</strong> Technologie wspomagające traktują przyciski i linki w różny sposób. Użycie właściwego elementu HTML gwarantuje, że użytkownicy będą wiedzieć, jakich skrótów klawiaturowych użyć i jakie działanie zostanie wywołane.',
+      POTENTIAL_UI_ELEMENTS: ["menu", "zamknij", "przełącz", "otwórz", "rozwiń", "zwiń", "następny", "poprzedni", "odtwórz", "pauza", "podmenu", "pokaż", "ukryj", "rozwijane", "wstecz", "dalej", "pomiń", "wyślij", "anuluj", "zapisz", "edytuj", "usuń", "usuń", "szukaj", "filtr", "sortuj", "stop", "wycisz", "wyłącz wyciszenie", "pełny ekran", "minimalizuj", "maksymalizuj"],
       // Tables
       TABLES_MISSING_HEADINGS: 'Brak nagłówków tabeli! Dostępne tabele wymagają znaczników HTML, które wskazują komórki nagłówków i komórki danych, które definiują ich relację. Informacje te zapewniają kontekst osobom korzystającym z technologii wspomagających. Tabele powinny być używane tylko dla danych tabelarycznych.<hr>Dowiedz się więcej o <a href="https://www.w3.org/WAI/tutorials/tables/">dostępnych tabelach.</a>',
       TABLES_SEMANTIC_HEADING: 'Nagłówki semantyczne, takie jak nagłówek H2 lub nagłówek H3, powinny być używane tylko w odniesieniu do sekcji treści; <strong>nie</strong> w tabelach HTML. Zamiast tego należy wskazać nagłówki tabeli przy użyciu elementu <strong>th</strong>. <hr> Dowiedz się więcej o <a href="https://www.w3.org/WAI/tutorials/tables/">dostępnych tabelach.</a>',
       TABLES_EMPTY_HEADING: 'Wykryto pusty nagłówek tabeli! Nagłówki tabel <em>nigdy</em> nie powinny być puste. Ważne jest, aby wyznaczyć nagłówki wierszy i/lub kolumn, aby przekazać ich relację. Informacje te zapewniają kontekst osobom korzystającym z technologii wspomagających. Należy pamiętać, że tabele powinny być używane tylko dla danych tabelarycznych. <hr> Dowiedz się więcej o <a href="https://www.w3.org/WAI/tutorials/tables/">dostępnych tabelach.</a>',
+      TABLES_INVALID_HEADERS_REF: 'Ta tabela próbuje powiązać konkretną komórkę danych z konkretną komórką nagłówka, ale nie można odnaleźć identyfikatora ID nagłówka. Upewnij się, że każdy atrybut <code>headers</code> odpowiada identyfikatorowi ID komórki nagłówka w tej samej tabeli. <hr> <strong {B}>Nagłówki</strong> <code>%(VALUE)</code> <hr> <strong>Wskazówka!</strong> <a href="https://www.w3.org/WAI/WCAG22/Techniques/html/H43">Ręczne używanie odwołań ID</a> do kojarzenia komórek danych z komórkami nagłówka jest skomplikowane i zawodne. Jeśli to możliwe, dziel złożone dane na mniejsze tabele z prostymi wierszami i kolumnami nagłówkowymi.',
       // Contrast
       CONTRAST_NORMAL: "Tekst normalnej wielkości powinien mieć współczynnik kontrastu co najmniej %(RATIO).",
       CONTRAST_LARGE: "Tekst dużej wielkości powinien mieć współczynnik kontrastu co najmniej %(RATIO).",
@@ -297,7 +307,14 @@
       UNKNOWN: "Nieznane",
       FG: "Pierwszy plan",
       BG: "Tło",
-      NO_SUGGESTION: "Nie znaleziono dostępnej kombinacji, zmieniając tylko kolor tekstu. Spróbuj zmienić kolor tła."
+      NO_SUGGESTION: "Nie znaleziono dostępnej kombinacji, zmieniając tylko kolor tekstu. Spróbuj zmienić kolor tła.",
+      // Page language
+      PAGE_LANG_CONFIDENCE: 'Ponad połowa tekstu na tej stronie wydaje się być w języku %(LIKELY_LANG), ale zadeklarowany język strony to %(PAGE_LANG). Rozważ aktualizację <a href="https://www.w3.org/International/questions/qa-html-language-declarations">zadeklarowanego języka strony</a>, aby był zgodny z treścią.',
+      LANG_OF_PARTS: "Język strony został zadeklarowany jako %(PAGE_LANG), ale ta treść wydaje się być w języku %(LIKELY_LANG). Upewnij się, że treść jest odpowiednio oznaczona.",
+      LANG_MISMATCH: "Ta treść wydaje się być w języku %(DETECTED_LANG), jednak została oznaczona jako %(WRONG_LANG).",
+      LANG_OF_PARTS_ALT: "Ten tekst alternatywny wydaje się być w języku %(LIKELY_LANG), ale język strony został zadeklarowany jako %(PAGE_LANG). Upewnij się, że tekst alternatywny jest w tym samym języku co reszta strony. <hr> {ALT} <strong {C}>%(ALT)</strong>",
+      LANG_TIP: "<hr><strong>Wskazówka!</strong> Czytniki ekranu wypowiadają słowa, używając tagów językowych. Wypowiadanie języka z niedopasowanym pakietem językowym powoduje niezrozumiałą mowę.",
+      LANG_UNSUPPORTED: "Kontrole dostępności związane z językiem zostały pominięte, ponieważ ta przeglądarka nie obsługuje automatycznego wykrywania języka."
     }
   };
   return pl;

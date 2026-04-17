@@ -1,4 +1,36 @@
 import { APCAcontrast, alphaBlend, fontLookupAPCA, sRGBtoY } from './apca';
+import { convertToRGBA } from './convertColors';
+import * as Utils from '../utils/utils';
+
+export function memoize(fn, keyResolver) {
+  const cache = new Map();
+  const memoized = (...args) => {
+    const key = keyResolver ? keyResolver(...args) : JSON.stringify(args);
+    if (cache.has(key)) {
+      return cache.get(key);
+    }
+    const result = fn.apply(this, args);
+    cache.set(key, result);
+    return result;
+  };
+
+  memoized.clear = () => {
+    cache.clear();
+  };
+
+  return memoized;
+}
+
+/* Clears all memoized caches and the DOM background cache. */
+export function resetContrastCaches() {
+  clearBackgroundCache();
+  if (getLuminance.clear) getLuminance.clear();
+  if (getAPCAValue.clear) getAPCAValue.clear();
+  if (calculateContrast.clear) calculateContrast.clear();
+  if (suggestColorWCAG.clear) suggestColorWCAG.clear();
+  if (suggestColorAPCA.clear) suggestColorAPCA.clear();
+  if (extractColorFromString.clear) extractColorFromString.clear();
+}
 
 /**
  * Normalizes a given font weight to a numeric value. Maps keywords to their numeric equivalents.
@@ -19,131 +51,114 @@ export function normalizeFontWeight(weight) {
   return weightMap[weight] || 400;
 }
 
-/**
- * Convert colour string to RGBA format.
- * @param {string} color The colour string to convert.
- * @param {number} opacity The computed opacity of the element (0 to 1).
- * @returns Returns colour in rgba format with alpha value.
- */
-export function convertToRGBA(color, opacity) {
-  const colorString = color;
-  let r;
-  let g;
-  let b;
-  let a = 1; // Initialize alpha to 1 by default.
-
-  if (!colorString.startsWith('rgb')) {
-    // Unsupported color spaces.
-    if (
-      colorString.startsWith('color(rec2020') ||
-      colorString.startsWith('color(display-p3') ||
-      colorString.startsWith('url(')
-    ) {
-      return 'unsupported';
-    }
-
-    // Let the browser do conversion in rgb for non-supported colour spaces.
-    const canvas = document.createElement('canvas');
-    const context = canvas.getContext('2d');
-    context.fillStyle = colorString;
-    context.fillRect(0, 0, 1, 1);
-    const imageData = context.getImageData(0, 0, 1, 1);
-    [r, g, b, a] = imageData.data;
-    a = (a / 255).toFixed(2); // Convert alpha to range [0, 1]
-  } else {
-    // Parse RGB or RGBA values from the color string
-    const rgbaArray = colorString.match(/[\d.]+/g).map(Number);
-    [r, g, b, a] = rgbaArray.length === 4 ? rgbaArray : [...rgbaArray, 1];
-  }
-
-  // If element has opacity attribute, amend the foreground text color string.
-  if (opacity && opacity < 1) {
-    a = (a * opacity).toFixed(2); // Adjust alpha based on the opacity
-  }
-  return [r, g, b, Number(a)];
-}
+// Initialize the WeakMap outside the function to persist the cache across calls.
+let backgroundCache = new WeakMap();
 
 /**
- * Retrieves the background colour of an element by traversing up the DOM tree.
+ * Retrieves the background colour of an element by traversing up the DOM tree,
+ * accounting for slotted content, shadow DOM boundaries, and utilizing a WeakMap cache.
  * @param {HTMLElement} $el - The DOM element from which to start searching for the background.
  * @param {Boolean} shadowDetection - Whether to traverse shadow DOM.
- * @returns {string} - The background color in RGBA format, or "image" if background image.
+ * @returns {string|Array|Object} - The background color in RGBA format, or object if image.
  */
 export function getBackground($el, shadowDetection) {
-  let targetEl = $el;
-  while (targetEl && targetEl.nodeType === 1) {
-    // Element is within a shadow component.
+  // 1. Check if we've already calculated the background for this exact element
+  if (backgroundCache.has($el)) {
+    return backgroundCache.get($el);
+  }
+
+  // Helper to traverse the flattened tree (crosses slot and shadow boundaries)
+  const getVisualParent = (node) => {
+    if (!node) return null;
     if (shadowDetection) {
-      const root = targetEl.getRootNode();
-      if (root instanceof ShadowRoot) {
-        // Traverse upward until the shadow root's host.
-        let node = targetEl;
-        while (node && node !== root.host) {
-          const styles = getComputedStyle(node);
+      if (node.assignedSlot) return node.assignedSlot;
+      if (node instanceof ShadowRoot) return node.host;
+    }
+    return node.parentElement || node.parentNode;
+  };
 
-          // Background image check.
-          if (styles.backgroundImage && styles.backgroundImage !== 'none') {
-            return { type: 'image', value: styles.backgroundImage };
-          }
+  let targetEl = $el;
+  let finalBackground = [255, 255, 255]; // Default fallback to white
 
-          // Background colour check.
-          const bgColor = convertToRGBA(styles.backgroundColor);
-          if (bgColor[3] !== 0 && bgColor !== 'transparent') {
-            return bgColor;
-          }
-          node = node.parentElement;
-        }
-
-        // If nothing found within the shadow tree, continue with the host.
-        return getBackground(root.host);
-      }
+  // Allow Node.ELEMENT_NODE (1) and Node.DOCUMENT_FRAGMENT_NODE / ShadowRoot (11).
+  while (targetEl && (targetEl.nodeType === 1 || targetEl.nodeType === 11)) {
+    // If we land exactly on a ShadowRoot, skip computing styles and jump to its host.
+    if (targetEl instanceof ShadowRoot) {
+      targetEl = targetEl.host;
+      continue;
     }
 
+    const styles = Utils.getCachedStyle(targetEl);
+
     // Element has background image.
-    const styles = getComputedStyle(targetEl);
     const bgImage = styles.backgroundImage;
-    if (bgImage !== 'none') {
-      return { type: 'image', value: bgImage };
+    if (bgImage && bgImage !== 'none') {
+      finalBackground = { type: 'image', value: bgImage };
+      break;
     }
 
     // Element has background colour.
     const bgColor = convertToRGBA(styles.backgroundColor);
+
     if (bgColor[3] !== 0 && bgColor !== 'transparent') {
       // If the background colour has an alpha channel.
       if (bgColor[3] < 1) {
         // We need to find the first non-transparent parent background and blend them together.
-        let parentEl = targetEl.parentElement;
-        let parentBgColor = 'rgba(255, 255, 255, 1)';
-        while (parentEl && parentEl.nodeType === 1) {
-          const parentStyles = getComputedStyle(parentEl);
-          parentBgColor = parentStyles.backgroundColor;
+        let parentEl = getVisualParent(targetEl);
+        let parentBgColor = 'rgba(255, 255, 255, 1)'; // Default assumption
+
+        while (parentEl && (parentEl.nodeType === 1 || parentEl.nodeType === 11)) {
+          if (parentEl instanceof ShadowRoot) {
+            parentEl = parentEl.host;
+            continue;
+          }
+
+          const parentStyles = Utils.getCachedStyle(parentEl);
+          const currentParentBg = parentStyles.backgroundColor;
 
           // Stop, valid colour found.
-          if (parentBgColor !== 'rgba(0, 0, 0, 0)') {
+          if (currentParentBg !== 'rgba(0, 0, 0, 0)' && currentParentBg !== 'transparent') {
+            parentBgColor = currentParentBg;
             break;
           }
 
-          // If we reach the HTML tag, default to white.
-          if (parentBgColor === 'rgba(0, 0, 0, 0)' && parentEl.tagName === 'HTML') {
-            parentBgColor = 'rgba(255, 255, 255, 1)';
-          }
-
-          // Move up the DOM tree.
-          parentEl = parentEl.parentElement;
+          // Move up the flattened DOM tree.
+          parentEl = getVisualParent(parentEl);
         }
-        const parentColor = convertToRGBA(parentBgColor || 'rgba(255, 255, 255, 1)');
-        const blendedBG = alphaBlend(bgColor, parentColor);
-        return blendedBG;
+
+        // If we reach the HTML tag without finding a solid background, default to white.
+        if (parentBgColor === 'rgba(0, 0, 0, 0)' || parentBgColor === 'transparent') {
+          parentBgColor = 'rgba(255, 255, 255, 1)';
+        }
+
+        const parentColor = convertToRGBA(parentBgColor);
+        finalBackground = alphaBlend(bgColor, parentColor);
+        break;
       }
-      // Return solid color immediately if no alpha channel.
-      return bgColor;
+
+      // Solid color immediately found if no alpha channel.
+      finalBackground = bgColor;
+      break;
     }
+
+    // Default to white if we reach the HTML tag.
     if (targetEl.tagName === 'HTML') {
-      return [255, 255, 255]; // Default to white if we reach the HTML tag.
+      finalBackground = [255, 255, 255];
+      break;
     }
-    targetEl = targetEl.parentNode;
+
+    // Move up the flattened DOM tree instead of just parentNode.
+    targetEl = getVisualParent(targetEl);
   }
-  return [255, 255, 255]; // Default to white if no background color is found.
+
+  // 2. Save the calculated result to our WeakMap cache before returning
+  backgroundCache.set($el, finalBackground);
+  return finalBackground;
+}
+
+// Garbage collection.
+export function clearBackgroundCache() {
+  backgroundCache = new WeakMap();
 }
 
 /**
@@ -152,13 +167,16 @@ export function getBackground($el, shadowDetection) {
  * @param {number[]} color Colour code in [R,G,B] format.
  * @returns Luminance value.
  */
-export function getLuminance(color) {
-  const rgb = color.slice(0, 3).map((x) => {
-    const normalized = x / 255;
-    return normalized <= 0.03928 ? normalized / 12.92 : ((normalized + 0.055) / 1.055) ** 2.4;
-  });
-  return 0.2126 * rgb[0] + 0.7152 * rgb[1] + 0.0722 * rgb[2];
-}
+export const getLuminance = memoize(
+  function getLuminance(color) {
+    const rgb = color.slice(0, 3).map((x) => {
+      const normalized = x / 255;
+      return normalized <= 0.03928 ? normalized / 12.92 : ((normalized + 0.055) / 1.055) ** 2.4;
+    });
+    return 0.2126 * rgb[0] + 0.7152 * rgb[1] + 0.0722 * rgb[2];
+  },
+  (color) => color.join(','), // Key resolver: e.g., "255,255,255,1"
+);
 
 /**
  * Compute an APCA (Advanced Perceptual Contrast Algorithm) contrast value
@@ -167,13 +185,16 @@ export function getLuminance(color) {
  * @param {number[]} bg - Background color in `[R, G, B, A]` format.
  * @returns {{ ratio: number, blendedColor: number[] }} Computed APCA value & alpha-blended foreground.
  */
-export function getAPCAValue(color, bg) {
-  const blendedColor = alphaBlend(color, bg).slice(0, 4);
-  const foreground = sRGBtoY(blendedColor);
-  const background = sRGBtoY(bg);
-  const ratio = APCAcontrast(foreground, background);
-  return { ratio, blendedColor };
-}
+export const getAPCAValue = memoize(
+  function getAPCAValue(color, bg) {
+    const blendedColor = alphaBlend(color, bg).slice(0, 4);
+    const foreground = sRGBtoY(blendedColor);
+    const background = sRGBtoY(bg);
+    const ratio = APCAcontrast(foreground, background);
+    return { ratio, blendedColor };
+  },
+  (color, bg) => `${color.join(',')}|${bg.join(',')}`,
+);
 
 /**
  * Get WCAG 2.0 contrast ratio from luminance value.
@@ -275,21 +296,24 @@ export function ratioToDisplay(value, contrastAlgorithm) {
  * @param {String} contrastAlgorithm Preferred algorithm.
  * @returns Either WCAG 2.0 contrast ratio or APCA contrast value.
  */
-export function calculateContrast(color, bg, contrastAlgorithm) {
-  let ratio;
-  const blendedColor = alphaBlend(color, bg).slice(0, 4);
-  if (contrastAlgorithm === 'APCA') {
-    const foreground = sRGBtoY(blendedColor);
-    const background = sRGBtoY(bg);
-    ratio = APCAcontrast(foreground, background);
-  } else {
-    // Uses WCAG 2.0 contrast algorithm based on luminance.
-    const foreground = getLuminance(blendedColor);
-    const background = getLuminance(bg);
-    ratio = getWCAG2Ratio(foreground, background);
-  }
-  return { ratio, blendedColor };
-}
+export const calculateContrast = memoize(
+  function calculateContrast(color, bg, contrastAlgorithm) {
+    let ratio;
+    const blendedColor = alphaBlend(color, bg).slice(0, 4);
+    if (contrastAlgorithm === 'APCA') {
+      const foreground = sRGBtoY(blendedColor);
+      const background = sRGBtoY(bg);
+      ratio = APCAcontrast(foreground, background);
+    } else {
+      // Uses WCAG 2.0 contrast algorithm based on luminance.
+      const foreground = getLuminance(blendedColor);
+      const background = getLuminance(bg);
+      ratio = getWCAG2Ratio(foreground, background);
+    }
+    return { ratio, blendedColor };
+  },
+  (color, bg, alg) => `${color.join(',')}|${bg.join(',')}|${alg}`,
+);
 
 /**
  * Suggest a foreground colour with sufficient contrast.
@@ -299,67 +323,70 @@ export function calculateContrast(color, bg, contrastAlgorithm) {
  * @param {boolean} contrastAlgorithm Preferred contrast algorithm
  * @returns Compliant colour hexcode.
  */
-export function suggestColorWCAG(color, background, isLargeText, contrastAlgorithm) {
-  let minContrastRatio;
-  if (contrastAlgorithm === 'AAA') {
-    minContrastRatio = isLargeText ? 4.5 : 7;
-  } else {
-    minContrastRatio = isLargeText ? 3 : 4.5;
-  }
-
-  // Get luminance
-  const fgLuminance = getLuminance(color);
-  const bgLuminance = getLuminance(background);
-
-  // Determine if text color should be lightened or darkened (considers extreme values).
-  const adjustMode =
-    fgLuminance > bgLuminance
-      ? getWCAG2Ratio(1, bgLuminance) > minContrastRatio
-      : getWCAG2Ratio(0, bgLuminance) < minContrastRatio;
-
-  const adjustColor = (foregroundColor, amount, mode) =>
-    mode ? brighten(foregroundColor, amount) : darken(foregroundColor, amount);
-
-  let adjustedColor = color;
-  let lastValidColor = adjustedColor;
-  let contrastRatio = getWCAG2Ratio(fgLuminance, bgLuminance);
-  let bestContrast = contrastRatio;
-  let previousColor = color;
-
-  // Loop parameters.
-  let step = 0.16;
-  const percentChange = 0.5;
-  const precision = 0.01;
-  let iterations = 0;
-  const maxIterations = 100;
-
-  while (step >= precision) {
-    iterations += 1;
-
-    // Return null if no colour found.
-    if (iterations > maxIterations) {
-      return { color: null };
+export const suggestColorWCAG = memoize(
+  function suggestColorWCAG(color, background, isLargeText, contrastAlgorithm) {
+    let minContrastRatio;
+    if (contrastAlgorithm === 'AAA') {
+      minContrastRatio = isLargeText ? 4.5 : 7;
+    } else {
+      minContrastRatio = isLargeText ? 3 : 4.5;
     }
 
-    adjustedColor = adjustColor(adjustedColor, step, adjustMode);
-    const newLuminance = getLuminance(adjustedColor);
-    contrastRatio = getWCAG2Ratio(newLuminance, bgLuminance);
+    // Get luminance
+    const fgLuminance = getLuminance(color);
+    const bgLuminance = getLuminance(background);
 
-    // console.log(`%c ${getHex(adjustedColor)} | ${contrastRatio}`, `color:${getHex(adjustedColor)};background:${getHex(background)}`);
+    // Determine if text color should be lightened or darkened (considers extreme values).
+    const adjustMode =
+      fgLuminance > bgLuminance
+        ? getWCAG2Ratio(1, bgLuminance) > minContrastRatio
+        : getWCAG2Ratio(0, bgLuminance) < minContrastRatio;
 
-    // Save valid colour, go back to previous, and continue with a smaller step.
-    if (contrastRatio >= minContrastRatio) {
-      // Ensure new colour is closer to the contrast minimum than old colour.
-      lastValidColor = contrastRatio <= bestContrast ? adjustedColor : lastValidColor;
-      bestContrast = contrastRatio;
-      adjustedColor = previousColor;
-      step *= percentChange;
+    const adjustColor = (foregroundColor, amount, mode) =>
+      mode ? brighten(foregroundColor, amount) : darken(foregroundColor, amount);
+
+    let adjustedColor = color;
+    let lastValidColor = adjustedColor;
+    let contrastRatio = getWCAG2Ratio(fgLuminance, bgLuminance);
+    let bestContrast = contrastRatio;
+    let previousColor = color;
+
+    // Loop parameters.
+    let step = 0.16;
+    const percentChange = 0.5;
+    const precision = 0.01;
+    let iterations = 0;
+    const maxIterations = 100;
+
+    while (step >= precision) {
+      iterations += 1;
+
+      // Return null if no colour found.
+      if (iterations > maxIterations) {
+        return { color: null };
+      }
+
+      adjustedColor = adjustColor(adjustedColor, step, adjustMode);
+      const newLuminance = getLuminance(adjustedColor);
+      contrastRatio = getWCAG2Ratio(newLuminance, bgLuminance);
+
+      // console.log(`%c ${getHex(adjustedColor)} | ${contrastRatio}`, `color:${getHex(adjustedColor)};background:${getHex(background)}`);
+
+      // Save valid colour, go back to previous, and continue with a smaller step.
+      if (contrastRatio >= minContrastRatio) {
+        // Ensure new colour is closer to the contrast minimum than old colour.
+        lastValidColor = contrastRatio <= bestContrast ? adjustedColor : lastValidColor;
+        bestContrast = contrastRatio;
+        adjustedColor = previousColor;
+        step *= percentChange;
+      }
+
+      previousColor = adjustedColor;
     }
-
-    previousColor = adjustedColor;
-  }
-  return { color: getHex(lastValidColor) };
-}
+    return { color: getHex(lastValidColor) };
+  },
+  (color, bg, isLargeText, alg) => `${color.join(',')}|${bg.join(',')}|${isLargeText}|${alg}`,
+);
 
 /**
  * Determines the optimal contrasting color (either #000 or #FFF) for a given background color and the minimum font size required to meet APCA.
@@ -386,102 +413,107 @@ const getOptimalAPCACombo = (background, fontWeight) => {
  * @param {number} fontSize Current font size of the element.
  * @returns Compliant colour hexcode and/or font size combination.
  */
-export function suggestColorAPCA(color, background, fontWeight, fontSize) {
-  const graphicMinLc = 45;
-  const isGraphic = fontWeight == null || fontSize == null;
-  const bgLuminance = sRGBtoY(background);
+export const suggestColorAPCA = memoize(
+  function suggestColorAPCA(color, background, fontWeight, fontSize) {
+    const graphicMinLc = 45;
+    const isGraphic = fontWeight == null || fontSize == null;
+    const bgLuminance = sRGBtoY(background);
 
-  const adjustColor = (foregroundColor, amount) =>
-    bgLuminance <= 0.179 ? brighten(foregroundColor, amount) : darken(foregroundColor, amount);
+    const adjustColor = (foregroundColor, amount) =>
+      bgLuminance <= 0.179 ? brighten(foregroundColor, amount) : darken(foregroundColor, amount);
 
-  let adjustedColor = color;
-  let contrast = getAPCAValue(adjustedColor, background);
-  let { ratio } = contrast;
+    let adjustedColor = color;
+    let contrast = getAPCAValue(adjustedColor, background);
+    let { ratio } = contrast;
 
-  let bestTextCombo = null;
-  let bestContrast = ratio;
-  let lastValidColor = null;
+    let bestTextCombo = null;
+    let bestContrast = ratio;
+    let lastValidColor = null;
 
-  let fontLookup;
-  let fontWeightIndex;
-  let minimumSizeRequired;
+    let fontLookup;
+    let fontWeightIndex;
+    let minimumSizeRequired;
 
-  const passesText = () => {
-    fontLookup = fontLookupAPCA(ratio).slice(1);
-    fontWeightIndex = Math.min(
-      Math.max(Math.floor(fontWeight / 100) - 1, 0),
-      fontLookup.length - 1,
-    );
-    minimumSizeRequired = fontLookup[fontWeightIndex];
-    return (
-      minimumSizeRequired <= fontSize && minimumSizeRequired !== 999 && minimumSizeRequired !== 777
-    );
-  };
+    const passesText = () => {
+      fontLookup = fontLookupAPCA(ratio).slice(1);
+      fontWeightIndex = Math.min(
+        Math.max(Math.floor(fontWeight / 100) - 1, 0),
+        fontLookup.length - 1,
+      );
+      minimumSizeRequired = fontLookup[fontWeightIndex];
+      return (
+        minimumSizeRequired <= fontSize &&
+        minimumSizeRequired !== 999 &&
+        minimumSizeRequired !== 777
+      );
+    };
 
-  const passesGraphic = () => Math.abs(ratio) >= graphicMinLc;
+    const passesGraphic = () => Math.abs(ratio) >= graphicMinLc;
 
-  if (!isGraphic) {
-    bestTextCombo = getOptimalAPCACombo(background, fontWeight);
+    if (!isGraphic) {
+      bestTextCombo = getOptimalAPCACombo(background, fontWeight);
 
-    // If only bigger text will work, return that suggestion.
-    if (bestTextCombo.size > fontSize) {
+      // If only bigger text will work, return that suggestion.
+      if (bestTextCombo.size > fontSize) {
+        return {
+          color: getHex(bestTextCombo.suggestedColor),
+          size: bestTextCombo.size,
+        };
+      }
+
+      // If current combo already passes, no need to adjust colour.
+      if (passesText()) {
+        return { color: getHex(color), size: null };
+      }
+    } else if (passesGraphic()) {
+      return { color: getHex(color), size: null };
+    }
+
+    let previousColor = color;
+    let step = 0.16;
+    const percentChange = 0.5;
+    const precision = 0.01;
+    let iterations = 0;
+    const maxIterations = 50;
+
+    while (step >= precision && iterations < maxIterations) {
+      iterations += 1;
+      adjustedColor = adjustColor(adjustedColor, step);
+
+      contrast = getAPCAValue(adjustedColor, background);
+      ratio = contrast.ratio;
+
+      const passes = isGraphic ? passesGraphic() : passesText();
+
+      // console.log(`%c ${getHex(adjustedColor)} | ${displayAPCAValue(ratio)} | ${isGraphic ? `Lc≥${graphicMinLc}` : fontLookup}`, `color:${getHex(adjustedColor)};background:${getHex(background)}`);
+
+      if (passes) {
+        if (Math.abs(ratio) <= Math.abs(bestContrast) || !lastValidColor) {
+          lastValidColor = adjustedColor;
+          bestContrast = ratio;
+        }
+        adjustedColor = previousColor;
+        step *= percentChange;
+      }
+
+      previousColor = adjustedColor;
+    }
+
+    if (lastValidColor) {
+      return { color: getHex(lastValidColor), size: null };
+    }
+
+    if (!isGraphic && bestTextCombo) {
       return {
         color: getHex(bestTextCombo.suggestedColor),
         size: bestTextCombo.size,
       };
     }
 
-    // If current combo already passes, no need to adjust colour.
-    if (passesText()) {
-      return { color: getHex(color), size: null };
-    }
-  } else if (passesGraphic()) {
     return { color: getHex(color), size: null };
-  }
-
-  let previousColor = color;
-  let step = 0.16;
-  const percentChange = 0.5;
-  const precision = 0.01;
-  let iterations = 0;
-  const maxIterations = 50;
-
-  while (step >= precision && iterations < maxIterations) {
-    iterations += 1;
-    adjustedColor = adjustColor(adjustedColor, step);
-
-    contrast = getAPCAValue(adjustedColor, background);
-    ratio = contrast.ratio;
-
-    const passes = isGraphic ? passesGraphic() : passesText();
-
-    // console.log(`%c ${getHex(adjustedColor)} | ${displayAPCAValue(ratio)} | ${isGraphic ? `Lc≥${graphicMinLc}` : fontLookup}`, `color:${getHex(adjustedColor)};background:${getHex(background)}`);
-
-    if (passes) {
-      if (Math.abs(ratio) <= Math.abs(bestContrast) || !lastValidColor) {
-        lastValidColor = adjustedColor;
-        bestContrast = ratio;
-      }
-      adjustedColor = previousColor;
-      step *= percentChange;
-    }
-
-    previousColor = adjustedColor;
-  }
-
-  if (lastValidColor) {
-    return { color: getHex(lastValidColor), size: null };
-  }
-
-  if (!isGraphic && bestTextCombo) {
-    return {
-      color: getHex(bestTextCombo.suggestedColor),
-      size: bestTextCombo.size,
-    };
-  }
-
-  return { color: getHex(color), size: null };
-}
+  },
+  (color, bg, weight, size) => `${color.join(',')}|${bg.join(',')}|${weight}|${size}`,
+);
 
 /**
  * Calculate an elements contrast based on WCAG 2.0 contrast algorithm.
@@ -506,11 +538,19 @@ export function wcagAlgorithm(
   const { ratio, blendedColor } = calculateContrast(color, background);
   const isLargeText = fontSize >= 24 || (fontSize >= 18.67 && fontWeight >= 700);
 
+  // Misc exceptions.
+  const tagName = $el.tagName.toLowerCase();
+  const isCloseIcon = /^[x×✕✖✗✘]$/i.test($el.textContent);
+  const isCloseButton = (tagName === 'button' || tagName === 'a') && isCloseIcon;
+
+  // Evaluate.
   let hasLowContrast;
-  if (contrastAlgorithm === 'AAA') {
+  if (isCloseButton) {
+    hasLowContrast = ratio > 0 && ratio < 3;
+  } else if (contrastAlgorithm === 'AAA') {
     hasLowContrast = isLargeText ? ratio < 4.5 : ratio < 7;
   } else {
-    const hasLowContrastNormalText = ratio > 1 && ratio < 4.5;
+    const hasLowContrastNormalText = ratio > 0 && ratio < 4.5;
     hasLowContrast = isLargeText ? ratio < 3 : hasLowContrastNormalText;
   }
 
@@ -524,7 +564,7 @@ export function wcagAlgorithm(
       fontWeight,
       isLargeText,
       opacity,
-      textUnderline: getComputedStyle($el).textDecorationLine,
+      textUnderline: Utils.getCachedStyle($el).textDecorationLine,
     };
   }
   return null;
@@ -568,7 +608,7 @@ export function apcaAlgorithm(
       fontWeight,
       fontSize,
       opacity,
-      textUnderline: getComputedStyle($el).textDecorationLine,
+      textUnderline: Utils.getCachedStyle($el).textDecorationLine,
     };
   }
   return null;
@@ -597,3 +637,25 @@ export function checkElementContrast(
   const algorithm = contrastAlgorithm === 'APCA' ? apcaAlgorithm : wcagAlgorithm;
   return algorithm($el, color, background, fontSize, fontWeight, opacity, contrastAlgorithm);
 }
+
+/**
+ * Extracts and normalizes all valid CSS color values found in a string.
+ * @param {String} cssValue Usually from `background-image:`
+ * @returns {Array} Returns array of RGB-converted colours.
+ */
+const colorTokenPattern =
+  /#(?:[\da-f]{3,4}|[\da-f]{6}|[\da-f]{8})\b|\b(?:rgb|hsl|lab|lch|oklab|oklch)a?\([^)]+\)|\b[a-z]+\b/gi;
+export const extractColorFromString = memoize(
+  function extractColorFromString(cssValue) {
+    const tokens = cssValue.match(colorTokenPattern);
+    if (!tokens) return [];
+    const colors = [];
+    for (const token of tokens) {
+      if (/^[a-z]+$/i.test(token) && !CSS.supports('color', token)) continue;
+      const color = convertToRGBA(token);
+      if (color) colors.push(color);
+    }
+    return colors;
+  },
+  (cssValue) => cssValue,
+);

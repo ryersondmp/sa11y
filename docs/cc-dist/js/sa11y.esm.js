@@ -1,9 +1,9 @@
 /*!
       * Sa11y, the accessibility quality assurance assistant.
-      * @version 4.4.1
+      * @version 5.0.0
       * @author Adam Chaboryk
       * @license GPL-2.0-or-later
-      * @copyright © 2020 - 2025 Toronto Metropolitan University.
+      * @copyright © 2020 - 2026 Toronto Metropolitan University.
       * @contact adam.chaboryk@torontomu.ca
       * GitHub: git+https://github.com/ryersondmp/sa11y.git | Website: https://sa11y.netlify.app
       * The above copyright notice shall be included in all copies or substantial portions of the Software.
@@ -23,7 +23,12 @@ const defaultOptions = {
   linkIgnore: "",
   linkIgnoreSpan: "",
   linkIgnoreStrings: [],
+  paragraphIgnore: "table p",
   ignoreContentOutsideRoots: false,
+  ignoreByTest: {
+    LABELS_ARIA_LABELS_INPUT: ':is(header, footer) [type="search"]',
+    LABELS_PLACEHOLDER: ':is(header, footer) [type="search"]'
+  },
   // Control panel settings
   aboutContent: "",
   panelPosition: "right",
@@ -49,6 +54,9 @@ const defaultOptions = {
   selectorPath: false,
   shadowComponents: "",
   autoDetectShadowComponents: false,
+  pepper: window.location.hostname,
+  // Provide a string to seed hashes.
+  unitTestMode: false,
   // Annotations
   showGoodImageButton: true,
   showGoodLinkButton: true,
@@ -84,6 +92,9 @@ const defaultOptions = {
   extraPlaceholderStopWords: "",
   imageWithinLightbox: "",
   initialHeadingLevel: [],
+  // Shared properties for page language detection
+  langOfPartsPlugin: false,
+  langOfPartsCache: true,
   // All checks
   checks: {
     // Heading checks
@@ -134,6 +145,8 @@ const defaultOptions = {
     LINK_ALT_MAYBE_BAD: {
       minLength: 15
     },
+    ALT_MAYBE_BAD_WARNING: true,
+    LINK_ALT_MAYBE_BAD_WARNING: true,
     // Link checks
     DUPLICATE_TITLE: {
       dismissAll: true
@@ -161,13 +174,15 @@ const defaultOptions = {
       dismissAll: true
     },
     LINK_FILE_EXT: true,
+    LINK_UNPRONOUNCEABLE: true,
     // Form labels checks
     LABELS_MISSING_IMAGE_INPUT: true,
     LABELS_INPUT_RESET: true,
     LABELS_MISSING_LABEL: true,
-    LABELS_ARIA_LABEL_INPUT: true,
     LABELS_NO_FOR_ATTRIBUTE: true,
     LABELS_PLACEHOLDER: true,
+    LABELS_ARIA_LABEL_INPUT: true,
+    ARIA_INPUT_FIELD_NAME: true,
     // Embedded content checks
     EMBED_AUDIO: {
       sources: ""
@@ -198,6 +213,7 @@ const defaultOptions = {
     TABLES_MISSING_HEADINGS: true,
     TABLES_SEMANTIC_HEADING: true,
     TABLES_EMPTY_HEADING: true,
+    TABLES_INVALID_HEADERS_REF: true,
     QA_FAKE_HEADING: true,
     QA_FAKE_LIST: true,
     QA_UPPERCASE: true,
@@ -206,13 +222,25 @@ const defaultOptions = {
     QA_NESTED_COMPONENTS: {
       sources: ""
     },
-    QA_JUSTIFY: true,
-    QA_SMALL_TEXT: true,
+    QA_JUSTIFY: {
+      dismissAll: true
+    },
+    QA_SMALL_TEXT: {
+      dismissAll: true
+    },
     // Meta checks
     META_LANG: true,
+    META_LANG_VALID: true,
+    META_LANG_SUGGEST: true,
     META_SCALABLE: true,
     META_MAX: true,
     META_REFRESH: true,
+    PAGE_LANG_CONFIDENCE: {
+      confidence: 0.95
+    },
+    LANG_OF_PARTS: true,
+    LANG_MISMATCH: true,
+    LANG_OF_PARTS_ALT: true,
     // Developer checks
     DUPLICATE_ID: true,
     META_TITLE: true,
@@ -223,6 +251,7 @@ const defaultOptions = {
     BTN_EMPTY: true,
     BTN_EMPTY_LABELLEDBY: true,
     BTN_ROLE_IN_NAME: true,
+    LINK_MAYBE_BUTTON: true,
     // Contrast checks
     CONTRAST_WARNING: {
       dismissAll: true
@@ -240,6 +269,45 @@ const defaultOptions = {
     }
   }
 };
+const State = {
+  option: { ...defaultOptions },
+  results: [],
+  headingOutline: [],
+  imageResults: [],
+  counts: {
+    error: 0,
+    warning: 0,
+    dismissed: 0
+  },
+  customChecks: {
+    running: false,
+    finished: 0
+  },
+  dismissedResults: [],
+  start: 0
+};
+const resetState = () => {
+  State.results = [];
+  State.headingOutline = [];
+  State.imageResults = [];
+  State.counts.error = 0;
+  State.counts.warning = 0;
+  State.counts.dismissed = 0;
+  State.customChecks.running = false;
+  State.customChecks.finished = 0;
+  State.dismissedResults = [];
+  State.start = 0;
+};
+const setState = (newOptions) => {
+  State.option = {
+    ...State.option,
+    ...newOptions,
+    checks: {
+      ...State.option.checks,
+      ...newOptions.checks || {}
+    }
+  };
+};
 const Lang = {
   langStrings: {},
   addI18n(strings) {
@@ -251,12 +319,19 @@ const Lang = {
   sprintf(string, ...args) {
     let transString = this._(string);
     transString = this.prepHTML(transString);
+    const el2 = document.createElement("div");
+    el2.innerHTML = transString;
     if (args?.length) {
-      args.forEach((arg) => {
-        transString = transString.replace(/%\([a-zA-z]+\)/, arg);
+      args.forEach((_arg, index2) => {
+        el2.innerHTML = el2.innerHTML.replace(/%\([a-zA-Z_]+\)/, `<span data-arg='${index2}'></span>`);
+      });
+      args.forEach((arg, index2) => {
+        const replacement = el2.querySelector(`[data-arg="${index2}"]`);
+        if (!replacement || arg === null) return;
+        replacement.textContent = this.truncateString(String(arg), 300);
       });
     }
-    return transString;
+    return el2;
   },
   translate(string) {
     return this.langStrings[string] || string;
@@ -266,9 +341,14 @@ const Lang = {
       /{L}/g,
       `<strong class="badge"><span class="link-icon"></span><span class="visually-hidden">${Lang._("LINKED")}</span></strong>`
     );
+  },
+  truncateString(string, maxLength) {
+    const truncatedString = string.substring(0, maxLength).trimEnd();
+    return string.length > maxLength ? `${truncatedString}...` : string;
   }
 };
 function removeAlert() {
+  if (State.option.headless) return;
   const Sa11yPanel = document.querySelector("sa11y-control-panel").shadowRoot;
   const alert = Sa11yPanel.getElementById("panel-alert");
   const alertText = Sa11yPanel.getElementById("panel-alert-text");
@@ -282,7 +362,10 @@ function removeAlert() {
     alertPreview.removeChild(alertPreview.firstChild);
   }
 }
-function createAlert(alertMessage, errorPreview, extendedPreview) {
+function createAlert(alertMessage, errorPreview, extendedPreview, dismissable = false) {
+  if (State.option.headless) return;
+  const storageKey = dismissable ? `sa11y-dismissed-alert-${alertMessage.textContent.substring(0, 20)}` : "";
+  if (dismissable && store.getItem(storageKey)) return;
   removeAlert();
   const Sa11yPanel = document.querySelector("sa11y-control-panel").shadowRoot;
   const alert = Sa11yPanel.getElementById("panel-alert");
@@ -291,11 +374,46 @@ function createAlert(alertMessage, errorPreview, extendedPreview) {
   const alertClose = Sa11yPanel.getElementById("close-alert");
   const skipButton = Sa11yPanel.getElementById("skip-button");
   alert.classList.add("active");
-  alertText.innerHTML = alertMessage;
-  const elementPreview = extendedPreview ? `<div class="element-preview">${extendedPreview}</div>` : "";
+  if (typeof alertMessage === "string") {
+    alertText.textContent = alertMessage;
+  } else {
+    alertText.appendChild(alertMessage);
+  }
+  alertPreview.innerHTML = "";
   if (errorPreview) {
     alertPreview.classList.add("panel-alert-preview");
-    alertPreview.innerHTML = `${elementPreview}<div class="preview-message">${errorPreview}</div>`;
+    if (extendedPreview) {
+      const elementPreview = document.createElement("div");
+      elementPreview.className = "element-preview";
+      if (typeof extendedPreview === "string") {
+        elementPreview.textContent = extendedPreview;
+      } else {
+        elementPreview.appendChild(extendedPreview);
+      }
+      alertPreview.appendChild(elementPreview);
+    }
+    const previewMessage = document.createElement("div");
+    previewMessage.className = "preview-message";
+    if (typeof errorPreview === "string") {
+      previewMessage.textContent = errorPreview;
+    } else {
+      previewMessage.appendChild(errorPreview);
+    }
+    alertPreview.appendChild(previewMessage);
+  }
+  if (dismissable) {
+    const dismissBtn = document.createElement("button");
+    dismissBtn.setAttribute("type", "button");
+    dismissBtn.setAttribute("class", "dismiss-alert");
+    dismissBtn.textContent = Lang._("Dismiss");
+    dismissBtn.id = "dismiss-alert";
+    dismissBtn.setAttribute("aria-labelledby", "dismiss-alert alert-heading");
+    dismissBtn.setAttribute("aria-describedby", "panel-alert-text");
+    dismissBtn.addEventListener("click", () => {
+      store.setItem(storageKey, "true");
+      closeAlert();
+    });
+    alertText.appendChild(dismissBtn);
   }
   setTimeout(() => alertClose.focus(), 300);
   function closeAlert() {
@@ -313,44 +431,27 @@ function createAlert(alertMessage, errorPreview, extendedPreview) {
 }
 const Constants = /* @__PURE__ */ (function myConstants() {
   const Global = {};
-  function initializeGlobal(option) {
+  function initializeGlobal() {
     Global.html = document.querySelector("html");
-    Global.headless = option.headless;
-    Global.panelPosition = option.panelPosition;
-    Global.dismissAnnotations = option.dismissAnnotations;
-    Global.aboutContent = option.aboutContent;
-    Global.shadowDetection = option.shadowComponents.length > 0 || option.autoDetectShadowComponents === true;
-    Global.fixedRoots = option.fixedRoots;
-    Global.ignoreAriaOnElements = option.ignoreAriaOnElements;
-    Global.ignoreTextInElements = option.ignoreTextInElements;
-    Global.contrastSuggestions = option.contrastSuggestions;
-    Global.contrastAlgorithm = option.contrastAlgorithm.toUpperCase();
-    Global.developerPlugin = option.developerPlugin;
-    Global.colourFilterPlugin = option.colourFilterPlugin;
-    Global.checkAllHideToggles = option.checkAllHideToggles;
-    Global.exportResultsPlugin = option.exportResultsPlugin;
-    Global.readabilityPlugin = option.readabilityPlugin;
-    Global.showImageOutline = option.showImageOutline;
-    Global.editImageURLofCMS = option.editImageURLofCMS;
-    Global.relativePathImageSRC = option.relativePathImageSRC;
-    Global.relativePathImageID = option.relativePathImageID;
-    Global.ignoreEditImageURL = option.ignoreEditImageURL;
-    Global.ignoreEditImageClass = option.ignoreEditImageClass;
-    Global.showMovePanelToggle = option.showMovePanelToggle;
+    Global.shadowDetection = State.option.shadowComponents.length > 0 || State.option.autoDetectShadowComponents === true;
+    const panelPositions = /* @__PURE__ */ new Set(["top-left", "top-right", "left", "right"]);
+    const positionValue = State.option.panelPosition?.trim().toLowerCase();
+    Global.panelPosition = panelPositions.has(positionValue) ? positionValue : "right";
+    Global.contrastAlgorithm = State.option.contrastAlgorithm.toUpperCase();
     let reducedMotion = false;
     if (typeof window.matchMedia === "function") {
       reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
     }
     Global.scrollBehaviour = !reducedMotion || reducedMotion.matches ? "auto" : "smooth";
-    Global.langDirection = Global.html.getAttribute("dir") === "rtl" ? "rtl" : "ltr";
-    const documentSources = option.checks.QA_DOCUMENT.sources;
+    Global.langDirection = Global.html.getAttribute("dir")?.trim()?.toLowerCase() === "rtl" ? "rtl" : "ltr";
+    const documentSources = State.option.checks.QA_DOCUMENT.sources;
     const defaultDocumentSources = 'a[href$=".doc"], a[href$=".docx"], a[href*=".doc?"], a[href*=".docx?"], a[href$=".ppt"], a[href$=".pptx"], a[href*=".ppt?"], a[href*=".pptx?"], a[href^="https://drive.google.com/file"], a[href^="https://docs.google."], a[href^="https://sway."]';
     if (documentSources) {
       Global.documentSources = `${defaultDocumentSources}, ${documentSources}`;
     } else {
       Global.documentSources = defaultDocumentSources;
     }
-    const videoSources = option.checks.EMBED_VIDEO.sources;
+    const videoSources = State.option.checks.EMBED_VIDEO.sources;
     const defaultVideoSources = 'video, [src*="Video"], [src*="video"], [src*="watch"], [src*="youtube.com"], [src*="vimeo.com"], [src*="panopto.com"], [src*="wistia.com"], [src*="dailymotion.com"], [src*="brightcove.com"], [src*="vidyard.com"]';
     if (videoSources) {
       const videos = videoSources.split(/\s*[\s,]\s*/).map(($el) => `[src*="${$el}"]`);
@@ -358,7 +459,7 @@ const Constants = /* @__PURE__ */ (function myConstants() {
     } else {
       Global.VideoSources = defaultVideoSources;
     }
-    const audioSources = option.checks.EMBED_AUDIO.sources;
+    const audioSources = State.option.checks.EMBED_AUDIO.sources;
     const defaultAudioSources = 'audio, [src*="soundcloud.com"], [src*="simplecast.com"], [src*="podbean.com"], [src*="buzzsprout.com"], [src*="blubrry.com"], [src*="transistor.fm"], [src*="fusebox.fm"], [src*="libsyn.com"], [src*="spotify.com"], [src*="podcasts.apple.com"], [src*="castbox.fm"], [src*="megaphone.fm"], [src*="spreaker.com"], [src*="anchor.fm"], [src*="rss.com"], [src*="redcircle.com"]';
     if (audioSources) {
       const audio = audioSources.split(/\s*[\s,]\s*/).map(($el) => `[src*="${$el}"]`);
@@ -366,7 +467,7 @@ const Constants = /* @__PURE__ */ (function myConstants() {
     } else {
       Global.AudioSources = defaultAudioSources;
     }
-    const dataVizSources = option.checks.EMBED_DATA_VIZ.sources;
+    const dataVizSources = State.option.checks.EMBED_DATA_VIZ.sources;
     const defaultDataVizSources = '[src*="datastudio"], [src*="tableau"], [src*="lookerstudio"], [src*="powerbi"], [src*="qlik"]';
     if (dataVizSources) {
       const data = dataVizSources.split(/\s*[\s,]\s*/).map(($el) => `[src*="${$el}"]`);
@@ -408,35 +509,31 @@ const Constants = /* @__PURE__ */ (function myConstants() {
           Constants.Root.Readability.push(root);
         });
       } else {
+        Root.Readability = Root.areaToCheck;
         console.error(
           `Sa11y: The target readability root (${desiredReadabilityRoot}) does not exist.`
         );
-      }
-    } catch {
-      Root.Readability.length = 0;
-    }
-    if (Root.Readability.length === 0 && Global.headless === false) {
-      if (Root.areaToCheck.length === 0) {
-        Root.Readability.push(document.body);
-      } else {
-        Root.Readability = Root.areaToCheck;
         setTimeout(() => {
           const { readabilityDetails, readabilityToggle } = Constants.Panel;
           const readabilityOn = readabilityToggle?.getAttribute("aria-pressed") === "true";
           const alert = Constants.Panel.readability.querySelector("#readability-alert");
           if (readabilityDetails && readabilityOn && !alert) {
-            const roots = Root.areaToCheck.map((el) => {
-              if (el.id) return `#${el.id}`;
-              if (el.className) return `.${el.className.split(/\s+/).filter(Boolean).join(".")}`;
-              return el.tagName.toLowerCase();
+            const roots2 = Root.areaToCheck.map((el2) => {
+              if (el2.id) return `#${el2.id}`;
+              if (el2.className) return `.${el2.className.split(/\s+/).filter(Boolean).join(".")}`;
+              return el2.tagName.toLowerCase();
             }).join(", ");
             const note = document.createElement("div");
             note.id = "readability-alert";
-            note.innerHTML = `<hr><p>${Lang.sprintf("MISSING_READABILITY_ROOT", roots, desiredReadabilityRoot)}</p>`;
+            note.appendChild(document.createElement("hr"));
+            const message = Lang.sprintf("MISSING_READABILITY_ROOT", roots2, desiredReadabilityRoot);
+            note.appendChild(message);
             readabilityDetails.insertAdjacentElement("afterend", note);
           }
         }, 100);
       }
+    } catch {
+      Root.Readability.length = 0;
     }
   }
   const Panel = {};
@@ -494,9 +591,8 @@ const Constants = /* @__PURE__ */ (function myConstants() {
     Panel.readabilityDetails = Sa11yPanel.getElementById("readability-details");
   }
   const Readability = {};
-  function initializeReadability(option) {
-    if (option.readabilityPlugin) {
-      Readability.Lang = Lang._("LANG_CODE").substring(0, 2);
+  function initializeReadability() {
+    if (State.option.readabilityPlugin) {
       const supported = [
         "en",
         "fr",
@@ -512,21 +608,15 @@ const Constants = /* @__PURE__ */ (function myConstants() {
         "nn",
         "pt"
       ];
-      const pageLang = Constants.Global.html.getAttribute("lang");
-      if (!pageLang) {
-        Readability.Plugin = false;
-      } else {
-        const pageLangLowerCase = pageLang.toLowerCase().substring(0, 2);
-        if (!supported.includes(pageLangLowerCase) || !supported.includes(Readability.Lang)) {
-          Readability.Plugin = false;
-        } else {
-          Readability.Plugin = true;
-        }
-      }
+      const langCode = Lang._("LANG_CODE").substring(0, 2);
+      const pageLang = Constants.Global.html.getAttribute("lang")?.trim()?.toLowerCase().substring(0, 2);
+      Readability.Lang = langCode;
+      const isSupported = pageLang && supported.includes(pageLang) && supported.includes(langCode);
+      Readability.Plugin = Boolean(isSupported);
     }
   }
   const Exclusions = {};
-  function initializeExclusions(option) {
+  function initializeExclusions() {
     Exclusions.Sa11yElements = [
       "sa11y-heading-label",
       "sa11y-heading-anchor",
@@ -539,8 +629,8 @@ const Constants = /* @__PURE__ */ (function myConstants() {
     ];
     const exclusions = ["style", "script", "noscript"];
     Exclusions.Container = ["#wpadminbar", "#wpadminbar *", ...exclusions];
-    if (option.containerIgnore) {
-      const containerSelectors = option.containerIgnore.split(",").map((item) => item.trim());
+    if (State.option.containerIgnore) {
+      const containerSelectors = State.option.containerIgnore.split(",").map((item) => item.trim());
       Exclusions.Container = Exclusions.Container.concat(
         containerSelectors.flatMap((item) => [`${item} *`, item])
       );
@@ -560,31 +650,44 @@ const Constants = /* @__PURE__ */ (function myConstants() {
       "meter",
       "meter *",
       "iframe",
-      "svg title",
-      "svg desc",
+      "svg",
+      "svg *",
+      "script",
+      "style",
+      "noscript",
+      "template",
+      "head",
+      "head *",
+      "title",
+      "meta",
+      "link",
+      "base",
+      "datalist",
+      "datalist *",
       ...exclusions
     ];
-    if (option.contrastIgnore) {
-      Exclusions.Contrast = option.contrastIgnore.split(",").map(($el) => $el.trim()).flatMap(($el) => [$el, `${$el} *`]).concat(Exclusions.Contrast);
+    if (State.option.contrastIgnore) {
+      Exclusions.Contrast = State.option.contrastIgnore.split(",").map(($el) => $el.trim()).flatMap(($el) => [$el, `${$el} *`]).concat(Exclusions.Contrast);
     }
     Exclusions.Readability = ["nav li", '[role="navigation"] li', ...exclusions];
-    if (option.readabilityIgnore) {
-      Exclusions.Readability = option.readabilityIgnore.split(",").map(($el) => $el.trim()).flatMap(($el) => [$el, `${$el} *`]).concat(Exclusions.Readability);
+    if (State.option.readabilityIgnore) {
+      Exclusions.Readability = State.option.readabilityIgnore.split(",").map(($el) => $el.trim()).flatMap(($el) => [$el, `${$el} *`]).concat(Exclusions.Readability);
     }
-    Exclusions.Headings = option.headerIgnore ? option.headerIgnore.split(",").map(($el) => $el.trim()) : [];
-    Exclusions.HeaderSpan = option.headerIgnoreSpan ? option.headerIgnoreSpan.split(",").map(($el) => $el.trim()) : [];
-    Exclusions.Outline = option.outlineIgnore ? option.outlineIgnore.split(",").map(($el) => $el.trim()) : [];
+    Exclusions.Headings = State.option.headerIgnore ? State.option.headerIgnore.split(",").map(($el) => $el.trim()) : [];
+    Exclusions.HeaderSpan = State.option.headerIgnoreSpan ? State.option.headerIgnoreSpan.split(",").map(($el) => $el.trim()) : [];
+    Exclusions.Outline = State.option.outlineIgnore ? State.option.outlineIgnore.split(",").map(($el) => $el.trim()) : [];
     Exclusions.Images = [
-      'img[role="presentation"]:not(a img[role="presentation"]), img[aria-hidden="true"]:not(a img[aria-hidden="true"])'
+      'img[role="presentation"]:not(a img[role="presentation"]), img[aria-hidden="true"]:not(a img[aria-hidden="true"]), img[role="none"]:not(a img[role="none"]), [aria-hidden="true"][role="img"]'
     ];
-    if (option.imageIgnore) {
-      Exclusions.Images = option.imageIgnore.split(",").map(($el) => $el.trim()).concat(Exclusions.Images);
+    if (State.option.imageIgnore) {
+      Exclusions.Images = State.option.imageIgnore.split(",").map(($el) => $el.trim()).concat(Exclusions.Images);
     }
-    Exclusions.Links = [".anchorjs-link"];
-    if (option.linkIgnore) {
-      Exclusions.Links = option.linkIgnore.split(",").map(($el) => $el.trim()).concat(Exclusions.Links);
+    Exclusions.Links = [".anchorjs-link", '[aria-hidden="true"][tabindex^="-"]'];
+    if (State.option.linkIgnore) {
+      Exclusions.Links = State.option.linkIgnore.split(",").map(($el) => $el.trim()).concat(Exclusions.Links);
     }
-    Exclusions.LinkSpan = option.linkIgnoreSpan ? option.linkIgnoreSpan.split(",").map(($el) => $el.trim()) : [];
+    Exclusions.LinkSpan = State.option.linkIgnoreSpan ? State.option.linkIgnoreSpan.split(",").map(($el) => $el.trim()) : [];
+    Exclusions.Paragraphs = State.option.paragraphIgnore ? State.option.paragraphIgnore.split(",").map(($el) => $el.trim()) : [];
   }
   return {
     initializeRoot,
@@ -603,8 +706,8 @@ function find(selector, desiredRoot, exclude) {
   const root = [];
   if (desiredRoot === "document") {
     root.push(document.body);
-    if (Constants.Global.fixedRoots) {
-      root.push(Constants.Global.fixedRoots);
+    if (State.option.fixedRoots) {
+      root.push(State.option.fixedRoots);
     }
   } else if (desiredRoot === "root") {
     root.push(Constants.Root.areaToCheck);
@@ -623,9 +726,9 @@ function find(selector, desiredRoot, exclude) {
     );
     if (shadowComponents.length) {
       const shadowFind = [];
-      elements.forEach((el, i) => {
-        if (el?.matches?.("[data-sa11y-has-shadow-root]") && el?.shadowRoot) {
-          shadowFind[i] = el.shadowRoot.querySelectorAll(
+      elements.forEach((el2, i) => {
+        if (el2?.matches?.("[data-sa11y-has-shadow-root]") && el2?.shadowRoot) {
+          shadowFind[i] = el2.shadowRoot.querySelectorAll(
             `:is(${selector}):not(${exclusions}${additional})`
           );
         }
@@ -642,146 +745,6 @@ function find(selector, desiredRoot, exclude) {
   });
   return list;
 }
-const Elements = /* @__PURE__ */ (function myElements() {
-  const Found = {};
-  function initializeElements(option) {
-    Found.Everything = find("*", "root", Constants.Exclusions.Sa11yElements);
-    Found.Contrast = Found.Everything.filter(($el) => {
-      const matchesSelector = Constants.Exclusions.Contrast.some(
-        (exclusion) => $el.matches(exclusion)
-      );
-      return !matchesSelector && !Constants.Exclusions.Contrast.includes($el);
-    });
-    Found.Images = Found.Everything.filter(
-      ($el) => $el.tagName === "IMG" && !Constants.Exclusions.Images.some((selector) => $el.matches(selector))
-    );
-    Found.Links = Found.Everything.filter(
-      ($el) => ($el.tagName === "A" || $el.tagName === "a") && $el.hasAttribute("href") && !$el.matches('[role="button"]') && // Exclude links with [role="button"]
-      !Constants.Exclusions.Links.some((selector) => $el.matches(selector))
-    );
-    Found.Headings = find(
-      'h1, h2, h3, h4, h5, h6, [role="heading"][aria-level]',
-      option.ignoreContentOutsideRoots || option.fixedRoots ? "root" : "document",
-      Constants.Exclusions.Headings
-    );
-    Found.HeadingOne = find(
-      'h1, [role="heading"][aria-level="1"]',
-      option.ignoreContentOutsideRoots || option.fixedRoots ? "root" : "document",
-      Constants.Exclusions.Headings
-    );
-    Found.HeadingOverrideStart = /* @__PURE__ */ new WeakMap();
-    Found.HeadingOverrideEnd = /* @__PURE__ */ new WeakMap();
-    if (option.initialHeadingLevel) {
-      option.initialHeadingLevel.forEach((section) => {
-        const headingsInSection = find(
-          `${section.selector} :is(h1,h2,h3,h4,h5,h6,[aria-role=heading][aria-level])`,
-          option.ignoreContentOutsideRoots || option.fixedRoots ? "root" : "document",
-          Constants.Exclusions.Headings
-        );
-        if (headingsInSection.length > 0) {
-          Found.HeadingOverrideStart.set(headingsInSection[0], section.previousHeading);
-          Found.HeadingOverrideEnd.set(headingsInSection.pop(), section.previousHeading);
-        }
-      });
-    }
-    Found.ExcludedHeadings = Found.Headings.filter(
-      (heading) => Constants.Exclusions.Headings.some((exclusion) => heading.matches(exclusion))
-    );
-    Found.ExcludedOutlineHeadings = Found.Headings.filter(
-      (heading) => Constants.Exclusions.Outline.some((exclusion) => heading.matches(exclusion))
-    );
-    Found.OutlineIgnore = Elements.Found.ExcludedOutlineHeadings.concat(
-      Elements.Found.ExcludedHeadings
-    );
-    Found.Paragraphs = Found.Everything.filter(
-      ($el) => $el.tagName === "P" && !$el.closest("table")
-    );
-    Found.Lists = Found.Everything.filter(($el) => $el.tagName === "LI");
-    Found.Blockquotes = Found.Everything.filter(($el) => $el.tagName === "BLOCKQUOTE");
-    Found.Tables = Found.Everything.filter(
-      ($el) => $el.tagName === "TABLE" && !$el.matches('[role="presentation"]') && !$el.matches('[role="none"]')
-    );
-    Found.StrongItalics = Found.Everything.filter(($el) => ["STRONG", "EM"].includes($el.tagName));
-    Found.Subscripts = Found.Everything.filter(($el) => ["SUP", "SUB"].includes($el.tagName));
-    const badLinkSources = option.checks.QA_BAD_LINK.sources;
-    Found.CustomErrorLinks = badLinkSources.length ? Found.Links.filter(
-      ($el) => badLinkSources.split(",").some((selector) => $el.matches(selector.trim()))
-    ) : [];
-    const readabilityExclusions = ($el) => Constants.Root.Readability.some((rootEl) => rootEl.contains($el)) && !Constants.Exclusions.Readability.some((selector) => $el.matches(selector));
-    Found.Readability = [
-      ...Found.Paragraphs.filter(readabilityExclusions),
-      ...Found.Lists.filter(readabilityExclusions)
-    ];
-    const nestedSources = option.checks.QA_NESTED_COMPONENTS.sources || '[role="tablist"], details';
-    Found.NestedComponents = Found.Everything.filter(($el) => $el.matches(nestedSources));
-    Found.TabIndex = Found.Everything.filter(
-      ($el) => $el.hasAttribute("tabindex") && $el.getAttribute("tabindex") !== "0" && !$el.getAttribute("tabindex").startsWith("-")
-    );
-    Found.Svg = Found.Everything.filter(($el) => $el.tagName === "svg");
-    Found.Buttons = Found.Everything.filter(
-      ($el) => $el.tagName === "BUTTON" || $el.matches('[role="button"]')
-    );
-    Found.Inputs = Found.Everything.filter(
-      ($el) => ["INPUT", "SELECT", "TEXTAREA", "METER", "PROGRESS"].includes($el.tagName)
-    );
-    Found.Labels = Found.Everything.filter(($el) => $el.tagName === "LABEL");
-    Found.iframes = Found.Everything.filter(
-      ($el) => ["IFRAME", "AUDIO", "VIDEO"].includes($el.tagName)
-    );
-    Found.Videos = Found.iframes.filter(($el) => $el.matches(Constants.Global.VideoSources));
-    Found.Audio = Found.iframes.filter(($el) => $el.matches(Constants.Global.AudioSources));
-    Found.Visualizations = Found.iframes.filter(
-      ($el) => $el.matches(Constants.Global.VisualizationSources)
-    );
-    Found.EmbeddedContent = Found.iframes.filter(
-      ($el) => !$el.matches(Constants.Global.AllEmbeddedContent)
-    );
-    const html = document.querySelector("html");
-    Found.Language = html.getAttribute("lang");
-  }
-  const Annotations2 = {};
-  function initializeAnnotations() {
-    Annotations2.Array = find("sa11y-annotation", "document");
-    Annotations2.Array.forEach((annotation, i) => {
-      annotation.setAttribute("data-sa11y-position", i);
-    });
-  }
-  return {
-    initializeElements,
-    Found,
-    initializeAnnotations,
-    Annotations: Annotations2
-  };
-})();
-const styles$1 = "[data-sa11y-overflow]{overflow:auto!important}[data-sa11y-error]{outline-offset:2px;outline:5px solid var(--sa11y-error)!important}[data-sa11y-warning]:not([data-sa11y-error]){outline-offset:2px;outline:5px solid var(--sa11y-warning)!important}[data-sa11y-pulse-border]{box-shadow:0;animation:1s 2 pulse;outline:5px solid var(--sa11y-focus-color)!important}[data-sa11y-pulse-border]:hover,[data-sa11y-pulse-border]:focus{animation:none}@keyframes pulse{0%{box-shadow:0 0 0 5px var(--sa11y-focus-color)}50%{box-shadow:0 0 0 12px var(--sa11y-pulse-color)}to{box-shadow:0 0 0 5px var(--sa11y-pulse-color)}}img[data-sa11y-pulse-border],h1[data-sa11y-pulse-border],h2[data-sa11y-pulse-border],h3[data-sa11y-pulse-border],h4[data-sa11y-pulse-border],h5[data-sa11y-pulse-border],h6[data-sa11y-pulse-border]{animation:1s 2 pulse-scale}@keyframes pulse-scale{0%{opacity:1;transform:scale(1)}50%{opacity:.7;transform:scale(1.02)}to{opacity:1;transform:scale(1)}}@media (prefers-reduced-motion:reduce){[data-sa11y-pulse-border]{animation:none!important}}@media (forced-colors:active){[data-sa11y-error],[data-sa11y-warning],[data-sa11y-good],[data-sa11y-error-inline],[data-sa11y-warning-inline],[data-sa11y-pulse-border]{forced-color-adjust:none}}";
-const addStyleUtilities = (component) => {
-  const CSSUtils = component.shadowRoot.querySelectorAll(".sa11y-css-utilities");
-  if (CSSUtils.length === 0) {
-    const style = document.createElement("style");
-    style.setAttribute("class", "sa11y-css-utilities");
-    style.textContent = styles$1;
-    component.shadowRoot.appendChild(style);
-  }
-};
-function findShadowComponents(option) {
-  if (option.autoDetectShadowComponents) {
-    const ignore = Constants.Exclusions.Sa11yElements;
-    const root = document.querySelector(option.checkRoot);
-    const search = root ? Array.from(root.querySelectorAll(`*:not(${ignore})`)) : Array.from(document.body.querySelectorAll(`*:not(${ignore})`));
-    search.forEach((component) => {
-      if (component.shadowRoot && component.shadowRoot.mode === "open") {
-        component.setAttribute("data-sa11y-has-shadow-root", "");
-        addStyleUtilities(component);
-      }
-    });
-  } else if (option.shadowComponents) {
-    const providedShadow = document.querySelectorAll(option.shadowComponents);
-    providedShadow.forEach((component) => {
-      component.setAttribute("data-sa11y-has-shadow-root", "");
-      addStyleUtilities(component);
-    });
-  }
-}
 function documentLoadingCheck(callback) {
   if (document.readyState === "complete") {
     callback();
@@ -790,7 +753,7 @@ function documentLoadingCheck(callback) {
   }
 }
 function isScreenReaderOnly(element) {
-  const style = getComputedStyle(element);
+  const style = getCachedStyle(element);
   if (style.getPropertyValue("clip-path").startsWith("inset(50%)")) {
     return true;
   }
@@ -810,7 +773,31 @@ function isScreenReaderOnly(element) {
   return parseFloat(style.fontSize) < 2;
 }
 function isElementHidden(element) {
-  return element.hidden || getComputedStyle(element).getPropertyValue("display") === "none";
+  if (element.hidden) return true;
+  const styles2 = getCachedStyle(element);
+  return styles2.getPropertyValue("display") === "none" || styles2.getPropertyValue("visibility") === "hidden";
+}
+function isAriaHidden($el) {
+  if (!$el || typeof $el.getAttribute !== "function") return false;
+  return $el.getAttribute("aria-hidden")?.trim().toLowerCase() === "true";
+}
+function isPresentational($el) {
+  if (!$el || typeof $el.getAttribute !== "function") return false;
+  const roleAttr = $el.getAttribute("role");
+  if (!roleAttr) return false;
+  return roleAttr.toLowerCase().split(/\s+/).some((role) => role === "presentation" || role === "none");
+}
+function isNegativeTabindex($el) {
+  return $el && $el.tabIndex < 0;
+}
+function isHiddenAndUnfocusable($el) {
+  return (isPresentational($el) || isAriaHidden($el)) && isNegativeTabindex($el);
+}
+function isDisabled($el) {
+  if (!$el || typeof $el.getAttribute !== "function") return false;
+  const isNativeDisabled = $el.hasAttribute("disabled") || $el.disabled === true;
+  const isAriaDisabled = $el.getAttribute("aria-disabled")?.trim().toLowerCase() === "true";
+  return isNativeDisabled || isAriaDisabled;
 }
 function isElementVisuallyHiddenOrHidden(element) {
   if (element.offsetWidth === 0 && element.offsetHeight === 0 || element.clientHeight === 1 && element.clientWidth === 1) {
@@ -818,95 +805,247 @@ function isElementVisuallyHiddenOrHidden(element) {
   }
   return isElementHidden(element);
 }
-function escapeHTML(string) {
-  const div2 = document.createElement("div");
-  div2.textContent = string;
-  return div2.innerHTML.replaceAll('"', "&quot;").replaceAll("'", "&#039;").replaceAll("`", "&#x60;");
-}
-function decodeHTML(string) {
-  return string.replace(/&(#?[a-zA-Z0-9]+);/g, (match, entity) => {
-    switch (entity) {
-      case "amp":
-        return "&";
-      case "lt":
-        return "<";
-      case "gt":
-        return ">";
-      case "quot":
-        return "'";
-      case "#39":
-        return "'";
-      // Convert single quotes to actual single quotes.
-      default:
-        if (entity.charAt(0) === "#") {
-          return String.fromCharCode(
-            entity.charAt(1) === "x" ? parseInt(entity.substr(2), 16) : parseInt(entity.substr(1), 10)
-          );
-        }
-        return match;
-    }
-  });
-}
-function stripHTMLtags(string) {
-  return string.replace(/<[^>]*>/g, "");
-}
 function stripAllSpecialCharacters(string) {
+  if (!string) return "";
   return string.replace(/[^\p{L}\p{N}\s]/gu, "").replace(/\s+/g, " ").trim();
 }
-function sanitizeHTML(string) {
-  return string.replace(/[^\w. ]/gi, (c) => `&#${c.charCodeAt(0)};`);
+const invalidProtocolRegex = /^([^\w]*)(javascript|data|vbscript)/im;
+const htmlEntitiesRegex = /&#(\w+)(^\w|;)?/g;
+const htmlCtrlEntityRegex = /&(newline|tab);/gi;
+const ctrlCharactersRegex = (
+  // biome-ignore lint/suspicious/noControlCharactersInRegex: original lib.
+  /[\u0000-\u001F\u007F-\u009F\u2000-\u200D\uFEFF]/gim
+);
+const urlSchemeRegex = /^.+(:|&colon;)/gim;
+const whitespaceEscapeCharsRegex = /(\\|%5[cC])((%(6[eE]|72|74))|[nrt])/g;
+const relativeFirstCharacters = [".", "/"];
+const BLANK_URL = "about:blank";
+function isRelativeUrlWithoutProtocol(url2) {
+  return relativeFirstCharacters.indexOf(url2[0]) > -1;
 }
-function sanitizeURL(string) {
-  if (!string) return "#";
-  const sanitizedInput = String(string).trim();
-  if (/^javascript:/i.test(sanitizedInput)) return "#";
-  if (/^data:/i.test(sanitizedInput)) return "#";
-  const protocols = ["http:", "https:", "mailto:", "tel:", "ftp:"];
-  const hasValidProtocol = protocols.some(
-    (protocol) => sanitizedInput.toLowerCase().startsWith(protocol)
-  );
-  if (!hasValidProtocol && !sanitizedInput.startsWith("/") && !sanitizedInput.startsWith("#")) {
-    return `./${sanitizedInput}`;
-  }
-  const cleanedString = sanitizedInput.replace(/<[^>]*>/g, "");
-  return encodeURI(cleanedString);
-}
-function sanitizeHTMLBlock(html, allowStyles = false) {
-  const tempDiv = document.createElement("div");
-  tempDiv.innerHTML = html;
-  ["script", "style", "noscript", "iframe", "form"].forEach((tag) => {
-    const elements = tempDiv.getElementsByTagName(tag);
-    while (elements.length > 0) {
-      elements[0].parentNode.removeChild(elements[0]);
-    }
+function decodeHtmlCharacters(str) {
+  const removedNullByte = str.replace(ctrlCharactersRegex, "");
+  return removedNullByte.replace(htmlEntitiesRegex, (match, dec) => {
+    return String.fromCharCode(dec);
   });
-  const allElements = Array.from(tempDiv.getElementsByTagName("*"));
-  allElements.forEach((element) => {
-    Array.from(element.attributes).forEach((attr) => {
-      if (attr.name.startsWith("on")) {
-        element.removeAttribute(attr.name);
+}
+function isValidUrl(url2) {
+  if (typeof URL.canParse === "function") {
+    return URL.canParse(url2);
+  }
+  try {
+    const parsedUrl = new URL(url2);
+    return Boolean(parsedUrl);
+  } catch {
+    return false;
+  }
+}
+const decodeURIs = (uri) => {
+  try {
+    return decodeURIComponent(uri);
+  } catch {
+    return uri;
+  }
+};
+function sanitizeURL(url2) {
+  if (!url2 || typeof url2 !== "string") return BLANK_URL;
+  const isBase64Data = /^data:([a-z]+\/[a-z0-9-+.]+)?;base64,/i.test(url2.trim());
+  if (isBase64Data) return url2.trim();
+  let charsToDecode;
+  let decodedUrl = decodeURIs(url2.trim());
+  do {
+    decodedUrl = decodeHtmlCharacters(decodedUrl).replace(htmlCtrlEntityRegex, "").replace(ctrlCharactersRegex, "").replace(whitespaceEscapeCharsRegex, "").trim();
+    decodedUrl = decodeURIs(decodedUrl);
+    charsToDecode = decodedUrl.match(ctrlCharactersRegex) || decodedUrl.match(htmlEntitiesRegex) || decodedUrl.match(htmlCtrlEntityRegex) || decodedUrl.match(whitespaceEscapeCharsRegex);
+  } while (charsToDecode && charsToDecode.length > 0);
+  const sanitizedUrl = decodedUrl;
+  if (!sanitizedUrl) return BLANK_URL;
+  if (isRelativeUrlWithoutProtocol(sanitizedUrl)) return sanitizedUrl;
+  const trimmedUrl = sanitizedUrl.trimStart();
+  const urlSchemeParseResults = trimmedUrl.match(urlSchemeRegex);
+  if (!urlSchemeParseResults) return sanitizedUrl;
+  const urlScheme = urlSchemeParseResults[0].toLowerCase().trim();
+  if (invalidProtocolRegex.test(urlScheme)) return BLANK_URL;
+  const backSanitized = trimmedUrl.replace(/\\/g, "/");
+  if (urlScheme === "mailto:" || urlScheme.includes("://")) return backSanitized;
+  if (urlScheme === "http:" || urlScheme === "https:") {
+    if (!isValidUrl(backSanitized)) return BLANK_URL;
+    const url3 = new URL(backSanitized);
+    url3.protocol = url3.protocol.toLowerCase();
+    url3.hostname = url3.hostname.toLowerCase();
+    return url3.toString();
+  }
+  return backSanitized;
+}
+const allowedTags = [
+  "a",
+  "abbr",
+  "address",
+  "article",
+  "aside",
+  "audio",
+  "b",
+  "bdo",
+  "blockquote",
+  "br",
+  "button",
+  "canvas",
+  "cite",
+  "code",
+  "data",
+  "dd",
+  "del",
+  "details",
+  "dfn",
+  "div",
+  "dl",
+  "dt",
+  "em",
+  "fieldset",
+  "figcaption",
+  "figure",
+  "footer",
+  "form",
+  "h1",
+  "h2",
+  "h3",
+  "h4",
+  "h5",
+  "h6",
+  "header",
+  "hr",
+  "i",
+  "iframe",
+  "img",
+  "input",
+  "ins",
+  "kbd",
+  "label",
+  "li",
+  "main",
+  "mark",
+  "meter",
+  "nav",
+  "noscript",
+  "ol",
+  "output",
+  "p",
+  "picture",
+  "pre",
+  "progress",
+  "q",
+  "rp",
+  "rt",
+  "s",
+  "samp",
+  "section",
+  "select",
+  "small",
+  "source",
+  "span",
+  "strong",
+  "sub",
+  "summary",
+  "sup",
+  "svg",
+  "table",
+  "tbody",
+  "td",
+  "textarea",
+  "tfoot",
+  "th",
+  "thead",
+  "time",
+  "tr",
+  "track",
+  "u",
+  "ul",
+  "var",
+  "video",
+  "wbr",
+  "path"
+];
+const attrWhitelist = {
+  a: ["href", "title", "target", "rel", "download"],
+  img: ["src", "alt", "title", "width", "height", "loading", "srcset", "sizes"],
+  iframe: [
+    "src",
+    "width",
+    "height",
+    "title",
+    "frameborder",
+    "allowfullscreen",
+    "loading",
+    "sandbox"
+  ],
+  details: ["open"],
+  ol: ["start", "type", "reversed"],
+  li: ["value"],
+  td: ["colspan", "rowspan"],
+  th: ["colspan", "rowspan", "scope"],
+  global: ["class", "id", "role", "lang", "dir", "name"],
+  path: ["d", "fill", "fill-rule"]
+};
+function sanitizeHTML(string) {
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(string, "text/html");
+  const allElements = doc.body.querySelectorAll("*");
+  allElements.forEach((node) => {
+    const tag = node.tagName.toLowerCase();
+    if (!allowedTags.includes(tag)) {
+      node.remove();
+      return;
+    }
+    const allowedForThisTag = attrWhitelist[tag] || [];
+    const globals = attrWhitelist.global;
+    [...node.attributes].forEach(({ name, value }) => {
+      const isAria = name.startsWith("aria-");
+      const isAllowed = allowedForThisTag.includes(name) || globals.includes(name) || isAria;
+      const isUrlAttr = ["src", "href", "srcset"].includes(name);
+      if (!isAllowed) {
+        node.removeAttribute(name);
+      } else if (isUrlAttr) {
+        const cleanURL = sanitizeURL(value);
+        if (!cleanURL) {
+          node.removeAttribute(name);
+        } else {
+          node.setAttribute(name, cleanURL);
+        }
       }
     });
-    if (!allowStyles) {
-      element.removeAttribute("style");
-    }
   });
-  return tempDiv.innerHTML;
+  return doc.body.innerHTML;
 }
-function fnIgnore(element, selectors) {
-  let ignoreQuery = "noscript,script,style,audio,video,form,iframe";
-  if (selectors && selectors.length > 0) {
-    ignoreQuery = `${ignoreQuery},${selectors.join(",")}`;
+const baseIgnores = "noscript,script,style,audio,video,form,iframe";
+function fnIgnore(element, selectors = []) {
+  const ignoreQuery = selectors.length ? `${baseIgnores},${selectors.join(",")}` : baseIgnores;
+  if (!element || element.nodeType !== Node.ELEMENT_NODE) {
+    return element ? element.cloneNode(true) : null;
   }
-  const clone = element.cloneNode(true);
-  const toRemove = clone.querySelectorAll(ignoreQuery);
-  let i = toRemove.length;
-  while (i--) {
-    toRemove[i].remove();
+  function cloneTree(node, isRoot = false) {
+    const type = node.nodeType;
+    if (type === Node.ELEMENT_NODE) {
+      if (node.matches(ignoreQuery) && !isRoot) {
+        return null;
+      }
+      const clone = node.cloneNode(false);
+      if (node.matches(ignoreQuery) && isRoot) {
+        return clone;
+      }
+      let child = node.firstChild;
+      while (child) {
+        const clonedChild = cloneTree(child);
+        if (clonedChild) clone.appendChild(clonedChild);
+        child = child.nextSibling;
+      }
+      return clone;
+    }
+    if (type === Node.TEXT_NODE) return node.cloneNode(true);
+    return null;
   }
-  return clone;
+  return cloneTree(element, true);
 }
-const gotText = /* @__PURE__ */ new WeakMap();
+let gotText = /* @__PURE__ */ new WeakMap();
 function getText(element) {
   if (gotText.has(element)) {
     return gotText.get(element);
@@ -916,14 +1055,53 @@ function getText(element) {
   gotText.set(element, text);
   return text;
 }
+function resetGetText() {
+  gotText = /* @__PURE__ */ new WeakMap();
+}
+let styleCaches = {};
+const getCachedStyle = (node, pseudoElt = null) => {
+  if (!node) return null;
+  const cacheKey = pseudoElt || "base";
+  if (!styleCaches[cacheKey]) {
+    styleCaches[cacheKey] = /* @__PURE__ */ new WeakMap();
+  }
+  const targetCache = styleCaches[cacheKey];
+  if (!targetCache.has(node)) {
+    targetCache.set(node, getComputedStyle(node, pseudoElt));
+  }
+  return targetCache.get(node);
+};
+const resetStyleCache = () => {
+  styleCaches = {};
+};
+let parentCache = /* @__PURE__ */ new WeakMap();
+function getCachedClosest(element, selector) {
+  if (!element || !selector) return null;
+  if (!parentCache.has(element)) {
+    parentCache.set(element, /* @__PURE__ */ new Map());
+  }
+  const elementCache = parentCache.get(element);
+  if (elementCache.has(selector)) {
+    return elementCache.get(selector);
+  }
+  const result = element.closest(selector);
+  elementCache.set(selector, result);
+  return result;
+}
+function resetParentCache() {
+  parentCache = /* @__PURE__ */ new WeakMap();
+}
 function removeWhitespace(string) {
   return string.replace(/[\r\n]+/g, " ").replace(/\s+/g, " ").trim();
+}
+function normalizeString(string) {
+  return removeWhitespace(string.replace(/[\u0000-\u001F\u007F-\u009F]/g, ""));
 }
 function truncateString(string, maxLength) {
   const truncatedString = string.substring(0, maxLength).trimEnd();
   return string.length > maxLength ? `${truncatedString}...` : string;
 }
-function debounce$2(callback, wait) {
+function debounce(callback, wait) {
   let timeoutId = null;
   return (...args) => {
     window.clearTimeout(timeoutId);
@@ -935,7 +1113,7 @@ function debounce$2(callback, wait) {
 function findVisibleParent(element, property, value) {
   let $el = element;
   while ($el) {
-    const style = window.getComputedStyle($el);
+    const style = getCachedStyle($el);
     const propValue = style.getPropertyValue(property);
     if (propValue === value) {
       return $el;
@@ -981,6 +1159,19 @@ function addPulse(element) {
   const border = "data-sa11y-pulse-border";
   element.setAttribute(border, "");
   setTimeout(() => element.removeAttribute(border), 2500);
+}
+function getNextSibling(element, selector) {
+  let sibling = element.nextElementSibling;
+  if (!selector) {
+    return sibling;
+  }
+  while (sibling) {
+    if (sibling.matches(selector)) {
+      return sibling;
+    }
+    sibling = sibling.nextElementSibling;
+  }
+  return "";
 }
 function prepareDismissal(string) {
   return String(string).replace(/([^0-9a-zA-Z])/g, "").substring(0, 256);
@@ -1073,14 +1264,10 @@ function getBestImageSource(element) {
   const getLastSrc = (src) => src?.split(/,\s+/).pop()?.trim()?.split(/\s+/)[0];
   const resolveUrl = (src) => src ? new URL(src, window.location.href).href : null;
   const dataSrc = getLastSrc(element.getAttribute("data-src") || element.getAttribute("srcset"));
-  if (dataSrc) {
-    return resolveUrl(dataSrc);
-  }
-  const picture = element.closest("picture")?.querySelector("source[srcset]")?.getAttribute("srcset");
-  const pictureSrc = getLastSrc(picture);
-  if (pictureSrc) {
-    return resolveUrl(pictureSrc);
-  }
+  if (dataSrc) return resolveUrl(dataSrc);
+  const pictureSrcset = getCachedClosest(element, "picture")?.querySelector("source[srcset]")?.getAttribute("srcset");
+  const pictureSrc = getLastSrc(pictureSrcset);
+  if (pictureSrc) return resolveUrl(pictureSrc);
   return resolveUrl(element.getAttribute("src"));
 }
 const blobToBase64 = (blob) => new Promise((resolve, reject) => {
@@ -1098,75 +1285,69 @@ const blobToBase64 = (blob) => new Promise((resolve, reject) => {
 });
 function generateElementPreview(issueObject, convertBase64 = false) {
   const issueElement = issueObject.element;
-  const cleanHTML = sanitizeHTMLBlock(issueObject.htmlPath);
-  const truncatedHTML = truncateString(cleanHTML, 600);
-  const htmlPath = `<pre><code>${escapeHTML(truncatedHTML)}</code></pre>`;
+  const createCodeFallback = () => {
+    const pre = document.createElement("pre");
+    const code = document.createElement("code");
+    code.textContent = truncateString(issueObject.htmlPath, 150);
+    pre.appendChild(code);
+    return pre;
+  };
   const simple = (element) => {
     const text = getText(element);
-    const truncatedText = truncateString(text, 100);
-    return text.length ? sanitizeHTML(truncatedText) : htmlPath;
+    if (text.length > 0) {
+      const span = document.createElement("span");
+      span.textContent = truncateString(text, 150);
+      return span;
+    }
+    return createCodeFallback();
   };
-  const tag = {
+  const tagHandlers = {
     SPAN: simple,
     P: simple,
     A: (element) => {
       const text = getText(element);
-      const truncatedText = truncateString(text, 100);
       if (text.length > 1 && element.href && !element.hasAttribute("role")) {
-        return `<a href="${sanitizeURL(element.href)}">${sanitizeHTML(truncatedText)}</a>`;
+        const anchor = document.createElement("a");
+        anchor.href = sanitizeURL(element.href);
+        anchor.textContent = truncateString(text, 150);
+        return anchor;
       }
-      return htmlPath;
+      return createCodeFallback();
     },
     IMG: (element) => {
-      const anchor = element.closest("a[href]");
-      const alt = element.alt ? `alt="${sanitizeHTML(element.alt)}"` : "alt";
-      const source = getBestImageSource(element);
-      function createImageElement(src) {
-        return anchor ? `<a href="${sanitizeURL(anchor.href)}" rel="noopener noreferrer"><img src="${src}" ${alt}/></a>` : `<img src="${src}" ${alt}/>`;
-      }
-      if (convertBase64) {
-        return new Promise((resolve) => {
-          if (source) {
-            const isSameDomain = new URL(source, window.location.origin).origin === window.location.origin;
-            if (isSameDomain) {
-              fetch(source).then((response) => response.blob()).then((blob) => blobToBase64(blob)).then((base64Source) => {
-                const imageSource = base64Source.startsWith("data:image/") ? base64Source : sanitizeURL(base64Source);
-                resolve(createImageElement(imageSource));
-              }).catch(() => {
-                resolve(createImageElement(source));
-              });
-            } else {
-              const imageSource = source.startsWith("data:image/") ? source : sanitizeURL(source);
-              resolve(createImageElement(imageSource));
-            }
-          } else {
-            resolve(htmlPath);
-          }
-        });
-      }
-      const sanitized = source.startsWith("data:image/") ? source : sanitizeURL(source);
-      if (source) {
-        return createImageElement(sanitized);
-      }
-      return htmlPath;
-    },
-    IFRAME: (element) => {
-      const source = element.src;
-      const title = element.title ? element.title : "";
-      const ariaLabelAttr = element.getAttribute("aria-label");
-      const ariaLabel = ariaLabelAttr || "";
-      if (source) {
-        const iframeTitle = ariaLabel || title;
-        return `<iframe src="${sanitizeURL(source)}" aria-label="${sanitizeHTML(iframeTitle)}"></iframe>`;
-      }
-      return htmlPath;
-    },
-    AUDIO: () => sanitizeHTMLBlock(issueObject.htmlPath),
-    VIDEO: () => sanitizeHTMLBlock(issueObject.htmlPath)
+      const src = getBestImageSource(element);
+      if (!src) return createCodeFallback();
+      const containerAnchor = getCachedClosest(element, "a[href]");
+      const buildImgElement = (url2) => {
+        const img = document.createElement("img");
+        img.src = url2.startsWith("data:image/") ? url2 : sanitizeURL(url2);
+        if (element.alt) img.alt = element.alt;
+        if (containerAnchor) {
+          const a = document.createElement("a");
+          a.href = sanitizeURL(containerAnchor.href);
+          a.rel = "noopener noreferrer";
+          a.appendChild(img);
+          return a;
+        }
+        return img;
+      };
+      if (!convertBase64) return buildImgElement(src);
+      return (async () => {
+        try {
+          if (new URL(src, window.location.origin).origin !== window.location.origin)
+            throw new Error();
+          const response = await fetch(src);
+          const blob = await response.blob();
+          const b64 = await blobToBase64(blob);
+          return buildImgElement(b64);
+        } catch {
+          return buildImgElement(src);
+        }
+      })();
+    }
   };
-  const tagHandler = tag[issueElement.tagName];
-  const elementPreview = tagHandler ? tagHandler(issueElement) : htmlPath;
-  return elementPreview;
+  const handler = tagHandlers[issueElement.tagName];
+  return handler ? handler(issueElement) : createCodeFallback();
 }
 function isVisibleTextInAccName($el, accName, exclusions = [], linkIgnoreStrings) {
   let text = "";
@@ -1190,7 +1371,7 @@ function isVisibleTextInAccName($el, accName, exclusions = [], linkIgnoreStrings
   const emojiRegex = /[\p{Emoji_Presentation}\p{Extended_Pictographic}]/gu;
   let visibleText = text.replace(emojiRegex, "");
   visibleText = removeWhitespace(visibleText).toLowerCase();
-  if (visibleText === "x") {
+  if (/^[x×✕✖✗✘]$/i.test(visibleText)) {
     return false;
   }
   return visibleText.length !== 0 && !accName.toLowerCase().includes(visibleText);
@@ -1270,8 +1451,475 @@ function generateRegexString(input, matchStart = false) {
   const finalPattern = matchStart ? `^(?:${joinedPatterns})` : joinedPatterns;
   return new RegExp(finalPattern, "gi");
 }
-const styles = ":host{z-index:999999;background:var(--sa11y-panel-bg);border-top:5px solid var(--sa11y-panel-bg-splitter);width:100%;height:fit-content;display:block;position:fixed;bottom:0;left:0;right:0}*{font-size:var(--sa11y-normal-text);color:var(--sa11y-panel-primary);font-family:var(--sa11y-font-face)!important;-webkit-font-smoothing:auto!important;line-height:22px!important}#dialog{max-width:900px;margin:20px auto;padding:20px}h2{font-size:var(--sa11y-large-text);margin-top:0}a{color:var(--sa11y-hyperlink);cursor:pointer;text-decoration:underline}a:hover,a:focus{text-decoration:none}p{margin-top:0}.error{color:var(--sa11y-error-text);background:var(--sa11y-error);border:2px dashed #f08080;margin-bottom:0;padding:5px}";
-const sharedStyles = '.visually-hidden{clip:rect(1px,1px,1px,1px);white-space:nowrap;clip-path:inset(50%);border:0;width:1px;height:1px;padding:0;display:block;position:absolute;overflow:hidden}[hidden]{display:none!important}h2,.header-text-inline,.header-text{font-size:var(--sa11y-large-text);color:var(--sa11y-panel-primary);margin-bottom:3px;font-weight:600;display:block}.header-text-inline{display:inline-block!important}code{font-size:calc(var(--sa11y-normal-text) - 1px);font-weight:600;font-family:monospace!important}pre code{white-space:pre-wrap;overflow:auto}pre,code,kbd,.kbd{color:var(--sa11y-panel-primary);background-color:var(--sa11y-panel-badge);border-radius:3.2px;padding:1.6px 4.8px}.bold{font-weight:600}.error .colour,.red-text{font-family:var(--sa11y-font-face);color:var(--sa11y-red-text)}.warning .colour,.yellow-text{font-family:var(--sa11y-font-face);color:var(--sa11y-yellow-text)}.normal-badge,.badge{min-width:10px;color:var(--sa11y-panel-primary);text-align:center;white-space:nowrap;vertical-align:baseline;background-color:var(--sa11y-panel-badge);border-radius:10px;outline:1px solid #0000;padding:1px 5px 1.75px;font-size:14px;line-height:1;display:inline;font-weight:700!important}.error .badge{color:var(--sa11y-error-text);background:var(--sa11y-error)}.error-badge{color:var(--sa11y-error-text)!important;background:var(--sa11y-error)!important}.warning .badge{color:var(--sa11y-panel-bg);background:var(--sa11y-yellow-text)}.warning-badge{color:var(--sa11y-panel-bg)!important;background:var(--sa11y-yellow-text)!important}.good-contrast{color:var(--sa11y-good-text)!important;background:var(--sa11y-good)!important}#contrast-preview{overflow-wrap:break-word;border:2px dashed var(--sa11y-panel-bg-splitter);background-color:#e8e8e8;background-image:linear-gradient(45deg,#ccc 25%,#0000 25% 75%,#ccc 75%,#ccc),linear-gradient(45deg,#ccc 25%,#0000 25% 75%,#ccc 75%,#ccc);background-position:0 0,5px 5px;background-size:10px 10px;border-radius:3.2px;max-height:100px;margin-top:10px;padding:5px;line-height:1;overflow:clip}#contrast-preview:empty{display:none}#color-pickers{justify-content:space-between;margin-top:10px;margin-bottom:10px;display:flex}#color-pickers label{align-items:center;display:flex}#color-pickers input{cursor:pointer;margin-inline-start:7px}#fg-color-wrapper.unknown,#bg-color-wrapper.unknown{display:inline-block;position:relative}:is(#fg-color-wrapper.unknown,#bg-color-wrapper.unknown):after{z-index:2;color:#fff;pointer-events:none;content:"?";justify-content:center;align-items:center;width:44px;height:44px;margin:-46px 7px;font-size:22px;display:flex;position:absolute}input[type=color i]{background:var(--sa11y-panel-bg-secondary);border-color:var(--sa11y-button-outline);border-style:solid;border-width:1px;border-radius:50%;block-size:44px;inline-size:44px;padding:2px}input[type=color i]::-webkit-color-swatch-wrapper{padding:1px}input[type=color i]::-webkit-color-swatch{border-color:var(--sa11y-button-outline);border-radius:50%}input[type=color i]::-moz-color-swatch{border-color:var(--sa11y-button-outline);border-radius:50%}input[type=color i].unknown{box-shadow:0 0 0 3px var(--sa11y-yellow-text)}.close-btn{float:var(--sa11y-float-rtl);width:32px;height:32px;font-size:var(--sa11y-normal-text);color:var(--sa11y-panel-primary);cursor:pointer;background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-button-outline);border-radius:50%;margin:0;font-weight:400;transition:all .2s ease-in-out;position:relative}.close-btn:hover,.close-btn:focus{background-color:var(--sa11y-shortcut-hover)}.close-btn:after{content:"";background:var(--sa11y-setting-switch-bg-off);-webkit-mask:var(--sa11y-close-btn-svg)center no-repeat;mask:var(--sa11y-close-btn-svg)center no-repeat;position:absolute;inset:-7px}@media screen and (forced-colors:active){.close-btn:after{filter:invert()}}#container [tabindex="0"]:focus,#container [tabindex="-1"]:focus,#container input:focus,#container select:focus,#container button:focus,#container a:focus{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}#container .switch:focus,#container #panel-controls button:focus{box-shadow:inset 0 0 0 4px var(--sa11y-focus-color);outline:0}#container [tabindex="0"]:focus:not(:focus-visible),#container [tabindex="-1"]:focus:not(:focus-visible),#container input:focus:not(:focus-visible),#container button:focus:not(:focus-visible),#container select:focus:not(:focus-visible),#container #panel-controls button:focus:not(:focus-visible){box-shadow:none;outline:0}#container a:focus-visible,#container button:not(#panel-controls button,.switch):focus-visible,#container select:focus-visible,#container input:focus-visible,#container [tabindex="0"]:focus-visible,#container [tabindex="-1"]:focus-visible{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}#container .switch:focus-visible,#container #panel-controls button:focus-visible{box-shadow:inset 0 0 0 4px var(--sa11y-focus-color);outline:0}@media screen and (forced-colors:active){#panel-controls button:focus{border:inset 3px solid transparent}.close-btn:focus{outline:3px solid #0000!important}#container a:focus,#container [tabindex="-1"]:focus,#container [tabindex="0"]:focus,#container select:focus,#container button:focus{outline:3px solid #0000!important}}';
+async function dismissDigest(pepper, message) {
+  const msgUint8 = new TextEncoder().encode(pepper + message);
+  const hashBuffer = await window.crypto.subtle.digest("SHA-256", msgUint8);
+  if (Uint8Array.prototype.toHex) {
+    return new Uint8Array(hashBuffer).toHex();
+  }
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
+}
+let langCache;
+function validateLang(code, displayLangCode) {
+  if (typeof code !== "string") return { valid: false };
+  const norm = code.trim().replace(/_/g, "-");
+  if (!langCache && typeof Intl !== "undefined") {
+    try {
+      langCache = new Intl.DisplayNames([displayLangCode], { type: "language", fallback: "none" });
+    } catch {
+    }
+  }
+  if (langCache) {
+    const check = (val) => {
+      try {
+        return langCache.of(val);
+      } catch {
+        return false;
+      }
+    };
+    if (check(code)) return { valid: true };
+    if (check(norm)) return { valid: false, suggest: norm };
+    return { valid: false };
+  }
+  return { valid: /^[a-z]{2,3}(-[a-z]{4})?(-[a-z]{2,4})?$/i.test(norm) };
+}
+const Utils = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+  __proto__: null,
+  addPulse,
+  blobToBase64,
+  debounce,
+  dismissDigest,
+  documentLoadingCheck,
+  findVisibleParent,
+  fnIgnore,
+  generateElementPreview,
+  generateRegexString,
+  generateSelectorPath,
+  getBestImageSource,
+  getCachedClosest,
+  getCachedStyle,
+  getNextSibling,
+  getText,
+  initRovingTabindex,
+  isAriaHidden,
+  isDisabled,
+  isElementHidden,
+  isElementVisuallyHiddenOrHidden,
+  isHiddenAndUnfocusable,
+  isNegativeTabindex,
+  isPresentational,
+  isScreenReaderOnly,
+  isScrollable,
+  isVisibleTextInAccName,
+  normalizeString,
+  offsetTop,
+  prepareDismissal,
+  remove,
+  removeWhitespace,
+  resetAttributes,
+  resetGetText,
+  resetParentCache,
+  resetStyleCache,
+  sanitizeHTML,
+  sanitizeURL,
+  standardizeHref,
+  store,
+  stripAllSpecialCharacters,
+  supportsAnchorPositioning,
+  trapFocus,
+  truncateString,
+  validateLang
+}, Symbol.toStringTag, { value: "Module" }));
+const styles$1 = "[data-sa11y-overflow]{overflow:auto!important}[data-sa11y-error]{outline-offset:2px;outline:5px solid var(--sa11y-error)!important}a[data-sa11y-error]:empty{margin:1px}[data-sa11y-warning]:not([data-sa11y-error]){outline-offset:2px;outline:5px solid var(--sa11y-warning)!important}[data-sa11y-pulse-border]{box-shadow:0;animation:1s 2 pulse;outline:5px solid var(--sa11y-focus-color)!important}[data-sa11y-pulse-border]:hover,[data-sa11y-pulse-border]:focus{animation:none}@keyframes pulse{0%{box-shadow:0 0 0 5px var(--sa11y-focus-color)}50%{box-shadow:0 0 0 12px var(--sa11y-pulse-color)}to{box-shadow:0 0 0 5px var(--sa11y-pulse-color)}}img[data-sa11y-pulse-border],h1[data-sa11y-pulse-border],h2[data-sa11y-pulse-border],h3[data-sa11y-pulse-border],h4[data-sa11y-pulse-border],h5[data-sa11y-pulse-border],h6[data-sa11y-pulse-border]{animation:1s 2 pulse-scale}@keyframes pulse-scale{0%{opacity:1;transform:scale(1)}50%{opacity:.7;transform:scale(1.02)}to{opacity:1;transform:scale(1)}}@media (prefers-reduced-motion:reduce){[data-sa11y-pulse-border]{animation:none!important}}@media (forced-colors:active){[data-sa11y-error],[data-sa11y-warning],[data-sa11y-good],[data-sa11y-error-inline],[data-sa11y-warning-inline],[data-sa11y-pulse-border]{forced-color-adjust:none}}";
+const addStyleUtilities = (component) => {
+  const CSSUtils = component.shadowRoot.querySelectorAll(".sa11y-css-utilities");
+  if (CSSUtils.length === 0) {
+    const style = document.createElement("style");
+    style.setAttribute("class", "sa11y-css-utilities");
+    style.textContent = styles$1;
+    component.shadowRoot.appendChild(style);
+  }
+};
+function findShadowComponents() {
+  if (State.option.autoDetectShadowComponents) {
+    const ignore = Constants.Exclusions.Sa11yElements;
+    const root = document.querySelector(State.option.checkRoot);
+    const search = root ? Array.from(root.querySelectorAll(`*:not(${ignore})`)) : Array.from(document.body.querySelectorAll(`*:not(${ignore})`));
+    search.forEach((component) => {
+      if (component.shadowRoot && component.shadowRoot.mode === "open") {
+        component.setAttribute("data-sa11y-has-shadow-root", "");
+        addStyleUtilities(component);
+      }
+    });
+  } else if (State.option.shadowComponents) {
+    const providedShadow = document.querySelectorAll(State.option.shadowComponents);
+    providedShadow.forEach((component) => {
+      component.setAttribute("data-sa11y-has-shadow-root", "");
+      addStyleUtilities(component);
+    });
+  }
+}
+const Elements = (function myElements() {
+  const Found = {};
+  const contrastExcludedTags = /* @__PURE__ */ new Set([
+    "AUDIO",
+    "VIDEO",
+    "IFRAME",
+    "SVG",
+    "SCRIPT",
+    "STYLE",
+    "NOSCRIPT",
+    "TEMPLATE",
+    "HEAD",
+    "TITLE",
+    "META",
+    "BASE",
+    "DATALIST",
+    "PROGRESS",
+    "METER",
+    "LINK",
+    "HR",
+    "OPTION"
+  ]);
+  const contrastAncestorSelector = "audio,video,meter,progress,datalist,head,svg";
+  let contrastAttrSelector = "";
+  function buildContrastAttrSelector() {
+    const base = ['input[type="color"]', 'input[type="range"]'];
+    if (State.option.contrastIgnore) {
+      const userSelectors = State.option.contrastIgnore.split(",").map((s) => s.trim()).flatMap((s) => [s, `${s} *`]);
+      base.push(...userSelectors);
+    }
+    contrastAttrSelector = base.join(",");
+  }
+  let _pageTextComputed = false;
+  let _pageTextValue = null;
+  let _readabilityComputed = false;
+  let _readabilityValue = null;
+  Object.defineProperty(Found, "pageText", {
+    get() {
+      if (!_pageTextComputed) {
+        _pageTextValue = computePageText();
+        _pageTextComputed = true;
+      }
+      return _pageTextValue;
+    },
+    set(val) {
+      _pageTextValue = val;
+      _pageTextComputed = true;
+    },
+    configurable: true,
+    enumerable: true
+  });
+  Object.defineProperty(Found, "Readability", {
+    get() {
+      if (!_readabilityComputed) {
+        _readabilityValue = computeReadabilityText();
+        _readabilityComputed = true;
+      }
+      return _readabilityValue;
+    },
+    set(val) {
+      _readabilityValue = val;
+      _readabilityComputed = true;
+    },
+    configurable: true,
+    enumerable: true
+  });
+  function computePageText() {
+    const elementSet = new Set(Found.Everything);
+    return Found.Everything.filter(($el) => {
+      if ($el instanceof HTMLImageElement) return true;
+      let parent = $el.parentElement;
+      while (parent) {
+        if (elementSet.has(parent)) return false;
+        parent = parent.parentElement;
+      }
+      return true;
+    }).map(($el) => {
+      let text = "";
+      if ($el instanceof HTMLImageElement) {
+        text = $el.alt || "";
+      } else if ($el.tagName === "LI") {
+        text = Array.from($el.childNodes).filter((n) => n.nodeType === 3).map((n) => n.textContent).join(" ");
+      } else {
+        const clone = $el.cloneNode(true);
+        if (clone.querySelectorAll) {
+          const nestedLangNodes = clone.querySelectorAll("[lang]");
+          for (const node of nestedLangNodes) node.remove();
+        }
+        text = getText(fnIgnore(clone));
+      }
+      return normalizeString(text);
+    }).filter(Boolean);
+  }
+  function computeReadabilityText() {
+    const readabilityExclusions = ($el) => Constants.Root.Readability.some((rootEl) => rootEl.contains($el)) && !Constants.Exclusions.Readability.some((selector) => $el.matches(selector));
+    return [
+      ...Found.Paragraphs.filter(readabilityExclusions),
+      ...Found.Lists.filter(readabilityExclusions)
+    ].map(($el) => getText(fnIgnore($el))).filter(Boolean);
+  }
+  function initializeElements() {
+    _pageTextComputed = false;
+    _pageTextValue = null;
+    _readabilityComputed = false;
+    _readabilityValue = null;
+    buildContrastAttrSelector();
+    const badLinkSourcesRaw = State.option.checks.QA_BAD_LINK.sources;
+    const badLinkSelectors = badLinkSourcesRaw.length ? badLinkSourcesRaw.split(",").map((s) => s.trim()) : [];
+    const nestedSources = State.option.checks.QA_NESTED_COMPONENTS.sources || '[role="tablist"], details';
+    Found.Everything = find("*", "root", Constants.Exclusions.Sa11yElements);
+    Found.Images = [];
+    Found.Links = [];
+    Found.Paragraphs = [];
+    Found.Lists = [];
+    Found.Blockquotes = [];
+    Found.Tables = [];
+    Found.StrongItalics = [];
+    Found.Subscripts = [];
+    Found.Buttons = [];
+    Found.Inputs = [];
+    Found.Labels = [];
+    Found.iframes = [];
+    Found.Svg = [];
+    Found.Contrast = [];
+    Found.TabIndex = [];
+    Found.NestedComponents = [];
+    Found.CustomErrorLinks = [];
+    Found.LangTags = [];
+    const imageRoles = /* @__PURE__ */ new Set(["img", "graphics-document", "graphics-symbol", "graphics-object"]);
+    const ariaInputRoles = /* @__PURE__ */ new Set([
+      "textbox",
+      "searchbox",
+      "checkbox",
+      "radio",
+      "switch",
+      "slider",
+      "spinbutton",
+      "combobox",
+      "listbox",
+      "menuitemcheckbox",
+      "menuitemradio",
+      "radiogroup"
+    ]);
+    for (let i = 0; i < Found.Everything.length; i++) {
+      const $el = Found.Everything[i];
+      const tag = $el.tagName;
+      const role = $el.getAttribute("role")?.trim().toLowerCase();
+      let handledByRole = false;
+      if (role) {
+        if (imageRoles.has(role) && !Constants.Exclusions.Images.some((s) => $el.matches(s))) {
+          Found.Images.push($el);
+          handledByRole = true;
+        } else if (role === "link" && !Constants.Exclusions.Links.some((s) => $el.matches(s))) {
+          Found.Links.push($el);
+          handledByRole = true;
+        } else if (role === "button") {
+          Found.Buttons.push($el);
+          handledByRole = true;
+        } else if (ariaInputRoles.has(role)) {
+          Found.Inputs.push($el);
+          handledByRole = true;
+        }
+      }
+      if (!handledByRole) {
+        switch (tag) {
+          case "IMG":
+            if (!Constants.Exclusions.Images.some((s) => $el.matches(s))) Found.Images.push($el);
+            break;
+          case "A":
+          // HTML anchor
+          case "a":
+            if ($el.hasAttribute("href") && !$el.matches('[role="button"]') && !Constants.Exclusions.Links.some((s) => $el.matches(s))) {
+              Found.Links.push($el);
+              if (badLinkSelectors.length > 0 && badLinkSelectors.some((s) => $el.matches(s))) {
+                Found.CustomErrorLinks.push($el);
+              }
+            }
+            break;
+          case "P":
+            if (!Constants.Exclusions.Paragraphs.some((s) => $el.matches(s)))
+              Found.Paragraphs.push($el);
+            break;
+          case "LI":
+            Found.Lists.push($el);
+            break;
+          case "BLOCKQUOTE":
+            Found.Blockquotes.push($el);
+            break;
+          case "TABLE":
+            if (!$el.matches('[role="presentation"],[role="none"]')) Found.Tables.push($el);
+            break;
+          case "STRONG":
+          case "EM":
+            Found.StrongItalics.push($el);
+            break;
+          case "SUP":
+          case "SUB":
+            Found.Subscripts.push($el);
+            break;
+          case "BUTTON": {
+            Found.Buttons.push($el);
+            break;
+          }
+          case "INPUT":
+          case "SELECT":
+          case "TEXTAREA":
+          case "METER":
+          case "PROGRESS":
+            Found.Inputs.push($el);
+            break;
+          case "LABEL":
+            Found.Labels.push($el);
+            break;
+          case "IFRAME":
+          case "AUDIO":
+          case "VIDEO":
+            Found.iframes.push($el);
+            break;
+          case "svg":
+            Found.Svg.push($el);
+            break;
+        }
+      }
+      if ($el.hasAttribute("tabindex") && $el.tabIndex >= 0) Found.TabIndex.push($el);
+      if ($el.matches(nestedSources)) Found.NestedComponents.push($el);
+      if (!contrastExcludedTags.has(tag)) {
+        if (!getCachedClosest($el, contrastAncestorSelector)) {
+          if (!contrastAttrSelector || !$el.matches(contrastAttrSelector)) {
+            Found.Contrast.push($el);
+          }
+        }
+      }
+      if ($el.hasAttribute("lang")) {
+        Found.LangTags.push($el);
+      }
+    }
+    const headingScope = State.option.ignoreContentOutsideRoots || State.option.fixedRoots ? "root" : "document";
+    Found.Headings = find(
+      'h1, h2, h3, h4, h5, h6, [role="heading"][aria-level]',
+      headingScope,
+      Constants.Exclusions.Headings
+    );
+    Found.HeadingOne = Found.Headings.filter(
+      ($el) => $el.tagName === "H1" || $el.matches('[role="heading"]') && $el.getAttribute("aria-level") === "1"
+    );
+    Found.HeadingOverrideStart = /* @__PURE__ */ new WeakMap();
+    Found.HeadingOverrideEnd = /* @__PURE__ */ new WeakMap();
+    if (State.option.initialHeadingLevel) {
+      State.option.initialHeadingLevel.forEach((section) => {
+        const headingsInSection = find(
+          `${section.selector} :is(h1,h2,h3,h4,h5,h6,[aria-role=heading][aria-level])`,
+          headingScope,
+          Constants.Exclusions.Headings
+        );
+        if (headingsInSection.length > 0) {
+          Found.HeadingOverrideStart.set(headingsInSection[0], section.previousHeading);
+          Found.HeadingOverrideEnd.set(headingsInSection.pop(), section.previousHeading);
+        }
+      });
+    }
+    Found.ExcludedHeadings = [];
+    Found.ExcludedOutlineHeadings = [];
+    for (const heading of Found.Headings) {
+      if (Constants.Exclusions.Headings.some((ex) => heading.matches(ex)))
+        Found.ExcludedHeadings.push(heading);
+      if (Constants.Exclusions.Outline.some((ex) => heading.matches(ex)))
+        Found.ExcludedOutlineHeadings.push(heading);
+    }
+    Found.OutlineIgnore = Found.ExcludedOutlineHeadings.concat(Found.ExcludedHeadings);
+    Found.Videos = [];
+    Found.Audio = [];
+    Found.Visualizations = [];
+    Found.EmbeddedContent = [];
+    for (const $el of Found.iframes) {
+      let matched = false;
+      if ($el.matches(Constants.Global.VideoSources)) {
+        Found.Videos.push($el);
+        matched = true;
+      }
+      if ($el.matches(Constants.Global.AudioSources)) {
+        Found.Audio.push($el);
+        matched = true;
+      }
+      if ($el.matches(Constants.Global.VisualizationSources)) {
+        Found.Visualizations.push($el);
+        matched = true;
+      }
+      if (!matched) {
+        Found.EmbeddedContent.push($el);
+      }
+    }
+    Found.html = document.querySelector("html");
+    Found.Language = Found.html.getAttribute("lang")?.trim();
+    Found.Focusable = [
+      ...Elements.Found.Links || [],
+      ...Elements.Found.Buttons || [],
+      ...Elements.Found.Inputs || [],
+      ...Elements.Found.TabIndex || []
+    ];
+  }
+  function initializeFilterElements() {
+    buildContrastAttrSelector();
+    Found.Everything = find("*", "root", Constants.Exclusions.Sa11yElements);
+    Found.Images = [];
+    Found.Links = [];
+    Found.Contrast = [];
+    for (let i = 0; i < Found.Everything.length; i++) {
+      const $el = Found.Everything[i];
+      const tag = $el.tagName;
+      switch (tag) {
+        case "IMG":
+          if (!Constants.Exclusions.Images.some((s) => $el.matches(s))) Found.Images.push($el);
+          break;
+        case "A":
+        case "a":
+          if ($el.hasAttribute("href") && !$el.matches('[role="button"]') && !Constants.Exclusions.Links.some((s) => $el.matches(s))) {
+            Found.Links.push($el);
+          }
+          break;
+      }
+      if (!contrastExcludedTags.has(tag)) {
+        if (!getCachedClosest($el, contrastAncestorSelector)) {
+          if (!contrastAttrSelector || !$el.matches(contrastAttrSelector)) {
+            Found.Contrast.push($el);
+          }
+        }
+      }
+    }
+    Found.Headings = find(
+      'h1, h2, h3, h4, h5, h6, [role="heading"][aria-level]',
+      "root",
+      Constants.Exclusions.Headings
+    );
+    Found.ExcludedHeadings = [];
+    Found.ExcludedOutlineHeadings = [];
+    for (const heading of Found.Headings) {
+      if (Constants.Exclusions.Headings.some((ex) => heading.matches(ex)))
+        Found.ExcludedHeadings.push(heading);
+      if (Constants.Exclusions.Outline.some((ex) => heading.matches(ex)))
+        Found.ExcludedOutlineHeadings.push(heading);
+    }
+    Found.OutlineIgnore = Found.ExcludedOutlineHeadings.concat(Found.ExcludedHeadings);
+  }
+  const Annotations2 = {};
+  function initializeAnnotations() {
+    Annotations2.Array = find("sa11y-annotation", "document");
+    Annotations2.Array.forEach((annotation, i) => {
+      annotation.setAttribute("data-sa11y-position", i);
+    });
+  }
+  return {
+    initializeElements,
+    initializeFilterElements,
+    Found,
+    initializeAnnotations,
+    Annotations: Annotations2
+  };
+})();
+const styles = ":host{z-index:999999;background:var(--sa11y-panel-bg);border-top:5px solid var(--sa11y-panel-bg-splitter);width:100%;height:fit-content;display:block;position:fixed;bottom:0;left:0;right:0}*{font-size:var(--sa11y-normal-text);color:var(--sa11y-panel-primary);font-family:var(--sa11y-font-face)!important;-webkit-font-smoothing:auto!important;line-height:22px!important}#dialog{max-width:900px;margin:20px auto;padding:20px}h2{font-size:var(--sa11y-large-text);margin-top:0}a{color:var(--sa11y-hyperlink);cursor:pointer;text-decoration:underline}a:hover,a:focus{text-decoration:none}p{margin-top:0}.error{color:var(--sa11y-error-text);background:var(--sa11y-error);border:2px dashed #f08080;max-height:300px;margin-bottom:0;padding:5px;overflow:scroll}";
+const sharedStyles = '.visually-hidden{clip:rect(1px, 1px, 1px, 1px);white-space:nowrap;clip-path:inset(50%);border:0;width:1px;height:1px;padding:0;display:block;position:absolute;overflow:hidden}[hidden]{display:none!important}h2,.header-text-inline,.header-text{font-size:var(--sa11y-large-text);color:var(--sa11y-panel-primary);margin-bottom:3px;font-weight:600;display:block}.header-text-inline{display:inline-block!important}code{font-size:calc(var(--sa11y-normal-text) - 1px);font-weight:600;font-family:monospace!important}pre code{white-space:pre-wrap;overflow:auto}pre,code,kbd,.kbd{color:var(--sa11y-panel-primary);background-color:var(--sa11y-panel-badge);border-radius:3.2px;padding:1.6px 4.8px}.bold{font-weight:600}.error .colour,.red-text{font-family:var(--sa11y-font-face);color:var(--sa11y-red-text)}.warning .colour,.yellow-text{font-family:var(--sa11y-font-face);color:var(--sa11y-yellow-text)}.normal-badge,.badge{min-width:10px;color:var(--sa11y-panel-primary);text-align:center;white-space:nowrap;vertical-align:baseline;background-color:var(--sa11y-panel-badge);border-radius:10px;outline:1px solid #0000;padding:1px 5px 1.75px;font-size:14px;line-height:1;display:inline;font-weight:700!important}.error .badge{color:var(--sa11y-error-text);background:var(--sa11y-error)}.error-badge{color:var(--sa11y-error-text)!important;background:var(--sa11y-error)!important}.warning .badge{color:var(--sa11y-panel-bg);background:var(--sa11y-yellow-text)}.warning-badge{color:var(--sa11y-panel-bg)!important;background:var(--sa11y-yellow-text)!important}.good-contrast{color:var(--sa11y-good-text)!important;background:var(--sa11y-good)!important}#contrast-preview{overflow-wrap:break-word;border:2px dashed var(--sa11y-panel-bg-splitter);background-color:#e8e8e8;background-image:linear-gradient(45deg,#ccc 25%,#0000 25% 75%,#ccc 75%,#ccc),linear-gradient(45deg,#ccc 25%,#0000 25% 75%,#ccc 75%,#ccc);background-position:0 0,5px 5px;background-size:10px 10px;border-radius:3.2px;max-height:100px;margin-top:10px;padding:5px;line-height:1;overflow:clip}#contrast-preview:empty{display:none}#color-pickers{justify-content:space-between;margin-top:10px;margin-bottom:10px;display:flex}#color-pickers label{align-items:center;display:flex}#color-pickers input{cursor:pointer;margin-inline-start:7px}#fg-color-wrapper.unknown,#bg-color-wrapper.unknown{display:inline-block;position:relative}:is(#fg-color-wrapper.unknown,#bg-color-wrapper.unknown):after{z-index:2;color:#fff;pointer-events:none;content:"?";justify-content:center;align-items:center;width:44px;height:44px;margin:-46px 7px;font-size:22px;display:flex;position:absolute}input[type=color i]{background:var(--sa11y-panel-bg-secondary);border-color:var(--sa11y-button-outline);border-style:solid;border-width:1px;border-radius:50%;block-size:44px;inline-size:44px;padding:2px}input[type=color i]::-webkit-color-swatch-wrapper{padding:1px}input[type=color i]::-webkit-color-swatch{border-color:var(--sa11y-button-outline);border-radius:50%}input[type=color i]::-moz-color-swatch{border-color:var(--sa11y-button-outline);border-radius:50%}input[type=color i].unknown{box-shadow:0 0 0 3px var(--sa11y-yellow-text)}.close-btn{float:var(--sa11y-float-rtl);width:32px;height:32px;font-size:var(--sa11y-normal-text);color:var(--sa11y-panel-primary);cursor:pointer;background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-button-outline);border-radius:50%;margin:0;font-weight:400;transition:all .2s ease-in-out;position:relative}.close-btn:hover,.close-btn:focus{background-color:var(--sa11y-shortcut-hover)}.close-btn:after{content:"";background:var(--sa11y-setting-switch-bg-off);-webkit-mask:var(--sa11y-close-btn-svg) center no-repeat;mask:var(--sa11y-close-btn-svg) center no-repeat;position:absolute;inset:-7px}@media screen and (forced-colors:active){.close-btn:after{filter:invert()}}#container [tabindex="0"]:focus,#container [tabindex="-1"]:focus,#container input:focus,#container select:focus,#container button:focus,#container a:focus{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}#container .switch:focus,#container #panel-controls button:focus{box-shadow:inset 0 0 0 4px var(--sa11y-focus-color);outline:0}#container [tabindex="0"]:focus:not(:focus-visible),#container [tabindex="-1"]:focus:not(:focus-visible),#container input:focus:not(:focus-visible),#container button:focus:not(:focus-visible),#container select:focus:not(:focus-visible),#container #panel-controls button:focus:not(:focus-visible){box-shadow:none;outline:0}#container a:focus-visible,#container button:not(#panel-controls button,.switch):focus-visible,#container select:focus-visible,#container input:focus-visible,#container [tabindex="0"]:focus-visible,#container [tabindex="-1"]:focus-visible{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}#container .switch:focus-visible,#container #panel-controls button:focus-visible{box-shadow:inset 0 0 0 4px var(--sa11y-focus-color);outline:0}@media screen and (forced-colors:active){#panel-controls button:focus{border:inset 3px solid transparent}.close-btn:focus{outline:3px solid #0000!important}#container a:focus,#container [tabindex="-1"]:focus,#container [tabindex="0"]:focus,#container select:focus,#container button:focus{outline:3px solid #0000!important}}';
 class ConsoleErrors extends HTMLElement {
   constructor(error) {
     super();
@@ -1280,32 +1928,49 @@ class ConsoleErrors extends HTMLElement {
   connectedCallback() {
     const shadow = this.attachShadow({ mode: "open" });
     const style = document.createElement("style");
-    style.innerHTML = styles + sharedStyles;
+    style.textContent = styles + sharedStyles;
     shadow.appendChild(style);
     const content = document.createElement("div");
     content.setAttribute("id", "dialog");
     content.setAttribute("tabindex", "-1");
-    const url2 = window.location;
-    const google = "https://forms.gle/sjzK9XykETaoqZv99";
-    const template = `## Error Description
+    const url2 = sanitizeURL(window.location.href);
+    const template = `## Error description
 \`\`\`javascript
 ${this.error.stack}
 \`\`\`
 
+## Configuration options
+\`\`\`javascript
+${JSON.stringify(State.option)}
+\`\`\`
+
 ## Details
 - **URL:** ${url2}
-- **Version:** ${"4.4.1"}
+- **Version:** ${"5.0.0"}
 
 ## Comments
 `;
-    const encodedTemplate = encodeURIComponent(template);
-    const github = `https://github.com/ryersondmp/sa11y/issues/new?title=Bug%20report&body=${encodedTemplate}`;
-    content.innerHTML = `
-      <button class="close-btn" aria-label="${Lang._("ALERT_CLOSE")}"></button>
-      <h2>${Lang._("ERROR")}</h2>
-      <p>${Lang.sprintf("CONSOLE_ERROR", google, github)}</p>
-      <p class="error">${escapeHTML(this.error.stack)}<br><br>Version: ${"4.4.1"} <br> URL: ${url2}</p>
-    `;
+    const closeBtn = document.createElement("button");
+    closeBtn.className = "close-btn";
+    closeBtn.setAttribute("aria-label", Lang._("ALERT_CLOSE"));
+    const h2 = document.createElement("h2");
+    h2.textContent = Lang._("ERROR");
+    const p1 = document.createElement("p");
+    p1.append(Lang.sprintf("CONSOLE_ERROR"));
+    const p2 = document.createElement("p");
+    p2.className = "error";
+    p2.append(
+      this.error.stack,
+      document.createElement("br"),
+      document.createElement("br"),
+      `Version: ${"5.0.0"}`,
+      document.createElement("br"),
+      `URL: ${url2}`,
+      document.createElement("br"),
+      document.createElement("br"),
+      `Config options: ${JSON.stringify(State.option)}`
+    );
+    content.append(closeBtn, h2, p1, p2);
     shadow.appendChild(content);
     setTimeout(() => {
       Constants.Panel.toggle.style.display = "none";
@@ -1316,122 +1981,400 @@ ${this.error.stack}
       close.addEventListener("click", () => {
         container.remove();
       });
-    }, 0);
-  }
-}
-function detectPageChanges(detectSPArouting, checkAll, resetAll) {
-  if (detectSPArouting === true) {
-    let url2 = window.location.href;
-    const checkURL = debounce$2(async () => {
-      if (url2 !== window.location.href) {
-        if (store.getItem("sa11y-panel") === "Closed" || !store.getItem("sa11y-panel")) {
-          checkAll();
-        } else {
-          resetAll(false);
-          await checkAll();
-        }
-        url2 = window.location.href;
+      const encodedTemplate = encodeURIComponent(template);
+      const github = container.shadowRoot.querySelector(
+        'a[href="https://github.com/ryersondmp/sa11y/issues/new?title=Bug%20report"]'
+      );
+      const href = github.getAttribute("href");
+      if (href) {
+        const newHref = `${href}&body=${encodedTemplate}`;
+        github.setAttribute("href", newHref);
       }
-    }, 250);
-    window.addEventListener("click", checkURL);
-    window.addEventListener("keydown", checkURL);
+    }, 10);
   }
 }
-function dismissLogic(results, dismissTooltip) {
-  const dismissedIssues = JSON.parse(localStorage.getItem("sa11y-dismissed") || "[]");
-  const currentPath = window.location.pathname;
-  const isSoloDismissed = (issue, dismissed) => dismissed.key.includes(issue.dismiss) && dismissed.href === currentPath && (issue.type === "warning" || issue.type === "good");
-  const dismissAll = (issue, dismissed) => typeof dismissed.dismissAll === "string" && issue.dismissAll === dismissed.dismissAll && dismissed.href === currentPath;
-  const soloDismissed = results.filter(
-    (issue) => dismissedIssues.some((dismissed) => isSoloDismissed(issue, dismissed))
-  );
-  const allDismissed = results.filter(
-    (issue) => dismissedIssues.some((dismissed) => dismissAll(issue, dismissed))
-  );
-  const mergeDismissed = [...soloDismissed, ...allDismissed];
-  const dismissedResults = [
-    ...new Map(mergeDismissed.map((issue) => [issue.dismiss, issue])).values()
-  ];
-  const dismissCount = dismissedResults.length;
-  const updatedResults = results.filter(
-    (issue) => !dismissedResults.some(
-      (dismissed) => dismissed.dismiss === issue.dismiss && (issue.type === "warning" || issue.type === "good")
-    )
-  );
-  if (dismissCount) {
-    Constants.Panel.dismissButton.classList.add("active");
-    Constants.Panel.dismissTooltip.innerText = Lang.sprintf("PANEL_DISMISS_BUTTON", dismissCount);
-    dismissTooltip.object.setContent(Lang.sprintf("PANEL_DISMISS_BUTTON", dismissCount));
+const isElementVisible = (element) => {
+  return !!(element?.offsetWidth && element?.offsetHeight);
+};
+const closeAnyActiveTooltips = () => {
+  const tooltip = document.querySelector("sa11y-tooltips").shadowRoot;
+  const button = tooltip.querySelector("button");
+  if (button !== null) {
+    button.click();
+  }
+};
+const getHiddenParent = ($el) => {
+  const shadowHost = $el.getRootNode().host;
+  const visibleParent = findVisibleParent(shadowHost, "display", "none");
+  if (visibleParent !== null) {
+    const hiddenParent = visibleParent.previousElementSibling;
+    if (hiddenParent) {
+      addPulse(hiddenParent);
+    } else {
+      addPulse(visibleParent.parentNode);
+    }
+  }
+};
+const getScrollPosition = ($el, results) => {
+  if (isElementVisible($el) === false) {
+    const annotationHost = $el.getRootNode().host;
+    const visiblePosition = findVisibleParent(annotationHost, "display", "none");
+    const annotationIndex = parseInt(annotationHost.getAttribute("data-sa11y-annotation"), 10);
+    const issueObject = results.find((issue) => issue.id === annotationIndex);
+    const elementPreview = generateElementPreview(issueObject);
+    getHiddenParent($el);
+    const result = State.results.find((item) => String(item.id) === String(annotationIndex));
+    if (result.content instanceof Element) {
+      result.content.setAttribute("lang", Lang._("LANG_CODE"));
+      result.content.className = result.type;
+      let h3 = result.content.querySelector(".issue-label");
+      if (!h3) {
+        h3 = document.createElement("h3");
+        h3.className = "issue-label";
+        result.content.prepend(h3);
+      }
+      h3.textContent = result.issueLabel;
+    }
+    createAlert(`${Lang._("NOT_VISIBLE")}`, result.finalContent, elementPreview);
+    closeAnyActiveTooltips();
+    if (visiblePosition) {
+      const prevSibling = visiblePosition.previousElementSibling;
+      const { parentNode } = visiblePosition;
+      if (prevSibling) {
+        return offsetTop(prevSibling).top - 150;
+      }
+      return offsetTop(parentNode).top - 150;
+    }
   } else {
-    Constants.Panel.dismissButton.classList.remove("active");
+    removeAlert();
+    Constants.Panel.skipButton.focus();
   }
-  return { dismissedIssues, updatedResults, dismissCount, dismissedResults };
-}
-let restoreDismissedHandler;
-let dismissHandler;
-const dismissIssueButton = async (e, results, checkAll, resetAll) => {
-  let savedDismissKeys = JSON.parse(store.getItem("sa11y-dismissed"));
-  const dismissButton = e.target;
-  const dismissContainer = document.querySelector("sa11y-panel-tooltips");
-  dismissContainer.hidden = false;
-  if (dismissButton.tagName === "BUTTON" && dismissButton.hasAttribute("data-sa11y-dismiss")) {
-    const dismissItem = parseInt(dismissButton.getAttribute("data-sa11y-dismiss"), 10);
-    const issue = results.find(($el) => $el.id === dismissItem);
-    if (savedDismissKeys === null) {
-      setTimeout(() => createAlert(Lang._("DISMISS_REMINDER")), 0);
-      savedDismissKeys = [];
+  return offsetTop($el).top - 150;
+};
+let index = -1;
+const determineIndex = () => {
+  const latestDismissed = store.getItem("sa11y-latest-dismissed");
+  if (latestDismissed !== null) {
+    index = parseInt(latestDismissed, 10) - 1;
+  }
+  store.removeItem("sa11y-latest-dismissed");
+  const opened = find("[data-sa11y-opened]", "root");
+  if (opened[0]) {
+    index = parseInt(opened[0].getAttribute("data-sa11y-position"), 10);
+  }
+};
+const goToNext = (results) => {
+  determineIndex();
+  const issues = Elements.Annotations.Array;
+  if (index >= issues.length - 1) {
+    index = -1;
+  }
+  const annotation = issues[index + 1];
+  const button = annotation.shadowRoot.querySelector("button");
+  const scrollPos = getScrollPosition(button, results);
+  window.scrollTo({
+    top: scrollPos,
+    behavior: `${Constants.Global.scrollBehaviour}`
+  });
+  if (isElementVisible(button)) {
+    button.focus();
+    button.click();
+  }
+  index += 1;
+};
+const goToPrev = (results) => {
+  determineIndex();
+  const issues = Elements.Annotations.Array;
+  if (index <= 0) {
+    index = issues.length;
+  }
+  const button = Elements.Annotations.Array[index - 1].shadowRoot.querySelector("button");
+  const scrollPos = getScrollPosition(button, results);
+  window.scrollTo({
+    top: scrollPos,
+    behavior: `${Constants.Global.scrollBehaviour}`
+  });
+  if (isElementVisible(button)) {
+    button.focus();
+    button.click();
+  }
+  index -= 1;
+  if (index === -1) {
+    index = Elements.Annotations.Array.length - 1;
+  }
+};
+function keyboardShortcut(e, results) {
+  if (Elements.Annotations.Array.length && !Constants.Panel.skipButton.hasAttribute("disabled")) {
+    if (e.altKey && (e.code === "KeyS" || e.code === "Period")) {
+      e.preventDefault();
+      goToNext(results);
+    } else if (e.altKey && (e.code === "KeyW" || e.code === "Comma")) {
+      e.preventDefault();
+      goToPrev(results);
     }
-    if (issue.dismiss) {
-      const dismissAllSelected = dismissButton.hasAttribute("data-sa11y-dismiss-all") ? issue.dismissAll : "";
-      const dismissalDetails = {
-        key: issue.dismiss,
-        href: window.location.pathname,
-        ...dismissAllSelected ? { dismissAll: dismissAllSelected } : {}
-      };
-      const item = find(`[data-sa11y-annotation='${issue.id}']`, "root");
-      const latestDismissed = item[0] ? item[0].getAttribute("data-sa11y-position") : 0;
-      store.setItem("sa11y-latest-dismissed", latestDismissed);
-      store.setItem("sa11y-dismiss-item", JSON.stringify(dismissalDetails));
-      savedDismissKeys.push(dismissalDetails);
-      store.setItem("sa11y-dismissed", JSON.stringify(savedDismissKeys));
-      store.removeItem("sa11y-dismiss-item");
-      const tooltip = dismissButton?.closest("[data-tippy-root]");
-      if (tooltip) {
-        setTimeout(() => {
-          tooltip.remove();
-        }, 0);
+  }
+}
+let keyboardShortcutHandler;
+let handleSkipButtonHandler;
+function skipToIssue() {
+  keyboardShortcutHandler = (e) => {
+    keyboardShortcut(e, State.results);
+  };
+  handleSkipButtonHandler = () => {
+    goToNext(State.results);
+  };
+  document.addEventListener("keydown", keyboardShortcutHandler);
+  Constants.Panel.skipButton.addEventListener("click", handleSkipButtonHandler);
+}
+function removeSkipBtnListeners() {
+  document.removeEventListener("keydown", keyboardShortcutHandler);
+  Constants.Panel.skipButton.removeEventListener("click", handleSkipButtonHandler);
+}
+const exportResultsStyles = `:root{--font-primary:system-ui, "Segoe UI", roboto, helvetica, arial, sans-serif;--font-secondary:consolas, monaco, "Ubuntu Mono", "Liberation Mono", "Courier New", courier, monospace;--body-text:#333;--bg-primary:#fff;--bg-secondary:#f6f8fa;--bg-tertiary:#d7d7d7;--link-primary:#004c9b;--red-text:#d30017;--warning-text:#966f0d;--hr:#d7d7d74d;--sa11y-link-icon-svg:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 640 512'%3E%3Cpath d='M579.8 267.7c56.5-56.5 56.5-148 0-204.5c-50-50-128.8-56.5-186.3-15.4l-1.6 1.1c-14.4 10.3-17.7 30.3-7.4 44.6s30.3 17.7 44.6 7.4l1.6-1.1c32.1-22.9 76-19.3 103.8 8.6c31.5 31.5 31.5 82.5 0 114L422.3 334.8c-31.5 31.5-82.5 31.5-114 0c-27.9-27.9-31.5-71.8-8.6-103.8l1.1-1.6c10.3-14.4 6.9-34.4-7.4-44.6s-34.4-6.9-44.6 7.4l-1.1 1.6C206.5 251.2 213 330 263 380c56.5 56.5 148 56.5 204.5 0L579.8 267.7zM60.2 244.3c-56.5 56.5-56.5 148 0 204.5c50 50 128.8 56.5 186.3 15.4l1.6-1.1c14.4-10.3 17.7-30.3 7.4-44.6s-30.3-17.7-44.6-7.4l-1.6 1.1c-32.1 22.9-76 19.3-103.8-8.6C74 372 74 321 105.5 289.5L217.7 177.2c31.5-31.5 82.5-31.5 114 0c27.9 27.9 31.5 71.8 8.6 103.9l-1.1 1.6c-10.3 14.4-6.9 34.4 7.4 44.6s34.4 6.9 44.6-7.4l1.1-1.6C433.5 260.8 427 182 377 132c-56.5-56.5-148-56.5-204.5 0L60.2 244.3z'/%3E%3C/svg%3E")}@media (prefers-color-scheme:dark){:root{--body-text:#dde8ff;--bg-primary:#0a2051;--bg-secondary:#072c7c;--bg-tertiary:#0041c9;--link-primary:#64b2ff;--red-text:#ffa2a2;--warning-text:#ffdb59;--hr:#0041c94d}}*{margin:0;padding:0}article,aside,nav,ol,p,pre,section,ul{margin-bottom:1rem}body{max-width:70ch;font-family:var(--font-primary);color:var(--body-text);word-break:break-word;overflow-wrap:break-word;background:var(--bg-primary);margin:0 auto;padding:2rem;font-size:1rem;line-height:1.5;overflow-x:hidden}h1,h2,h3{color:var(--body-text);margin-bottom:8px;padding-top:.875rem;padding-bottom:2px;line-height:1}h1{font-size:2.25rem}h2{font-size:1.85rem}h3{font-size:1.55rem}a{color:var(--link-primary)}a:hover,a:focus{text-decoration:none}header,footer{background:var(--bg-secondary);padding:2rem calc(50vw - 50%)}header{border-bottom:1px solid var(--bg-tertiary);margin:-2rem calc(-50vw + 50%) 2rem}footer{text-align:center;border-top:1px solid var(--bg-tertiary);margin:3rem calc(-50vw + 50%) -2rem}header>:first-child{margin-top:0;padding-top:0}header>:last-child{margin-bottom:0}hr{background:var(--hr);opacity:1;border:none;height:1px;margin:10px 0;padding:0}code,samp,kbd,pre{font-family:var(--font-secondary);background:var(--bg-secondary);border:1px solid var(--bg-tertiary);border-radius:4px;padding:3px 6px;font-size:.9rem}pre{max-width:100%;padding:1rem 1.4rem;display:block;overflow:auto}pre code{font-size:inherit;color:inherit;background:inherit;border:0;margin:0;padding:0}code pre{font-size:inherit;color:inherit;background:inherit;border:0;margin:0;padding:0;display:inline}details{background:var(--bg-primary);border:2px solid var(--link-primary);border-radius:4px;padding:.6rem 1rem}summary{cursor:pointer;font-weight:700}summary div{display:inline-block}summary p{margin:0}details[open]{padding-bottom:.75rem}details[open] summary{margin-bottom:6px}details[open]>:last-child{margin-bottom:0}.two-columns{display:flex}.column{flex:1;margin-inline-end:20px}.count{max-width:220px}dl{padding-top:10px}.column dl{width:100%}dt{font-weight:700}dd{padding-bottom:10px}ul ul,ol ul,ul ol,ol ol{margin-bottom:0}ul li{margin-bottom:.5rem}ol,ul{padding-left:2rem}ol li:not(li li){margin-bottom:4rem}iframe,img{background:var(--bg-tertiary);border-radius:5px;max-width:50%;padding:5px;display:block}video,audio{border:0;display:block}.red-text{color:var(--red-text)}.visually-hidden{clip:rect(1px, 1px, 1px, 1px);white-space:nowrap;clip-path:inset(50%);border:0;width:1px;height:1px;padding:0;display:block;position:absolute;overflow:hidden}.badge{color:#fff;text-align:center;white-space:nowrap;vertical-align:baseline;border-radius:10px;outline:1px solid #0000;min-width:10px;padding:1px 5px 1.75px;font-size:14px;line-height:1;display:inline;font-weight:700!important}.error .colour{color:var(--red-text)}.error .badge{color:#fff;background:#d30017}.warning .colour{color:var(--warning-text)}.warning .badge{color:#fff;background:#966f0d}.link-icon{width:16px;height:16px;-webkit-mask:var(--sa11y-link-icon-svg) center no-repeat;mask:var(--sa11y-link-icon-svg) center no-repeat;background:#fff;margin-bottom:-3.5px;display:inline-block}li pre,li li pre,li li img,li li iframe,li li video,li li audio{margin-top:1rem}li li{margin-top:1rem;list-style:none}`;
+function el(tagOrNode, props = {}, ...children) {
+  const node = typeof tagOrNode === "string" ? document.createElement(tagOrNode) : tagOrNode;
+  for (const [key, val] of Object.entries(props)) {
+    if (key === "textContent") {
+      node.textContent = val;
+    } else if (key === "className") {
+      node.className = val;
+    } else {
+      node.setAttribute(key, val);
+    }
+  }
+  for (const child of children) {
+    if (child == null) continue;
+    if (typeof child === "string") {
+      node.appendChild(document.createTextNode(child));
+    } else {
+      node.appendChild(child);
+    }
+  }
+  return node;
+}
+function generateMetaData() {
+  const today = /* @__PURE__ */ new Date();
+  const day = String(today.getDate()).padStart(2, "0");
+  const month = String(today.getMonth() + 1).padStart(2, "0");
+  const year = today.getFullYear();
+  const date = (/* @__PURE__ */ new Date()).toLocaleString();
+  const numericDate = `${month}-${day}-${year}`;
+  const title = document.querySelector("head title");
+  const titleCheck = !title || title.textContent.trim().length === 0;
+  const metaTitle = !titleCheck ? title.textContent : "";
+  const pageURL = sanitizeURL(window.location.href);
+  return { date, numericDate, titleCheck, metaTitle, pageURL };
+}
+function sanitizeCSVCell(value) {
+  const strValue = String(value ?? "");
+  const escaped = strValue.replaceAll('"', '""');
+  if (/^[=+\-@\t\r]/.test(escaped)) {
+    return `'${escaped}`;
+  }
+  return escaped;
+}
+async function generateList(issues, type) {
+  if (!issues.length) return null;
+  const typeLabels = {
+    error: Lang._("ERRORS"),
+    warning: Lang._("WARNINGS"),
+    dismissed: Lang._("DISMISSED")
+  };
+  const fragment = document.createDocumentFragment();
+  fragment.appendChild(el("h2", { textContent: typeLabels[type] }));
+  const ol = el("ol", { className: type });
+  for (const issue of issues) {
+    const li = document.createElement("li");
+    const msgContainer = document.createElement("div");
+    const importedBody = document.importNode(issue.content, true);
+    msgContainer.append(...importedBody.childNodes);
+    li.appendChild(msgContainer);
+    const ul = document.createElement("ul");
+    if (issue.element) {
+      if (["IMG"].includes(issue.element.tagName)) {
+        const previewLi = document.createElement("li");
+        const strong = el("strong", { textContent: `${Lang._("PREVIEW")}: ` });
+        previewLi.appendChild(strong);
+        const previewNode = await generateElementPreview(issue, true);
+        const previewContainer = document.createElement("div");
+        previewContainer.appendChild(previewNode);
+        previewLi.appendChild(previewContainer);
+        ul.appendChild(previewLi);
       }
-      resetAll(false);
-      await checkAll();
+      const elemLi = document.createElement("li");
+      elemLi.appendChild(el("strong", { textContent: `${Lang._("ELEMENT")}: ` }));
+      const elemPre = document.createElement("pre");
+      elemPre.appendChild(el("code", { textContent: issue.htmlPath }));
+      elemLi.appendChild(elemPre);
+      ul.appendChild(elemLi);
     }
+    if (issue.cssPath) {
+      const pathLi = document.createElement("li");
+      pathLi.appendChild(el("strong", { textContent: `${Lang._("PATH")}: ` }));
+      const pathPre = document.createElement("pre");
+      pathPre.appendChild(el("code", { textContent: issue.cssPath }));
+      pathLi.appendChild(pathPre);
+      ul.appendChild(pathLi);
+    }
+    li.appendChild(ul);
+    ol.appendChild(li);
   }
-};
-const restoreDismissButton = async (dismissed, checkAll, resetAll) => {
-  const dismissContainer = document.querySelector("sa11y-panel-tooltips");
-  dismissContainer.hidden = true;
-  const filtered = dismissed.filter((item) => item.href !== window.location.pathname);
-  store.setItem("sa11y-dismissed", JSON.stringify(filtered));
-  Constants.Panel.dismissButton.classList.remove("active");
-  resetAll(false);
-  await checkAll();
-};
-function dismissButtons(results, dismissed, checkAll, resetAll) {
-  if (Constants.Global.dismissAnnotations) {
-    dismissHandler = (e) => dismissIssueButton(e, results, checkAll, resetAll);
-    const tooltips = document.querySelector("sa11y-tooltips").shadowRoot;
-    tooltips.addEventListener("click", dismissHandler);
-    Constants.Panel.panel.addEventListener("click", dismissHandler);
+  if (type === "dismissed") {
+    const details = document.createElement("details");
+    details.className = "warning";
+    details.appendChild(
+      el("summary", {}, Lang.sprintf("PANEL_DISMISS_BUTTON", State.counts.dismissed))
+    );
+    details.appendChild(ol);
+    fragment.appendChild(details);
+  } else {
+    fragment.appendChild(ol);
   }
-  restoreDismissedHandler = () => restoreDismissButton(dismissed, checkAll, resetAll);
-  Constants.Panel.dismissButton?.addEventListener("click", restoreDismissedHandler);
+  return fragment;
 }
-function removeDismissListeners() {
-  Constants.Panel.panel?.removeEventListener("click", dismissHandler);
-  Constants.Panel.dismissButton?.removeEventListener("click", restoreDismissedHandler);
+async function generateHTMLTemplate() {
+  const errors = State.results.filter((issue) => issue.type === "error");
+  const warnings = State.results.filter((issue) => issue.type === "warning");
+  const meta = generateMetaData();
+  const doc = document.implementation.createHTMLDocument("");
+  doc.documentElement.setAttribute("lang", Lang._("LANG_CODE"));
+  el("meta", { charset: "UTF-8" });
+  const existingMeta = doc.querySelector("meta[charset]");
+  if (existingMeta) {
+    existingMeta.setAttribute("charset", "UTF-8");
+  } else {
+    doc.head.insertBefore(el("meta", { charset: "UTF-8" }), doc.head.firstChild);
+  }
+  doc.head.appendChild(
+    el("meta", { name: "viewport", content: "width=device-width, initial-scale=1.0" })
+  );
+  doc.title = `${Lang._("RESULTS")}: ${meta.metaTitle}`;
+  const styleEl = doc.createElement("style");
+  styleEl.textContent = exportResultsStyles;
+  doc.head.appendChild(styleEl);
+  const header = doc.createElement("header");
+  header.appendChild(el("h1", { textContent: Lang._("RESULTS") }));
+  const dl = el("dl", { className: "two-columns" });
+  const leftCol = el("div", { className: "column" });
+  if (!meta.titleCheck) {
+    leftCol.appendChild(el("dt", { textContent: Lang._("PAGE_TITLE") }));
+    leftCol.appendChild(el("dd", { textContent: meta.metaTitle }));
+  }
+  leftCol.appendChild(el("dt", { textContent: "URL" }));
+  const urlAnchor = el("a", { href: meta.pageURL, textContent: meta.pageURL });
+  leftCol.appendChild(el("dd", {}, urlAnchor));
+  leftCol.appendChild(el("dt", { textContent: Lang._("DATE") }));
+  leftCol.appendChild(el("dd", { textContent: meta.date }));
+  dl.appendChild(leftCol);
+  const rightCol = el("div", { className: "column count" });
+  if (State.counts.error !== 0) {
+    rightCol.appendChild(el("dt", { textContent: Lang._("ERRORS") }));
+    rightCol.appendChild(el("dd", { textContent: String(State.counts.error) }));
+  }
+  if (State.counts.warning !== 0) {
+    rightCol.appendChild(el("dt", { textContent: Lang._("WARNINGS") }));
+    rightCol.appendChild(el("dd", { textContent: String(State.counts.warning) }));
+  }
+  if (State.counts.dismissed !== 0) {
+    rightCol.appendChild(el("dt", { textContent: Lang._("DISMISSED") }));
+    rightCol.appendChild(el("dd", { textContent: String(State.counts.dismissed) }));
+  }
+  dl.appendChild(rightCol);
+  header.appendChild(dl);
+  const main = doc.createElement("main");
+  const listEntries = [
+    [errors, "error"],
+    [warnings, "warning"],
+    [State.dismissedResults, "dismissed"]
+  ];
+  for (const [issues, type] of listEntries) {
+    const fragment = await generateList(issues, type);
+    if (fragment) main.appendChild(fragment);
+  }
+  const footer = document.createElement("footer");
+  const generatedBy = Lang.sprintf("GENERATED");
+  footer.appendChild(generatedBy);
+  doc.body.appendChild(header);
+  doc.body.appendChild(main);
+  doc.body.appendChild(footer);
+  return new XMLSerializer().serializeToString(doc);
+}
+async function downloadHTMLTemplate() {
+  const htmlContent = await generateHTMLTemplate();
+  const meta = generateMetaData();
+  const blob = new Blob([htmlContent], { type: "text/html" });
+  const link = document.createElement("a");
+  const title = !meta.titleCheck ? `_${meta.metaTitle.trim().replace(/ /g, "")}` : "";
+  link.href = window.URL.createObjectURL(blob);
+  link.download = `Sa11y_${meta.numericDate + title}.html`;
+  document.body.appendChild(link);
+  link.click();
+  setTimeout(() => {
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(link.href);
+  }, 100);
+}
+function downloadCSVTemplate() {
+  const meta = generateMetaData();
+  const filteredObjects = State.results.filter((issue) => issue.type === "warning" || issue.type === "error").map((issue) => {
+    const { type, content, htmlPath, cssPath } = issue;
+    const clone = content.cloneNode(true);
+    clone.querySelectorAll(".visually-hidden").forEach((n) => {
+      n.remove();
+    });
+    clone.querySelectorAll("hr").forEach((hr) => {
+      hr.replaceWith(" | ");
+    });
+    const encoded = clone.textContent.replaceAll('"', '""');
+    const columns = {
+      Title: `"${sanitizeCSVCell(meta.metaTitle)}"`,
+      URL: `"${sanitizeCSVCell(meta.pageURL)}"`,
+      Type: `"${sanitizeCSVCell(String(type))}"`,
+      Issue: `"${sanitizeCSVCell(encoded)}"`,
+      Element: `"${sanitizeCSVCell(htmlPath)}"`
+    };
+    if (cssPath) {
+      columns.Path = `"${sanitizeCSVCell(cssPath)}"`;
+    }
+    return columns;
+  });
+  const headers = Object.keys(filteredObjects[0]);
+  const csvContent = `${headers.join(",")}
+${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join(",")).join("\n")}`;
+  const bom = new Uint8Array([239, 187, 191]);
+  const blob = new Blob([bom, csvContent], { type: "text/csv;charset=utf-8;" });
+  const url2 = window.URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url2;
+  const fileNameTitle = !meta.titleCheck ? `_${meta.metaTitle.trim().replace(/ /g, "")}` : "";
+  link.setAttribute("download", `Sa11y_${meta.numericDate + fileNameTitle}.csv`);
+  document.body.appendChild(link);
+  link.click();
+  link.href = "";
+  window.URL.revokeObjectURL(link.href);
+}
+let exportHTMLHandler;
+let exportCSVHandler;
+function exportResults() {
+  if (!State.option.exportResultsPlugin) return;
+  exportHTMLHandler = async () => {
+    await downloadHTMLTemplate();
+  };
+  exportCSVHandler = () => {
+    downloadCSVTemplate();
+  };
+  Constants.Panel.exportHTML.addEventListener("click", exportHTMLHandler);
+  Constants.Panel.exportCSV.addEventListener("click", exportCSVHandler);
+}
+function removeExportListeners() {
+  if (State.option.exportResultsPlugin) {
+    Constants.Panel.exportHTML.removeEventListener("click", exportHTMLHandler);
+    Constants.Panel.exportCSV.removeEventListener("click", exportCSVHandler);
+  }
 }
 function addColourFilters() {
-  if (Constants.Global.colourFilterPlugin) {
-    if (Constants.Global.headless === false) {
+  if (State.option.colourFilterPlugin) {
+    if (State.option.headless === false) {
       const svg = document.createElement("div");
       svg.id = "sa11y-colour-filters";
       svg.innerHTML = `
@@ -1470,7 +2413,7 @@ function addColourFilters() {
   }
 }
 function resetColourFilters() {
-  if (Constants.Global.colourFilterPlugin) {
+  if (State.option.colourFilterPlugin) {
     document.body.removeAttribute("data-sa11y-filter");
     Constants.Panel.settingsContent.classList.remove("hide-settings-border");
     Constants.Panel.colourFilterSelect.value = 0;
@@ -1481,3665 +2424,102 @@ function resetColourFilters() {
     Constants.Panel.controls.hidden = false;
   }
 }
-const exportResultsStyles = `:root{--font-primary:system-ui,"Segoe UI",roboto,helvetica,arial,sans-serif;--font-secondary:consolas,monaco,"Ubuntu Mono","Liberation Mono","Courier New",courier,monospace;--body-text:#333;--bg-primary:#fff;--bg-secondary:#f6f8fa;--bg-tertiary:#d7d7d7;--link-primary:#004c9b;--red-text:#d30017;--warning-text:#966f0d;--hr:#d7d7d74d;--sa11y-link-icon-svg:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 640 512'%3E%3Cpath d='M579.8 267.7c56.5-56.5 56.5-148 0-204.5c-50-50-128.8-56.5-186.3-15.4l-1.6 1.1c-14.4 10.3-17.7 30.3-7.4 44.6s30.3 17.7 44.6 7.4l1.6-1.1c32.1-22.9 76-19.3 103.8 8.6c31.5 31.5 31.5 82.5 0 114L422.3 334.8c-31.5 31.5-82.5 31.5-114 0c-27.9-27.9-31.5-71.8-8.6-103.8l1.1-1.6c10.3-14.4 6.9-34.4-7.4-44.6s-34.4-6.9-44.6 7.4l-1.1 1.6C206.5 251.2 213 330 263 380c56.5 56.5 148 56.5 204.5 0L579.8 267.7zM60.2 244.3c-56.5 56.5-56.5 148 0 204.5c50 50 128.8 56.5 186.3 15.4l1.6-1.1c14.4-10.3 17.7-30.3 7.4-44.6s-30.3-17.7-44.6-7.4l-1.6 1.1c-32.1 22.9-76 19.3-103.8-8.6C74 372 74 321 105.5 289.5L217.7 177.2c31.5-31.5 82.5-31.5 114 0c27.9 27.9 31.5 71.8 8.6 103.9l-1.1 1.6c-10.3 14.4-6.9 34.4 7.4 44.6s34.4 6.9 44.6-7.4l1.1-1.6C433.5 260.8 427 182 377 132c-56.5-56.5-148-56.5-204.5 0L60.2 244.3z'/%3E%3C/svg%3E")}@media (prefers-color-scheme:dark){:root{--body-text:#dde8ff;--bg-primary:#0a2051;--bg-secondary:#072c7c;--bg-tertiary:#0041c9;--link-primary:#64b2ff;--red-text:#ffa2a2;--warning-text:#ffdb59;--hr:#0041c94d}}*{margin:0;padding:0}article,aside,nav,ol,p,pre,section,ul{margin-bottom:1rem}body{max-width:70ch;font-family:var(--font-primary);color:var(--body-text);word-break:break-word;overflow-wrap:break-word;background:var(--bg-primary);margin:0 auto;padding:2rem;font-size:1rem;line-height:1.5;overflow-x:hidden}h1,h2,h3{color:var(--body-text);margin-bottom:8px;padding-top:.875rem;padding-bottom:2px;line-height:1}h1{font-size:2.25rem}h2{font-size:1.85rem}h3{font-size:1.55rem}a{color:var(--link-primary)}a:hover,a:focus{text-decoration:none}header,footer{background:var(--bg-secondary);padding:2rem calc(50vw - 50%)}header{border-bottom:1px solid var(--bg-tertiary);margin:-2rem calc(-50vw + 50%) 2rem}footer{text-align:center;border-top:1px solid var(--bg-tertiary);margin:3rem calc(-50vw + 50%) -2rem}header>:first-child{margin-top:0;padding-top:0}header>:last-child{margin-bottom:0}hr{background:var(--hr);opacity:1;border:none;height:1px;margin:10px 0;padding:0}code,samp,kbd,pre{font-family:var(--font-secondary);background:var(--bg-secondary);border:1px solid var(--bg-tertiary);border-radius:4px;padding:3px 6px;font-size:.9rem}pre{max-width:100%;padding:1rem 1.4rem;display:block;overflow:auto}pre code{font-size:inherit;color:inherit;background:inherit;border:0;margin:0;padding:0}code pre{font-size:inherit;color:inherit;background:inherit;border:0;margin:0;padding:0;display:inline}details{background:var(--bg-primary);border:2px solid var(--link-primary);border-radius:4px;padding:.6rem 1rem}summary{cursor:pointer;font-weight:700}details[open]{padding-bottom:.75rem}details[open] summary{margin-bottom:6px}details[open]>:last-child{margin-bottom:0}.two-columns{display:flex}.column{flex:1;margin-inline-end:20px}.count{max-width:220px}dl{padding-top:10px}.column dl{width:100%}dt{font-weight:700}dd{padding-bottom:10px}ul ul,ol ul,ul ol,ol ol{margin-bottom:0}ul li{margin-bottom:.5rem}ol,ul{padding-left:2rem}ol li:not(li li){margin-bottom:4rem}iframe,img{background:var(--bg-tertiary);border-radius:5px;max-width:50%;padding:5px;display:block}video,audio{border:0;display:block}.red-text{color:var(--red-text)}.visually-hidden{clip:rect(1px,1px,1px,1px);white-space:nowrap;clip-path:inset(50%);border:0;width:1px;height:1px;padding:0;display:block;position:absolute;overflow:hidden}.badge{color:#fff;text-align:center;white-space:nowrap;vertical-align:baseline;border-radius:10px;outline:1px solid #0000;min-width:10px;padding:1px 5px 1.75px;font-size:14px;line-height:1;display:inline;font-weight:700!important}.error .colour{color:var(--red-text)}.error .badge{color:#fff;background:#d30017}.warning .colour{color:var(--warning-text)}.warning .badge{color:#fff;background:#966f0d}.link-icon{width:16px;height:16px;-webkit-mask:var(--sa11y-link-icon-svg)center no-repeat;mask:var(--sa11y-link-icon-svg)center no-repeat;background:#fff;margin-bottom:-3.5px;display:inline-block}li pre,li li pre,li li img,li li iframe,li li video,li li audio{margin-top:1rem}li li{margin-top:1rem;list-style:none}`;
-function generateMetaData() {
-  const today = /* @__PURE__ */ new Date();
-  const day = String(today.getDate()).padStart(2, "0");
-  const month = String(today.getMonth() + 1).padStart(2, "0");
-  const year = today.getFullYear();
-  const date = (/* @__PURE__ */ new Date()).toLocaleString();
-  const numericDate = `${month}-${day}-${year}`;
-  const title = document.querySelector("head title");
-  const titleCheck = !title || title.textContent.trim().length === 0;
-  const metaTitle = !titleCheck ? title.textContent : "";
-  const pageURL = window.location.href;
-  return { date, numericDate, titleCheck, metaTitle, pageURL };
-}
-async function generateHTMLTemplate(results, dismissResults) {
-  const errors = results.filter((issue) => issue.type === "error");
-  const warnings = results.filter((issue) => issue.type === "warning");
-  const count = { error: errors.length, warning: warnings.length, dismiss: dismissResults.length };
-  async function generateList(issues, type) {
-    const types = {
-      error: Lang._("ERRORS"),
-      warning: Lang._("WARNINGS"),
-      dismissed: Lang._("DISMISSED")
-    };
-    const heading = types[type];
-    const hasIssues = issues.length > 0;
-    if (!hasIssues) {
-      return "";
-    }
-    let list = `<h2>${heading}</h2>`;
-    let listOpeningTag = `<ol class="${type}">`;
-    let listClosingTag = "</ol>";
-    if (type === "dismissed") {
-      listOpeningTag = `<details><summary>${Lang.sprintf("PANEL_DISMISS_BUTTON", count.dismiss)}</summary><ol>`;
-      listClosingTag = "</details>";
-    }
-    list += listOpeningTag;
-    const issuePromises = issues.map(async (issue) => {
-      let elementPreview = "";
-      if (issue.element) {
-        const allowedTags = ["IMG", "IFRAME", "AUDIO", "VIDEO"];
-        const preview = await generateElementPreview(issue, true);
-        if (allowedTags.includes(issue.element.tagName)) {
-          elementPreview = `<li><strong>${Lang._("PREVIEW")}:</strong> ${preview}</li><li><strong>${Lang._("ELEMENT")}:</strong> <pre><code>${escapeHTML(issue.htmlPath)}</code></pre></li>`;
-        } else {
-          elementPreview = `<li><strong>${Lang._("ELEMENT")}:</strong> <pre><code>${escapeHTML(issue.htmlPath)}</code></pre></li>`;
-        }
-      }
-      const cssPath = issue.cssPath ? `<li><strong>${Lang._("PATH")}:</strong> <pre><code>${issue.cssPath}</code></pre></li>` : "";
-      return `<li>${issue.content} <ul>${elementPreview}${cssPath}</ul></li>`;
-    });
-    const resolvedIssues = await Promise.all(issuePromises);
-    list += resolvedIssues.join("");
-    list += listClosingTag;
-    return list;
-  }
-  const errorsList = await generateList(errors, "error");
-  const warningList = await generateList(warnings, "warning");
-  const dismissedList = await generateList(dismissResults, "dismissed");
-  const meta = generateMetaData();
-  const metaTitle = !meta.titleCheck ? `<dt>${Lang._("PAGE_TITLE")}</dt><dd>${meta.metaTitle}</dd>` : "";
-  const metaErrors = count.error !== 0 ? `<dt>${Lang._("ERRORS")}</dt><dd>${count.error}</dd>` : "";
-  const metaWarnings = count.warning !== 0 ? `<dt>${Lang._("WARNINGS")}</dt><dd>${count.warning}</dd>` : "";
-  const metaDismissed = count.dismiss !== 0 ? `<dt>${Lang._("DISMISSED")}</dt><dd>${count.dismiss}</dd>` : "";
-  const tool = '<a href="https://sa11y.netlify.app">Sa11y</a>';
-  const htmlTemplate = `
-      <!DOCTYPE html>
-      <html lang="${Lang._("LANG_CODE")}">
-      <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>${Lang._("RESULTS")}: ${meta.metaTitle}</title>
-        <style>${exportResultsStyles}</style>
-      </head>
-      <body>
-        <header>
-          <h1>${Lang._("RESULTS")}</h1>
-          <dl class="two-columns">
-            <div class="column">
-              ${metaTitle}
-              <dt>URL</dt>
-              <dd><a href="${meta.pageURL}">${meta.pageURL}</a></dd>
-              <dt>${Lang._("DATE")}</dt>
-              <dd>${meta.date}</dd>
-            </div>
-            <div class="column count">
-              ${metaErrors}
-              ${metaWarnings}
-              ${metaDismissed}
-            </div>
-        </dl>
-        </header>
-        <main>
-          ${errorsList}
-          ${warningList}
-          ${dismissedList}
-        </main>
-        <footer>
-          <p>${Lang.sprintf("GENERATED", tool)}</p>
-        </footer>
-      </body>
-      </html>
-    `;
-  return htmlTemplate;
-}
-async function downloadHTMLTemplate(results, dismissResults) {
-  const htmlContent = await generateHTMLTemplate(results, dismissResults);
-  const meta = generateMetaData();
-  const blob = new Blob([htmlContent], { type: "text/html" });
-  const link = document.createElement("a");
-  const title = !meta.titleCheck ? `_${meta.metaTitle.trim().replace(/ /g, "")}` : "";
-  link.href = window.URL.createObjectURL(blob);
-  link.download = `Sa11y_${meta.numericDate + title}.html`;
-  document.body.appendChild(link);
-  link.click();
-  setTimeout(() => {
-    document.body.removeChild(link);
-    window.URL.revokeObjectURL(link.href);
-  }, 100);
-}
-function downloadCSVTemplate(results) {
-  const meta = generateMetaData();
-  const filteredObjects = results.filter((issue) => issue.type === "warning" || issue.type === "error").map((issue) => {
-    const { type, content, htmlPath, cssPath } = issue;
-    const prepContent = content.replaceAll(/<span\s+class="visually-hidden"[^>]*>.*?<\/span>/gi, "").replaceAll('<hr aria-hidden="true">', " | ").replaceAll(/"/g, '""');
-    const stripHTML = stripHTMLtags(String(prepContent));
-    const encoded = decodeHTML(stripHTML);
-    const columns = {
-      Title: `"${meta.metaTitle}"`,
-      URL: `"${meta.pageURL}"`,
-      Type: `"${String(type)}"`,
-      Issue: `"${encoded}"`,
-      Element: `"${htmlPath}"`
-    };
-    if (cssPath) {
-      columns.Path = `"${cssPath}"`;
-    }
-    return columns;
-  });
-  const headers = Object.keys(filteredObjects[0]);
-  const csvContent = `${headers.join(",")}
-${filteredObjects.map((obj) => headers.map((header) => obj[header]).join(",")).join("\n")}`;
-  const bom = new Uint8Array([239, 187, 191]);
-  const blob = new Blob([bom, csvContent], { type: "text/csv;charset=utf-8;" });
-  const url2 = window.URL.createObjectURL(blob);
-  const link = document.createElement("a");
-  link.href = url2;
-  link.href = window.URL.createObjectURL(blob);
-  const fileNameTitle = !meta.titleCheck ? `_${meta.metaTitle.trim().replace(/ /g, "")}` : "";
-  link.setAttribute("download", `Sa11y_${meta.numericDate + fileNameTitle}.csv`);
-  document.body.appendChild(link);
-  link.click();
-  setTimeout(() => {
-    document.body.removeChild(link);
-    window.URL.revokeObjectURL(link.href);
-  }, 100);
-}
-let exportHTMLHandler;
-let exportCSVHandler;
-function exportResults(results, dismissResults) {
-  if (Constants.Global.exportResultsPlugin) {
-    exportHTMLHandler = async () => {
-      await downloadHTMLTemplate(results, dismissResults);
-    };
-    exportCSVHandler = () => {
-      downloadCSVTemplate(results);
-    };
-    Constants.Panel.exportHTML.addEventListener("click", exportHTMLHandler);
-    Constants.Panel.exportCSV.addEventListener("click", exportCSVHandler);
-  }
-}
-function removeExportListeners() {
-  if (Constants.Global.exportResultsPlugin) {
-    Constants.Panel.exportHTML.removeEventListener("click", exportHTMLHandler);
-    Constants.Panel.exportCSV.removeEventListener("click", exportCSVHandler);
-  }
-}
-function mainToggle(checkAll, resetAll) {
-  Constants.Panel.toggle.addEventListener("click", (e) => {
-    if (store.getItem("sa11y-panel") === "Opened") {
-      e.preventDefault();
-      store.setItem("sa11y-panel", "Closed");
-      Constants.Panel.toggle.classList.remove("on");
-      Constants.Panel.toggle.setAttribute("aria-expanded", "false");
-      resetAll();
-      if (Constants.Panel.notifCount.innerHTML.trim().length === 0) {
-        Constants.Panel.notifBadge.style.display = "none";
-      } else {
-        Constants.Panel.notifBadge.style.display = "flex";
-      }
-    } else {
-      e.preventDefault();
-      store.setItem("sa11y-panel", "Opened");
-      Constants.Panel.toggle.classList.add("on");
-      Constants.Panel.toggle.setAttribute("aria-expanded", "true");
-      checkAll();
-      isScrollable(Constants.Panel.outlineList, Constants.Panel.outlineContent);
-    }
-  });
-  if (store.getItem("sa11y-panel") === "Opened") {
-    Constants.Panel.toggle.classList.add("on");
-    Constants.Panel.toggle.setAttribute("aria-expanded", "true");
-    Constants.Panel.panel.style.transform = "";
-  }
-  document.onkeydown = (e) => {
-    const evt = e || window.event;
-    if (evt.altKey && evt.code === "KeyA") {
-      Constants.Panel.toggle.click();
-      Constants.Panel.toggle.focus();
-    }
-  };
-}
-const panelStyles = 'h1,h2,h3,div,p,span,ol,ul,li,a,label,button,svg,strong,kbd,pre,code{all:unset;box-sizing:border-box!important}:before,:after{all:unset}div{display:block}*{font-family:var(--sa11y-font-face)!important;-webkit-font-smoothing:auto!important}p,ol,ul,li,label{font-size:var(--sa11y-normal-text);text-align:start;letter-spacing:normal;word-break:break-word;font-weight:400;line-height:22px!important}.sa11y-overflow{overflow:auto}img,video,iframe{border:0;max-width:100%;height:auto;display:block}audio{max-width:100%}#toggle{bottom:var(--sa11y-toggle-y-offset);z-index:2147483644;color:#fff;cursor:pointer;background:linear-gradient(#00bcd4,#e040fb);background-color:var(--sa11y-setting-switch-bg-off);width:55px;height:55px;background-size:150% 150%;border-radius:50%;justify-content:center;align-items:center;margin:0;transition:all .2s ease-in-out;display:flex;position:fixed;inset-inline-end:var(--sa11y-toggle-x-offset);overflow:visible}#toggle.left,#toggle.top-left{inset-inline-start:var(--sa11y-toggle-x-offset)}#toggle.top-left,#toggle.top-right{top:var(--sa11y-toggle-y-offset);bottom:unset}@media screen and (forced-colors:active){#toggle{border:2px solid #0000;background:buttonface!important}}#toggle svg{width:35px;height:35px}#toggle svg path{fill:var(--sa11y-panel-bg)}#toggle:hover,#toggle:focus{animation:3s sa11y-toggle-gradient}#toggle:disabled:hover,#toggle:disabled:focus{animation:none}#toggle.on{background:linear-gradient(#e040fb,#00bcd4)}#toggle:disabled{cursor:not-allowed;background:unset;background-color:var(--sa11y-setting-switch-bg-off)}#notification-badge{color:#fff;text-wrap:nowrap;background-color:#eb0000;border:1px solid #0000;border-radius:12px;justify-content:center;align-items:center;min-width:20px;padding:2.5px;font-size:13.5px;font-weight:400;line-height:1;display:none;position:absolute;top:-5.5px;right:-3px}#notification-badge.notification-badge-warning{color:var(--sa11y-warning-text);background-color:var(--sa11y-warning-hover);border:1px solid var(--sa11y-warning)}#panel{bottom:calc(var(--sa11y-toggle-y-offset) + var(--sa11y-panel-y-gap));z-index:2147483643;visibility:hidden;background:var(--sa11y-panel-bg);opacity:0;transition:transform .2s,opacity .2s background .2s;transform-origin:100% 100%;border-radius:4px;position:fixed;inset-inline-end:calc(var(--sa11y-toggle-x-offset) + var(--sa11y-panel-x-gap));overflow:visible;transform:scale(0);box-shadow:0 0 20px 4px #9aa1b126,0 4px 80px -8px #24282f40,0 4px 4px -2px #5b5e6926}#panel.left,#panel.top-left{inset-inline-start:calc(var(--sa11y-toggle-x-offset) + var(--sa11y-panel-x-gap));inset-inline-end:unset}#panel.top-right,#panel.top-left{top:calc(var(--sa11y-toggle-y-offset) + var(--sa11y-panel-y-gap) + 10px);bottom:unset}#panel.active{visibility:visible;opacity:1;transform-origin:100% 100%;height:auto;transition:transform .2s,opacity .2s;transform:scale(1)}@media screen and (forced-colors:active){#panel{border:2px solid #0000}}#panel.active.left,[dir=rtl] #panel.active{transform-origin:0 100%}#panel.active.top-left{transform-origin:0 0}#panel.active.top-right{transform-origin:100% 0}#panel-alert{opacity:0;display:none}#panel-alert.active{opacity:1;display:block}#panel-alert-content{max-height:400px;color:var(--sa11y-panel-primary);border-bottom:1px solid var(--sa11y-panel-bg-splitter);align-items:center;padding:15px 20px 15px 15px;line-height:22px;position:relative;overflow-y:auto}:is(.top-left,.top-right) #panel-alert-content{border:0}#panel-alert-preview .close-tooltip{display:none}#panel-alert-preview,#panel-alert-text{font-family:var(--sa11y-font-face);font-size:var(--sa11y-normal-text);font-weight:400;line-height:22px}.panel-alert-preview{background:var(--sa11y-panel-bg-secondary);border:1px dashed var(--sa11y-panel-bg-splitter);border-radius:5px;margin-top:15px;padding:10px}.panel-alert-preview ul{margin:0;margin-block:0;padding:0;position:relative}.panel-alert-preview li{margin:5px 10px 0 20px;padding-bottom:5px;display:list-item}.element-preview{overflow-wrap:break-word;background-color:var(--sa11y-element-preview);border-radius:3.2px;margin-bottom:10px;padding:5px}button[data-sa11y-dismiss]{color:var(--sa11y-panel-primary);cursor:pointer;background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-button-outline);margin:10px 5px 5px 0;border-radius:5px;margin-inline-end:15px;padding:4px 8px;display:block}button[data-sa11y-dismiss]:hover,button[data-sa11y-dismiss]:focus{background:var(--sa11y-shortcut-hover)}h2{font-size:var(--sa11y-large-text);margin-bottom:3px;font-weight:700;display:block}h3{font-size:calc(var(--sa11y-large-text) - 1px);margin-bottom:3px;font-weight:600;display:block}strong{font-weight:600}a:not(#outline-list a,#images-list a){color:var(--sa11y-hyperlink);cursor:pointer;border-bottom:0;font-weight:500;text-decoration:underline}a:hover,a:focus{text-decoration:none!important}hr{background:var(--sa11y-panel-bg-splitter);opacity:1;border:none;height:1px;margin:10px 0;padding:0}#dismiss-button,#skip-button{text-align:center;cursor:pointer;background:var(--sa11y-panel-bg-secondary);border:1px solid var(--sa11y-button-outline);border-radius:50px;width:36px;height:36px;margin-inline:2px 8px;transition:all .1s ease-in-out;display:none;position:relative;overflow:visible}:is(#dismiss-button,#skip-button).active{display:block}:is(#dismiss-button,#skip-button):disabled{cursor:default;box-shadow:none;background:0 0;border:0}:is(#dismiss-button,#skip-button):before{content:"";position:absolute;inset:-5px}:is(#dismiss-button,#skip-button):hover:not(:disabled),:is(#dismiss-button,#skip-button):focus:not(:disabled){background-color:var(--sa11y-shortcut-hover)}:is(#panel.top-left,#panel.left) #dismiss-button,:is(#panel.top-left,#panel.left) #skip-button{margin-inline:8px 2px}.dismiss-icon{background:var(--sa11y-setting-switch-bg-off);width:24px;height:24px;-webkit-mask:var(--sa11y-dismiss-icon)center no-repeat;mask:var(--sa11y-dismiss-icon)center no-repeat;margin-bottom:-4px;display:inline-block}.dismiss-group{display:flex}@media screen and (forced-colors:active){.dismiss-icon{filter:invert()}}#panel-content{color:var(--sa11y-panel-primary);align-items:center;padding:6px;display:flex}#panel-content.errors .panel-icon,#panel-content.good .panel-icon,#panel-content.warnings .panel-icon{width:26px;height:26px;margin:0 auto}#panel-content.errors .panel-icon{background:var(--sa11y-panel-error);-webkit-mask:var(--sa11y-error-svg)center no-repeat;mask:var(--sa11y-error-svg)center no-repeat;margin-top:-2px}#panel-content.good .panel-icon{background:var(--sa11y-good);-webkit-mask:var(--sa11y-good-svg)center no-repeat;mask:var(--sa11y-good-svg)center no-repeat}#panel-content.warnings .panel-icon{background:var(--sa11y-yellow-text);transform:scaleX(var(--sa11y-icon-direction));-webkit-mask:var(--sa11y-warning-svg)center no-repeat;mask:var(--sa11y-warning-svg)center no-repeat}@media screen and (forced-colors:active){#panel-content.errors .panel-icon,#panel-content.good .panel-icon,#panel-content.warnings .panel-icon{filter:invert()}}#panel.top-left #panel-content,#panel.left #panel-content{flex-direction:row-reverse}#status{font-size:var(--sa11y-large-text);color:var(--sa11y-panel-primary)}.panel-count{color:var(--sa11y-panel-primary);background-color:var(--sa11y-panel-badge);border-radius:4px;margin-left:3px;margin-right:3px;padding:2px 4px;font-size:15px;font-weight:400}#page-issues,#images-panel,#settings-panel,#outline-panel{color:var(--sa11y-panel-primary);opacity:0;display:none}#page-issues.active,#images-panel.active,#settings-panel.active,#outline-panel.active{opacity:1;display:block}.panel-header{text-align:start;justify-content:space-between;padding:10px 15px 0;display:flex}#about-content{padding-top:5px}#about-content p{margin-block-end:1em;display:block}#images-content,#page-issues-content,#settings-content,#outline-content{border-bottom:1px solid var(--sa11y-panel-bg-splitter);padding:0 15px 10px}.top-right :is(#images-content,#page-issues-content,#settings-content,#outline-content),.top-left :is(#images-content,#page-issues-content,#settings-content,#outline-content){border:0}#images-content{padding-inline:5px}#page-issues-content{max-height:160px;overflow-y:auto}#settings-content{max-height:400px;overflow-y:auto}#images-content,#outline-content{max-height:250px;overflow-y:auto}#settings-panel .sa11y-red-text,#outline-panel .outline-list-item.sa11y-red-text{color:var(--sa11y-red-text)}#outline-list{margin:0;padding:0;display:block}#outline-list button{cursor:pointer;text-decoration:none;display:block}#outline-list button:hover,#outline-list button:focus{background:var(--sa11y-panel-outline-hover);box-shadow:0 0 0 2px var(--sa11y-panel-outline-hover);border-radius:5px;display:block}#outline-list li{margin-top:0;margin-bottom:4.5px;padding:0;list-style-type:none;display:block}#outline-list li:first-child{margin-top:5px}#outline-list .outline-2{margin-inline-start:15px}#outline-list .outline-3{margin-inline-start:30px}#outline-list .outline-4{margin-inline-start:45px}#outline-list .outline-5{margin-inline-start:60px}#outline-list .outline-6{margin-inline-start:75px}#images-list{margin:0;padding:0;display:block}#images-list button{cursor:pointer;min-height:44px;margin:10px 5px;text-decoration:none;display:block}#images-list button:hover,#images-list button:focus{background:var(--sa11y-panel-outline-hover);box-shadow:0 0 0 2px var(--sa11y-panel-outline-hover);border-radius:5px;display:block}#images-list li{border-bottom:1px solid var(--sa11y-panel-bg-splitter);flex-direction:column;width:100%;list-style-type:none;display:flex;overflow:hidden}#images-list li.no-images{padding-inline:10px}#images-list li:last-child{border:none;margin-bottom:0}#images-list li .alt{padding:2px 5px 10px}#images-list li .edit-block{justify-content:flex-end;margin-bottom:15px;display:flex}#images-list li .edit{color:var(--sa11y-panel-primary);cursor:pointer;background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-button-outline);border-radius:5px;margin-inline-end:5px;padding:4px 7px;text-decoration:none;position:relative}#images-list li .edit:hover,#images-list li .edit:focus{background-color:var(--sa11y-shortcut-hover)}#images-list li .edit:before{content:"";position:absolute;inset:-10px}#images-list li img{float:inline-start;border-radius:5px;max-width:110px;margin:5px}#images-list li.warning .alt{color:var(--sa11y-yellow-text)}#images-list li.warning img{background-color:var(--sa11y-yellow-text);border:5px solid var(--sa11y-yellow-text)}#images-list li.error .alt{color:var(--sa11y-error)}#images-list li.error img{background-color:var(--sa11y-error);border:5px solid var(--sa11y-error)}#images-list li.good img{background-color:var(--sa11y-panel-badge);border:5px solid var(--sa11y-panel-badge)}@media screen and (forced-colors:active){#images-list li img{background-color:buttonborder!important}}.move-panel-icon{vertical-align:middle;background:var(--sa11y-setting-switch-bg-off);width:18px;height:18px;-webkit-mask:var(--sa11y-move-panel-icon);mask:var(--sa11y-move-panel-icon)}.info-icon{vertical-align:middle;background:var(--sa11y-setting-switch-bg-off);width:20px;height:20px;-webkit-mask:var(--sa11y-info-icon);mask:var(--sa11y-info-icon);margin-top:-2px}.sun-icon{vertical-align:middle;background:var(--sa11y-setting-switch-bg-off);width:18px;height:18px;-webkit-mask:var(--sa11y-sun-icon);mask:var(--sa11y-sun-icon)}.moon-icon{vertical-align:middle;background:var(--sa11y-setting-switch-bg-off);width:18px;height:18px;-webkit-mask:var(--sa11y-moon-icon);mask:var(--sa11y-moon-icon)}.error-icon{background:var(--sa11y-error-text);width:16px;height:16px;-webkit-mask:var(--sa11y-error-svg);mask:var(--sa11y-error-svg);margin-bottom:-4px}.hidden-icon{background:var(--sa11y-panel-primary);width:16px;height:16px;-webkit-mask:var(--sa11y-hidden-icon-svg);mask:var(--sa11y-hidden-icon-svg);margin-bottom:-3px}.link-icon{background:var(--sa11y-panel-primary);width:16px;height:16px;-webkit-mask:var(--sa11y-link-icon-svg);mask:var(--sa11y-link-icon-svg);margin-bottom:-3.5px}.move-panel-icon,.info-icon,.sun-icon,.moon-icon,.error-icon,.hidden-icon,.link-icon{display:inline-block;-webkit-mask-position:50%;mask-position:50%;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat}.error-badge .link-icon,.error-badge .hidden-icon{background:var(--sa11y-error-text)!important}.warning-badge .link-icon,.warning-badge .hidden-icon{background:var(--sa11y-panel-bg)}.error .hidden-icon,.error .link-icon{background:var(--sa11y-error-text)}.warning .hidden-icon,.warning .link-icon{background:var(--sa11y-panel-bg)}@media screen and (forced-colors:active){.move-panel-icon,.sun-icon,.moon-icon,.info-icon,.error-icon,.link-icon,.hidden-icon{filter:invert()}}#panel-controls{border-bottom:1px solid var(--sa11y-panel-bg-splitter);border-radius:0 0 4px 4px;display:flex;overflow:hidden}#panel-controls button{width:100%;height:30px;font-size:var(--sa11y-normal-text);color:var(--sa11y-panel-secondary);text-align:center;cursor:pointer;background:var(--sa11y-panel-bg-secondary);background-color:var(--sa11y-panel-bg-secondary);border-top:1px solid var(--sa11y-panel-bg-splitter);border-inline-end:1px solid var(--sa11y-panel-bg-splitter);opacity:1;outline:0;margin:0;padding:0;font-weight:400;line-height:0;transition:background .2s;display:block;position:relative}#panel-controls button:hover,#panel-controls button.active{background-color:var(--sa11y-shortcut-hover)}#panel-controls button.active{font-weight:600}#export-results-mode,label{width:100%;color:var(--sa11y-panel-primary);margin:0;font-weight:400;display:inline-block}label:not(#colour-filter-mode,#export-results-mode){cursor:pointer}#panel.right #panel-controls[data-image-panel]:after{content:"";width:80px}#panel.left #panel-controls[data-image-panel]:before{content:"";width:50px}#settings-panel .export-results-group,#settings-panel .appearance-group{margin:5px 0;display:flex}:is(#settings-panel .export-results-group,#settings-panel .appearance-group) button{text-align:center;white-space:nowrap;cursor:pointer;border:2px solid var(--sa11y-setting-switch-bg-off);margin:2px 0;border-radius:5px;justify-content:center;align-items:center;min-width:44px;min-height:34px;margin-inline:8px 4px;display:flex;position:relative}:is(#settings-panel .export-results-group,#settings-panel .appearance-group) button:hover,:is(#settings-panel .export-results-group,#settings-panel .appearance-group) button:focus,:is(#settings-panel .export-results-group,#settings-panel .appearance-group) button:focus-within{background:var(--sa11y-shortcut-hover)}:is(#settings-panel .export-results-group,#settings-panel .appearance-group) button:before{content:"";position:absolute;inset:-7px}:is(#settings-panel .export-results-group,#settings-panel .appearance-group) button .text{color:var(--sa11y-setting-switch-bg-off);padding:0 6px;font-weight:600}#settings-panel .switch{width:105px;height:44px;font-size:var(--sa11y-normal-text);color:var(--sa11y-setting-switch-bg-off);text-align:end;cursor:pointer;background:0 0;border:0;border-radius:5px;margin:0;padding:7px 10px;font-weight:600;position:relative}#settings-panel .switch[aria-pressed=true]:after,#settings-panel .switch[aria-pressed=false]:after{vertical-align:middle;content:"";width:27px;height:27px;margin:0 4px 4px;display:inline-block}#settings-panel .switch[aria-pressed=true]:after{background:var(--sa11y-setting-switch-bg-on);-webkit-mask:var(--sa11y-setting-switch-on-svg)center no-repeat;mask:var(--sa11y-setting-switch-on-svg)center no-repeat}#settings-panel .switch[aria-pressed=false]:after{background:var(--sa11y-setting-switch-bg-off);-webkit-mask:var(--sa11y-setting-switch-off-svg)center no-repeat;mask:var(--sa11y-setting-switch-off-svg)center no-repeat}@media screen and (forced-colors:active){#settings-panel .switch[aria-pressed=false]:after,#settings-panel .switch[aria-pressed=true]:after{filter:invert()}}#settings-panel #settings-options li{border-bottom:1px solid var(--sa11y-panel-bg-splitter);justify-content:space-between;align-items:center;padding:1px 0;list-style-type:none;display:flex}#settings-panel #settings-options li:last-child{border:none}#page-issues{color:var(--sa11y-panel-primary);align-items:center}#page-issues-list{margin-top:4px;display:block}#page-issues-list li{margin:0 0 10px;display:block}:is(.top-left,.top-right).has-page-issues #page-issues{border-top:1px solid var(--sa11y-panel-bg-splitter);margin-top:-1px}#panel-colour-filters{font-family:var(--sa11y-font-face);font-size:var(--sa11y-normal-text);color:var(--sa11y-panel-primary);align-items:center;font-weight:400;line-height:22px;display:none}#panel-colour-filters.active{display:flex}#panel-colour-filters p{width:100%;padding:6px 20px 6px 6px}#panel-colour-filters[data-colour=protanopia],#panel-colour-filters[data-colour=deuteranopia],#panel-colour-filters[data-colour=tritanopia],#panel-colour-filters[data-colour=monochromacy]{border-bottom:6px solid #0000;border-image-slice:1}#panel-colour-filters[data-colour=protanopia]{border-image:linear-gradient(94deg,#786719 11%,#e0c600 36% 47%,#0059e3 75%,#0042aa 91%)}#panel-colour-filters[data-colour=deuteranopia]{border-image:linear-gradient(270deg,#567fdb 0%,#a4a28d 48%,#c3ad14 69%,#a79505 100%)}#panel-colour-filters[data-colour=tritanopia]{border-image:linear-gradient(270deg,#b1506f 0%,#0696c1 35%,#f3a9ba 70%,#d91c5d 87%,#fe015c 100%)}#panel-colour-filters[data-colour=monochromacy]{border-image:linear-gradient(270deg,#000 0%,#a7a7a7 50%,#000 100%)}#panel-colour-filters[data-colour=protanopia] .panel-icon{background:var(--sa11y-panel-error)}#panel-colour-filters[data-colour=deuteranopia] .panel-icon{background:var(--sa11y-good-hover)}#panel-colour-filters[data-colour=tritanopia] .panel-icon{background:var(--sa11y-blue)}#panel-colour-filters[data-colour=monochromacy] .panel-icon{background:linear-gradient(90deg,#38a459 20%,red 50%,#0077c8 80%)}#panel-colour-filters .panel-icon{width:30px;height:30px;-webkit-mask:var(--sa11y-low-vision-icon)center no-repeat;mask:var(--sa11y-low-vision-icon)center no-repeat;margin-inline:10px 5px}@media screen and (forced-colors:active){#panel-colour-filters .panel-icon{forced-color-adjust:none}}.select-dropdown{align-items:center;display:flex;position:relative}.select-dropdown:after{content:" ";border-top:5px solid var(--sa11y-setting-switch-bg-off);border-left:5px solid #0000;border-right:5px solid #0000;position:absolute;inset-inline-end:14px}#colour-filter-select{appearance:none;height:30px;font-size:var(--sa11y-normal-text);color:var(--sa11y-setting-switch-bg-off);text-align:end;vertical-align:middle;cursor:pointer;background:var(--sa11y-panel-bg);border:2px solid var(--sa11y-setting-switch-bg-off);border-radius:5px;margin-inline-end:4px;padding-inline:5px 25px;font-weight:400;position:relative}#colour-filter-select:hover,#colour-filter-select:focus{background:var(--sa11y-shortcut-hover)}#colour-filter-select.active{box-shadow:0 0 0 2px var(--sa11y-setting-switch-bg-on)}#colour-filter-item label,#colour-filter-item select{margin-top:10px;margin-bottom:9px}#readability-panel{opacity:0;display:none}#readability-panel.active{opacity:1;display:block}:is(.top-left,.top-right) #readability-content{border-top:1px solid var(--sa11y-panel-bg-splitter)}:is(.left,.right) #readability-content{border-bottom:1px solid var(--sa11y-panel-bg-splitter)}#readability-content{width:100%;color:var(--sa11y-panel-primary);padding:10px 15px}#readability-details{white-space:normal;margin:0;padding:0;list-style-type:none;display:block}#readability-details li{margin:0;padding-inline-end:10px;list-style-type:none;display:inline-block}.readability-score{color:var(--sa11y-panel-primary);background-color:var(--sa11y-panel-badge);border-radius:4px;margin-inline-start:5px;padding:2px 5px}#readability-info{margin-inline-start:10px}#skip-to-page-issues{display:none}#panel.has-page-issues #skip-to-page-issues{clip:rect(0,0,0,0);white-space:nowrap;background:var(--sa11y-panel-bg);border:0;border-radius:5px;width:1px;height:1px;margin:-1px;padding:0;font-weight:600;display:block;position:absolute;overflow:hidden}#panel.has-page-issues #skip-to-page-issues:focus{z-index:1;clip:auto;white-space:normal;width:auto;height:auto;margin:0;padding:7px 10px;overflow:visible}.hide-settings-border{border-bottom:0!important;padding:0 15px!important}.hide-settings-border li:not(#colour-filter-item){display:none!important}.hide-settings-border #about-content{display:none}.hide-settings-border.scrollable:before{all:unset}#contrast-tools{display:none}::-webkit-scrollbar{width:7px;height:6px}::-webkit-scrollbar-thumb{background-color:var(--sa11y-button-outline);border-radius:6px}*{scrollbar-color:var(--sa11y-button-outline);scrollbar-width:thin}.scrollable:before{z-index:-1;content:"";background:linear-gradient(180deg,#0000 70%,var(--sa11y-panel-scrollable)100%);background-position:bottom;width:100%;height:250px;transition:opacity 1s ease-in-out;animation:1s ease-in-out fade;position:absolute;inset:auto 0}#settings-content.scrollable:before{height:400px}.top-right .scrollable:before,.top-left .scrollable:before{border-radius:5px}#page-issues-content.scrollable:before{height:160px}#panel-alert.scrollable:before{height:200px}@keyframes sa11y-toggle-gradient{0%{background-position:50% 0}50%{background-position:50% 100%}to{background-position:50% 0}}@keyframes fade{0%{opacity:0}to{opacity:1}}@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;transform:none!important}}#panel{width:440px}#container:lang(en) #panel{width:315px}:is(#container:lang(nb),#container:lang(da),#container:lang(pl),#container:lang(de),#container:lang(sv),#container:lang(zh)) #panel{width:365px}:is(#container:lang(bg),#container:lang(es)) .switch:not(#export-results-item *){width:230px!important}#container:not(:lang(en),:lang(de)) .switch{width:205px}';
-class ControlPanel extends HTMLElement {
+const annotationStyles = '.annotation{display:block;position:relative}.annotation-inline{text-align:end;display:inline-block;position:relative}button{cursor:pointer;border-radius:50%;width:36px;height:36px;padding:0;transition:all .2s ease-in-out;display:block;position:absolute;box-shadow:0 0 16px #0000004f}button:after{content:"";width:36px;height:36px;padding:7px;position:absolute;top:-7px;left:-7px}.error-btn{z-index:9999;background:50% 50% var(--sa11y-error-svg) no-repeat;background-color:var(--sa11y-error);border:1px solid var(--sa11y-error);background-size:22px}.error-btn:hover,.error-btn:focus{background-color:var(--sa11y-error-hover)}.good-btn{z-index:9977;background:50% 50% var(--sa11y-good) var(--sa11y-good-svg) no-repeat;background-color:var(--sa11y-good);border:1px solid var(--sa11y-good);background-size:20px}.good-btn:hover,.good-btn:focus{background-color:var(--sa11y-good-hover)}.warning-btn{z-index:9988;background:50% 50% var(--sa11y-warning) var(--sa11y-warning-svg) no-repeat;background-color:var(--sa11y-warning);border:1px solid var(--sa11y-warning);transform:scaleX(var(--sa11y-icon-direction));background-size:24px}.warning-btn:hover,.warning-btn:focus{background-color:var(--sa11y-warning-hover)}button:active,button:focus{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}@media screen and (forced-colors:active){button{forced-color-adjust:none;border:1px solid #0000!important;outline:3px solid #0000!important}}';
+class Annotations extends HTMLElement {
   connectedCallback() {
-    this.attachShadow({ mode: "open" });
+    if (this.shadowRoot) return;
+    const shadow = this.attachShadow({ mode: "open" });
     const style = document.createElement("style");
-    style.textContent = panelStyles + sharedStyles;
-    this.shadowRoot.appendChild(style);
-    const MainToggleIcon = '<svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M256 48c114.953 0 208 93.029 208 208 0 114.953-93.029 208-208 208-114.953 0-208-93.029-208-208 0-114.953 93.029-208 208-208m0-40C119.033 8 8 119.033 8 256s111.033 248 248 248 248-111.033 248-248S392.967 8 256 8zm0 56C149.961 64 64 149.961 64 256s85.961 192 192 192 192-85.961 192-192S362.039 64 256 64zm0 44c19.882 0 36 16.118 36 36s-16.118 36-36 36-36-16.118-36-36 16.118-36 36-36zm117.741 98.023c-28.712 6.779-55.511 12.748-82.14 15.807.851 101.023 12.306 123.052 25.037 155.621 3.617 9.26-.957 19.698-10.217 23.315-9.261 3.617-19.699-.957-23.316-10.217-8.705-22.308-17.086-40.636-22.261-78.549h-9.686c-5.167 37.851-13.534 56.208-22.262 78.549-3.615 9.255-14.05 13.836-23.315 10.217-9.26-3.617-13.834-14.056-10.217-23.315 12.713-32.541 24.185-54.541 25.037-155.621-26.629-3.058-53.428-9.027-82.141-15.807-8.6-2.031-13.926-10.648-11.895-19.249s10.647-13.926 19.249-11.895c96.686 22.829 124.283 22.783 220.775 0 8.599-2.03 17.218 3.294 19.249 11.895 2.029 8.601-3.297 17.219-11.897 19.249z"/></svg>';
-    const rememberDeveloper = store.getItem("sa11y-developer") === "On";
-    const rememberReadability = store.getItem("sa11y-readability") === "On";
-    const rememberTheme = store.getItem("sa11y-theme");
-    const rememberPanelPosition = store.getItem("sa11y-position");
-    const checkAll = Constants.Global.checkAllHideToggles;
-    const developerPlugin = Constants.Global.developerPlugin ? `
-      <li id="developer-item" ${checkAll ? "hidden" : ""}>
-        <label id="check-developer" for="developer-toggle">
-          ${Lang._("DEVELOPER_CHECKS")} <span class="info-icon"></span>
-        </label>
-        <button type="button" id="developer-toggle" class="switch"
-          aria-labelledby="check-developer" aria-describedby="check-developer-desc"
-          aria-pressed="${rememberDeveloper ? "true" : "false"}"
-        >${rememberDeveloper ? Lang._("ON") : Lang._("OFF")}</button>
-        <div id="check-developer-desc" hidden>${Lang._("DEVELOPER_DESC")}</div>
-      </li>` : "";
-    const readabilityPlugin = Constants.Readability.Plugin ? `
-      <li id="readability-item">
-        <label id="check-readability" for="readability-toggle">${Lang._("READABILITY")} <span class="info-icon"></span></label>
-        <button type="button" id="readability-toggle" aria-labelledby="check-readability" class="switch"
-          aria-pressed="${rememberReadability ? "true" : "false"}"
-        >${rememberReadability ? Lang._("ON") : Lang._("OFF")}</button>
-        <div id="check-readability-desc" hidden>${Lang._("READABILITY_DESC")}</div>
-      </li>` : "";
-    const colourFilterPlugin = Constants.Global.colourFilterPlugin ? `
-      <li id="colour-filter-item">
-        <label id="colour-filter-mode" for="colour-filter">${Lang._("COLOUR_FILTER")}</label>
-        <div class="select-dropdown">
-          <select id="colour-filter-select">
-            <option value="0">${Lang._("OFF")}</option>
-            <option value="1">${Lang._("PROTANOPIA")}</option>
-            <option value="2">${Lang._("DEUTERANOPIA")}</option>
-            <option value="3">${Lang._("TRITANOPIA")}</option>
-            <option value="4">${Lang._("MONOCHROMACY")}</option>
-          </select>
-        </div>
-      </li>` : "";
-    const colourFilterPanel = Constants.Global.colourFilterPlugin ? `
-      <div id="panel-colour-filters" role="region" aria-labelledby="colour-filter-mode">
-        <div id="filter-icon" class="panel-icon" role="img"></div>
-        <p>${Lang._("COLOUR_FILTER_MESSAGE")}</p>
-      </div>` : "";
-    const exportResultsPlugin = Constants.Global.exportResultsPlugin ? `
-      <li id="export-results-item">
-        <span id="export-results-mode">${Lang._("EXPORT_RESULTS")}</span>
-        <div class="export-results-group">
-          <button type="button" id="export-csv" aria-describedby="export-results-mode">
-            <span class="text">CSV</span>
-          </button>
-          <button type="button" id="export-html" aria-describedby="export-results-mode">
-            <span class="text">HTML</span>
-          </button>
-        </div>
-      </li>` : "";
-    const aboutSection = Constants.Global.aboutContent ? `
-      <div id="about-content">${Constants.Global.aboutContent}</div>` : "";
-    const mainToggle2 = `
-      <button type="button" aria-expanded="false" id="toggle" part="toggle" aria-describedby="notification-badge" aria-label="${Lang._("MAIN_TOGGLE_LABEL")}" class="${rememberPanelPosition}" disabled>
-        ${MainToggleIcon}
-        <div id="notification-badge">
-          <span id="notification-count"></span>
-          <span id="notification-text" class="visually-hidden"></span>
-        </div>
-      </button>`;
-    const pageIssues = `
-      <div id="page-issues">
-        <div class="panel-header">
-          <h2 id="page-issues-header" tabindex="-1">${Lang._("PAGE_ISSUES")}</h2>
-        </div>
-        <div id="page-issues-content">
-          <ul id="page-issues-list" role="list" aria-labelledby="page-issues-header"></ul>
-        </div>
-      </div>`;
-    const pageOutline = `
-      <div id="outline-panel" role="tabpanel" aria-labelledby="outline-header">
-        <div class="panel-header">
-          <h2 id="outline-header" tabindex="-1">${Lang._("OUTLINE")}</h2>
-        </div>
-        <div id="outline-content">
-          <ul id="outline-list" tabindex="0" role="list" aria-labelledby="outline-header"></ul>
-        </div>
-        <div id="readability-panel">
-          <div id="readability-content">
-            <h2 class="header-text-inline">${Lang._("READABILITY")}</h2>
-            <p id="readability-info"></p>
-            <ul id="readability-details"></ul>
-          </div>
-        </div>
-      </div>`;
-    const imagesOutline = Constants.Global.showImageOutline ? `
-      <div id="images-panel" role="tabpanel" aria-labelledby="images-header">
-        <div class="panel-header">
-          <h2 id="images-header" tabindex="-1">${Lang._("IMAGES")}</h2>
-        </div>
-        <div id="images-content">
-          <ul id="images-list" tabindex="0" role="list" aria-labelledby="images-header"></ul>
-        </div>
-      </div>` : "";
-    const leftPressed = rememberPanelPosition === "left" || rememberPanelPosition === "top-left";
-    const panelMoved = leftPressed ? "true" : "false";
-    const panelPositionToggle = Constants.Global.showMovePanelToggle ? `<button type="button" id="move-panel"
-          aria-label="${Lang._("MOVE_PANEL")}"
-          aria-pressed="${panelMoved}"
-          ><span class="move-panel-icon"></span>
-        </button>` : "";
-    const pageSettings = `
-      <div id="settings-panel" role="tabpanel" aria-labelledby="settings-header">
-        <div class="panel-header">
-          <h2 id="settings-header" tabindex="-1">${Lang._("SETTINGS")}</h2>
-        </div>
-        <div id="settings-content">
-          <ul id="settings-options">
-            ${developerPlugin}
-            ${readabilityPlugin}
-            <li id="appearance-item">
-              <span id="appearance-mode">${Lang._("APPEARANCE")}</span>
-              <div class="appearance-group">
-                <button type="button" id="theme-toggle"
-                  aria-label="${Lang._("DARK_MODE")}"
-                  aria-pressed=${rememberTheme === "dark" ? "true" : "false"}
-                ><span class="moon-icon"></span></button>
-                ${panelPositionToggle}
-              </div>
-            </li>
-            ${exportResultsPlugin}
-            ${colourFilterPlugin}
-          </ul>
-          ${aboutSection}
-        </div>
-      </div>`;
-    const panelAlerts = `
-      <div id="panel-alert" role="alertdialog" aria-labelledby="alert-heading" aria-describedby="panel-alert-text">
-        <div id="panel-alert-content">
-          <div class="header-text">
-            <button type="button" id="close-alert" class="close-btn" aria-label="${Lang._("ALERT_CLOSE")}"></button>
-            <h2 id="alert-heading">${Lang._("ALERT_TEXT")}</h2>
-          </div>
-          <p id="panel-alert-text"></p>
-          <div id="panel-alert-preview"></div>
-        </div>
-      </div>`;
-    const panelStatus = `
-      <div id="panel-content">
-        <button type="button" id="skip-to-page-issues">
-          ${Lang._("SKIP_TO_PAGE_ISSUES")}
-        </button>
-        <button type="button" id="skip-button">
-          <div class="panel-icon"></div>
-          <span class="visually-hidden">${Lang._("SHORTCUT_SR")}</span>
-        </button>
-        <button type="button" id="dismiss-button">
-          <div class="dismiss-icon"></div>
-          <span id="dismiss-tooltip" class="visually-hidden"></span>
-        </button>
-        <div id="panel-text">
-          <h1 class="visually-hidden">${Lang._("PANEL_HEADING")}</h1>
-          <p id="status" aria-live="polite"></p>
-        </div>
-      </div>`;
-    const imageToggleButton = `<button type="button" role="tab" aria-expanded="false" id="images-toggle" aria-controls="images-panel">${Lang._("IMAGES")}</button>`;
-    const imagePanelEnabled = Constants.Global.showImageOutline ? "data-image-panel" : "";
-    const tabToggles = `
-      <div id="panel-controls" role="tablist" aria-orientation="horizontal" ${imagePanelEnabled}>
-        <button type="button" role="tab" aria-expanded="false" id="outline-toggle" aria-controls="outline-panel">${Lang._("OUTLINE")}</button>
-        ${Constants.Global.showImageOutline ? imageToggleButton : ""}
-        <button type="button" role="tab" aria-expanded="false" id="settings-toggle" aria-controls="settings-panel">${Lang._("SETTINGS")}</button>
-      </div>`;
-    const container = document.createElement("div");
-    container.setAttribute("id", "container");
-    container.setAttribute("role", "region");
-    container.setAttribute("data-sa11y-version", "4.4.1");
-    container.setAttribute("lang", Lang._("LANG_CODE"));
-    container.setAttribute("aria-label", Lang._("CONTAINER_LABEL"));
-    container.setAttribute("dir", Constants.Global.langDirection);
-    if (rememberPanelPosition === "top-left" || rememberPanelPosition === "top-right") {
-      container.innerHTML = `
-        ${mainToggle2}
-        <div id="panel" class="${rememberPanelPosition}" part="panel">
-          ${panelStatus}
-          ${colourFilterPanel}
-          ${tabToggles}
-          ${pageOutline}
-          ${imagesOutline}
-          ${pageSettings}
-          ${panelAlerts}
-          ${pageIssues}
-        </div>`;
-    } else {
-      container.innerHTML = `
-        ${mainToggle2}
-        <div id="panel" class="${rememberPanelPosition}" part="panel">
-          ${pageIssues}
-          ${pageOutline}
-          ${imagesOutline}
-          ${pageSettings}
-          ${panelAlerts}
-          ${colourFilterPanel}
-          ${panelStatus}
-          ${tabToggles}
-        </div>`;
-    }
-    this.shadowRoot.appendChild(container);
-    Constants.initializePanelSelectors();
-  }
-}
-function settingsPanelToggles(checkAll, resetAll) {
-  if (Constants.Global.showMovePanelToggle) {
-    Constants.Panel.movePanelToggle.onclick = async () => {
-      const panelPosition = store.getItem("sa11y-position");
-      const [position1, position2] = panelPosition.includes("top") ? ["top-right", "top-left"] : ["right", "left"];
-      const newPosition = panelPosition === position1 ? position2 : position1;
-      store.setItem("sa11y-position", newPosition);
-      [position1, position2].forEach((classname) => {
-        Constants.Panel.toggle.classList.replace(classname, newPosition);
-        Constants.Panel.panel.classList.replace(classname, newPosition);
-      });
-      Constants.Panel.movePanelToggle.setAttribute(
-        "aria-pressed",
-        panelPosition === position1 ? "true" : "false"
-      );
-    };
-  }
-  if (Constants.Global.developerPlugin) {
-    Constants.Panel.developerToggle.onclick = async () => {
-      if (store.getItem("sa11y-developer") === "On") {
-        store.setItem("sa11y-developer", "Off");
-        Constants.Panel.developerToggle.textContent = `${Lang._("OFF")}`;
-        Constants.Panel.developerToggle.setAttribute("aria-pressed", "false");
-        resetAll(false);
-        await checkAll();
-      } else {
-        store.setItem("sa11y-developer", "On");
-        Constants.Panel.developerToggle.textContent = `${Lang._("ON")}`;
-        Constants.Panel.developerToggle.setAttribute("aria-pressed", "true");
-        resetAll(false);
-        await checkAll();
-      }
-    };
-  } else {
-    store.setItem("sa11y-developer", "Off");
-  }
-  if (Constants.Readability.Plugin) {
-    Constants.Panel.readabilityToggle.onclick = async () => {
-      if (store.getItem("sa11y-readability") === "On") {
-        store.setItem("sa11y-readability", "Off");
-        Constants.Panel.readabilityToggle.textContent = `${Lang._("OFF")}`;
-        Constants.Panel.readabilityToggle.setAttribute("aria-pressed", "false");
-        Constants.Panel.readability.classList.remove("active");
-        resetAll(false);
-        await checkAll();
-      } else {
-        store.setItem("sa11y-readability", "On");
-        Constants.Panel.readabilityToggle.textContent = `${Lang._("ON")}`;
-        Constants.Panel.readabilityToggle.setAttribute("aria-pressed", "true");
-        Constants.Panel.readability.classList.add("active");
-        resetAll(false);
-        await checkAll();
-      }
-    };
-    if (store.getItem("sa11y-readability") === "On") {
-      Constants.Panel.readability.classList.add("active");
-    }
-  }
-  const systemInitiatedDark = window.matchMedia("(prefers-color-scheme: dark)");
-  const { themeToggle } = Constants.Panel;
-  const { html } = Constants.Global;
-  const storeTheme = (theme) => {
-    html.setAttribute("data-sa11y-theme", theme);
-    store.setItem("sa11y-theme", theme);
-    const icon = themeToggle.querySelector("span").classList;
-    icon.toggle("moon-icon", theme === "light");
-    icon.toggle("sun-icon", theme === "dark");
-    themeToggle.setAttribute("aria-pressed", theme === "dark" ? "true" : "false");
-  };
-  const initialTheme = store.getItem("sa11y-theme") || (systemInitiatedDark.matches ? "dark" : "light");
-  storeTheme(initialTheme);
-  systemInitiatedDark.addEventListener("change", () => {
-    storeTheme(systemInitiatedDark.matches ? "dark" : "light");
-  });
-  themeToggle.onclick = () => {
-    const currentTheme = store.getItem("sa11y-theme") || (systemInitiatedDark.matches ? "dark" : "light");
-    const preferredTheme = currentTheme === "dark" ? "light" : "dark";
-    storeTheme(preferredTheme);
-  };
-  if (Constants.Global.colourFilterPlugin) {
-    Constants.Panel.colourFilterSelect.addEventListener("change", async () => {
-      const option = parseInt(Constants.Panel.colourFilterSelect.value, 10);
-      const filters = ["protanopia", "deuteranopia", "tritanopia", "monochromacy"];
-      const icons = [
-        Lang._("RED_EYE"),
-        Lang._("GREEN_EYE"),
-        Lang._("BLUE_EYE"),
-        Lang._("MONO_EYE")
-      ];
-      if (option >= 1 && option <= 4) {
-        if (window.matchMedia("(forced-colors: active)").matches) {
-          createAlert(Lang._("COLOUR_FILTER_HIGH_CONTRAST"));
-        } else {
-          document.body.setAttribute("data-sa11y-filter", filters[option - 1]);
-          Constants.Panel.colourFilterIcon.setAttribute("aria-label", icons[option - 1]);
-          resetAttributes(
-            ["data-sa11y-error", "data-sa11y-warning", "data-sa11y-good", "data-sa11y-overflow"],
-            "document"
-          );
-          remove(["sa11y-annotation", "sa11y-tooltips", "sa11y-heading-label"], "document");
-          Constants.Panel.skipButton.disabled = true;
-          Constants.Panel.pageIssues.classList.remove("active");
-          Constants.Panel.settingsContent.classList.add("hide-settings-border");
-          Constants.Panel.controls.hidden = true;
-          Constants.Panel.colourFilterSelect.classList.add("active");
-          Constants.Panel.colourPanel.classList.add("active");
-          Constants.Panel.colourPanel.setAttribute("data-colour", filters[option - 1]);
-          Constants.Panel.content.hidden = true;
-        }
-      } else {
-        resetColourFilters();
-        resetAll(false);
-        await checkAll();
-      }
-    });
-  }
-}
-const openOutline = () => {
-  Constants.Panel.outlineToggle.classList.add("active");
-  Constants.Panel.outline.classList.add("active");
-  Constants.Panel.outlineToggle.setAttribute("aria-expanded", "true");
-  store.setItem("sa11y-outline", "Opened");
-  isScrollable(Constants.Panel.outlineList, Constants.Panel.outlineContent);
-  const headingLabels = find("sa11y-heading-label", "document");
-  headingLabels.forEach(($el) => {
-    $el.hidden = false;
-  });
-  const event = new CustomEvent("sa11y-build-heading-outline");
-  document.dispatchEvent(event);
-};
-const closeOutline = () => {
-  Constants.Panel.outline.classList.remove("active");
-  Constants.Panel.outlineToggle.classList.remove("active");
-  Constants.Panel.outlineToggle.setAttribute("aria-expanded", "false");
-  store.setItem("sa11y-outline", "Closed");
-  const headingLabels = find("sa11y-heading-label", "document");
-  headingLabels.forEach(($el) => {
-    $el.hidden = true;
-  });
-};
-const openImages = () => {
-  Constants.Panel.imagesToggle.classList.add("active");
-  Constants.Panel.images.classList.add("active");
-  Constants.Panel.imagesToggle.setAttribute("aria-expanded", "true");
-  store.setItem("sa11y-images", "Opened");
-  isScrollable(Constants.Panel.imagesList, Constants.Panel.imagesContent);
-  const event = new CustomEvent("sa11y-build-image-outline");
-  document.dispatchEvent(event);
-};
-const closeImages = () => {
-  if (Constants.Global.showImageOutline) {
-    Constants.Panel.imagesToggle.classList.remove("active");
-    Constants.Panel.images.classList.remove("active");
-    Constants.Panel.imagesToggle.setAttribute("aria-expanded", "false");
-    store.setItem("sa11y-images", "Closed");
-  }
-};
-const openSettings = () => {
-  Constants.Panel.settingsToggle.classList.add("active");
-  Constants.Panel.settings.classList.add("active");
-  Constants.Panel.settingsToggle.setAttribute("aria-expanded", "true");
-  store.setItem("sa11y-settings", "Opened");
-  isScrollable(
-    Constants.Panel.settingsContent,
-    Constants.Panel.settingsContent,
-    Lang._("SETTINGS")
-  );
-};
-const closeSettings = () => {
-  Constants.Panel.settings.classList.remove("active");
-  Constants.Panel.settingsToggle.classList.remove("active");
-  Constants.Panel.settingsToggle.setAttribute("aria-expanded", "false");
-  store.setItem("sa11y-settings", "Closed");
-};
-function initializePanelToggles() {
-  Constants.Panel.outlineToggle.addEventListener("click", () => {
-    if (Constants.Panel.outlineToggle.getAttribute("aria-expanded") === "true") {
-      closeOutline();
-    } else {
-      openOutline();
-      closeSettings();
-      closeImages();
-    }
-    Constants.Panel.outlineHeader.focus();
-  });
-  if (store.getItem("sa11y-outline") === "Opened") {
-    openOutline();
-  }
-  if (Constants.Global.showImageOutline) {
-    Constants.Panel.imagesToggle.addEventListener("click", () => {
-      if (Constants.Panel.imagesToggle.getAttribute("aria-expanded") === "true") {
-        closeImages();
-      } else {
-        openImages();
-        closeOutline();
-        closeSettings();
-      }
-      Constants.Panel.imagesHeader.focus();
-    });
-    if (store.getItem("sa11y-images") === "Opened") {
-      openImages();
-    }
-  }
-  Constants.Panel.settingsToggle.addEventListener("click", () => {
-    if (Constants.Panel.settingsToggle.getAttribute("aria-expanded") === "true") {
-      closeSettings();
-    } else {
-      openSettings();
-      closeOutline();
-      closeImages();
-    }
-    Constants.Panel.settingsHeader.focus();
-  });
-  if (store.getItem("sa11y-settings") === "Opened") {
-    openSettings();
-  }
-  Constants.Panel.skipToPageIssues.addEventListener("click", () => {
-    Constants.Panel.pageIssuesHeader.focus();
-  });
-  const tabs = Constants.Panel.panel.querySelectorAll("[role=tab]");
-  if (tabs.length !== 0) {
-    tabs.forEach((tab) => {
-      tab.addEventListener("keydown", (e) => {
-        if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") {
-          return;
-        }
-        e.preventDefault();
-        const currentIndex = Array.from(tabs).indexOf(e.currentTarget);
-        let nextIndex;
-        if (e.key === "ArrowRight") {
-          nextIndex = (currentIndex + 1) % tabs.length;
-        } else {
-          nextIndex = (currentIndex - 1 + tabs.length) % tabs.length;
-        }
-        tabs[nextIndex].focus();
-      });
-    });
-  }
-}
-function generatePageOutline(dismissed, headingOutline, option) {
-  const outlineHandler = () => {
-    const outlineArray = [];
-    const findDismissedHeadings = dismissed.map((e) => headingOutline.find((f) => e.dismiss === f.dismiss)).filter(Boolean);
-    findDismissedHeadings.forEach(($el) => {
-      $el.dismissedHeading = true;
-    });
-    let outlineItem;
-    if (option.showTitleInPageOutline) {
-      const metaTitleElement = document.querySelector("head title");
-      if (!metaTitleElement || metaTitleElement.textContent.trim().length === 0) {
-        outlineItem = `<li><div class="badge error-badge"><span aria-hidden="true"><span class="error-icon"></span></span> ${Lang._("TITLE")}</div> <div class="badge error-badge">${Lang._("MISSING")}</div></li>`;
-      } else {
-        const titleText = getText(metaTitleElement);
-        outlineItem = `<li><span class="badge">${Lang._("TITLE")}</span> ${sanitizeHTML(titleText)}</li>`;
-      }
-      outlineArray.push(outlineItem);
-    }
-    headingOutline.forEach((heading, i) => {
-      const { element, headingLevel, text, type, dismissedHeading, isWithinRoot } = heading;
-      const hidden = isElementVisuallyHiddenOrHidden(element);
-      const visibleIcon = hidden === true ? `<span class="hidden-icon"></span><span class="visually-hidden">${Lang._("HIDDEN")}</span>` : "";
-      const badgeH = option.showHinPageOutline === true || option.showHinPageOutline === 1 ? "H" : "";
-      let append;
-      if (type === "error" && isWithinRoot === true) {
-        append = `
-            <li class="outline-${headingLevel}">
-              <button type="button" tabindex="-1">
-                <span class="badge error-badge">
-                <span aria-hidden="true">${visibleIcon}
-                  <span class="error-icon"></span>
-                </span>
-                <span class="visually-hidden">${Lang._("ERROR")}</span> ${badgeH + headingLevel}</span>
-                <strong class="outline-list-item red-text">${text}</strong>
-              </button>
-            </li>`;
-        outlineArray.push(append);
-      } else if (type === "warning" && !dismissedHeading && isWithinRoot === true) {
-        append = `
-            <li class="outline-${headingLevel}">
-              <button type="button" tabindex="-1">
-                <span class="badge warning-badge">
-                <span aria-hidden="true">${visibleIcon} &#x3f;</span>
-                <span class="visually-hidden">${Lang._("WARNING")}</span> ${badgeH + headingLevel}</span>
-                <strong class="outline-list-item yellow-text">${text}</strong>
-              </button>
-            </li>`;
-        outlineArray.push(append);
-      } else {
-        append = `
-            <li class="outline-${headingLevel}">
-              <button type="button" tabindex="-1">
-                <span class="badge">${visibleIcon} ${badgeH + headingLevel}</span>
-                <span class="outline-list-item">${text}</span>
-              </button>
-            </li>`;
-        outlineArray.push(append);
-      }
-      const label = document.createElement("sa11y-heading-label");
-      label.hidden = true;
-      element?.insertAdjacentElement("beforeend", label);
-      const anchor = document.createElement("sa11y-heading-anchor");
-      anchor.id = `sa11y-h${i}`;
-      if (hidden) {
-        const parent = findVisibleParent(element, "display", "none");
-        const target = parent?.previousElementSibling || parent?.parentNode;
-        target?.insertAdjacentElement("beforebegin", anchor);
-        target?.setAttribute("data-sa11y-parent", `h${i}`);
-      } else {
-        label?.insertAdjacentElement("beforebegin", anchor);
-      }
-      const content = document.createElement("span");
-      content.classList.add("heading-label");
-      content.innerHTML = `H${headingLevel}`;
-      label.shadowRoot.appendChild(content);
-      if (store.getItem("sa11y-outline") === "Opened") {
-        label.hidden = false;
-      }
-    });
-    Constants.Panel.outlineList.innerHTML = headingOutline.length === 0 ? `${outlineItem || ""} <li>${Lang._("PANEL_NO_HEADINGS")}</li>` : outlineArray.join(" ");
-    setTimeout(() => {
-      const buttons = Constants.Panel.outlineList.querySelectorAll("button");
-      buttons.forEach((button, i) => {
-        button.addEventListener("click", () => {
-          const heading = find(
-            `#sa11y-h${i}, [data-sa11y-parent="h${i}"]`,
-            "document",
-            Constants.Exclusions.Container
-          )[0];
-          if (heading) {
-            heading.scrollIntoView({
-              behavior: `${Constants.Global.scrollBehaviour}`,
-              block: "center"
-            });
-            addPulse(heading.parentNode || heading);
-          }
-          removeAlert();
-          if (!heading || heading.hasAttribute("data-sa11y-parent")) {
-            createAlert(Lang._("NOT_VISIBLE"));
-          }
-        });
-      });
-      initRovingTabindex(Constants.Panel.outlineList, buttons);
-    }, 0);
-    document.removeEventListener("sa11y-build-heading-outline", outlineHandler);
-  };
-  if (store.getItem("sa11y-outline") === "Opened") {
-    outlineHandler();
-  }
-  document.addEventListener("sa11y-build-heading-outline", outlineHandler);
-}
-const wrapPseudoContent = (element, string) => {
-  const getAltText = (content) => {
-    if (content === "none") {
-      return "";
-    }
-    const match = content.includes("url(") || content.includes("image-set(") ? content.match(/\/\s*"([^"]+)"/) : content.match(/"([^"]+)"/);
-    return match ? match[1] : "";
-  };
-  const before = getAltText(
-    window.getComputedStyle(element, ":before").getPropertyValue("content")
-  );
-  const after = getAltText(window.getComputedStyle(element, ":after").getPropertyValue("content"));
-  return `${before}${string}${after}`;
-};
-const nextTreeBranch = (tree) => {
-  for (let i = 0; i < 1e3; i++) {
-    if (tree.nextSibling()) {
-      return tree.previousNode();
-    }
-    if (!tree.parentNode()) {
-      return false;
-    }
-  }
-  return false;
-};
-const computeAriaLabel = (element, recursing = false) => {
-  if (Constants.Global.ignoreAriaOnElements && element.matches(Constants.Global.ignoreAriaOnElements)) {
-    return "noAria";
-  }
-  if (Constants.Global.ignoreTextInElements && element.matches(Constants.Global.ignoreTextInElements)) {
-    return "";
-  }
-  const labelledBy = element.getAttribute("aria-labelledby");
-  if (!recursing && labelledBy) {
-    return labelledBy.split(/\s+/).filter((id) => id.trim()).map((id) => {
-      const targetElement = document.querySelector(`#${CSS.escape(id)}`);
-      return targetElement ? computeAccessibleName(targetElement, "", 1) : "";
-    }).join(" ");
-  }
-  const { ariaLabel } = element;
-  if (ariaLabel && ariaLabel.trim().length > 0) {
-    return ariaLabel;
-  }
-  return "noAria";
-};
-const computeAccessibleName = (element, exclusions = [], recursing = 0) => {
-  const ariaLabel = computeAriaLabel(element, recursing);
-  if (ariaLabel !== "noAria") {
-    return ariaLabel;
-  }
-  let computedText = "";
-  if (!element.children.length) {
-    computedText = wrapPseudoContent(element, element.textContent);
-    if (!computedText.trim() && element.hasAttribute("title")) {
-      return element.getAttribute("title");
-    }
-    return computedText;
-  }
-  function createTreeWalker(root, showElement, showText) {
-    const acceptNode = (node) => {
-      if (node.nodeType === Node.ELEMENT_NODE) {
-        return NodeFilter.FILTER_ACCEPT;
-      }
-      if (node.nodeType === Node.TEXT_NODE) {
-        return NodeFilter.FILTER_ACCEPT;
-      }
-      return NodeFilter.FILTER_REJECT;
-    };
-    return document.createTreeWalker(root, NodeFilter.SHOW_ALL, { acceptNode });
-  }
-  const treeWalker = createTreeWalker(element);
-  const alwaysExclude = ["noscript", "style", "script", "video", "audio"];
-  const excludeSelector = [...exclusions, ...alwaysExclude].join(", ");
-  const exclude = excludeSelector ? element.querySelectorAll(excludeSelector) : [];
-  let addTitleIfNoName = false;
-  let aText = false;
-  let count = 0;
-  let continueWalker = true;
-  while (treeWalker.nextNode() && continueWalker) {
-    count += 1;
-    const node = treeWalker.currentNode;
-    const excluded = Array.from(exclude).some((ex) => ex.contains(node));
-    if (excluded) {
-      continue;
-    }
-    if (node.shadowRoot) {
-      const shadowChildren = node.shadowRoot.querySelectorAll("*");
-      for (let i = 0; i < shadowChildren.length; i++) {
-        const child = shadowChildren[i];
-        if (!excludeSelector || !child.closest(excludeSelector)) {
-          computedText += computeAccessibleName(child, exclusions, recursing + 1);
-        }
-      }
-    }
-    if (node.nodeType === Node.TEXT_NODE) {
-      if (node.parentNode.tagName !== "SLOT") {
-        computedText += ` ${node.nodeValue}`;
-      }
-      continue;
-    }
-    if (addTitleIfNoName && !node.closest("a")) {
-      if (aText === computedText) {
-        computedText += addTitleIfNoName;
-      }
-      addTitleIfNoName = false;
-      aText = false;
-    }
-    if (node.ariaHidden === "true" && !(recursing && count < 3)) {
-      if (!nextTreeBranch(treeWalker)) {
-        continueWalker = false;
-      }
-      continue;
-    }
-    const aria = computeAriaLabel(node, recursing);
-    if (aria !== "noAria") {
-      computedText += ` ${aria}`;
-      if (!nextTreeBranch(treeWalker)) {
-        continueWalker = false;
-      }
-      continue;
-    }
-    switch (node.tagName) {
-      case "IMG":
-        if (node.hasAttribute("alt") && node.role !== "presentation") {
-          computedText += node.getAttribute("alt");
-        }
-        break;
-      case "SVG":
-        if (node.role === "img" || node.role === "graphics-document") {
-          computedText += computeAriaLabel(node);
-        } else {
-          const title = node.querySelector("title");
-          if (title) {
-            computedText += title.textContent;
-          }
-        }
-        break;
-      case "A":
-        if (node.hasAttribute("title")) {
-          addTitleIfNoName = node.getAttribute("title");
-          aText = computedText;
-        } else {
-          addTitleIfNoName = false;
-          aText = false;
-        }
-        computedText += wrapPseudoContent(node, "");
-        break;
-      case "INPUT":
-        computedText += wrapPseudoContent(treeWalker.currentNode, "");
-        if (treeWalker.currentNode.hasAttribute("title")) {
-          addTitleIfNoName = treeWalker.currentNode.getAttribute("title");
-        }
-        break;
-      case "SLOT": {
-        const children = node.assignedNodes?.() || [];
-        let slotText = "";
-        children.forEach((child) => {
-          if (child.nodeType === Node.ELEMENT_NODE) {
-            slotText += computeAccessibleName(child);
-          } else if (child.nodeType === Node.TEXT_NODE) {
-            slotText += child.nodeValue;
-          }
-        });
-        computedText += slotText;
-        computedText += wrapPseudoContent(node, "");
-        break;
-      }
-      default:
-        computedText += wrapPseudoContent(node, "");
-        break;
-    }
-  }
-  if (addTitleIfNoName && !aText) {
-    computedText += ` ${addTitleIfNoName}`;
-  }
-  computedText = computedText.replace(/[\uE000-\uF8FF]/gu, "");
-  if (!computedText.trim() && element.hasAttribute("title")) {
-    return element.getAttribute("title");
-  }
-  return computedText;
-};
-const generateEditLink = (image) => {
-  const { src } = image.element;
-  const urlExclusions = Constants.Global.ignoreEditImageURL.some((ignore) => src.includes(ignore));
-  const classExclusions = Constants.Global.ignoreEditImageClass.some(
-    (ignore) => image.element.classList.contains(ignore)
-  );
-  if (urlExclusions || classExclusions) {
-    return "";
-  }
-  const relativePath = Constants.Global.relativePathImageSRC || window.location.host;
-  const fileExtension = src.split(relativePath)[1] || "";
-  const imageID = Constants.Global.relativePathImageID;
-  let imageUniqueID;
-  if (imageID.length && image.element.classList.length) {
-    image.element.classList.forEach((className) => {
-      if (className.startsWith(imageID)) {
-        const [digit] = className.match(/\d+/) || [];
-        imageUniqueID = digit;
-      }
-    });
-  }
-  const editURL = relativePath && imageID.length ? Constants.Global.editImageURLofCMS + imageUniqueID : Constants.Global.editImageURLofCMS + fileExtension;
-  const isRelativeLink = (imageSrc) => imageSrc.includes(window.location.host) || imageSrc.startsWith(relativePath);
-  if (imageID.length && imageUniqueID !== void 0 || !imageID) {
-    return isRelativeLink(src) ? `<div class="edit-block"><a href="${encodeURI(editURL)}" tabindex="-1" target="_blank" rel="noopener noreferrer" class="edit">${Lang._("EDIT")}</a></div>` : "";
-  }
-  return "";
-};
-function generateImageOutline(dismissed, imageResults, option) {
-  const imageOutlineHandler = () => {
-    const imageArray = [];
-    imageResults.forEach((image, i) => {
-      const isDismissed = dismissed.some((key) => key.dismiss === image.dismiss);
-      if (isDismissed) {
-        Object.assign(image, { dismissedImage: true });
-      }
-      const { element, type, developer, dismissedImage } = image;
-      const altText = computeAriaLabel(element) === "noAria" ? escapeHTML(element.getAttribute("alt")) : computeAriaLabel(element);
-      const hidden = isElementVisuallyHiddenOrHidden(element);
-      if (hidden) {
-        const parent = findVisibleParent(element, "display", "none");
-        const anchor2 = document.createElement("sa11y-image-anchor");
-        anchor2.setAttribute("data-sa11y-parent", `image${i}`);
-        const target = parent?.previousElementSibling || parent?.parentNode;
-        target?.insertAdjacentElement("beforebegin", anchor2);
-      } else {
-        element.setAttribute("data-sa11y-image", i);
-      }
-      const dev = store.getItem("sa11y-developer");
-      const devChecksOff = dev === "Off" || dev === null;
-      const showDeveloperChecks = devChecksOff && (type === "error" || type === "warning") && developer === true;
-      const source = getBestImageSource(image.element);
-      const edit = Constants.Global.editImageURLofCMS ? generateEditLink(image) : "";
-      const decorative = element.hasAttribute("alt") && altText === "" ? `<div class="badge">${Lang._("DECORATIVE")}</div>` : "";
-      const startsWithSpecificAlt = option.altPlaceholder?.some(
-        (text) => altText.toLowerCase().startsWith(text.toLowerCase())
-      );
-      const anchor = option.imageWithinLightbox ? `a[href]:not(${option.imageWithinLightbox})` : "a[href]";
-      const linked = element.closest(anchor) ? `<div class="badge"><span class="link-icon"></span><span class="visually-hidden">${Lang._("LINKED")}</span></div>` : "";
-      const visibleIcon = hidden === true ? `<div class="badge"><span class="hidden-icon"></span><span class="visually-hidden">${Lang._("HIDDEN")}</span></div>` : "";
-      let append;
-      if (type === "error" && !showDeveloperChecks) {
-        const missing = altText.length === 0 ? `<div class="badge">${Lang._("MISSING")}</div>` : "";
-        append = `
-        <li class="error">
-          <button type="button" tabindex="-1">
-            <img src="${source}" alt/>
-            <div class="alt"> ${visibleIcon} ${linked} ${missing}
-              <div class="badge"><span class="error-icon"></span><span class="visually-hidden">${Lang._("ERROR")}</span> ${Lang._("ALT")}</div> <strong class="red-text">${startsWithSpecificAlt ? "" : altText}</strong>
-            </div>
-          </button>
-          ${edit}
-        </li>`;
-        imageArray.push(append);
-      } else if (type === "warning" && !dismissedImage && !showDeveloperChecks) {
-        append = `
-        <li class="warning">
-          <button type="button" tabindex="-1">
-            <img src="${source}" alt/>
-            <div class="alt"> ${visibleIcon} ${linked} ${decorative}
-              <div class="badge"><span aria-hidden="true">&#63;</span> <span class="visually-hidden">${Lang._("WARNING")}</span> ${Lang._("ALT")}</div> <strong class="yellow-text">${startsWithSpecificAlt ? "" : altText}</strong>
-            </div>
-          </button>
-          ${edit}
-        </li>`;
-        imageArray.push(append);
-      } else {
-        append = `
-        <li class="good">
-          <button type="button" tabindex="-1">
-            <img src="${source}" alt/>
-            <div class="alt"> ${visibleIcon} ${linked} ${decorative}
-              <div class="badge">${Lang._("ALT")}</div> ${altText}
-            </div>
-          </button>
-          ${edit}
-        </li>`;
-        imageArray.push(append);
-      }
-    });
-    Constants.Panel.imagesList.innerHTML = imageArray.length === 0 ? `<li class="no-images">${Lang._("NO_IMAGES")}</li>` : imageArray.join(" ");
-    setTimeout(() => {
-      const buttons = Constants.Panel.imagesList.querySelectorAll("button");
-      buttons.forEach(($el, i) => {
-        $el.addEventListener("click", () => {
-          const image = find(
-            `[data-sa11y-image='${i}'], [data-sa11y-parent='image${i}']`,
-            "document",
-            Constants.Exclusions.Container
-          )[0];
-          if (image) {
-            image.scrollIntoView({
-              behavior: `${Constants.Global.scrollBehaviour}`,
-              block: "center"
-            });
-            addPulse(image);
-          }
-          removeAlert();
-          if (!image || image.hasAttribute("data-sa11y-parent")) {
-            createAlert(Lang._("NOT_VISIBLE"));
-          }
-        });
-      });
-      const tabbable = Constants.Panel.imagesList.querySelectorAll("a, button");
-      initRovingTabindex(Constants.Panel.imagesList, tabbable);
-    }, 0);
-    document.removeEventListener("sa11y-build-image-outline", imageOutlineHandler);
-  };
-  if (store.getItem("sa11y-images") === "Opened") {
-    imageOutlineHandler();
-  }
-  document.addEventListener("sa11y-build-image-outline", imageOutlineHandler);
-}
-function updatePanel(dismissCount, errorCount, warningCount) {
-  Constants.Panel.skipButton.disabled = false;
-  Constants.Panel.panel.classList.add("active");
-  Constants.Global.html.setAttribute("data-sa11y-active", "true");
-  Constants.Panel.skipButton.classList.add("active");
-  if (errorCount > 0 && warningCount > 0) {
-    Constants.Panel.content.setAttribute("class", "errors");
-    Constants.Panel.status.innerHTML = `${Lang._("ERRORS")} <span class="panel-count">${errorCount}</span> ${Lang._("WARNINGS")} <span class="panel-count" id="warning-count">${warningCount}</span>`;
-  } else if (errorCount > 0) {
-    Constants.Panel.content.setAttribute("class", "errors");
-    Constants.Panel.status.innerHTML = `${Lang._("ERRORS")} <span class="panel-count">${errorCount}</span>`;
-  } else if (warningCount > 0) {
-    Constants.Panel.content.setAttribute("class", "warnings");
-    Constants.Panel.status.innerHTML = `${Lang._("WARNINGS")} <span class="panel-count" id="warning-count">${warningCount}</span>`;
-  } else if (dismissCount > 0) {
-    Constants.Panel.status.innerHTML = `${Lang._("DISMISSED")} <span class="panel-count">${dismissCount}</span>`;
-    Constants.Panel.skipButton.classList.remove("active");
-  } else {
-    Constants.Panel.content.setAttribute("class", "good");
-    Constants.Panel.status.innerHTML = `${Lang._("NO_ERRORS_FOUND")}`;
-  }
-  const annotations = document.querySelectorAll("sa11y-annotation");
-  if (annotations.length === 0) {
-    Constants.Panel.skipButton.disabled = true;
-  }
-}
-function updateBadge(errorCount, warningCount) {
-  const totalCount = errorCount + warningCount;
-  if (totalCount === 0) {
-    Constants.Panel.notifCount.innerText = "";
-    Constants.Panel.notifText.innerText = "";
-    Constants.Panel.notifBadge.style.display = "none";
-  } else if (warningCount > 0 && errorCount === 0) {
-    Constants.Panel.notifBadge.classList.add("notification-badge-warning");
-    Constants.Panel.notifCount.innerText = `${warningCount}`;
-    Constants.Panel.notifText.innerText = `${Lang._("WARNINGS_FOUND")}`;
-  } else {
-    Constants.Panel.notifBadge.classList.remove("notification-badge-warning");
-    Constants.Panel.notifCount.innerText = `${totalCount}`;
-    Constants.Panel.notifText.innerText = Lang._("TOTAL_FOUND");
-  }
-  if (store.getItem("sa11y-panel") === "Opened" || totalCount === 0) {
-    Constants.Panel.notifBadge.style.display = "none";
-  } else {
-    Constants.Panel.notifBadge.style.display = "flex";
-  }
-}
-function updateCount(results, error, warning) {
-  let updatedErrorCount = error;
-  let updatedWarningCount = warning;
-  results.forEach((_, i) => {
-    const issue = results[i].type;
-    if (issue === "error") {
-      updatedErrorCount += 1;
-    } else if (issue === "warning") {
-      updatedWarningCount += 1;
-    }
-  });
-  return { error: updatedErrorCount, warning: updatedWarningCount };
-}
-var top = "top";
-var bottom = "bottom";
-var right = "right";
-var left = "left";
-var auto = "auto";
-var basePlacements = [top, bottom, right, left];
-var start = "start";
-var end = "end";
-var clippingParents = "clippingParents";
-var viewport = "viewport";
-var popper = "popper";
-var reference = "reference";
-var variationPlacements = /* @__PURE__ */ basePlacements.reduce(function(acc, placement) {
-  return acc.concat([placement + "-" + start, placement + "-" + end]);
-}, []);
-var placements = /* @__PURE__ */ [].concat(basePlacements, [auto]).reduce(function(acc, placement) {
-  return acc.concat([placement, placement + "-" + start, placement + "-" + end]);
-}, []);
-var beforeRead = "beforeRead";
-var read = "read";
-var afterRead = "afterRead";
-var beforeMain = "beforeMain";
-var main = "main";
-var afterMain = "afterMain";
-var beforeWrite = "beforeWrite";
-var write = "write";
-var afterWrite = "afterWrite";
-var modifierPhases = [beforeRead, read, afterRead, beforeMain, main, afterMain, beforeWrite, write, afterWrite];
-function getNodeName(element) {
-  return element ? (element.nodeName || "").toLowerCase() : null;
-}
-function getWindow(node) {
-  if (node == null) {
-    return window;
-  }
-  if (node.toString() !== "[object Window]") {
-    var ownerDocument = node.ownerDocument;
-    return ownerDocument ? ownerDocument.defaultView || window : window;
-  }
-  return node;
-}
-function isElement$1(node) {
-  var OwnElement = getWindow(node).Element;
-  return node instanceof OwnElement || node instanceof Element;
-}
-function isHTMLElement(node) {
-  var OwnElement = getWindow(node).HTMLElement;
-  return node instanceof OwnElement || node instanceof HTMLElement;
-}
-function isShadowRoot(node) {
-  if (typeof ShadowRoot === "undefined") {
-    return false;
-  }
-  var OwnElement = getWindow(node).ShadowRoot;
-  return node instanceof OwnElement || node instanceof ShadowRoot;
-}
-function applyStyles(_ref) {
-  var state = _ref.state;
-  Object.keys(state.elements).forEach(function(name) {
-    var style = state.styles[name] || {};
-    var attributes = state.attributes[name] || {};
-    var element = state.elements[name];
-    if (!isHTMLElement(element) || !getNodeName(element)) {
-      return;
-    }
-    Object.assign(element.style, style);
-    Object.keys(attributes).forEach(function(name2) {
-      var value = attributes[name2];
-      if (value === false) {
-        element.removeAttribute(name2);
-      } else {
-        element.setAttribute(name2, value === true ? "" : value);
-      }
-    });
-  });
-}
-function effect$2(_ref2) {
-  var state = _ref2.state;
-  var initialStyles = {
-    popper: {
-      position: state.options.strategy,
-      left: "0",
-      top: "0",
-      margin: "0"
-    },
-    arrow: {
-      position: "absolute"
-    },
-    reference: {}
-  };
-  Object.assign(state.elements.popper.style, initialStyles.popper);
-  state.styles = initialStyles;
-  if (state.elements.arrow) {
-    Object.assign(state.elements.arrow.style, initialStyles.arrow);
-  }
-  return function() {
-    Object.keys(state.elements).forEach(function(name) {
-      var element = state.elements[name];
-      var attributes = state.attributes[name] || {};
-      var styleProperties = Object.keys(state.styles.hasOwnProperty(name) ? state.styles[name] : initialStyles[name]);
-      var style = styleProperties.reduce(function(style2, property) {
-        style2[property] = "";
-        return style2;
-      }, {});
-      if (!isHTMLElement(element) || !getNodeName(element)) {
-        return;
-      }
-      Object.assign(element.style, style);
-      Object.keys(attributes).forEach(function(attribute) {
-        element.removeAttribute(attribute);
-      });
-    });
-  };
-}
-const applyStyles$1 = {
-  name: "applyStyles",
-  enabled: true,
-  phase: "write",
-  fn: applyStyles,
-  effect: effect$2,
-  requires: ["computeStyles"]
-};
-function getBasePlacement$1(placement) {
-  return placement.split("-")[0];
-}
-var max = Math.max;
-var min = Math.min;
-var round = Math.round;
-function getUAString() {
-  var uaData = navigator.userAgentData;
-  if (uaData != null && uaData.brands && Array.isArray(uaData.brands)) {
-    return uaData.brands.map(function(item) {
-      return item.brand + "/" + item.version;
-    }).join(" ");
-  }
-  return navigator.userAgent;
-}
-function isLayoutViewport() {
-  return !/^((?!chrome|android).)*safari/i.test(getUAString());
-}
-function getBoundingClientRect(element, includeScale, isFixedStrategy) {
-  if (includeScale === void 0) {
-    includeScale = false;
-  }
-  if (isFixedStrategy === void 0) {
-    isFixedStrategy = false;
-  }
-  var clientRect = element.getBoundingClientRect();
-  var scaleX = 1;
-  var scaleY = 1;
-  if (includeScale && isHTMLElement(element)) {
-    scaleX = element.offsetWidth > 0 ? round(clientRect.width) / element.offsetWidth || 1 : 1;
-    scaleY = element.offsetHeight > 0 ? round(clientRect.height) / element.offsetHeight || 1 : 1;
-  }
-  var _ref = isElement$1(element) ? getWindow(element) : window, visualViewport = _ref.visualViewport;
-  var addVisualOffsets = !isLayoutViewport() && isFixedStrategy;
-  var x = (clientRect.left + (addVisualOffsets && visualViewport ? visualViewport.offsetLeft : 0)) / scaleX;
-  var y = (clientRect.top + (addVisualOffsets && visualViewport ? visualViewport.offsetTop : 0)) / scaleY;
-  var width = clientRect.width / scaleX;
-  var height = clientRect.height / scaleY;
-  return {
-    width,
-    height,
-    top: y,
-    right: x + width,
-    bottom: y + height,
-    left: x,
-    x,
-    y
-  };
-}
-function getLayoutRect(element) {
-  var clientRect = getBoundingClientRect(element);
-  var width = element.offsetWidth;
-  var height = element.offsetHeight;
-  if (Math.abs(clientRect.width - width) <= 1) {
-    width = clientRect.width;
-  }
-  if (Math.abs(clientRect.height - height) <= 1) {
-    height = clientRect.height;
-  }
-  return {
-    x: element.offsetLeft,
-    y: element.offsetTop,
-    width,
-    height
-  };
-}
-function contains(parent, child) {
-  var rootNode = child.getRootNode && child.getRootNode();
-  if (parent.contains(child)) {
-    return true;
-  } else if (rootNode && isShadowRoot(rootNode)) {
-    var next = child;
-    do {
-      if (next && parent.isSameNode(next)) {
-        return true;
-      }
-      next = next.parentNode || next.host;
-    } while (next);
-  }
-  return false;
-}
-function getComputedStyle$1(element) {
-  return getWindow(element).getComputedStyle(element);
-}
-function isTableElement(element) {
-  return ["table", "td", "th"].indexOf(getNodeName(element)) >= 0;
-}
-function getDocumentElement(element) {
-  return ((isElement$1(element) ? element.ownerDocument : (
-    // $FlowFixMe[prop-missing]
-    element.document
-  )) || window.document).documentElement;
-}
-function getParentNode(element) {
-  if (getNodeName(element) === "html") {
-    return element;
-  }
-  return (
-    // this is a quicker (but less type safe) way to save quite some bytes from the bundle
-    // $FlowFixMe[incompatible-return]
-    // $FlowFixMe[prop-missing]
-    element.assignedSlot || // step into the shadow DOM of the parent of a slotted node
-    element.parentNode || // DOM Element detected
-    (isShadowRoot(element) ? element.host : null) || // ShadowRoot detected
-    // $FlowFixMe[incompatible-call]: HTMLElement is a Node
-    getDocumentElement(element)
-  );
-}
-function getTrueOffsetParent(element) {
-  if (!isHTMLElement(element) || // https://github.com/popperjs/popper-core/issues/837
-  getComputedStyle$1(element).position === "fixed") {
-    return null;
-  }
-  return element.offsetParent;
-}
-function getContainingBlock(element) {
-  var isFirefox = /firefox/i.test(getUAString());
-  var isIE = /Trident/i.test(getUAString());
-  if (isIE && isHTMLElement(element)) {
-    var elementCss = getComputedStyle$1(element);
-    if (elementCss.position === "fixed") {
-      return null;
-    }
-  }
-  var currentNode = getParentNode(element);
-  if (isShadowRoot(currentNode)) {
-    currentNode = currentNode.host;
-  }
-  while (isHTMLElement(currentNode) && ["html", "body"].indexOf(getNodeName(currentNode)) < 0) {
-    var css = getComputedStyle$1(currentNode);
-    if (css.transform !== "none" || css.perspective !== "none" || css.contain === "paint" || ["transform", "perspective"].indexOf(css.willChange) !== -1 || isFirefox && css.willChange === "filter" || isFirefox && css.filter && css.filter !== "none") {
-      return currentNode;
-    } else {
-      currentNode = currentNode.parentNode;
-    }
-  }
-  return null;
-}
-function getOffsetParent(element) {
-  var window2 = getWindow(element);
-  var offsetParent = getTrueOffsetParent(element);
-  while (offsetParent && isTableElement(offsetParent) && getComputedStyle$1(offsetParent).position === "static") {
-    offsetParent = getTrueOffsetParent(offsetParent);
-  }
-  if (offsetParent && (getNodeName(offsetParent) === "html" || getNodeName(offsetParent) === "body" && getComputedStyle$1(offsetParent).position === "static")) {
-    return window2;
-  }
-  return offsetParent || getContainingBlock(element) || window2;
-}
-function getMainAxisFromPlacement(placement) {
-  return ["top", "bottom"].indexOf(placement) >= 0 ? "x" : "y";
-}
-function within(min$1, value, max$1) {
-  return max(min$1, min(value, max$1));
-}
-function withinMaxClamp(min2, value, max2) {
-  var v = within(min2, value, max2);
-  return v > max2 ? max2 : v;
-}
-function getFreshSideObject() {
-  return {
-    top: 0,
-    right: 0,
-    bottom: 0,
-    left: 0
-  };
-}
-function mergePaddingObject(paddingObject) {
-  return Object.assign({}, getFreshSideObject(), paddingObject);
-}
-function expandToHashMap(value, keys) {
-  return keys.reduce(function(hashMap, key) {
-    hashMap[key] = value;
-    return hashMap;
-  }, {});
-}
-var toPaddingObject = function toPaddingObject2(padding, state) {
-  padding = typeof padding === "function" ? padding(Object.assign({}, state.rects, {
-    placement: state.placement
-  })) : padding;
-  return mergePaddingObject(typeof padding !== "number" ? padding : expandToHashMap(padding, basePlacements));
-};
-function arrow(_ref) {
-  var _state$modifiersData$;
-  var state = _ref.state, name = _ref.name, options = _ref.options;
-  var arrowElement = state.elements.arrow;
-  var popperOffsets2 = state.modifiersData.popperOffsets;
-  var basePlacement = getBasePlacement$1(state.placement);
-  var axis = getMainAxisFromPlacement(basePlacement);
-  var isVertical = [left, right].indexOf(basePlacement) >= 0;
-  var len = isVertical ? "height" : "width";
-  if (!arrowElement || !popperOffsets2) {
-    return;
-  }
-  var paddingObject = toPaddingObject(options.padding, state);
-  var arrowRect = getLayoutRect(arrowElement);
-  var minProp = axis === "y" ? top : left;
-  var maxProp = axis === "y" ? bottom : right;
-  var endDiff = state.rects.reference[len] + state.rects.reference[axis] - popperOffsets2[axis] - state.rects.popper[len];
-  var startDiff = popperOffsets2[axis] - state.rects.reference[axis];
-  var arrowOffsetParent = getOffsetParent(arrowElement);
-  var clientSize = arrowOffsetParent ? axis === "y" ? arrowOffsetParent.clientHeight || 0 : arrowOffsetParent.clientWidth || 0 : 0;
-  var centerToReference = endDiff / 2 - startDiff / 2;
-  var min2 = paddingObject[minProp];
-  var max2 = clientSize - arrowRect[len] - paddingObject[maxProp];
-  var center = clientSize / 2 - arrowRect[len] / 2 + centerToReference;
-  var offset2 = within(min2, center, max2);
-  var axisProp = axis;
-  state.modifiersData[name] = (_state$modifiersData$ = {}, _state$modifiersData$[axisProp] = offset2, _state$modifiersData$.centerOffset = offset2 - center, _state$modifiersData$);
-}
-function effect$1(_ref2) {
-  var state = _ref2.state, options = _ref2.options;
-  var _options$element = options.element, arrowElement = _options$element === void 0 ? "[data-popper-arrow]" : _options$element;
-  if (arrowElement == null) {
-    return;
-  }
-  if (typeof arrowElement === "string") {
-    arrowElement = state.elements.popper.querySelector(arrowElement);
-    if (!arrowElement) {
-      return;
-    }
-  }
-  if (!contains(state.elements.popper, arrowElement)) {
-    return;
-  }
-  state.elements.arrow = arrowElement;
-}
-const arrow$1 = {
-  name: "arrow",
-  enabled: true,
-  phase: "main",
-  fn: arrow,
-  effect: effect$1,
-  requires: ["popperOffsets"],
-  requiresIfExists: ["preventOverflow"]
-};
-function getVariation(placement) {
-  return placement.split("-")[1];
-}
-var unsetSides = {
-  top: "auto",
-  right: "auto",
-  bottom: "auto",
-  left: "auto"
-};
-function roundOffsetsByDPR(_ref, win) {
-  var x = _ref.x, y = _ref.y;
-  var dpr = win.devicePixelRatio || 1;
-  return {
-    x: round(x * dpr) / dpr || 0,
-    y: round(y * dpr) / dpr || 0
-  };
-}
-function mapToStyles(_ref2) {
-  var _Object$assign2;
-  var popper2 = _ref2.popper, popperRect = _ref2.popperRect, placement = _ref2.placement, variation = _ref2.variation, offsets = _ref2.offsets, position = _ref2.position, gpuAcceleration = _ref2.gpuAcceleration, adaptive = _ref2.adaptive, roundOffsets = _ref2.roundOffsets, isFixed = _ref2.isFixed;
-  var _offsets$x = offsets.x, x = _offsets$x === void 0 ? 0 : _offsets$x, _offsets$y = offsets.y, y = _offsets$y === void 0 ? 0 : _offsets$y;
-  var _ref3 = typeof roundOffsets === "function" ? roundOffsets({
-    x,
-    y
-  }) : {
-    x,
-    y
-  };
-  x = _ref3.x;
-  y = _ref3.y;
-  var hasX = offsets.hasOwnProperty("x");
-  var hasY = offsets.hasOwnProperty("y");
-  var sideX = left;
-  var sideY = top;
-  var win = window;
-  if (adaptive) {
-    var offsetParent = getOffsetParent(popper2);
-    var heightProp = "clientHeight";
-    var widthProp = "clientWidth";
-    if (offsetParent === getWindow(popper2)) {
-      offsetParent = getDocumentElement(popper2);
-      if (getComputedStyle$1(offsetParent).position !== "static" && position === "absolute") {
-        heightProp = "scrollHeight";
-        widthProp = "scrollWidth";
-      }
-    }
-    offsetParent = offsetParent;
-    if (placement === top || (placement === left || placement === right) && variation === end) {
-      sideY = bottom;
-      var offsetY = isFixed && offsetParent === win && win.visualViewport ? win.visualViewport.height : (
-        // $FlowFixMe[prop-missing]
-        offsetParent[heightProp]
-      );
-      y -= offsetY - popperRect.height;
-      y *= gpuAcceleration ? 1 : -1;
-    }
-    if (placement === left || (placement === top || placement === bottom) && variation === end) {
-      sideX = right;
-      var offsetX = isFixed && offsetParent === win && win.visualViewport ? win.visualViewport.width : (
-        // $FlowFixMe[prop-missing]
-        offsetParent[widthProp]
-      );
-      x -= offsetX - popperRect.width;
-      x *= gpuAcceleration ? 1 : -1;
-    }
-  }
-  var commonStyles = Object.assign({
-    position
-  }, adaptive && unsetSides);
-  var _ref4 = roundOffsets === true ? roundOffsetsByDPR({
-    x,
-    y
-  }, getWindow(popper2)) : {
-    x,
-    y
-  };
-  x = _ref4.x;
-  y = _ref4.y;
-  if (gpuAcceleration) {
-    var _Object$assign;
-    return Object.assign({}, commonStyles, (_Object$assign = {}, _Object$assign[sideY] = hasY ? "0" : "", _Object$assign[sideX] = hasX ? "0" : "", _Object$assign.transform = (win.devicePixelRatio || 1) <= 1 ? "translate(" + x + "px, " + y + "px)" : "translate3d(" + x + "px, " + y + "px, 0)", _Object$assign));
-  }
-  return Object.assign({}, commonStyles, (_Object$assign2 = {}, _Object$assign2[sideY] = hasY ? y + "px" : "", _Object$assign2[sideX] = hasX ? x + "px" : "", _Object$assign2.transform = "", _Object$assign2));
-}
-function computeStyles(_ref5) {
-  var state = _ref5.state, options = _ref5.options;
-  var _options$gpuAccelerat = options.gpuAcceleration, gpuAcceleration = _options$gpuAccelerat === void 0 ? true : _options$gpuAccelerat, _options$adaptive = options.adaptive, adaptive = _options$adaptive === void 0 ? true : _options$adaptive, _options$roundOffsets = options.roundOffsets, roundOffsets = _options$roundOffsets === void 0 ? true : _options$roundOffsets;
-  var commonStyles = {
-    placement: getBasePlacement$1(state.placement),
-    variation: getVariation(state.placement),
-    popper: state.elements.popper,
-    popperRect: state.rects.popper,
-    gpuAcceleration,
-    isFixed: state.options.strategy === "fixed"
-  };
-  if (state.modifiersData.popperOffsets != null) {
-    state.styles.popper = Object.assign({}, state.styles.popper, mapToStyles(Object.assign({}, commonStyles, {
-      offsets: state.modifiersData.popperOffsets,
-      position: state.options.strategy,
-      adaptive,
-      roundOffsets
-    })));
-  }
-  if (state.modifiersData.arrow != null) {
-    state.styles.arrow = Object.assign({}, state.styles.arrow, mapToStyles(Object.assign({}, commonStyles, {
-      offsets: state.modifiersData.arrow,
-      position: "absolute",
-      adaptive: false,
-      roundOffsets
-    })));
-  }
-  state.attributes.popper = Object.assign({}, state.attributes.popper, {
-    "data-popper-placement": state.placement
-  });
-}
-const computeStyles$1 = {
-  name: "computeStyles",
-  enabled: true,
-  phase: "beforeWrite",
-  fn: computeStyles,
-  data: {}
-};
-var passive = {
-  passive: true
-};
-function effect(_ref) {
-  var state = _ref.state, instance = _ref.instance, options = _ref.options;
-  var _options$scroll = options.scroll, scroll = _options$scroll === void 0 ? true : _options$scroll, _options$resize = options.resize, resize = _options$resize === void 0 ? true : _options$resize;
-  var window2 = getWindow(state.elements.popper);
-  var scrollParents = [].concat(state.scrollParents.reference, state.scrollParents.popper);
-  if (scroll) {
-    scrollParents.forEach(function(scrollParent) {
-      scrollParent.addEventListener("scroll", instance.update, passive);
-    });
-  }
-  if (resize) {
-    window2.addEventListener("resize", instance.update, passive);
-  }
-  return function() {
-    if (scroll) {
-      scrollParents.forEach(function(scrollParent) {
-        scrollParent.removeEventListener("scroll", instance.update, passive);
-      });
-    }
-    if (resize) {
-      window2.removeEventListener("resize", instance.update, passive);
-    }
-  };
-}
-const eventListeners = {
-  name: "eventListeners",
-  enabled: true,
-  phase: "write",
-  fn: function fn() {
-  },
-  effect,
-  data: {}
-};
-var hash$1 = {
-  left: "right",
-  right: "left",
-  bottom: "top",
-  top: "bottom"
-};
-function getOppositePlacement(placement) {
-  return placement.replace(/left|right|bottom|top/g, function(matched) {
-    return hash$1[matched];
-  });
-}
-var hash = {
-  start: "end",
-  end: "start"
-};
-function getOppositeVariationPlacement(placement) {
-  return placement.replace(/start|end/g, function(matched) {
-    return hash[matched];
-  });
-}
-function getWindowScroll(node) {
-  var win = getWindow(node);
-  var scrollLeft = win.pageXOffset;
-  var scrollTop = win.pageYOffset;
-  return {
-    scrollLeft,
-    scrollTop
-  };
-}
-function getWindowScrollBarX(element) {
-  return getBoundingClientRect(getDocumentElement(element)).left + getWindowScroll(element).scrollLeft;
-}
-function getViewportRect(element, strategy) {
-  var win = getWindow(element);
-  var html = getDocumentElement(element);
-  var visualViewport = win.visualViewport;
-  var width = html.clientWidth;
-  var height = html.clientHeight;
-  var x = 0;
-  var y = 0;
-  if (visualViewport) {
-    width = visualViewport.width;
-    height = visualViewport.height;
-    var layoutViewport = isLayoutViewport();
-    if (layoutViewport || !layoutViewport && strategy === "fixed") {
-      x = visualViewport.offsetLeft;
-      y = visualViewport.offsetTop;
-    }
-  }
-  return {
-    width,
-    height,
-    x: x + getWindowScrollBarX(element),
-    y
-  };
-}
-function getDocumentRect(element) {
-  var _element$ownerDocumen;
-  var html = getDocumentElement(element);
-  var winScroll = getWindowScroll(element);
-  var body = (_element$ownerDocumen = element.ownerDocument) == null ? void 0 : _element$ownerDocumen.body;
-  var width = max(html.scrollWidth, html.clientWidth, body ? body.scrollWidth : 0, body ? body.clientWidth : 0);
-  var height = max(html.scrollHeight, html.clientHeight, body ? body.scrollHeight : 0, body ? body.clientHeight : 0);
-  var x = -winScroll.scrollLeft + getWindowScrollBarX(element);
-  var y = -winScroll.scrollTop;
-  if (getComputedStyle$1(body || html).direction === "rtl") {
-    x += max(html.clientWidth, body ? body.clientWidth : 0) - width;
-  }
-  return {
-    width,
-    height,
-    x,
-    y
-  };
-}
-function isScrollParent(element) {
-  var _getComputedStyle = getComputedStyle$1(element), overflow = _getComputedStyle.overflow, overflowX = _getComputedStyle.overflowX, overflowY = _getComputedStyle.overflowY;
-  return /auto|scroll|overlay|hidden/.test(overflow + overflowY + overflowX);
-}
-function getScrollParent(node) {
-  if (["html", "body", "#document"].indexOf(getNodeName(node)) >= 0) {
-    return node.ownerDocument.body;
-  }
-  if (isHTMLElement(node) && isScrollParent(node)) {
-    return node;
-  }
-  return getScrollParent(getParentNode(node));
-}
-function listScrollParents(element, list) {
-  var _element$ownerDocumen;
-  if (list === void 0) {
-    list = [];
-  }
-  var scrollParent = getScrollParent(element);
-  var isBody = scrollParent === ((_element$ownerDocumen = element.ownerDocument) == null ? void 0 : _element$ownerDocumen.body);
-  var win = getWindow(scrollParent);
-  var target = isBody ? [win].concat(win.visualViewport || [], isScrollParent(scrollParent) ? scrollParent : []) : scrollParent;
-  var updatedList = list.concat(target);
-  return isBody ? updatedList : (
-    // $FlowFixMe[incompatible-call]: isBody tells us target will be an HTMLElement here
-    updatedList.concat(listScrollParents(getParentNode(target)))
-  );
-}
-function rectToClientRect(rect) {
-  return Object.assign({}, rect, {
-    left: rect.x,
-    top: rect.y,
-    right: rect.x + rect.width,
-    bottom: rect.y + rect.height
-  });
-}
-function getInnerBoundingClientRect(element, strategy) {
-  var rect = getBoundingClientRect(element, false, strategy === "fixed");
-  rect.top = rect.top + element.clientTop;
-  rect.left = rect.left + element.clientLeft;
-  rect.bottom = rect.top + element.clientHeight;
-  rect.right = rect.left + element.clientWidth;
-  rect.width = element.clientWidth;
-  rect.height = element.clientHeight;
-  rect.x = rect.left;
-  rect.y = rect.top;
-  return rect;
-}
-function getClientRectFromMixedType(element, clippingParent, strategy) {
-  return clippingParent === viewport ? rectToClientRect(getViewportRect(element, strategy)) : isElement$1(clippingParent) ? getInnerBoundingClientRect(clippingParent, strategy) : rectToClientRect(getDocumentRect(getDocumentElement(element)));
-}
-function getClippingParents(element) {
-  var clippingParents2 = listScrollParents(getParentNode(element));
-  var canEscapeClipping = ["absolute", "fixed"].indexOf(getComputedStyle$1(element).position) >= 0;
-  var clipperElement = canEscapeClipping && isHTMLElement(element) ? getOffsetParent(element) : element;
-  if (!isElement$1(clipperElement)) {
-    return [];
-  }
-  return clippingParents2.filter(function(clippingParent) {
-    return isElement$1(clippingParent) && contains(clippingParent, clipperElement) && getNodeName(clippingParent) !== "body";
-  });
-}
-function getClippingRect(element, boundary, rootBoundary, strategy) {
-  var mainClippingParents = boundary === "clippingParents" ? getClippingParents(element) : [].concat(boundary);
-  var clippingParents2 = [].concat(mainClippingParents, [rootBoundary]);
-  var firstClippingParent = clippingParents2[0];
-  var clippingRect = clippingParents2.reduce(function(accRect, clippingParent) {
-    var rect = getClientRectFromMixedType(element, clippingParent, strategy);
-    accRect.top = max(rect.top, accRect.top);
-    accRect.right = min(rect.right, accRect.right);
-    accRect.bottom = min(rect.bottom, accRect.bottom);
-    accRect.left = max(rect.left, accRect.left);
-    return accRect;
-  }, getClientRectFromMixedType(element, firstClippingParent, strategy));
-  clippingRect.width = clippingRect.right - clippingRect.left;
-  clippingRect.height = clippingRect.bottom - clippingRect.top;
-  clippingRect.x = clippingRect.left;
-  clippingRect.y = clippingRect.top;
-  return clippingRect;
-}
-function computeOffsets(_ref) {
-  var reference2 = _ref.reference, element = _ref.element, placement = _ref.placement;
-  var basePlacement = placement ? getBasePlacement$1(placement) : null;
-  var variation = placement ? getVariation(placement) : null;
-  var commonX = reference2.x + reference2.width / 2 - element.width / 2;
-  var commonY = reference2.y + reference2.height / 2 - element.height / 2;
-  var offsets;
-  switch (basePlacement) {
-    case top:
-      offsets = {
-        x: commonX,
-        y: reference2.y - element.height
-      };
-      break;
-    case bottom:
-      offsets = {
-        x: commonX,
-        y: reference2.y + reference2.height
-      };
-      break;
-    case right:
-      offsets = {
-        x: reference2.x + reference2.width,
-        y: commonY
-      };
-      break;
-    case left:
-      offsets = {
-        x: reference2.x - element.width,
-        y: commonY
-      };
-      break;
-    default:
-      offsets = {
-        x: reference2.x,
-        y: reference2.y
-      };
-  }
-  var mainAxis = basePlacement ? getMainAxisFromPlacement(basePlacement) : null;
-  if (mainAxis != null) {
-    var len = mainAxis === "y" ? "height" : "width";
-    switch (variation) {
-      case start:
-        offsets[mainAxis] = offsets[mainAxis] - (reference2[len] / 2 - element[len] / 2);
-        break;
-      case end:
-        offsets[mainAxis] = offsets[mainAxis] + (reference2[len] / 2 - element[len] / 2);
-        break;
-    }
-  }
-  return offsets;
-}
-function detectOverflow(state, options) {
-  if (options === void 0) {
-    options = {};
-  }
-  var _options = options, _options$placement = _options.placement, placement = _options$placement === void 0 ? state.placement : _options$placement, _options$strategy = _options.strategy, strategy = _options$strategy === void 0 ? state.strategy : _options$strategy, _options$boundary = _options.boundary, boundary = _options$boundary === void 0 ? clippingParents : _options$boundary, _options$rootBoundary = _options.rootBoundary, rootBoundary = _options$rootBoundary === void 0 ? viewport : _options$rootBoundary, _options$elementConte = _options.elementContext, elementContext = _options$elementConte === void 0 ? popper : _options$elementConte, _options$altBoundary = _options.altBoundary, altBoundary = _options$altBoundary === void 0 ? false : _options$altBoundary, _options$padding = _options.padding, padding = _options$padding === void 0 ? 0 : _options$padding;
-  var paddingObject = mergePaddingObject(typeof padding !== "number" ? padding : expandToHashMap(padding, basePlacements));
-  var altContext = elementContext === popper ? reference : popper;
-  var popperRect = state.rects.popper;
-  var element = state.elements[altBoundary ? altContext : elementContext];
-  var clippingClientRect = getClippingRect(isElement$1(element) ? element : element.contextElement || getDocumentElement(state.elements.popper), boundary, rootBoundary, strategy);
-  var referenceClientRect = getBoundingClientRect(state.elements.reference);
-  var popperOffsets2 = computeOffsets({
-    reference: referenceClientRect,
-    element: popperRect,
-    placement
-  });
-  var popperClientRect = rectToClientRect(Object.assign({}, popperRect, popperOffsets2));
-  var elementClientRect = elementContext === popper ? popperClientRect : referenceClientRect;
-  var overflowOffsets = {
-    top: clippingClientRect.top - elementClientRect.top + paddingObject.top,
-    bottom: elementClientRect.bottom - clippingClientRect.bottom + paddingObject.bottom,
-    left: clippingClientRect.left - elementClientRect.left + paddingObject.left,
-    right: elementClientRect.right - clippingClientRect.right + paddingObject.right
-  };
-  var offsetData = state.modifiersData.offset;
-  if (elementContext === popper && offsetData) {
-    var offset2 = offsetData[placement];
-    Object.keys(overflowOffsets).forEach(function(key) {
-      var multiply = [right, bottom].indexOf(key) >= 0 ? 1 : -1;
-      var axis = [top, bottom].indexOf(key) >= 0 ? "y" : "x";
-      overflowOffsets[key] += offset2[axis] * multiply;
-    });
-  }
-  return overflowOffsets;
-}
-function computeAutoPlacement(state, options) {
-  if (options === void 0) {
-    options = {};
-  }
-  var _options = options, placement = _options.placement, boundary = _options.boundary, rootBoundary = _options.rootBoundary, padding = _options.padding, flipVariations = _options.flipVariations, _options$allowedAutoP = _options.allowedAutoPlacements, allowedAutoPlacements = _options$allowedAutoP === void 0 ? placements : _options$allowedAutoP;
-  var variation = getVariation(placement);
-  var placements$1 = variation ? flipVariations ? variationPlacements : variationPlacements.filter(function(placement2) {
-    return getVariation(placement2) === variation;
-  }) : basePlacements;
-  var allowedPlacements = placements$1.filter(function(placement2) {
-    return allowedAutoPlacements.indexOf(placement2) >= 0;
-  });
-  if (allowedPlacements.length === 0) {
-    allowedPlacements = placements$1;
-  }
-  var overflows = allowedPlacements.reduce(function(acc, placement2) {
-    acc[placement2] = detectOverflow(state, {
-      placement: placement2,
-      boundary,
-      rootBoundary,
-      padding
-    })[getBasePlacement$1(placement2)];
-    return acc;
-  }, {});
-  return Object.keys(overflows).sort(function(a, b) {
-    return overflows[a] - overflows[b];
-  });
-}
-function getExpandedFallbackPlacements(placement) {
-  if (getBasePlacement$1(placement) === auto) {
-    return [];
-  }
-  var oppositePlacement = getOppositePlacement(placement);
-  return [getOppositeVariationPlacement(placement), oppositePlacement, getOppositeVariationPlacement(oppositePlacement)];
-}
-function flip(_ref) {
-  var state = _ref.state, options = _ref.options, name = _ref.name;
-  if (state.modifiersData[name]._skip) {
-    return;
-  }
-  var _options$mainAxis = options.mainAxis, checkMainAxis = _options$mainAxis === void 0 ? true : _options$mainAxis, _options$altAxis = options.altAxis, checkAltAxis = _options$altAxis === void 0 ? true : _options$altAxis, specifiedFallbackPlacements = options.fallbackPlacements, padding = options.padding, boundary = options.boundary, rootBoundary = options.rootBoundary, altBoundary = options.altBoundary, _options$flipVariatio = options.flipVariations, flipVariations = _options$flipVariatio === void 0 ? true : _options$flipVariatio, allowedAutoPlacements = options.allowedAutoPlacements;
-  var preferredPlacement = state.options.placement;
-  var basePlacement = getBasePlacement$1(preferredPlacement);
-  var isBasePlacement = basePlacement === preferredPlacement;
-  var fallbackPlacements = specifiedFallbackPlacements || (isBasePlacement || !flipVariations ? [getOppositePlacement(preferredPlacement)] : getExpandedFallbackPlacements(preferredPlacement));
-  var placements2 = [preferredPlacement].concat(fallbackPlacements).reduce(function(acc, placement2) {
-    return acc.concat(getBasePlacement$1(placement2) === auto ? computeAutoPlacement(state, {
-      placement: placement2,
-      boundary,
-      rootBoundary,
-      padding,
-      flipVariations,
-      allowedAutoPlacements
-    }) : placement2);
-  }, []);
-  var referenceRect = state.rects.reference;
-  var popperRect = state.rects.popper;
-  var checksMap = /* @__PURE__ */ new Map();
-  var makeFallbackChecks = true;
-  var firstFittingPlacement = placements2[0];
-  for (var i = 0; i < placements2.length; i++) {
-    var placement = placements2[i];
-    var _basePlacement = getBasePlacement$1(placement);
-    var isStartVariation = getVariation(placement) === start;
-    var isVertical = [top, bottom].indexOf(_basePlacement) >= 0;
-    var len = isVertical ? "width" : "height";
-    var overflow = detectOverflow(state, {
-      placement,
-      boundary,
-      rootBoundary,
-      altBoundary,
-      padding
-    });
-    var mainVariationSide = isVertical ? isStartVariation ? right : left : isStartVariation ? bottom : top;
-    if (referenceRect[len] > popperRect[len]) {
-      mainVariationSide = getOppositePlacement(mainVariationSide);
-    }
-    var altVariationSide = getOppositePlacement(mainVariationSide);
-    var checks = [];
-    if (checkMainAxis) {
-      checks.push(overflow[_basePlacement] <= 0);
-    }
-    if (checkAltAxis) {
-      checks.push(overflow[mainVariationSide] <= 0, overflow[altVariationSide] <= 0);
-    }
-    if (checks.every(function(check) {
-      return check;
-    })) {
-      firstFittingPlacement = placement;
-      makeFallbackChecks = false;
-      break;
-    }
-    checksMap.set(placement, checks);
-  }
-  if (makeFallbackChecks) {
-    var numberOfChecks = flipVariations ? 3 : 1;
-    var _loop = function _loop2(_i2) {
-      var fittingPlacement = placements2.find(function(placement2) {
-        var checks2 = checksMap.get(placement2);
-        if (checks2) {
-          return checks2.slice(0, _i2).every(function(check) {
-            return check;
-          });
-        }
-      });
-      if (fittingPlacement) {
-        firstFittingPlacement = fittingPlacement;
-        return "break";
-      }
-    };
-    for (var _i = numberOfChecks; _i > 0; _i--) {
-      var _ret = _loop(_i);
-      if (_ret === "break") break;
-    }
-  }
-  if (state.placement !== firstFittingPlacement) {
-    state.modifiersData[name]._skip = true;
-    state.placement = firstFittingPlacement;
-    state.reset = true;
-  }
-}
-const flip$1 = {
-  name: "flip",
-  enabled: true,
-  phase: "main",
-  fn: flip,
-  requiresIfExists: ["offset"],
-  data: {
-    _skip: false
-  }
-};
-function getSideOffsets(overflow, rect, preventedOffsets) {
-  if (preventedOffsets === void 0) {
-    preventedOffsets = {
-      x: 0,
-      y: 0
-    };
-  }
-  return {
-    top: overflow.top - rect.height - preventedOffsets.y,
-    right: overflow.right - rect.width + preventedOffsets.x,
-    bottom: overflow.bottom - rect.height + preventedOffsets.y,
-    left: overflow.left - rect.width - preventedOffsets.x
-  };
-}
-function isAnySideFullyClipped(overflow) {
-  return [top, right, bottom, left].some(function(side) {
-    return overflow[side] >= 0;
-  });
-}
-function hide(_ref) {
-  var state = _ref.state, name = _ref.name;
-  var referenceRect = state.rects.reference;
-  var popperRect = state.rects.popper;
-  var preventedOffsets = state.modifiersData.preventOverflow;
-  var referenceOverflow = detectOverflow(state, {
-    elementContext: "reference"
-  });
-  var popperAltOverflow = detectOverflow(state, {
-    altBoundary: true
-  });
-  var referenceClippingOffsets = getSideOffsets(referenceOverflow, referenceRect);
-  var popperEscapeOffsets = getSideOffsets(popperAltOverflow, popperRect, preventedOffsets);
-  var isReferenceHidden = isAnySideFullyClipped(referenceClippingOffsets);
-  var hasPopperEscaped = isAnySideFullyClipped(popperEscapeOffsets);
-  state.modifiersData[name] = {
-    referenceClippingOffsets,
-    popperEscapeOffsets,
-    isReferenceHidden,
-    hasPopperEscaped
-  };
-  state.attributes.popper = Object.assign({}, state.attributes.popper, {
-    "data-popper-reference-hidden": isReferenceHidden,
-    "data-popper-escaped": hasPopperEscaped
-  });
-}
-const hide$1 = {
-  name: "hide",
-  enabled: true,
-  phase: "main",
-  requiresIfExists: ["preventOverflow"],
-  fn: hide
-};
-function distanceAndSkiddingToXY(placement, rects, offset2) {
-  var basePlacement = getBasePlacement$1(placement);
-  var invertDistance = [left, top].indexOf(basePlacement) >= 0 ? -1 : 1;
-  var _ref = typeof offset2 === "function" ? offset2(Object.assign({}, rects, {
-    placement
-  })) : offset2, skidding = _ref[0], distance = _ref[1];
-  skidding = skidding || 0;
-  distance = (distance || 0) * invertDistance;
-  return [left, right].indexOf(basePlacement) >= 0 ? {
-    x: distance,
-    y: skidding
-  } : {
-    x: skidding,
-    y: distance
-  };
-}
-function offset(_ref2) {
-  var state = _ref2.state, options = _ref2.options, name = _ref2.name;
-  var _options$offset = options.offset, offset2 = _options$offset === void 0 ? [0, 0] : _options$offset;
-  var data = placements.reduce(function(acc, placement) {
-    acc[placement] = distanceAndSkiddingToXY(placement, state.rects, offset2);
-    return acc;
-  }, {});
-  var _data$state$placement = data[state.placement], x = _data$state$placement.x, y = _data$state$placement.y;
-  if (state.modifiersData.popperOffsets != null) {
-    state.modifiersData.popperOffsets.x += x;
-    state.modifiersData.popperOffsets.y += y;
-  }
-  state.modifiersData[name] = data;
-}
-const offset$1 = {
-  name: "offset",
-  enabled: true,
-  phase: "main",
-  requires: ["popperOffsets"],
-  fn: offset
-};
-function popperOffsets(_ref) {
-  var state = _ref.state, name = _ref.name;
-  state.modifiersData[name] = computeOffsets({
-    reference: state.rects.reference,
-    element: state.rects.popper,
-    placement: state.placement
-  });
-}
-const popperOffsets$1 = {
-  name: "popperOffsets",
-  enabled: true,
-  phase: "read",
-  fn: popperOffsets,
-  data: {}
-};
-function getAltAxis(axis) {
-  return axis === "x" ? "y" : "x";
-}
-function preventOverflow(_ref) {
-  var state = _ref.state, options = _ref.options, name = _ref.name;
-  var _options$mainAxis = options.mainAxis, checkMainAxis = _options$mainAxis === void 0 ? true : _options$mainAxis, _options$altAxis = options.altAxis, checkAltAxis = _options$altAxis === void 0 ? false : _options$altAxis, boundary = options.boundary, rootBoundary = options.rootBoundary, altBoundary = options.altBoundary, padding = options.padding, _options$tether = options.tether, tether = _options$tether === void 0 ? true : _options$tether, _options$tetherOffset = options.tetherOffset, tetherOffset = _options$tetherOffset === void 0 ? 0 : _options$tetherOffset;
-  var overflow = detectOverflow(state, {
-    boundary,
-    rootBoundary,
-    padding,
-    altBoundary
-  });
-  var basePlacement = getBasePlacement$1(state.placement);
-  var variation = getVariation(state.placement);
-  var isBasePlacement = !variation;
-  var mainAxis = getMainAxisFromPlacement(basePlacement);
-  var altAxis = getAltAxis(mainAxis);
-  var popperOffsets2 = state.modifiersData.popperOffsets;
-  var referenceRect = state.rects.reference;
-  var popperRect = state.rects.popper;
-  var tetherOffsetValue = typeof tetherOffset === "function" ? tetherOffset(Object.assign({}, state.rects, {
-    placement: state.placement
-  })) : tetherOffset;
-  var normalizedTetherOffsetValue = typeof tetherOffsetValue === "number" ? {
-    mainAxis: tetherOffsetValue,
-    altAxis: tetherOffsetValue
-  } : Object.assign({
-    mainAxis: 0,
-    altAxis: 0
-  }, tetherOffsetValue);
-  var offsetModifierState = state.modifiersData.offset ? state.modifiersData.offset[state.placement] : null;
-  var data = {
-    x: 0,
-    y: 0
-  };
-  if (!popperOffsets2) {
-    return;
-  }
-  if (checkMainAxis) {
-    var _offsetModifierState$;
-    var mainSide = mainAxis === "y" ? top : left;
-    var altSide = mainAxis === "y" ? bottom : right;
-    var len = mainAxis === "y" ? "height" : "width";
-    var offset2 = popperOffsets2[mainAxis];
-    var min$1 = offset2 + overflow[mainSide];
-    var max$1 = offset2 - overflow[altSide];
-    var additive = tether ? -popperRect[len] / 2 : 0;
-    var minLen = variation === start ? referenceRect[len] : popperRect[len];
-    var maxLen = variation === start ? -popperRect[len] : -referenceRect[len];
-    var arrowElement = state.elements.arrow;
-    var arrowRect = tether && arrowElement ? getLayoutRect(arrowElement) : {
-      width: 0,
-      height: 0
-    };
-    var arrowPaddingObject = state.modifiersData["arrow#persistent"] ? state.modifiersData["arrow#persistent"].padding : getFreshSideObject();
-    var arrowPaddingMin = arrowPaddingObject[mainSide];
-    var arrowPaddingMax = arrowPaddingObject[altSide];
-    var arrowLen = within(0, referenceRect[len], arrowRect[len]);
-    var minOffset = isBasePlacement ? referenceRect[len] / 2 - additive - arrowLen - arrowPaddingMin - normalizedTetherOffsetValue.mainAxis : minLen - arrowLen - arrowPaddingMin - normalizedTetherOffsetValue.mainAxis;
-    var maxOffset = isBasePlacement ? -referenceRect[len] / 2 + additive + arrowLen + arrowPaddingMax + normalizedTetherOffsetValue.mainAxis : maxLen + arrowLen + arrowPaddingMax + normalizedTetherOffsetValue.mainAxis;
-    var arrowOffsetParent = state.elements.arrow && getOffsetParent(state.elements.arrow);
-    var clientOffset = arrowOffsetParent ? mainAxis === "y" ? arrowOffsetParent.clientTop || 0 : arrowOffsetParent.clientLeft || 0 : 0;
-    var offsetModifierValue = (_offsetModifierState$ = offsetModifierState == null ? void 0 : offsetModifierState[mainAxis]) != null ? _offsetModifierState$ : 0;
-    var tetherMin = offset2 + minOffset - offsetModifierValue - clientOffset;
-    var tetherMax = offset2 + maxOffset - offsetModifierValue;
-    var preventedOffset = within(tether ? min(min$1, tetherMin) : min$1, offset2, tether ? max(max$1, tetherMax) : max$1);
-    popperOffsets2[mainAxis] = preventedOffset;
-    data[mainAxis] = preventedOffset - offset2;
-  }
-  if (checkAltAxis) {
-    var _offsetModifierState$2;
-    var _mainSide = mainAxis === "x" ? top : left;
-    var _altSide = mainAxis === "x" ? bottom : right;
-    var _offset = popperOffsets2[altAxis];
-    var _len = altAxis === "y" ? "height" : "width";
-    var _min = _offset + overflow[_mainSide];
-    var _max = _offset - overflow[_altSide];
-    var isOriginSide = [top, left].indexOf(basePlacement) !== -1;
-    var _offsetModifierValue = (_offsetModifierState$2 = offsetModifierState == null ? void 0 : offsetModifierState[altAxis]) != null ? _offsetModifierState$2 : 0;
-    var _tetherMin = isOriginSide ? _min : _offset - referenceRect[_len] - popperRect[_len] - _offsetModifierValue + normalizedTetherOffsetValue.altAxis;
-    var _tetherMax = isOriginSide ? _offset + referenceRect[_len] + popperRect[_len] - _offsetModifierValue - normalizedTetherOffsetValue.altAxis : _max;
-    var _preventedOffset = tether && isOriginSide ? withinMaxClamp(_tetherMin, _offset, _tetherMax) : within(tether ? _tetherMin : _min, _offset, tether ? _tetherMax : _max);
-    popperOffsets2[altAxis] = _preventedOffset;
-    data[altAxis] = _preventedOffset - _offset;
-  }
-  state.modifiersData[name] = data;
-}
-const preventOverflow$1 = {
-  name: "preventOverflow",
-  enabled: true,
-  phase: "main",
-  fn: preventOverflow,
-  requiresIfExists: ["offset"]
-};
-function getHTMLElementScroll(element) {
-  return {
-    scrollLeft: element.scrollLeft,
-    scrollTop: element.scrollTop
-  };
-}
-function getNodeScroll(node) {
-  if (node === getWindow(node) || !isHTMLElement(node)) {
-    return getWindowScroll(node);
-  } else {
-    return getHTMLElementScroll(node);
-  }
-}
-function isElementScaled(element) {
-  var rect = element.getBoundingClientRect();
-  var scaleX = round(rect.width) / element.offsetWidth || 1;
-  var scaleY = round(rect.height) / element.offsetHeight || 1;
-  return scaleX !== 1 || scaleY !== 1;
-}
-function getCompositeRect(elementOrVirtualElement, offsetParent, isFixed) {
-  if (isFixed === void 0) {
-    isFixed = false;
-  }
-  var isOffsetParentAnElement = isHTMLElement(offsetParent);
-  var offsetParentIsScaled = isHTMLElement(offsetParent) && isElementScaled(offsetParent);
-  var documentElement = getDocumentElement(offsetParent);
-  var rect = getBoundingClientRect(elementOrVirtualElement, offsetParentIsScaled, isFixed);
-  var scroll = {
-    scrollLeft: 0,
-    scrollTop: 0
-  };
-  var offsets = {
-    x: 0,
-    y: 0
-  };
-  if (isOffsetParentAnElement || !isOffsetParentAnElement && !isFixed) {
-    if (getNodeName(offsetParent) !== "body" || // https://github.com/popperjs/popper-core/issues/1078
-    isScrollParent(documentElement)) {
-      scroll = getNodeScroll(offsetParent);
-    }
-    if (isHTMLElement(offsetParent)) {
-      offsets = getBoundingClientRect(offsetParent, true);
-      offsets.x += offsetParent.clientLeft;
-      offsets.y += offsetParent.clientTop;
-    } else if (documentElement) {
-      offsets.x = getWindowScrollBarX(documentElement);
-    }
-  }
-  return {
-    x: rect.left + scroll.scrollLeft - offsets.x,
-    y: rect.top + scroll.scrollTop - offsets.y,
-    width: rect.width,
-    height: rect.height
-  };
-}
-function order(modifiers) {
-  var map = /* @__PURE__ */ new Map();
-  var visited = /* @__PURE__ */ new Set();
-  var result = [];
-  modifiers.forEach(function(modifier) {
-    map.set(modifier.name, modifier);
-  });
-  function sort(modifier) {
-    visited.add(modifier.name);
-    var requires = [].concat(modifier.requires || [], modifier.requiresIfExists || []);
-    requires.forEach(function(dep) {
-      if (!visited.has(dep)) {
-        var depModifier = map.get(dep);
-        if (depModifier) {
-          sort(depModifier);
-        }
-      }
-    });
-    result.push(modifier);
-  }
-  modifiers.forEach(function(modifier) {
-    if (!visited.has(modifier.name)) {
-      sort(modifier);
-    }
-  });
-  return result;
-}
-function orderModifiers(modifiers) {
-  var orderedModifiers = order(modifiers);
-  return modifierPhases.reduce(function(acc, phase) {
-    return acc.concat(orderedModifiers.filter(function(modifier) {
-      return modifier.phase === phase;
-    }));
-  }, []);
-}
-function debounce$1(fn2) {
-  var pending;
-  return function() {
-    if (!pending) {
-      pending = new Promise(function(resolve) {
-        Promise.resolve().then(function() {
-          pending = void 0;
-          resolve(fn2());
-        });
-      });
-    }
-    return pending;
-  };
-}
-function mergeByName(modifiers) {
-  var merged = modifiers.reduce(function(merged2, current) {
-    var existing = merged2[current.name];
-    merged2[current.name] = existing ? Object.assign({}, existing, current, {
-      options: Object.assign({}, existing.options, current.options),
-      data: Object.assign({}, existing.data, current.data)
-    }) : current;
-    return merged2;
-  }, {});
-  return Object.keys(merged).map(function(key) {
-    return merged[key];
-  });
-}
-var DEFAULT_OPTIONS = {
-  placement: "bottom",
-  modifiers: [],
-  strategy: "absolute"
-};
-function areValidElements() {
-  for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
-    args[_key] = arguments[_key];
-  }
-  return !args.some(function(element) {
-    return !(element && typeof element.getBoundingClientRect === "function");
-  });
-}
-function popperGenerator(generatorOptions) {
-  if (generatorOptions === void 0) {
-    generatorOptions = {};
-  }
-  var _generatorOptions = generatorOptions, _generatorOptions$def = _generatorOptions.defaultModifiers, defaultModifiers2 = _generatorOptions$def === void 0 ? [] : _generatorOptions$def, _generatorOptions$def2 = _generatorOptions.defaultOptions, defaultOptions2 = _generatorOptions$def2 === void 0 ? DEFAULT_OPTIONS : _generatorOptions$def2;
-  return function createPopper2(reference2, popper2, options) {
-    if (options === void 0) {
-      options = defaultOptions2;
-    }
-    var state = {
-      placement: "bottom",
-      orderedModifiers: [],
-      options: Object.assign({}, DEFAULT_OPTIONS, defaultOptions2),
-      modifiersData: {},
-      elements: {
-        reference: reference2,
-        popper: popper2
-      },
-      attributes: {},
-      styles: {}
-    };
-    var effectCleanupFns = [];
-    var isDestroyed = false;
-    var instance = {
-      state,
-      setOptions: function setOptions(setOptionsAction) {
-        var options2 = typeof setOptionsAction === "function" ? setOptionsAction(state.options) : setOptionsAction;
-        cleanupModifierEffects();
-        state.options = Object.assign({}, defaultOptions2, state.options, options2);
-        state.scrollParents = {
-          reference: isElement$1(reference2) ? listScrollParents(reference2) : reference2.contextElement ? listScrollParents(reference2.contextElement) : [],
-          popper: listScrollParents(popper2)
-        };
-        var orderedModifiers = orderModifiers(mergeByName([].concat(defaultModifiers2, state.options.modifiers)));
-        state.orderedModifiers = orderedModifiers.filter(function(m) {
-          return m.enabled;
-        });
-        runModifierEffects();
-        return instance.update();
-      },
-      // Sync update – it will always be executed, even if not necessary. This
-      // is useful for low frequency updates where sync behavior simplifies the
-      // logic.
-      // For high frequency updates (e.g. `resize` and `scroll` events), always
-      // prefer the async Popper#update method
-      forceUpdate: function forceUpdate() {
-        if (isDestroyed) {
-          return;
-        }
-        var _state$elements = state.elements, reference3 = _state$elements.reference, popper3 = _state$elements.popper;
-        if (!areValidElements(reference3, popper3)) {
-          return;
-        }
-        state.rects = {
-          reference: getCompositeRect(reference3, getOffsetParent(popper3), state.options.strategy === "fixed"),
-          popper: getLayoutRect(popper3)
-        };
-        state.reset = false;
-        state.placement = state.options.placement;
-        state.orderedModifiers.forEach(function(modifier) {
-          return state.modifiersData[modifier.name] = Object.assign({}, modifier.data);
-        });
-        for (var index2 = 0; index2 < state.orderedModifiers.length; index2++) {
-          if (state.reset === true) {
-            state.reset = false;
-            index2 = -1;
-            continue;
-          }
-          var _state$orderedModifie = state.orderedModifiers[index2], fn2 = _state$orderedModifie.fn, _state$orderedModifie2 = _state$orderedModifie.options, _options = _state$orderedModifie2 === void 0 ? {} : _state$orderedModifie2, name = _state$orderedModifie.name;
-          if (typeof fn2 === "function") {
-            state = fn2({
-              state,
-              options: _options,
-              name,
-              instance
-            }) || state;
-          }
-        }
-      },
-      // Async and optimistically optimized update – it will not be executed if
-      // not necessary (debounced to run at most once-per-tick)
-      update: debounce$1(function() {
-        return new Promise(function(resolve) {
-          instance.forceUpdate();
-          resolve(state);
-        });
-      }),
-      destroy: function destroy() {
-        cleanupModifierEffects();
-        isDestroyed = true;
-      }
-    };
-    if (!areValidElements(reference2, popper2)) {
-      return instance;
-    }
-    instance.setOptions(options).then(function(state2) {
-      if (!isDestroyed && options.onFirstUpdate) {
-        options.onFirstUpdate(state2);
-      }
-    });
-    function runModifierEffects() {
-      state.orderedModifiers.forEach(function(_ref) {
-        var name = _ref.name, _ref$options = _ref.options, options2 = _ref$options === void 0 ? {} : _ref$options, effect3 = _ref.effect;
-        if (typeof effect3 === "function") {
-          var cleanupFn = effect3({
-            state,
-            name,
-            instance,
-            options: options2
-          });
-          var noopFn = function noopFn2() {
-          };
-          effectCleanupFns.push(cleanupFn || noopFn);
-        }
-      });
-    }
-    function cleanupModifierEffects() {
-      effectCleanupFns.forEach(function(fn2) {
-        return fn2();
-      });
-      effectCleanupFns = [];
-    }
-    return instance;
-  };
-}
-var defaultModifiers = [eventListeners, popperOffsets$1, computeStyles$1, applyStyles$1, offset$1, flip$1, preventOverflow$1, arrow$1, hide$1];
-var createPopper = /* @__PURE__ */ popperGenerator({
-  defaultModifiers
-});
-var BOX_CLASS = "tippy-box";
-var CONTENT_CLASS = "tippy-content";
-var BACKDROP_CLASS = "tippy-backdrop";
-var ARROW_CLASS = "tippy-arrow";
-var SVG_ARROW_CLASS = "tippy-svg-arrow";
-var TOUCH_OPTIONS = {
-  passive: true,
-  capture: true
-};
-var TIPPY_DEFAULT_APPEND_TO = function TIPPY_DEFAULT_APPEND_TO2() {
-  return document.body;
-};
-function getValueAtIndexOrReturn(value, index2, defaultValue) {
-  if (Array.isArray(value)) {
-    var v = value[index2];
-    return v == null ? Array.isArray(defaultValue) ? defaultValue[index2] : defaultValue : v;
-  }
-  return value;
-}
-function isType(value, type) {
-  var str = {}.toString.call(value);
-  return str.indexOf("[object") === 0 && str.indexOf(type + "]") > -1;
-}
-function invokeWithArgsOrReturn(value, args) {
-  return typeof value === "function" ? value.apply(void 0, args) : value;
-}
-function debounce(fn5, ms) {
-  if (ms === 0) {
-    return fn5;
-  }
-  var timeout;
-  return function(arg) {
-    clearTimeout(timeout);
-    timeout = setTimeout(function() {
-      fn5(arg);
-    }, ms);
-  };
-}
-function splitBySpaces(value) {
-  return value.split(/\s+/).filter(Boolean);
-}
-function normalizeToArray(value) {
-  return [].concat(value);
-}
-function pushIfUnique(arr, value) {
-  if (arr.indexOf(value) === -1) {
-    arr.push(value);
-  }
-}
-function unique(arr) {
-  return arr.filter(function(item, index2) {
-    return arr.indexOf(item) === index2;
-  });
-}
-function getBasePlacement(placement) {
-  return placement.split("-")[0];
-}
-function arrayFrom(value) {
-  return [].slice.call(value);
-}
-function removeUndefinedProps(obj) {
-  return Object.keys(obj).reduce(function(acc, key) {
-    if (obj[key] !== void 0) {
-      acc[key] = obj[key];
-    }
-    return acc;
-  }, {});
-}
-function div() {
-  return document.createElement("div");
-}
-function isElement(value) {
-  return ["Element", "Fragment"].some(function(type) {
-    return isType(value, type);
-  });
-}
-function isNodeList(value) {
-  return isType(value, "NodeList");
-}
-function isMouseEvent(value) {
-  return isType(value, "MouseEvent");
-}
-function isReferenceElement(value) {
-  return !!(value && value._tippy && value._tippy.reference === value);
-}
-function getArrayOfElements(value) {
-  if (isElement(value)) {
-    return [value];
-  }
-  if (isNodeList(value)) {
-    return arrayFrom(value);
-  }
-  if (Array.isArray(value)) {
-    return value;
-  }
-  return arrayFrom(document.querySelectorAll(value));
-}
-function setTransitionDuration(els, value) {
-  els.forEach(function(el) {
-    if (el) {
-      el.style.transitionDuration = value + "ms";
-    }
-  });
-}
-function setVisibilityState(els, state) {
-  els.forEach(function(el) {
-    if (el) {
-      el.setAttribute("data-state", state);
-    }
-  });
-}
-function getOwnerDocument(elementOrElements) {
-  var _element$ownerDocumen;
-  var _normalizeToArray = normalizeToArray(elementOrElements), element = _normalizeToArray[0];
-  return element != null && (_element$ownerDocumen = element.ownerDocument) != null && _element$ownerDocumen.body ? element.ownerDocument : document;
-}
-function isCursorOutsideInteractiveBorder(popperTreeData, event) {
-  var clientX = event.clientX, clientY = event.clientY;
-  return popperTreeData.every(function(_ref) {
-    var popperRect = _ref.popperRect, popperState = _ref.popperState, props = _ref.props;
-    var interactiveBorder = props.interactiveBorder;
-    var basePlacement = getBasePlacement(popperState.placement);
-    var offsetData = popperState.modifiersData.offset;
-    if (!offsetData) {
-      return true;
-    }
-    var topDistance = basePlacement === "bottom" ? offsetData.top.y : 0;
-    var bottomDistance = basePlacement === "top" ? offsetData.bottom.y : 0;
-    var leftDistance = basePlacement === "right" ? offsetData.left.x : 0;
-    var rightDistance = basePlacement === "left" ? offsetData.right.x : 0;
-    var exceedsTop = popperRect.top - clientY + topDistance > interactiveBorder;
-    var exceedsBottom = clientY - popperRect.bottom - bottomDistance > interactiveBorder;
-    var exceedsLeft = popperRect.left - clientX + leftDistance > interactiveBorder;
-    var exceedsRight = clientX - popperRect.right - rightDistance > interactiveBorder;
-    return exceedsTop || exceedsBottom || exceedsLeft || exceedsRight;
-  });
-}
-function updateTransitionEndListener(box, action, listener) {
-  var method = action + "EventListener";
-  ["transitionend", "webkitTransitionEnd"].forEach(function(event) {
-    box[method](event, listener);
-  });
-}
-function actualContains(parent, child) {
-  var target = child;
-  while (target) {
-    var _target$getRootNode;
-    if (parent.contains(target)) {
-      return true;
-    }
-    target = target.getRootNode == null ? void 0 : (_target$getRootNode = target.getRootNode()) == null ? void 0 : _target$getRootNode.host;
-  }
-  return false;
-}
-var currentInput = {
-  isTouch: false
-};
-var lastMouseMoveTime = 0;
-function onDocumentTouchStart() {
-  if (currentInput.isTouch) {
-    return;
-  }
-  currentInput.isTouch = true;
-  if (window.performance) {
-    document.addEventListener("mousemove", onDocumentMouseMove);
-  }
-}
-function onDocumentMouseMove() {
-  var now = performance.now();
-  if (now - lastMouseMoveTime < 20) {
-    currentInput.isTouch = false;
-    document.removeEventListener("mousemove", onDocumentMouseMove);
-  }
-  lastMouseMoveTime = now;
-}
-function onWindowBlur() {
-  var activeElement = document.activeElement;
-  if (isReferenceElement(activeElement)) {
-    var instance = activeElement._tippy;
-    if (activeElement.blur && !instance.state.isVisible) {
-      activeElement.blur();
-    }
-  }
-}
-function bindGlobalEventListeners() {
-  document.addEventListener("touchstart", onDocumentTouchStart, TOUCH_OPTIONS);
-  window.addEventListener("blur", onWindowBlur);
-}
-var isBrowser = typeof window !== "undefined" && typeof document !== "undefined";
-var isIE11 = isBrowser ? (
-  // @ts-ignore
-  !!window.msCrypto
-) : false;
-var pluginProps = {
-  animateFill: false,
-  followCursor: false,
-  inlinePositioning: false,
-  sticky: false
-};
-var renderProps = {
-  allowHTML: false,
-  animation: "fade",
-  arrow: true,
-  content: "",
-  inertia: false,
-  maxWidth: 350,
-  role: "tooltip",
-  theme: "",
-  zIndex: 9999
-};
-var defaultProps = Object.assign({
-  appendTo: TIPPY_DEFAULT_APPEND_TO,
-  aria: {
-    content: "auto",
-    expanded: "auto"
-  },
-  delay: 0,
-  duration: [300, 250],
-  getReferenceClientRect: null,
-  hideOnClick: true,
-  ignoreAttributes: false,
-  interactive: false,
-  interactiveBorder: 2,
-  interactiveDebounce: 0,
-  moveTransition: "",
-  offset: [0, 10],
-  onAfterUpdate: function onAfterUpdate() {
-  },
-  onBeforeUpdate: function onBeforeUpdate() {
-  },
-  onCreate: function onCreate() {
-  },
-  onDestroy: function onDestroy() {
-  },
-  onHidden: function onHidden() {
-  },
-  onHide: function onHide() {
-  },
-  onMount: function onMount() {
-  },
-  onShow: function onShow() {
-  },
-  onShown: function onShown() {
-  },
-  onTrigger: function onTrigger() {
-  },
-  onUntrigger: function onUntrigger() {
-  },
-  onClickOutside: function onClickOutside() {
-  },
-  placement: "top",
-  plugins: [],
-  popperOptions: {},
-  render: null,
-  showOnCreate: false,
-  touch: true,
-  trigger: "mouseenter focus",
-  triggerTarget: null
-}, pluginProps, renderProps);
-var defaultKeys = Object.keys(defaultProps);
-var setDefaultProps = function setDefaultProps2(partialProps) {
-  var keys = Object.keys(partialProps);
-  keys.forEach(function(key) {
-    defaultProps[key] = partialProps[key];
-  });
-};
-function getExtendedPassedProps(passedProps) {
-  var plugins = passedProps.plugins || [];
-  var pluginProps2 = plugins.reduce(function(acc, plugin) {
-    var name = plugin.name, defaultValue = plugin.defaultValue;
-    if (name) {
-      var _name;
-      acc[name] = passedProps[name] !== void 0 ? passedProps[name] : (_name = defaultProps[name]) != null ? _name : defaultValue;
-    }
-    return acc;
-  }, {});
-  return Object.assign({}, passedProps, pluginProps2);
-}
-function getDataAttributeProps(reference2, plugins) {
-  var propKeys = plugins ? Object.keys(getExtendedPassedProps(Object.assign({}, defaultProps, {
-    plugins
-  }))) : defaultKeys;
-  var props = propKeys.reduce(function(acc, key) {
-    var valueAsString = (reference2.getAttribute("data-tippy-" + key) || "").trim();
-    if (!valueAsString) {
-      return acc;
-    }
-    if (key === "content") {
-      acc[key] = valueAsString;
-    } else {
-      try {
-        acc[key] = JSON.parse(valueAsString);
-      } catch (e) {
-        acc[key] = valueAsString;
-      }
-    }
-    return acc;
-  }, {});
-  return props;
-}
-function evaluateProps(reference2, props) {
-  var out = Object.assign({}, props, {
-    content: invokeWithArgsOrReturn(props.content, [reference2])
-  }, props.ignoreAttributes ? {} : getDataAttributeProps(reference2, props.plugins));
-  out.aria = Object.assign({}, defaultProps.aria, out.aria);
-  out.aria = {
-    expanded: out.aria.expanded === "auto" ? props.interactive : out.aria.expanded,
-    content: out.aria.content === "auto" ? props.interactive ? null : "describedby" : out.aria.content
-  };
-  return out;
-}
-var innerHTML = function innerHTML2() {
-  return "innerHTML";
-};
-function dangerouslySetInnerHTML(element, html) {
-  element[innerHTML()] = html;
-}
-function createArrowElement(value) {
-  var arrow2 = div();
-  if (value === true) {
-    arrow2.className = ARROW_CLASS;
-  } else {
-    arrow2.className = SVG_ARROW_CLASS;
-    if (isElement(value)) {
-      arrow2.appendChild(value);
-    } else {
-      dangerouslySetInnerHTML(arrow2, value);
-    }
-  }
-  return arrow2;
-}
-function setContent(content, props) {
-  if (isElement(props.content)) {
-    dangerouslySetInnerHTML(content, "");
-    content.appendChild(props.content);
-  } else if (typeof props.content !== "function") {
-    if (props.allowHTML) {
-      dangerouslySetInnerHTML(content, props.content);
-    } else {
-      content.textContent = props.content;
-    }
-  }
-}
-function getChildren(popper2) {
-  var box = popper2.firstElementChild;
-  var boxChildren = arrayFrom(box.children);
-  return {
-    box,
-    content: boxChildren.find(function(node) {
-      return node.classList.contains(CONTENT_CLASS);
-    }),
-    arrow: boxChildren.find(function(node) {
-      return node.classList.contains(ARROW_CLASS) || node.classList.contains(SVG_ARROW_CLASS);
-    }),
-    backdrop: boxChildren.find(function(node) {
-      return node.classList.contains(BACKDROP_CLASS);
-    })
-  };
-}
-function render(instance) {
-  var popper2 = div();
-  var box = div();
-  box.className = BOX_CLASS;
-  box.setAttribute("data-state", "hidden");
-  box.setAttribute("tabindex", "-1");
-  var content = div();
-  content.className = CONTENT_CLASS;
-  content.setAttribute("data-state", "hidden");
-  setContent(content, instance.props);
-  popper2.appendChild(box);
-  box.appendChild(content);
-  onUpdate(instance.props, instance.props);
-  function onUpdate(prevProps, nextProps) {
-    var _getChildren = getChildren(popper2), box2 = _getChildren.box, content2 = _getChildren.content, arrow2 = _getChildren.arrow;
-    if (nextProps.theme) {
-      box2.setAttribute("data-theme", nextProps.theme);
-    } else {
-      box2.removeAttribute("data-theme");
-    }
-    if (typeof nextProps.animation === "string") {
-      box2.setAttribute("data-animation", nextProps.animation);
-    } else {
-      box2.removeAttribute("data-animation");
-    }
-    if (nextProps.inertia) {
-      box2.setAttribute("data-inertia", "");
-    } else {
-      box2.removeAttribute("data-inertia");
-    }
-    box2.style.maxWidth = typeof nextProps.maxWidth === "number" ? nextProps.maxWidth + "px" : nextProps.maxWidth;
-    if (nextProps.role) {
-      box2.setAttribute("role", nextProps.role);
-    } else {
-      box2.removeAttribute("role");
-    }
-    if (prevProps.content !== nextProps.content || prevProps.allowHTML !== nextProps.allowHTML) {
-      setContent(content2, instance.props);
-    }
-    if (nextProps.arrow) {
-      if (!arrow2) {
-        box2.appendChild(createArrowElement(nextProps.arrow));
-      } else if (prevProps.arrow !== nextProps.arrow) {
-        box2.removeChild(arrow2);
-        box2.appendChild(createArrowElement(nextProps.arrow));
-      }
-    } else if (arrow2) {
-      box2.removeChild(arrow2);
-    }
-  }
-  return {
-    popper: popper2,
-    onUpdate
-  };
-}
-render.$$tippy = true;
-var idCounter = 1;
-var mouseMoveListeners = [];
-var mountedInstances = [];
-function createTippy(reference2, passedProps) {
-  var props = evaluateProps(reference2, Object.assign({}, defaultProps, getExtendedPassedProps(removeUndefinedProps(passedProps))));
-  var showTimeout;
-  var hideTimeout;
-  var scheduleHideAnimationFrame;
-  var isVisibleFromClick = false;
-  var didHideDueToDocumentMouseDown = false;
-  var didTouchMove = false;
-  var ignoreOnFirstUpdate = false;
-  var lastTriggerEvent;
-  var currentTransitionEndListener;
-  var onFirstUpdate;
-  var listeners = [];
-  var debouncedOnMouseMove = debounce(onMouseMove, props.interactiveDebounce);
-  var currentTarget;
-  var id = idCounter++;
-  var popperInstance = null;
-  var plugins = unique(props.plugins);
-  var state = {
-    // Is the instance currently enabled?
-    isEnabled: true,
-    // Is the tippy currently showing and not transitioning out?
-    isVisible: false,
-    // Has the instance been destroyed?
-    isDestroyed: false,
-    // Is the tippy currently mounted to the DOM?
-    isMounted: false,
-    // Has the tippy finished transitioning in?
-    isShown: false
-  };
-  var instance = {
-    // properties
+    style.textContent = annotationStyles + sharedStyles;
+    shadow.appendChild(style);
+  }
+}
+const annotationButtons = [];
+function annotate(issue) {
+  const {
+    element,
+    type,
+    content,
+    inline = false,
+    position = "beforebegin",
     id,
-    reference: reference2,
-    popper: div(),
-    popperInstance,
-    props,
-    state,
-    plugins,
-    // methods
-    clearDelayTimeouts,
-    setProps,
-    setContent: setContent2,
-    show,
-    hide: hide2,
-    hideWithInteractivity,
-    enable,
-    disable,
-    unmount,
-    destroy
-  };
-  if (!props.render) {
-    return instance;
-  }
-  var _props$render = props.render(instance), popper2 = _props$render.popper, onUpdate = _props$render.onUpdate;
-  popper2.setAttribute("data-tippy-root", "");
-  popper2.id = "tippy-" + instance.id;
-  instance.popper = popper2;
-  reference2._tippy = instance;
-  popper2._tippy = instance;
-  var pluginsHooks = plugins.map(function(plugin) {
-    return plugin.fn(instance);
-  });
-  var hasAriaExpanded = reference2.hasAttribute("aria-expanded");
-  addListeners();
-  handleAriaExpandedAttribute();
-  handleStyles();
-  invokeHook("onCreate", [instance]);
-  if (props.showOnCreate) {
-    scheduleShow();
-  }
-  popper2.addEventListener("mouseenter", function() {
-    if (instance.props.interactive && instance.state.isVisible) {
-      instance.clearDelayTimeouts();
-    }
-  });
-  popper2.addEventListener("mouseleave", function() {
-    if (instance.props.interactive && instance.props.trigger.indexOf("mouseenter") >= 0) {
-      getDocument().addEventListener("mousemove", debouncedOnMouseMove);
-    }
-  });
-  return instance;
-  function getNormalizedTouchSettings() {
-    var touch = instance.props.touch;
-    return Array.isArray(touch) ? touch : [touch, 0];
-  }
-  function getIsCustomTouchBehavior() {
-    return getNormalizedTouchSettings()[0] === "hold";
-  }
-  function getIsDefaultRenderFn() {
-    var _instance$props$rende;
-    return !!((_instance$props$rende = instance.props.render) != null && _instance$props$rende.$$tippy);
-  }
-  function getCurrentTarget() {
-    return currentTarget || reference2;
-  }
-  function getDocument() {
-    var parent = getCurrentTarget().parentNode;
-    return parent ? getOwnerDocument(parent) : document;
-  }
-  function getDefaultTemplateChildren() {
-    return getChildren(popper2);
-  }
-  function getDelay(isShow) {
-    if (instance.state.isMounted && !instance.state.isVisible || currentInput.isTouch || lastTriggerEvent && lastTriggerEvent.type === "focus") {
-      return 0;
-    }
-    return getValueAtIndexOrReturn(instance.props.delay, isShow ? 0 : 1, defaultProps.delay);
-  }
-  function handleStyles(fromHide) {
-    if (fromHide === void 0) {
-      fromHide = false;
-    }
-    popper2.style.pointerEvents = instance.props.interactive && !fromHide ? "" : "none";
-    popper2.style.zIndex = "" + instance.props.zIndex;
-  }
-  function invokeHook(hook, args, shouldInvokePropsHook) {
-    if (shouldInvokePropsHook === void 0) {
-      shouldInvokePropsHook = true;
-    }
-    pluginsHooks.forEach(function(pluginHooks) {
-      if (pluginHooks[hook]) {
-        pluginHooks[hook].apply(pluginHooks, args);
+    dismiss,
+    margin,
+    issueLabel
+  } = issue;
+  if (!type && !element) return;
+  if (element) {
+    if (type === "good") {
+      if (!State.option.showGoodImageButton && element?.tagName === "IMG") {
+        return;
       }
-    });
-    if (shouldInvokePropsHook) {
-      var _instance$props;
-      (_instance$props = instance.props)[hook].apply(_instance$props, args);
-    }
-  }
-  function handleAriaContentAttribute() {
-    var aria = instance.props.aria;
-    if (!aria.content) {
-      return;
-    }
-    var attr = "aria-" + aria.content;
-    var id2 = popper2.id;
-    var nodes = normalizeToArray(instance.props.triggerTarget || reference2);
-    nodes.forEach(function(node) {
-      var currentValue = node.getAttribute(attr);
-      if (instance.state.isVisible) {
-        node.setAttribute(attr, currentValue ? currentValue + " " + id2 : id2);
-      } else {
-        var nextValue = currentValue && currentValue.replace(id2, "").trim();
-        if (nextValue) {
-          node.setAttribute(attr, nextValue);
-        } else {
-          node.removeAttribute(attr);
-        }
-      }
-    });
-  }
-  function handleAriaExpandedAttribute() {
-    if (hasAriaExpanded || !instance.props.aria.expanded) {
-      return;
-    }
-    var nodes = normalizeToArray(instance.props.triggerTarget || reference2);
-    nodes.forEach(function(node) {
-      if (instance.props.interactive) {
-        node.setAttribute("aria-expanded", instance.state.isVisible && node === getCurrentTarget() ? "true" : "false");
-      } else {
-        node.removeAttribute("aria-expanded");
-      }
-    });
-  }
-  function cleanupInteractiveMouseListeners() {
-    getDocument().removeEventListener("mousemove", debouncedOnMouseMove);
-    mouseMoveListeners = mouseMoveListeners.filter(function(listener) {
-      return listener !== debouncedOnMouseMove;
-    });
-  }
-  function onDocumentPress(event) {
-    if (currentInput.isTouch) {
-      if (didTouchMove || event.type === "mousedown") {
+      if (!State.option.showGoodLinkButton && element?.tagName === "A") {
         return;
       }
     }
-    var actualTarget = event.composedPath && event.composedPath()[0] || event.target;
-    if (instance.props.interactive && actualContains(popper2, actualTarget)) {
-      return;
-    }
-    if (normalizeToArray(instance.props.triggerTarget || reference2).some(function(el) {
-      return actualContains(el, actualTarget);
-    })) {
-      if (currentInput.isTouch) {
-        return;
-      }
-      if (instance.state.isVisible && instance.props.trigger.indexOf("click") >= 0) {
-        return;
-      }
-    } else {
-      invokeHook("onClickOutside", [instance, event]);
-    }
-    if (instance.props.hideOnClick === true) {
-      instance.clearDelayTimeouts();
-      instance.hide();
-      didHideDueToDocumentMouseDown = true;
-      setTimeout(function() {
-        didHideDueToDocumentMouseDown = false;
-      });
-      if (!instance.state.isMounted) {
-        removeDocumentPress();
-      }
-    }
-  }
-  function onTouchMove() {
-    didTouchMove = true;
-  }
-  function onTouchStart() {
-    didTouchMove = false;
-  }
-  function addDocumentPress() {
-    var doc = getDocument();
-    doc.addEventListener("mousedown", onDocumentPress, true);
-    doc.addEventListener("touchend", onDocumentPress, TOUCH_OPTIONS);
-    doc.addEventListener("touchstart", onTouchStart, TOUCH_OPTIONS);
-    doc.addEventListener("touchmove", onTouchMove, TOUCH_OPTIONS);
-  }
-  function removeDocumentPress() {
-    var doc = getDocument();
-    doc.removeEventListener("mousedown", onDocumentPress, true);
-    doc.removeEventListener("touchend", onDocumentPress, TOUCH_OPTIONS);
-    doc.removeEventListener("touchstart", onTouchStart, TOUCH_OPTIONS);
-    doc.removeEventListener("touchmove", onTouchMove, TOUCH_OPTIONS);
-  }
-  function onTransitionedOut(duration, callback) {
-    onTransitionEnd(duration, function() {
-      if (!instance.state.isVisible && popper2.parentNode && popper2.parentNode.contains(popper2)) {
-        callback();
-      }
-    });
-  }
-  function onTransitionedIn(duration, callback) {
-    onTransitionEnd(duration, callback);
-  }
-  function onTransitionEnd(duration, callback) {
-    var box = getDefaultTemplateChildren().box;
-    function listener(event) {
-      if (event.target === box) {
-        updateTransitionEndListener(box, "remove", listener);
-        callback();
-      }
-    }
-    if (duration === 0) {
-      return callback();
-    }
-    updateTransitionEndListener(box, "remove", currentTransitionEndListener);
-    updateTransitionEndListener(box, "add", listener);
-    currentTransitionEndListener = listener;
-  }
-  function on(eventType, handler, options) {
-    if (options === void 0) {
-      options = false;
-    }
-    var nodes = normalizeToArray(instance.props.triggerTarget || reference2);
-    nodes.forEach(function(node) {
-      node.addEventListener(eventType, handler, options);
-      listeners.push({
-        node,
-        eventType,
-        handler,
-        options
-      });
-    });
-  }
-  function addListeners() {
-    if (getIsCustomTouchBehavior()) {
-      on("touchstart", onTrigger2, {
-        passive: true
-      });
-      on("touchend", onMouseLeave, {
-        passive: true
-      });
-    }
-    splitBySpaces(instance.props.trigger).forEach(function(eventType) {
-      if (eventType === "manual") {
-        return;
-      }
-      on(eventType, onTrigger2);
-      switch (eventType) {
-        case "mouseenter":
-          on("mouseleave", onMouseLeave);
-          break;
-        case "focus":
-          on(isIE11 ? "focusout" : "blur", onBlurOrFocusOut);
-          break;
-        case "focusin":
-          on("focusout", onBlurOrFocusOut);
-          break;
-      }
-    });
-  }
-  function removeListeners() {
-    listeners.forEach(function(_ref) {
-      var node = _ref.node, eventType = _ref.eventType, handler = _ref.handler, options = _ref.options;
-      node.removeEventListener(eventType, handler, options);
-    });
-    listeners = [];
-  }
-  function onTrigger2(event) {
-    var _lastTriggerEvent;
-    var shouldScheduleClickHide = false;
-    if (!instance.state.isEnabled || isEventListenerStopped(event) || didHideDueToDocumentMouseDown) {
-      return;
-    }
-    var wasFocused = ((_lastTriggerEvent = lastTriggerEvent) == null ? void 0 : _lastTriggerEvent.type) === "focus";
-    lastTriggerEvent = event;
-    currentTarget = event.currentTarget;
-    handleAriaExpandedAttribute();
-    if (!instance.state.isVisible && isMouseEvent(event)) {
-      mouseMoveListeners.forEach(function(listener) {
-        return listener(event);
-      });
-    }
-    if (event.type === "click" && (instance.props.trigger.indexOf("mouseenter") < 0 || isVisibleFromClick) && instance.props.hideOnClick !== false && instance.state.isVisible) {
-      shouldScheduleClickHide = true;
-    } else {
-      scheduleShow(event);
-    }
-    if (event.type === "click") {
-      isVisibleFromClick = !shouldScheduleClickHide;
-    }
-    if (shouldScheduleClickHide && !wasFocused) {
-      scheduleHide(event);
-    }
-  }
-  function onMouseMove(event) {
-    var target = event.target;
-    var isCursorOverReferenceOrPopper = getCurrentTarget().contains(target) || popper2.contains(target);
-    if (event.type === "mousemove" && isCursorOverReferenceOrPopper) {
-      return;
-    }
-    var popperTreeData = getNestedPopperTree().concat(popper2).map(function(popper22) {
-      var _instance$popperInsta;
-      var instance2 = popper22._tippy;
-      var state2 = (_instance$popperInsta = instance2.popperInstance) == null ? void 0 : _instance$popperInsta.state;
-      if (state2) {
-        return {
-          popperRect: popper22.getBoundingClientRect(),
-          popperState: state2,
-          props
-        };
-      }
-      return null;
-    }).filter(Boolean);
-    if (isCursorOutsideInteractiveBorder(popperTreeData, event)) {
-      cleanupInteractiveMouseListeners();
-      scheduleHide(event);
-    }
-  }
-  function onMouseLeave(event) {
-    var shouldBail = isEventListenerStopped(event) || instance.props.trigger.indexOf("click") >= 0 && isVisibleFromClick;
-    if (shouldBail) {
-      return;
-    }
-    if (instance.props.interactive) {
-      instance.hideWithInteractivity(event);
-      return;
-    }
-    scheduleHide(event);
-  }
-  function onBlurOrFocusOut(event) {
-    if (instance.props.trigger.indexOf("focusin") < 0 && event.target !== getCurrentTarget()) {
-      return;
-    }
-    if (instance.props.interactive && event.relatedTarget && popper2.contains(event.relatedTarget)) {
-      return;
-    }
-    scheduleHide(event);
-  }
-  function isEventListenerStopped(event) {
-    return currentInput.isTouch ? getIsCustomTouchBehavior() !== event.type.indexOf("touch") >= 0 : false;
-  }
-  function createPopperInstance() {
-    destroyPopperInstance();
-    var _instance$props2 = instance.props, popperOptions = _instance$props2.popperOptions, placement = _instance$props2.placement, offset2 = _instance$props2.offset, getReferenceClientRect = _instance$props2.getReferenceClientRect, moveTransition = _instance$props2.moveTransition;
-    var arrow2 = getIsDefaultRenderFn() ? getChildren(popper2).arrow : null;
-    var computedReference = getReferenceClientRect ? {
-      getBoundingClientRect: getReferenceClientRect,
-      contextElement: getReferenceClientRect.contextElement || getCurrentTarget()
-    } : reference2;
-    var tippyModifier = {
-      name: "$$tippy",
-      enabled: true,
-      phase: "beforeWrite",
-      requires: ["computeStyles"],
-      fn: function fn5(_ref2) {
-        var state2 = _ref2.state;
-        if (getIsDefaultRenderFn()) {
-          var _getDefaultTemplateCh = getDefaultTemplateChildren(), box = _getDefaultTemplateCh.box;
-          ["placement", "reference-hidden", "escaped"].forEach(function(attr) {
-            if (attr === "placement") {
-              box.setAttribute("data-placement", state2.placement);
-            } else {
-              if (state2.attributes.popper["data-popper-" + attr]) {
-                box.setAttribute("data-" + attr, "");
-              } else {
-                box.removeAttribute("data-" + attr);
-              }
-            }
-          });
-          state2.attributes.popper = {};
-        }
-      }
+    const tagMap = {
+      error: "data-sa11y-error",
+      warning: "data-sa11y-warning",
+      good: "data-sa11y-good"
     };
-    var modifiers = [{
-      name: "offset",
-      options: {
-        offset: offset2
-      }
-    }, {
-      name: "preventOverflow",
-      options: {
-        padding: {
-          top: 2,
-          bottom: 2,
-          left: 5,
-          right: 5
-        }
-      }
-    }, {
-      name: "flip",
-      options: {
-        padding: 5
-      }
-    }, {
-      name: "computeStyles",
-      options: {
-        adaptive: !moveTransition
-      }
-    }, tippyModifier];
-    if (getIsDefaultRenderFn() && arrow2) {
-      modifiers.push({
-        name: "arrow",
-        options: {
-          element: arrow2,
-          padding: 3
-        }
-      });
+    if (tagMap[type]) {
+      element.setAttribute(tagMap[type], "");
     }
-    modifiers.push.apply(modifiers, (popperOptions == null ? void 0 : popperOptions.modifiers) || []);
-    instance.popperInstance = createPopper(computedReference, popper2, Object.assign({}, popperOptions, {
-      placement,
-      onFirstUpdate,
-      modifiers
-    }));
-  }
-  function destroyPopperInstance() {
-    if (instance.popperInstance) {
-      instance.popperInstance.destroy();
-      instance.popperInstance = null;
+    const annotation = document.createElement("sa11y-annotation");
+    annotation.setAttribute("data-sa11y-annotation", id);
+    if (State.option.unitTestMode) {
+      annotation.setAttribute("data-content", `${issueLabel} ${content.textContent}`);
     }
-  }
-  function mount() {
-    var appendTo = instance.props.appendTo;
-    var parentNode;
-    var node = getCurrentTarget();
-    if (instance.props.interactive && appendTo === TIPPY_DEFAULT_APPEND_TO || appendTo === "parent") {
-      parentNode = node.parentNode;
-    } else {
-      parentNode = invokeWithArgsOrReturn(appendTo, [node]);
+    if (supportsAnchorPositioning()) {
+      annotation.style.position = "absolute";
+      annotation.style.positionAnchor = `--sa11y-anchor-${id}`;
+      annotation.style.top = "anchor(top)";
+      annotation.style.left = "anchor(left)";
+      const existingNames = element.style.anchorName ? element.style.anchorName.split(",").map((name) => name.trim()) : [];
+      const filteredNames = existingNames.filter((name) => !name.startsWith("--sa11y-anchor-"));
+      filteredNames.push(`--sa11y-anchor-${id}`);
+      element.style.anchorName = filteredNames.join(", ");
     }
-    if (!parentNode.contains(popper2)) {
-      parentNode.appendChild(popper2);
+    const buttonWrapper = document.createElement("div");
+    buttonWrapper.classList.add(inline ? "annotation-inline" : "annotation");
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = `${type}-btn`;
+    button.setAttribute("aria-label", issueLabel);
+    button.setAttribute("aria-haspopup", "dialog");
+    button.style.margin = `${inline ? "-10px" : ""} ${margin}`;
+    buttonWrapper.appendChild(button);
+    annotationButtons.push(button);
+    const insertBefore = State.option.insertAnnotationBefore ? `, ${State.option.insertAnnotationBefore}` : "";
+    const location = getCachedClosest(element, "svg") || getCachedClosest(element, `a, button, [role="link"], [role="button"] ${insertBefore}`) || element;
+    location.insertAdjacentElement(position, annotation);
+    annotation.shadowRoot.appendChild(buttonWrapper);
+    const ignoredElements = State.option.ignoreHiddenOverflow ? State.option.ignoreHiddenOverflow.split(",").flatMap((selector) => [...document.querySelectorAll(selector)]) : [];
+    const parent = findVisibleParent(element, "overflow", "hidden");
+    if (parent && !ignoredElements.includes(parent)) {
+      parent.setAttribute("data-sa11y-overflow", "");
     }
-    instance.state.isMounted = true;
-    createPopperInstance();
-  }
-  function getNestedPopperTree() {
-    return arrayFrom(popper2.querySelectorAll("[data-tippy-root]"));
-  }
-  function scheduleShow(event) {
-    instance.clearDelayTimeouts();
-    if (event) {
-      invokeHook("onTrigger", [instance, event]);
+  } else {
+    const dismissBtn = State.option.dismissAnnotations && ["warning", "good"].includes(type) && dismiss ? Object.assign(document.createElement("button"), {
+      type: "button",
+      textContent: Lang._("DISMISS")
+    }) : null;
+    if (dismissBtn) dismissBtn.dataset.sa11yDismiss = id;
+    const listItem = document.createElement("li");
+    listItem.classList.add([type]);
+    const heading = document.createElement("h3");
+    heading.textContent = issueLabel;
+    listItem.appendChild(heading);
+    listItem.append(content, dismissBtn || "");
+    if (State.option.unitTestMode) {
+      const test = Lang.sprintf("<hr><strong>Test ID:</strong> <code>%(TEST)</code>", issue.test);
+      listItem.append(test);
     }
-    addDocumentPress();
-    var delay = getDelay(true);
-    var _getNormalizedTouchSe = getNormalizedTouchSettings(), touchValue = _getNormalizedTouchSe[0], touchDelay = _getNormalizedTouchSe[1];
-    if (currentInput.isTouch && touchValue === "hold" && touchDelay) {
-      delay = touchDelay;
-    }
-    if (delay) {
-      showTimeout = setTimeout(function() {
-        instance.show();
-      }, delay);
-    } else {
-      instance.show();
-    }
-  }
-  function scheduleHide(event) {
-    instance.clearDelayTimeouts();
-    invokeHook("onUntrigger", [instance, event]);
-    if (!instance.state.isVisible) {
-      removeDocumentPress();
-      return;
-    }
-    if (instance.props.trigger.indexOf("mouseenter") >= 0 && instance.props.trigger.indexOf("click") >= 0 && ["mouseleave", "mousemove"].indexOf(event.type) >= 0 && isVisibleFromClick) {
-      return;
-    }
-    var delay = getDelay(false);
-    if (delay) {
-      hideTimeout = setTimeout(function() {
-        if (instance.state.isVisible) {
-          instance.hide();
-        }
-      }, delay);
-    } else {
-      scheduleHideAnimationFrame = requestAnimationFrame(function() {
-        instance.hide();
-      });
-    }
-  }
-  function enable() {
-    instance.state.isEnabled = true;
-  }
-  function disable() {
-    instance.hide();
-    instance.state.isEnabled = false;
-  }
-  function clearDelayTimeouts() {
-    clearTimeout(showTimeout);
-    clearTimeout(hideTimeout);
-    cancelAnimationFrame(scheduleHideAnimationFrame);
-  }
-  function setProps(partialProps) {
-    if (instance.state.isDestroyed) {
-      return;
-    }
-    invokeHook("onBeforeUpdate", [instance, partialProps]);
-    removeListeners();
-    var prevProps = instance.props;
-    var nextProps = evaluateProps(reference2, Object.assign({}, prevProps, removeUndefinedProps(partialProps), {
-      ignoreAttributes: true
-    }));
-    instance.props = nextProps;
-    addListeners();
-    if (prevProps.interactiveDebounce !== nextProps.interactiveDebounce) {
-      cleanupInteractiveMouseListeners();
-      debouncedOnMouseMove = debounce(onMouseMove, nextProps.interactiveDebounce);
-    }
-    if (prevProps.triggerTarget && !nextProps.triggerTarget) {
-      normalizeToArray(prevProps.triggerTarget).forEach(function(node) {
-        node.removeAttribute("aria-expanded");
-      });
-    } else if (nextProps.triggerTarget) {
-      reference2.removeAttribute("aria-expanded");
-    }
-    handleAriaExpandedAttribute();
-    handleStyles();
-    if (onUpdate) {
-      onUpdate(prevProps, nextProps);
-    }
-    if (instance.popperInstance) {
-      createPopperInstance();
-      getNestedPopperTree().forEach(function(nestedPopper) {
-        requestAnimationFrame(nestedPopper._tippy.popperInstance.forceUpdate);
-      });
-    }
-    invokeHook("onAfterUpdate", [instance, partialProps]);
-  }
-  function setContent2(content) {
-    instance.setProps({
-      content
-    });
-  }
-  function show() {
-    var isAlreadyVisible = instance.state.isVisible;
-    var isDestroyed = instance.state.isDestroyed;
-    var isDisabled = !instance.state.isEnabled;
-    var isTouchAndTouchDisabled = currentInput.isTouch && !instance.props.touch;
-    var duration = getValueAtIndexOrReturn(instance.props.duration, 0, defaultProps.duration);
-    if (isAlreadyVisible || isDestroyed || isDisabled || isTouchAndTouchDisabled) {
-      return;
-    }
-    if (getCurrentTarget().hasAttribute("disabled")) {
-      return;
-    }
-    invokeHook("onShow", [instance], false);
-    if (instance.props.onShow(instance) === false) {
-      return;
-    }
-    instance.state.isVisible = true;
-    if (getIsDefaultRenderFn()) {
-      popper2.style.visibility = "visible";
-    }
-    handleStyles();
-    addDocumentPress();
-    if (!instance.state.isMounted) {
-      popper2.style.transition = "none";
-    }
-    if (getIsDefaultRenderFn()) {
-      var _getDefaultTemplateCh2 = getDefaultTemplateChildren(), box = _getDefaultTemplateCh2.box, content = _getDefaultTemplateCh2.content;
-      setTransitionDuration([box, content], 0);
-    }
-    onFirstUpdate = function onFirstUpdate2() {
-      var _instance$popperInsta2;
-      if (!instance.state.isVisible || ignoreOnFirstUpdate) {
-        return;
-      }
-      ignoreOnFirstUpdate = true;
-      void popper2.offsetHeight;
-      popper2.style.transition = instance.props.moveTransition;
-      if (getIsDefaultRenderFn() && instance.props.animation) {
-        var _getDefaultTemplateCh3 = getDefaultTemplateChildren(), _box = _getDefaultTemplateCh3.box, _content = _getDefaultTemplateCh3.content;
-        setTransitionDuration([_box, _content], duration);
-        setVisibilityState([_box, _content], "visible");
-      }
-      handleAriaContentAttribute();
-      handleAriaExpandedAttribute();
-      pushIfUnique(mountedInstances, instance);
-      (_instance$popperInsta2 = instance.popperInstance) == null ? void 0 : _instance$popperInsta2.forceUpdate();
-      invokeHook("onMount", [instance]);
-      if (instance.props.animation && getIsDefaultRenderFn()) {
-        onTransitionedIn(duration, function() {
-          instance.state.isShown = true;
-          invokeHook("onShown", [instance]);
-        });
-      }
-    };
-    mount();
-  }
-  function hide2() {
-    var isAlreadyHidden = !instance.state.isVisible;
-    var isDestroyed = instance.state.isDestroyed;
-    var isDisabled = !instance.state.isEnabled;
-    var duration = getValueAtIndexOrReturn(instance.props.duration, 1, defaultProps.duration);
-    if (isAlreadyHidden || isDestroyed || isDisabled) {
-      return;
-    }
-    invokeHook("onHide", [instance], false);
-    if (instance.props.onHide(instance) === false) {
-      return;
-    }
-    instance.state.isVisible = false;
-    instance.state.isShown = false;
-    ignoreOnFirstUpdate = false;
-    isVisibleFromClick = false;
-    if (getIsDefaultRenderFn()) {
-      popper2.style.visibility = "hidden";
-    }
-    cleanupInteractiveMouseListeners();
-    removeDocumentPress();
-    handleStyles(true);
-    if (getIsDefaultRenderFn()) {
-      var _getDefaultTemplateCh4 = getDefaultTemplateChildren(), box = _getDefaultTemplateCh4.box, content = _getDefaultTemplateCh4.content;
-      if (instance.props.animation) {
-        setTransitionDuration([box, content], duration);
-        setVisibilityState([box, content], "hidden");
-      }
-    }
-    handleAriaContentAttribute();
-    handleAriaExpandedAttribute();
-    if (instance.props.animation) {
-      if (getIsDefaultRenderFn()) {
-        onTransitionedOut(duration, instance.unmount);
-      }
-    } else {
-      instance.unmount();
-    }
-  }
-  function hideWithInteractivity(event) {
-    getDocument().addEventListener("mousemove", debouncedOnMouseMove);
-    pushIfUnique(mouseMoveListeners, debouncedOnMouseMove);
-    debouncedOnMouseMove(event);
-  }
-  function unmount() {
-    if (instance.state.isVisible) {
-      instance.hide();
-    }
-    if (!instance.state.isMounted) {
-      return;
-    }
-    destroyPopperInstance();
-    getNestedPopperTree().forEach(function(nestedPopper) {
-      nestedPopper._tippy.unmount();
-    });
-    if (popper2.parentNode) {
-      popper2.parentNode.removeChild(popper2);
-    }
-    mountedInstances = mountedInstances.filter(function(i) {
-      return i !== instance;
-    });
-    instance.state.isMounted = false;
-    invokeHook("onHidden", [instance]);
-  }
-  function destroy() {
-    if (instance.state.isDestroyed) {
-      return;
-    }
-    instance.clearDelayTimeouts();
-    instance.unmount();
-    removeListeners();
-    delete reference2._tippy;
-    instance.state.isDestroyed = true;
-    invokeHook("onDestroy", [instance]);
+    Constants.Panel.pageIssuesList.prepend(listItem);
+    Constants.Panel.pageIssues.classList.add("active");
+    Constants.Panel.panel.classList.add("has-page-issues");
   }
 }
-function tippy(targets, optionalProps) {
-  if (optionalProps === void 0) {
-    optionalProps = {};
-  }
-  var plugins = defaultProps.plugins.concat(optionalProps.plugins || []);
-  bindGlobalEventListeners();
-  var passedProps = Object.assign({}, optionalProps, {
-    plugins
-  });
-  var elements = getArrayOfElements(targets);
-  var instances = elements.reduce(function(acc, reference2) {
-    var instance = reference2 && createTippy(reference2, passedProps);
-    if (instance) {
-      acc.push(instance);
-    }
-    return acc;
-  }, []);
-  return isElement(targets) ? instances[0] : instances;
-}
-tippy.defaultProps = defaultProps;
-tippy.setDefaultProps = setDefaultProps;
-tippy.currentInput = currentInput;
-Object.assign({}, applyStyles$1, {
-  effect: function effect2(_ref) {
-    var state = _ref.state;
-    var initialStyles = {
-      popper: {
-        position: state.options.strategy,
-        left: "0",
-        top: "0",
-        margin: "0"
-      },
-      arrow: {
-        position: "absolute"
-      },
-      reference: {}
-    };
-    Object.assign(state.elements.popper.style, initialStyles.popper);
-    state.styles = initialStyles;
-    if (state.elements.arrow) {
-      Object.assign(state.elements.arrow.style, initialStyles.arrow);
-    }
-  }
-});
-tippy.setDefaultProps({
-  render
-});
-const tooltipStyles = 'h1,h2,div,p,span,ol,ul,li,a,button,svg,strong,kbd,code{all:unset;box-sizing:border-box!important}div{display:block}:before,:after{all:unset}.tippy-box[data-animation=fade][data-state=hidden]{opacity:0}[data-tippy-root]{max-width:calc(100vw - 10px)}@media (forced-colors:active){[data-tippy-root]{border:2px solid #0000;border-radius:5px}}.tippy-arrow{color:#333;width:16px;height:16px}.tippy-arrow:before{content:"";border-style:solid;border-color:#0000;position:absolute}.tippy-box[data-placement^=top] .tippy-arrow{bottom:0}.tippy-box[data-placement^=top] .tippy-arrow:before{border-width:8px 8px 0;border-top-color:initial;transform-origin:top;bottom:-7px;left:0}.tippy-box[data-placement^=bottom] .tippy-arrow{top:0}.tippy-box[data-placement^=bottom] .tippy-arrow:before{border-width:0 8px 8px;border-bottom-color:initial;transform-origin:bottom;top:-7px;left:0}.tippy-box[data-placement^=left] .tippy-arrow{right:0}.tippy-box[data-placement^=left] .tippy-arrow:before{border-width:8px 0 8px 8px;border-left-color:initial;transform-origin:0;right:-7px}.tippy-box[data-placement^=right] .tippy-arrow{left:0}.tippy-box[data-placement^=right] .tippy-arrow:before{border-width:8px 8px 8px 0;border-right-color:initial;transform-origin:100%;left:-7px}.tippy-content{z-index:1;padding:5px 9px;position:relative}.tippy-box[data-theme~=sa11y-theme][role=tooltip]{box-sizing:border-box!important}.tippy-box[data-theme~=sa11y-theme][role=tooltip][data-animation=fade][data-state=hidden]{opacity:0}.tippy-box[data-theme~=sa11y-theme][role=tooltip][data-inertia][data-state=visible]{transition-timing-function:cubic-bezier(.54,1.5,.38,1.11)}[role=dialog]{text-align:start;word-wrap:break-word;min-width:300px}[role=tooltip]{text-align:center;min-width:185px}.tippy-box[data-theme~=sa11y-panel]{border:1px solid var(--sa11y-panel-bg-splitter);box-shadow:var(--sa11y-box-shadow)}.tippy-box[data-theme~=sa11y-theme]:not([data-theme~=sa11y-panel]){box-shadow:0 0 20px 4px #9aa1b126,0 4px 80px -8px #24282f40,0 4px 4px -2px #5b5e6926!important}.tippy-box[data-theme~=sa11y-theme]{font-family:var(--sa11y-font-face);font-size:var(--sa11y-normal-text);color:var(--sa11y-panel-primary);letter-spacing:normal;background-color:var(--sa11y-panel-bg);-webkit-font-smoothing:auto;border-radius:4px;outline:0;padding:8px;font-weight:400;line-height:22px;transition-property:transform,visibility,opacity;display:block;position:relative}.tippy-box[data-theme~=sa11y-theme] pre code{white-space:pre-wrap;display:block;overflow:auto}.tippy-box[data-theme~=sa11y-theme] code{font-family:monospace;font-size:calc(var(--sa11y-normal-text) - 1px);font-weight:500}.tippy-box[data-theme~=sa11y-theme] pre,.tippy-box[data-theme~=sa11y-theme] code,.tippy-box[data-theme~=sa11y-theme] kbd{color:var(--sa11y-panel-primary);letter-spacing:normal;background-color:var(--sa11y-panel-badge);-webkit-font-smoothing:auto;border-radius:3.2px;padding:1.6px 4.8px;line-height:22px}.tippy-box[data-theme~=sa11y-theme] .tippy-content{padding:5px 9px}.tippy-box[data-theme~=sa11y-theme] sub,.tippy-box[data-theme~=sa11y-theme] sup{font-size:var(--sa11y-small-text)}.tippy-box[data-theme~=sa11y-theme] ul{margin:0;margin-block:0;padding:0;position:relative}.tippy-box[data-theme~=sa11y-theme] li{margin:5px 10px 0 20px;padding-bottom:5px;display:list-item}.tippy-box[data-theme~=sa11y-theme] a{color:var(--sa11y-hyperlink);cursor:pointer;font-weight:500;text-decoration:underline}.tippy-box[data-theme~=sa11y-theme] a:hover,.tippy-box[data-theme~=sa11y-theme] a:focus{text-decoration:none}.tippy-box[data-theme~=sa11y-theme] strong{font-weight:600}.tippy-box[data-theme~=sa11y-theme] hr{background:var(--sa11y-panel-bg-splitter);opacity:1;border:none;height:1px;margin:10px 0;padding:0}.tippy-box[data-theme~=sa11y-theme] button.close-btn{margin-inline-start:10px;margin-bottom:10px}.tippy-box[data-theme~=sa11y-theme] button#suggest-size,.tippy-box[data-theme~=sa11y-theme] button#suggest{cursor:pointer;padding:.2rem;transition:background-color .2s,color .2s;position:relative}:is(.tippy-box[data-theme~=sa11y-theme] button#suggest-size,.tippy-box[data-theme~=sa11y-theme] button#suggest):after{content:"";position:absolute;inset:-10px -5px -14px}:is(.tippy-box[data-theme~=sa11y-theme] button#suggest-size,.tippy-box[data-theme~=sa11y-theme] button#suggest):hover,:is(.tippy-box[data-theme~=sa11y-theme] button#suggest-size,.tippy-box[data-theme~=sa11y-theme] button#suggest):focus-visible{color:#000!important;background-color:#fff!important}.tippy-box[data-theme~=sa11y-theme] .dismiss-group{margin-top:5px}.tippy-box[data-theme~=sa11y-theme] .dismiss-group button{margin:10px 5px 5px 0;color:var(--sa11y-panel-primary);cursor:pointer;background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-button-outline);border-radius:5px;margin-inline-end:15px;padding:4px 8px;display:inline-block}.tippy-box[data-theme~=sa11y-theme] .dismiss-group button:hover,.tippy-box[data-theme~=sa11y-theme] .dismiss-group button:focus{background:var(--sa11y-shortcut-hover)}.tippy-box[data-theme~=sa11y-theme] .good-icon{background:var(--sa11y-good-text);width:14px;height:14px;-webkit-mask:var(--sa11y-good-svg)center no-repeat;mask:var(--sa11y-good-svg)center no-repeat;margin-bottom:-2.5px;display:inline-block}.tippy-box[data-theme~=sa11y-theme] .link-icon{background:var(--sa11y-panel-primary);width:16px;height:16px;-webkit-mask:var(--sa11y-link-icon-svg)center no-repeat;mask:var(--sa11y-link-icon-svg)center no-repeat;margin-bottom:-3.5px;display:inline-block}.tippy-box[data-theme~=sa11y-theme] .error .badge{color:var(--sa11y-error-text);background:var(--sa11y-error)}.tippy-box[data-theme~=sa11y-theme] .error .colour{color:var(--sa11y-red-text)}.tippy-box[data-theme~=sa11y-theme] .error .link-icon{background:var(--sa11y-error-text)}.tippy-box[data-theme~=sa11y-theme] .warning .badge{color:var(--sa11y-panel-bg);background:var(--sa11y-yellow-text)}.tippy-box[data-theme~=sa11y-theme] .warning .colour{color:var(--sa11y-yellow-text)}.tippy-box[data-theme~=sa11y-theme] .warning .link-icon{background:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme][data-placement^=top] .tippy-arrow:before{border-top-color:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme][data-placement^=bottom] .tippy-arrow:before{border-bottom-color:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme][data-placement^=left] .tippy-arrow:before{border-left-color:var(--sa11y-panel-bg)}.tippy-box[data-theme~=sa11y-theme][data-placement^=right] .tippy-arrow:before{border-right-color:var(--sa11y-panel-bg)}@media (forced-colors:active){.tippy-box[data-theme~=sa11y-theme][data-placement^=top] .tippy-arrow:before,.tippy-box[data-theme~=sa11y-theme][data-placement^=bottom] .tippy-arrow:before,.tippy-box[data-theme~=sa11y-theme][data-placement^=left] .tippy-arrow:before,.tippy-box[data-theme~=sa11y-theme][data-placement^=right] .tippy-arrow:before{forced-color-adjust:none}.tippy-box[data-theme~=sa11y-theme] .tippy-arrow{z-index:-1}}.tippy-box[data-theme~=sa11y-theme] a:focus,.tippy-box[data-theme~=sa11y-theme] input:focus,.tippy-box[data-theme~=sa11y-theme] button:focus,.tippy-box[data-theme~=sa11y-theme] button:active,.tippy-box[data-theme~=sa11y-theme] [tabindex="-1"]:focus{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}.tippy-box[data-theme~=sa11y-theme] input:focus:not(:focus-visible),.tippy-box[data-theme~=sa11y-theme] a:focus:not(:focus-visible),.tippy-box[data-theme~=sa11y-theme] button:focus:not(:focus-visible),.tippy-box[data-theme~=sa11y-theme] [tabindex="-1"]:focus:not(:focus-visible){box-shadow:none;outline:0}.tippy-box[data-theme~=sa11y-theme] a:focus-visible,.tippy-box[data-theme~=sa11y-theme] button:focus-visible,.tippy-box[data-theme~=sa11y-theme] input:focus-visible,.tippy-box[data-theme~=sa11y-theme] [tabindex="-1"]:focus-visible{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}@media screen and (forced-colors:active){.tippy-box[data-theme~=sa11y-theme] .error-icon,.tippy-box[data-theme~=sa11y-theme] .link-icon,.tippy-box[data-theme~=sa11y-theme] .hidden-icon{filter:invert()}.tippy-box[data-theme~=sa11y-theme] a:focus,.tippy-box[data-theme~=sa11y-theme] button:focus,.tippy-box[data-theme~=sa11y-theme] [tabindex="-1"]:focus{outline:3px solid #0000!important}}';
 const SA98G = {
   mainTRC: 2.4,
   sRco: 0.2126729,
@@ -5287,6 +2667,99 @@ function alphaBlend(rgbaFG = [0, 0, 0, 1], rgbBG = [0, 0, 0], round2 = true) {
   }
   return rgbOut;
 }
+const maxCacheSize = 500;
+const colorCache = /* @__PURE__ */ new Map();
+let sharedContext = null;
+function getSharedContext(colorSpace = "srgb") {
+  if (!sharedContext) {
+    if (typeof OffscreenCanvas !== "undefined") {
+      const canvas = new OffscreenCanvas(1, 1);
+      sharedContext = canvas.getContext("2d", { colorSpace, willReadFrequently: true });
+    } else {
+      const canvas = document.createElement("canvas");
+      canvas.width = 1;
+      canvas.height = 1;
+      sharedContext = canvas.getContext("2d", { willReadFrequently: true });
+    }
+  }
+  return sharedContext;
+}
+function setCache$1(key, value) {
+  if (colorCache.size >= maxCacheSize) {
+    const firstKey = colorCache.keys().next().value;
+    colorCache.delete(firstKey);
+  }
+  colorCache.set(key, value);
+}
+function convertToRGBA(color, opacity = 1) {
+  const cacheKey = `${color}_${opacity}`;
+  if (colorCache.has(cacheKey)) {
+    return colorCache.get(cacheKey);
+  }
+  let r;
+  let g;
+  let b;
+  let a = 1;
+  if (color.startsWith("#")) {
+    const hex = color.slice(1);
+    const len = hex.length;
+    if (len === 3) {
+      r = parseInt(hex[0] + hex[0], 16);
+      g = parseInt(hex[1] + hex[1], 16);
+      b = parseInt(hex[2] + hex[2], 16);
+    } else {
+      r = parseInt(hex.substring(0, 2), 16);
+      g = parseInt(hex.substring(2, 4), 16);
+      b = parseInt(hex.substring(4, 6), 16);
+    }
+  } else if (color.startsWith("rgb")) {
+    const values = color.match(/[\d.]+/g);
+    if (values) {
+      r = parseInt(values[0], 10);
+      g = parseInt(values[1], 10);
+      b = parseInt(values[2], 10);
+      a = values[3] !== void 0 ? parseFloat(values[3]) : 1;
+    }
+  } else {
+    const colorSpace = color.startsWith("color(display-p3") ? "display-p3" : "srgb";
+    const ctx = getSharedContext(colorSpace);
+    if (!ctx || color.startsWith("color(rec2020")) return "unsupported";
+    ctx.fillStyle = color;
+    ctx.fillRect(0, 0, 1, 1);
+    const imageData = ctx.getImageData(0, 0, 1, 1);
+    [r, g, b, a] = imageData.data;
+    a = a / 255;
+  }
+  const finalAlpha = opacity < 1 ? Number((a * opacity).toFixed(2)) : a;
+  const result = [r, g, b, finalAlpha];
+  setCache$1(cacheKey, result);
+  return result;
+}
+function memoize(fn, keyResolver) {
+  const cache = /* @__PURE__ */ new Map();
+  const memoized = (...args) => {
+    const key = keyResolver ? keyResolver(...args) : JSON.stringify(args);
+    if (cache.has(key)) {
+      return cache.get(key);
+    }
+    const result = fn.apply(this, args);
+    cache.set(key, result);
+    return result;
+  };
+  memoized.clear = () => {
+    cache.clear();
+  };
+  return memoized;
+}
+function resetContrastCaches() {
+  clearBackgroundCache();
+  if (getLuminance.clear) getLuminance.clear();
+  if (getAPCAValue.clear) getAPCAValue.clear();
+  if (calculateContrast.clear) calculateContrast.clear();
+  if (suggestColorWCAG.clear) suggestColorWCAG.clear();
+  if (suggestColorAPCA.clear) suggestColorAPCA.clear();
+  if (extractColorFromString.clear) extractColorFromString.clear();
+}
 function normalizeFontWeight(weight) {
   const numericWeight = parseInt(weight, 10);
   if (!Number.isNaN(numericWeight)) {
@@ -5300,101 +2773,93 @@ function normalizeFontWeight(weight) {
   };
   return weightMap[weight] || 400;
 }
-function convertToRGBA(color, opacity) {
-  const colorString = color;
-  let r;
-  let g;
-  let b;
-  let a = 1;
-  if (!colorString.startsWith("rgb")) {
-    if (colorString.startsWith("color(rec2020") || colorString.startsWith("color(display-p3") || colorString.startsWith("url(")) {
-      return "unsupported";
-    }
-    const canvas = document.createElement("canvas");
-    const context = canvas.getContext("2d");
-    context.fillStyle = colorString;
-    context.fillRect(0, 0, 1, 1);
-    const imageData = context.getImageData(0, 0, 1, 1);
-    [r, g, b, a] = imageData.data;
-    a = (a / 255).toFixed(2);
-  } else {
-    const rgbaArray = colorString.match(/[\d.]+/g).map(Number);
-    [r, g, b, a] = rgbaArray.length === 4 ? rgbaArray : [...rgbaArray, 1];
-  }
-  if (opacity && opacity < 1) {
-    a = (a * opacity).toFixed(2);
-  }
-  return [r, g, b, Number(a)];
-}
+let backgroundCache = /* @__PURE__ */ new WeakMap();
 function getBackground($el, shadowDetection) {
-  let targetEl = $el;
-  while (targetEl && targetEl.nodeType === 1) {
+  if (backgroundCache.has($el)) {
+    return backgroundCache.get($el);
+  }
+  const getVisualParent = (node) => {
+    if (!node) return null;
     if (shadowDetection) {
-      const root = targetEl.getRootNode();
-      if (root instanceof ShadowRoot) {
-        let node = targetEl;
-        while (node && node !== root.host) {
-          const styles3 = getComputedStyle(node);
-          if (styles3.backgroundImage && styles3.backgroundImage !== "none") {
-            return { type: "image", value: styles3.backgroundImage };
-          }
-          const bgColor2 = convertToRGBA(styles3.backgroundColor);
-          if (bgColor2[3] !== 0 && bgColor2 !== "transparent") {
-            return bgColor2;
-          }
-          node = node.parentElement;
-        }
-        return getBackground(root.host);
-      }
+      if (node.assignedSlot) return node.assignedSlot;
+      if (node instanceof ShadowRoot) return node.host;
     }
-    const styles2 = getComputedStyle(targetEl);
+    return node.parentElement || node.parentNode;
+  };
+  let targetEl = $el;
+  let finalBackground = [255, 255, 255];
+  while (targetEl && (targetEl.nodeType === 1 || targetEl.nodeType === 11)) {
+    if (targetEl instanceof ShadowRoot) {
+      targetEl = targetEl.host;
+      continue;
+    }
+    const styles2 = getCachedStyle(targetEl);
     const bgImage = styles2.backgroundImage;
-    if (bgImage !== "none") {
-      return { type: "image", value: bgImage };
+    if (bgImage && bgImage !== "none") {
+      finalBackground = { type: "image", value: bgImage };
+      break;
     }
     const bgColor = convertToRGBA(styles2.backgroundColor);
     if (bgColor[3] !== 0 && bgColor !== "transparent") {
       if (bgColor[3] < 1) {
-        let parentEl = targetEl.parentElement;
+        let parentEl = getVisualParent(targetEl);
         let parentBgColor = "rgba(255, 255, 255, 1)";
-        while (parentEl && parentEl.nodeType === 1) {
-          const parentStyles = getComputedStyle(parentEl);
-          parentBgColor = parentStyles.backgroundColor;
-          if (parentBgColor !== "rgba(0, 0, 0, 0)") {
+        while (parentEl && (parentEl.nodeType === 1 || parentEl.nodeType === 11)) {
+          if (parentEl instanceof ShadowRoot) {
+            parentEl = parentEl.host;
+            continue;
+          }
+          const parentStyles = getCachedStyle(parentEl);
+          const currentParentBg = parentStyles.backgroundColor;
+          if (currentParentBg !== "rgba(0, 0, 0, 0)" && currentParentBg !== "transparent") {
+            parentBgColor = currentParentBg;
             break;
           }
-          if (parentBgColor === "rgba(0, 0, 0, 0)" && parentEl.tagName === "HTML") {
-            parentBgColor = "rgba(255, 255, 255, 1)";
-          }
-          parentEl = parentEl.parentElement;
+          parentEl = getVisualParent(parentEl);
         }
-        const parentColor = convertToRGBA(parentBgColor || "rgba(255, 255, 255, 1)");
-        const blendedBG = alphaBlend(bgColor, parentColor);
-        return blendedBG;
+        if (parentBgColor === "rgba(0, 0, 0, 0)" || parentBgColor === "transparent") {
+          parentBgColor = "rgba(255, 255, 255, 1)";
+        }
+        const parentColor = convertToRGBA(parentBgColor);
+        finalBackground = alphaBlend(bgColor, parentColor);
+        break;
       }
-      return bgColor;
+      finalBackground = bgColor;
+      break;
     }
     if (targetEl.tagName === "HTML") {
-      return [255, 255, 255];
+      finalBackground = [255, 255, 255];
+      break;
     }
-    targetEl = targetEl.parentNode;
+    targetEl = getVisualParent(targetEl);
   }
-  return [255, 255, 255];
+  backgroundCache.set($el, finalBackground);
+  return finalBackground;
 }
-function getLuminance(color) {
-  const rgb = color.slice(0, 3).map((x) => {
-    const normalized = x / 255;
-    return normalized <= 0.03928 ? normalized / 12.92 : ((normalized + 0.055) / 1.055) ** 2.4;
-  });
-  return 0.2126 * rgb[0] + 0.7152 * rgb[1] + 0.0722 * rgb[2];
+function clearBackgroundCache() {
+  backgroundCache = /* @__PURE__ */ new WeakMap();
 }
-function getAPCAValue(color, bg) {
-  const blendedColor = alphaBlend(color, bg).slice(0, 4);
-  const foreground = sRGBtoY(blendedColor);
-  const background = sRGBtoY(bg);
-  const ratio = APCAcontrast(foreground, background);
-  return { ratio, blendedColor };
-}
+const getLuminance = memoize(
+  function getLuminance2(color) {
+    const rgb = color.slice(0, 3).map((x) => {
+      const normalized = x / 255;
+      return normalized <= 0.03928 ? normalized / 12.92 : ((normalized + 0.055) / 1.055) ** 2.4;
+    });
+    return 0.2126 * rgb[0] + 0.7152 * rgb[1] + 0.0722 * rgb[2];
+  },
+  (color) => color.join(",")
+  // Key resolver: e.g., "255,255,255,1"
+);
+const getAPCAValue = memoize(
+  function getAPCAValue2(color, bg) {
+    const blendedColor = alphaBlend(color, bg).slice(0, 4);
+    const foreground = sRGBtoY(blendedColor);
+    const background = sRGBtoY(bg);
+    const ratio = APCAcontrast(foreground, background);
+    return { ratio, blendedColor };
+  },
+  (color, bg) => `${color.join(",")}|${bg.join(",")}`
+);
 function getWCAG2Ratio(l1, l2) {
   const lighter = Math.max(l1, l2);
   const darker = Math.min(l1, l2);
@@ -5436,59 +2901,65 @@ function displayWCAGRatio(value) {
 function ratioToDisplay(value, contrastAlgorithm) {
   return contrastAlgorithm === "APCA" ? displayAPCAValue(value) : displayWCAGRatio(value);
 }
-function calculateContrast(color, bg, contrastAlgorithm) {
-  let ratio;
-  const blendedColor = alphaBlend(color, bg).slice(0, 4);
-  if (contrastAlgorithm === "APCA") {
-    const foreground = sRGBtoY(blendedColor);
-    const background = sRGBtoY(bg);
-    ratio = APCAcontrast(foreground, background);
-  } else {
-    const foreground = getLuminance(blendedColor);
-    const background = getLuminance(bg);
-    ratio = getWCAG2Ratio(foreground, background);
-  }
-  return { ratio, blendedColor };
-}
-function suggestColorWCAG(color, background, isLargeText, contrastAlgorithm) {
-  let minContrastRatio;
-  if (contrastAlgorithm === "AAA") {
-    minContrastRatio = isLargeText ? 4.5 : 7;
-  } else {
-    minContrastRatio = isLargeText ? 3 : 4.5;
-  }
-  const fgLuminance = getLuminance(color);
-  const bgLuminance = getLuminance(background);
-  const adjustMode = fgLuminance > bgLuminance ? getWCAG2Ratio(1, bgLuminance) > minContrastRatio : getWCAG2Ratio(0, bgLuminance) < minContrastRatio;
-  const adjustColor = (foregroundColor, amount, mode) => mode ? brighten(foregroundColor, amount) : darken(foregroundColor, amount);
-  let adjustedColor = color;
-  let lastValidColor = adjustedColor;
-  let contrastRatio = getWCAG2Ratio(fgLuminance, bgLuminance);
-  let bestContrast = contrastRatio;
-  let previousColor = color;
-  let step = 0.16;
-  const percentChange = 0.5;
-  const precision = 0.01;
-  let iterations = 0;
-  const maxIterations = 100;
-  while (step >= precision) {
-    iterations += 1;
-    if (iterations > maxIterations) {
-      return { color: null };
+const calculateContrast = memoize(
+  function calculateContrast2(color, bg, contrastAlgorithm) {
+    let ratio;
+    const blendedColor = alphaBlend(color, bg).slice(0, 4);
+    if (contrastAlgorithm === "APCA") {
+      const foreground = sRGBtoY(blendedColor);
+      const background = sRGBtoY(bg);
+      ratio = APCAcontrast(foreground, background);
+    } else {
+      const foreground = getLuminance(blendedColor);
+      const background = getLuminance(bg);
+      ratio = getWCAG2Ratio(foreground, background);
     }
-    adjustedColor = adjustColor(adjustedColor, step, adjustMode);
-    const newLuminance = getLuminance(adjustedColor);
-    contrastRatio = getWCAG2Ratio(newLuminance, bgLuminance);
-    if (contrastRatio >= minContrastRatio) {
-      lastValidColor = contrastRatio <= bestContrast ? adjustedColor : lastValidColor;
-      bestContrast = contrastRatio;
-      adjustedColor = previousColor;
-      step *= percentChange;
+    return { ratio, blendedColor };
+  },
+  (color, bg, alg) => `${color.join(",")}|${bg.join(",")}|${alg}`
+);
+const suggestColorWCAG = memoize(
+  function suggestColorWCAG2(color, background, isLargeText, contrastAlgorithm) {
+    let minContrastRatio;
+    if (contrastAlgorithm === "AAA") {
+      minContrastRatio = isLargeText ? 4.5 : 7;
+    } else {
+      minContrastRatio = isLargeText ? 3 : 4.5;
     }
-    previousColor = adjustedColor;
-  }
-  return { color: getHex(lastValidColor) };
-}
+    const fgLuminance = getLuminance(color);
+    const bgLuminance = getLuminance(background);
+    const adjustMode = fgLuminance > bgLuminance ? getWCAG2Ratio(1, bgLuminance) > minContrastRatio : getWCAG2Ratio(0, bgLuminance) < minContrastRatio;
+    const adjustColor = (foregroundColor, amount, mode) => mode ? brighten(foregroundColor, amount) : darken(foregroundColor, amount);
+    let adjustedColor = color;
+    let lastValidColor = adjustedColor;
+    let contrastRatio = getWCAG2Ratio(fgLuminance, bgLuminance);
+    let bestContrast = contrastRatio;
+    let previousColor = color;
+    let step = 0.16;
+    const percentChange = 0.5;
+    const precision = 0.01;
+    let iterations = 0;
+    const maxIterations = 100;
+    while (step >= precision) {
+      iterations += 1;
+      if (iterations > maxIterations) {
+        return { color: null };
+      }
+      adjustedColor = adjustColor(adjustedColor, step, adjustMode);
+      const newLuminance = getLuminance(adjustedColor);
+      contrastRatio = getWCAG2Ratio(newLuminance, bgLuminance);
+      if (contrastRatio >= minContrastRatio) {
+        lastValidColor = contrastRatio <= bestContrast ? adjustedColor : lastValidColor;
+        bestContrast = contrastRatio;
+        adjustedColor = previousColor;
+        step *= percentChange;
+      }
+      previousColor = adjustedColor;
+    }
+    return { color: getHex(lastValidColor) };
+  },
+  (color, bg, isLargeText, alg) => `${color.join(",")}|${bg.join(",")}|${isLargeText}|${alg}`
+);
 const getOptimalAPCACombo = (background, fontWeight) => {
   const contrastWithDark = getAPCAValue(background, [0, 0, 0, 1]);
   const contrastWithLight = getAPCAValue(background, [255, 255, 255, 1]);
@@ -5499,85 +2970,93 @@ const getOptimalAPCACombo = (background, fontWeight) => {
   const size = Math.ceil(newFontLookup[Math.floor(fontWeight / 100) - 1]);
   return { suggestedColor, size };
 };
-function suggestColorAPCA(color, background, fontWeight, fontSize) {
-  const graphicMinLc = 45;
-  const isGraphic = fontWeight == null || fontSize == null;
-  const bgLuminance = sRGBtoY(background);
-  const adjustColor = (foregroundColor, amount) => bgLuminance <= 0.179 ? brighten(foregroundColor, amount) : darken(foregroundColor, amount);
-  let adjustedColor = color;
-  let contrast = getAPCAValue(adjustedColor, background);
-  let { ratio } = contrast;
-  let bestTextCombo = null;
-  let bestContrast = ratio;
-  let lastValidColor = null;
-  let fontLookup;
-  let fontWeightIndex;
-  let minimumSizeRequired;
-  const passesText = () => {
-    fontLookup = fontLookupAPCA(ratio).slice(1);
-    fontWeightIndex = Math.min(
-      Math.max(Math.floor(fontWeight / 100) - 1, 0),
-      fontLookup.length - 1
-    );
-    minimumSizeRequired = fontLookup[fontWeightIndex];
-    return minimumSizeRequired <= fontSize && minimumSizeRequired !== 999 && minimumSizeRequired !== 777;
-  };
-  const passesGraphic = () => Math.abs(ratio) >= graphicMinLc;
-  if (!isGraphic) {
-    bestTextCombo = getOptimalAPCACombo(background, fontWeight);
-    if (bestTextCombo.size > fontSize) {
+const suggestColorAPCA = memoize(
+  function suggestColorAPCA2(color, background, fontWeight, fontSize) {
+    const graphicMinLc = 45;
+    const isGraphic = fontWeight == null || fontSize == null;
+    const bgLuminance = sRGBtoY(background);
+    const adjustColor = (foregroundColor, amount) => bgLuminance <= 0.179 ? brighten(foregroundColor, amount) : darken(foregroundColor, amount);
+    let adjustedColor = color;
+    let contrast = getAPCAValue(adjustedColor, background);
+    let { ratio } = contrast;
+    let bestTextCombo = null;
+    let bestContrast = ratio;
+    let lastValidColor = null;
+    let fontLookup;
+    let fontWeightIndex;
+    let minimumSizeRequired;
+    const passesText = () => {
+      fontLookup = fontLookupAPCA(ratio).slice(1);
+      fontWeightIndex = Math.min(
+        Math.max(Math.floor(fontWeight / 100) - 1, 0),
+        fontLookup.length - 1
+      );
+      minimumSizeRequired = fontLookup[fontWeightIndex];
+      return minimumSizeRequired <= fontSize && minimumSizeRequired !== 999 && minimumSizeRequired !== 777;
+    };
+    const passesGraphic = () => Math.abs(ratio) >= graphicMinLc;
+    if (!isGraphic) {
+      bestTextCombo = getOptimalAPCACombo(background, fontWeight);
+      if (bestTextCombo.size > fontSize) {
+        return {
+          color: getHex(bestTextCombo.suggestedColor),
+          size: bestTextCombo.size
+        };
+      }
+      if (passesText()) {
+        return { color: getHex(color), size: null };
+      }
+    } else if (passesGraphic()) {
+      return { color: getHex(color), size: null };
+    }
+    let previousColor = color;
+    let step = 0.16;
+    const percentChange = 0.5;
+    const precision = 0.01;
+    let iterations = 0;
+    const maxIterations = 50;
+    while (step >= precision && iterations < maxIterations) {
+      iterations += 1;
+      adjustedColor = adjustColor(adjustedColor, step);
+      contrast = getAPCAValue(adjustedColor, background);
+      ratio = contrast.ratio;
+      const passes = isGraphic ? passesGraphic() : passesText();
+      if (passes) {
+        if (Math.abs(ratio) <= Math.abs(bestContrast) || !lastValidColor) {
+          lastValidColor = adjustedColor;
+          bestContrast = ratio;
+        }
+        adjustedColor = previousColor;
+        step *= percentChange;
+      }
+      previousColor = adjustedColor;
+    }
+    if (lastValidColor) {
+      return { color: getHex(lastValidColor), size: null };
+    }
+    if (!isGraphic && bestTextCombo) {
       return {
         color: getHex(bestTextCombo.suggestedColor),
         size: bestTextCombo.size
       };
     }
-    if (passesText()) {
-      return { color: getHex(color), size: null };
-    }
-  } else if (passesGraphic()) {
     return { color: getHex(color), size: null };
-  }
-  let previousColor = color;
-  let step = 0.16;
-  const percentChange = 0.5;
-  const precision = 0.01;
-  let iterations = 0;
-  const maxIterations = 50;
-  while (step >= precision && iterations < maxIterations) {
-    iterations += 1;
-    adjustedColor = adjustColor(adjustedColor, step);
-    contrast = getAPCAValue(adjustedColor, background);
-    ratio = contrast.ratio;
-    const passes = isGraphic ? passesGraphic() : passesText();
-    if (passes) {
-      if (Math.abs(ratio) <= Math.abs(bestContrast) || !lastValidColor) {
-        lastValidColor = adjustedColor;
-        bestContrast = ratio;
-      }
-      adjustedColor = previousColor;
-      step *= percentChange;
-    }
-    previousColor = adjustedColor;
-  }
-  if (lastValidColor) {
-    return { color: getHex(lastValidColor), size: null };
-  }
-  if (!isGraphic && bestTextCombo) {
-    return {
-      color: getHex(bestTextCombo.suggestedColor),
-      size: bestTextCombo.size
-    };
-  }
-  return { color: getHex(color), size: null };
-}
+  },
+  (color, bg, weight, size) => `${color.join(",")}|${bg.join(",")}|${weight}|${size}`
+);
 function wcagAlgorithm($el, color, background, fontSize, fontWeight, opacity, contrastAlgorithm) {
   const { ratio, blendedColor } = calculateContrast(color, background);
   const isLargeText = fontSize >= 24 || fontSize >= 18.67 && fontWeight >= 700;
+  const tagName = $el.tagName.toLowerCase();
+  const isCloseIcon = /^[x×✕✖✗✘]$/i.test($el.textContent);
+  const isCloseButton = (tagName === "button" || tagName === "a") && isCloseIcon;
   let hasLowContrast;
-  if (contrastAlgorithm === "AAA") {
+  if (isCloseButton) {
+    hasLowContrast = ratio > 0 && ratio < 3;
+  } else if (contrastAlgorithm === "AAA") {
     hasLowContrast = isLargeText ? ratio < 4.5 : ratio < 7;
   } else {
-    const hasLowContrastNormalText = ratio > 1 && ratio < 4.5;
+    const hasLowContrastNormalText = ratio > 0 && ratio < 4.5;
     hasLowContrast = isLargeText ? ratio < 3 : hasLowContrastNormalText;
   }
   if (hasLowContrast) {
@@ -5590,7 +3069,7 @@ function wcagAlgorithm($el, color, background, fontSize, fontWeight, opacity, co
       fontWeight,
       isLargeText,
       opacity,
-      textUnderline: getComputedStyle($el).textDecorationLine
+      textUnderline: getCachedStyle($el).textDecorationLine
     };
   }
   return null;
@@ -5609,7 +3088,7 @@ function apcaAlgorithm($el, color, background, fontSize, fontWeight, opacity, co
       fontWeight,
       fontSize,
       opacity,
-      textUnderline: getComputedStyle($el).textDecorationLine
+      textUnderline: getCachedStyle($el).textDecorationLine
     };
   }
   return null;
@@ -5618,8 +3097,765 @@ function checkElementContrast($el, color, background, fontSize, fontWeight, opac
   const algorithm = contrastAlgorithm === "APCA" ? apcaAlgorithm : wcagAlgorithm;
   return algorithm($el, color, background, fontSize, fontWeight, opacity, contrastAlgorithm);
 }
+const colorTokenPattern = /#(?:[\da-f]{3,4}|[\da-f]{6}|[\da-f]{8})\b|\b(?:rgb|hsl|lab|lch|oklab|oklch)a?\([^)]+\)|\b[a-z]+\b/gi;
+const extractColorFromString = memoize(
+  function extractColorFromString2(cssValue) {
+    const tokens = cssValue.match(colorTokenPattern);
+    if (!tokens) return [];
+    const colors = [];
+    for (const token of tokens) {
+      if (/^[a-z]+$/i.test(token) && !CSS.supports("color", token)) continue;
+      const color = convertToRGBA(token);
+      if (color) colors.push(color);
+    }
+    return colors;
+  },
+  (cssValue) => cssValue
+);
+async function resetAll(restartPanel = true) {
+  resetGetText();
+  resetStyleCache();
+  resetParentCache();
+  resetContrastCaches();
+  resetState();
+  window.sa11yCheckComplete = null;
+  if (State.option.headless) return;
+  Constants.Global.html.removeAttribute("data-sa11y-active");
+  remove(
+    [
+      "sa11y-annotation",
+      "sa11y-heading-label",
+      "sa11y-heading-anchor",
+      "sa11y-image-anchor",
+      "sa11y-tooltips"
+    ],
+    "document"
+  );
+  annotationButtons.length = 0;
+  if (supportsAnchorPositioning()) {
+    find("[style]", "document").forEach(($el) => {
+      const anchor = $el;
+      const anchors = (anchor.style.anchorName || "").split(",").map((s) => s.trim()).filter((s) => s && !s.startsWith("--sa11y-anchor"));
+      if (anchors.length) {
+        anchor.style.anchorName = anchors.join(", ");
+      } else {
+        anchor.style.removeProperty("anchor-name");
+        if (!anchor.style.length) {
+          anchor.removeAttribute("style");
+        }
+      }
+    });
+  }
+  resetAttributes(
+    [
+      "data-sa11y-parent",
+      "data-sa11y-error",
+      "data-sa11y-warning",
+      "data-sa11y-good",
+      "data-sa11y-overflow",
+      "data-sa11y-image",
+      "data-sa11y-pulse-border",
+      "data-sa11y-filter",
+      "data-sa11y-has-shadow-root"
+    ],
+    "document"
+  );
+  Constants.Panel.outlineList.innerHTML = "";
+  if (State.option.showImageOutline) {
+    Constants.Panel.imagesList.innerHTML = "";
+  }
+  Constants.Panel.pageIssuesList.innerHTML = "";
+  Constants.Panel.readabilityInfo.innerHTML = "";
+  Constants.Panel.readabilityDetails.innerHTML = "";
+  Constants.Panel.panel.classList.remove("has-page-issues");
+  Constants.Panel.pageIssues.classList.remove("active");
+  Constants.Panel.settingsContent.classList.remove("hide-settings-border");
+  Constants.Panel.panel.querySelector("#readability-alert")?.remove();
+  removeAlert();
+  removeSkipBtnListeners();
+  removeExportListeners();
+  removeDismissListeners();
+  resetColourFilters();
+  while (Constants.Panel.status.firstChild) {
+    Constants.Panel.status.removeChild(Constants.Panel.status.firstChild);
+  }
+  document.querySelectorAll("[data-sa11y-has-shadow-root]").forEach((el2) => {
+    el2.shadowRoot.querySelectorAll("style.sa11y-css-utilities").forEach((style) => {
+      style.remove();
+    });
+    el2.removeAttribute("data-sa11y-has-shadow-root");
+  });
+  if (restartPanel) {
+    Constants.Panel.panel.classList.remove("active");
+  }
+}
+function initializeDismissals() {
+  State.dismissedIssues = JSON.parse(store.getItem("sa11y-dismissed-digest") || "[]");
+  const currentPath = window.location.pathname;
+  const isSoloDismissed = (issue, dismissed) => dismissed.key.includes(issue.dismissDigest) && dismissed.href === currentPath && (issue.type === "warning" || issue.type === "good");
+  const dismissAll = (issue, dismissed) => typeof dismissed.dismissAll === "string" && issue.dismissAll === dismissed.dismissAll && dismissed.href === currentPath;
+  const soloDismissed = State.results.filter(
+    (issue) => State.dismissedIssues.some((dismissed) => isSoloDismissed(issue, dismissed))
+  );
+  const allDismissed = State.results.filter(
+    (issue) => State.dismissedIssues.some((dismissed) => dismissAll(issue, dismissed))
+  );
+  const mergeDismissed = [...soloDismissed, ...allDismissed];
+  State.dismissedResults = [
+    ...new Map(mergeDismissed.map((issue) => [issue.dismiss, issue])).values()
+  ];
+  State.counts.dismissed = State.dismissedResults.length;
+  State.results = State.results.filter(
+    (issue) => !State.dismissedResults.some(
+      (dismissed) => dismissed.dismiss === issue.dismiss && (issue.type === "warning" || issue.type === "good")
+    )
+  );
+  if (State.counts.dismissed) {
+    Constants.Panel.dismissButton.classList.add("active");
+    Constants.Panel.dismissTooltip.appendChild(
+      Lang.sprintf("PANEL_DISMISS_BUTTON", State.counts.dismissed)
+    );
+  } else {
+    Constants.Panel.dismissButton.classList.remove("active");
+  }
+}
+let restoreDismissedHandler;
+let dismissHandler;
+const dismissIssueButton = async (e) => {
+  let savedDismissKeys = JSON.parse(store.getItem("sa11y-dismissed-digest"));
+  const dismissButton = e.target;
+  if (dismissButton.tagName === "BUTTON" && dismissButton.hasAttribute("data-sa11y-dismiss")) {
+    const dismissItem = parseInt(dismissButton.getAttribute("data-sa11y-dismiss"), 10);
+    const issue = State.results.find(($el) => $el.id === dismissItem);
+    if (savedDismissKeys === null) {
+      setTimeout(() => createAlert(Lang.sprintf("DISMISS_REMINDER")), 0);
+      savedDismissKeys = [];
+    }
+    if (issue.dismissDigest) {
+      const dismissAllSelected = dismissButton.hasAttribute("data-sa11y-dismiss-all") ? issue.dismissAll : "";
+      const dismissalDetails = {
+        key: issue.dismissDigest,
+        href: window.location.pathname,
+        ...dismissAllSelected ? { dismissAll: dismissAllSelected } : {}
+      };
+      const item = find(`[data-sa11y-annotation='${issue.id}']`, "root");
+      const latestDismissed = item[0] ? item[0].getAttribute("data-sa11y-position") : 0;
+      store.setItem("sa11y-latest-dismissed", latestDismissed);
+      store.setItem("sa11y-dismiss-item", JSON.stringify(dismissalDetails));
+      savedDismissKeys.push(dismissalDetails);
+      store.setItem("sa11y-dismissed-digest", JSON.stringify(savedDismissKeys));
+      store.removeItem("sa11y-dismiss-item");
+      const tooltip = dismissButton ? getCachedClosest(dismissButton, "[data-tippy-root]") : null;
+      if (tooltip) {
+        setTimeout(() => {
+          tooltip.remove();
+        }, 0);
+      }
+      resetAll(false);
+      await checkAll();
+    }
+  }
+};
+const restoreDismissButton = async () => {
+  State.panelTooltips.dismissTooltip.hide();
+  const filtered = State.dismissedIssues.filter((item) => item.href !== window.location.pathname);
+  store.setItem("sa11y-dismissed-digest", JSON.stringify(filtered));
+  Constants.Panel.dismissButton.classList.remove("active");
+  resetAll(false);
+  await checkAll();
+};
+function dismissButtons() {
+  if (State.option.dismissAnnotations) {
+    dismissHandler = (e) => dismissIssueButton(e);
+    const tooltips = document.querySelector("sa11y-tooltips").shadowRoot;
+    tooltips.addEventListener("click", dismissHandler);
+    Constants.Panel.panel.addEventListener("click", dismissHandler);
+  }
+  restoreDismissedHandler = () => restoreDismissButton();
+  Constants.Panel.dismissButton?.addEventListener("click", restoreDismissedHandler);
+}
+function removeDismissListeners() {
+  Constants.Panel.panel?.removeEventListener("click", dismissHandler);
+  Constants.Panel.dismissButton?.removeEventListener("click", restoreDismissedHandler);
+}
+const outlineTemplate = document.createElement("template");
+outlineTemplate.innerHTML = `
+  <li>
+    <button type="button" tabindex="-1">
+      <span class="badge"></span>
+      <span class="outline-list-item"></span>
+    </button>
+  </li>
+`;
+function generatePageOutline() {
+  const outlineHandler = () => {
+    Constants.Panel.outlineList.textContent = "";
+    const fragment = document.createDocumentFragment();
+    const findDismissedHeadings = State.dismissedResults.map((e) => State.headingOutline.find((f) => e.dismiss === f.dismiss)).filter(Boolean);
+    findDismissedHeadings.forEach(($el) => {
+      $el.dismissedHeading = true;
+    });
+    if (State.option.showTitleInPageOutline && store.getItem("sa11y-developer") === "On") {
+      const metaTitleElement = document.querySelector("head title");
+      const li = document.createElement("li");
+      if (!metaTitleElement || metaTitleElement.textContent.trim().length === 0) {
+        li.innerHTML = `
+          <div class="badge error-badge"><span aria-hidden="true"><span class="error-icon"></span></span> ${Lang._("TITLE")}</div>
+          <div class="badge error-badge">${Lang._("MISSING")}</div>
+        `;
+      } else {
+        const titleBadge = document.createElement("span");
+        titleBadge.className = "badge";
+        titleBadge.textContent = Lang._("TITLE");
+        li.appendChild(titleBadge);
+        li.appendChild(document.createTextNode(` ${getText(metaTitleElement)}`));
+      }
+      fragment.appendChild(li);
+    }
+    State.headingOutline.forEach((heading, i) => {
+      const { element, headingLevel, text, type, dismissedHeading, isWithinRoot } = heading;
+      const hidden = isElementVisuallyHiddenOrHidden(element);
+      const visibleIcon = hidden ? `<span class="hidden-icon"></span><span class="visually-hidden">${Lang._("HIDDEN")}</span>` : "";
+      const badgeH = State.option.showHinPageOutline === true || State.option.showHinPageOutline === 1 ? "H" : "";
+      const clone = outlineTemplate.content.cloneNode(true);
+      const li = clone.querySelector("li");
+      const badge = clone.querySelector(".badge");
+      const listItemText = clone.querySelector(".outline-list-item");
+      li.className = `outline-${headingLevel}`;
+      listItemText.textContent = text;
+      if (type === "error" && isWithinRoot === true) {
+        badge.className = "badge error-badge";
+        badge.innerHTML = `<span aria-hidden="true">${visibleIcon}<span class="error-icon"></span></span><span class="visually-hidden">${Lang._("ERROR")}</span>${badgeH}${headingLevel}`;
+        const strongText = document.createElement("strong");
+        strongText.className = "outline-list-item red-text";
+        strongText.textContent = text;
+        listItemText.replaceWith(strongText);
+      } else if (type === "warning" && !dismissedHeading && isWithinRoot === true) {
+        badge.className = "badge warning-badge";
+        badge.innerHTML = `<span aria-hidden="true">${visibleIcon} &#x3f;</span><span class="visually-hidden">${Lang._("WARNING")}</span> ${badgeH}${headingLevel}`;
+        const strongText = document.createElement("strong");
+        strongText.className = "outline-list-item yellow-text";
+        strongText.textContent = text;
+        listItemText.replaceWith(strongText);
+      } else {
+        badge.innerHTML = `${visibleIcon}${badgeH}${headingLevel}`;
+      }
+      fragment.appendChild(clone);
+      const label = document.createElement("sa11y-heading-label");
+      label.hidden = true;
+      element?.insertAdjacentElement("beforeend", label);
+      const anchor = document.createElement("sa11y-heading-anchor");
+      anchor.id = `sa11y-h${i}`;
+      if (hidden) {
+        const parent = findVisibleParent(element, "display", "none");
+        const target = parent?.previousElementSibling || parent?.parentNode;
+        target?.insertAdjacentElement("beforebegin", anchor);
+        target?.setAttribute("data-sa11y-parent", `h${i}`);
+      } else {
+        label?.insertAdjacentElement("beforebegin", anchor);
+      }
+      const content = document.createElement("span");
+      content.classList.add("heading-label");
+      content.textContent = `H${headingLevel}`;
+      label.shadowRoot.appendChild(content);
+      if (store.getItem("sa11y-outline") === "Opened") {
+        label.hidden = false;
+      }
+    });
+    if (State.headingOutline.length === 0) {
+      const emptyLi = document.createElement("li");
+      emptyLi.textContent = Lang._("PANEL_NO_HEADINGS");
+      fragment.appendChild(emptyLi);
+    }
+    Constants.Panel.outlineList.appendChild(fragment);
+    setTimeout(() => {
+      const buttons = Constants.Panel.outlineList.querySelectorAll("button");
+      buttons.forEach((button, i) => {
+        button.addEventListener("click", () => {
+          const heading = find(
+            `#sa11y-h${i}, [data-sa11y-parent="h${i}"]`,
+            "document",
+            Constants.Exclusions.Container
+          )[0];
+          if (heading) {
+            heading.scrollIntoView({
+              behavior: `${Constants.Global.scrollBehaviour}`,
+              block: "center"
+            });
+            addPulse(heading.parentNode || heading);
+          }
+          removeAlert();
+          if (!heading || button.querySelector("span.hidden-icon")) {
+            createAlert(Lang._("NOT_VISIBLE"));
+          }
+        });
+      });
+      initRovingTabindex(Constants.Panel.outlineList, buttons);
+    }, 0);
+    document.removeEventListener("sa11y-build-heading-outline", outlineHandler);
+  };
+  if (store.getItem("sa11y-outline") === "Opened") {
+    outlineHandler();
+  }
+  document.addEventListener("sa11y-build-heading-outline", outlineHandler);
+}
+const wrapPseudoContent = (element, string) => {
+  const getAltText = (content) => {
+    if (content === "none") {
+      return "";
+    }
+    const match = content.includes("url(") || content.includes("image-set(") ? content.match(/\/\s*"([^"]+)"/) : content.match(/"([^"]+)"/);
+    return match ? match[1] : "";
+  };
+  const before = getAltText(getCachedStyle(element, ":before").getPropertyValue("content"));
+  const after = getAltText(getCachedStyle(element, ":after").getPropertyValue("content"));
+  return `${before}${string}${after}`;
+};
+const nextTreeBranch = (tree) => {
+  for (let i = 0; i < 1e3; i++) {
+    if (tree.nextSibling()) {
+      return tree.previousNode();
+    }
+    if (!tree.parentNode()) {
+      return false;
+    }
+  }
+  return false;
+};
+const computeAriaLabel = (element, recursing = false) => {
+  if (State.option.ignoreAriaOnElements && element.matches(State.option.ignoreAriaOnElements)) {
+    return "noAria";
+  }
+  if (State.option.ignoreTextInElements && element.matches(State.option.ignoreTextInElements)) {
+    return "";
+  }
+  const labelledBy = element.getAttribute("aria-labelledby");
+  if (!recursing && labelledBy) {
+    return labelledBy.split(/\s+/).filter((id) => id.trim()).map((id) => {
+      const targetElement = document.querySelector(`#${CSS.escape(id)}`);
+      return targetElement ? computeAccessibleName(targetElement, "", 1) : "";
+    }).join(" ");
+  }
+  const { ariaLabel } = element;
+  if (ariaLabel && ariaLabel.trim().length > 0) {
+    return ariaLabel;
+  }
+  return "noAria";
+};
+const computeAccessibleName = (element, exclusions = [], recursing = 0) => {
+  const ariaLabel = computeAriaLabel(element, recursing);
+  if (ariaLabel !== "noAria") {
+    return ariaLabel;
+  }
+  let computedText = "";
+  const and = (word) => {
+    computedText += ` ${word}`;
+  };
+  if (!element.children.length) {
+    computedText = wrapPseudoContent(element, element.textContent);
+    if (!computedText.trim() && element.hasAttribute("title")) {
+      return element.getAttribute("title");
+    }
+    return computedText;
+  }
+  function createTreeWalker(root, showElement, showText) {
+    const acceptNode = (node) => {
+      if (node.nodeType === Node.ELEMENT_NODE) {
+        return NodeFilter.FILTER_ACCEPT;
+      }
+      if (node.nodeType === Node.TEXT_NODE) {
+        return NodeFilter.FILTER_ACCEPT;
+      }
+      return NodeFilter.FILTER_REJECT;
+    };
+    return document.createTreeWalker(root, NodeFilter.SHOW_ALL, { acceptNode });
+  }
+  const treeWalker = createTreeWalker(element);
+  const alwaysExclude = ["noscript", "style", "script", "video", "audio"];
+  const excludeSelector = [...exclusions, ...alwaysExclude].join(", ");
+  const exclude = excludeSelector ? element.querySelectorAll(excludeSelector) : [];
+  let addTitleIfNoName = false;
+  let aText = false;
+  let count = 0;
+  let continueWalker = true;
+  while (treeWalker.nextNode() && continueWalker) {
+    count += 1;
+    const node = treeWalker.currentNode;
+    const excluded = Array.from(exclude).some((ex) => ex.contains(node));
+    if (excluded) {
+      continue;
+    }
+    if (node.shadowRoot) {
+      const shadowChildren = node.shadowRoot.querySelectorAll("*");
+      for (let i = 0; i < shadowChildren.length; i++) {
+        const child = shadowChildren[i];
+        if (!excludeSelector || !getCachedClosest(child, excludeSelector)) {
+          and(computeAccessibleName(child, exclusions, recursing + 1));
+        }
+      }
+    }
+    if (node.nodeType === Node.TEXT_NODE) {
+      if (node.parentNode.tagName !== "SLOT") {
+        and(node.nodeValue);
+      }
+      continue;
+    }
+    if (addTitleIfNoName && !getCachedClosest(node, "a")) {
+      if (aText === computedText) {
+        and(addTitleIfNoName);
+      }
+      addTitleIfNoName = false;
+      aText = false;
+    }
+    if (node.ariaHidden === "true" && !(recursing && count < 3)) {
+      if (!nextTreeBranch(treeWalker)) {
+        continueWalker = false;
+      }
+      continue;
+    }
+    const aria = computeAriaLabel(node, recursing);
+    if (aria !== "noAria") {
+      and(aria);
+      if (!nextTreeBranch(treeWalker)) {
+        continueWalker = false;
+      }
+      continue;
+    }
+    switch (node.tagName) {
+      case "IMG": {
+        const role = node.getAttribute("role");
+        if (node.hasAttribute("alt") && role !== "presentation" && role !== "none") {
+          and(node.getAttribute("alt"));
+        }
+        break;
+      }
+      case "SVG":
+        if (node.role === "img" || node.role === "graphics-document") {
+          and(computeAriaLabel(node));
+        } else {
+          const title = node.querySelector("title");
+          if (title) {
+            and(title.textContent);
+          }
+        }
+        break;
+      case "A":
+        if (node.hasAttribute("title")) {
+          addTitleIfNoName = node.getAttribute("title");
+          aText = computedText;
+        } else {
+          addTitleIfNoName = false;
+          aText = false;
+        }
+        and(wrapPseudoContent(node, ""));
+        break;
+      case "INPUT":
+        and(wrapPseudoContent(treeWalker.currentNode, ""));
+        if (treeWalker.currentNode.hasAttribute("title")) {
+          addTitleIfNoName = treeWalker.currentNode.getAttribute("title");
+        }
+        break;
+      case "SLOT": {
+        const children = node.assignedNodes?.() || [];
+        let slotText = "";
+        children.forEach((child) => {
+          if (child.nodeType === Node.ELEMENT_NODE) {
+            slotText += computeAccessibleName(child);
+          } else if (child.nodeType === Node.TEXT_NODE) {
+            slotText += child.nodeValue;
+          }
+        });
+        and(slotText);
+        and(wrapPseudoContent(node, ""));
+        break;
+      }
+      case "SPAN": {
+        and(wrapPseudoContent(treeWalker.currentNode, ""));
+        if (treeWalker.currentNode.hasAttribute("title")) {
+          addTitleIfNoName = treeWalker.currentNode.getAttribute("title");
+        }
+        break;
+      }
+      default:
+        and(wrapPseudoContent(node, ""));
+        break;
+    }
+  }
+  if (addTitleIfNoName && !aText) {
+    and(addTitleIfNoName);
+  }
+  computedText = computedText.replace(/[\uE000-\uF8FF]/gu, "");
+  if (!computedText.trim()) {
+    computedText = wrapPseudoContent(element, "");
+    if (!computedText.trim() && element.hasAttribute("title")) {
+      return element.getAttribute("title");
+    }
+  }
+  return computedText;
+};
+const imageOutlineTemplate = document.createElement("template");
+imageOutlineTemplate.innerHTML = `
+  <li>
+    <button type="button" tabindex="-1">
+      <img alt="" />
+      <div class="alt">
+        <span class="badges-container"></span>
+        <span class="alt-text-container"></span>
+      </div>
+    </button>
+  </li>
+`;
+const generateEditLinkElement = (image) => {
+  const { src } = image.element;
+  if (!src) return;
+  const urlExclusions = State.option.ignoreEditImageURL.some((ignore) => src.includes(ignore));
+  const classExclusions = State.option.ignoreEditImageClass.some(
+    (ignore) => image.element.classList.contains(ignore)
+  );
+  if (urlExclusions || classExclusions) {
+    return null;
+  }
+  const relativePath = State.option.relativePathImageSRC || window.location.host;
+  const fileExtension = src.split(relativePath)[1] || "";
+  const imageID = State.option.relativePathImageID;
+  let imageUniqueID;
+  if (imageID.length && image.element.classList.length) {
+    image.element.classList.forEach((className) => {
+      if (className.startsWith(imageID)) {
+        const [digit] = className.match(/\d+/) || [];
+        imageUniqueID = digit;
+      }
+    });
+  }
+  const editURL = relativePath && imageID.length ? State.option.editImageURLofCMS + imageUniqueID : State.option.editImageURLofCMS + fileExtension;
+  const isRelativeLink = (imageSrc) => imageSrc.includes(window.location.host) || imageSrc.startsWith(relativePath);
+  if (imageID.length && imageUniqueID !== void 0 || !imageID) {
+    if (isRelativeLink(src)) {
+      const wrapper = document.createElement("div");
+      wrapper.className = "edit-block";
+      const anchor = document.createElement("a");
+      anchor.href = editURL;
+      anchor.tabIndex = -1;
+      anchor.target = "_blank";
+      anchor.rel = "noopener noreferrer";
+      anchor.className = "edit";
+      anchor.textContent = Lang._("EDIT");
+      wrapper.appendChild(anchor);
+      return wrapper;
+    }
+  }
+  return null;
+};
+function generateImageOutline() {
+  if (!State.option.showImageOutline) return;
+  const imageOutlineHandler = () => {
+    Constants.Panel.imagesList.textContent = "";
+    const fragment = document.createDocumentFragment();
+    let hasImages = false;
+    State.imageResults.forEach((image, i) => {
+      hasImages = true;
+      const isDismissed = State.dismissedResults.some(
+        (key) => key.dismissDigest === image.dismissDigest
+      );
+      if (isDismissed) {
+        Object.assign(image, { dismissedImage: true });
+      }
+      const { element, type, developer, dismissedImage } = image;
+      const ariaLabel = computeAriaLabel(element);
+      const altText = ariaLabel === "noAria" ? element.getAttribute("alt") ?? "" : ariaLabel ?? "";
+      const hidden = isElementVisuallyHiddenOrHidden(element);
+      if (hidden) {
+        const parent = findVisibleParent(element, "display", "none");
+        const anchor = document.createElement("sa11y-image-anchor");
+        anchor.setAttribute("data-sa11y-parent", `image${i}`);
+        const target = parent?.previousElementSibling || parent?.parentNode;
+        target?.insertAdjacentElement("beforebegin", anchor);
+      } else {
+        element.setAttribute("data-sa11y-image", i);
+      }
+      const dev = store.getItem("sa11y-developer");
+      const devChecksOff = dev === "Off" || dev === null;
+      const showDeveloperChecks = devChecksOff && (type === "error" || type === "warning") && developer === true;
+      const source = getBestImageSource(element);
+      let decorative = altText === "";
+      if (!decorative && State.option.altPlaceholder.length) {
+        const altPlaceholderPattern = generateRegexString(State.option.altPlaceholder, true);
+        decorative = altText.match(altPlaceholderPattern)?.[0];
+      }
+      const clone = imageOutlineTemplate.content.cloneNode(true);
+      const li = clone.querySelector("li");
+      const img = clone.querySelector("img");
+      const badgesContainer = clone.querySelector(".badges-container");
+      const altTextContainer = clone.querySelector(".alt-text-container");
+      const handleFallback = () => {
+        const fallback = document.createElement("span");
+        fallback.className = "image-icon";
+        img.replaceWith(fallback);
+      };
+      if (!source) {
+        handleFallback();
+      } else {
+        img.src = source;
+        img.onload = () => {
+          if (img.naturalWidth <= 1 || img.naturalHeight <= 1) handleFallback();
+        };
+        img.onerror = handleFallback;
+      }
+      let badgesHTML = "";
+      if (hidden) {
+        badgesHTML += `<div class="badge"><span class="hidden-icon"></span><span class="visually-hidden">${Lang._("HIDDEN")}</span></div> `;
+      }
+      const anchorSelector = State.option.imageWithinLightbox ? `a[href]:not(${State.option.imageWithinLightbox})` : "a[href]";
+      if (getCachedClosest(element, anchorSelector)) {
+        badgesHTML += `<div class="badge"><span class="link-icon"></span><span class="visually-hidden">${Lang._("LINKED")}</span></div> `;
+      }
+      if (type === "error" && !showDeveloperChecks) {
+        li.className = "error";
+        if (altText.length === 0) badgesHTML += `<div class="badge">${Lang._("MISSING")}</div> `;
+        badgesHTML += `<div class="badge"><span class="error-icon"></span><span class="visually-hidden">${Lang._("ERROR")}</span> ${Lang._("ALT")}</div> `;
+        if (!decorative) {
+          const strong = document.createElement("strong");
+          strong.className = "red-text";
+          strong.textContent = altText;
+          altTextContainer.replaceWith(strong);
+        }
+      } else if (type === "warning" && !dismissedImage && !showDeveloperChecks) {
+        li.className = "warning";
+        if (decorative) badgesHTML += `<div class="badge">${Lang._("DECORATIVE")}</div> `;
+        badgesHTML += `<div class="badge"><span aria-hidden="true">&#63;</span> <span class="visually-hidden">${Lang._("WARNING")}</span> ${Lang._("ALT")}</div> `;
+        if (!decorative) {
+          const strong = document.createElement("strong");
+          strong.className = "yellow-text";
+          strong.textContent = altText;
+          altTextContainer.replaceWith(strong);
+        }
+      } else {
+        li.className = "good";
+        if (decorative) badgesHTML += `<div class="badge">${Lang._("DECORATIVE")}</div> `;
+        badgesHTML += `<div class="badge">${Lang._("ALT")}</div> `;
+        if (!decorative) {
+          altTextContainer.textContent = ` ${altText}`;
+        }
+      }
+      badgesContainer.innerHTML = badgesHTML;
+      if (State.option.editImageURLofCMS) {
+        const editEl = generateEditLinkElement(image);
+        if (editEl) li.appendChild(editEl);
+      }
+      fragment.appendChild(clone);
+    });
+    if (!hasImages) {
+      const emptyLi = document.createElement("li");
+      emptyLi.className = "no-images";
+      emptyLi.textContent = Lang._("NO_IMAGES");
+      fragment.appendChild(emptyLi);
+    }
+    Constants.Panel.imagesList.appendChild(fragment);
+    setTimeout(() => {
+      const buttons = Constants.Panel.imagesList.querySelectorAll("button");
+      buttons.forEach(($el, i) => {
+        $el.addEventListener("click", () => {
+          const image = find(
+            `[data-sa11y-image='${i}'], [data-sa11y-parent='image${i}']`,
+            "document",
+            Constants.Exclusions.Container
+          )[0];
+          if (image) {
+            image.scrollIntoView({
+              behavior: `${Constants.Global.scrollBehaviour}`,
+              block: "center"
+            });
+            addPulse(image);
+          }
+          removeAlert();
+          if (!image || $el.querySelector("span.hidden-icon")) {
+            createAlert(Lang._("NOT_VISIBLE"));
+          }
+        });
+      });
+      const tabbable = Constants.Panel.imagesList.querySelectorAll("a, button");
+      initRovingTabindex(Constants.Panel.imagesList, tabbable);
+    }, 0);
+    document.removeEventListener("sa11y-build-image-outline", imageOutlineHandler);
+  };
+  if (store.getItem("sa11y-images") === "Opened") {
+    imageOutlineHandler();
+  }
+  document.addEventListener("sa11y-build-image-outline", imageOutlineHandler);
+}
+function updatePanel() {
+  Constants.Panel.skipButton.disabled = false;
+  Constants.Panel.panel.classList.add("active");
+  Constants.Global.html.setAttribute("data-sa11y-active", "true");
+  Constants.Panel.skipButton.classList.add("active");
+  if (State.counts.error > 0 && State.counts.warning > 0) {
+    Constants.Panel.content.setAttribute("class", "errors");
+    Constants.Panel.status.innerHTML = `${Lang._("ERRORS")} <span class="panel-count">${State.counts.error}</span> ${Lang._("WARNINGS")} <span class="panel-count" id="warning-count">${State.counts.warning}</span>`;
+  } else if (State.counts.error > 0) {
+    Constants.Panel.content.setAttribute("class", "errors");
+    Constants.Panel.status.innerHTML = `${Lang._("ERRORS")} <span class="panel-count">${State.counts.error}</span>`;
+  } else if (State.counts.warning > 0) {
+    Constants.Panel.content.setAttribute("class", "warnings");
+    Constants.Panel.status.innerHTML = `${Lang._("WARNINGS")} <span class="panel-count" id="warning-count">${State.counts.warning}</span>`;
+  } else if (State.counts.dismissed > 0) {
+    Constants.Panel.status.innerHTML = `${Lang._("DISMISSED")} <span class="panel-count">${State.counts.dismissed}</span>`;
+    Constants.Panel.skipButton.classList.remove("active");
+  } else {
+    Constants.Panel.content.setAttribute("class", "good");
+    Constants.Panel.status.textContent = Lang._("NO_ERRORS_FOUND");
+  }
+  const annotations = document.querySelectorAll("sa11y-annotation");
+  if (annotations.length === 0) {
+    Constants.Panel.skipButton.disabled = true;
+  }
+}
+function updateBadge() {
+  const totalCount = State.counts.error + State.counts.warning;
+  if (totalCount === 0) {
+    Constants.Panel.notifCount.innerText = "";
+    Constants.Panel.notifText.innerText = "";
+    Constants.Panel.notifBadge.style.display = "none";
+  } else if (State.counts.warning > 0 && State.counts.error === 0) {
+    Constants.Panel.notifBadge.classList.add("notification-badge-warning");
+    Constants.Panel.notifCount.innerText = `${State.counts.warning}`;
+    Constants.Panel.notifText.innerText = `${Lang._("WARNINGS_FOUND")}`;
+  } else {
+    Constants.Panel.notifBadge.classList.remove("notification-badge-warning");
+    Constants.Panel.notifCount.innerText = `${totalCount}`;
+    Constants.Panel.notifText.innerText = Lang._("TOTAL_FOUND");
+  }
+  if (store.getItem("sa11y-panel") === "Opened" || totalCount === 0) {
+    Constants.Panel.notifBadge.style.display = "none";
+  } else {
+    Constants.Panel.notifBadge.style.display = "flex";
+  }
+}
+function updateCount() {
+  State.results.forEach((_, i) => {
+    const issue = State.results[i].type;
+    if (issue === "error") {
+      State.counts.error += 1;
+    } else if (issue === "warning") {
+      State.counts.warning += 1;
+    }
+  });
+}
+function disabled() {
+  setTimeout(() => {
+    if (store.getItem("sa11y-panel") === "Opened") {
+      Constants.Panel.toggle?.click();
+    }
+    Constants.Panel.toggle.disabled = true;
+  }, State.option.delayCheck + 10);
+}
+function enabled() {
+  if (Constants.Panel.toggle) {
+    Constants.Panel.toggle.disabled = false;
+  }
+}
+const tooltipStyles = 'h1,h2,div,p,span,ol,ul,li,a,button,svg,strong,kbd,code{all:unset;box-sizing:border-box!important}div{display:block}:before,:after{all:unset}[data-animation=fade][data-state=hidden]{opacity:0}.sa11y-theme{max-width:375px}@media (forced-colors:active){[role=dialog],[role=tooltip]{border:2px solid #0000;border-radius:5px}}.arrow{background:inherit;visibility:hidden;width:8px;height:8px;position:absolute}.arrow:before{content:"";background:inherit;visibility:visible;width:8px;height:8px;position:absolute;transform:rotate(45deg)}[data-placement^=top]>.arrow{bottom:-4px}[data-placement^=bottom]>.arrow{top:-4px}[data-placement^=left]>.arrow{right:-4px}[data-placement^=right]>.arrow{left:-4px}.content{z-index:1;padding:5px 9px;position:relative}[role=tooltip]{box-sizing:border-box!important}[role=tooltip][data-animation=fade][data-state=hidden]{opacity:0}[role=tooltip][data-inertia][data-state=visible]{transition-timing-function:cubic-bezier(.54,1.5,.38,1.11)}[role=dialog]{text-align:start;word-wrap:break-word;min-width:300px}[role=tooltip]{text-align:center;min-width:185px;max-width:250px}.sa11y-panel{border:1px solid var(--sa11y-panel-bg-splitter);box-shadow:var(--sa11y-box-shadow)}.sa11y-theme:not(.sa11y-panel){box-shadow:0 0 20px 4px #9aa1b126,0 4px 80px -8px #24282f40,0 4px 4px -2px #5b5e6926!important}.sa11y-theme{font-family:var(--sa11y-font-face);font-size:var(--sa11y-normal-text);color:var(--sa11y-panel-primary);letter-spacing:normal;background-color:var(--sa11y-panel-bg);-webkit-font-smoothing:auto;border-radius:4px;outline:0;padding:8px;font-weight:400;line-height:22px;transition-property:transform,visibility,opacity;display:block;position:relative}.sa11y-theme pre code{white-space:pre-wrap;display:block;overflow:auto}.sa11y-theme code{font-family:monospace;font-size:calc(var(--sa11y-normal-text) - 1px);font-weight:500}.sa11y-theme pre,.sa11y-theme code,.sa11y-theme kbd{color:var(--sa11y-panel-primary);letter-spacing:normal;background-color:var(--sa11y-panel-badge);-webkit-font-smoothing:auto;border-radius:3.2px;padding:1.6px 4.8px;line-height:22px}.sa11y-theme sub,.sa11y-theme sup{font-size:var(--sa11y-small-text)}.sa11y-theme ul{margin:0;margin-block:0;padding:0;position:relative}.sa11y-theme li{margin:5px 10px 0 20px;padding-bottom:5px;display:list-item}.sa11y-theme a{color:var(--sa11y-hyperlink);cursor:pointer;font-weight:500;text-decoration:underline}.sa11y-theme a:hover,.sa11y-theme a:focus{text-decoration:none}.sa11y-theme .good .colour{font-weight:400}.sa11y-theme strong{font-weight:600}.sa11y-theme hr{background:var(--sa11y-panel-bg-splitter);opacity:1;border:none;height:1px;margin:10px 0;padding:0}.sa11y-theme button.close-btn{margin-inline-start:10px;margin-bottom:10px}.sa11y-theme button#suggest-size,.sa11y-theme button#suggest{cursor:pointer;padding:.2rem;transition:background-color .2s,color .2s;position:relative}:is(.sa11y-theme button#suggest-size,.sa11y-theme button#suggest):after{content:"";position:absolute;inset:-10px -5px -14px}:is(.sa11y-theme button#suggest-size,.sa11y-theme button#suggest):hover,:is(.sa11y-theme button#suggest-size,.sa11y-theme button#suggest):focus-visible{color:#000!important;background-color:#fff!important}.sa11y-theme .dismiss-group{margin-top:5px}.sa11y-theme .dismiss-group button{margin:10px 5px 5px 0;color:var(--sa11y-panel-primary);cursor:pointer;background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-button-outline);border-radius:5px;margin-inline-end:15px;padding:4px 8px;display:inline-block}.sa11y-theme .dismiss-group button:hover,.sa11y-theme .dismiss-group button:focus{background:var(--sa11y-shortcut-hover)}.sa11y-theme .good-icon{background:var(--sa11y-good-text);width:14px;height:14px;-webkit-mask:var(--sa11y-good-svg) center no-repeat;mask:var(--sa11y-good-svg) center no-repeat;margin-bottom:-2.5px;display:inline-block}.sa11y-theme .link-icon{background:var(--sa11y-panel-primary);width:16px;height:16px;-webkit-mask:var(--sa11y-link-icon-svg) center no-repeat;mask:var(--sa11y-link-icon-svg) center no-repeat;margin-bottom:-3.5px;display:inline-block}.sa11y-theme .error .badge{color:var(--sa11y-error-text);background:var(--sa11y-error)}.sa11y-theme .error .colour{color:var(--sa11y-red-text)}.sa11y-theme .error .link-icon{background:var(--sa11y-error-text)}.sa11y-theme .warning .badge{color:var(--sa11y-panel-bg);background:var(--sa11y-yellow-text)}.sa11y-theme .warning .colour{color:var(--sa11y-yellow-text)}.sa11y-theme .warning .link-icon{background:var(--sa11y-panel-bg)}.sa11y-theme[data-placement^=top] .arrow:before{border-top-color:var(--sa11y-panel-bg)}.sa11y-theme[data-placement^=bottom] .arrow:before{border-bottom-color:var(--sa11y-panel-bg)}.sa11y-theme[data-placement^=left] .arrow:before{border-left-color:var(--sa11y-panel-bg)}.sa11y-theme[data-placement^=right] .arrow:before{border-right-color:var(--sa11y-panel-bg)}@media (forced-colors:active){.sa11y-theme[data-placement^=top] .arrow:before,.sa11y-theme[data-placement^=bottom] .arrow:before,.sa11y-theme[data-placement^=left] .arrow:before,.sa11y-theme[data-placement^=right] .arrow:before{forced-color-adjust:none}.sa11y-theme .arrow{z-index:-1}}.sa11y-theme a:focus,.sa11y-theme input:focus,.sa11y-theme button:focus,.sa11y-theme button:active,.sa11y-theme [tabindex="-1"]:focus{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}.sa11y-theme input:focus:not(:focus-visible),.sa11y-theme a:focus:not(:focus-visible),.sa11y-theme button:focus:not(:focus-visible),.sa11y-theme [tabindex="-1"]:focus:not(:focus-visible){box-shadow:none;outline:0}.sa11y-theme a:focus-visible,.sa11y-theme button:focus-visible,.sa11y-theme input:focus-visible,.sa11y-theme [tabindex="-1"]:focus-visible{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}@media screen and (forced-colors:active){.sa11y-theme .error-icon,.sa11y-theme .link-icon,.sa11y-theme .hidden-icon{filter:invert()}.sa11y-theme a:focus,.sa11y-theme button:focus,.sa11y-theme [tabindex="-1"]:focus{outline:3px solid #0000!important}}.sa11y-theme{animation:.15s ease-out forwards fade-in}@keyframes fade-in{0%{opacity:0}to{opacity:1;transform:translateY(0)}}';
 function generateContrastTools(contrastDetails) {
-  const { sanitizedText, color, background, fontWeight, fontSize, ratio, textUnderline } = contrastDetails;
+  const { previewText, color, background, fontWeight, fontSize, ratio, textUnderline } = contrastDetails;
   const hasBackgroundColor = background && background.type !== "image";
   const backgroundHex = hasBackgroundColor ? getHex(background) : "#000000";
   const foregroundHex = color ? getHex(color) : "#000000";
@@ -5643,7 +3879,7 @@ function generateContrastTools(contrastDetails) {
       <div id="contrast" class="badge">${Lang._("CONTRAST")}</div>
       <div id="value" class="badge">${displayedRatio}</div>
       <div id="good" class="badge good-contrast" hidden>${Lang._("GOOD")} <span class="good-icon"></span></div>
-      <div id="contrast-preview" style="color:${foregroundHex};${hasBackgroundColor ? `background:${backgroundHex};` : ""}${hasFontWeight + hasFontSize + textDecoration}">${sanitizedText}</div>
+      <div id="contrast-preview" style="color:${foregroundHex};${hasBackgroundColor ? `background:${backgroundHex};` : ""}${hasFontWeight + hasFontSize + textDecoration}"></div>
       <div id="color-pickers">
         <label for="fg-text">${Lang._("FG")} ${unknownFGText}
           <div id="fg-color-wrapper" ${unknownFG}>
@@ -5656,6 +3892,7 @@ function generateContrastTools(contrastDetails) {
           </div>
         </label>
       </div>`;
+  contrastTools.querySelector("#contrast-preview").textContent = previewText;
   return contrastTools;
 }
 function initializeContrastTools(container, contrastDetails) {
@@ -5679,7 +3916,7 @@ function initializeContrastTools(container, contrastDetails) {
       const match = contrastPreview.style.fontSize.match(/([\d.]+)/);
       if (match) return parseFloat(match[1]);
     }
-    const computed = getComputedStyle(contrastPreview).fontSize;
+    const computed = getCachedStyle(contrastPreview).fontSize;
     if (computed) {
       const match = computed.match(/([\d.]+)/);
       if (match) return parseFloat(match[1]);
@@ -5768,12 +4005,12 @@ function initializeContrastTools(container, contrastDetails) {
   bgInput.addEventListener("input", updatePreview);
   setTimeout(() => {
     const bindSuggest = (id, action) => {
-      const el = container.querySelector(id);
-      if (!el) return;
-      el.addEventListener("click", () => {
-        action(el.textContent);
+      const el2 = container.querySelector(id);
+      if (!el2) return;
+      el2.addEventListener("click", () => {
+        action(el2.textContent);
         updatePreview();
-        navigator.clipboard.writeText(el.textContent).catch(() => {
+        navigator.clipboard.writeText(el2.textContent).catch(() => {
         });
       });
     };
@@ -5786,455 +4023,2188 @@ function initializeContrastTools(container, contrastDetails) {
   }, 0);
 }
 function generateColorSuggestion(contrastDetails) {
-  let adviceContainer;
-  const { color, background, fontWeight, fontSize, isLargeText, type } = contrastDetails;
-  if (color && background && background.type !== "image" && (type === "text" || type === "svg-error" || type === "input")) {
-    const suggested = Constants.Global.contrastAlgorithm === "APCA" ? suggestColorAPCA(color, background, fontWeight, fontSize) : suggestColorWCAG(
-      color,
-      background,
-      isLargeText,
-      Constants.Global.contrastAlgorithm
-    );
-    let advice;
-    const hr = '<hr aria-hidden="true">';
-    const bgHex = getHex(contrastDetails.background);
-    const style = `color:${suggested.color};background-color:${bgHex};`;
-    const colorBadge = `<button id="suggest" class="badge" style="${style}">${suggested.color}</button>`;
-    const sizeBadge = `<button id="suggest-size" class="normal-badge">${suggested.size}px</button>`;
-    if (Constants.Global.contrastAlgorithm === "AA" || Constants.Global.contrastAlgorithm === "AAA") {
-      if (suggested.color === null) {
-        advice = `${hr} ${Lang._("NO_SUGGESTION")}`;
-      } else {
-        advice = `${hr} ${Lang._("CONTRAST_COLOR")} ${colorBadge}`;
-      }
-    } else if (suggested.color && suggested.size) {
-      advice = `${hr} ${Lang._("CONTRAST_APCA")} ${colorBadge} ${sizeBadge}`;
-    } else if (suggested.color) {
-      advice = `${hr} ${Lang._("CONTRAST_COLOR")} ${colorBadge}`;
-    } else if (suggested.size) {
-      advice = `${hr} ${Lang._("CONTRAST_SIZE")} ${sizeBadge}`;
+  const { color, background, fontWeight, fontSize, isLargeText, type, opacity } = contrastDetails;
+  if (!color || !background || background.type === "image" || !(type === "text" || type === "svg-error" || type === "input" || type === "placeholder")) {
+    return;
+  }
+  const suggested = Constants.Global.contrastAlgorithm === "APCA" ? suggestColorAPCA(color, background, fontWeight, fontSize) : suggestColorWCAG(
+    color,
+    background,
+    isLargeText,
+    Constants.Global.contrastAlgorithm
+  );
+  const adviceContainer = document.createElement("div");
+  adviceContainer.id = "advice";
+  const createHr = () => {
+    const hr = document.createElement("hr");
+    hr.setAttribute("aria-hidden", "true");
+    return hr;
+  };
+  const createColorBadge = (suggestedColor) => {
+    const btn = document.createElement("button");
+    btn.id = "suggest";
+    btn.className = "badge";
+    const bgHex = getHex(background);
+    btn.style.color = suggestedColor;
+    btn.style.backgroundColor = bgHex;
+    btn.textContent = suggestedColor;
+    return btn;
+  };
+  const createSizeBadge = (size) => {
+    const btn = document.createElement("button");
+    btn.id = "suggest-size";
+    btn.className = "normal-badge";
+    btn.textContent = `${size}px`;
+    return btn;
+  };
+  if (opacity < 1) {
+    adviceContainer.append(createHr(), " ", Lang.sprintf("CONTRAST_OPACITY"));
+    return adviceContainer;
+  }
+  const algo = Constants.Global.contrastAlgorithm;
+  if (algo === "AA" || algo === "AAA") {
+    if (suggested.color === null) {
+      adviceContainer.append(createHr(), " ", Lang._("NO_SUGGESTION"));
+    } else {
+      adviceContainer.append(
+        createHr(),
+        " ",
+        Lang._("CONTRAST_COLOR"),
+        " ",
+        createColorBadge(suggested.color)
+      );
     }
-    adviceContainer = document.createElement("div");
-    adviceContainer.id = "advice";
-    const suggestion = contrastDetails.opacity < 1 ? `<hr aria-hidden="true"> ${Lang.sprintf("CONTRAST_OPACITY")}` : advice;
-    adviceContainer.innerHTML = suggestion;
+  } else {
+    const hasColor = !!suggested.color;
+    const hasSize = !!suggested.size;
+    if (hasColor || hasSize) {
+      adviceContainer.append(createHr(), " ");
+      if (hasColor && hasSize) {
+        adviceContainer.append(
+          Lang._("CONTRAST_APCA"),
+          " ",
+          createColorBadge(suggested.color),
+          " ",
+          createSizeBadge(suggested.size)
+        );
+      } else if (hasColor) {
+        adviceContainer.append(Lang._("CONTRAST_COLOR"), " ", createColorBadge(suggested.color));
+      } else if (hasSize) {
+        adviceContainer.append(Lang._("CONTRAST_SIZE"), " ", createSizeBadge(suggested.size));
+      }
+    }
   }
   return adviceContainer;
 }
-const annotationStyles = '.annotation{display:block;position:relative}.annotation-inline{text-align:end;display:inline-block;position:relative}button{cursor:pointer;border-radius:50%;width:36px;height:36px;padding:0;transition:all .2s ease-in-out;display:block;position:absolute;box-shadow:0 0 16px #0000004f}button:after{content:"";width:36px;height:36px;padding:7px;position:absolute;top:-7px;left:-7px}.error-btn{z-index:9999;background:50% 50% var(--sa11y-error-svg)no-repeat;background-color:var(--sa11y-error);border:1px solid var(--sa11y-error);background-size:22px}.error-btn:hover,.error-btn:focus{background-color:var(--sa11y-error-hover)}.good-btn{z-index:9977;background:50% 50% var(--sa11y-good)var(--sa11y-good-svg)no-repeat;background-color:var(--sa11y-good);border:1px solid var(--sa11y-good);background-size:20px}.good-btn:hover,.good-btn:focus{background-color:var(--sa11y-good-hover)}.warning-btn{z-index:9988;background:50% 50% var(--sa11y-warning)var(--sa11y-warning-svg)no-repeat;background-color:var(--sa11y-warning);border:1px solid var(--sa11y-warning);transform:scaleX(var(--sa11y-icon-direction));background-size:24px}.warning-btn:hover,.warning-btn:focus{background-color:var(--sa11y-warning-hover)}button:active,button:focus{box-shadow:0 0 0 5px var(--sa11y-focus-color);outline:0}@media screen and (forced-colors:active){button{forced-color-adjust:none;border:1px solid #0000!important;outline:3px solid #0000!important}}';
-class Annotations extends HTMLElement {
-  connectedCallback() {
-    if (this.shadowRoot) {
-      return;
-    }
-    const shadow = this.attachShadow({ mode: "open" });
-    const style = document.createElement("style");
-    style.innerHTML = annotationStyles + sharedStyles;
-    shadow.appendChild(style);
+const sides = ["top", "right", "bottom", "left"];
+const alignments = ["start", "end"];
+const placements = /* @__PURE__ */ sides.reduce((acc, side) => acc.concat(side, side + "-" + alignments[0], side + "-" + alignments[1]), []);
+const min = Math.min;
+const max = Math.max;
+const round = Math.round;
+const floor = Math.floor;
+const createCoords = (v) => ({
+  x: v,
+  y: v
+});
+const oppositeSideMap = {
+  left: "right",
+  right: "left",
+  bottom: "top",
+  top: "bottom"
+};
+function clamp(start, value, end) {
+  return max(start, min(value, end));
+}
+function evaluate(value, param) {
+  return typeof value === "function" ? value(param) : value;
+}
+function getSide(placement) {
+  return placement.split("-")[0];
+}
+function getAlignment(placement) {
+  return placement.split("-")[1];
+}
+function getOppositeAxis(axis) {
+  return axis === "x" ? "y" : "x";
+}
+function getAxisLength(axis) {
+  return axis === "y" ? "height" : "width";
+}
+function getSideAxis(placement) {
+  const firstChar = placement[0];
+  return firstChar === "t" || firstChar === "b" ? "y" : "x";
+}
+function getAlignmentAxis(placement) {
+  return getOppositeAxis(getSideAxis(placement));
+}
+function getAlignmentSides(placement, rects, rtl) {
+  if (rtl === void 0) {
+    rtl = false;
+  }
+  const alignment = getAlignment(placement);
+  const alignmentAxis = getAlignmentAxis(placement);
+  const length = getAxisLength(alignmentAxis);
+  let mainAlignmentSide = alignmentAxis === "x" ? alignment === (rtl ? "end" : "start") ? "right" : "left" : alignment === "start" ? "bottom" : "top";
+  if (rects.reference[length] > rects.floating[length]) {
+    mainAlignmentSide = getOppositePlacement(mainAlignmentSide);
+  }
+  return [mainAlignmentSide, getOppositePlacement(mainAlignmentSide)];
+}
+function getExpandedPlacements(placement) {
+  const oppositePlacement = getOppositePlacement(placement);
+  return [getOppositeAlignmentPlacement(placement), oppositePlacement, getOppositeAlignmentPlacement(oppositePlacement)];
+}
+function getOppositeAlignmentPlacement(placement) {
+  return placement.includes("start") ? placement.replace("start", "end") : placement.replace("end", "start");
+}
+const lrPlacement = ["left", "right"];
+const rlPlacement = ["right", "left"];
+const tbPlacement = ["top", "bottom"];
+const btPlacement = ["bottom", "top"];
+function getSideList(side, isStart, rtl) {
+  switch (side) {
+    case "top":
+    case "bottom":
+      if (rtl) return isStart ? rlPlacement : lrPlacement;
+      return isStart ? lrPlacement : rlPlacement;
+    case "left":
+    case "right":
+      return isStart ? tbPlacement : btPlacement;
+    default:
+      return [];
   }
 }
-const annotationButtons = [];
-function annotate(issue, option) {
-  const {
-    element,
-    type,
-    content,
-    inline = false,
-    position = "beforebegin",
-    id,
-    dismiss,
-    dismissAll,
-    contrastDetails,
-    margin
-  } = issue;
-  const validTypes = ["error", "warning", "good"];
-  if (!type && !element) {
-    return;
-  }
-  if (validTypes.indexOf(type) === -1) {
-    throw Error(`Invalid type [${type}] for annotation`);
-  }
-  const ariaLabel = {
-    [validTypes[0]]: Lang._("ERROR"),
-    [validTypes[1]]: Lang._("WARNING"),
-    [validTypes[2]]: Lang._("GOOD")
-  };
-  const dismissBtn = option.dismissAnnotations && (type === "warning" || type === "good") && dismiss ? `<button data-sa11y-dismiss='${id}' type='button'>${Lang._("DISMISS")}</button>` : "";
-  if (element) {
-    if (type === "good") {
-      if (!option.showGoodImageButton && element?.tagName === "IMG") {
-        return;
-      }
-      if (!option.showGoodLinkButton && element?.tagName === "A") {
-        return;
-      }
+function getOppositeAxisPlacements(placement, flipAlignment, direction, rtl) {
+  const alignment = getAlignment(placement);
+  let list = getSideList(getSide(placement), direction === "start", rtl);
+  if (alignment) {
+    list = list.map((side) => side + "-" + alignment);
+    if (flipAlignment) {
+      list = list.concat(list.map(getOppositeAlignmentPlacement));
     }
-    const tag = {
-      [validTypes[0]]: "data-sa11y-error",
-      [validTypes[1]]: "data-sa11y-warning",
-      [validTypes[2]]: "data-sa11y-good"
-    };
-    [type].forEach(($el) => {
-      if (tag[$el]) {
-        element.setAttribute(tag[$el], "");
+  }
+  return list;
+}
+function getOppositePlacement(placement) {
+  const side = getSide(placement);
+  return oppositeSideMap[side] + placement.slice(side.length);
+}
+function expandPaddingObject(padding) {
+  return {
+    top: 0,
+    right: 0,
+    bottom: 0,
+    left: 0,
+    ...padding
+  };
+}
+function getPaddingObject(padding) {
+  return typeof padding !== "number" ? expandPaddingObject(padding) : {
+    top: padding,
+    right: padding,
+    bottom: padding,
+    left: padding
+  };
+}
+function rectToClientRect(rect) {
+  const {
+    x,
+    y,
+    width,
+    height
+  } = rect;
+  return {
+    width,
+    height,
+    top: y,
+    left: x,
+    right: x + width,
+    bottom: y + height,
+    x,
+    y
+  };
+}
+function computeCoordsFromPlacement(_ref, placement, rtl) {
+  let {
+    reference,
+    floating
+  } = _ref;
+  const sideAxis = getSideAxis(placement);
+  const alignmentAxis = getAlignmentAxis(placement);
+  const alignLength = getAxisLength(alignmentAxis);
+  const side = getSide(placement);
+  const isVertical = sideAxis === "y";
+  const commonX = reference.x + reference.width / 2 - floating.width / 2;
+  const commonY = reference.y + reference.height / 2 - floating.height / 2;
+  const commonAlign = reference[alignLength] / 2 - floating[alignLength] / 2;
+  let coords;
+  switch (side) {
+    case "top":
+      coords = {
+        x: commonX,
+        y: reference.y - floating.height
+      };
+      break;
+    case "bottom":
+      coords = {
+        x: commonX,
+        y: reference.y + reference.height
+      };
+      break;
+    case "right":
+      coords = {
+        x: reference.x + reference.width,
+        y: commonY
+      };
+      break;
+    case "left":
+      coords = {
+        x: reference.x - floating.width,
+        y: commonY
+      };
+      break;
+    default:
+      coords = {
+        x: reference.x,
+        y: reference.y
+      };
+  }
+  switch (getAlignment(placement)) {
+    case "start":
+      coords[alignmentAxis] -= commonAlign * (rtl && isVertical ? -1 : 1);
+      break;
+    case "end":
+      coords[alignmentAxis] += commonAlign * (rtl && isVertical ? -1 : 1);
+      break;
+  }
+  return coords;
+}
+async function detectOverflow(state, options) {
+  var _await$platform$isEle;
+  if (options === void 0) {
+    options = {};
+  }
+  const {
+    x,
+    y,
+    platform: platform2,
+    rects,
+    elements,
+    strategy
+  } = state;
+  const {
+    boundary = "clippingAncestors",
+    rootBoundary = "viewport",
+    elementContext = "floating",
+    altBoundary = false,
+    padding = 0
+  } = evaluate(options, state);
+  const paddingObject = getPaddingObject(padding);
+  const altContext = elementContext === "floating" ? "reference" : "floating";
+  const element = elements[altBoundary ? altContext : elementContext];
+  const clippingClientRect = rectToClientRect(await platform2.getClippingRect({
+    element: ((_await$platform$isEle = await (platform2.isElement == null ? void 0 : platform2.isElement(element))) != null ? _await$platform$isEle : true) ? element : element.contextElement || await (platform2.getDocumentElement == null ? void 0 : platform2.getDocumentElement(elements.floating)),
+    boundary,
+    rootBoundary,
+    strategy
+  }));
+  const rect = elementContext === "floating" ? {
+    x,
+    y,
+    width: rects.floating.width,
+    height: rects.floating.height
+  } : rects.reference;
+  const offsetParent = await (platform2.getOffsetParent == null ? void 0 : platform2.getOffsetParent(elements.floating));
+  const offsetScale = await (platform2.isElement == null ? void 0 : platform2.isElement(offsetParent)) ? await (platform2.getScale == null ? void 0 : platform2.getScale(offsetParent)) || {
+    x: 1,
+    y: 1
+  } : {
+    x: 1,
+    y: 1
+  };
+  const elementClientRect = rectToClientRect(platform2.convertOffsetParentRelativeRectToViewportRelativeRect ? await platform2.convertOffsetParentRelativeRectToViewportRelativeRect({
+    elements,
+    rect,
+    offsetParent,
+    strategy
+  }) : rect);
+  return {
+    top: (clippingClientRect.top - elementClientRect.top + paddingObject.top) / offsetScale.y,
+    bottom: (elementClientRect.bottom - clippingClientRect.bottom + paddingObject.bottom) / offsetScale.y,
+    left: (clippingClientRect.left - elementClientRect.left + paddingObject.left) / offsetScale.x,
+    right: (elementClientRect.right - clippingClientRect.right + paddingObject.right) / offsetScale.x
+  };
+}
+const MAX_RESET_COUNT = 50;
+const computePosition$1 = async (reference, floating, config) => {
+  const {
+    placement = "bottom",
+    strategy = "absolute",
+    middleware = [],
+    platform: platform2
+  } = config;
+  const platformWithDetectOverflow = platform2.detectOverflow ? platform2 : {
+    ...platform2,
+    detectOverflow
+  };
+  const rtl = await (platform2.isRTL == null ? void 0 : platform2.isRTL(floating));
+  let rects = await platform2.getElementRects({
+    reference,
+    floating,
+    strategy
+  });
+  let {
+    x,
+    y
+  } = computeCoordsFromPlacement(rects, placement, rtl);
+  let statefulPlacement = placement;
+  let resetCount = 0;
+  const middlewareData = {};
+  for (let i = 0; i < middleware.length; i++) {
+    const currentMiddleware = middleware[i];
+    if (!currentMiddleware) {
+      continue;
+    }
+    const {
+      name,
+      fn
+    } = currentMiddleware;
+    const {
+      x: nextX,
+      y: nextY,
+      data,
+      reset
+    } = await fn({
+      x,
+      y,
+      initialPlacement: placement,
+      placement: statefulPlacement,
+      strategy,
+      middlewareData,
+      rects,
+      platform: platformWithDetectOverflow,
+      elements: {
+        reference,
+        floating
       }
     });
-    const annotation = document.createElement("sa11y-annotation");
-    annotation.setAttribute("data-sa11y-annotation", id);
-    if (supportsAnchorPositioning()) {
-      annotation.style.position = "absolute";
-      annotation.style.positionAnchor = `--sa11y-anchor-${id}`;
-      annotation.style.top = "anchor(top)";
-      annotation.style.left = "anchor(left)";
-      const existing = element.style.anchorName;
-      element.style.anchorName = existing ? `${existing}, --sa11y-anchor-${id}` : `--sa11y-anchor-${id}`;
+    x = nextX != null ? nextX : x;
+    y = nextY != null ? nextY : y;
+    middlewareData[name] = {
+      ...middlewareData[name],
+      ...data
+    };
+    if (reset && resetCount < MAX_RESET_COUNT) {
+      resetCount++;
+      if (typeof reset === "object") {
+        if (reset.placement) {
+          statefulPlacement = reset.placement;
+        }
+        if (reset.rects) {
+          rects = reset.rects === true ? await platform2.getElementRects({
+            reference,
+            floating,
+            strategy
+          }) : reset.rects;
+        }
+        ({
+          x,
+          y
+        } = computeCoordsFromPlacement(rects, statefulPlacement, rtl));
+      }
+      i = -1;
     }
-    const dismissAllBtn = option.dismissAnnotations && option.dismissAll && typeof dismissAll === "string" && (type === "warning" || type === "good") ? `<button data-sa11y-dismiss='${id}' data-sa11y-dismiss-all type='button'>${Lang._("DISMISS_ALL")}</button>` : "";
-    const buttonWrapper = document.createElement("div");
-    buttonWrapper.classList.add(inline ? "annotation-inline" : "annotation");
-    const button = document.createElement("button");
-    button.type = "button";
-    button.className = `${type}-btn`;
-    button.setAttribute("aria-label", ariaLabel[type]);
-    button.setAttribute("aria-haspopup", "dialog");
-    button.style.margin = `${inline ? "-10px" : ""} ${margin}`;
-    button.dataset.tippyContent = `<div lang='${Lang._("LANG_CODE")}' class='${type}'><button type='button' class='close-btn close-tooltip' aria-label='${Lang._("ALERT_CLOSE")}'></button><h2>${ariaLabel[type]}</h2> ${content} ${contrastDetails ? "<div data-sa11y-contrast-details></div>" : ""} <div class='dismiss-group'>${dismissBtn}${dismissAllBtn}</div></div>`;
-    buttonWrapper.appendChild(button);
-    annotationButtons.push(button);
-    const insertBefore = option.insertAnnotationBefore ? `, ${option.insertAnnotationBefore}` : "";
-    const location = element.closest(`a, button, [role="link"], [role="button"] ${insertBefore}`) || element;
-    location.insertAdjacentElement(position, annotation);
-    annotation.shadowRoot.appendChild(buttonWrapper);
-    const ignoredElements = option.ignoreHiddenOverflow ? option.ignoreHiddenOverflow.split(",").flatMap((selector) => [...document.querySelectorAll(selector)]) : [];
-    const parent = findVisibleParent(element, "overflow", "hidden");
-    if (parent && !ignoredElements.includes(parent)) {
-      parent.setAttribute("data-sa11y-overflow", "");
-    }
-  } else {
-    const listItem = document.createElement("li");
-    listItem.innerHTML = `<h3>${ariaLabel[type]}</h3> ${content}${dismissBtn}`;
-    Constants.Panel.pageIssuesList.insertAdjacentElement("afterbegin", listItem);
-    Constants.Panel.pageIssues.classList.add("active");
-    Constants.Panel.panel.classList.add("has-page-issues");
   }
+  return {
+    x,
+    y,
+    placement: statefulPlacement,
+    strategy,
+    middlewareData
+  };
+};
+const arrow$1 = (options) => ({
+  name: "arrow",
+  options,
+  async fn(state) {
+    const {
+      x,
+      y,
+      placement,
+      rects,
+      platform: platform2,
+      elements,
+      middlewareData
+    } = state;
+    const {
+      element,
+      padding = 0
+    } = evaluate(options, state) || {};
+    if (element == null) {
+      return {};
+    }
+    const paddingObject = getPaddingObject(padding);
+    const coords = {
+      x,
+      y
+    };
+    const axis = getAlignmentAxis(placement);
+    const length = getAxisLength(axis);
+    const arrowDimensions = await platform2.getDimensions(element);
+    const isYAxis = axis === "y";
+    const minProp = isYAxis ? "top" : "left";
+    const maxProp = isYAxis ? "bottom" : "right";
+    const clientProp = isYAxis ? "clientHeight" : "clientWidth";
+    const endDiff = rects.reference[length] + rects.reference[axis] - coords[axis] - rects.floating[length];
+    const startDiff = coords[axis] - rects.reference[axis];
+    const arrowOffsetParent = await (platform2.getOffsetParent == null ? void 0 : platform2.getOffsetParent(element));
+    let clientSize = arrowOffsetParent ? arrowOffsetParent[clientProp] : 0;
+    if (!clientSize || !await (platform2.isElement == null ? void 0 : platform2.isElement(arrowOffsetParent))) {
+      clientSize = elements.floating[clientProp] || rects.floating[length];
+    }
+    const centerToReference = endDiff / 2 - startDiff / 2;
+    const largestPossiblePadding = clientSize / 2 - arrowDimensions[length] / 2 - 1;
+    const minPadding = min(paddingObject[minProp], largestPossiblePadding);
+    const maxPadding = min(paddingObject[maxProp], largestPossiblePadding);
+    const min$1 = minPadding;
+    const max2 = clientSize - arrowDimensions[length] - maxPadding;
+    const center = clientSize / 2 - arrowDimensions[length] / 2 + centerToReference;
+    const offset2 = clamp(min$1, center, max2);
+    const shouldAddOffset = !middlewareData.arrow && getAlignment(placement) != null && center !== offset2 && rects.reference[length] / 2 - (center < min$1 ? minPadding : maxPadding) - arrowDimensions[length] / 2 < 0;
+    const alignmentOffset = shouldAddOffset ? center < min$1 ? center - min$1 : center - max2 : 0;
+    return {
+      [axis]: coords[axis] + alignmentOffset,
+      data: {
+        [axis]: offset2,
+        centerOffset: center - offset2 - alignmentOffset,
+        ...shouldAddOffset && {
+          alignmentOffset
+        }
+      },
+      reset: shouldAddOffset
+    };
+  }
+});
+function getPlacementList(alignment, autoAlignment, allowedPlacements) {
+  const allowedPlacementsSortedByAlignment = alignment ? [...allowedPlacements.filter((placement) => getAlignment(placement) === alignment), ...allowedPlacements.filter((placement) => getAlignment(placement) !== alignment)] : allowedPlacements.filter((placement) => getSide(placement) === placement);
+  return allowedPlacementsSortedByAlignment.filter((placement) => {
+    if (alignment) {
+      return getAlignment(placement) === alignment || (autoAlignment ? getOppositeAlignmentPlacement(placement) !== placement : false);
+    }
+    return true;
+  });
+}
+const autoPlacement$1 = function(options) {
+  if (options === void 0) {
+    options = {};
+  }
+  return {
+    name: "autoPlacement",
+    options,
+    async fn(state) {
+      var _middlewareData$autoP, _middlewareData$autoP2, _placementsThatFitOnE;
+      const {
+        rects,
+        middlewareData,
+        placement,
+        platform: platform2,
+        elements
+      } = state;
+      const {
+        crossAxis = false,
+        alignment,
+        allowedPlacements = placements,
+        autoAlignment = true,
+        ...detectOverflowOptions
+      } = evaluate(options, state);
+      const placements$1 = alignment !== void 0 || allowedPlacements === placements ? getPlacementList(alignment || null, autoAlignment, allowedPlacements) : allowedPlacements;
+      const overflow = await platform2.detectOverflow(state, detectOverflowOptions);
+      const currentIndex = ((_middlewareData$autoP = middlewareData.autoPlacement) == null ? void 0 : _middlewareData$autoP.index) || 0;
+      const currentPlacement = placements$1[currentIndex];
+      if (currentPlacement == null) {
+        return {};
+      }
+      const alignmentSides = getAlignmentSides(currentPlacement, rects, await (platform2.isRTL == null ? void 0 : platform2.isRTL(elements.floating)));
+      if (placement !== currentPlacement) {
+        return {
+          reset: {
+            placement: placements$1[0]
+          }
+        };
+      }
+      const currentOverflows = [overflow[getSide(currentPlacement)], overflow[alignmentSides[0]], overflow[alignmentSides[1]]];
+      const allOverflows = [...((_middlewareData$autoP2 = middlewareData.autoPlacement) == null ? void 0 : _middlewareData$autoP2.overflows) || [], {
+        placement: currentPlacement,
+        overflows: currentOverflows
+      }];
+      const nextPlacement = placements$1[currentIndex + 1];
+      if (nextPlacement) {
+        return {
+          data: {
+            index: currentIndex + 1,
+            overflows: allOverflows
+          },
+          reset: {
+            placement: nextPlacement
+          }
+        };
+      }
+      const placementsSortedByMostSpace = allOverflows.map((d) => {
+        const alignment2 = getAlignment(d.placement);
+        return [d.placement, alignment2 && crossAxis ? (
+          // Check along the mainAxis and main crossAxis side.
+          d.overflows.slice(0, 2).reduce((acc, v) => acc + v, 0)
+        ) : (
+          // Check only the mainAxis.
+          d.overflows[0]
+        ), d.overflows];
+      }).sort((a, b) => a[1] - b[1]);
+      const placementsThatFitOnEachSide = placementsSortedByMostSpace.filter((d) => d[2].slice(
+        0,
+        // Aligned placements should not check their opposite crossAxis
+        // side.
+        getAlignment(d[0]) ? 2 : 3
+      ).every((v) => v <= 0));
+      const resetPlacement = ((_placementsThatFitOnE = placementsThatFitOnEachSide[0]) == null ? void 0 : _placementsThatFitOnE[0]) || placementsSortedByMostSpace[0][0];
+      if (resetPlacement !== placement) {
+        return {
+          data: {
+            index: currentIndex + 1,
+            overflows: allOverflows
+          },
+          reset: {
+            placement: resetPlacement
+          }
+        };
+      }
+      return {};
+    }
+  };
+};
+const flip$1 = function(options) {
+  if (options === void 0) {
+    options = {};
+  }
+  return {
+    name: "flip",
+    options,
+    async fn(state) {
+      var _middlewareData$arrow, _middlewareData$flip;
+      const {
+        placement,
+        middlewareData,
+        rects,
+        initialPlacement,
+        platform: platform2,
+        elements
+      } = state;
+      const {
+        mainAxis: checkMainAxis = true,
+        crossAxis: checkCrossAxis = true,
+        fallbackPlacements: specifiedFallbackPlacements,
+        fallbackStrategy = "bestFit",
+        fallbackAxisSideDirection = "none",
+        flipAlignment = true,
+        ...detectOverflowOptions
+      } = evaluate(options, state);
+      if ((_middlewareData$arrow = middlewareData.arrow) != null && _middlewareData$arrow.alignmentOffset) {
+        return {};
+      }
+      const side = getSide(placement);
+      const initialSideAxis = getSideAxis(initialPlacement);
+      const isBasePlacement = getSide(initialPlacement) === initialPlacement;
+      const rtl = await (platform2.isRTL == null ? void 0 : platform2.isRTL(elements.floating));
+      const fallbackPlacements = specifiedFallbackPlacements || (isBasePlacement || !flipAlignment ? [getOppositePlacement(initialPlacement)] : getExpandedPlacements(initialPlacement));
+      const hasFallbackAxisSideDirection = fallbackAxisSideDirection !== "none";
+      if (!specifiedFallbackPlacements && hasFallbackAxisSideDirection) {
+        fallbackPlacements.push(...getOppositeAxisPlacements(initialPlacement, flipAlignment, fallbackAxisSideDirection, rtl));
+      }
+      const placements2 = [initialPlacement, ...fallbackPlacements];
+      const overflow = await platform2.detectOverflow(state, detectOverflowOptions);
+      const overflows = [];
+      let overflowsData = ((_middlewareData$flip = middlewareData.flip) == null ? void 0 : _middlewareData$flip.overflows) || [];
+      if (checkMainAxis) {
+        overflows.push(overflow[side]);
+      }
+      if (checkCrossAxis) {
+        const sides2 = getAlignmentSides(placement, rects, rtl);
+        overflows.push(overflow[sides2[0]], overflow[sides2[1]]);
+      }
+      overflowsData = [...overflowsData, {
+        placement,
+        overflows
+      }];
+      if (!overflows.every((side2) => side2 <= 0)) {
+        var _middlewareData$flip2, _overflowsData$filter;
+        const nextIndex = (((_middlewareData$flip2 = middlewareData.flip) == null ? void 0 : _middlewareData$flip2.index) || 0) + 1;
+        const nextPlacement = placements2[nextIndex];
+        if (nextPlacement) {
+          const ignoreCrossAxisOverflow = checkCrossAxis === "alignment" ? initialSideAxis !== getSideAxis(nextPlacement) : false;
+          if (!ignoreCrossAxisOverflow || // We leave the current main axis only if every placement on that axis
+          // overflows the main axis.
+          overflowsData.every((d) => getSideAxis(d.placement) === initialSideAxis ? d.overflows[0] > 0 : true)) {
+            return {
+              data: {
+                index: nextIndex,
+                overflows: overflowsData
+              },
+              reset: {
+                placement: nextPlacement
+              }
+            };
+          }
+        }
+        let resetPlacement = (_overflowsData$filter = overflowsData.filter((d) => d.overflows[0] <= 0).sort((a, b) => a.overflows[1] - b.overflows[1])[0]) == null ? void 0 : _overflowsData$filter.placement;
+        if (!resetPlacement) {
+          switch (fallbackStrategy) {
+            case "bestFit": {
+              var _overflowsData$filter2;
+              const placement2 = (_overflowsData$filter2 = overflowsData.filter((d) => {
+                if (hasFallbackAxisSideDirection) {
+                  const currentSideAxis = getSideAxis(d.placement);
+                  return currentSideAxis === initialSideAxis || // Create a bias to the `y` side axis due to horizontal
+                  // reading directions favoring greater width.
+                  currentSideAxis === "y";
+                }
+                return true;
+              }).map((d) => [d.placement, d.overflows.filter((overflow2) => overflow2 > 0).reduce((acc, overflow2) => acc + overflow2, 0)]).sort((a, b) => a[1] - b[1])[0]) == null ? void 0 : _overflowsData$filter2[0];
+              if (placement2) {
+                resetPlacement = placement2;
+              }
+              break;
+            }
+            case "initialPlacement":
+              resetPlacement = initialPlacement;
+              break;
+          }
+        }
+        if (placement !== resetPlacement) {
+          return {
+            reset: {
+              placement: resetPlacement
+            }
+          };
+        }
+      }
+      return {};
+    }
+  };
+};
+const originSides = /* @__PURE__ */ new Set(["left", "top"]);
+async function convertValueToCoords(state, options) {
+  const {
+    placement,
+    platform: platform2,
+    elements
+  } = state;
+  const rtl = await (platform2.isRTL == null ? void 0 : platform2.isRTL(elements.floating));
+  const side = getSide(placement);
+  const alignment = getAlignment(placement);
+  const isVertical = getSideAxis(placement) === "y";
+  const mainAxisMulti = originSides.has(side) ? -1 : 1;
+  const crossAxisMulti = rtl && isVertical ? -1 : 1;
+  const rawValue = evaluate(options, state);
+  let {
+    mainAxis,
+    crossAxis,
+    alignmentAxis
+  } = typeof rawValue === "number" ? {
+    mainAxis: rawValue,
+    crossAxis: 0,
+    alignmentAxis: null
+  } : {
+    mainAxis: rawValue.mainAxis || 0,
+    crossAxis: rawValue.crossAxis || 0,
+    alignmentAxis: rawValue.alignmentAxis
+  };
+  if (alignment && typeof alignmentAxis === "number") {
+    crossAxis = alignment === "end" ? alignmentAxis * -1 : alignmentAxis;
+  }
+  return isVertical ? {
+    x: crossAxis * crossAxisMulti,
+    y: mainAxis * mainAxisMulti
+  } : {
+    x: mainAxis * mainAxisMulti,
+    y: crossAxis * crossAxisMulti
+  };
+}
+const offset$1 = function(options) {
+  if (options === void 0) {
+    options = 0;
+  }
+  return {
+    name: "offset",
+    options,
+    async fn(state) {
+      var _middlewareData$offse, _middlewareData$arrow;
+      const {
+        x,
+        y,
+        placement,
+        middlewareData
+      } = state;
+      const diffCoords = await convertValueToCoords(state, options);
+      if (placement === ((_middlewareData$offse = middlewareData.offset) == null ? void 0 : _middlewareData$offse.placement) && (_middlewareData$arrow = middlewareData.arrow) != null && _middlewareData$arrow.alignmentOffset) {
+        return {};
+      }
+      return {
+        x: x + diffCoords.x,
+        y: y + diffCoords.y,
+        data: {
+          ...diffCoords,
+          placement
+        }
+      };
+    }
+  };
+};
+const shift$1 = function(options) {
+  if (options === void 0) {
+    options = {};
+  }
+  return {
+    name: "shift",
+    options,
+    async fn(state) {
+      const {
+        x,
+        y,
+        placement,
+        platform: platform2
+      } = state;
+      const {
+        mainAxis: checkMainAxis = true,
+        crossAxis: checkCrossAxis = false,
+        limiter = {
+          fn: (_ref) => {
+            let {
+              x: x2,
+              y: y2
+            } = _ref;
+            return {
+              x: x2,
+              y: y2
+            };
+          }
+        },
+        ...detectOverflowOptions
+      } = evaluate(options, state);
+      const coords = {
+        x,
+        y
+      };
+      const overflow = await platform2.detectOverflow(state, detectOverflowOptions);
+      const crossAxis = getSideAxis(getSide(placement));
+      const mainAxis = getOppositeAxis(crossAxis);
+      let mainAxisCoord = coords[mainAxis];
+      let crossAxisCoord = coords[crossAxis];
+      if (checkMainAxis) {
+        const minSide = mainAxis === "y" ? "top" : "left";
+        const maxSide = mainAxis === "y" ? "bottom" : "right";
+        const min2 = mainAxisCoord + overflow[minSide];
+        const max2 = mainAxisCoord - overflow[maxSide];
+        mainAxisCoord = clamp(min2, mainAxisCoord, max2);
+      }
+      if (checkCrossAxis) {
+        const minSide = crossAxis === "y" ? "top" : "left";
+        const maxSide = crossAxis === "y" ? "bottom" : "right";
+        const min2 = crossAxisCoord + overflow[minSide];
+        const max2 = crossAxisCoord - overflow[maxSide];
+        crossAxisCoord = clamp(min2, crossAxisCoord, max2);
+      }
+      const limitedCoords = limiter.fn({
+        ...state,
+        [mainAxis]: mainAxisCoord,
+        [crossAxis]: crossAxisCoord
+      });
+      return {
+        ...limitedCoords,
+        data: {
+          x: limitedCoords.x - x,
+          y: limitedCoords.y - y,
+          enabled: {
+            [mainAxis]: checkMainAxis,
+            [crossAxis]: checkCrossAxis
+          }
+        }
+      };
+    }
+  };
+};
+function hasWindow() {
+  return typeof window !== "undefined";
+}
+function getNodeName(node) {
+  if (isNode(node)) {
+    return (node.nodeName || "").toLowerCase();
+  }
+  return "#document";
+}
+function getWindow(node) {
+  var _node$ownerDocument;
+  return (node == null || (_node$ownerDocument = node.ownerDocument) == null ? void 0 : _node$ownerDocument.defaultView) || window;
+}
+function getDocumentElement(node) {
+  var _ref;
+  return (_ref = (isNode(node) ? node.ownerDocument : node.document) || window.document) == null ? void 0 : _ref.documentElement;
+}
+function isNode(value) {
+  if (!hasWindow()) {
+    return false;
+  }
+  return value instanceof Node || value instanceof getWindow(value).Node;
+}
+function isElement(value) {
+  if (!hasWindow()) {
+    return false;
+  }
+  return value instanceof Element || value instanceof getWindow(value).Element;
+}
+function isHTMLElement(value) {
+  if (!hasWindow()) {
+    return false;
+  }
+  return value instanceof HTMLElement || value instanceof getWindow(value).HTMLElement;
+}
+function isShadowRoot(value) {
+  if (!hasWindow() || typeof ShadowRoot === "undefined") {
+    return false;
+  }
+  return value instanceof ShadowRoot || value instanceof getWindow(value).ShadowRoot;
+}
+function isOverflowElement(element) {
+  const {
+    overflow,
+    overflowX,
+    overflowY,
+    display
+  } = getComputedStyle$1(element);
+  return /auto|scroll|overlay|hidden|clip/.test(overflow + overflowY + overflowX) && display !== "inline" && display !== "contents";
+}
+function isTableElement(element) {
+  return /^(table|td|th)$/.test(getNodeName(element));
+}
+function isTopLayer(element) {
+  try {
+    if (element.matches(":popover-open")) {
+      return true;
+    }
+  } catch (_e) {
+  }
+  try {
+    return element.matches(":modal");
+  } catch (_e) {
+    return false;
+  }
+}
+const willChangeRe = /transform|translate|scale|rotate|perspective|filter/;
+const containRe = /paint|layout|strict|content/;
+const isNotNone = (value) => !!value && value !== "none";
+let isWebKitValue;
+function isContainingBlock(elementOrCss) {
+  const css = isElement(elementOrCss) ? getComputedStyle$1(elementOrCss) : elementOrCss;
+  return isNotNone(css.transform) || isNotNone(css.translate) || isNotNone(css.scale) || isNotNone(css.rotate) || isNotNone(css.perspective) || !isWebKit() && (isNotNone(css.backdropFilter) || isNotNone(css.filter)) || willChangeRe.test(css.willChange || "") || containRe.test(css.contain || "");
+}
+function getContainingBlock(element) {
+  let currentNode = getParentNode(element);
+  while (isHTMLElement(currentNode) && !isLastTraversableNode(currentNode)) {
+    if (isContainingBlock(currentNode)) {
+      return currentNode;
+    } else if (isTopLayer(currentNode)) {
+      return null;
+    }
+    currentNode = getParentNode(currentNode);
+  }
+  return null;
+}
+function isWebKit() {
+  if (isWebKitValue == null) {
+    isWebKitValue = typeof CSS !== "undefined" && CSS.supports && CSS.supports("-webkit-backdrop-filter", "none");
+  }
+  return isWebKitValue;
+}
+function isLastTraversableNode(node) {
+  return /^(html|body|#document)$/.test(getNodeName(node));
+}
+function getComputedStyle$1(element) {
+  return getWindow(element).getComputedStyle(element);
+}
+function getNodeScroll(element) {
+  if (isElement(element)) {
+    return {
+      scrollLeft: element.scrollLeft,
+      scrollTop: element.scrollTop
+    };
+  }
+  return {
+    scrollLeft: element.scrollX,
+    scrollTop: element.scrollY
+  };
+}
+function getParentNode(node) {
+  if (getNodeName(node) === "html") {
+    return node;
+  }
+  const result = (
+    // Step into the shadow DOM of the parent of a slotted node.
+    node.assignedSlot || // DOM Element detected.
+    node.parentNode || // ShadowRoot detected.
+    isShadowRoot(node) && node.host || // Fallback.
+    getDocumentElement(node)
+  );
+  return isShadowRoot(result) ? result.host : result;
+}
+function getNearestOverflowAncestor(node) {
+  const parentNode = getParentNode(node);
+  if (isLastTraversableNode(parentNode)) {
+    return node.ownerDocument ? node.ownerDocument.body : node.body;
+  }
+  if (isHTMLElement(parentNode) && isOverflowElement(parentNode)) {
+    return parentNode;
+  }
+  return getNearestOverflowAncestor(parentNode);
+}
+function getOverflowAncestors(node, list, traverseIframes) {
+  var _node$ownerDocument2;
+  if (list === void 0) {
+    list = [];
+  }
+  if (traverseIframes === void 0) {
+    traverseIframes = true;
+  }
+  const scrollableAncestor = getNearestOverflowAncestor(node);
+  const isBody = scrollableAncestor === ((_node$ownerDocument2 = node.ownerDocument) == null ? void 0 : _node$ownerDocument2.body);
+  const win = getWindow(scrollableAncestor);
+  if (isBody) {
+    const frameElement = getFrameElement(win);
+    return list.concat(win, win.visualViewport || [], isOverflowElement(scrollableAncestor) ? scrollableAncestor : [], frameElement && traverseIframes ? getOverflowAncestors(frameElement) : []);
+  } else {
+    return list.concat(scrollableAncestor, getOverflowAncestors(scrollableAncestor, [], traverseIframes));
+  }
+}
+function getFrameElement(win) {
+  return win.parent && Object.getPrototypeOf(win.parent) ? win.frameElement : null;
+}
+function getCssDimensions(element) {
+  const css = getComputedStyle$1(element);
+  let width = parseFloat(css.width) || 0;
+  let height = parseFloat(css.height) || 0;
+  const hasOffset = isHTMLElement(element);
+  const offsetWidth = hasOffset ? element.offsetWidth : width;
+  const offsetHeight = hasOffset ? element.offsetHeight : height;
+  const shouldFallback = round(width) !== offsetWidth || round(height) !== offsetHeight;
+  if (shouldFallback) {
+    width = offsetWidth;
+    height = offsetHeight;
+  }
+  return {
+    width,
+    height,
+    $: shouldFallback
+  };
+}
+function unwrapElement(element) {
+  return !isElement(element) ? element.contextElement : element;
+}
+function getScale(element) {
+  const domElement = unwrapElement(element);
+  if (!isHTMLElement(domElement)) {
+    return createCoords(1);
+  }
+  const rect = domElement.getBoundingClientRect();
+  const {
+    width,
+    height,
+    $
+  } = getCssDimensions(domElement);
+  let x = ($ ? round(rect.width) : rect.width) / width;
+  let y = ($ ? round(rect.height) : rect.height) / height;
+  if (!x || !Number.isFinite(x)) {
+    x = 1;
+  }
+  if (!y || !Number.isFinite(y)) {
+    y = 1;
+  }
+  return {
+    x,
+    y
+  };
+}
+const noOffsets = /* @__PURE__ */ createCoords(0);
+function getVisualOffsets(element) {
+  const win = getWindow(element);
+  if (!isWebKit() || !win.visualViewport) {
+    return noOffsets;
+  }
+  return {
+    x: win.visualViewport.offsetLeft,
+    y: win.visualViewport.offsetTop
+  };
+}
+function shouldAddVisualOffsets(element, isFixed, floatingOffsetParent) {
+  if (isFixed === void 0) {
+    isFixed = false;
+  }
+  if (!floatingOffsetParent || isFixed && floatingOffsetParent !== getWindow(element)) {
+    return false;
+  }
+  return isFixed;
+}
+function getBoundingClientRect(element, includeScale, isFixedStrategy, offsetParent) {
+  if (includeScale === void 0) {
+    includeScale = false;
+  }
+  if (isFixedStrategy === void 0) {
+    isFixedStrategy = false;
+  }
+  const clientRect = element.getBoundingClientRect();
+  const domElement = unwrapElement(element);
+  let scale = createCoords(1);
+  if (includeScale) {
+    if (offsetParent) {
+      if (isElement(offsetParent)) {
+        scale = getScale(offsetParent);
+      }
+    } else {
+      scale = getScale(element);
+    }
+  }
+  const visualOffsets = shouldAddVisualOffsets(domElement, isFixedStrategy, offsetParent) ? getVisualOffsets(domElement) : createCoords(0);
+  let x = (clientRect.left + visualOffsets.x) / scale.x;
+  let y = (clientRect.top + visualOffsets.y) / scale.y;
+  let width = clientRect.width / scale.x;
+  let height = clientRect.height / scale.y;
+  if (domElement) {
+    const win = getWindow(domElement);
+    const offsetWin = offsetParent && isElement(offsetParent) ? getWindow(offsetParent) : offsetParent;
+    let currentWin = win;
+    let currentIFrame = getFrameElement(currentWin);
+    while (currentIFrame && offsetParent && offsetWin !== currentWin) {
+      const iframeScale = getScale(currentIFrame);
+      const iframeRect = currentIFrame.getBoundingClientRect();
+      const css = getComputedStyle$1(currentIFrame);
+      const left = iframeRect.left + (currentIFrame.clientLeft + parseFloat(css.paddingLeft)) * iframeScale.x;
+      const top = iframeRect.top + (currentIFrame.clientTop + parseFloat(css.paddingTop)) * iframeScale.y;
+      x *= iframeScale.x;
+      y *= iframeScale.y;
+      width *= iframeScale.x;
+      height *= iframeScale.y;
+      x += left;
+      y += top;
+      currentWin = getWindow(currentIFrame);
+      currentIFrame = getFrameElement(currentWin);
+    }
+  }
+  return rectToClientRect({
+    width,
+    height,
+    x,
+    y
+  });
+}
+function getWindowScrollBarX(element, rect) {
+  const leftScroll = getNodeScroll(element).scrollLeft;
+  if (!rect) {
+    return getBoundingClientRect(getDocumentElement(element)).left + leftScroll;
+  }
+  return rect.left + leftScroll;
+}
+function getHTMLOffset(documentElement, scroll) {
+  const htmlRect = documentElement.getBoundingClientRect();
+  const x = htmlRect.left + scroll.scrollLeft - getWindowScrollBarX(documentElement, htmlRect);
+  const y = htmlRect.top + scroll.scrollTop;
+  return {
+    x,
+    y
+  };
+}
+function convertOffsetParentRelativeRectToViewportRelativeRect(_ref) {
+  let {
+    elements,
+    rect,
+    offsetParent,
+    strategy
+  } = _ref;
+  const isFixed = strategy === "fixed";
+  const documentElement = getDocumentElement(offsetParent);
+  const topLayer = elements ? isTopLayer(elements.floating) : false;
+  if (offsetParent === documentElement || topLayer && isFixed) {
+    return rect;
+  }
+  let scroll = {
+    scrollLeft: 0,
+    scrollTop: 0
+  };
+  let scale = createCoords(1);
+  const offsets = createCoords(0);
+  const isOffsetParentAnElement = isHTMLElement(offsetParent);
+  if (isOffsetParentAnElement || !isOffsetParentAnElement && !isFixed) {
+    if (getNodeName(offsetParent) !== "body" || isOverflowElement(documentElement)) {
+      scroll = getNodeScroll(offsetParent);
+    }
+    if (isOffsetParentAnElement) {
+      const offsetRect = getBoundingClientRect(offsetParent);
+      scale = getScale(offsetParent);
+      offsets.x = offsetRect.x + offsetParent.clientLeft;
+      offsets.y = offsetRect.y + offsetParent.clientTop;
+    }
+  }
+  const htmlOffset = documentElement && !isOffsetParentAnElement && !isFixed ? getHTMLOffset(documentElement, scroll) : createCoords(0);
+  return {
+    width: rect.width * scale.x,
+    height: rect.height * scale.y,
+    x: rect.x * scale.x - scroll.scrollLeft * scale.x + offsets.x + htmlOffset.x,
+    y: rect.y * scale.y - scroll.scrollTop * scale.y + offsets.y + htmlOffset.y
+  };
+}
+function getClientRects(element) {
+  return Array.from(element.getClientRects());
+}
+function getDocumentRect(element) {
+  const html = getDocumentElement(element);
+  const scroll = getNodeScroll(element);
+  const body = element.ownerDocument.body;
+  const width = max(html.scrollWidth, html.clientWidth, body.scrollWidth, body.clientWidth);
+  const height = max(html.scrollHeight, html.clientHeight, body.scrollHeight, body.clientHeight);
+  let x = -scroll.scrollLeft + getWindowScrollBarX(element);
+  const y = -scroll.scrollTop;
+  if (getComputedStyle$1(body).direction === "rtl") {
+    x += max(html.clientWidth, body.clientWidth) - width;
+  }
+  return {
+    width,
+    height,
+    x,
+    y
+  };
+}
+const SCROLLBAR_MAX = 25;
+function getViewportRect(element, strategy) {
+  const win = getWindow(element);
+  const html = getDocumentElement(element);
+  const visualViewport = win.visualViewport;
+  let width = html.clientWidth;
+  let height = html.clientHeight;
+  let x = 0;
+  let y = 0;
+  if (visualViewport) {
+    width = visualViewport.width;
+    height = visualViewport.height;
+    const visualViewportBased = isWebKit();
+    if (!visualViewportBased || visualViewportBased && strategy === "fixed") {
+      x = visualViewport.offsetLeft;
+      y = visualViewport.offsetTop;
+    }
+  }
+  const windowScrollbarX = getWindowScrollBarX(html);
+  if (windowScrollbarX <= 0) {
+    const doc = html.ownerDocument;
+    const body = doc.body;
+    const bodyStyles = getComputedStyle(body);
+    const bodyMarginInline = doc.compatMode === "CSS1Compat" ? parseFloat(bodyStyles.marginLeft) + parseFloat(bodyStyles.marginRight) || 0 : 0;
+    const clippingStableScrollbarWidth = Math.abs(html.clientWidth - body.clientWidth - bodyMarginInline);
+    if (clippingStableScrollbarWidth <= SCROLLBAR_MAX) {
+      width -= clippingStableScrollbarWidth;
+    }
+  } else if (windowScrollbarX <= SCROLLBAR_MAX) {
+    width += windowScrollbarX;
+  }
+  return {
+    width,
+    height,
+    x,
+    y
+  };
+}
+function getInnerBoundingClientRect(element, strategy) {
+  const clientRect = getBoundingClientRect(element, true, strategy === "fixed");
+  const top = clientRect.top + element.clientTop;
+  const left = clientRect.left + element.clientLeft;
+  const scale = isHTMLElement(element) ? getScale(element) : createCoords(1);
+  const width = element.clientWidth * scale.x;
+  const height = element.clientHeight * scale.y;
+  const x = left * scale.x;
+  const y = top * scale.y;
+  return {
+    width,
+    height,
+    x,
+    y
+  };
+}
+function getClientRectFromClippingAncestor(element, clippingAncestor, strategy) {
+  let rect;
+  if (clippingAncestor === "viewport") {
+    rect = getViewportRect(element, strategy);
+  } else if (clippingAncestor === "document") {
+    rect = getDocumentRect(getDocumentElement(element));
+  } else if (isElement(clippingAncestor)) {
+    rect = getInnerBoundingClientRect(clippingAncestor, strategy);
+  } else {
+    const visualOffsets = getVisualOffsets(element);
+    rect = {
+      x: clippingAncestor.x - visualOffsets.x,
+      y: clippingAncestor.y - visualOffsets.y,
+      width: clippingAncestor.width,
+      height: clippingAncestor.height
+    };
+  }
+  return rectToClientRect(rect);
+}
+function hasFixedPositionAncestor(element, stopNode) {
+  const parentNode = getParentNode(element);
+  if (parentNode === stopNode || !isElement(parentNode) || isLastTraversableNode(parentNode)) {
+    return false;
+  }
+  return getComputedStyle$1(parentNode).position === "fixed" || hasFixedPositionAncestor(parentNode, stopNode);
+}
+function getClippingElementAncestors(element, cache) {
+  const cachedResult = cache.get(element);
+  if (cachedResult) {
+    return cachedResult;
+  }
+  let result = getOverflowAncestors(element, [], false).filter((el2) => isElement(el2) && getNodeName(el2) !== "body");
+  let currentContainingBlockComputedStyle = null;
+  const elementIsFixed = getComputedStyle$1(element).position === "fixed";
+  let currentNode = elementIsFixed ? getParentNode(element) : element;
+  while (isElement(currentNode) && !isLastTraversableNode(currentNode)) {
+    const computedStyle = getComputedStyle$1(currentNode);
+    const currentNodeIsContaining = isContainingBlock(currentNode);
+    if (!currentNodeIsContaining && computedStyle.position === "fixed") {
+      currentContainingBlockComputedStyle = null;
+    }
+    const shouldDropCurrentNode = elementIsFixed ? !currentNodeIsContaining && !currentContainingBlockComputedStyle : !currentNodeIsContaining && computedStyle.position === "static" && !!currentContainingBlockComputedStyle && (currentContainingBlockComputedStyle.position === "absolute" || currentContainingBlockComputedStyle.position === "fixed") || isOverflowElement(currentNode) && !currentNodeIsContaining && hasFixedPositionAncestor(element, currentNode);
+    if (shouldDropCurrentNode) {
+      result = result.filter((ancestor) => ancestor !== currentNode);
+    } else {
+      currentContainingBlockComputedStyle = computedStyle;
+    }
+    currentNode = getParentNode(currentNode);
+  }
+  cache.set(element, result);
+  return result;
+}
+function getClippingRect(_ref) {
+  let {
+    element,
+    boundary,
+    rootBoundary,
+    strategy
+  } = _ref;
+  const elementClippingAncestors = boundary === "clippingAncestors" ? isTopLayer(element) ? [] : getClippingElementAncestors(element, this._c) : [].concat(boundary);
+  const clippingAncestors = [...elementClippingAncestors, rootBoundary];
+  const firstRect = getClientRectFromClippingAncestor(element, clippingAncestors[0], strategy);
+  let top = firstRect.top;
+  let right = firstRect.right;
+  let bottom = firstRect.bottom;
+  let left = firstRect.left;
+  for (let i = 1; i < clippingAncestors.length; i++) {
+    const rect = getClientRectFromClippingAncestor(element, clippingAncestors[i], strategy);
+    top = max(rect.top, top);
+    right = min(rect.right, right);
+    bottom = min(rect.bottom, bottom);
+    left = max(rect.left, left);
+  }
+  return {
+    width: right - left,
+    height: bottom - top,
+    x: left,
+    y: top
+  };
+}
+function getDimensions(element) {
+  const {
+    width,
+    height
+  } = getCssDimensions(element);
+  return {
+    width,
+    height
+  };
+}
+function getRectRelativeToOffsetParent(element, offsetParent, strategy) {
+  const isOffsetParentAnElement = isHTMLElement(offsetParent);
+  const documentElement = getDocumentElement(offsetParent);
+  const isFixed = strategy === "fixed";
+  const rect = getBoundingClientRect(element, true, isFixed, offsetParent);
+  let scroll = {
+    scrollLeft: 0,
+    scrollTop: 0
+  };
+  const offsets = createCoords(0);
+  function setLeftRTLScrollbarOffset() {
+    offsets.x = getWindowScrollBarX(documentElement);
+  }
+  if (isOffsetParentAnElement || !isOffsetParentAnElement && !isFixed) {
+    if (getNodeName(offsetParent) !== "body" || isOverflowElement(documentElement)) {
+      scroll = getNodeScroll(offsetParent);
+    }
+    if (isOffsetParentAnElement) {
+      const offsetRect = getBoundingClientRect(offsetParent, true, isFixed, offsetParent);
+      offsets.x = offsetRect.x + offsetParent.clientLeft;
+      offsets.y = offsetRect.y + offsetParent.clientTop;
+    } else if (documentElement) {
+      setLeftRTLScrollbarOffset();
+    }
+  }
+  if (isFixed && !isOffsetParentAnElement && documentElement) {
+    setLeftRTLScrollbarOffset();
+  }
+  const htmlOffset = documentElement && !isOffsetParentAnElement && !isFixed ? getHTMLOffset(documentElement, scroll) : createCoords(0);
+  const x = rect.left + scroll.scrollLeft - offsets.x - htmlOffset.x;
+  const y = rect.top + scroll.scrollTop - offsets.y - htmlOffset.y;
+  return {
+    x,
+    y,
+    width: rect.width,
+    height: rect.height
+  };
+}
+function isStaticPositioned(element) {
+  return getComputedStyle$1(element).position === "static";
+}
+function getTrueOffsetParent(element, polyfill) {
+  if (!isHTMLElement(element) || getComputedStyle$1(element).position === "fixed") {
+    return null;
+  }
+  if (polyfill) {
+    return polyfill(element);
+  }
+  let rawOffsetParent = element.offsetParent;
+  if (getDocumentElement(element) === rawOffsetParent) {
+    rawOffsetParent = rawOffsetParent.ownerDocument.body;
+  }
+  return rawOffsetParent;
+}
+function getOffsetParent(element, polyfill) {
+  const win = getWindow(element);
+  if (isTopLayer(element)) {
+    return win;
+  }
+  if (!isHTMLElement(element)) {
+    let svgOffsetParent = getParentNode(element);
+    while (svgOffsetParent && !isLastTraversableNode(svgOffsetParent)) {
+      if (isElement(svgOffsetParent) && !isStaticPositioned(svgOffsetParent)) {
+        return svgOffsetParent;
+      }
+      svgOffsetParent = getParentNode(svgOffsetParent);
+    }
+    return win;
+  }
+  let offsetParent = getTrueOffsetParent(element, polyfill);
+  while (offsetParent && isTableElement(offsetParent) && isStaticPositioned(offsetParent)) {
+    offsetParent = getTrueOffsetParent(offsetParent, polyfill);
+  }
+  if (offsetParent && isLastTraversableNode(offsetParent) && isStaticPositioned(offsetParent) && !isContainingBlock(offsetParent)) {
+    return win;
+  }
+  return offsetParent || getContainingBlock(element) || win;
+}
+const getElementRects = async function(data) {
+  const getOffsetParentFn = this.getOffsetParent || getOffsetParent;
+  const getDimensionsFn = this.getDimensions;
+  const floatingDimensions = await getDimensionsFn(data.floating);
+  return {
+    reference: getRectRelativeToOffsetParent(data.reference, await getOffsetParentFn(data.floating), data.strategy),
+    floating: {
+      x: 0,
+      y: 0,
+      width: floatingDimensions.width,
+      height: floatingDimensions.height
+    }
+  };
+};
+function isRTL(element) {
+  return getComputedStyle$1(element).direction === "rtl";
+}
+const platform = {
+  convertOffsetParentRelativeRectToViewportRelativeRect,
+  getDocumentElement,
+  getClippingRect,
+  getOffsetParent,
+  getElementRects,
+  getClientRects,
+  getDimensions,
+  getScale,
+  isElement,
+  isRTL
+};
+function rectsAreEqual(a, b) {
+  return a.x === b.x && a.y === b.y && a.width === b.width && a.height === b.height;
+}
+function observeMove(element, onMove) {
+  let io = null;
+  let timeoutId;
+  const root = getDocumentElement(element);
+  function cleanup() {
+    var _io;
+    clearTimeout(timeoutId);
+    (_io = io) == null || _io.disconnect();
+    io = null;
+  }
+  function refresh(skip, threshold) {
+    if (skip === void 0) {
+      skip = false;
+    }
+    if (threshold === void 0) {
+      threshold = 1;
+    }
+    cleanup();
+    const elementRectForRootMargin = element.getBoundingClientRect();
+    const {
+      left,
+      top,
+      width,
+      height
+    } = elementRectForRootMargin;
+    if (!skip) {
+      onMove();
+    }
+    if (!width || !height) {
+      return;
+    }
+    const insetTop = floor(top);
+    const insetRight = floor(root.clientWidth - (left + width));
+    const insetBottom = floor(root.clientHeight - (top + height));
+    const insetLeft = floor(left);
+    const rootMargin = -insetTop + "px " + -insetRight + "px " + -insetBottom + "px " + -insetLeft + "px";
+    const options = {
+      rootMargin,
+      threshold: max(0, min(1, threshold)) || 1
+    };
+    let isFirstUpdate = true;
+    function handleObserve(entries) {
+      const ratio = entries[0].intersectionRatio;
+      if (ratio !== threshold) {
+        if (!isFirstUpdate) {
+          return refresh();
+        }
+        if (!ratio) {
+          timeoutId = setTimeout(() => {
+            refresh(false, 1e-7);
+          }, 1e3);
+        } else {
+          refresh(false, ratio);
+        }
+      }
+      if (ratio === 1 && !rectsAreEqual(elementRectForRootMargin, element.getBoundingClientRect())) {
+        refresh();
+      }
+      isFirstUpdate = false;
+    }
+    try {
+      io = new IntersectionObserver(handleObserve, {
+        ...options,
+        // Handle <iframe>s
+        root: root.ownerDocument
+      });
+    } catch (_e) {
+      io = new IntersectionObserver(handleObserve, options);
+    }
+    io.observe(element);
+  }
+  refresh(true);
+  return cleanup;
+}
+function autoUpdate(reference, floating, update, options) {
+  if (options === void 0) {
+    options = {};
+  }
+  const {
+    ancestorScroll = true,
+    ancestorResize = true,
+    elementResize = typeof ResizeObserver === "function",
+    layoutShift = typeof IntersectionObserver === "function",
+    animationFrame = false
+  } = options;
+  const referenceEl = unwrapElement(reference);
+  const ancestors = ancestorScroll || ancestorResize ? [...referenceEl ? getOverflowAncestors(referenceEl) : [], ...floating ? getOverflowAncestors(floating) : []] : [];
+  ancestors.forEach((ancestor) => {
+    ancestorScroll && ancestor.addEventListener("scroll", update, {
+      passive: true
+    });
+    ancestorResize && ancestor.addEventListener("resize", update);
+  });
+  const cleanupIo = referenceEl && layoutShift ? observeMove(referenceEl, update) : null;
+  let reobserveFrame = -1;
+  let resizeObserver = null;
+  if (elementResize) {
+    resizeObserver = new ResizeObserver((_ref) => {
+      let [firstEntry] = _ref;
+      if (firstEntry && firstEntry.target === referenceEl && resizeObserver && floating) {
+        resizeObserver.unobserve(floating);
+        cancelAnimationFrame(reobserveFrame);
+        reobserveFrame = requestAnimationFrame(() => {
+          var _resizeObserver;
+          (_resizeObserver = resizeObserver) == null || _resizeObserver.observe(floating);
+        });
+      }
+      update();
+    });
+    if (referenceEl && !animationFrame) {
+      resizeObserver.observe(referenceEl);
+    }
+    if (floating) {
+      resizeObserver.observe(floating);
+    }
+  }
+  let frameId;
+  let prevRefRect = animationFrame ? getBoundingClientRect(reference) : null;
+  if (animationFrame) {
+    frameLoop();
+  }
+  function frameLoop() {
+    const nextRefRect = getBoundingClientRect(reference);
+    if (prevRefRect && !rectsAreEqual(prevRefRect, nextRefRect)) {
+      update();
+    }
+    prevRefRect = nextRefRect;
+    frameId = requestAnimationFrame(frameLoop);
+  }
+  update();
+  return () => {
+    var _resizeObserver2;
+    ancestors.forEach((ancestor) => {
+      ancestorScroll && ancestor.removeEventListener("scroll", update);
+      ancestorResize && ancestor.removeEventListener("resize", update);
+    });
+    cleanupIo == null || cleanupIo();
+    (_resizeObserver2 = resizeObserver) == null || _resizeObserver2.disconnect();
+    resizeObserver = null;
+    if (animationFrame) {
+      cancelAnimationFrame(frameId);
+    }
+  };
+}
+const offset = offset$1;
+const autoPlacement = autoPlacement$1;
+const shift = shift$1;
+const flip = flip$1;
+const arrow = arrow$1;
+const computePosition = (reference, floating, options) => {
+  const cache = /* @__PURE__ */ new Map();
+  const mergedOptions = {
+    platform,
+    ...options
+  };
+  const platformWithCache = {
+    ...mergedOptions.platform,
+    _c: cache
+  };
+  return computePosition$1(reference, floating, {
+    ...mergedOptions,
+    platform: platformWithCache
+  });
+};
+let activeInstance = null;
+function setupFloatingUI(references, options) {
+  const {
+    appendTo,
+    content,
+    onShow,
+    onHide,
+    theme,
+    placement,
+    offset: offsetVal,
+    interactive,
+    allowHTML = false,
+    clickTrigger = true,
+    role
+  } = options;
+  const targets = Array.isArray(references) ? references : [references];
+  const mainReference = targets[0];
+  let popper = null;
+  let cleanup = null;
+  const hide = () => {
+    if (popper?.parentNode) {
+      if (cleanup) {
+        cleanup();
+        cleanup = null;
+      }
+      if (onHide) onHide({ reference: mainReference, popper });
+      popper.remove();
+      popper = null;
+      if (activeInstance === hide) activeInstance = null;
+    }
+  };
+  const updatePosition = () => {
+    if (!popper) return;
+    const arrowEl = popper.querySelector(".arrow");
+    const middleware = [offset(offsetVal)];
+    if (placement === "auto" || placement === "auto-start" || placement === "auto-end") {
+      middleware.push(
+        autoPlacement({
+          alignment: placement.split("-")[1] || null,
+          padding: 5
+        })
+      );
+    } else {
+      middleware.push(
+        flip({
+          padding: 5,
+          fallbackPlacements: ["bottom", "right", "left"]
+        })
+      );
+    }
+    middleware.push(shift({ padding: 5 }), arrow({ element: arrowEl }));
+    computePosition(mainReference, popper, {
+      placement: placement?.includes("auto") ? void 0 : placement,
+      middleware
+    }).then(({ x, y, placement: finalPlacement, middlewareData }) => {
+      Object.assign(popper.style, { left: `${x}px`, top: `${y}px` });
+      if (middlewareData.arrow) {
+        const { x: ax, y: ay } = middlewareData.arrow;
+        const side = { top: "bottom", right: "left", bottom: "top", left: "right" }[finalPlacement.split("-")[0]];
+        Object.assign(arrowEl.style, {
+          left: ax != null ? `${ax}px` : "",
+          top: ay != null ? `${ay}px` : "",
+          [side]: "-4px"
+        });
+      }
+      popper.setAttribute("data-placement", finalPlacement);
+    });
+  };
+  const show = (eventType) => {
+    if (activeInstance && activeInstance !== hide) activeInstance();
+    if (popper) return;
+    popper = document.createElement("div");
+    popper.className = `${theme || ""}`;
+    popper.setAttribute("role", role || "tooltip");
+    popper.style.cssText = `position: absolute; z-index: 2147483645; left: 0; top: 0;`;
+    popper.innerHTML = `<div class="content"></div><div class="arrow"></div>`;
+    const contentEl = popper.querySelector(".content");
+    const actualContent = typeof content === "function" ? content(mainReference) : content;
+    if (actualContent instanceof Node) {
+      contentEl.appendChild(actualContent);
+    } else if (allowHTML) {
+      contentEl.innerHTML = actualContent;
+    } else {
+      contentEl.textContent = actualContent;
+    }
+    appendTo.appendChild(popper);
+    activeInstance = hide;
+    cleanup = autoUpdate(mainReference, popper, updatePosition);
+    requestAnimationFrame(() => {
+      if (popper) popper.classList.add("visible");
+    });
+    if (onShow) onShow({ reference: mainReference, popper, hide, eventType });
+  };
+  targets.forEach((target) => {
+    target.addEventListener("mouseenter", () => !popper && show("mouseenter"));
+    target.addEventListener("mouseleave", () => {
+      const isPersistent = clickTrigger && popper?.getAttribute("data-trigger") === "click";
+      if (!popper || isPersistent) return;
+      if (interactive) {
+        setTimeout(() => {
+          const isOverAnyTarget = targets.some((t) => t.matches(":hover"));
+          if (!popper?.matches(":hover") && !isOverAnyTarget) {
+            hide();
+          }
+        }, 100);
+      } else {
+        hide();
+      }
+    });
+    if (clickTrigger) {
+      target.addEventListener("click", (e) => {
+        e.stopPropagation();
+        if (popper && popper.getAttribute("data-trigger") === "click") {
+          hide();
+        } else {
+          if (!popper) show("click");
+          popper.setAttribute("data-trigger", "click");
+        }
+      });
+    }
+  });
+  return { show, hide, popper: () => popper };
 }
 class AnnotationTooltips extends HTMLElement {
   connectedCallback() {
     const shadowRoot = this.attachShadow({ mode: "open" });
     const style = document.createElement("style");
-    style.innerHTML = tooltipStyles + sharedStyles;
+    style.textContent = tooltipStyles + sharedStyles;
     shadowRoot.appendChild(style);
-    const annotations = tippy(annotationButtons, {
-      interactive: true,
-      trigger: "mouseenter click",
-      hideOnClick: false,
-      arrow: true,
-      offset: [0, 8],
-      delay: [0, 400],
-      maxWidth: 375,
-      theme: "sa11y-theme",
-      placement: "auto-start",
-      allowHTML: true,
-      role: "dialog",
-      aria: {
-        content: null,
-        expanded: "auto"
-      },
-      appendTo: shadowRoot,
-      zIndex: 2147483645,
-      onShow(instance) {
-        annotations.forEach((popper2) => {
-          if (popper2 !== instance.popper) {
-            popper2.hide();
+    annotationButtons.forEach((btn) => {
+      setupFloatingUI(btn, {
+        interactive: true,
+        offset: 8,
+        theme: "sa11y-theme",
+        placement: "auto-start",
+        appendTo: shadowRoot,
+        role: "dialog",
+        content: (ref) => {
+          const host = ref.getRootNode().host;
+          const id = host.getAttribute("data-sa11y-annotation");
+          const result = State.results.find((item) => String(item.id) === String(id));
+          if (!result) return null;
+          const wrapper = document.createElement("div");
+          wrapper.innerHTML = `<button type="button" class="close-btn close-tooltip" aria-label="${Lang._("ALERT_CLOSE")}"></button><div class="sa11y-content-body"></div>`;
+          const body = wrapper.querySelector(".sa11y-content-body");
+          if (result.finalContent instanceof Node) {
+            body.appendChild(result.finalContent);
+          } else {
+            body.textContent = result.finalContent;
           }
-        });
-        const annotation = instance.reference.getRootNode().host;
-        annotation.setAttribute("data-sa11y-opened", "");
-        const closeButton = instance.popper.querySelector(".close-btn");
-        const closeButtonHandler = () => {
-          instance.hide();
-          instance.reference.focus();
-        };
-        closeButton.addEventListener("click", closeButtonHandler);
-        const escapeListener = (event) => {
-          if (event.key === "Escape") {
-            instance.hide();
-            instance.reference.focus();
+          let contrastDiv = body.querySelector("[data-sa11y-contrast-details]");
+          if (result.contrastDetails && !contrastDiv) {
+            contrastDiv = document.createElement("div");
+            contrastDiv.setAttribute("data-sa11y-contrast-details", "");
+            const tools = generateContrastTools(result.contrastDetails);
+            contrastDiv.appendChild(tools);
+            const suggestion = generateColorSuggestion(result.contrastDetails);
+            if (suggestion) contrastDiv.appendChild(suggestion);
+            const target = body.querySelector(".dismiss-group");
+            target ? target.before(contrastDiv) : body.append(contrastDiv);
           }
-        };
-        instance.popper.addEventListener("keydown", escapeListener);
-        if (!instance.popper.hasAttribute("contrast-tools-initialized")) {
-          const issueID = parseInt(annotation.getAttribute("data-sa11y-annotation"), 10);
-          const issueObject = window.sa11yCheckComplete.results.find(
-            (issue) => issue.id === issueID
-          );
-          const { contrastDetails } = issueObject || {};
-          if (contrastDetails) {
-            const container = instance.popper.querySelector("[data-sa11y-contrast-details]");
-            const tools = generateContrastTools(contrastDetails);
-            container.appendChild(tools);
-            initializeContrastTools(instance.popper, contrastDetails);
-            const suggestion = generateColorSuggestion(contrastDetails);
-            if (suggestion) {
-              container.appendChild(suggestion);
-            }
-            instance.popper.setAttribute("contrast-tools-initialized", true);
+          return wrapper;
+        },
+        onShow: ({ reference, popper, hide, eventType }) => {
+          const host = reference.getRootNode().host;
+          host?.setAttribute("data-sa11y-opened", "");
+          const rawId = host?.getAttribute("data-sa11y-annotation");
+          const issueObject = State.results.find((i) => String(i.id) === String(rawId));
+          popper.setAttribute("lang", Lang._("LANG_CODE"));
+          if (issueObject) popper.classList.add(issueObject.type);
+          if (issueObject?.contrastDetails && !popper.hasAttribute("contrast-tools-initialized")) {
+            initializeContrastTools(popper, issueObject.contrastDetails);
+            popper.setAttribute("contrast-tools-initialized", "true");
           }
+          const closeBtn = popper.querySelector(".close-btn");
+          const handleClose = () => {
+            hide();
+            reference.focus();
+          };
+          closeBtn?.addEventListener("click", handleClose);
+          const esc = (e) => e.key === "Escape" && handleClose();
+          document.addEventListener("keydown", esc, { once: true });
+          if (eventType === "click") {
+            requestAnimationFrame(() => {
+              closeBtn?.focus();
+              trapFocus(popper);
+            });
+          }
+        },
+        onHide: ({ reference }) => {
+          reference.getRootNode().host?.removeAttribute("data-sa11y-opened");
         }
-        let firstClick = true;
-        function handleMouseDown(event) {
-          if (firstClick && event.target.matches('input[type="color"]')) {
-            instance.reference.click();
-            firstClick = false;
-            instance.popper.removeEventListener("mousedown", handleMouseDown);
-          }
-        }
-        instance.popper.addEventListener("mousedown", handleMouseDown);
-        const onHiddenTooltip = () => {
-          closeButton.removeEventListener("click", closeButtonHandler);
-          instance.popper.removeEventListener("keydown", escapeListener);
-          instance.popper.removeEventListener("hidden", onHiddenTooltip);
-        };
-        instance.popper.addEventListener("hidden", onHiddenTooltip);
-      },
-      onTrigger(instance, event) {
-        if (event.type === "click") {
-          setTimeout(() => {
-            instance.popper.querySelector(".close-btn").focus();
-            trapFocus(instance.popper);
-          }, 0);
-        }
-      },
-      onHide(instance) {
-        instance.popper.querySelector(".close-btn").removeEventListener("click", () => {
-          instance.hide();
-        });
-        const annotation = instance.reference.getRootNode().host;
-        annotation.removeAttribute("data-sa11y-opened");
-      }
+      });
     });
   }
 }
 class PanelTooltips extends HTMLElement {
   connectedCallback() {
-    const tooltipOptions = (shadowRoot2) => ({
-      allowHTML: true,
-      delay: [500, 0],
-      trigger: "mouseenter focusin",
-      arrow: true,
-      placement: "top",
-      theme: "sa11y-theme sa11y-panel",
-      role: "tooltip",
-      aria: {
-        content: null,
-        expanded: null
-      },
-      appendTo: shadowRoot2,
-      zIndex: 2147483645
-    });
     const shadowRoot = this.attachShadow({ mode: "open" });
     const style = document.createElement("style");
-    style.innerHTML = tooltipStyles + sharedStyles;
+    style.textContent = tooltipStyles + sharedStyles;
     shadowRoot.appendChild(style);
-    const keyboardShortcut2 = navigator.userAgent.indexOf("Mac") !== -1 ? '<span class="kbd">Option</span> + <span class="kbd">S</span>' : '<span class="kbd">Alt</span> + <span class="kbd">S</span>';
-    tippy(Constants.Panel.skipButton, {
-      ...tooltipOptions(shadowRoot),
-      offset: [0, 8],
-      maxWidth: 200,
-      content: `${Lang._("SKIP_TO_ISSUE")} &raquo; <br> ${keyboardShortcut2}`
+    const baseOptions = {
+      appendTo: shadowRoot,
+      offset: 8,
+      theme: "sa11y-theme sa11y-panel",
+      placement: "top",
+      clickTrigger: false,
+      allowHTML: true
+      // Safe: No user supplied content here.
+    };
+    const shortcut = navigator.userAgent.includes("Mac") ? "Option + S" : "Alt + S";
+    setupFloatingUI(Constants.Panel.skipButton, {
+      ...baseOptions,
+      content: `${Lang._("SKIP_TO_ISSUE")} &raquo; <br> <span class="kbd">${shortcut}</span>`
     });
-    this.object = tippy(Constants.Panel.dismissButton, {
-      offset: [0, 8],
-      maxWidth: 200,
-      ...tooltipOptions(shadowRoot)
+    this.dismissTooltip = setupFloatingUI(Constants.Panel.dismissButton, {
+      ...baseOptions,
+      content: () => Lang.sprintf("PANEL_DISMISS_BUTTON", State.counts.dismissed)
     });
-    if (Constants.Global.developerPlugin) {
-      const infoIcon = Constants.Panel.developerItem?.querySelector(".info-icon");
-      if (infoIcon) {
-        tippy(infoIcon, {
-          ...tooltipOptions(shadowRoot),
-          triggerTarget: [Constants.Panel.developerItem],
-          offset: [0, 10],
-          maxWidth: 250,
-          content: Lang._("DEVELOPER_DESC")
-        });
-      }
+    const devIcon = Constants.Panel.developerItem?.querySelector(".info-icon");
+    if (State.option.developerPlugin && devIcon) {
+      this.devTooltip = setupFloatingUI([devIcon, Constants.Panel.developerItem], {
+        ...baseOptions,
+        content: Lang._("DEVELOPER_DESC")
+      });
     }
-    if (Constants.Global.readabilityPlugin) {
-      const infoIcon = Constants.Panel.readabilityItem?.querySelector(".info-icon");
-      if (infoIcon) {
-        tippy(infoIcon, {
-          ...tooltipOptions(shadowRoot),
-          triggerTarget: [Constants.Panel.readabilityItem],
-          offset: [0, 10],
-          maxWidth: 250,
-          content: Lang._("READABILITY_DESC")
-        });
-      }
+    const readIcon = Constants.Panel.readabilityItem?.querySelector(".info-icon");
+    if (State.option.readabilityPlugin && readIcon) {
+      this.readTooltip = setupFloatingUI([readIcon, Constants.Panel.readabilityItem], {
+        ...baseOptions,
+        content: Lang._("READABILITY_DESC")
+      });
     }
   }
 }
-class HeadingAnchor extends HTMLElement {
-  connectedCallback() {
-    this.attachShadow({ mode: "open" });
-  }
-}
-class HeadingLabel extends HTMLElement {
-  connectedCallback() {
-    const shadow = this.attachShadow({ mode: "open" });
-    const style = document.createElement("style");
-    style.textContent = `
-      span.heading-label {
-        background-color: #777678;
-        background-image: linear-gradient(to bottom right, #b629ce, #16aec2);
-        border-radius: 5px;
-        border: 1px solid #36a5c3;
-        color: white;
-        display: inline-block;
-        font-family: var(--sa11y-font-face);
-        font-weight: 500;
-        font-size: 18px;
-        line-height: normal;
-        letter-spacing: normal;
-        margin: -5px 0 0 5px;
-        padding: 3px;
-        position: absolute;
-        text-shadow: 1px 1px black;
-        -webkit-text-fill-color: white;
-        word-break: keep-all;
-        z-index: 200;
-      }
-      @media screen and (forced-colors: active) {
-        span.heading-label {
-          border: 2px solid transparent;
+const STORAGE_KEY = "sa11y-lang-detection";
+const MAX_CACHE_SIZE = 200;
+let detectorPromise = null;
+function getLanguageDetector() {
+  if (detectorPromise) return detectorPromise;
+  detectorPromise = (async () => {
+    try {
+      if (!("LanguageDetector" in globalThis)) {
+        if (!store.getItem(STORAGE_KEY)) {
+          store.setItem(STORAGE_KEY, []);
+          console.error(`Sa11y: ${Lang._("LANG_UNSUPPORTED")}`);
         }
-      }`;
-    shadow.appendChild(style);
-  }
-}
-const closeAnyActiveTooltips = () => {
-  const tooltip = document.querySelector("sa11y-tooltips").shadowRoot;
-  const button = tooltip.querySelector("button");
-  if (button !== null) {
-    button.click();
-  }
-};
-const getHiddenParent = ($el) => {
-  const shadowHost = $el.getRootNode().host;
-  const visibleParent = findVisibleParent(shadowHost, "display", "none");
-  if (visibleParent !== null) {
-    const hiddenParent = visibleParent.previousElementSibling;
-    if (hiddenParent) {
-      addPulse(hiddenParent);
-    } else {
-      addPulse(visibleParent.parentNode);
-    }
-  }
-};
-const getScrollPosition = ($el, results) => {
-  const offsetTopPosition = $el.offsetTop;
-  if (offsetTopPosition === 0) {
-    const annotationHost = $el.getRootNode().host;
-    const visiblePosition = findVisibleParent(annotationHost, "display", "none");
-    const annotationIndex = parseInt(annotationHost.getAttribute("data-sa11y-annotation"), 10);
-    const issueObject = results.find((issue) => issue.id === annotationIndex);
-    const elementPreview = generateElementPreview(issueObject);
-    getHiddenParent($el);
-    const tooltip = $el.getAttribute("data-tippy-content");
-    createAlert(`${Lang._("NOT_VISIBLE")}`, tooltip, elementPreview);
-    closeAnyActiveTooltips();
-    if (visiblePosition) {
-      const prevSibling = visiblePosition.previousElementSibling;
-      const { parentNode } = visiblePosition;
-      if (prevSibling) {
-        return offsetTop(prevSibling).top - 150;
+        return null;
       }
-      return offsetTop(parentNode).top - 150;
+      return await globalThis.LanguageDetector.create();
+    } catch {
+      console.error(`Sa11y: ${Lang._("LANG_UNSUPPORTED")}`);
+      return null;
     }
-  } else {
-    removeAlert();
-    Constants.Panel.skipButton.focus();
-  }
-  return offsetTop($el).top - 150;
-};
-let index = -1;
-const determineIndex = () => {
-  const latestDismissed = store.getItem("sa11y-latest-dismissed");
-  if (latestDismissed !== null) {
-    index = parseInt(latestDismissed, 10) - 1;
-  }
-  store.removeItem("sa11y-latest-dismissed");
-  const opened = find("[data-sa11y-opened]", "root");
-  if (opened[0]) {
-    index = parseInt(opened[0].getAttribute("data-sa11y-position"), 10);
+  })();
+  return detectorPromise;
+}
+const getLanguageLabel = (lang) => {
+  try {
+    const canonicalLang = Intl.getCanonicalLocales(lang)[0];
+    const baseLang = new Intl.Locale(canonicalLang).language;
+    const label = new Intl.DisplayNames(Lang._("LANG_CODE") || navigator.language, {
+      type: "language"
+    }).of(baseLang);
+    return label;
+  } catch {
+    return lang;
   }
 };
-const goToNext = (results) => {
-  determineIndex();
-  const issues = Elements.Annotations.Array;
-  if (index >= issues.length - 1) {
-    index = -1;
-  }
-  const annotation = issues[index + 1];
-  const button = annotation.shadowRoot.querySelector("button");
-  const scrollPos = getScrollPosition(button, results);
-  window.scrollTo({
-    top: scrollPos,
-    behavior: `${Constants.Global.scrollBehaviour}`
-  });
-  if (button.offsetTop !== 0) {
-    button.focus();
-    button.click();
-  }
-  index += 1;
-};
-const goToPrev = (results) => {
-  determineIndex();
-  const issues = Elements.Annotations.Array;
-  if (index <= 0) {
-    index = issues.length;
-  }
-  const button = Elements.Annotations.Array[index - 1].shadowRoot.querySelector("button");
-  const scrollPos = getScrollPosition(button, results);
-  window.scrollTo({
-    top: scrollPos,
-    behavior: `${Constants.Global.scrollBehaviour}`
-  });
-  if (button.offsetTop !== 0) {
-    button.focus();
-    button.click();
-  }
-  index -= 1;
-  if (index === -1) {
-    index = Elements.Annotations.Array.length - 1;
+const primary = (lang) => String(lang).toLowerCase().split("-")[0];
+const getCache = () => {
+  try {
+    const get = store.getItem(STORAGE_KEY);
+    return get ? JSON.parse(get) : [];
+  } catch (e) {
+    console.error("Sa11y: Error loading cache", e);
+    return [];
   }
 };
-function keyboardShortcut(e, results) {
-  if (Elements.Annotations.Array.length && !Constants.Panel.skipButton.hasAttribute("disabled")) {
-    if (e.altKey && (e.code === "KeyS" || e.code === "Period")) {
-      e.preventDefault();
-      goToNext(results);
-    } else if (e.altKey && (e.code === "KeyW" || e.code === "Comma")) {
-      e.preventDefault();
-      goToPrev(results);
+const setCache = (data) => {
+  if (!State.option.langOfPartsCache) {
+    store.removeItem(STORAGE_KEY);
+    return;
+  }
+  try {
+    const cache = getCache().filter((item) => item.key !== data.key);
+    cache.push(data);
+    while (cache.length > MAX_CACHE_SIZE) cache.shift();
+    store.setItem(STORAGE_KEY, JSON.stringify(cache));
+  } catch (e) {
+    console.error("Sa11y: Error saving cache.", e);
+  }
+};
+const nonLatinRegex = /[^\p{Script=Latin}\p{M}\p{Z}\p{P}\p{N}\p{S}\p{C}]/u;
+async function checkPageLanguage() {
+  const start = performance.now();
+  if (!State.option.langOfPartsPlugin) return;
+  if (!await getLanguageDetector()) return;
+  if (!State.option.langOfPartsCache) store.removeItem(STORAGE_KEY);
+  const isDeclaredValid = Elements.Found.Language ? validateLang(Elements.Found.Language) : null;
+  if (!isDeclaredValid) return;
+  const declared = primary(Elements.Found.Language);
+  const pageText = (Elements.Found.pageText || []).join(" ");
+  if (pageText.length < 100) return;
+  const cacheKey = window.location.href;
+  const cached = getCache().find((item) => item.key === cacheKey);
+  const langChanged = cached?.declared && cached.declared !== declared;
+  let isStale = cached && (Math.abs(cached.textLength - pageText.length) > 5 || langChanged);
+  if (cached && !isStale && cached.element) {
+    const currentElement = find(cached.element, "root")[0];
+    if (!currentElement) {
+      isStale = true;
+    } else if (currentElement.getAttribute("lang") === cached.args[0]) {
+      isStale = true;
     }
   }
+  if (cached && !isStale) {
+    if (cached.test) {
+      const getElement = cached.element ? find(cached.element, "root")[0] : null;
+      const elementText = getElement ? getText(getElement) : null;
+      const processArgs = cached.args.map((arg) => getLanguageLabel(arg));
+      const finalArgs = [...processArgs];
+      if (elementText) finalArgs.push(elementText);
+      const mainContent = Lang.sprintf(
+        State.option.checks[cached.test].content || [cached.test],
+        ...finalArgs
+      );
+      const contentContainer = document.createElement("div");
+      contentContainer.append(mainContent);
+      if (cached.element) {
+        contentContainer.append(" ", Lang.sprintf("LANG_TIP"));
+      }
+      State.results.push({
+        element: getElement || null,
+        test: cached.test,
+        type: State.option.checks[cached.test].type || cached.type,
+        content: contentContainer,
+        dismiss: prepareDismissal(cached.test),
+        developer: State.option.checks[cached.test].developer ?? false,
+        confidence: cached.confidence,
+        textLength: cached.textLength,
+        cached: true
+      });
+    }
+    return;
+  }
+  const detector = await getLanguageDetector();
+  const detected = await detector.detect(pageText);
+  const detectedLangCode = primary(detected[0].detectedLanguage);
+  let test = null;
+  let type = null;
+  let content = null;
+  let element = null;
+  let dismiss = null;
+  let confidence = null;
+  let args = null;
+  if (detectedLangCode !== declared) {
+    test = "PAGE_LANG_CONFIDENCE";
+    content = Lang.sprintf(
+      State.option.checks.PAGE_LANG_CONFIDENCE.content || "PAGE_LANG_CONFIDENCE",
+      getLanguageLabel(detectedLangCode),
+      getLanguageLabel(declared)
+    );
+    dismiss = prepareDismissal(cacheKey);
+    type = detected[0].confidence >= 0.6 ? "error" : "warning";
+    confidence = detected[0].confidence;
+    args = [detectedLangCode, declared];
+    setCache({
+      key: cacheKey,
+      test,
+      type,
+      args,
+      confidence,
+      textLength: pageText.length,
+      declared
+    });
+  }
+  if (detectedLangCode === declared) {
+    const langAttributes = find("[lang]", "root");
+    const confidenceTarget = State.option.PAGE_LANG_CONFIDENCE?.confidence || 0.95;
+    if (detected[0].confidence >= confidenceTarget && langAttributes.length === 0) {
+      setCache({
+        key: cacheKey,
+        textLength: pageText.length,
+        declared,
+        confidence: detected[0].confidence
+      });
+      return;
+    }
+    for (let i = 0; i < Elements.Found.Everything.length; i++) {
+      const node = Elements.Found.Everything[i];
+      const isImage = node.nodeName === "IMG";
+      if (!isImage) {
+        if (!node.textContent) continue;
+        const isShort = node.textContent.length < 30;
+        const hasNonEnglish = nonLatinRegex.test(node.textContent);
+        if (isShort && !hasNonEnglish) {
+          continue;
+        }
+      }
+      let textString = "";
+      if (isImage) {
+        textString = node.alt || "";
+      } else {
+        textString = Array.from(node.childNodes).filter((child) => child.nodeType === Node.TEXT_NODE).map((child) => child.textContent).join(" ");
+      }
+      const nodeText = normalizeString(textString);
+      if (nodeText.length <= 30 && !nonLatinRegex.test(nodeText)) continue;
+      const detectNode = await detector.detect(nodeText);
+      const nodeLang = primary(detectNode[0].detectedLanguage);
+      const nodeConfidence = detectNode[0].confidence;
+      if (nodeConfidence >= 0.6) {
+        const langAttribute = node.getAttribute("lang") ? primary(node.getAttribute("lang")) : "";
+        const selector = generateSelectorPath(node);
+        if (langAttribute && langAttribute !== nodeLang) {
+          test = "LANG_MISMATCH";
+          content = Lang.sprintf(
+            State.option.checks.LANG_MISMATCH.content || "LANG_MISMATCH",
+            getLanguageLabel(nodeLang),
+            getLanguageLabel(langAttribute),
+            textString
+          );
+          args = [nodeLang, langAttribute];
+        } else if (!langAttribute && nodeLang !== declared) {
+          if (isImage && node.alt) {
+            test = "LANG_OF_PARTS_ALT";
+            content = Lang.sprintf(
+              State.option.checks.LANG_OF_PARTS_ALT.content || "LANG_OF_PARTS_ALT",
+              getLanguageLabel(nodeLang),
+              getLanguageLabel(declared),
+              node.alt
+            );
+            args = [nodeLang, declared, node.alt];
+          } else {
+            test = "LANG_OF_PARTS";
+            content = Lang.sprintf(
+              State.option.checks.LANG_OF_PARTS.content || "LANG_OF_PARTS",
+              getLanguageLabel(declared),
+              getLanguageLabel(nodeLang),
+              textString
+            );
+            args = [declared, nodeLang];
+          }
+        } else {
+          continue;
+        }
+        element = node;
+        type = nodeConfidence >= 0.9 ? "error" : "warning";
+        dismiss = prepareDismissal(nodeText.slice(0, 256));
+        confidence = nodeConfidence;
+        setCache({
+          key: cacheKey,
+          test,
+          element: selector,
+          type,
+          args,
+          confidence: nodeConfidence,
+          textLength: pageText.length,
+          declared
+        });
+        break;
+      }
+    }
+  }
+  if (test) {
+    const wrapper = document.createElement("div");
+    wrapper.append(content, " ", Lang.sprintf("LANG_TIP"));
+    State.results.push({
+      element,
+      test,
+      type: State.option.checks[test].type || type,
+      content: element ? wrapper : content,
+      dismiss,
+      developer: State.option.checks[test].developer ?? false,
+      cached: false,
+      pageText: pageText.length,
+      confidence,
+      time: `${(performance.now() - start).toFixed(2)}ms`
+    });
+  }
 }
-let keyboardShortcutHandler;
-let handleSkipButtonHandler;
-function skipToIssue(results) {
-  keyboardShortcutHandler = (e) => {
-    keyboardShortcut(e, results);
-  };
-  handleSkipButtonHandler = () => {
-    goToNext(results);
-  };
-  document.addEventListener("keydown", keyboardShortcutHandler);
-  Constants.Panel.skipButton.addEventListener("click", handleSkipButtonHandler);
+async function updateResults() {
+  const { option } = State;
+  const ignoreByTest = option.ignoreByTest || {};
+  const devChecks = store.getItem("sa11y-developer");
+  const isDevOff = !devChecks || devChecks === "Off";
+  State.results = State.results.filter((issue, _, src) => {
+    if (issue.isWithinRoot === false || (isDevOff || option.externalDeveloperChecks) && issue.developer || isDevOff && issue.external)
+      return false;
+    if (State.option.langOfPartsPlugin && issue?.element?.tagName === "IMG" && issue.type === "good") {
+      return !src.some(
+        (i) => i.element === issue.element && (i.type === "error" || i.type === "warning") && i.element?.alt === issue.element?.alt
+      );
+    }
+    if (State.option.langOfPartsPlugin && issue.test === "PAGE_LANG_CONFIDENCE") {
+      return !src.some(
+        (i) => i.test === "META_LANG" || i.test === "META_LANG_SUGGEST" || i.test === "META_LANG_VALID"
+      );
+    }
+    if (ignoreByTest[issue.test] && issue.element) {
+      try {
+        if (issue.element.matches(ignoreByTest[issue.test])) return false;
+      } catch (e) {
+        console.error(`Sa11y: Invalid CSS selector for ignoreByTest prop "${issue.test}"`, e);
+      }
+    }
+    return true;
+  });
+  await Promise.all(
+    State.results.map(async (item, id) => {
+      item.id = id;
+      item.cssPath = option.selectorPath ? generateSelectorPath(item.element) : "";
+      item.htmlPath = item.element?.outerHTML.replace(/\s{2,}/g, " ").trim() || "";
+      if (item.dismiss) item.dismissDigest = await dismissDigest(item.dismiss);
+      if (typeof item.content === "string") {
+        const wrapper = document.createElement("div");
+        wrapper.innerHTML = sanitizeHTML(item.content);
+        item.content = wrapper;
+      }
+      const validTypes = ["error", "warning", "good"];
+      if (item.type && validTypes.indexOf(item.type) === -1) {
+        throw Error(`Invalid type [${item.type}] for annotation`);
+      }
+      const mapLabel = {
+        [validTypes[0]]: Lang._("ERROR"),
+        [validTypes[1]]: Lang._("WARNING"),
+        [validTypes[2]]: Lang._("GOOD")
+      };
+      item.issueLabel = mapLabel[item.type];
+    })
+  );
+  if (!option.headless) syncUI();
+  const duration = `${(performance.now() - State.start).toFixed(2)}ms`;
+  const detail = { results: State.results, page: window.location.pathname, time: duration };
+  window.sa11yCheckComplete = detail;
+  document.dispatchEvent(new CustomEvent("sa11y-check-complete", { detail }));
 }
-function removeSkipBtnListeners() {
-  document.removeEventListener("keydown", keyboardShortcutHandler);
-  Constants.Panel.skipButton.removeEventListener("click", handleSkipButtonHandler);
+async function syncUI() {
+  State.imageResults = Elements.Found.Images.map(
+    (image) => State.results.find((i) => i.element === image)
+  ).filter(Boolean).map(({ element, type, dismissDigest: dismissDigest2, developer }) => ({
+    element,
+    type,
+    dismissDigest: dismissDigest2,
+    developer
+  }));
+  initializeDismissals();
+  updateCount();
+  updateBadge();
+  if (store.getItem("sa11y-panel") === "Opened") {
+    const counts = /* @__PURE__ */ new Map();
+    State.results.forEach((issue) => {
+      if (issue.element) {
+        if (!issue.margin) {
+          const index2 = counts.get(issue.element) || 0;
+          counts.set(issue.element, index2 + 1);
+          issue.margin = `${index2 * 20 + (issue.inline ? 0 : 15)}px`;
+        }
+        issue.finalContent = issue?.content?.cloneNode(true);
+        issue.finalContent.setAttribute("lang", Lang._("LANG_CODE"));
+        issue.finalContent.className = issue.type;
+        const reviewText = issue.type === "good" && ["IMAGE_PASS", "LINK_LABEL"].some((val) => issue.test.includes(val)) ? Lang._("REVIEW") : issue.issueLabel;
+        const header = document.createElement("h2");
+        header.textContent = reviewText;
+        issue.finalContent?.prepend(header);
+        const dismissable = State.option.dismissAnnotations && (issue.type === "warning" || issue.type === "good");
+        const showDismissAll = dismissable && State.option.dismissAll && typeof issue.dismissAll === "string";
+        const showDismiss = dismissable && issue.dismiss;
+        if (showDismiss || showDismissAll) {
+          const container = document.createElement("div");
+          container.className = "dismiss-group";
+          const createBtn = (text, isAll) => {
+            const btn = document.createElement("button");
+            btn.type = "button";
+            btn.textContent = Lang._(text);
+            btn.setAttribute("data-sa11y-dismiss", issue.id);
+            if (isAll) btn.setAttribute("data-sa11y-dismiss-all", "");
+            return btn;
+          };
+          if (showDismiss) container.append(createBtn("DISMISS", false));
+          if (showDismissAll) container.append(createBtn("DISMISS_ALL", true));
+          issue.finalContent.append(container);
+        }
+        if (State.option.unitTestMode) {
+          const test = Lang.sprintf(
+            "<hr><strong>Test ID:</strong> <code>%(TEST)</code>",
+            issue.test
+          );
+          issue.finalContent.append(test);
+        }
+      }
+      annotate(issue);
+    });
+    Elements.initializeAnnotations();
+    document.body.appendChild(new AnnotationTooltips());
+    dismissButtons();
+    generatePageOutline();
+    generateImageOutline();
+    updatePanel();
+    skipToIssue();
+    exportResults();
+    if (State.option.langOfPartsPlugin && await getLanguageDetector() === null) {
+      createAlert(Lang.sprintf("LANG_UNSUPPORTED"), null, null, true);
+    }
+    isScrollable(Constants.Panel.pageIssuesList, Constants.Panel.pageIssuesContent);
+  }
+  Constants.Panel.toggle.disabled = false;
 }
 const url = [
   ".avif",
@@ -6249,15 +6219,15 @@ const url = [
   ".heic",
   "http"
 ];
-function checkImages(results, option) {
-  const susAltWords = option.susAltStopWords ? option.susAltStopWords.split(",").map((word) => word.trim().toLowerCase()).filter(Boolean) : Lang._("SUS_ALT_STOPWORDS");
+function checkImages() {
+  const susAltWords = State.option.susAltStopWords ? State.option.susAltStopWords.split(",").map((word) => word.trim().toLowerCase()).filter(Boolean) : Lang._("SUS_ALT_STOPWORDS");
   const placeholderAltSet = new Set(Lang._("PLACEHOLDER_ALT_STOPWORDS"));
-  const altPlaceholderPattern = generateRegexString(option.altPlaceholder, true);
-  const linkIgnoreStringPattern = generateRegexString(option.linkIgnoreStrings);
-  const extraPlaceholderStopWords = option.extraPlaceholderStopWords.split(",").map((word) => word.trim().toLowerCase()).filter(Boolean);
+  const altPlaceholderPattern = generateRegexString(State.option.altPlaceholder, true);
+  const linkIgnoreStringPattern = generateRegexString(State.option.linkIgnoreStrings);
+  const extraPlaceholderStopWords = State.option.extraPlaceholderStopWords.split(",").map((word) => word.trim().toLowerCase()).filter(Boolean);
   const containsAltTextStopWords = (alt) => {
-    const altLowerCase = alt.toLowerCase();
-    const altNoNumbers = altLowerCase.replace(/\d+/g, "").trim();
+    const altLowerCase = removeWhitespace(alt).toLowerCase();
+    const altOnlyLetters = removeWhitespace(altLowerCase.replace(/[^\p{L}\s]/gu, ""));
     const hit = [null, null, null];
     for (const urlHit of url) {
       if (altLowerCase.includes(urlHit)) {
@@ -6276,7 +6246,7 @@ function checkImages(results, option) {
         break;
       }
     }
-    if (placeholderAltSet.has(altLowerCase) || placeholderAltSet.has(altNoNumbers)) {
+    if (placeholderAltSet.has(altLowerCase) || placeholderAltSet.has(altOnlyLetters)) {
       hit[2] = alt;
     }
     if (extraPlaceholderStopWords.length) {
@@ -6291,44 +6261,29 @@ function checkImages(results, option) {
     return hit;
   };
   Elements.Found.Images.forEach(($el) => {
-    const alt = computeAriaLabel($el) === "noAria" ? $el.getAttribute("alt") : computeAriaLabel($el);
-    const ariaHidden = $el?.getAttribute("aria-hidden") === "true";
-    const presentationRole = $el?.getAttribute("role") === "presentation";
+    const alt = computeAriaLabel($el) === "noAria" ? $el.getAttribute("alt") ?? $el.getAttribute("title") : computeAriaLabel($el);
     if ($el.height < 2 && $el.width < 2 && (isElementHidden($el) || alt === "")) {
       return;
     }
-    const link = $el.closest(
-      option.imageWithinLightbox ? `a[href]:not(${option.imageWithinLightbox})` : "a[href]"
+    const link = getCachedClosest(
+      $el,
+      State.option.imageWithinLightbox ? `a[href]:not(${State.option.imageWithinLightbox})` : "a[href]"
     );
-    const src = $el.getAttribute("src") ? $el.getAttribute("src") : $el.getAttribute("srcset");
+    if (isHiddenAndUnfocusable(link)) return;
+    const src = $el.getAttribute("src") ? $el.getAttribute("src").split("?")[0] : $el.getAttribute("srcset");
     const linkText = link ? fnIgnore(link, Constants.Exclusions.LinkSpan).textContent.replace(
       linkIgnoreStringPattern,
       ""
     ) : "";
     const linkTextLength = removeWhitespace(linkText).length;
-    if (link && link.getAttribute("aria-hidden") === "true") {
-      const unfocusable = link.getAttribute("tabindex") === "-1";
-      if (option.checks.HIDDEN_FOCUSABLE && !unfocusable) {
-        results.push({
-          test: "HIDDEN_FOCUSABLE",
-          element: $el,
-          type: option.checks.HIDDEN_FOCUSABLE.type || "error",
-          content: Lang.sprintf(option.checks.HIDDEN_FOCUSABLE.content || "HIDDEN_FOCUSABLE"),
-          dismiss: prepareDismissal(`IMGHIDDENFOCUSABLE${src}`),
-          dismissAll: option.checks.HIDDEN_FOCUSABLE.dismissAll ? "LINK_HIDDEN_FOCUSABLE" : false,
-          developer: option.checks.HIDDEN_FOCUSABLE.developer || true
-        });
-      }
-      return;
-    }
     if (alt === null) {
       if (link) {
-        const hasAriaHiddenOrPresentationRole = linkTextLength > 0 && (ariaHidden || presentationRole);
+        const hasAriaHiddenOrPresentationRole = linkTextLength > 0 && (isPresentational($el) || isAriaHidden($el));
         if (!hasAriaHiddenOrPresentationRole) {
-          const rule = linkTextLength === 0 ? option.checks.MISSING_ALT_LINK : option.checks.MISSING_ALT_LINK_HAS_TEXT;
+          const rule = linkTextLength === 0 ? State.option.checks.MISSING_ALT_LINK : State.option.checks.MISSING_ALT_LINK_HAS_TEXT;
           const conditional = linkTextLength === 0 ? "MISSING_ALT_LINK" : "MISSING_ALT_LINK_HAS_TEXT";
           if (rule) {
-            results.push({
+            State.results.push({
               test: conditional,
               element: $el,
               type: rule.type || "error",
@@ -6339,52 +6294,54 @@ function checkImages(results, option) {
             });
           }
         }
-      } else if (option.checks.MISSING_ALT) {
-        results.push({
+      } else if (State.option.checks.MISSING_ALT) {
+        State.results.push({
           test: "MISSING_ALT",
           element: $el,
-          type: option.checks.MISSING_ALT.type || "error",
-          content: Lang.sprintf(option.checks.MISSING_ALT.content || "MISSING_ALT"),
-          dismiss: prepareDismissal(`IMGNOALT${src}`),
-          dismissAll: option.checks.MISSING_ALT.dismissAll ? "MISSING_ALT" : false,
-          developer: option.checks.MISSING_ALT.developer || false
+          type: State.option.checks.MISSING_ALT.type || "error",
+          content: Lang.sprintf(State.option.checks.MISSING_ALT.content || "MISSING_ALT"),
+          dismiss: prepareDismissal(`MISSING_ALT ${src}`),
+          dismissAll: State.option.checks.MISSING_ALT.dismissAll ? "MISSING_ALT" : false,
+          developer: State.option.checks.MISSING_ALT.developer || false
         });
       }
       return;
     }
-    const sanitizedAlt = sanitizeHTML(alt);
-    const altText = removeWhitespace(sanitizedAlt);
+    const altText = removeWhitespace(alt);
     const hasAria = $el.getAttribute("aria-label") || $el.getAttribute("aria-labelledby");
-    if (option.checks.MISSING_ALT) {
-      if (hasAria && altText === "") {
-        results.push({
+    if (State.option.checks.MISSING_ALT) {
+      if (hasAria && alt === "") {
+        State.results.push({
           test: "MISSING_ALT",
           element: $el,
-          type: option.checks.MISSING_ALT.type || "error",
-          content: Lang.sprintf(option.checks.MISSING_ALT.content || "MISSING_ALT"),
-          dismiss: prepareDismissal(`IMGNOALTARIA${src}`),
-          dismissAll: option.checks.MISSING_ALT.dismissAll ? "MISSING_ALT" : false,
-          developer: option.checks.MISSING_ALT.developer || false
+          type: State.option.checks.MISSING_ALT.type || "error",
+          content: Lang.sprintf(State.option.checks.MISSING_ALT.content || "MISSING_ALT"),
+          dismiss: prepareDismissal(`MISSING_ALT ${hasAria + src}`),
+          dismissAll: State.option.checks.MISSING_ALT.dismissAll ? "MISSING_ALT" : false,
+          developer: State.option.checks.MISSING_ALT.developer || false
         });
         return;
       }
     }
-    const decorative = alt === "";
-    const figure = $el.closest("figure");
+    let decorative = alt === "";
+    const figure = getCachedClosest($el, "figure");
     const figcaption = figure?.querySelector("figcaption");
     const figcaptionText = figcaption ? getText(figcaption) : "";
-    const maxAltCharactersLinks = option.checks.LINK_IMAGE_LONG_ALT.maxLength || 250;
-    const maxAltCharacters = option.checks.IMAGE_ALT_TOO_LONG.maxLength || 250;
-    const startsWithSpecificAlt = alt.match(altPlaceholderPattern)?.[0];
-    if (decorative || startsWithSpecificAlt) {
-      const carouselSources = option.checks.IMAGE_DECORATIVE_CAROUSEL.sources;
-      const carousel = carouselSources ? $el.closest(carouselSources) : "";
+    const maxAltCharactersLinks = State.option.checks.LINK_IMAGE_LONG_ALT.maxLength || 250;
+    const maxAltCharacters = State.option.checks.IMAGE_ALT_TOO_LONG.maxLength || 250;
+    if (!decorative && State.option.altPlaceholder.length) {
+      decorative = alt.match(altPlaceholderPattern)?.[0];
+    }
+    if (decorative) {
+      if (getCachedClosest($el, `button, [role='button']`)) return;
+      const carouselSources = State.option.checks.IMAGE_DECORATIVE_CAROUSEL.sources;
+      const carousel = carouselSources ? getCachedClosest($el, carouselSources) : "";
       if (carousel) {
         const numberOfSlides = carousel.querySelectorAll("img");
-        const rule = numberOfSlides.length === 1 ? option.checks.IMAGE_DECORATIVE : option.checks.IMAGE_DECORATIVE_CAROUSEL;
+        const rule = numberOfSlides.length === 1 ? State.option.checks.IMAGE_DECORATIVE : State.option.checks.IMAGE_DECORATIVE_CAROUSEL;
         const conditional = numberOfSlides.length === 1 ? "IMAGE_DECORATIVE" : "IMAGE_DECORATIVE_CAROUSEL";
         if (rule) {
-          results.push({
+          State.results.push({
             test: conditional,
             element: $el,
             type: rule.type || "warning",
@@ -6395,10 +6352,10 @@ function checkImages(results, option) {
           });
         }
       } else if (link) {
-        const rule = linkTextLength === 0 ? option.checks.LINK_IMAGE_NO_ALT_TEXT : option.checks.LINK_IMAGE_TEXT;
+        const rule = linkTextLength === 0 ? State.option.checks.LINK_IMAGE_NO_ALT_TEXT : State.option.checks.LINK_IMAGE_TEXT;
         const conditional = linkTextLength === 0 ? "LINK_IMAGE_NO_ALT_TEXT" : "LINK_IMAGE_TEXT";
         if (rule) {
-          results.push({
+          State.results.push({
             test: conditional,
             element: $el,
             type: rule.type || (linkTextLength === 0 ? "error" : "good"),
@@ -6409,10 +6366,10 @@ function checkImages(results, option) {
           });
         }
       } else if (figure) {
-        const rule = figcaption && figcaptionText.length ? option.checks.IMAGE_FIGURE_DECORATIVE : option.checks.IMAGE_DECORATIVE;
+        const rule = figcaption && figcaptionText.length ? State.option.checks.IMAGE_FIGURE_DECORATIVE : State.option.checks.IMAGE_DECORATIVE;
         const conditional = figcaption && figcaptionText.length ? "IMAGE_FIGURE_DECORATIVE" : "IMAGE_DECORATIVE";
         if (rule) {
-          results.push({
+          State.results.push({
             test: conditional,
             element: $el,
             type: rule.type || "warning",
@@ -6422,29 +6379,30 @@ function checkImages(results, option) {
             developer: rule.developer || false
           });
         }
-      } else if (option.checks.IMAGE_DECORATIVE) {
-        results.push({
+      } else if (State.option.checks.IMAGE_DECORATIVE) {
+        State.results.push({
           test: "IMAGE_DECORATIVE",
           element: $el,
-          type: option.checks.IMAGE_DECORATIVE.type || "warning",
-          content: Lang.sprintf(option.checks.IMAGE_DECORATIVE.content || "IMAGE_DECORATIVE"),
-          dismiss: prepareDismissal(`DECIMAGE${src}`),
-          dismissAll: option.checks.IMAGE_DECORATIVE.dismissAll ? "IMAGE_DECORATIVE" : false,
-          developer: option.checks.IMAGE_DECORATIVE.developer || false
+          type: State.option.checks.IMAGE_DECORATIVE.type || "warning",
+          content: Lang.sprintf(State.option.checks.IMAGE_DECORATIVE.content || "IMAGE_DECORATIVE"),
+          dismiss: prepareDismissal(`IMAGE_DECORATIVE ${src}`),
+          dismissAll: State.option.checks.IMAGE_DECORATIVE.dismissAll ? "IMAGE_DECORATIVE" : false,
+          developer: State.option.checks.IMAGE_DECORATIVE.developer || false
         });
       }
       return;
     }
-    const unpronounceable = link ? option.checks.LINK_ALT_UNPRONOUNCEABLE : option.checks.ALT_UNPRONOUNCEABLE;
+    const unpronounceable = link ? State.option.checks.LINK_ALT_UNPRONOUNCEABLE : State.option.checks.ALT_UNPRONOUNCEABLE;
     if (unpronounceable) {
       if (alt.replace(/"|'|\?|\.|-|\s+/g, "") === "" && linkTextLength === 0) {
         const conditional = link ? "LINK_ALT_UNPRONOUNCEABLE" : "ALT_UNPRONOUNCEABLE";
-        results.push({
+        State.results.push({
           test: conditional,
           element: $el,
           type: unpronounceable.type || "error",
           content: Lang.sprintf(unpronounceable.content || conditional, altText),
-          dismiss: prepareDismissal(`UNPRONOUNCEABLE${src}`),
+          args: [altText],
+          dismiss: prepareDismissal(`${conditional + src}`),
           dismissAll: unpronounceable.dismissAll ? "ALT_UNPRONOUNCEABLE" : false,
           developer: unpronounceable.developer || false
         });
@@ -6452,163 +6410,196 @@ function checkImages(results, option) {
       }
     }
     const error = containsAltTextStopWords(altText);
-    const maybeBadAlt = link ? option.checks.LINK_ALT_MAYBE_BAD : option.checks.ALT_MAYBE_BAD;
+    const maybeBadAlt = link ? State.option.checks.LINK_ALT_MAYBE_BAD : State.option.checks.ALT_MAYBE_BAD;
     const isTooLongSingleWord = new RegExp(`^\\S{${maybeBadAlt.minLength || 15},}$`);
-    const containsNonAlphaChar = /[^\p{L}\-,.!?]/u.test(alt);
+    const containsNonAlphaChar = /[^\p{L}\-,.!? ]/u.test(altText);
+    const isBadFilename = new RegExp(
+      `^(?=[^_-]*([_-][^_-]*){3,})\\S{${maybeBadAlt.minLength || 15},}$`
+    ).test(altText);
+    const hasTooMuchNoise = /^(?:\s*\d){5,}\s*$/.test(altText) || // Is a number longer than 5 digits.
+    (altText.match(/[_-]/g) || []).length >= 3;
     if (error[0] !== null) {
-      const rule = link ? option.checks.LINK_ALT_FILE_EXT : option.checks.ALT_FILE_EXT;
+      const rule = link ? State.option.checks.LINK_ALT_FILE_EXT : State.option.checks.ALT_FILE_EXT;
       const conditional = link ? "LINK_ALT_FILE_EXT" : "ALT_FILE_EXT";
       if (rule) {
-        results.push({
+        State.results.push({
           test: conditional,
           element: $el,
           type: rule.type || "error",
           content: Lang.sprintf(rule.content || conditional, error[0], altText),
-          dismiss: prepareDismissal(`${conditional + src + altText}`),
+          args: [error[0], altText],
+          dismiss: prepareDismissal(`${conditional + src + alt}`),
           dismissAll: rule.dismissAll ? conditional : false,
           developer: rule.developer || false
         });
       }
     } else if (error[2] !== null) {
-      const rule = link ? option.checks.LINK_PLACEHOLDER_ALT : option.checks.ALT_PLACEHOLDER;
+      const rule = link ? State.option.checks.LINK_PLACEHOLDER_ALT : State.option.checks.ALT_PLACEHOLDER;
       const conditional = link ? "LINK_PLACEHOLDER_ALT" : "ALT_PLACEHOLDER";
       if (rule) {
-        results.push({
+        State.results.push({
           test: conditional,
           element: $el,
           type: rule.type || "error",
           content: Lang.sprintf(rule.content || conditional, altText),
-          dismiss: prepareDismissal(`${conditional + src + altText}`),
+          args: [altText],
+          dismiss: prepareDismissal(`${conditional + src + alt}`),
           dismissAll: rule.dismissAll ? conditional : false,
           developer: rule.developer || false
         });
       }
     } else if (error[1] !== null) {
-      const rule = link ? option.checks.LINK_SUS_ALT : option.checks.SUS_ALT;
+      const rule = link ? State.option.checks.LINK_SUS_ALT : State.option.checks.SUS_ALT;
       const conditional = link ? "LINK_SUS_ALT" : "SUS_ALT";
       if (rule) {
-        results.push({
+        State.results.push({
           test: conditional,
           element: $el,
           type: rule.type || "warning",
           content: Lang.sprintf(rule.content || conditional, error[1], altText),
-          dismiss: prepareDismissal(`${conditional + src + altText}`),
+          args: [error[1], altText],
+          dismiss: prepareDismissal(`${conditional + src + alt}`),
           dismissAll: rule.dismissAll ? conditional : false,
           developer: rule.developer || false
         });
       }
-    } else if (maybeBadAlt && isTooLongSingleWord.test(alt) && containsNonAlphaChar) {
+    } else if (isBadFilename || maybeBadAlt && isTooLongSingleWord.test(alt) && containsNonAlphaChar) {
+      const rule = link ? State.option.checks.LINK_ALT_MAYBE_BAD : State.option.checks.ALT_MAYBE_BAD;
       const conditional = link ? "LINK_ALT_MAYBE_BAD" : "ALT_MAYBE_BAD";
-      results.push({
-        test: conditional,
-        element: $el,
-        type: maybeBadAlt.type || "error",
-        content: Lang.sprintf(maybeBadAlt.content || conditional, altText),
-        dismiss: prepareDismissal(`${conditional + src + altText}`),
-        dismissAll: maybeBadAlt.dismissAll ? conditional : false,
-        developer: maybeBadAlt.developer || false
-      });
-    } else if (link ? alt.length > maxAltCharactersLinks : alt.length > maxAltCharacters) {
-      const rule = link ? option.checks.LINK_IMAGE_LONG_ALT : option.checks.IMAGE_ALT_TOO_LONG;
-      const conditional = link ? "LINK_IMAGE_LONG_ALT" : "IMAGE_ALT_TOO_LONG";
-      const truncated = truncateString(altText, 600);
       if (rule) {
-        results.push({
+        State.results.push({
+          test: conditional,
+          element: $el,
+          type: rule.type || "error",
+          content: Lang.sprintf(rule.content || conditional, altText),
+          args: [altText],
+          dismiss: prepareDismissal(`${conditional + src + alt}`),
+          dismissAll: rule.dismissAll ? conditional : false,
+          developer: rule.developer || false
+        });
+      }
+    } else if (hasTooMuchNoise) {
+      const conditional = link ? "LINK_ALT_MAYBE_BAD" : "ALT_MAYBE_BAD";
+      const rule = link ? State.option.checks.LINK_ALT_MAYBE_BAD_WARNING : State.option.checks.ALT_MAYBE_BAD_WARNING;
+      if (rule) {
+        State.results.push({
+          test: link ? "LINK_ALT_MAYBE_BAD_WARNING" : "ALT_MAYBE_BAD_WARNING",
+          element: $el,
+          type: rule.type || "warning",
+          content: Lang.sprintf(rule.content || conditional, altText),
+          args: [altText],
+          dismiss: prepareDismissal(`${conditional}WARNING${src + alt} `),
+          dismissAll: rule.dismissAll ? conditional : false,
+          developer: rule.developer || false
+        });
+      }
+    } else if (link ? alt.length > maxAltCharactersLinks : alt.length > maxAltCharacters) {
+      const rule = link ? State.option.checks.LINK_IMAGE_LONG_ALT : State.option.checks.IMAGE_ALT_TOO_LONG;
+      const conditional = link ? "LINK_IMAGE_LONG_ALT" : "IMAGE_ALT_TOO_LONG";
+      if (rule) {
+        State.results.push({
           test: conditional,
           element: $el,
           type: rule.type || "warning",
-          content: Lang.sprintf(rule.content || conditional, alt.length, truncated),
-          dismiss: prepareDismissal(`${conditional + src + altText}`),
+          content: Lang.sprintf(rule.content || conditional, alt.length, altText),
+          args: [alt.length, altText],
+          dismiss: prepareDismissal(`${conditional + src + alt}`),
           dismissAll: rule.dismissAll ? conditional : false,
           developer: rule.developer || false
         });
       }
     } else if (link) {
-      const rule = linkTextLength === 0 ? option.checks.LINK_IMAGE_ALT : option.checks.LINK_IMAGE_ALT_AND_TEXT;
+      const rule = linkTextLength === 0 ? State.option.checks.LINK_IMAGE_ALT : State.option.checks.LINK_IMAGE_ALT_AND_TEXT;
       const conditional = linkTextLength === 0 ? "LINK_IMAGE_ALT" : "LINK_IMAGE_ALT_AND_TEXT";
       if (rule) {
         const linkAccName = computeAccessibleName(link);
-        const removeWhitespace$1 = removeWhitespace(linkAccName);
-        const sanitizedText = sanitizeHTML(removeWhitespace$1);
-        const tooltip = linkTextLength === 0 ? Lang.sprintf("LINK_IMAGE_ALT", altText) : `${Lang.sprintf("LINK_IMAGE_ALT_AND_TEXT", altText, sanitizedText)} ${Lang.sprintf("ACC_NAME_TIP")}`;
-        results.push({
+        const accName = removeWhitespace(linkAccName);
+        const tooltip = Lang.sprintf(
+          linkTextLength === 0 ? Lang._("LINK_IMAGE_ALT") : Lang._("LINK_IMAGE_ALT_AND_TEXT") + Lang._("ACC_NAME_TIP"),
+          altText,
+          accName
+        );
+        State.results.push({
           test: conditional,
           element: $el,
           type: rule.type || "warning",
-          content: rule.content ? Lang.sprintf(rule.content, altText, sanitizedText) : tooltip,
-          dismiss: prepareDismissal(`${conditional + src + altText}`),
+          content: rule.content ? Lang.sprintf(rule.content, altText, accName) : tooltip,
+          args: [altText, accName],
+          dismiss: prepareDismissal(`${conditional + src + alt}`),
           dismissAll: rule.dismissAll ? conditional : false,
           developer: rule.developer || false
         });
       }
     } else if (figure) {
-      const duplicate = !!figcaption && figcaptionText.toLowerCase() === altText.toLowerCase();
+      const duplicate = !!figcaption && figcaptionText.toLowerCase() === alt.toLowerCase();
       if (duplicate) {
-        if (option.checks.IMAGE_FIGURE_DUPLICATE_ALT) {
-          results.push({
+        if (State.option.checks.IMAGE_FIGURE_DUPLICATE_ALT) {
+          State.results.push({
             test: "IMAGE_FIGURE_DUPLICATE_ALT",
             element: $el,
-            type: option.checks.IMAGE_FIGURE_DUPLICATE_ALT.type || "warning",
+            type: State.option.checks.IMAGE_FIGURE_DUPLICATE_ALT.type || "warning",
             content: Lang.sprintf(
-              option.checks.IMAGE_FIGURE_DUPLICATE_ALT.content || "IMAGE_FIGURE_DUPLICATE_ALT",
+              State.option.checks.IMAGE_FIGURE_DUPLICATE_ALT.content || "IMAGE_FIGURE_DUPLICATE_ALT",
               altText
             ),
-            dismiss: prepareDismissal(`FIGDUPLICATE${src}`),
-            dismissAll: option.checks.IMAGE_FIGURE_DUPLICATE_ALT.dismissAll ? "IMAGE_FIGURE_DUPLICATE_ALT" : false,
-            developer: option.checks.IMAGE_FIGURE_DUPLICATE_ALT.developer || false
+            args: [altText],
+            dismiss: prepareDismissal(`IMAGE_FIGURE_DUPLICATE_ALT ${src}`),
+            dismissAll: State.option.checks.IMAGE_FIGURE_DUPLICATE_ALT.dismissAll ? "IMAGE_FIGURE_DUPLICATE_ALT" : false,
+            developer: State.option.checks.IMAGE_FIGURE_DUPLICATE_ALT.developer || false
           });
         }
-      } else if (option.checks.IMAGE_PASS) {
-        results.push({
+      } else if (State.option.checks.IMAGE_PASS) {
+        State.results.push({
           test: "IMAGE_PASS",
           element: $el,
-          type: option.checks.IMAGE_PASS.type || "good",
-          content: Lang.sprintf(option.checks.IMAGE_PASS.content || "IMAGE_PASS", altText),
-          dismiss: prepareDismissal(`FIGIMGPASS${src + altText}`),
-          dismissAll: option.checks.IMAGE_PASS.dismissAll ? "IMAGE_PASS" : false,
-          developer: option.checks.IMAGE_PASS.developer || false
+          type: State.option.checks.IMAGE_PASS.type || "good",
+          content: Lang.sprintf(State.option.checks.IMAGE_PASS.content || "IMAGE_PASS", altText),
+          args: [altText],
+          dismiss: prepareDismissal(`IMAGE_PASS FIGURE ${src + alt}`),
+          dismissAll: State.option.checks.IMAGE_PASS.dismissAll ? "IMAGE_PASS" : false,
+          developer: State.option.checks.IMAGE_PASS.developer || false
         });
       }
-    } else if (option.checks.IMAGE_PASS) {
-      if (!$el.closest('button, [role="button"]')) {
-        results.push({
+    } else if (State.option.checks.IMAGE_PASS) {
+      const button = getCachedClosest($el, 'button, [role="button"]');
+      if (!button) {
+        State.results.push({
           test: "IMAGE_PASS",
           element: $el,
-          type: option.checks.IMAGE_PASS.type || "good",
-          content: Lang.sprintf(option.checks.IMAGE_PASS.content || "IMAGE_PASS", altText),
-          dismiss: prepareDismissal(`IMAGEPASS${src + altText}`),
-          dismissAll: option.checks.IMAGE_PASS.dismissAll ? "IMAGE_PASS" : false,
-          developer: option.checks.IMAGE_PASS.developer || false
+          type: State.option.checks.IMAGE_PASS.type || "good",
+          content: Lang.sprintf(State.option.checks.IMAGE_PASS.content || "IMAGE_PASS", altText),
+          args: [altText],
+          dismiss: prepareDismissal(`IMAGE_PASS ${src + alt}`),
+          dismissAll: State.option.checks.IMAGE_PASS.dismissAll ? "IMAGE_PASS" : false,
+          developer: State.option.checks.IMAGE_PASS.developer || false
         });
       }
     }
-    const titleAttr = $el.getAttribute("title");
-    if (titleAttr?.toLowerCase() === alt.toLowerCase()) {
-      if (option.checks.DUPLICATE_TITLE) {
-        results.push({
+    const title = $el.getAttribute("title");
+    if (title !== null && title.trim().toLowerCase() === $el.getAttribute("alt")?.trim().toLowerCase()) {
+      if (State.option.checks.DUPLICATE_TITLE) {
+        State.results.push({
           test: "DUPLICATE_TITLE",
           element: $el,
-          type: option.checks.DUPLICATE_TITLE.type || "warning",
-          content: Lang.sprintf(option.checks.DUPLICATE_TITLE.content || "DUPLICATE_TITLE"),
+          type: State.option.checks.DUPLICATE_TITLE.type || "warning",
+          content: Lang.sprintf(State.option.checks.DUPLICATE_TITLE.content || "DUPLICATE_TITLE"),
           inline: true,
-          dismiss: prepareDismissal(`ALTDUPLICATETITLE${altText}`),
-          dismissAll: option.checks.DUPLICATE_TITLE.dismissAll ? "DUPLICATE_TITLE" : false,
-          developer: option.checks.DUPLICATE_TITLE.developer || false
+          dismiss: prepareDismissal(`DUPLICATE_TITLE ${alt}`),
+          dismissAll: State.option.checks.DUPLICATE_TITLE.dismissAll ? "DUPLICATE_TITLE" : false,
+          developer: State.option.checks.DUPLICATE_TITLE.developer || false
         });
       }
     }
   });
-  return results;
 }
-function checkHeaders(results, option, headingOutline) {
+function checkHeaders() {
   let prevLevel;
   let prevHeadingText = "";
-  const stringExclusionPattern = generateRegexString(option.headerIgnoreStrings);
+  const stringExclusionPattern = generateRegexString(State.option.headerIgnoreStrings);
   Elements.Found.Headings.forEach(($el, i) => {
     const accName = computeAccessibleName($el, Constants.Exclusions.HeaderSpan);
     const stringMatchExclusions = accName.replace(stringExclusionPattern, "");
-    const removeWhitespace$1 = removeWhitespace(stringMatchExclusions);
-    const headingText = sanitizeHTML(removeWhitespace$1);
+    const headingText = removeWhitespace(stringMatchExclusions);
     const rootContainsHeading = Constants.Root.areaToCheck.some((root) => root.contains($el));
     const rootContainsShadowHeading = Constants.Root.areaToCheck.some(
       (root) => root.contains($el.getRootNode().host)
@@ -6619,82 +6610,95 @@ function checkHeaders(results, option, headingOutline) {
       prevLevel = headingStartsOverride;
     }
     const level = parseInt($el.getAttribute("aria-level") || $el.tagName.slice(1), 10);
-    const headingLength = removeWhitespace$1.length;
-    const maxHeadingLength = option.checks.HEADING_LONG.maxLength || 160;
+    const headingLength = headingText.length;
+    const maxHeadingLength = State.option.checks.HEADING_LONG.maxLength || 160;
     let test = null;
     let type = null;
     let content = null;
     let developer = null;
     let dismissAll = null;
     let margin = null;
+    let args = null;
     if (headingLength === 0) {
       const image = $el.querySelector("img");
       if (image) {
         const alt = image?.getAttribute("alt");
-        if (image && (!alt || alt.trim() === "")) {
-          if (option.checks.HEADING_EMPTY_WITH_IMAGE) {
+        if (image && (!alt || alt.trim() === "" || accName === "")) {
+          if (State.option.checks.HEADING_EMPTY_WITH_IMAGE) {
             test = "HEADING_EMPTY_WITH_IMAGE";
-            type = option.checks.HEADING_EMPTY_WITH_IMAGE.type || "error";
+            type = State.option.checks.HEADING_EMPTY_WITH_IMAGE.type || "error";
             content = Lang.sprintf(
-              option.checks.HEADING_EMPTY_WITH_IMAGE.content || "HEADING_EMPTY_WITH_IMAGE",
+              State.option.checks.HEADING_EMPTY_WITH_IMAGE.content || "HEADING_EMPTY_WITH_IMAGE",
               level
             );
-            developer = option.checks.HEADING_EMPTY_WITH_IMAGE.developer || false;
-            dismissAll = option.checks.HEADING_EMPTY_WITH_IMAGE.dismissAll ? "HEADING_EMPTY_WITH_IMAGE" : false;
+            args = [level];
+            developer = State.option.checks.HEADING_EMPTY_WITH_IMAGE.developer || false;
+            dismissAll = State.option.checks.HEADING_EMPTY_WITH_IMAGE.dismissAll ? "HEADING_EMPTY_WITH_IMAGE" : false;
             margin = "-15px 30px";
           }
         }
-      } else if (option.checks.HEADING_EMPTY) {
+      } else if (State.option.checks.HEADING_EMPTY) {
         test = "HEADING_EMPTY";
-        type = option.checks.HEADING_EMPTY.type || "error";
-        content = Lang.sprintf(option.checks.HEADING_EMPTY.content || "HEADING_EMPTY", level);
-        developer = option.checks.HEADING_EMPTY.developer || false;
-        dismissAll = option.checks.HEADING_EMPTY.dismissAll ? "HEADING_EMPTY" : false;
+        type = State.option.checks.HEADING_EMPTY.type || "error";
+        content = Lang.sprintf(State.option.checks.HEADING_EMPTY.content || "HEADING_EMPTY", level);
+        args = [level];
+        developer = State.option.checks.HEADING_EMPTY.developer || false;
+        dismissAll = State.option.checks.HEADING_EMPTY.dismissAll ? "HEADING_EMPTY" : false;
         margin = "0";
       }
-    } else if (level - prevLevel > 1 && i !== 0) {
-      if (option.checks.HEADING_SKIPPED_LEVEL) {
+    } else if (level - prevLevel > 1 && (i !== 0 || headingStartsOverride)) {
+      if (State.option.checks.HEADING_SKIPPED_LEVEL) {
         test = "HEADING_SKIPPED_LEVEL";
-        type = option.checks.HEADING_SKIPPED_LEVEL.type || "error";
+        type = State.option.checks.HEADING_SKIPPED_LEVEL.type || "error";
         content = Lang.sprintf(
-          option.checks.HEADING_SKIPPED_LEVEL.content || "HEADING_SKIPPED_LEVEL",
+          State.option.checks.HEADING_SKIPPED_LEVEL.content || "HEADING_SKIPPED_LEVEL",
           prevLevel,
           level,
           truncateString(headingText, 60),
           truncateString(prevHeadingText, 60),
           prevLevel + 1
         );
-        developer = option.checks.HEADING_SKIPPED_LEVEL.developer || false;
-        dismissAll = option.checks.HEADING_SKIPPED_LEVEL.dismissAll ? "HEADING_SKIPPED_LEVEL" : false;
+        args = [
+          prevLevel,
+          level,
+          truncateString(headingText, 60),
+          truncateString(prevHeadingText, 60),
+          prevLevel + 1
+        ];
+        developer = State.option.checks.HEADING_SKIPPED_LEVEL.developer || false;
+        dismissAll = State.option.checks.HEADING_SKIPPED_LEVEL.dismissAll ? "HEADING_SKIPPED_LEVEL" : false;
       }
     } else if (i === 0 && level !== 1 && level !== 2) {
-      if (option.checks.HEADING_FIRST) {
+      if (State.option.checks.HEADING_FIRST) {
         test = "HEADING_FIRST";
-        type = option.checks.HEADING_FIRST.type || "error";
-        content = Lang.sprintf(option.checks.HEADING_FIRST.content || "HEADING_FIRST");
-        developer = option.checks.HEADING_FIRST.developer || false;
-        dismissAll = option.checks.HEADING_FIRST.dismissAll ? "HEADING_FIRST" : false;
+        type = State.option.checks.HEADING_FIRST.type || "error";
+        content = Lang.sprintf(State.option.checks.HEADING_FIRST.content || "HEADING_FIRST");
+        developer = State.option.checks.HEADING_FIRST.developer || false;
+        dismissAll = State.option.checks.HEADING_FIRST.dismissAll ? "HEADING_FIRST" : false;
       }
     } else if (headingLength > maxHeadingLength) {
-      if (option.checks.HEADING_LONG) {
+      if (State.option.checks.HEADING_LONG) {
         test = "HEADING_LONG";
-        type = option.checks.HEADING_LONG.type || "warning";
+        type = State.option.checks.HEADING_LONG.type || "warning";
         content = Lang.sprintf(
-          option.checks.HEADING_LONG.content || "HEADING_LONG",
+          State.option.checks.HEADING_LONG.content || "HEADING_LONG",
           maxHeadingLength,
-          headingLength
+          headingLength,
+          headingText
         );
-        developer = option.checks.HEADING_LONG.developer || false;
-        dismissAll = option.checks.HEADING_LONG.dismissAll ? "HEADING_LONG" : false;
+        args = [maxHeadingLength, headingLength, headingText];
+        developer = State.option.checks.HEADING_LONG.developer || false;
+        dismissAll = State.option.checks.HEADING_LONG.dismissAll ? "HEADING_LONG" : false;
       }
     }
     if (content && type) {
-      results.push({
+      State.results.push({
         test,
         element: $el,
         type,
         content,
-        dismiss: prepareDismissal(`H${level + headingText}`),
+        args,
+        dismiss: prepareDismissal(`${test + level + headingText}`),
         dismissAll,
         isWithinRoot,
         developer,
@@ -6704,26 +6708,27 @@ function checkHeaders(results, option, headingOutline) {
     prevLevel = level;
     prevHeadingText = headingText;
     if (!Elements.Found.OutlineIgnore.includes($el)) {
-      headingOutline.push({
+      State.headingOutline.push({
         element: $el,
         headingLevel: level,
         text: headingText,
         type,
-        dismiss: prepareDismissal(`H${level + headingText}`),
+        dismiss: prepareDismissal(`${test + level + headingText}`),
         isWithinRoot
       });
     }
   });
-  if (option.checks.HEADING_MISSING_ONE && Elements.Found.HeadingOne.length === 0) {
-    results.push({
+  if (State.option.checks.HEADING_MISSING_ONE && Elements.Found.HeadingOne.length === 0) {
+    State.results.push({
       test: "HEADING_MISSING_ONE",
-      type: option.checks.HEADING_MISSING_ONE.type || "warning",
-      content: Lang.sprintf(option.checks.HEADING_MISSING_ONE.content || "HEADING_MISSING_ONE"),
-      dismiss: "MISSINGH1",
-      developer: option.checks.HEADING_MISSING_ONE.developer || false
+      type: State.option.checks.HEADING_MISSING_ONE.type || "warning",
+      content: Lang.sprintf(
+        State.option.checks.HEADING_MISSING_ONE.content || "HEADING_MISSING_ONE"
+      ),
+      dismiss: "HEADING_MISSING_ONE",
+      developer: State.option.checks.HEADING_MISSING_ONE.developer || false
     });
   }
-  return { results, headingOutline };
 }
 const defaultFileTypes = [
   "pdf",
@@ -6749,30 +6754,30 @@ const defaultFileTypes = [
   "zip"
 ];
 const cssFileTypeSelectors = 'a[href$=".pdf"], a[href$=".doc"], a[href$=".docx"], a[href$=".zip"], a[href$=".mp3"], a[href$=".txt"], a[href$=".exe"], a[href$=".dmg"], a[href$=".rtf"], a[href$=".pptx"], a[href$=".ppt"], a[href$=".xls"], a[href$=".xlsx"], a[href$=".csv"], a[href$=".mp4"], a[href$=".mov"], a[href$=".avi"]';
-const citationPattern = /(doi\.org\/|dl\.acm\.org\/|link\.springer\.com\/|pubmed\.ncbi\.nlm\.nih\.gov\/|scholar\.google\.com\/|ieeexplore\.ieee\.org\/|researchgate\.net\/publication\/|sciencedirect\.com\/science\/article\/)[a-z0-9/.-]+/i;
+const citationPattern = /(doi\.org\/|dl\.acm\.org\/|link\.springer\.com\/|pubmed\.ncbi\.nlm\.nih\.gov\/|scholar\.google\.com\/|ieeexplore\.ieee\.org\/|researchgate\.net\/publication\/|sciencedirect\.com\/science\/article\/|10\.\d{4,}\/)[a-z0-9/.-]+/i;
 const urlEndings = /\b(?:\.edu\/|\.gob\/|\.gov\/|\.app\/|\.com\/|\.net\/|\.org\/|\.us\/|\.ca\/|\.de\/|\.icu\/|\.uk\/|\.ru\/|\.info\/|\.top\/|\.xyz\/|\.tk\/|\.cn\/|\.ga\/|\.cf\/|\.nl\/|\.io\/|\.fr\/|\.pe\/|\.nz\/|\.pt\/|\.es\/|\.pl\/|\.ua\/)\b/i;
-const specialCharPattern = /[^a-zA-Z0-9]/g;
+const specialCharPattern = /[^a-zA-Z0-9]/;
 const htmlSymbols = /([<>↣↳←→↓«»↴]+)/;
 const checkStopWords = (textContent, stopWordsSet, stripStrings) => {
   const stripped = textContent.replace(stripStrings, "").trim();
   if (stopWordsSet.has(stripped)) return stripped;
   return null;
 };
-function checkLinkText(results, option) {
-  const customStopWords = option.linkStopWords ? option.linkStopWords.split(",").map((word) => word.toLowerCase().trim()) : [];
+function checkLinkText() {
+  const customStopWords = State.option.linkStopWords ? State.option.linkStopWords.split(",").map((word) => word.toLowerCase().trim()) : [];
   const linkStopWords = /* @__PURE__ */ new Set([...Lang._("LINK_STOPWORDS"), ...customStopWords]);
-  const linkIgnoreStrings = new Set(option.linkIgnoreStrings.map((word) => word.toLowerCase()));
+  const linkIgnoreStrings = new Set(
+    State.option.linkIgnoreStrings.map((word) => word.toLowerCase())
+  );
   const clickRegex = generateRegexString(Lang._("CLICK"));
   const newWindowRegex = generateRegexString(Lang._("NEW_WINDOW_PHRASES"));
   const fileTypeRegex = generateRegexString(defaultFileTypes);
-  const ignorePattern = generateRegexString(option.linkIgnoreStrings);
+  const ignorePattern = generateRegexString(State.option.linkIgnoreStrings);
   const seen = {};
   Elements.Found.Links.forEach(($el) => {
-    const href = standardizeHref($el);
+    const href = $el.href ? standardizeHref($el) : "";
     const titleAttr = $el.getAttribute("title");
-    const ariaHidden = $el.getAttribute("aria-hidden") === "true";
-    const negativeTabindex = $el.getAttribute("tabindex") === "-1";
-    const targetBlank = $el.getAttribute("target")?.toLowerCase() === "_blank";
+    const targetBlank = $el.getAttribute("target")?.trim()?.toLowerCase() === "_blank";
     const ariaLabel = $el.getAttribute("aria-label");
     const ariaLabelledby = $el.getAttribute("aria-labelledby");
     const childLabelledby = !ariaLabelledby ? $el.querySelector("[aria-labelledby]") : null;
@@ -6785,30 +6790,14 @@ function checkLinkText(results, option) {
     const lowercaseLinkText = linkText.toLowerCase();
     const strippedLinkText = stripAllSpecialCharacters(lowercaseLinkText);
     const textContent = getText($el).toLowerCase();
+    const textContentIgnoredStrings = getText(
+      fnIgnore($el, Constants.Exclusions.LinkSpan)
+    ).replace(ignorePattern, "");
     const containsNewWindowPhrases = lowercaseLinkText.match(newWindowRegex)?.[0] || textContent.match(newWindowRegex)?.[0];
     const containsFileTypePhrases = lowercaseLinkText.match(fileTypeRegex)?.[0] || textContent.match(fileTypeRegex)?.[0];
     const fileTypeMatch = $el.matches(cssFileTypeSelectors);
     if (!$el.querySelector("img")) {
-      if (ariaHidden) {
-        if (!negativeTabindex) {
-          if (option.checks.HIDDEN_FOCUSABLE) {
-            results.push({
-              test: "HIDDEN_FOCUSABLE",
-              element: $el,
-              type: option.checks.HIDDEN_FOCUSABLE.type || "error",
-              content: Lang.sprintf(option.checks.HIDDEN_FOCUSABLE.content || "HIDDEN_FOCUSABLE"),
-              inline: true,
-              position: "afterend",
-              dismiss: prepareDismissal(`LINKHIDDENFOCUS${href + strippedLinkText}`),
-              dismissAll: option.checks.HIDDEN_FOCUSABLE.dismissAll ? "LINK_HIDDEN_FOCUSABLE" : false,
-              developer: option.checks.HIDDEN_FOCUSABLE.developer || true
-            });
-          }
-        }
-        return;
-      }
       if (hasAria && linkText.length !== 0) {
-        const sanitizedText = sanitizeHTML(linkText);
         const excludeSpan = fnIgnore($el, Constants.Exclusions.LinkSpan);
         const visibleLinkText = getText(excludeSpan).replace(ignorePattern, "");
         const cleanedString = stripAllSpecialCharacters(visibleLinkText);
@@ -6817,127 +6806,142 @@ function checkLinkText(results, option) {
           $el,
           accName,
           Constants.Exclusions.LinkSpan,
-          option.linkIgnoreStrings
+          State.option.linkIgnoreStrings
         );
-        if (option.checks.LINK_STOPWORD_ARIA && stopword !== null) {
-          results.push({
+        if (State.option.checks.LINK_STOPWORD_ARIA && stopword !== null) {
+          State.results.push({
             test: "LINK_STOPWORD_ARIA",
             element: $el,
-            type: option.checks.LINK_STOPWORD_ARIA.type || "warning",
-            content: option.checks.LINK_STOPWORD_ARIA.content ? Lang.sprintf(option.checks.LINK_STOPWORD_ARIA.content, stopword, sanitizedText) : Lang.sprintf("LINK_STOPWORD_ARIA", stopword, sanitizedText) + Lang.sprintf("LINK_TIP"),
+            type: State.option.checks.LINK_STOPWORD_ARIA.type || "warning",
+            content: Lang.sprintf(
+              State.option.checks.LINK_STOPWORD_ARIA.content || Lang._("LINK_STOPWORD_ARIA") + Lang._("LINK_TIP"),
+              stopword,
+              linkText
+            ),
+            args: [stopword, linkText],
             inline: true,
-            dismiss: prepareDismissal(`LINKSTOPWORDARIA${href + strippedLinkText}`),
-            dismissAll: option.checks.LINK_STOPWORD_ARIA.dismissAll ? " LINK_STOPWORD_ARIA" : false,
-            developer: option.checks.LINK_STOPWORD_ARIA.developer || true
+            dismiss: prepareDismissal(`LINK_STOPWORD_ARIA ${strippedLinkText}`),
+            dismissAll: State.option.checks.LINK_STOPWORD_ARIA.dismissAll ? " LINK_STOPWORD_ARIA" : false,
+            developer: State.option.checks.LINK_STOPWORD_ARIA.developer || true
           });
-        } else if (option.checks.LABEL_IN_NAME && visibleTextInName && textContent.length !== 0) {
-          results.push({
+        } else if (State.option.checks.LABEL_IN_NAME && visibleTextInName && textContent.length !== 0) {
+          State.results.push({
             test: "LABEL_IN_NAME",
             element: $el,
-            type: option.checks.LABEL_IN_NAME.type || "warning",
+            type: State.option.checks.LABEL_IN_NAME.type || "warning",
             content: Lang.sprintf(
-              option.checks.LABEL_IN_NAME.content || "LABEL_IN_NAME",
-              sanitizedText
+              State.option.checks.LABEL_IN_NAME.content || Lang._("LABEL_IN_NAME") + Lang._("ACC_NAME_TIP"),
+              textContentIgnoredStrings,
+              linkText
             ),
+            args: [textContentIgnoredStrings, linkText],
             inline: true,
             position: "afterend",
-            dismiss: prepareDismissal(`LINKLABELNAME${href + strippedLinkText}`),
-            dismissAll: option.checks.LABEL_IN_NAME.dismissAll ? "BTN_LABEL_IN_NAME" : false,
-            developer: option.checks.LABEL_IN_NAME.developer || true
+            dismiss: prepareDismissal(`LABEL_IN_NAME ${strippedLinkText}`),
+            dismissAll: State.option.checks.LABEL_IN_NAME.dismissAll ? "BTN_LABEL_IN_NAME" : false,
+            developer: State.option.checks.LABEL_IN_NAME.developer || true
           });
-        } else if (option.checks.LINK_LABEL) {
-          results.push({
+        } else if (State.option.checks.LINK_LABEL) {
+          State.results.push({
             test: "LINK_LABEL",
             element: $el,
-            type: option.checks.LINK_LABEL.type || "good",
-            content: option.checks.LINK_LABEL.content ? Lang.sprintf(option.checks.LINK_LABEL.content, sanitizedText) : `${Lang.sprintf("ACC_NAME", sanitizedText)} ${Lang.sprintf("ACC_NAME_TIP")}`,
+            type: State.option.checks.LINK_LABEL.type || "good",
+            content: Lang.sprintf(
+              State.option.checks.LINK_LABEL.content || Lang._("ACC_NAME") + Lang._("ACC_NAME_TIP"),
+              linkText
+            ),
+            args: [linkText],
             inline: true,
             position: "afterend",
-            dismiss: prepareDismissal(`LINKGOOD${href + strippedLinkText}`),
-            dismissAll: option.checks.LINK_LABEL.dismissAll ? "LINK_LABEL" : false,
-            developer: option.checks.LINK_LABEL.developer || true
+            dismiss: prepareDismissal(`LINK_LABEL ${strippedLinkText}`),
+            dismissAll: State.option.checks.LINK_LABEL.dismissAll ? "LINK_LABEL" : false,
+            developer: State.option.checks.LINK_LABEL.developer || true
           });
         }
       }
       let oneStop;
-      const addStopWordResult = (element, stopword) => {
-        if (option.checks.LINK_STOPWORD && !oneStop) {
+      const addStopWordResult = (element) => {
+        if (State.option.checks.LINK_STOPWORD && !oneStop) {
           oneStop = true;
-          results.push({
+          State.results.push({
             test: "LINK_STOPWORD",
             element,
-            type: option.checks.LINK_STOPWORD.type || "error",
-            content: option.checks.LINK_STOPWORD.content ? Lang.sprintf(option.checks.LINK_STOPWORD.content, stopword) : Lang.sprintf("LINK_STOPWORD", stopword) + Lang.sprintf("LINK_TIP"),
+            type: State.option.checks.LINK_STOPWORD.type || "error",
+            content: Lang.sprintf(
+              State.option.checks.LINK_STOPWORD.content || Lang._("LINK_STOPWORD") + Lang._("LINK_TIP"),
+              linkText
+            ),
+            args: [linkText],
             inline: true,
             position: "afterend",
-            dismiss: prepareDismissal(`LINKSTOPWORD${href + strippedLinkText}`),
-            dismissAll: option.checks.LINK_STOPWORD.dismissAll ? "LINK_STOPWORD" : false,
-            developer: option.checks.LINK_STOPWORD.developer || false
+            dismiss: prepareDismissal(`LINK_STOPWORD ${strippedLinkText}`),
+            dismissAll: State.option.checks.LINK_STOPWORD.dismissAll ? "LINK_STOPWORD" : false,
+            developer: State.option.checks.LINK_STOPWORD.developer || false
           });
         }
       };
       const isLinkIgnoreStrings = checkStopWords(textContent, linkIgnoreStrings);
       if (isLinkIgnoreStrings === textContent || isLinkIgnoreStrings === strippedLinkText) {
-        addStopWordResult($el, isLinkIgnoreStrings);
+        addStopWordResult($el);
       } else if (containsNewWindowPhrases === textContent || containsNewWindowPhrases === strippedLinkText) {
-        addStopWordResult($el, containsNewWindowPhrases);
+        addStopWordResult($el);
         return;
       }
       if (linkText.length === 0) {
         if (hasAriaLabelledby) {
-          if (option.checks.LINK_EMPTY_LABELLEDBY) {
-            results.push({
+          if (State.option.checks.LINK_EMPTY_LABELLEDBY) {
+            State.results.push({
               test: "LINK_EMPTY_LABELLEDBY",
               element: $el,
-              type: option.checks.LINK_EMPTY_LABELLEDBY.type || "error",
+              type: State.option.checks.LINK_EMPTY_LABELLEDBY.type || "error",
               content: Lang.sprintf(
-                option.checks.LINK_EMPTY_LABELLEDBY.content || "LINK_EMPTY_LABELLEDBY"
+                State.option.checks.LINK_EMPTY_LABELLEDBY.content || "LINK_EMPTY_LABELLEDBY"
               ),
               inline: true,
               position: "afterend",
-              dismiss: prepareDismissal(`LINKEMPTYLABELLEDBY${href}`),
-              dismissAll: option.checks.LINK_EMPTY_LABELLEDBY.dismissAll ? "LINK_EMPTY_LABELLEDBY" : false,
-              developer: option.checks.LINK_EMPTY_LABELLEDBY.developer || true
+              dismiss: prepareDismissal(`LINK_EMPTY_LABELLEDBY ${href}`),
+              dismissAll: State.option.checks.LINK_EMPTY_LABELLEDBY.dismissAll ? "LINK_EMPTY_LABELLEDBY" : false,
+              developer: State.option.checks.LINK_EMPTY_LABELLEDBY.developer || true
             });
           }
         } else if ($el.children.length) {
           let hasStopWordWarning = false;
-          if (option.linkIgnoreSpan) {
-            const spanEl = $el.querySelector(option.linkIgnoreSpan);
+          if (State.option.linkIgnoreSpan) {
+            const spanEl = $el.querySelector(State.option.linkIgnoreSpan);
             if (spanEl) {
               const spanText = stripAllSpecialCharacters(spanEl.textContent).trim().toLowerCase();
               if (spanText === textContent) {
-                addStopWordResult($el, spanText);
+                addStopWordResult($el);
                 hasStopWordWarning = true;
               }
             }
           }
-          if (!hasStopWordWarning && option.checks.LINK_EMPTY_NO_LABEL) {
-            results.push({
+          if (!hasStopWordWarning && State.option.checks.LINK_EMPTY_NO_LABEL) {
+            State.results.push({
               test: "LINK_EMPTY_NO_LABEL",
               element: $el,
-              type: option.checks.LINK_EMPTY_NO_LABEL.type || "error",
+              type: State.option.checks.LINK_EMPTY_NO_LABEL.type || "error",
               content: Lang.sprintf(
-                option.checks.LINK_EMPTY_NO_LABEL.content || "LINK_EMPTY_NO_LABEL"
+                State.option.checks.LINK_EMPTY_NO_LABEL.content || "LINK_EMPTY_NO_LABEL"
               ),
               inline: true,
               position: "afterend",
-              dismiss: prepareDismissal(`LINKEMPTYNOLABEL${href}`),
-              dismissAll: option.checks.LINK_EMPTY_NO_LABEL.dismissAll ? "LINK_EMPTY_NO_LABEL" : false,
-              developer: option.checks.LINK_EMPTY_NO_LABEL.developer || false
+              dismiss: prepareDismissal(`LINK_EMPTY_NO_LABEL ${href}`),
+              dismissAll: State.option.checks.LINK_EMPTY_NO_LABEL.dismissAll ? "LINK_EMPTY_NO_LABEL" : false,
+              developer: State.option.checks.LINK_EMPTY_NO_LABEL.developer || false
             });
           }
-        } else if (!isLinkIgnoreStrings && option.checks.LINK_EMPTY) {
-          results.push({
+        } else if (!isLinkIgnoreStrings && State.option.checks.LINK_EMPTY) {
+          State.results.push({
             test: "LINK_EMPTY",
             element: $el,
-            type: option.checks.LINK_EMPTY.type || "error",
-            content: Lang.sprintf(option.checks.LINK_EMPTY.content || "LINK_EMPTY"),
+            type: State.option.checks.LINK_EMPTY.type || "error",
+            content: Lang.sprintf(State.option.checks.LINK_EMPTY.content || "LINK_EMPTY"),
             inline: true,
             position: "afterend",
-            dismiss: prepareDismissal(`LINKEMPTY${href}`),
-            dismissAll: option.checks.LINK_EMPTY.dismissAll ? "LINK_EMPTY" : false,
-            developer: option.checks.LINK_EMPTY.developer || false
+            dismiss: prepareDismissal(`LINK_EMPTY ${href}`),
+            dismissAll: State.option.checks.LINK_EMPTY.dismissAll ? "LINK_EMPTY" : false,
+            developer: State.option.checks.LINK_EMPTY.developer || false
           });
         }
         return;
@@ -6945,213 +6949,355 @@ function checkLinkText(results, option) {
       const isStopWord = checkStopWords(strippedLinkText, linkStopWords, newWindowRegex);
       const hasClickWord = strippedLinkText.match(clickRegex)?.[0] || textContent.match(clickRegex)?.[0];
       const isCitation = lowercaseLinkText.match(citationPattern)?.[0];
-      const urlCheck = lowercaseLinkText.startsWith("www.") || lowercaseLinkText.startsWith("http");
-      const isUrlFragment = urlCheck ? "URL Prefix" : lowercaseLinkText.match(urlEndings)?.[0];
+      const hasUrlPrefix = lowercaseLinkText.startsWith("www.") || lowercaseLinkText.startsWith("http");
+      const hasUrlEnding = Boolean(lowercaseLinkText.match(urlEndings));
+      const isUrlFragment = hasUrlPrefix || hasUrlEnding;
       const isSingleSpecialChar = linkText.length === 1 && specialCharPattern.test(linkText);
       const matchedSymbol = lowercaseLinkText.match(htmlSymbols)?.[0];
       if (isStopWord) {
-        addStopWordResult($el, isStopWord);
+        addStopWordResult($el);
       } else if (isCitation) {
         if (linkText.length > 8) {
-          if (option.checks.LINK_DOI) {
-            results.push({
+          if (State.option.checks.LINK_DOI) {
+            State.results.push({
               test: "LINK_DOI",
               element: $el,
-              type: option.checks.LINK_DOI.type || "warning",
-              content: Lang.sprintf(option.checks.LINK_DOI.content || "LINK_DOI"),
+              type: State.option.checks.LINK_DOI.type || "warning",
+              content: Lang.sprintf(State.option.checks.LINK_DOI.content || "LINK_DOI", linkText),
+              args: [linkText],
               inline: true,
-              dismiss: prepareDismissal(`LINKDOI${href + strippedLinkText}`),
-              dismissAll: option.checks.LINK_DOI.dismissAll ? "LINK_DOI" : false,
-              developer: option.checks.LINK_DOI.developer || false
+              dismiss: prepareDismissal(`LINK_DOI ${strippedLinkText}`),
+              dismissAll: State.option.checks.LINK_DOI.dismissAll ? "LINK_DOI" : false,
+              developer: State.option.checks.LINK_DOI.developer || false
             });
           }
         }
       } else if (isUrlFragment) {
-        if (!hasAria && linkText.length > (option.checks.LINK_URL.maxLength || 40)) {
-          if (option.checks.LINK_URL) {
-            results.push({
+        if (!hasAria && linkText.length > (State.option.checks.LINK_URL.maxLength || 40)) {
+          if (State.option.checks.LINK_URL) {
+            State.results.push({
               test: "LINK_URL",
               element: $el,
-              type: option.checks.LINK_URL.type || "warning",
-              content: option.checks.LINK_URL.content ? Lang.sprintf(option.checks.LINK_URL.content) : Lang.sprintf("LINK_URL") + Lang.sprintf("LINK_TIP"),
+              type: State.option.checks.LINK_URL.type || "warning",
+              content: Lang.sprintf(
+                State.option.checks.LINK_URL.content || Lang._("LINK_URL") + Lang._("LINK_TIP"),
+                linkText
+              ),
+              args: [linkText],
               inline: true,
-              dismiss: prepareDismissal(`LINKURLNAME${href + strippedLinkText}`),
-              dismissAll: option.checks.LINK_URL.dismissAll ? "LINK_URL" : false,
-              developer: option.checks.LINK_URL.developer || false
+              dismiss: prepareDismissal(`LINK_URL ${strippedLinkText}`),
+              dismissAll: State.option.checks.LINK_URL.dismissAll ? "LINK_URL" : false,
+              developer: State.option.checks.LINK_URL.developer || false
             });
           }
         }
-      } else if (matchedSymbol) {
-        if (option.checks.LINK_SYMBOLS) {
-          results.push({
+      } else if (matchedSymbol && linkText.length > 1) {
+        if (State.option.checks.LINK_SYMBOLS) {
+          State.results.push({
             test: "LINK_SYMBOLS",
             element: $el,
-            type: option.checks.LINK_SYMBOLS.type || "warning",
+            type: State.option.checks.LINK_SYMBOLS.type || "warning",
             content: Lang.sprintf(
-              option.checks.LINK_SYMBOLS.content || "LINK_SYMBOLS",
-              matchedSymbol
+              State.option.checks.LINK_SYMBOLS.content || "LINK_SYMBOLS",
+              matchedSymbol,
+              linkText
             ),
+            args: [matchedSymbol, linkText],
             inline: true,
-            dismiss: prepareDismissal(`LINKSYMBOL${href + strippedLinkText}`),
-            dismissAll: option.checks.LINK_SYMBOLS.dismissAll ? "LINK_SYMBOLS" : false,
-            developer: option.checks.LINK_SYMBOLS.developer || false
+            dismiss: prepareDismissal(`LINK_SYMBOLS ${strippedLinkText}`),
+            dismissAll: State.option.checks.LINK_SYMBOLS.dismissAll ? "LINK_SYMBOLS" : false,
+            developer: State.option.checks.LINK_SYMBOLS.developer || false
           });
         }
-      } else if (isSingleSpecialChar && !titleAttr) {
-        if (option.checks.LINK_EMPTY) {
-          results.push({
-            test: "LINK_EMPTY",
+      } else if ((isSingleSpecialChar || matchedSymbol) && !titleAttr) {
+        if (State.option.checks.LINK_UNPRONOUNCEABLE) {
+          State.results.push({
+            test: "LINK_UNPRONOUNCEABLE",
             element: $el,
-            type: option.checks.LINK_EMPTY.type || "error",
-            content: Lang.sprintf(option.checks.LINK_EMPTY.content || "LINK_EMPTY"),
+            type: State.option.checks.LINK_UNPRONOUNCEABLE.type || "error",
+            content: Lang.sprintf(
+              State.option.checks.LINK_UNPRONOUNCEABLE.content || Lang._("LINK_UNPRONOUNCEABLE") + Lang._("LINK_TIP"),
+              linkText
+            ),
+            args: [linkText],
             inline: true,
             position: "afterend",
-            dismiss: prepareDismissal(`LINKCHAR${href}`),
-            dismissAll: option.checks.LINK_EMPTY.dismissAll ? "LINK_EMPTY" : false,
-            developer: option.checks.LINK_EMPTY.developer || false
+            dismiss: prepareDismissal(`LINK_UNPRONOUNCEABLE ${href}`),
+            dismissAll: State.option.checks.LINK_UNPRONOUNCEABLE.dismissAll ? "LINK_UNPRONOUNCEABLE" : false,
+            developer: State.option.checks.LINK_UNPRONOUNCEABLE.developer || false
           });
         }
         return;
       }
       if (hasClickWord) {
-        if (option.checks.LINK_CLICK_HERE) {
-          results.push({
+        if (State.option.checks.LINK_CLICK_HERE) {
+          State.results.push({
             test: "LINK_CLICK_HERE",
             element: $el,
-            type: option.checks.LINK_CLICK_HERE.type || "warning",
-            content: option.checks.LINK_CLICK_HERE.content ? Lang.sprintf(option.checks.LINK_CLICK_HERE.content) : Lang.sprintf("LINK_CLICK_HERE") + Lang.sprintf("LINK_TIP"),
+            type: State.option.checks.LINK_CLICK_HERE.type || "warning",
+            content: Lang.sprintf(
+              State.option.checks.LINK_CLICK_HERE.content || Lang._("LINK_CLICK_HERE") + Lang._("LINK_TIP"),
+              linkText
+            ),
+            args: [linkText],
             inline: true,
-            dismiss: prepareDismissal(`LINKCLICKHERE${href + strippedLinkText}`),
-            dismissAll: option.checks.LINK_CLICK_HERE.dismissAll ? "LINK_CLICK_HERE" : false,
-            developer: option.checks.LINK_CLICK_HERE.developer || false
+            dismiss: prepareDismissal(`LINK_CLICK_HERE ${strippedLinkText}`),
+            dismissAll: State.option.checks.LINK_CLICK_HERE.dismissAll ? "LINK_CLICK_HERE" : false,
+            developer: State.option.checks.LINK_CLICK_HERE.developer || false
           });
         }
       }
       if (textContent.length !== 0 && titleAttr?.toLowerCase() === linkText.toLowerCase()) {
-        if (option.checks.DUPLICATE_TITLE) {
-          results.push({
+        if (State.option.checks.DUPLICATE_TITLE) {
+          State.results.push({
             test: "DUPLICATE_TITLE",
             element: $el,
-            type: option.checks.DUPLICATE_TITLE.type || "warning",
-            content: Lang.sprintf(option.checks.DUPLICATE_TITLE.content || "DUPLICATE_TITLE"),
+            type: State.option.checks.DUPLICATE_TITLE.type || "warning",
+            content: Lang.sprintf(State.option.checks.DUPLICATE_TITLE.content || "DUPLICATE_TITLE"),
             inline: true,
-            dismiss: prepareDismissal(`LINKDUPLICATETITLE${href + strippedLinkText}`),
-            dismissAll: option.checks.DUPLICATE_TITLE.dismissAll ? "DUPLICATE_TITLE" : false,
-            developer: option.checks.DUPLICATE_TITLE.developer || false
+            dismiss: prepareDismissal(`DUPLICATE_TITLE ${strippedLinkText}`),
+            dismissAll: State.option.checks.DUPLICATE_TITLE.dismissAll ? "DUPLICATE_TITLE" : false,
+            developer: State.option.checks.DUPLICATE_TITLE.developer || false
           });
         }
       }
     }
     if (strippedLinkText.length !== 0) {
       if (seen[strippedLinkText] && !seen[href]) {
-        const ignored = $el.ariaHidden === "true" && $el.getAttribute("tabindex") === "-1";
-        const hasAttributes = $el.hasAttribute("role") || $el.hasAttribute("disabled");
-        if (option.checks.LINK_IDENTICAL_NAME && !hasAttributes && !ignored) {
-          const sanitizedText = sanitizeHTML(linkText);
-          results.push({
+        const ignored = isHiddenAndUnfocusable($el);
+        const hasAttributes = $el.hasAttribute("role") || isDisabled($el);
+        const condition = linkText.toLowerCase() !== textContentIgnoredStrings.toLowerCase();
+        const diffAccName = condition ? `<hr> ${Lang._("ACC_NAME")}` : `<hr> ${Lang._("LINK_TEXT")}`;
+        const variable = condition ? linkText : textContentIgnoredStrings;
+        if (State.option.checks.LINK_IDENTICAL_NAME && !hasAttributes && !ignored) {
+          State.results.push({
             test: "LINK_IDENTICAL_NAME",
             element: $el,
-            type: option.checks.LINK_IDENTICAL_NAME.type || "warning",
-            content: option.checks.LINK_IDENTICAL_NAME.content ? Lang.sprintf(option.checks.LINK_IDENTICAL_NAME.content, sanitizedText) : `${Lang.sprintf("LINK_IDENTICAL_NAME", sanitizedText)} ${Lang.sprintf("ACC_NAME_TIP")}`,
+            type: State.option.checks.LINK_IDENTICAL_NAME.type || "warning",
+            content: Lang.sprintf(
+              State.option.checks.LINK_IDENTICAL_NAME.content || Lang._("LINK_IDENTICAL_NAME") + diffAccName + Lang._("LINK_TIP"),
+              variable
+            ),
+            args: [textContentIgnoredStrings, linkText],
             inline: true,
-            dismiss: prepareDismissal(`LINKSEEN${href + strippedLinkText}`),
-            dismissAll: option.checks.LINK_IDENTICAL_NAME.dismissAll ? "LINK_IDENTICAL_NAME" : false,
-            developer: option.checks.LINK_IDENTICAL_NAME.developer || false
+            dismiss: prepareDismissal(`LINK_IDENTICAL_NAME ${strippedLinkText}`),
+            dismissAll: State.option.checks.LINK_IDENTICAL_NAME.dismissAll ? "LINK_IDENTICAL_NAME" : false,
+            developer: State.option.checks.LINK_IDENTICAL_NAME.developer || false
           });
         }
       } else {
-        seen[strippedLinkText] = true;
+        seen[strippedLinkText] = href;
         seen[href] = true;
       }
       if (targetBlank && !fileTypeMatch && !containsNewWindowPhrases) {
-        if (option.checks.LINK_NEW_TAB) {
-          results.push({
+        const condition = linkText.toLowerCase() !== textContentIgnoredStrings.toLowerCase();
+        const diffAccName = condition ? `<hr> ${Lang._("ACC_NAME") + Lang._("ACC_NAME_TIP")}` : `<hr> ${Lang._("LINK_TEXT")}`;
+        if (State.option.checks.LINK_NEW_TAB) {
+          State.results.push({
             test: "LINK_NEW_TAB",
             element: $el,
-            type: option.checks.LINK_NEW_TAB.type || "warning",
-            content: Lang.sprintf(option.checks.LINK_NEW_TAB.content || "LINK_NEW_TAB"),
+            type: State.option.checks.LINK_NEW_TAB.type || "warning",
+            content: Lang.sprintf(
+              State.option.checks.LINK_NEW_TAB.content || Lang._("LINK_NEW_TAB") + diffAccName,
+              linkText
+            ),
+            args: [linkText],
             inline: true,
-            dismiss: prepareDismissal(`LINKNEWTAB${href + strippedLinkText}`),
-            dismissAll: option.checks.LINK_NEW_TAB.dismissAll ? "LINK_NEW_TAB" : false,
-            developer: option.checks.LINK_NEW_TAB.developer || false
+            dismiss: prepareDismissal(`LINK_NEW_TAB ${strippedLinkText}`),
+            dismissAll: State.option.checks.LINK_NEW_TAB.dismissAll ? "LINK_NEW_TAB" : false,
+            developer: State.option.checks.LINK_NEW_TAB.developer || false
           });
         }
       }
       if (fileTypeMatch && !containsFileTypePhrases) {
-        if (option.checks.LINK_FILE_EXT) {
-          results.push({
+        if (State.option.checks.LINK_FILE_EXT) {
+          State.results.push({
             test: "LINK_FILE_EXT",
             element: $el,
-            type: option.checks.LINK_FILE_EXT.type || "warning",
-            content: Lang.sprintf(option.checks.LINK_FILE_EXT.content || "LINK_FILE_EXT"),
+            type: State.option.checks.LINK_FILE_EXT.type || "warning",
+            content: Lang.sprintf(
+              State.option.checks.LINK_FILE_EXT.content || "LINK_FILE_EXT",
+              linkText
+            ),
+            args: [linkText],
             inline: true,
-            dismiss: prepareDismissal(`LINKEXT${href + strippedLinkText}`),
-            dismissAll: option.checks.LINK_FILE_EXT.dismissAll ? "LINK_FILE_EXT" : false,
-            developer: option.checks.LINK_FILE_EXT.developer || false
+            dismiss: prepareDismissal(`LINK_FILE_EXT ${strippedLinkText}`),
+            dismissAll: State.option.checks.LINK_FILE_EXT.dismissAll ? "LINK_FILE_EXT" : false,
+            developer: State.option.checks.LINK_FILE_EXT.developer || false
           });
         }
       }
     }
+    const hasExtension = $el.matches(Constants.Global.documentSources);
+    const hasPDF = $el.matches('a[href$=".pdf"], a[href*=".pdf?"]');
+    if (State.option.checks.QA_DOCUMENT && hasExtension) {
+      State.results.push({
+        test: "QA_DOCUMENT",
+        element: $el,
+        type: State.option.checks.QA_DOCUMENT.type || "warning",
+        content: Lang.sprintf(State.option.checks.QA_DOCUMENT.content || "QA_DOCUMENT", linkText),
+        args: [linkText],
+        inline: true,
+        dismiss: prepareDismissal(`QA_DOCUMENT ${href}`),
+        dismissAll: State.option.checks.QA_DOCUMENT.dismissAll ? "QA_DOCUMENT" : false,
+        developer: State.option.checks.QA_DOCUMENT.developer || false
+      });
+    } else if (State.option.checks.QA_PDF && hasPDF) {
+      State.results.push({
+        test: "QA_PDF",
+        element: $el,
+        type: State.option.checks.QA_PDF.type || "warning",
+        content: Lang.sprintf(State.option.checks.QA_PDF.content || "QA_PDF", linkText),
+        args: [linkText],
+        inline: true,
+        dismiss: prepareDismissal(`QA_PDF ${href}`),
+        dismissAll: State.option.checks.QA_PDF.dismissAll ? "QA_PDF" : false,
+        developer: State.option.checks.QA_PDF.developer || false
+      });
+    }
+    if (State.option.checks.QA_IN_PAGE_LINK || State.option.checks.LINK_MAYBE_BUTTON) {
+      const hasText = getText($el).length !== 0;
+      const ignored = isHiddenAndUnfocusable($el);
+      const hasAttributes = $el.hasAttribute("role") || $el.hasAttribute("aria-haspopup") || $el.hasAttribute("aria-expanded") || $el.hasAttribute("onclick") || isDisabled($el) || !!getCachedClosest($el, 'nav, [role="navigation"]');
+      const rawHref = $el.getAttribute("href");
+      if ((!rawHref || rawHref.startsWith("#")) && hasText && !ignored && !hasAttributes) {
+        const targetId = rawHref.substring(1);
+        const ariaControls = $el.getAttribute("aria-controls");
+        const decoded = targetId ? decodeURIComponent(targetId) : "";
+        const encoded = targetId ? encodeURIComponent(targetId) : "";
+        const targetElement = targetId && (document.getElementById(targetId) || ariaControls && document.getElementById(ariaControls) || decoded !== targetId && document.getElementById(decoded) || encoded !== targetId && document.getElementById(encoded) || document.querySelector(`a[name="${CSS.escape(targetId)}"]`));
+        if (!targetElement) {
+          let isFauxButton = false;
+          if (State.option.checks.LINK_MAYBE_BUTTON) {
+            const keywords = Lang._("POTENTIAL_UI_ELEMENTS");
+            const matchedKeyword = keywords.find((word) => accName.toLowerCase().includes(word));
+            const isSlide = Object.keys($el.dataset).some(
+              (key) => key.toLowerCase().includes("slide")
+            );
+            if ((matchedKeyword || isSlide) && accName.length <= 15) {
+              isFauxButton = true;
+              State.results.push({
+                test: "LINK_MAYBE_BUTTON",
+                element: $el,
+                type: State.option.checks.LINK_MAYBE_BUTTON.type || "error",
+                content: Lang.sprintf(
+                  State.option.checks.LINK_MAYBE_BUTTON.content || "LINK_MAYBE_BUTTON",
+                  accName
+                ),
+                args: [accName],
+                inline: true,
+                dismiss: prepareDismissal(`LINK_MAYBE_BUTTON_${matchedKeyword}`),
+                dismissAll: State.option.checks.LINK_MAYBE_BUTTON.dismissAll ? "LINK_MAYBE_BUTTON" : false,
+                developer: State.option.checks.LINK_MAYBE_BUTTON.developer || true
+              });
+            }
+          }
+          if (State.option.checks.QA_IN_PAGE_LINK && !isFauxButton) {
+            State.results.push({
+              test: "QA_IN_PAGE_LINK",
+              element: $el,
+              type: State.option.checks.QA_IN_PAGE_LINK.type || "error",
+              content: Lang.sprintf(
+                State.option.checks.QA_IN_PAGE_LINK.content || "QA_IN_PAGE_LINK",
+                targetId,
+                accName
+              ),
+              args: [targetId, accName],
+              inline: true,
+              dismiss: prepareDismissal(`QA_IN_PAGE_LINK ${href}`),
+              dismissAll: State.option.checks.QA_IN_PAGE_LINK.dismissAll ? "QA_IN_PAGE_LINK" : false,
+              developer: State.option.checks.QA_IN_PAGE_LINK.developer || false
+            });
+          }
+        }
+      }
+    }
   });
-  return results;
 }
-function checkContrast(results, option) {
+function checkContrast() {
+  if (!State.option.contrastPlugin) return;
   const contrastResults = [];
-  for (let i = 0; i < Elements.Found.Contrast.length; i++) {
-    const $el = Elements.Found.Contrast[i];
-    const style = getComputedStyle($el);
+  const elements = Elements.Found.Contrast;
+  const contrastAlgorithm = State.option.contrastAlgorithm;
+  const shadowDetection = Constants.Global.shadowDetection;
+  const inputTags = /* @__PURE__ */ new Set(["SELECT", "INPUT", "TEXTAREA"]);
+  for (let i = 0; i < elements.length; i++) {
+    const $el = elements[i];
+    const checkInputs = inputTags.has($el.tagName);
+    let text = "";
+    if (!checkInputs) {
+      const nodes = $el.childNodes;
+      for (let j = 0; j < nodes.length; j++) {
+        if (nodes[j].nodeType === 3) text += nodes[j].textContent;
+      }
+      text = text.trim();
+      if (!text) continue;
+    }
+    const style = getCachedStyle($el);
     const opacity = parseFloat(style.opacity);
-    const color = convertToRGBA(style.color, opacity);
     const fontSize = parseFloat(style.fontSize);
+    if (opacity === 0 || fontSize === 0 || isElementHidden($el)) continue;
+    if (isScreenReaderOnly($el)) continue;
+    if (isDisabled($el) || isDisabled(getCachedClosest($el, "label")?.control) || isDisabled(getCachedClosest($el, "fieldset")) || isDisabled(getCachedClosest($el, '[role="group"]')))
+      continue;
+    if (!checkInputs && !/[\p{L}\p{N}]/u.test(text)) continue;
+    const color = convertToRGBA(style.color, opacity);
     const getFontWeight = style.fontWeight;
     const fontWeight = normalizeFontWeight(getFontWeight);
-    const background = getBackground($el, Constants.Global.shadowDetection);
-    const isVisuallyHidden = isScreenReaderOnly($el);
-    const isExplicitlyHidden = isElementHidden($el);
-    const isHidden = isExplicitlyHidden || isVisuallyHidden || opacity === 0 || fontSize === 0;
-    const textString = Array.from($el.childNodes).filter((node) => node.nodeType === 3).map((node) => node.textContent).join("");
-    const text = textString.trim();
-    const checkInputs = ["SELECT", "INPUT", "TEXTAREA"].includes($el.tagName);
-    if (text.length !== 0 || checkInputs) {
-      const isLargeText = fontSize >= 24 || fontSize >= 18.67 && fontWeight >= 700;
-      if (color === "unsupported" || background === "unsupported") {
-        contrastResults.push({
-          $el,
-          type: "unsupported",
-          fontSize,
-          fontWeight,
-          isLargeText,
-          opacity,
-          ...background !== "unsupported" && { background },
-          ...color !== "unsupported" && { color }
-        });
-      } else if (background.type === "image") {
-        if (!isHidden) {
-          contrastResults.push({
-            $el,
-            type: "background-image",
-            color,
-            isLargeText,
-            background,
-            fontSize,
-            fontWeight,
-            opacity
-          });
-        }
-      } else if (!isHidden && getHex(color) !== getHex(background)) {
-        const result = checkElementContrast(
+    const background = getBackground($el, shadowDetection);
+    const isLargeText = fontSize >= 24 || fontSize >= 18.67 && fontWeight >= 700;
+    if (color === "unsupported" || background === "unsupported") {
+      contrastResults.push({
+        $el,
+        type: "unsupported",
+        fontSize,
+        fontWeight,
+        isLargeText,
+        opacity,
+        ...background !== "unsupported" && { background },
+        ...color !== "unsupported" && { color }
+      });
+      continue;
+    }
+    if (color && color[3] === 0) continue;
+    if (background.type === "image") {
+      const extractColours = extractColorFromString(background.value);
+      const hasFailure = !extractColours || extractColours.some(
+        (gradientStop) => checkElementContrast(
           $el,
           color,
+          gradientStop,
+          fontSize,
+          fontWeight,
+          opacity,
+          contrastAlgorithm
+        )
+      );
+      if (hasFailure || background.value.includes("url(")) {
+        contrastResults.push({
+          $el,
+          type: "background-image",
+          color,
+          isLargeText,
           background,
           fontSize,
           fontWeight,
-          opacity,
-          option.contrastAlgorithm
-        );
-        if (result) {
-          result.type = checkInputs ? "input" : "text";
-          contrastResults.push(result);
-        }
+          opacity
+        });
+      }
+    } else if (getHex(color) !== getHex(background)) {
+      const result = checkElementContrast(
+        $el,
+        color,
+        background,
+        fontSize,
+        fontWeight,
+        opacity,
+        contrastAlgorithm
+      );
+      if (result) {
+        result.type = checkInputs ? "input" : "text";
+        contrastResults.push(result);
       }
     }
   }
@@ -7165,14 +7311,14 @@ function checkContrast(results, option) {
     );
     let allSameColour = false;
     if (shapes.length) {
-      const ref = getComputedStyle(shapes[0]);
+      const ref = getCachedStyle(shapes[0]);
       allSameColour = Array.from(shapes).every((node) => {
-        const style = getComputedStyle(node);
+        const style = getCachedStyle(node);
         return style.fill === ref.fill && style.fillOpacity === ref.fillOpacity && style.stroke === ref.stroke && style.strokeOpacity === ref.strokeOpacity && style.opacity === ref.opacity;
       });
     }
     if ((shapes.length === 1 || allSameColour) && complex.length === 0) {
-      const style = getComputedStyle(shapes[0]);
+      const style = getCachedStyle(shapes[0]);
       const { fill, stroke, strokeWidth, opacity } = style;
       let strokePx = 0;
       const { width, height } = $el.getBBox();
@@ -7186,8 +7332,8 @@ function checkContrast(results, option) {
       const threshold = Math.min(width, height) < 50 ? 1 : 3;
       const hasStroke = stroke && strokePx >= threshold && stroke !== "none";
       const hasFill = fill && fill !== "none" && !fill.startsWith("url(");
-      const resolvedFill = fill === "currentColor" ? convertToRGBA(getComputedStyle(shapes[0]).color, opacity) : convertToRGBA(fill, opacity);
-      const resolvedStroke = stroke === "currentColor" ? convertToRGBA(getComputedStyle(shapes[0]).color, opacity) : convertToRGBA(stroke, opacity);
+      const resolvedFill = fill === "currentColor" ? convertToRGBA(getCachedStyle(shapes[0]).color, opacity) : convertToRGBA(fill, opacity);
+      const resolvedStroke = stroke === "currentColor" ? convertToRGBA(getCachedStyle(shapes[0]).color, opacity) : convertToRGBA(stroke, opacity);
       const supported = ![resolvedFill, resolvedStroke].includes("unsupported");
       if (supported && hasBackground) {
         let contrastValue;
@@ -7197,17 +7343,17 @@ function checkContrast(results, option) {
           contrastValue = calculateContrast(
             resolvedFill,
             background,
-            option.contrastAlgorithm
+            State.option.contrastAlgorithm
           );
-          fillPasses = option.contrastAlgorithm === "APCA" ? contrastValue.ratio >= 45 : contrastValue.ratio >= 3;
+          fillPasses = State.option.contrastAlgorithm === "APCA" ? contrastValue.ratio >= 45 : contrastValue.ratio >= 3;
         }
         if (hasStroke) {
           contrastValue = calculateContrast(
             resolvedStroke,
             background,
-            option.contrastAlgorithm
+            State.option.contrastAlgorithm
           );
-          strokePasses = option.contrastAlgorithm === "APCA" ? contrastValue.ratio >= 45 : contrastValue.ratio >= 3;
+          strokePasses = State.option.contrastAlgorithm === "APCA" ? contrastValue.ratio >= 45 : contrastValue.ratio >= 3;
         }
         const failsBoth = hasFill && hasStroke && !fillPasses && !strokePasses;
         const failsFill = hasFill && !hasStroke && !fillPasses;
@@ -7221,7 +7367,7 @@ function checkContrast(results, option) {
           }
           contrastResults.push({
             $el,
-            ratio: ratioToDisplay(contrastValue.ratio, option.contrastAlgorithm),
+            ratio: ratioToDisplay(contrastValue.ratio, State.option.contrastAlgorithm),
             color: contrastValue.blendedColor,
             type: "svg-error",
             isLargeText: true,
@@ -7249,7 +7395,7 @@ function checkContrast(results, option) {
   });
   Elements.Found.Inputs.forEach(($el) => {
     if ($el.placeholder && $el.placeholder.length !== 0) {
-      const placeholder = getComputedStyle($el, "::placeholder");
+      const placeholder = getCachedStyle($el, "::placeholder");
       const pColor = convertToRGBA(placeholder.getPropertyValue("color"));
       const pSize = parseFloat(placeholder.fontSize);
       const pWeight = normalizeFontWeight(placeholder.fontWeight);
@@ -7266,7 +7412,7 @@ function checkContrast(results, option) {
           pSize,
           pWeight,
           pOpacity,
-          option.contrastAlgorithm
+          State.option.contrastAlgorithm
         );
         if (result) {
           result.type = "placeholder";
@@ -7279,7 +7425,7 @@ function checkContrast(results, option) {
     const backgroundImages = warnings.filter((warning) => warning.type === "background-image");
     const otherWarnings = warnings.filter((warning) => warning.type !== "background-image");
     let processedBackgroundWarnings;
-    if (option.contrastAlgorithm === "APCA") {
+    if (State.option.contrastAlgorithm === "APCA") {
       processedBackgroundWarnings = backgroundImages.map((warning) => ({ ...warning }));
     } else {
       const groupedWarnings = backgroundImages.reduce((groups, warning) => {
@@ -7305,282 +7451,335 @@ function checkContrast(results, option) {
   processedResults.forEach((item) => {
     const { $el, ratio } = item;
     const updatedItem = item;
-    const element = $el.tagName === "OPTION" ? $el.closest("datalist, select, optgroup") : $el;
+    const element = $el.tagName === "OPTION" ? getCachedClosest($el, "datalist, select, optgroup") : $el;
     const nodeText = fnIgnore(element, ["option:not(option:first-child)"]);
     const text = getText(nodeText);
     const truncatedText = truncateString(text, 80);
-    const sanitizedText = sanitizeHTML(truncatedText);
     let previewText;
     if (item.type === "placeholder" || item.type === "placeholder-unsupported") {
-      previewText = sanitizeHTML($el.placeholder);
+      previewText = $el.placeholder;
     } else if (item.type === "svg-error" || item.type === "svg-warning") {
       previewText = "";
     } else {
-      previewText = sanitizedText;
+      previewText = truncatedText;
     }
-    updatedItem.sanitizedText = previewText;
-    let ratioTip = "";
-    if (option.contrastAlgorithm === "AA" || option.contrastAlgorithm === "AAA") {
-      const normal = option.contrastAlgorithm === "AAA" ? "7:1" : "4.5:1";
-      const large = option.contrastAlgorithm === "AAA" ? "4.5:1" : "3:1";
-      const ratioToDisplay2 = item.isLargeText ? large : normal;
-      const ratioRequirement = item.isLargeText ? "CONTRAST_LARGE" : "CONTRAST_NORMAL";
-      ratioTip = ` ${Lang.sprintf(ratioRequirement, ratioToDisplay2)}`;
-    }
-    const graphicsTip = option.contrastAlgorithm === "APCA" ? "" : ` ${Lang.sprintf("CONTRAST_TIP_GRAPHIC")}`;
+    updatedItem.previewText = previewText;
+    const isWcag = State.option.contrastAlgorithm === "AA" || State.option.contrastAlgorithm === "AAA";
+    const normal = State.option.contrastAlgorithm === "AAA" ? "7:1" : "4.5:1";
+    const large = State.option.contrastAlgorithm === "AAA" ? "4.5:1" : "3:1";
+    const ratioToDisplay2 = item.isLargeText ? large : normal;
+    const ratioRequirementKey = item.isLargeText ? "CONTRAST_LARGE" : "CONTRAST_NORMAL";
     switch (item.type) {
       case "text":
-        if (option.checks.CONTRAST_ERROR) {
-          results.push({
+        if (State.option.checks.CONTRAST_ERROR) {
+          State.results.push({
             test: "CONTRAST_ERROR",
             element: $el,
-            type: option.checks.CONTRAST_ERROR.type || "error",
-            content: option.checks.CONTRAST_ERROR.content ? Lang.sprintf(option.checks.CONTRAST_ERROR.content) : Lang.sprintf("CONTRAST_ERROR") + ratioTip,
-            dismiss: prepareDismissal(`CONTRAST${sanitizedText}`),
-            dismissAll: option.checks.CONTRAST_ERROR.dismissAll ? "CONTRAST_ERROR" : false,
-            developer: option.checks.CONTRAST_ERROR.developer || false,
+            type: State.option.checks.CONTRAST_ERROR.type || "error",
+            content: Lang.sprintf(
+              State.option.checks.CONTRAST_ERROR.content || (isWcag ? `${Lang._("CONTRAST_ERROR")} ${Lang._(ratioRequirementKey)}` : Lang._("CONTRAST_ERROR")),
+              ratioToDisplay2
+            ),
+            dismiss: prepareDismissal(`CONTRAST_ERROR ${previewText}`),
+            dismissAll: State.option.checks.CONTRAST_ERROR.dismissAll ? "CONTRAST_ERROR" : false,
+            developer: State.option.checks.CONTRAST_ERROR.developer || false,
             contrastDetails: updatedItem
           });
         }
         break;
       case "input":
-        if (option.checks.CONTRAST_INPUT) {
-          const sanitizedInput = sanitizeHTMLBlock($el.outerHTML);
-          results.push({
+        if (State.option.checks.CONTRAST_INPUT) {
+          State.results.push({
             test: "CONTRAST_INPUT",
             element,
-            type: option.checks.CONTRAST_INPUT.type || "error",
-            content: option.checks.CONTRAST_INPUT.content ? Lang.sprintf(option.checks.CONTRAST_INPUT.content) : Lang.sprintf("CONTRAST_INPUT", ratio) + ratioTip,
-            dismiss: prepareDismissal(`CONTRAST${sanitizedInput}`),
-            dismissAll: option.checks.CONTRAST_INPUT.dismissAll ? "CONTRAST_INPUT" : false,
-            developer: option.checks.CONTRAST_INPUT.developer || true,
+            type: State.option.checks.CONTRAST_INPUT.type || "error",
+            content: Lang.sprintf(
+              State.option.checks.CONTRAST_INPUT.content || (isWcag ? `${Lang._("CONTRAST_INPUT")} ${Lang._(ratioRequirementKey)}` : Lang._("CONTRAST_INPUT")),
+              ratio,
+              ratioToDisplay2
+            ),
+            dismiss: prepareDismissal(`CONTRAST_INPUT ${$el.outerHTML}`),
+            dismissAll: State.option.checks.CONTRAST_INPUT.dismissAll ? "CONTRAST_INPUT" : false,
+            developer: State.option.checks.CONTRAST_INPUT.developer || true,
             contrastDetails: updatedItem
           });
         }
         break;
       case "placeholder":
-        if (option.checks.CONTRAST_PLACEHOLDER) {
-          const sanitizedPlaceholder = sanitizeHTMLBlock($el.outerHTML);
-          results.push({
+        if (State.option.checks.CONTRAST_PLACEHOLDER) {
+          State.results.push({
             test: "CONTRAST_PLACEHOLDER",
             element: $el,
-            type: option.checks.CONTRAST_PLACEHOLDER.type || "error",
-            content: option.checks.CONTRAST_PLACEHOLDER.content ? Lang.sprintf(option.checks.CONTRAST_PLACEHOLDER.content) : Lang.sprintf("CONTRAST_PLACEHOLDER") + ratioTip,
+            type: State.option.checks.CONTRAST_PLACEHOLDER.type || "error",
+            content: Lang.sprintf(
+              State.option.checks.CONTRAST_PLACEHOLDER.content || (isWcag ? `${Lang._("CONTRAST_PLACEHOLDER")} ${Lang._(ratioRequirementKey)}` : Lang._("CONTRAST_PLACEHOLDER")),
+              ratioToDisplay2
+            ),
             position: "afterend",
-            dismiss: prepareDismissal(`CPLACEHOLDER${sanitizedPlaceholder}`),
-            dismissAll: option.checks.CONTRAST_PLACEHOLDER.dismissAll ? "CONTRAST_PLACEHOLDER" : false,
-            developer: option.checks.CONTRAST_PLACEHOLDER.developer || true,
+            dismiss: prepareDismissal(`CONTRAST_PLACEHOLDER ${$el.outerHTML}`),
+            dismissAll: State.option.checks.CONTRAST_PLACEHOLDER.dismissAll ? "CONTRAST_PLACEHOLDER" : false,
+            developer: State.option.checks.CONTRAST_PLACEHOLDER.developer || true,
             contrastDetails: updatedItem
           });
         }
         break;
       case "placeholder-unsupported":
-        if (option.checks.CONTRAST_PLACEHOLDER_UNSUPPORTED) {
-          const sanitizedPlaceholder = sanitizeHTMLBlock($el.outerHTML);
-          results.push({
+        if (State.option.checks.CONTRAST_PLACEHOLDER_UNSUPPORTED) {
+          State.results.push({
             test: "CONTRAST_PLACEHOLDER_UNSUPPORTED",
             element: $el,
-            type: option.checks.CONTRAST_PLACEHOLDER_UNSUPPORTED.type || "warning",
-            content: option.checks.CONTRAST_PLACEHOLDER_UNSUPPORTED.content ? Lang.sprintf(option.checks.CONTRAST_PLACEHOLDER_UNSUPPORTED.content) : Lang.sprintf("CONTRAST_PLACEHOLDER_UNSUPPORTED") + ratioTip,
+            type: State.option.checks.CONTRAST_PLACEHOLDER_UNSUPPORTED.type || "warning",
+            content: Lang.sprintf(
+              State.option.checks.CONTRAST_PLACEHOLDER_UNSUPPORTED.content || (isWcag ? `${Lang._("CONTRAST_PLACEHOLDER_UNSUPPORTED")} ${Lang._(ratioRequirementKey)}` : Lang._("CONTRAST_PLACEHOLDER_UNSUPPORTED")),
+              ratioToDisplay2
+            ),
             position: "afterend",
-            dismiss: prepareDismissal(`CPLACEHOLDERUN${sanitizedPlaceholder}`),
-            dismissAll: option.checks.CONTRAST_PLACEHOLDER_UNSUPPORTED.dismissAll ? "CONTRAST_PLACEHOLDER_UNSUPPORTED" : false,
-            developer: option.checks.CONTRAST_PLACEHOLDER_UNSUPPORTED.developer || true,
+            dismiss: prepareDismissal(`CONTRAST_PLACEHOLDER_UNSUPPORTED ${$el.outerHTML}`),
+            dismissAll: State.option.checks.CONTRAST_PLACEHOLDER_UNSUPPORTED.dismissAll ? "CONTRAST_PLACEHOLDER_UNSUPPORTED" : false,
+            developer: State.option.checks.CONTRAST_PLACEHOLDER_UNSUPPORTED.developer || true,
             contrastDetails: updatedItem
           });
         }
         break;
       case "svg-error":
-        if (option.checks.CONTRAST_ERROR_GRAPHIC) {
-          const sanitizedSVG = sanitizeHTMLBlock($el.outerHTML);
-          results.push({
+        if (State.option.checks.CONTRAST_ERROR_GRAPHIC) {
+          State.results.push({
             test: "CONTRAST_ERROR_GRAPHIC",
             element: $el,
-            type: option.checks.CONTRAST_ERROR_GRAPHIC.type || "error",
-            content: option.checks.CONTRAST_ERROR_GRAPHIC.content ? Lang.sprintf(option.checks.CONTRAST_ERROR_GRAPHIC.content) : Lang.sprintf("CONTRAST_ERROR_GRAPHIC") + graphicsTip,
-            dismiss: prepareDismissal(`CONTRASTERROR${sanitizedSVG}`),
-            dismissAll: option.checks.CONTRAST_ERROR_GRAPHIC.dismissAll ? "CONTRAST_ERROR_GRAPHIC" : false,
-            developer: option.checks.CONTRAST_ERROR_GRAPHIC.developer || true,
+            type: State.option.checks.CONTRAST_ERROR_GRAPHIC.type || "error",
+            content: Lang.sprintf(
+              State.option.checks.CONTRAST_ERROR_GRAPHIC.content || (State.option.contrastAlgorithm !== "APCA" ? `${Lang._("CONTRAST_ERROR_GRAPHIC")} ${Lang._("CONTRAST_TIP_GRAPHIC")}` : Lang._("CONTRAST_ERROR_GRAPHIC"))
+            ),
+            dismiss: prepareDismissal(`CONTRAST_ERROR_GRAPHIC ${$el.outerHTML}`),
+            dismissAll: State.option.checks.CONTRAST_ERROR_GRAPHIC.dismissAll ? "CONTRAST_ERROR_GRAPHIC" : false,
+            developer: State.option.checks.CONTRAST_ERROR_GRAPHIC.developer || true,
             contrastDetails: updatedItem,
             margin: "-25px"
           });
         }
         break;
       case "svg-warning":
-        if (option.checks.CONTRAST_WARNING_GRAPHIC) {
-          const sanitizedSVG = sanitizeHTMLBlock($el.outerHTML);
-          results.push({
+        if (State.option.checks.CONTRAST_WARNING_GRAPHIC) {
+          State.results.push({
             test: "CONTRAST_WARNING_GRAPHIC",
             element: $el,
-            type: option.checks.CONTRAST_WARNING_GRAPHIC.type || "warning",
-            content: option.checks.CONTRAST_WARNING_GRAPHIC.content ? Lang.sprintf(option.checks.CONTRAST_WARNING_GRAPHIC.content) : Lang.sprintf("CONTRAST_WARNING_GRAPHIC") + graphicsTip,
-            dismiss: prepareDismissal(`CONTRASTWARNING${sanitizedSVG}`),
-            dismissAll: option.checks.CONTRAST_WARNING_GRAPHIC.dismissAll ? "CONTRAST_WARNING_GRAPHIC" : false,
-            developer: option.checks.CONTRAST_WARNING_GRAPHIC.developer || true,
+            type: State.option.checks.CONTRAST_WARNING_GRAPHIC.type || "warning",
+            content: Lang.sprintf(
+              State.option.checks.CONTRAST_WARNING_GRAPHIC.content || (State.option.contrastAlgorithm !== "APCA" ? `${Lang._("CONTRAST_WARNING_GRAPHIC")} ${Lang._("CONTRAST_TIP_GRAPHIC")}` : Lang._("CONTRAST_WARNING_GRAPHIC"))
+            ),
+            dismiss: prepareDismissal(`CONTRAST_WARNING_GRAPHIC ${$el.outerHTML}`),
+            dismissAll: State.option.checks.CONTRAST_WARNING_GRAPHIC.dismissAll ? "CONTRAST_WARNING_GRAPHIC" : false,
+            developer: State.option.checks.CONTRAST_WARNING_GRAPHIC.developer || true,
             contrastDetails: updatedItem,
             margin: "-25px"
           });
         }
         break;
       case "background-image":
-        if (option.checks.CONTRAST_WARNING) {
-          results.push({
+        if (State.option.checks.CONTRAST_WARNING) {
+          State.results.push({
             test: "CONTRAST_WARNING",
             element,
-            type: option.checks.CONTRAST_WARNING.type || "warning",
-            content: option.checks.CONTRAST_WARNING.content ? Lang.sprintf(option.checks.CONTRAST_WARNING.content) : Lang.sprintf("CONTRAST_WARNING") + ratioTip,
-            dismiss: prepareDismissal(`CONTRAST${sanitizedText}`),
-            dismissAll: option.checks.CONTRAST_WARNING.dismissAll ? "CONTRAST_WARNING" : false,
-            developer: option.checks.CONTRAST_WARNING.developer || false,
+            type: State.option.checks.CONTRAST_WARNING.type || "warning",
+            content: Lang.sprintf(
+              State.option.checks.CONTRAST_WARNING.content || (isWcag ? `${Lang._("CONTRAST_WARNING")} ${Lang._(ratioRequirementKey)}` : Lang._("CONTRAST_WARNING")),
+              ratioToDisplay2
+            ),
+            dismiss: prepareDismissal(`CONTRAST_WARNING ${previewText}`),
+            dismissAll: State.option.checks.CONTRAST_WARNING.dismissAll ? "CONTRAST_WARNING" : false,
+            developer: State.option.checks.CONTRAST_WARNING.developer || false,
             contrastDetails: updatedItem
           });
         }
         break;
       case "unsupported":
-        if (option.checks.CONTRAST_UNSUPPORTED) {
-          results.push({
+        if (State.option.checks.CONTRAST_UNSUPPORTED) {
+          State.results.push({
             test: "CONTRAST_UNSUPPORTED",
             element,
-            type: option.checks.CONTRAST_UNSUPPORTED.type || "warning",
-            content: option.checks.CONTRAST_UNSUPPORTED.content ? Lang.sprintf(option.checks.CONTRAST_UNSUPPORTED.content) : Lang.sprintf("CONTRAST_WARNING") + ratioTip,
-            dismiss: prepareDismissal(`CONTRAST${sanitizedText}`),
-            dismissAll: option.checks.CONTRAST_UNSUPPORTED.dismissAll ? "CONTRAST_UNSUPPORTED" : false,
-            developer: option.checks.CONTRAST_UNSUPPORTED.developer || false,
+            type: State.option.checks.CONTRAST_UNSUPPORTED.type || "warning",
+            content: Lang.sprintf(
+              State.option.checks.CONTRAST_UNSUPPORTED.content || (isWcag ? `${Lang._("CONTRAST_WARNING")} ${Lang._(ratioRequirementKey)}` : Lang._("CONTRAST_WARNING")),
+              ratioToDisplay2
+            ),
+            dismiss: prepareDismissal(`CONTRAST_UNSUPPORTED ${previewText}`),
+            dismissAll: State.option.checks.CONTRAST_UNSUPPORTED.dismissAll ? "CONTRAST_UNSUPPORTED" : false,
+            developer: State.option.checks.CONTRAST_UNSUPPORTED.developer || false,
             contrastDetails: updatedItem
           });
         }
         break;
     }
   });
-  return results;
 }
-function checkLabels(results, option) {
-  if (option.formLabelsPlugin) {
+function checkLabels() {
+  if (State.option.formLabelsPlugin) {
     Elements.Found.Inputs.forEach(($el) => {
-      const ariaHidden = $el.getAttribute("aria-hidden") === "true";
-      const negativeTabindex = $el.getAttribute("tabindex") === "-1";
-      const hidden = isElementHidden($el);
-      if (hidden || ariaHidden && negativeTabindex) {
+      if (isElementHidden($el) || isHiddenAndUnfocusable($el) || isPresentational($el) && isDisabled($el))
         return;
-      }
       const computeName = computeAccessibleName($el);
       const inputName = removeWhitespace(computeName);
-      const alt = $el.getAttribute("alt");
       const type = $el.getAttribute("type");
       const hasTitle = $el.getAttribute("title");
-      const hasPlaceholder = $el.placeholder && $el.placeholder !== 0;
       const hasAria = $el.getAttribute("aria-label") || $el.getAttribute("aria-labelledby");
+      const nativeTags = ["INPUT", "TEXTAREA", "SELECT", "METER", "PROGRESS"];
+      const isNativeInput = nativeTags.includes($el.tagName.toUpperCase());
       if (type === "submit" || type === "button" || type === "hidden") {
         return;
       }
       if (type === "image") {
-        if (option.checks.LABELS_MISSING_IMAGE_INPUT && (!alt || alt.trim() === "") && !hasAria && !hasTitle) {
-          results.push({
+        if (State.option.checks.LABELS_MISSING_IMAGE_INPUT && inputName === "") {
+          State.results.push({
             test: "LABELS_MISSING_IMAGE_INPUT",
             element: $el,
-            type: option.checks.LABELS_MISSING_IMAGE_INPUT.type || "error",
+            type: State.option.checks.LABELS_MISSING_IMAGE_INPUT.type || "error",
             content: Lang.sprintf(
-              option.checks.LABELS_MISSING_IMAGE_INPUT.content || "LABELS_MISSING_IMAGE_INPUT"
+              State.option.checks.LABELS_MISSING_IMAGE_INPUT.content || "LABELS_MISSING_IMAGE_INPUT"
             ),
-            dismiss: prepareDismissal(`INPUTIMAGE${type + inputName}`),
-            dismissAll: option.checks.LABELS_MISSING_IMAGE_INPUT.dismissAll ? "LABELS_MISSING_IMAGE_INPUT" : false,
-            developer: option.checks.LABELS_MISSING_IMAGE_INPUT.developer || true
+            dismiss: prepareDismissal(`LABELS_MISSING_IMAGE_INPUT ${type + inputName}`),
+            dismissAll: State.option.checks.LABELS_MISSING_IMAGE_INPUT.dismissAll ? "LABELS_MISSING_IMAGE_INPUT" : false,
+            developer: State.option.checks.LABELS_MISSING_IMAGE_INPUT.developer || true
           });
         }
         return;
       }
       if (type === "reset") {
-        if (option.checks.LABELS_INPUT_RESET) {
-          results.push({
+        if (State.option.checks.LABELS_INPUT_RESET) {
+          State.results.push({
             test: "LABELS_INPUT_RESET",
             element: $el,
-            type: option.checks.LABELS_INPUT_RESET.type || "warning",
-            content: Lang.sprintf(option.checks.LABELS_INPUT_RESET.content || "LABELS_INPUT_RESET"),
-            dismiss: prepareDismissal(`INPUTRESET${type + inputName}`),
-            dismissAll: option.checks.LABELS_INPUT_RESET.dismissAll ? "LABELS_INPUT_RESET" : false,
-            developer: option.checks.LABELS_INPUT_RESET.developer || false
+            type: State.option.checks.LABELS_INPUT_RESET.type || "warning",
+            content: Lang.sprintf(
+              State.option.checks.LABELS_INPUT_RESET.content || "LABELS_INPUT_RESET"
+            ),
+            dismiss: prepareDismissal(`LABELS_INPUT_RESET ${type + inputName}`),
+            dismissAll: State.option.checks.LABELS_INPUT_RESET.dismissAll ? "LABELS_INPUT_RESET" : false,
+            developer: State.option.checks.LABELS_INPUT_RESET.developer || false
           });
         }
         return;
       }
-      if (hasAria || hasTitle || hasPlaceholder) {
-        if (hasPlaceholder && option.checks.LABELS_PLACEHOLDER) {
-          results.push({
-            test: "LABELS_PLACEHOLDER",
+      const hasPlaceholder = $el.placeholder && $el.placeholder !== 0;
+      if (hasPlaceholder && State.option.checks.LABELS_PLACEHOLDER) {
+        State.results.push({
+          test: "LABELS_PLACEHOLDER",
+          element: $el,
+          type: State.option.checks.LABELS_PLACEHOLDER.type || "warning",
+          content: Lang.sprintf(
+            State.option.checks.LABELS_PLACEHOLDER.content || "LABELS_PLACEHOLDER"
+          ),
+          dismiss: prepareDismissal(`LABELS_PLACEHOLDER ${type + inputName}`),
+          dismissAll: State.option.checks.LABELS_PLACEHOLDER.dismissAll ? "LABELS_PLACEHOLDER" : false,
+          developer: State.option.checks.LABELS_PLACEHOLDER.developer || true
+        });
+      }
+      if (State.option.checks.ARIA_INPUT_FIELD_NAME && !isNativeInput) {
+        const toggles = [
+          "checkbox",
+          "menu",
+          "menuitemcheckbox",
+          "menuitemradio",
+          "radio",
+          "radiogroup",
+          "switch"
+        ];
+        const role = $el.getAttribute("role")?.trim().toLowerCase() || "";
+        const toggleRole = toggles.includes(role);
+        if (toggleRole && inputName.length !== 0) return;
+        if (inputName.length === 0) {
+          const outerHTML = truncateString($el.outerHTML, 100);
+          State.results.push({
+            test: "ARIA_INPUT_FIELD_NAME",
             element: $el,
-            type: option.checks.LABELS_PLACEHOLDER.type || "warning",
-            content: Lang.sprintf(option.checks.LABELS_PLACEHOLDER.content || "LABELS_PLACEHOLDER"),
-            dismiss: prepareDismissal(`INPUTPLACEHOLDER${type + inputName}`),
-            dismissAll: option.checks.LABELS_PLACEHOLDER.dismissAll ? "LABELS_PLACEHOLDER" : false,
-            developer: option.checks.LABELS_PLACEHOLDER.developer || true
+            type: State.option.checks.ARIA_INPUT_FIELD_NAME.type || "error",
+            content: State.option.checks.ARIA_INPUT_FIELD_NAME.content ? Lang.sprintf(State.option.checks.ARIA_INPUT_FIELD_NAME.content) : Lang.sprintf(Lang._("ARIA_INPUT_FIELD_NAME") + Lang._("ACC_NAME_TIP"), outerHTML),
+            args: [outerHTML],
+            dismiss: prepareDismissal(`ARIA_INPUT_FIELD_NAME ${outerHTML}`),
+            dismissAll: State.option.checks.ARIA_INPUT_FIELD_NAME.dismissAll ? "ARIA_INPUT_FIELD_NAME" : false,
+            developer: State.option.checks.ARIA_INPUT_FIELD_NAME.developer || true
           });
-        } else if (inputName.length === 0) {
-          if (option.checks.LABELS_MISSING_LABEL) {
-            results.push({
+          return;
+        }
+      }
+      if (hasAria || hasTitle) {
+        if (inputName.length === 0) {
+          if (State.option.checks.LABELS_MISSING_LABEL) {
+            State.results.push({
               test: "LABELS_MISSING_LABEL",
               element: $el,
-              type: option.checks.LABELS_MISSING_LABEL.type || "error",
+              type: State.option.checks.LABELS_MISSING_LABEL.type || "error",
               content: Lang.sprintf(
-                option.checks.LABELS_MISSING_LABEL.content || "LABELS_MISSING_LABEL"
+                State.option.checks.LABELS_MISSING_LABEL.content || "LABELS_MISSING_LABEL"
               ),
-              dismiss: prepareDismissal(`INPUTMISSING${type + inputName}`),
-              dismissAll: option.checks.LABELS_MISSING_LABEL.dismissAll ? "LABELS_MISSING_LABEL" : false,
-              developer: option.checks.LABELS_MISSING_LABEL.developer || true
+              dismiss: prepareDismissal(`LABELS_MISSING_LABEL ${type + inputName}`),
+              dismissAll: State.option.checks.LABELS_MISSING_LABEL.dismissAll ? "LABELS_MISSING_LABEL" : false,
+              developer: State.option.checks.LABELS_MISSING_LABEL.developer || true
             });
           }
-        } else if (option.checks.LABELS_ARIA_LABEL_INPUT) {
-          const sanitizedText = sanitizeHTML(inputName);
-          results.push({
+        } else if (State.option.checks.LABELS_ARIA_LABEL_INPUT) {
+          const ariaLabelledBy = $el.getAttribute("aria-labelledby");
+          if (ariaLabelledBy) {
+            const ids = ariaLabelledBy.trim().split(/\s+/);
+            if (ids.length === 1) {
+              const target = find(`#${ids[0]}`, "root")?.[0];
+              if (target && !isElementHidden(target)) return;
+            }
+          }
+          State.results.push({
             test: "LABELS_ARIA_LABEL_INPUT",
             element: $el,
-            type: option.checks.LABELS_ARIA_LABEL_INPUT.type || "warning",
-            content: option.checks.LABELS_ARIA_LABEL_INPUT.content ? Lang.sprintf(option.checks.LABELS_ARIA_LABEL_INPUT.content, sanitizedText) : `${Lang.sprintf("LABELS_ARIA_LABEL_INPUT", sanitizedText)} ${Lang.sprintf("ACC_NAME_TIP")}`,
-            dismiss: prepareDismissal(`INPUTARIA${type + inputName}`),
-            dismissAll: option.checks.LABELS_ARIA_LABEL_INPUT.dismissAll ? "LABELS_ARIA_LABEL_INPUT" : false,
-            developer: option.checks.LABELS_ARIA_LABEL_INPUT.developer || true
+            type: State.option.checks.LABELS_ARIA_LABEL_INPUT.type || "warning",
+            content: State.option.checks.LABELS_ARIA_LABEL_INPUT.content ? Lang.sprintf(State.option.checks.LABELS_ARIA_LABEL_INPUT.content, inputName) : Lang.sprintf(Lang._("LABELS_ARIA_LABEL_INPUT") + Lang._("ACC_NAME_TIP"), inputName),
+            args: [inputName],
+            dismiss: prepareDismissal(`LABELS_ARIA_LABEL_INPUT ${type + inputName}`),
+            dismissAll: State.option.checks.LABELS_ARIA_LABEL_INPUT.dismissAll ? "LABELS_ARIA_LABEL_INPUT" : false,
+            developer: State.option.checks.LABELS_ARIA_LABEL_INPUT.developer || true
           });
         }
         return;
       }
-      const closestLabel = $el.closest("label");
-      const labelName = closestLabel ? removeWhitespace(computeAccessibleName(closestLabel)) : "";
-      if (closestLabel && labelName.length) {
-        return;
+      if (isNativeInput) {
+        const closestLabel = getCachedClosest($el, "label");
+        const labelName = closestLabel ? computeAccessibleName(closestLabel) : "";
+        if (closestLabel && labelName.length || hasPlaceholder) return;
       }
       const id = $el.getAttribute("id");
       if (id) {
-        if (!Elements.Found.Labels.some((label) => label.getAttribute("for") === id)) {
-          if (option.checks.LABELS_NO_FOR_ATTRIBUTE) {
-            results.push({
-              test: "LABELS_NO_FOR_ATTRIBUTE",
-              element: $el,
-              type: option.checks.LABELS_NO_FOR_ATTRIBUTE.type || "error",
-              content: Lang.sprintf(
-                option.checks.LABELS_NO_FOR_ATTRIBUTE.content || "LABELS_NO_FOR_ATTRIBUTE",
-                id
-              ),
-              dismiss: prepareDismissal(`INPUTNOFOR${type + inputName}`),
-              dismissAll: option.checks.LABELS_NO_FOR_ATTRIBUTE.dismissAll ? "LABELS_NO_FOR_ATTRIBUTE" : false,
-              developer: option.checks.LABELS_NO_FOR_ATTRIBUTE.developer || true
-            });
-          }
+        const hasMatchingLabel = Elements.Found.Labels.some(
+          (label) => label.getAttribute("for") === id
+        );
+        if (hasMatchingLabel) return;
+        if (State.option.checks.LABELS_NO_FOR_ATTRIBUTE) {
+          State.results.push({
+            test: "LABELS_NO_FOR_ATTRIBUTE",
+            element: $el,
+            type: State.option.checks.LABELS_NO_FOR_ATTRIBUTE.type || "error",
+            content: Lang.sprintf(
+              State.option.checks.LABELS_NO_FOR_ATTRIBUTE.content || "LABELS_NO_FOR_ATTRIBUTE",
+              id
+            ),
+            args: [id],
+            dismiss: prepareDismissal(`LABELS_NO_FOR_ATTRIBUTE ${type + inputName}`),
+            dismissAll: State.option.checks.LABELS_NO_FOR_ATTRIBUTE.dismissAll ? "LABELS_NO_FOR_ATTRIBUTE" : false,
+            developer: State.option.checks.LABELS_NO_FOR_ATTRIBUTE.developer || true
+          });
         }
-      } else if (option.checks.LABELS_MISSING_LABEL) {
-        results.push({
+      } else if (State.option.checks.LABELS_MISSING_LABEL) {
+        State.results.push({
           test: "LABELS_MISSING_LABEL",
           element: $el,
-          type: option.checks.LABELS_MISSING_LABEL.type || "error",
+          type: State.option.checks.LABELS_MISSING_LABEL.type || "error",
           content: Lang.sprintf(
-            option.checks.LABELS_MISSING_LABEL.content || "LABELS_MISSING_LABEL"
+            State.option.checks.LABELS_MISSING_LABEL.content || "LABELS_MISSING_LABEL"
           ),
-          dismiss: prepareDismissal(`INPUTNOID${type + inputName}`),
-          dismissAll: option.checks.LABELS_MISSING_LABEL.dismissAll ? "LABELS_MISSING_LABEL" : false,
-          developer: option.checks.LABELS_MISSING_LABEL.developer || true
+          dismiss: prepareDismissal(`LABELS_MISSING_LABEL ${type + inputName}`),
+          dismissAll: State.option.checks.LABELS_MISSING_LABEL.dismissAll ? "LABELS_MISSING_LABEL" : false,
+          developer: State.option.checks.LABELS_MISSING_LABEL.developer || true
         });
       }
     });
   }
-  return results;
+  return State.results;
 }
 function computeReadability(textArray, lang) {
   const readabilityArray = [];
@@ -7590,13 +7789,11 @@ function computeReadability(textArray, lang) {
     const sentence = punctuation.includes(lastCharacter) ? text : `${text}.`;
     readabilityArray.push(sentence);
   });
-  const pageText = readabilityArray.join(" ");
-  if (pageText.length === 0) {
-    return null;
-  }
+  const pageText = readabilityArray.join(" ").replace(/[\u0000-\u001F\u007F-\u009F]/g, "");
+  if (pageText.length === 0) return null;
   if (["en", "es", "fr", "de", "nl", "it", "pt"].includes(lang)) {
-    const numberOfSyllables = (el) => {
-      let wordCheck = el;
+    const numberOfSyllables = (el2) => {
+      let wordCheck = el2;
       wordCheck = wordCheck.toLowerCase().replace(".", "").replace("\n", "");
       if (wordCheck.length <= 3) {
         return 1;
@@ -7664,11 +7861,11 @@ function computeReadability(textArray, lang) {
     const avgWordsPerSentence = Number((words / sentences).toFixed(1));
     const complexWords = Math.round(100 * ((words - (syllables1 + syllables2)) / words));
     let difficultyToken;
-    if (fleschScore >= 0 && fleschScore < 30) {
+    if (fleschScore <= 30) {
       difficultyToken = "VERY_DIFFICULT";
-    } else if (fleschScore > 31 && fleschScore < 49) {
+    } else if (fleschScore <= 50) {
       difficultyToken = "DIFFICULT";
-    } else if (fleschScore > 50 && fleschScore < 60) {
+    } else if (fleschScore <= 60) {
       difficultyToken = "FAIRLY_DIFFICULT";
     } else {
       difficultyToken = "GOOD";
@@ -7696,11 +7893,11 @@ function computeReadability(textArray, lang) {
     const avgWordsPerSentence = Number((wordCount / sentenceCount).toFixed(1));
     const complexWords = Math.round(100 * (longWordsCount / wordCount));
     let difficultyToken;
-    if (score >= 0 && score < 39) {
+    if (score <= 40) {
       difficultyToken = "GOOD";
-    } else if (score > 40 && score < 50) {
+    } else if (score <= 50) {
       difficultyToken = "FAIRLY_DIFFICULT";
-    } else if (score > 51 && score < 61) {
+    } else if (score <= 60) {
       difficultyToken = "DIFFICULT";
     } else {
       difficultyToken = "VERY_DIFFICULT";
@@ -7716,11 +7913,8 @@ function computeReadability(textArray, lang) {
   }
   return null;
 }
-function checkReadability(results) {
-  const pageText = Elements.Found.Readability.map(
-    ($el) => getText(fnIgnore($el))
-  ).filter(Boolean);
-  const computed = computeReadability(pageText, Constants.Readability.Lang);
+function checkReadability() {
+  const computed = computeReadability(Elements.Found.Readability, Constants.Readability.Lang);
   let result;
   if (computed) {
     result = {
@@ -7728,9 +7922,9 @@ function checkReadability(results) {
       difficultyLevel: Lang._(computed.difficultyToken),
       ...computed
     };
-    results.push(result);
+    State.results.push(result);
   }
-  if (Constants.Global.headless === false) {
+  if (State.option.headless === false) {
     if (computed && result.wordCount > 30) {
       Constants.Panel.readabilityInfo.innerHTML = `${Math.ceil(result.score)} <span class="readability-score">${result.difficultyLevel}</span>`;
       Constants.Panel.readabilityDetails.innerHTML = `<li><strong>${Lang._("AVG_SENTENCE")}</strong> ${Math.ceil(result.averageWordsPerSentence)}</li><li><strong>${Lang._("COMPLEX_WORDS")}</strong> ${result.complexWords}%</li><li><strong>${Lang._("TOTAL_WORDS")}</strong> ${result.wordCount}</li>`;
@@ -7738,332 +7932,304 @@ function checkReadability(results) {
       Constants.Panel.readabilityInfo.innerHTML = `<br>${Lang._("READABILITY_NOT_ENOUGH")}`;
     }
   }
-  return results;
 }
-function checkEmbeddedContent(results, option) {
+function checkEmbeddedContent() {
+  if (!State.option.embeddedContentPlugin) return;
   const src = ($el) => $el.getAttribute("src") || $el.querySelector("source[src]")?.getAttribute("src") || $el.querySelector("[src]")?.getAttribute("src") || null;
-  if (option.checks.EMBED_AUDIO) {
+  if (State.option.checks.EMBED_AUDIO) {
     Elements.Found.Audio.forEach(($el) => {
-      results.push({
+      State.results.push({
         test: "EMBED_AUDIO",
         element: $el,
-        type: option.checks.EMBED_AUDIO.type || "warning",
-        content: Lang.sprintf(option.checks.EMBED_AUDIO.content || "EMBED_AUDIO"),
-        dismiss: prepareDismissal(`AUDIO${src($el)}`),
-        dismissAll: option.checks.EMBED_AUDIO.dismissAll ? "EMBED_AUDIO" : false,
-        developer: option.checks.EMBED_AUDIO.developer || false
+        type: State.option.checks.EMBED_AUDIO.type || "warning",
+        content: Lang.sprintf(State.option.checks.EMBED_AUDIO.content || "EMBED_AUDIO"),
+        dismiss: prepareDismissal(`EMBED_AUDIO ${src($el)}`),
+        dismissAll: State.option.checks.EMBED_AUDIO.dismissAll ? "EMBED_AUDIO" : false,
+        developer: State.option.checks.EMBED_AUDIO.developer || false
       });
     });
   }
-  if (option.checks.EMBED_VIDEO) {
+  if (State.option.checks.EMBED_VIDEO) {
     Elements.Found.Videos.forEach(($el) => {
       const track = $el.querySelector("track");
       const trackSrc = track?.getAttribute("src");
       if (track === null || trackSrc === null || trackSrc.trim().length === 0) {
-        results.push({
+        State.results.push({
           test: "EMBED_VIDEO",
           element: $el,
-          type: option.checks.EMBED_VIDEO.type || "warning",
-          content: Lang.sprintf(option.checks.EMBED_VIDEO.content || "EMBED_VIDEO"),
-          dismiss: prepareDismissal(`VIDEO${src($el)}`),
-          dismissAll: option.checks.EMBED_VIDEO.dismissAll ? "EMBED_VIDEO" : false,
-          developer: option.checks.EMBED_VIDEO.developer || false
+          type: State.option.checks.EMBED_VIDEO.type || "warning",
+          content: Lang.sprintf(State.option.checks.EMBED_VIDEO.content || "EMBED_VIDEO"),
+          dismiss: prepareDismissal(`EMBED_VIDEO ${src($el)}`),
+          dismissAll: State.option.checks.EMBED_VIDEO.dismissAll ? "EMBED_VIDEO" : false,
+          developer: State.option.checks.EMBED_VIDEO.developer || false
         });
       }
     });
   }
-  if (option.checks.EMBED_DATA_VIZ) {
+  if (State.option.checks.EMBED_DATA_VIZ) {
     Elements.Found.Visualizations.forEach(($el) => {
-      results.push({
+      State.results.push({
         test: "EMBED_DATA_VIZ",
         element: $el,
-        type: option.checks.EMBED_DATA_VIZ.type || "warning",
-        content: Lang.sprintf(option.checks.EMBED_DATA_VIZ.content || "EMBED_DATA_VIZ"),
-        dismiss: prepareDismissal(`DATAVIZ${src($el)}`),
-        dismissAll: option.checks.EMBED_DATA_VIZ.dismissAll ? "EMBED_DATA_VIZ" : false,
-        developer: option.checks.EMBED_DATA_VIZ.developer || false
+        type: State.option.checks.EMBED_DATA_VIZ.type || "warning",
+        content: Lang.sprintf(State.option.checks.EMBED_DATA_VIZ.content || "EMBED_DATA_VIZ"),
+        dismiss: prepareDismissal(`EMBED_DATA_VIZ ${src($el)}`),
+        dismissAll: State.option.checks.EMBED_DATA_VIZ.dismissAll ? "EMBED_DATA_VIZ" : false,
+        developer: State.option.checks.EMBED_DATA_VIZ.developer || false
       });
     });
   }
   Elements.Found.iframes.forEach(($el) => {
-    const presentation = ["presentation", "none"].includes($el.getAttribute("role"));
-    const hidden = isElementHidden($el);
     const videoAudio = $el.tagName === "VIDEO" || $el.tagName === "AUDIO";
-    const ariaHidden = $el.getAttribute("aria-hidden") === "true";
-    const negativeTabindex = $el.getAttribute("tabindex") === "-1";
-    if (hidden || videoAudio || ariaHidden && negativeTabindex || presentation) {
+    if (isElementHidden($el) || videoAudio || isHiddenAndUnfocusable($el) || isPresentational($el)) {
       return;
     }
-    if (negativeTabindex) {
-      if (option.checks.EMBED_UNFOCUSABLE) {
-        results.push({
+    if (isNegativeTabindex($el)) {
+      if (State.option.checks.EMBED_UNFOCUSABLE) {
+        State.results.push({
           test: "EMBED_UNFOCUSABLE",
           element: $el,
-          type: option.checks.EMBED_UNFOCUSABLE.type || "error",
-          content: Lang.sprintf(option.checks.EMBED_UNFOCUSABLE.content || "EMBED_UNFOCUSABLE"),
-          dismiss: prepareDismissal(`EMBEDUNFOCUSABLE${src($el)}`),
-          dismissAll: option.checks.EMBED_UNFOCUSABLE.dismissAll ? "EMBED_UNFOCUSABLE" : false,
-          developer: option.checks.EMBED_UNFOCUSABLE.developer || true
+          type: State.option.checks.EMBED_UNFOCUSABLE.type || "error",
+          content: Lang.sprintf(
+            State.option.checks.EMBED_UNFOCUSABLE.content || "EMBED_UNFOCUSABLE"
+          ),
+          dismiss: prepareDismissal(`EMBED_UNFOCUSABLE ${src($el)}`),
+          dismissAll: State.option.checks.EMBED_UNFOCUSABLE.dismissAll ? "EMBED_UNFOCUSABLE" : false,
+          developer: State.option.checks.EMBED_UNFOCUSABLE.developer || true
         });
       }
       return;
     }
-    if (option.checks.EMBED_MISSING_TITLE) {
+    if (State.option.checks.EMBED_MISSING_TITLE) {
       const aria = computeAriaLabel($el);
       const checkTitle = aria === "noAria" ? $el.getAttribute("title") || "" : aria;
       const accessibleName = removeWhitespace(checkTitle);
       if (accessibleName.length === 0) {
-        results.push({
+        State.results.push({
           test: "EMBED_MISSING_TITLE",
           element: $el,
-          type: option.checks.EMBED_MISSING_TITLE.type || "error",
-          content: Lang.sprintf(option.checks.EMBED_MISSING_TITLE.content || "EMBED_MISSING_TITLE"),
-          dismiss: prepareDismissal(`EMBEDMISSTITLE${src($el)}`),
-          dismissAll: option.checks.EMBED_MISSING_TITLE.dismissAll ? "EMBED_MISSING_TITLE" : false,
-          developer: option.checks.EMBED_MISSING_TITLE.developer || true
+          type: State.option.checks.EMBED_MISSING_TITLE.type || "error",
+          content: Lang.sprintf(
+            State.option.checks.EMBED_MISSING_TITLE.content || "EMBED_MISSING_TITLE"
+          ),
+          dismiss: prepareDismissal(`EMBED_MISSING_TITLE ${src($el)}`),
+          dismissAll: State.option.checks.EMBED_MISSING_TITLE.dismissAll ? "EMBED_MISSING_TITLE" : false,
+          developer: State.option.checks.EMBED_MISSING_TITLE.developer || true
         });
       }
     }
   });
-  if (option.checks.EMBED_GENERAL) {
+  if (State.option.checks.EMBED_GENERAL) {
     Elements.Found.EmbeddedContent.forEach(($el) => {
-      const presentation = ["presentation", "none"].includes($el.getAttribute("role"));
-      const ariaHidden = $el.getAttribute("aria-hidden") === "true";
-      const negativeTabindex = $el.getAttribute("tabindex") === "-1";
-      const hidden = isElementHidden($el);
-      if (hidden || ariaHidden && negativeTabindex || presentation) {
-        return;
-      }
-      if ($el.tagName === "VIDEO" || $el.tagName === "AUDIO") {
-        return;
-      }
-      results.push({
+      if (isElementHidden($el) || isHiddenAndUnfocusable($el)) return;
+      if ($el.tagName === "VIDEO" || $el.tagName === "AUDIO") return;
+      State.results.push({
         test: "EMBED_GENERAL",
         element: $el,
-        type: option.checks.EMBED_GENERAL.type || "warning",
-        content: Lang.sprintf(option.checks.EMBED_GENERAL.content || "EMBED_GENERAL"),
-        dismiss: prepareDismissal(`IFRAMEGENERAL${src($el)}`),
-        dismissAll: option.checks.EMBED_GENERAL.dismissAll ? "EMBED_GENERAL" : false,
-        developer: option.checks.EMBED_GENERAL.developer || false
+        type: State.option.checks.EMBED_GENERAL.type || "warning",
+        content: Lang.sprintf(State.option.checks.EMBED_GENERAL.content || "EMBED_GENERAL"),
+        dismiss: prepareDismissal(`EMBED_GENERAL ${src($el)}`),
+        dismissAll: State.option.checks.EMBED_GENERAL.dismissAll ? "EMBED_GENERAL" : false,
+        developer: State.option.checks.EMBED_GENERAL.developer || false
       });
     });
   }
-  return results;
+  return State.results;
 }
-function checkQA(results, option) {
-  if (option.checks.QA_BAD_LINK) {
+function checkQA() {
+  if (State.option.checks.QA_BAD_LINK) {
     Elements.Found.CustomErrorLinks.forEach(($el) => {
-      results.push({
+      const text = getText($el);
+      State.results.push({
         test: "QA_BAD_LINK",
         element: $el,
-        type: option.checks.QA_BAD_LINK.type || "error",
-        content: Lang.sprintf(option.checks.QA_BAD_LINK.content || "QA_BAD_LINK", $el),
+        type: State.option.checks.QA_BAD_LINK.type || "error",
+        content: Lang.sprintf(State.option.checks.QA_BAD_LINK.content || "QA_BAD_LINK", $el, text),
+        args: [$el, text],
         inline: true,
-        dismiss: prepareDismissal($el.tagName + $el.textContent),
-        dismissAll: option.checks.QA_BAD_LINK.dismissAll ? "QA_BAD_LINK" : false,
-        developer: option.checks.QA_BAD_LINK.developer || false
+        dismiss: prepareDismissal(`QA_BAD_LINK ${$el.tagName + $el.textContent}`),
+        dismissAll: State.option.checks.QA_BAD_LINK.dismissAll ? "QA_BAD_LINK" : false,
+        developer: State.option.checks.QA_BAD_LINK.developer || false
       });
     });
   }
-  if (option.checks.QA_STRONG_ITALICS) {
+  if (State.option.checks.QA_STRONG_ITALICS) {
     Elements.Found.StrongItalics.forEach(($el) => {
       const text = getText($el);
       if (text.length !== 0 && text.length > 400) {
-        results.push({
+        State.results.push({
           test: "QA_STRONG_ITALICS",
           element: $el.parentNode,
-          type: option.checks.QA_STRONG_ITALICS.type || "warning",
-          content: Lang.sprintf(option.checks.QA_STRONG_ITALICS.content || "QA_STRONG_ITALICS"),
-          dismiss: prepareDismissal($el.tagName + $el.textContent),
-          dismissAll: option.checks.QA_STRONG_ITALICS.dismissAll ? "QA_STRONG_ITALICS" : false,
-          developer: option.checks.QA_STRONG_ITALICS.developer || false
+          type: State.option.checks.QA_STRONG_ITALICS.type || "warning",
+          content: Lang.sprintf(
+            State.option.checks.QA_STRONG_ITALICS.content || "QA_STRONG_ITALICS",
+            text
+          ),
+          args: [text],
+          dismiss: prepareDismissal(`QA_STRONG_ITALICS ${$el.tagName + $el.textContent}`),
+          dismissAll: State.option.checks.QA_STRONG_ITALICS.dismissAll ? "QA_STRONG_ITALICS" : false,
+          developer: State.option.checks.QA_STRONG_ITALICS.developer || false
         });
       }
     });
   }
-  Elements.Found.Links.forEach(($el) => {
-    if ($el.hasAttribute("href")) {
-      const href = $el.getAttribute("href");
-      const hasExtension = $el.matches(Constants.Global.documentSources);
-      const hasPDF = $el.matches('a[href$=".pdf"], a[href*=".pdf?"]');
-      if (option.checks.QA_IN_PAGE_LINK) {
-        const hasText = getText($el).length !== 0;
-        const ignored = $el.ariaHidden === "true" && $el.getAttribute("tabindex") === "-1";
-        const hasAttributes = $el.hasAttribute("role") || $el.hasAttribute("aria-haspopup") || $el.hasAttribute("aria-expanded") || $el.hasAttribute("onclick") || $el.hasAttribute("disabled") || $el.closest('nav, [role="navigation"]');
-        if ((href.startsWith("#") || href === "") && hasText && !ignored && !hasAttributes) {
-          const targetId = href.substring(1);
-          const ariaControls = $el.getAttribute("aria-controls");
-          const targetElement = targetId && (document.getElementById(targetId) || document.getElementById(decodeURIComponent(targetId)) || document.getElementById(encodeURIComponent(targetId)) || document.getElementById(ariaControls) || document.querySelector(`a[name="${targetId}"]`));
-          if (!targetElement) {
-            results.push({
-              test: "QA_IN_PAGE_LINK",
-              element: $el,
-              type: option.checks.QA_IN_PAGE_LINK.type || "error",
-              content: Lang.sprintf(option.checks.QA_IN_PAGE_LINK.content || "QA_IN_PAGE_LINK"),
-              inline: true,
-              dismiss: prepareDismissal(`QAINPAGE${href}`),
-              dismissAll: option.checks.QA_IN_PAGE_LINK.dismissAll ? "QA_IN_PAGE_LINK" : false,
-              developer: option.checks.QA_IN_PAGE_LINK.developer || false
-            });
-          }
-        }
-      }
-      if (option.checks.QA_DOCUMENT && hasExtension) {
-        results.push({
-          test: "QA_DOCUMENT",
-          element: $el,
-          type: option.checks.QA_DOCUMENT.type || "warning",
-          content: Lang.sprintf(option.checks.QA_DOCUMENT.content || "QA_DOCUMENT"),
-          inline: true,
-          dismiss: prepareDismissal(`DOC${href}`),
-          dismissAll: option.checks.QA_DOCUMENT.dismissAll ? "QA_DOCUMENT" : false,
-          developer: option.checks.QA_DOCUMENT.developer || false
-        });
-      } else if (option.checks.QA_PDF && hasPDF) {
-        results.push({
-          test: "QA_PDF",
-          element: $el,
-          type: option.checks.QA_PDF.type || "warning",
-          content: Lang.sprintf(option.checks.QA_PDF.content || "QA_PDF"),
-          inline: true,
-          dismiss: prepareDismissal(`PDF${href}`),
-          dismissAll: option.checks.QA_PDF.dismissAll ? "QA_PDF" : false,
-          developer: option.checks.QA_PDF.developer || false
-        });
-      }
-    }
-  });
-  if (option.checks.QA_BLOCKQUOTE) {
+  if (State.option.checks.QA_BLOCKQUOTE) {
     Elements.Found.Blockquotes.forEach(($el) => {
       const text = getText($el);
       if (text.length !== 0 && text.length < 25) {
-        const sanitizedText = sanitizeHTML(text);
-        results.push({
+        State.results.push({
           test: "QA_BLOCKQUOTE",
           element: $el,
-          type: option.checks.QA_BLOCKQUOTE.type || "warning",
-          content: Lang.sprintf(
-            option.checks.QA_BLOCKQUOTE.content || "QA_BLOCKQUOTE",
-            sanitizedText
-          ),
-          dismiss: prepareDismissal(`BLOCKQUOTE${sanitizedText}`),
-          dismissAll: option.checks.QA_BLOCKQUOTE.dismissAll ? "QA_BLOCKQUOTE" : false,
-          developer: option.checks.QA_BLOCKQUOTE.developer || false
+          type: State.option.checks.QA_BLOCKQUOTE.type || "warning",
+          content: Lang.sprintf(State.option.checks.QA_BLOCKQUOTE.content || "QA_BLOCKQUOTE", text),
+          args: [text],
+          dismiss: prepareDismissal(`QA_BLOCKQUOTE ${text}`),
+          dismissAll: State.option.checks.QA_BLOCKQUOTE.dismissAll ? "QA_BLOCKQUOTE" : false,
+          developer: State.option.checks.QA_BLOCKQUOTE.developer || false
         });
       }
     });
   }
   Elements.Found.Tables.forEach(($el) => {
-    if (isElementHidden($el) === false) {
-      const tableHeaders = $el.querySelectorAll("th");
-      const semanticHeadings = $el.querySelectorAll("h1, h2, h3, h4, h5, h6");
-      const key = prepareDismissal(`TABLE${$el.textContent}`);
-      if (option.checks.TABLES_MISSING_HEADINGS && tableHeaders.length === 0) {
-        results.push({
-          test: "TABLES_MISSING_HEADINGS",
-          element: $el,
-          type: option.checks.TABLES_MISSING_HEADINGS.type || "error",
-          content: Lang.sprintf(
-            option.checks.TABLES_MISSING_HEADINGS.content || "TABLES_MISSING_HEADINGS"
-          ),
-          dismiss: key,
-          dismissAll: option.checks.TABLES_MISSING_HEADINGS.dismissAll ? "TABLES_MISSING_HEADINGS" : false,
-          developer: option.checks.TABLES_MISSING_HEADINGS.developer || false
-        });
-      }
-      if (option.checks.TABLES_SEMANTIC_HEADING && semanticHeadings.length > 0) {
-        semanticHeadings.forEach((heading) => {
-          results.push({
-            test: "TABLES_SEMANTIC_HEADING",
-            element: heading,
-            type: option.checks.TABLES_SEMANTIC_HEADING.type || "error",
-            content: Lang.sprintf(
-              option.checks.TABLES_SEMANTIC_HEADING.content || "TABLES_SEMANTIC_HEADING"
-            ),
-            dismiss: key,
-            dismissAll: option.checks.TABLES_SEMANTIC_HEADING.dismissAll ? "TABLES_SEMANTIC_HEADING" : false,
-            developer: option.checks.TABLES_SEMANTIC_HEADING.developer || false
-          });
-        });
-      }
-      tableHeaders.forEach((th) => {
-        if (option.checks.TABLES_EMPTY_HEADING && th.textContent.trim().length === 0) {
-          results.push({
-            test: "TABLES_EMPTY_HEADING",
-            element: th,
-            type: option.checks.TABLES_EMPTY_HEADING.type || "error",
-            content: Lang.sprintf(
-              option.checks.TABLES_EMPTY_HEADING.content || "TABLES_EMPTY_HEADING"
-            ),
-            position: "afterbegin",
-            dismiss: key,
-            dismissAll: option.checks.TABLES_EMPTY_HEADING.dismissAll ? "TABLES_EMPTY_HEADING" : false,
-            developer: option.checks.TABLES_EMPTY_HEADING.developer || false
-          });
+    if (isElementHidden($el)) return;
+    const role = $el.getAttribute("role")?.trim().toLowerCase();
+    if (role && !["table", "grid", "treegrid"].includes(role)) return;
+    const tableHeaders = $el.querySelectorAll('th, [role="columnheader"]');
+    const semanticHeadings = $el.querySelectorAll("h1, h2, h3, h4, h5, h6");
+    const firstRow = $el.querySelector("tr") ? $el.querySelector("tr").innerHTML : $el.innerHTML;
+    const invalidIds = [];
+    const cellsWithHeaders = $el.querySelectorAll("[headers]");
+    cellsWithHeaders.forEach((cell) => {
+      const headersAttr = cell.getAttribute("headers");
+      const headerIds = headersAttr.trim().split(/\s+/);
+      headerIds.forEach((id) => {
+        const referencedElement = $el.querySelector(`#${id}`);
+        const doesNotExist = !referencedElement;
+        const isNotInTable = referencedElement && !$el.contains(referencedElement);
+        let isNotHeader = true;
+        if (referencedElement) {
+          const tagName = referencedElement.tagName.toLowerCase();
+          const role2 = referencedElement.getAttribute("role")?.trim().toLowerCase();
+          if (tagName === "th" || role2 === "rowheader" || role2 === "columnheader")
+            isNotHeader = false;
         }
+        if (doesNotExist || isNotInTable || isNotHeader) invalidIds.push(id);
+      });
+    });
+    if (State.option.checks.TABLES_INVALID_HEADERS_REF && invalidIds.length > 0) {
+      State.results.push({
+        test: "TABLES_INVALID_HEADERS_REF",
+        element: $el,
+        type: State.option.checks.TABLES_INVALID_HEADERS_REF.type || "error",
+        content: Lang.sprintf(
+          State.option.checks.TABLES_INVALID_HEADERS_REF.content || "TABLES_INVALID_HEADERS_REF",
+          invalidIds.join(", ")
+        ),
+        args: [invalidIds.join(", ")],
+        dismiss: prepareDismissal(`TABLES_INVALID_HEADERS_REF ${firstRow}`),
+        dismissAll: State.option.checks.TABLES_INVALID_HEADERS_REF.dismissAll ? "TABLES_INVALID_HEADERS_REF" : false,
+        developer: State.option.checks.TABLES_INVALID_HEADERS_REF.developer || true
       });
     }
+    if (State.option.checks.TABLES_MISSING_HEADINGS && tableHeaders.length === 0) {
+      State.results.push({
+        test: "TABLES_MISSING_HEADINGS",
+        element: $el,
+        type: State.option.checks.TABLES_MISSING_HEADINGS.type || "error",
+        content: Lang.sprintf(
+          State.option.checks.TABLES_MISSING_HEADINGS.content || "TABLES_MISSING_HEADINGS"
+        ),
+        dismiss: prepareDismissal(`TABLES_MISSING_HEADINGS ${firstRow}`),
+        dismissAll: State.option.checks.TABLES_MISSING_HEADINGS.dismissAll ? "TABLES_MISSING_HEADINGS" : false,
+        developer: State.option.checks.TABLES_MISSING_HEADINGS.developer || false
+      });
+    }
+    if (State.option.checks.TABLES_SEMANTIC_HEADING && semanticHeadings.length > 0) {
+      semanticHeadings.forEach((heading) => {
+        State.results.push({
+          test: "TABLES_SEMANTIC_HEADING",
+          element: heading,
+          type: State.option.checks.TABLES_SEMANTIC_HEADING.type || "error",
+          content: Lang.sprintf(
+            State.option.checks.TABLES_SEMANTIC_HEADING.content || "TABLES_SEMANTIC_HEADING"
+          ),
+          dismiss: prepareDismissal(`TABLES_SEMANTIC_HEADING ${firstRow}`),
+          dismissAll: State.option.checks.TABLES_SEMANTIC_HEADING.dismissAll ? "TABLES_SEMANTIC_HEADING" : false,
+          developer: State.option.checks.TABLES_SEMANTIC_HEADING.developer || false
+        });
+      });
+    }
+    tableHeaders.forEach((th) => {
+      if (State.option.checks.TABLES_EMPTY_HEADING && th.textContent.trim().length === 0) {
+        State.results.push({
+          test: "TABLES_EMPTY_HEADING",
+          element: th,
+          type: State.option.checks.TABLES_EMPTY_HEADING.type || "error",
+          content: Lang.sprintf(
+            State.option.checks.TABLES_EMPTY_HEADING.content || "TABLES_EMPTY_HEADING"
+          ),
+          position: "afterbegin",
+          dismiss: prepareDismissal(`TABLES_EMPTY_HEADING ${firstRow}`),
+          dismissAll: State.option.checks.TABLES_EMPTY_HEADING.dismissAll ? "TABLES_EMPTY_HEADING" : false,
+          developer: State.option.checks.TABLES_EMPTY_HEADING.developer || false
+        });
+      }
+    });
   });
-  if (option.checks.QA_FAKE_HEADING) {
-    const addResult = (element, sanitizedText) => {
-      results.push({
+  if (State.option.checks.QA_FAKE_HEADING) {
+    const addResult = (element, text) => {
+      State.results.push({
         test: "QA_FAKE_HEADING",
         element,
-        type: option.checks.QA_FAKE_HEADING.type || "warning",
+        type: State.option.checks.QA_FAKE_HEADING.type || "warning",
         content: Lang.sprintf(
-          option.checks.QA_FAKE_HEADING.content || "QA_FAKE_HEADING",
-          sanitizedText
+          State.option.checks.QA_FAKE_HEADING.content || "QA_FAKE_HEADING",
+          text
         ),
-        dismiss: prepareDismissal(`BOLD${sanitizedText}`),
+        args: [text],
+        dismiss: prepareDismissal(`QA_FAKE_HEADING ${text}`),
         inline: true,
-        dismissAll: option.checks.QA_FAKE_HEADING.dismissAll ? "QA_FAKE_HEADING" : false,
-        developer: option.checks.QA_FAKE_HEADING.developer || false
+        dismissAll: State.option.checks.QA_FAKE_HEADING.dismissAll ? "QA_FAKE_HEADING" : false,
+        developer: State.option.checks.QA_FAKE_HEADING.developer || false
       });
     };
     const isPreviousElementAHeading = (p) => {
       const previousElement = p.previousElementSibling;
-      if (!previousElement) {
-        return false;
-      }
+      if (!previousElement) return false;
       const headingTags = ["H1", "H2", "H3", "H4", "H5", "H6"];
       return headingTags.includes(previousElement.tagName);
     };
     const ignoreParents = 'h1, h2, h3, h4, h5, h6, [role="heading"][aria-level], blockquote, table';
     const computeLargeParagraphs = (p) => {
-      const size = getComputedStyle(p).fontSize.replace("px", "");
+      const size = parseFloat(getCachedStyle(p).fontSize);
       const getText$1 = getText(p);
       const maybeSentence = getText$1.match(/[.;?!"]/) === null;
       const typicalHeadingLength = getText$1.length >= 4 && getText$1.length <= 120;
-      if (size >= 24 && !p.closest(ignoreParents) && typicalHeadingLength && maybeSentence && !isPreviousElementAHeading(p)) {
-        const sanitizedText = sanitizeHTML(getText$1);
-        addResult(p, sanitizedText);
+      if (size >= 24 && !getCachedClosest(p, ignoreParents) && typicalHeadingLength && maybeSentence && !isPreviousElementAHeading(p)) {
+        addResult(p, getText$1);
       }
     };
     const computeBoldTextParagraphs = (p) => {
-      const startsWithBold = /^<\s*(strong|b)(\s+[^>]*)?>/i.test(p.innerHTML.trim());
-      if (startsWithBold && !p.closest(ignoreParents)) {
-        const possibleHeading = p.querySelector("strong, b");
-        const possibleHeadingText = getText(possibleHeading);
-        const notASentence = possibleHeadingText.match(/[.:;?!"']/) === null;
-        const typicalHeadingLength = possibleHeadingText.length >= 3 && possibleHeadingText.length <= 120;
-        if (typicalHeadingLength && notASentence) {
-          const nonHeadingTextLength = fnIgnore(p, ["strong", "b"]).textContent.trim().length;
-          if (nonHeadingTextLength !== 0 && nonHeadingTextLength <= 250) {
-            return;
-          }
-          const sanitizedText = sanitizeHTML(possibleHeadingText);
-          addResult(possibleHeading, sanitizedText);
-        }
-      }
+      const html = p.innerHTML.trim();
+      if (html[0] !== "<") return;
+      const likelyFakeHeading = /^<\s*(?:strong|b)\b[^>]*>[\s\S]*?<\/\s*(?:strong|b)\s*>(?:<\s*\/?\s*br\s*>|$)/i.test(html);
+      if (!likelyFakeHeading || getCachedClosest(p, ignoreParents)) return;
+      const possibleHeading = p.querySelector("strong, b");
+      if (!possibleHeading) return;
+      const text = getText(possibleHeading);
+      if (text.length < 3 || text.length > 120 || /[.:;?!"']/.test(text)) return;
+      const paragraph = fnIgnore(p, ["strong", "b"]).textContent.trim();
+      if (paragraph && paragraph.length <= 250) return;
+      addResult(possibleHeading, text);
     };
     Elements.Found.Paragraphs.forEach((p) => {
       computeLargeParagraphs(p);
       computeBoldTextParagraphs(p);
     });
   }
-  if (option.checks.QA_FAKE_LIST) {
+  if (State.option.checks.QA_FAKE_LIST) {
     const numberMatch = new RegExp(/(([023456789][\d\s])|(1\d))/, "");
-    const alphabeticMatch = new RegExp(/(^[aA1αаΑ]|[^p{Alphabetic}\s])[-\s.)]/, "u");
+    const alphabeticMatch = new RegExp(/(^[aA1αаΑ]|[^\p{Alphabetic}\s])[-\s.)\]]/, "u");
     const emojiMatch = new RegExp(/\p{Extended_Pictographic}/, "u");
     const secondTextNoMatch = ["a", "A", "α", "Α", "а", "А", "1"];
     const specialCharsMatch = /[([{#]/;
@@ -8076,29 +8242,37 @@ function checkQA(results, option) {
       б: "а",
       Б: "А"
     };
-    const decrement = (element) => element.replace(/^b|^B|^б|^Б|^β|^В|^2/, (match) => prefixDecrement[match]);
+    const decrement = (element) => element.replace(/^b|^B|^б|^Б|^β|^В|^[2-9]/, (match) => prefixDecrement[match]);
     let activeMatch = "";
     let firstText = "";
     let lastHitWasEmoji = false;
     Elements.Found.Paragraphs.forEach((p, i) => {
       let secondText = false;
       let hit = false;
-      firstText = firstText || getText(p).replace("(", "");
+      firstText = firstText || getText(p).replace(/[([]/, "");
       const firstPrefix = firstText.substring(0, 2);
       const isAlphabetic = firstPrefix.match(alphabeticMatch);
       const isNumber = firstPrefix.match(numberMatch);
       const isEmoji = firstPrefix.match(emojiMatch);
       const isSpecialChar = specialCharsMatch.test(firstPrefix.charAt(0));
-      if (firstPrefix.length > 0 && firstPrefix !== activeMatch && !isNumber && (isAlphabetic || isEmoji || isSpecialChar)) {
+      const isRoman = /^(I|i)[.)\]]/.test(firstPrefix);
+      if (firstPrefix.length > 0 && firstPrefix !== activeMatch && !isNumber && (isAlphabetic || isEmoji || isSpecialChar || isRoman)) {
+        if (/^[A-Z]\.[A-Z]\./.test(firstText)) return;
         const secondP = Elements.Found.Paragraphs[i + 1];
         if (secondP) {
-          secondText = getText(secondP).replace("(", "").substring(0, 2);
+          secondText = getText(secondP).replace(/[([]/, "").substring(0, 2);
           if (secondTextNoMatch.includes(secondText?.toLowerCase().trim())) {
             return;
           }
           const secondPrefix = decrement(secondText);
-          if (isAlphabetic) {
-            if (firstPrefix !== "A " && firstPrefix === secondPrefix) {
+          if (isRoman) {
+            if (secondText.toLowerCase() === "ii") {
+              hit = true;
+            }
+          } else if (isAlphabetic) {
+            const firstChar = firstPrefix.charAt(0);
+            const secondChar = secondText.charAt(0);
+            if (decrement(secondChar) === firstChar && !/\w/.test(secondText.charAt(1))) {
               hit = true;
             }
           } else if (isEmoji && !lastHitWasEmoji) {
@@ -8113,33 +8287,37 @@ function checkQA(results, option) {
           if (textAfterBreak) {
             textAfterBreak = textAfterBreak.replace(/<\/?[^>]+(>|$)/g, "").trim().substring(0, 2);
             const checkForOtherPrefixChars = specialCharsMatch.test(textAfterBreak.charAt(0));
-            if (checkForOtherPrefixChars || firstPrefix === decrement(textAfterBreak) || !lastHitWasEmoji && textAfterBreak.match(emojiMatch)) {
+            if (checkForOtherPrefixChars || firstPrefix === decrement(textAfterBreak) || isRoman && textAfterBreak.toLowerCase() === "ii" || !lastHitWasEmoji && textAfterBreak.match(emojiMatch)) {
               hit = true;
             }
           }
         }
         if (hit) {
-          results.push({
+          State.results.push({
             test: "QA_FAKE_LIST",
             element: p,
-            type: option.checks.QA_FAKE_LIST.type || "warning",
+            type: State.option.checks.QA_FAKE_LIST.type || "warning",
             content: Lang.sprintf(
-              option.checks.QA_FAKE_LIST.content || "QA_FAKE_LIST",
-              firstPrefix
+              State.option.checks.QA_FAKE_LIST.content || "QA_FAKE_LIST",
+              firstPrefix,
+              firstText
             ),
-            dismiss: prepareDismissal(`LIST${p.textContent}`),
-            dismissAll: option.checks.QA_FAKE_LIST.dismissAll ? "QA_FAKE_LIST" : false,
-            developer: option.checks.QA_FAKE_LIST.developer || false
+            args: [firstPrefix, firstText],
+            dismiss: prepareDismissal(`QA_FAKE_LIST ${p.textContent}`),
+            dismissAll: State.option.checks.QA_FAKE_LIST.dismissAll ? "QA_FAKE_LIST" : false,
+            developer: State.option.checks.QA_FAKE_LIST.developer || false
           });
           activeMatch = firstPrefix;
         } else {
           activeMatch = "";
         }
+      } else {
+        activeMatch = "";
       }
       firstText = secondText ? "" : secondText;
     });
   }
-  if (option.checks.QA_UPPERCASE) {
+  if (State.option.checks.QA_UPPERCASE) {
     const checkCaps = ($el) => {
       let thisText = "";
       if ($el.tagName === "LI") {
@@ -8154,14 +8332,18 @@ function checkQA(results, option) {
       const uppercasePattern = /([A-Z]{2,}[ ])([A-Z]{2,}[ ])([A-Z]{2,}[ ])([A-Z]{2,})/g;
       const detectUpperCase = thisText.match(uppercasePattern);
       if (detectUpperCase && detectUpperCase[0].length > 10) {
-        results.push({
+        State.results.push({
           test: "QA_UPPERCASE",
           element: $el,
-          type: option.checks.QA_UPPERCASE.type || "warning",
-          content: Lang.sprintf(option.checks.QA_UPPERCASE.content || "QA_UPPERCASE"),
-          dismiss: prepareDismissal(`UPPERCASE${thisText}`),
-          dismissAll: option.checks.QA_UPPERCASE.dismissAll ? "QA_UPPERCASE" : false,
-          developer: option.checks.QA_UPPERCASE.developer || false
+          type: State.option.checks.QA_UPPERCASE.type || "warning",
+          content: Lang.sprintf(
+            State.option.checks.QA_UPPERCASE.content || "QA_UPPERCASE",
+            thisText
+          ),
+          args: [thisText],
+          dismiss: prepareDismissal(`QA_UPPERCASE ${thisText}`),
+          dismissAll: State.option.checks.QA_UPPERCASE.dismissAll ? "QA_UPPERCASE" : false,
+          developer: State.option.checks.QA_UPPERCASE.developer || false
         });
       }
     };
@@ -8179,133 +8361,183 @@ function checkQA(results, option) {
     });
   }
   const addUnderlineResult = ($el) => {
-    results.push({
+    const text = getText($el);
+    State.results.push({
       test: "QA_UNDERLINE",
       element: $el,
-      type: option.checks.QA_UNDERLINE.type || "warning",
-      content: Lang.sprintf(option.checks.QA_UNDERLINE.content || "QA_UNDERLINE"),
+      type: State.option.checks.QA_UNDERLINE.type || "warning",
+      content: Lang.sprintf(State.option.checks.QA_UNDERLINE.content || "QA_UNDERLINE", text),
+      args: [text],
       inline: true,
-      dismiss: prepareDismissal(`UNDERLINE${$el.textContent}`),
-      dismissAll: option.checks.QA_UNDERLINE.dismissAll ? "QA_UNDERLINE" : false,
-      developer: option.checks.QA_UNDERLINE.developer || false
+      dismiss: prepareDismissal(`QA_UNDERLINE ${text}`),
+      dismissAll: State.option.checks.QA_UNDERLINE.dismissAll ? "QA_UNDERLINE" : false,
+      developer: State.option.checks.QA_UNDERLINE.developer || false
     });
   };
   const addJustifyResult = ($el) => {
-    results.push({
+    const text = getText($el);
+    State.results.push({
       test: "QA_JUSTIFY",
       element: $el,
-      type: option.checks.QA_JUSTIFY.type || "warning",
-      content: Lang.sprintf(option.checks.QA_JUSTIFY.content || "QA_JUSTIFY"),
-      dismiss: prepareDismissal(`JUSTIFIED${$el.textContent}`),
-      dismissAll: option.checks.QA_JUSTIFY.dismissAll ? "QA_JUSTIFY" : false,
-      developer: option.checks.QA_JUSTIFY.developer || false
+      type: State.option.checks.QA_JUSTIFY.type || "warning",
+      content: Lang.sprintf(State.option.checks.QA_JUSTIFY.content || "QA_JUSTIFY", text),
+      args: [text],
+      dismiss: prepareDismissal(`QA_JUSTIFY ${text}`),
+      dismissAll: State.option.checks.QA_JUSTIFY.dismissAll ? "QA_JUSTIFY" : true,
+      developer: State.option.checks.QA_JUSTIFY.developer || false
     });
   };
   const addSmallTextResult = ($el) => {
-    results.push({
+    const text = getText($el);
+    State.results.push({
       test: "QA_SMALL_TEXT",
       element: $el,
-      type: option.checks.QA_SMALL_TEXT.type || "warning",
-      content: Lang.sprintf(option.checks.QA_SMALL_TEXT.content || "QA_SMALL_TEXT"),
-      dismiss: prepareDismissal(`SMALL${$el.textContent}`),
-      dismissAll: option.checks.QA_SMALL_TEXT.dismissAll ? "QA_SMALL_TEXT" : false,
-      developer: option.checks.QA_SMALL_TEXT.developer || false
+      type: State.option.checks.QA_SMALL_TEXT.type || "warning",
+      content: Lang.sprintf(State.option.checks.QA_SMALL_TEXT.content || "QA_SMALL_TEXT", text),
+      args: [text],
+      dismiss: prepareDismissal(`QA_SMALL_TEXT ${text}`),
+      dismissAll: State.option.checks.QA_SMALL_TEXT.dismissAll ? "QA_SMALL_TEXT" : true,
+      developer: State.option.checks.QA_SMALL_TEXT.developer || false
     });
   };
-  const computeStyle = ($el) => {
-    const style = getComputedStyle($el);
-    const { textDecorationLine, textAlign, fontSize } = style;
-    const interactive = 'a[href], button, abbr, [role="link"], [role="button"], [tabindex="0"], [onclick]';
-    if (option.checks.QA_UNDERLINE && ($el.closest("u") || textDecorationLine === "underline") && !$el.closest(interactive) && !$el.matches(interactive)) {
-      addUnderlineResult($el);
-    }
-    const defaultSize = option.checks.QA_SMALL_TEXT.fontSize || 10;
-    const computedFontSize = parseFloat(fontSize);
-    const parentFontSize = $el.parentElement ? parseFloat(getComputedStyle($el.parentElement).fontSize) : null;
-    const isInherited = parentFontSize === computedFontSize;
-    const withinRange = !isInherited && computedFontSize > 1 && computedFontSize <= defaultSize;
-    if (option.checks.QA_SMALL_TEXT && withinRange) {
-      addSmallTextResult($el);
-    }
-    const parentJustify = $el.parentElement ? getComputedStyle($el.parentElement).textAlign : null;
-    const justifyInherited = parentJustify === textAlign;
-    if (option.checks.QA_JUSTIFY && textAlign === "justify" && !justifyInherited) {
-      addJustifyResult($el);
-    }
-  };
-  if (option.checks.QA_UNDERLINE || option.checks.QA_JUSTIFY || option.checks.QA_SMALL_TEXT) {
+  const checkUnderline = State.option.checks.QA_UNDERLINE;
+  const checkSmallText = State.option.checks.QA_SMALL_TEXT;
+  const checkJustify = State.option.checks.QA_JUSTIFY;
+  if (checkUnderline || checkJustify || checkSmallText) {
+    const defaultSize = checkSmallText?.fontSize || 10;
+    const interactiveSelector = 'a[href], button, abbr, [role="link"], [role="button"], [tabindex="0"], [onclick]';
+    const hasDirectText = (el2) => {
+      let node = el2.firstChild;
+      while (node) {
+        if (node.nodeType === 3 && node.nodeValue.trim().length > 0) {
+          return true;
+        }
+        node = node.nextSibling;
+      }
+      return false;
+    };
     for (let i = 0; i < Elements.Found.Everything.length; i++) {
       const $el = Elements.Found.Everything[i];
-      const textString = Array.from($el.childNodes).filter((node) => node.nodeType === 3).map((node) => node.textContent).join("");
-      const text = textString.trim();
-      if (text.length !== 0) {
-        computeStyle($el);
+      if (!hasDirectText($el)) continue;
+      const style = getCachedStyle($el);
+      const parentStyle = getCachedStyle($el.parentElement);
+      if (checkUnderline) {
+        if ((style.textDecorationLine === "underline" || getCachedClosest($el, "u")) && !$el.matches(interactiveSelector) && !getCachedClosest($el, interactiveSelector)) {
+          addUnderlineResult($el);
+        }
+      }
+      if (checkSmallText) {
+        const computedFontSize = parseFloat(style.fontSize);
+        if (computedFontSize > 1 && computedFontSize <= defaultSize) {
+          const parentFontSize = parentStyle ? parseFloat(parentStyle.fontSize) : null;
+          const isInherited = parentFontSize === computedFontSize;
+          if (!isInherited && !getCachedClosest($el, "sup, sub")) {
+            addSmallTextResult($el);
+          }
+        }
+      }
+      if (checkJustify && style.textAlign === "justify") {
+        const parentJustify = parentStyle ? parentStyle.textAlign : null;
+        const justifyInherited = parentJustify === style.textAlign;
+        if (!justifyInherited) {
+          addJustifyResult($el);
+        }
       }
     }
   }
-  if (option.checks.QA_SUBSCRIPT) {
+  if (State.option.checks.QA_SUBSCRIPT) {
     Elements.Found.Subscripts.forEach(($el) => {
       const text = getText($el);
       if (text.length >= 80) {
-        results.push({
+        State.results.push({
           test: "QA_SUBSCRIPT",
           element: $el,
-          type: option.checks.QA_SUBSCRIPT.type || "warning",
-          content: Lang.sprintf(option.checks.QA_SUBSCRIPT.content || "QA_SUBSCRIPT"),
+          type: State.option.checks.QA_SUBSCRIPT.type || "warning",
+          content: Lang.sprintf(State.option.checks.QA_SUBSCRIPT.content || "QA_SUBSCRIPT", text),
+          args: [text],
           inline: true,
-          dismiss: prepareDismissal($el.tagName + text),
-          dismissAll: option.checks.QA_SUBSCRIPT.dismissAll ? "QA_SUBSCRIPT" : false,
-          developer: option.checks.QA_SUBSCRIPT.developer || false
+          dismiss: prepareDismissal(`QA_SUBSCRIPT ${$el.tagName + text}`),
+          dismissAll: State.option.checks.QA_SUBSCRIPT.dismissAll ? "QA_SUBSCRIPT" : false,
+          developer: State.option.checks.QA_SUBSCRIPT.developer || false
         });
       }
     });
   }
-  if (option.checks.QA_NESTED_COMPONENTS) {
+  if (State.option.checks.QA_NESTED_COMPONENTS) {
     Elements.Found.NestedComponents.forEach(($el) => {
-      const sources = option.checks.QA_NESTED_COMPONENTS.sources || '[role="tablist"], details';
+      const sources = State.option.checks.QA_NESTED_COMPONENTS.sources || '[role="tablist"], details';
       const component = $el.querySelector(sources);
       if (component) {
-        results.push({
+        State.results.push({
           test: "QA_NESTED_COMPONENTS",
           element: $el,
-          type: option.checks.QA_NESTED_COMPONENTS.type || "warning",
+          type: State.option.checks.QA_NESTED_COMPONENTS.type || "warning",
           content: Lang.sprintf(
-            option.checks.QA_NESTED_COMPONENTS.content || "QA_NESTED_COMPONENTS"
+            State.option.checks.QA_NESTED_COMPONENTS.content || "QA_NESTED_COMPONENTS"
           ),
-          dismiss: prepareDismissal(`NESTED${$el.textContent}`),
-          dismissAll: option.checks.QA_NESTED_COMPONENTS.dismissAll ? "QA_NESTED_COMPONENTS" : false,
-          developer: option.checks.QA_NESTED_COMPONENTS.developer || false
+          dismiss: prepareDismissal(`QA_NESTED_COMPONENTS ${$el.textContent}`),
+          dismissAll: State.option.checks.QA_NESTED_COMPONENTS.dismissAll ? "QA_NESTED_COMPONENTS" : false,
+          developer: State.option.checks.QA_NESTED_COMPONENTS.developer || false
         });
       }
     });
   }
-  return results;
 }
-function checkDeveloper(results, option) {
-  if (option.checks.META_LANG) {
-    if (!Elements.Found.Language || Elements.Found.Language.length < 2) {
-      results.push({
-        test: "META_LANG",
-        type: option.checks.META_LANG.type || "error",
-        content: Lang.sprintf(option.checks.META_LANG.content || "META_LANG"),
-        dismiss: prepareDismissal("LANG"),
-        developer: option.checks.META_LANG.developer || true
-      });
+function checkDeveloper() {
+  const report = (key, $el, ...args) => {
+    const rule = State.option.checks[key];
+    if (!rule) return;
+    const result = {
+      test: key,
+      type: rule.type || "error",
+      content: Lang.sprintf(rule.content || key, ...args),
+      args: [...args],
+      dismiss: prepareDismissal(key),
+      developer: rule.developer || true
+    };
+    if ($el) {
+      result.element = $el;
+    }
+    State.results.push(result);
+  };
+  if (!Elements.Found.Language) {
+    report("META_LANG", null);
+  } else {
+    const { valid, suggest } = validateLang(Elements.Found.Language, Lang._("LANG_CODE"));
+    if (!valid) {
+      if (suggest) {
+        report("META_LANG_SUGGEST", null, Elements.Found.Language, suggest);
+      } else {
+        report("META_LANG_VALID", null, "html", Elements.Found.Language);
+      }
     }
   }
-  if (option.checks.META_TITLE) {
+  if (Elements.Found.LangTags && Elements.Found.LangTags.length > 0) {
+    Elements.Found.LangTags.forEach(($el) => {
+      const langValue = $el.getAttribute("lang")?.trim();
+      const { valid, suggest } = validateLang(langValue, Lang._("LANG_CODE"));
+      if (!valid) {
+        if (suggest) {
+          report("META_LANG_SUGGEST", $el, langValue, suggest);
+        } else {
+          report("META_LANG_VALID", $el, $el.tagName.toLowerCase(), langValue);
+        }
+      }
+    });
+  }
+  if (State.option.checks.META_TITLE) {
     const metaTitle = document.querySelector("title:not(svg title)");
     if (!metaTitle || metaTitle.textContent.trim().length === 0) {
-      results.push({
+      State.results.push({
         test: "META_TITLE",
-        type: option.checks.META_TITLE.type || "error",
-        content: Lang.sprintf(option.checks.META_TITLE.content || "META_TITLE"),
-        dismiss: prepareDismissal("TITLE"),
-        developer: option.checks.META_TITLE.developer || true
+        type: State.option.checks.META_TITLE.type || "error",
+        content: Lang.sprintf(State.option.checks.META_TITLE.content || "META_TITLE"),
+        dismiss: prepareDismissal("META_TITLE"),
+        developer: State.option.checks.META_TITLE.developer || true
       });
     }
   }
-  if (option.checks.META_SCALABLE || option.checks.META_MAX) {
+  if (State.option.checks.META_SCALABLE || State.option.checks.META_MAX) {
     const metaViewport = document.querySelector('meta[name="viewport"]');
     if (metaViewport) {
       const content = metaViewport.getAttribute("content");
@@ -8315,41 +8547,44 @@ function checkDeveloper(results, option) {
           acc[key] = value;
           return acc;
         }, {});
-        if (option.checks.META_SCALABLE && (params["user-scalable"] === "no" || params["user-scalable"] === "0")) {
-          results.push({
+        if (State.option.checks.META_SCALABLE && (params["user-scalable"] === "no" || params["user-scalable"] === "0")) {
+          State.results.push({
             test: "META_SCALABLE",
-            type: option.checks.META_SCALABLE.type || "error",
-            content: Lang.sprintf(option.checks.META_SCALABLE.content || "META_SCALABLE"),
-            dismiss: prepareDismissal("SCALABLE"),
-            developer: option.checks.META_SCALABLE.developer || true
+            type: State.option.checks.META_SCALABLE.type || "error",
+            content: Lang.sprintf(State.option.checks.META_SCALABLE.content || "META_SCALABLE"),
+            dismiss: prepareDismissal("META_SCALABLE"),
+            developer: State.option.checks.META_SCALABLE.developer || true
           });
         }
         const maxScale = parseFloat(params["maximum-scale"]);
-        if (option.checks.META_MAX && !Number.isNaN(maxScale) && maxScale < 2) {
-          results.push({
+        if (State.option.checks.META_MAX && !Number.isNaN(maxScale) && maxScale < 2) {
+          State.results.push({
             test: "META_MAX",
-            type: option.checks.META_MAX.type || "error",
-            content: Lang.sprintf(option.checks.META_MAX.content || "META_MAX"),
-            dismiss: prepareDismissal("MAXSCALE"),
-            developer: option.checks.META_MAX.developer || true
+            type: State.option.checks.META_MAX.type || "error",
+            content: Lang.sprintf(State.option.checks.META_MAX.content || "META_MAX"),
+            dismiss: prepareDismissal("META_MAX"),
+            developer: State.option.checks.META_MAX.developer || true
           });
         }
       }
     }
   }
-  if (option.checks.META_REFRESH) {
-    const metaRefresh = document.querySelector('meta[http-equiv="refresh"]');
-    if (metaRefresh) {
-      results.push({
+  if (State.option.checks.META_REFRESH) {
+    const actuallyRefreshes = Array.from(
+      document.querySelectorAll('meta[http-equiv="refresh" i]')
+    ).some((tag) => parseInt(tag.getAttribute("content"), 10) > 0);
+    if (actuallyRefreshes) {
+      const option = State.option.checks.META_REFRESH;
+      State.results.push({
         test: "META_REFRESH",
-        type: option.checks.META_REFRESH.type || "error",
-        content: Lang.sprintf(option.checks.META_REFRESH.content || "META_REFRESH"),
-        dismiss: prepareDismissal("REFRESH"),
-        developer: option.checks.META_REFRESH.developer || true
+        type: option.type || "error",
+        content: Lang.sprintf(option.content || "META_REFRESH"),
+        dismiss: prepareDismissal("META_REFRESH"),
+        developer: option.developer ?? true
       });
     }
   }
-  if (option.checks.DUPLICATE_ID) {
+  if (State.option.checks.DUPLICATE_ID) {
     const doms = document.querySelectorAll("body, [data-sa11y-has-shadow-root]");
     doms.forEach((dom) => {
       const allIds = /* @__PURE__ */ new Set();
@@ -8371,14 +8606,18 @@ function checkDeveloper(results, option) {
                 [aria-owns*="${id}"]`)
             );
             if (ariaReference.length > 0) {
-              results.push({
+              State.results.push({
                 test: "DUPLICATE_ID",
                 element: $el,
-                type: option.checks.DUPLICATE_ID.type || "error",
-                content: Lang.sprintf(option.checks.DUPLICATE_ID.content || "DUPLICATE_ID", id),
-                dismiss: prepareDismissal(`DUPLICATEID${id}${$el.textContent}`),
-                dismissAll: option.checks.DUPLICATE_ID.dismissAll ? "DUPLICATE_ID" : false,
-                developer: option.checks.DUPLICATE_ID.developer || true
+                type: State.option.checks.DUPLICATE_ID.type || "error",
+                content: Lang.sprintf(
+                  State.option.checks.DUPLICATE_ID.content || "DUPLICATE_ID",
+                  id
+                ),
+                args: [id],
+                dismiss: prepareDismissal(`DUPLICATE_ID ${id}${$el.textContent}`),
+                dismissAll: State.option.checks.DUPLICATE_ID.dismissAll ? "DUPLICATE_ID" : false,
+                developer: State.option.checks.DUPLICATE_ID.developer || true
               });
             }
           }
@@ -8396,400 +8635,815 @@ function checkDeveloper(results, option) {
       findDuplicateIds(regularIds, dom);
     });
   }
-  if (option.checks.BTN_EMPTY || option.checks.BTN_EMPTY_LABELLEDBY || option.checks.BTN_LABEL || option.checks.HIDDEN_FOCUSABLE || option.checks.LABEL_IN_NAME) {
+  if (State.option.checks.BTN_EMPTY || State.option.checks.BTN_EMPTY_LABELLEDBY || State.option.checks.BTN_LABEL || State.option.checks.HIDDEN_FOCUSABLE || State.option.checks.LABEL_IN_NAME) {
     Elements.Found.Buttons.forEach(($el) => {
+      if (isHiddenAndUnfocusable($el) || isElementHidden($el) || isPresentational($el) && isDisabled($el))
+        return;
       const accName = computeAccessibleName($el);
       const buttonText = accName.replace(/'|"|-|\.|\s+/g, "").toLowerCase();
-      const key = prepareDismissal(`BTN${$el.tagName + $el.id + $el.className + accName}`);
+      const textContent = getText($el);
       const hasAria = $el.querySelector(":scope [aria-labelledby], :scope [aria-label]") || $el.getAttribute("aria-labelledby") || $el.getAttribute("aria-label");
       const hasAriaLabelledby = $el.querySelector(":scope [aria-labelledby]") || $el.getAttribute("aria-labelledby");
-      const ariaHidden = $el.getAttribute("aria-hidden") === "true";
-      const negativeTabindex = $el.getAttribute("tabindex") === "-1";
-      if (ariaHidden) {
-        if (!negativeTabindex) {
-          if (option.checks.HIDDEN_FOCUSABLE) {
-            results.push({
-              test: "HIDDEN_FOCUSABLE",
-              element: $el,
-              type: option.checks.HIDDEN_FOCUSABLE.type || "error",
-              content: Lang.sprintf(option.checks.HIDDEN_FOCUSABLE.content || "HIDDEN_FOCUSABLE"),
-              dismiss: key,
-              dismissAll: option.checks.HIDDEN_FOCUSABLE.dismissAll ? "BTN_HIDDEN_FOCUSABLE" : false,
-              developer: option.checks.HIDDEN_FOCUSABLE.developer || true
-            });
-          }
-        }
-        return;
-      }
       if (buttonText.length === 0) {
-        if (option.checks.BTN_EMPTY_LABELLEDBY && hasAriaLabelledby) {
-          results.push({
+        if (State.option.checks.BTN_EMPTY_LABELLEDBY && hasAriaLabelledby) {
+          State.results.push({
             test: "BTN_EMPTY_LABELLEDBY",
             element: $el,
-            type: option.checks.BTN_EMPTY_LABELLEDBY.type || "error",
-            content: option.checks.BTN_EMPTY_LABELLEDBY.content ? Lang.sprintf(option.checks.BTN_EMPTY_LABELLEDBY.content) : `${Lang.sprintf("BTN_EMPTY_LABELLEDBY")} ${Lang.sprintf("BTN_TIP")}`,
-            dismiss: prepareDismissal(key),
-            dismissAll: option.checks.BTN_EMPTY_LABELLEDBY.dismissAll ? "BTN_EMPTY_LABELLEDBY" : false,
-            developer: option.checks.BTN_EMPTY_LABELLEDBY.developer || true
+            type: State.option.checks.BTN_EMPTY_LABELLEDBY.type || "error",
+            content: Lang.sprintf(
+              State.option.checks.BTN_EMPTY_LABELLEDBY.content || Lang._("BTN_EMPTY_LABELLEDBY") + Lang._("BTN_TIP")
+            ),
+            dismiss: prepareDismissal(
+              `BTN_EMPTY_LABELLEDBY ${$el.tagName + $el.id + $el.className + accName}`
+            ),
+            dismissAll: State.option.checks.BTN_EMPTY_LABELLEDBY.dismissAll ? "BTN_EMPTY_LABELLEDBY" : false,
+            developer: State.option.checks.BTN_EMPTY_LABELLEDBY.developer || true
           });
-        } else if (option.checks.BTN_EMPTY) {
-          results.push({
+        } else if (State.option.checks.BTN_EMPTY) {
+          State.results.push({
             test: "BTN_EMPTY",
             element: $el,
-            type: option.checks.BTN_EMPTY.type || "error",
-            content: option.checks.BTN_EMPTY.content ? Lang.sprintf(option.checks.BTN_EMPTY.content) : `${Lang.sprintf("BTN_EMPTY")} ${Lang.sprintf("BTN_TIP")}`,
-            dismiss: key,
-            dismissAll: option.checks.BTN_EMPTY.dismissAll ? "BTN_EMPTY" : false,
-            developer: option.checks.BTN_EMPTY.developer || true
+            type: State.option.checks.BTN_EMPTY.type || "error",
+            content: Lang.sprintf(
+              State.option.checks.BTN_EMPTY.content || Lang._("BTN_EMPTY") + Lang._("BTN_TIP")
+            ),
+            dismiss: prepareDismissal(`BTN_EMPTY ${$el.tagName + $el.id + $el.className}`),
+            dismissAll: State.option.checks.BTN_EMPTY.dismissAll ? "BTN_EMPTY" : false,
+            developer: State.option.checks.BTN_EMPTY.developer || true
           });
         }
         return;
       }
       const isVisibleTextInAccName$1 = isVisibleTextInAccName($el, accName);
-      if (option.checks.LABEL_IN_NAME && hasAria && isVisibleTextInAccName$1) {
-        const sanitizedText = sanitizeHTML(accName);
-        results.push({
+      if (State.option.checks.LABEL_IN_NAME && hasAria && isVisibleTextInAccName$1) {
+        State.results.push({
           test: "LABEL_IN_NAME",
           element: $el,
-          type: option.checks.LABEL_IN_NAME.type || "warning",
-          content: option.checks.LABEL_IN_NAME.content ? Lang.sprintf(option.checks.LABEL_IN_NAME.content, sanitizedText) : `${Lang.sprintf("LABEL_IN_NAME", sanitizedText)} ${Lang.sprintf("ACC_NAME_TIP")}`,
-          dismiss: key,
-          dismissAll: option.checks.LABEL_IN_NAME.dismissAll ? "BTN_LABEL_IN_NAME" : false,
-          developer: option.checks.LABEL_IN_NAME.developer || true
+          type: State.option.checks.LABEL_IN_NAME.type || "warning",
+          content: Lang.sprintf(
+            State.option.checks.LABEL_IN_NAME.content || Lang._("LABEL_IN_NAME") + Lang._("ACC_NAME_TIP"),
+            textContent,
+            accName
+          ),
+          args: [textContent, accName],
+          dismiss: prepareDismissal(
+            `LABEL_IN_NAME ${$el.tagName + $el.id + $el.className + accName}`
+          ),
+          dismissAll: State.option.checks.LABEL_IN_NAME.dismissAll ? "BTN_LABEL_IN_NAME" : false,
+          developer: State.option.checks.LABEL_IN_NAME.developer || true
         });
         return;
       }
-      if (option.checks.BTN_ROLE_IN_NAME && accName.includes(Lang._("BTN"))) {
-        results.push({
+      if (State.option.checks.BTN_ROLE_IN_NAME && accName.includes(Lang._("BTN"))) {
+        State.results.push({
           test: "BTN_ROLE_IN_NAME",
           element: $el,
-          type: option.checks.BTN_ROLE_IN_NAME.type || "warning",
-          content: option.checks.BTN_ROLE_IN_NAME.content ? Lang.sprintf(option.checks.BTN_ROLE_IN_NAME.content) : `${Lang.sprintf("BTN_ROLE_IN_NAME")} ${Lang.sprintf("BTN_TIP")}`,
-          dismiss: key,
-          dismissAll: option.checks.BTN_ROLE_IN_NAME.dismissAll ? "BTN_ROLE_IN_NAME" : false,
-          developer: option.checks.BTN_ROLE_IN_NAME.developer || true
+          type: State.option.checks.BTN_ROLE_IN_NAME.type || "warning",
+          content: Lang.sprintf(
+            State.option.checks.BTN_ROLE_IN_NAME.content || Lang._("BTN_ROLE_IN_NAME") + Lang._("ACC_NAME_TIP") + Lang._("BTN_TIP"),
+            accName
+          ),
+          args: [accName],
+          dismiss: prepareDismissal(
+            `BTN_ROLE_IN_NAME ${$el.tagName + $el.id + $el.className + accName}`
+          ),
+          dismissAll: State.option.checks.BTN_ROLE_IN_NAME.dismissAll ? "BTN_ROLE_IN_NAME" : false,
+          developer: State.option.checks.BTN_ROLE_IN_NAME.developer || true
         });
       }
     });
   }
-  if (option.checks.UNCONTAINED_LI) {
+  if (State.option.checks.UNCONTAINED_LI) {
     Elements.Found.Lists.forEach(($el) => {
-      if (!$el.closest("ul, ol, menu")) {
-        results.push({
+      if (!getCachedClosest($el, "ul, ol, menu")) {
+        const text = getText($el);
+        State.results.push({
           test: "UNCONTAINED_LI",
           element: $el,
-          type: option.checks.UNCONTAINED_LI.type || "error",
-          content: Lang.sprintf(option.checks.UNCONTAINED_LI.content || "UNCONTAINED_LI"),
-          dismiss: prepareDismissal(`UNCONTAINEDLI${$el.textContent}`),
-          dismissAll: option.checks.UNCONTAINED_LI.dismissAll ? "UNCONTAINED_LI" : false,
-          developer: option.checks.UNCONTAINED_LI.developer || true
+          type: State.option.checks.UNCONTAINED_LI.type || "error",
+          content: Lang.sprintf(
+            State.option.checks.UNCONTAINED_LI.content || "UNCONTAINED_LI",
+            text
+          ),
+          args: [text],
+          dismiss: prepareDismissal(`UNCONTAINED_LI ${$el.textContent}`),
+          dismissAll: State.option.checks.UNCONTAINED_LI.dismissAll ? "UNCONTAINED_LI" : false,
+          developer: State.option.checks.UNCONTAINED_LI.developer || true
         });
       }
     });
   }
-  if (option.checks.TABINDEX_ATTR) {
+  if (State.option.checks.TABINDEX_ATTR) {
     Elements.Found.TabIndex.forEach(($el) => {
-      results.push({
+      if ($el.tabIndex <= 0) return;
+      State.results.push({
         test: "TABINDEX_ATTR",
         element: $el,
-        type: option.checks.TABINDEX_ATTR.type || "error",
-        content: Lang.sprintf(option.checks.TABINDEX_ATTR.content || "TABINDEX_ATTR"),
-        dismiss: prepareDismissal(`TABINDEX${$el.tagName + $el.id + $el.className}`),
-        dismissAll: option.checks.TABINDEX_ATTR.dismissAll ? "TABINDEX_ATTR" : false,
-        developer: option.checks.TABINDEX_ATTR.developer || true
+        type: State.option.checks.TABINDEX_ATTR.type || "error",
+        content: Lang.sprintf(State.option.checks.TABINDEX_ATTR.content || "TABINDEX_ATTR"),
+        dismiss: prepareDismissal(`TABINDEX_ATTR ${$el.tagName + $el.id + $el.className}`),
+        dismissAll: State.option.checks.TABINDEX_ATTR.dismissAll ? "TABINDEX_ATTR" : false,
+        developer: State.option.checks.TABINDEX_ATTR.developer || true
       });
     });
   }
-  return results;
+  if (State.option.checks.HIDDEN_FOCUSABLE) {
+    const flaggedForAriaHidden = /* @__PURE__ */ new Set();
+    Elements.Found.Focusable.forEach(($el) => {
+      if (flaggedForAriaHidden.has($el)) return;
+      if (isDisabled($el) || isNegativeTabindex($el) || isElementHidden($el))
+        return;
+      const hiddenContainer = getCachedClosest($el, '[aria-hidden="true"]');
+      if (hiddenContainer) {
+        const outerHTML = truncateString($el.outerHTML, 100);
+        State.results.push({
+          test: "HIDDEN_FOCUSABLE",
+          element: $el,
+          type: State.option.checks.HIDDEN_FOCUSABLE.type || "error",
+          content: Lang.sprintf(
+            State.option.checks.HIDDEN_FOCUSABLE.content || "HIDDEN_FOCUSABLE",
+            outerHTML
+          ),
+          args: [outerHTML],
+          dismiss: prepareDismissal(
+            `HIDDEN_FOCUSABLE ${$el.tagName + $el.id + $el.className}`
+          ),
+          dismissAll: State.option.checks.HIDDEN_FOCUSABLE.dismissAll ? "HIDDEN_FOCUSABLE" : false,
+          developer: State.option.checks.HIDDEN_FOCUSABLE.developer || true
+        });
+        flaggedForAriaHidden.add($el);
+      }
+    });
+  }
+  return State.results;
 }
 function checkCustom(results) {
   return results;
 }
+async function checkAll(desiredRoot = State.option.checkRoot, desiredReadabilityRoot = State.option.readabilityRoot, fixedRoots = State.option.fixedRoots) {
+  try {
+    State.start = performance.now();
+    Constants.initializeRoot(desiredRoot, desiredReadabilityRoot, fixedRoots);
+    findShadowComponents();
+    Elements.initializeElements();
+    checkHeaders();
+    checkLinkText();
+    checkImages();
+    checkLabels();
+    checkQA();
+    checkDeveloper();
+    checkEmbeddedContent();
+    checkContrast();
+    if (State.option.readabilityPlugin || store.getItem("sa11y-readability") === "On") {
+      checkReadability();
+    }
+    await checkPageLanguage();
+    if (State.option.customChecks === true) {
+      checkCustom();
+    } else if (typeof State.option.customChecks === "object") {
+      State.results.push(...State.option.customChecks);
+    } else if (State.option.customChecks === "listen") {
+      State.customChecksRunning = true;
+      State.customChecksFinished = 0;
+      document.addEventListener("sa11y-resume", () => {
+        State.customChecksFinished += 1;
+        if (State.customChecksFinished === 1) {
+          State.customChecksRunning = false;
+          updateResults();
+        }
+      });
+      window.setTimeout(() => {
+        if (State.customChecksRunning === true) {
+          State.customChecksRunning = false;
+          updateResults();
+          throw Error("Sa11y: No custom checks were returned.");
+        }
+      }, State.option.delayCustomCheck);
+      window.setTimeout(() => {
+        const customChecks = new CustomEvent("sa11y-custom-checks");
+        document.dispatchEvent(customChecks);
+      }, 0);
+    }
+    if (!State.customChecksRunning) updateResults();
+  } catch (error) {
+    const consoleErrors = new ConsoleErrors(error);
+    document.body.appendChild(consoleErrors);
+    throw error;
+  }
+}
+function detectPageChanges() {
+  if (State.option.detectSPArouting === true) {
+    let url2 = window.location.href;
+    const checkURL = debounce(async () => {
+      if (url2 !== window.location.href) {
+        if (store.getItem("sa11y-panel") === "Closed" || !store.getItem("sa11y-panel")) {
+          checkAll();
+        } else {
+          resetAll(false);
+          await checkAll();
+        }
+        url2 = window.location.href;
+      }
+    }, 250);
+    window.addEventListener("click", checkURL);
+    window.addEventListener("keydown", checkURL);
+  }
+}
+function mainToggle() {
+  Constants.Panel.toggle.addEventListener("click", (e) => {
+    if (store.getItem("sa11y-panel") === "Opened") {
+      e.preventDefault();
+      store.setItem("sa11y-panel", "Closed");
+      Constants.Panel.toggle.classList.remove("on");
+      Constants.Panel.toggle.setAttribute("aria-expanded", "false");
+      resetAll();
+      if (Constants.Panel.notifCount.textContent.trim().length === 0) {
+        Constants.Panel.notifBadge.style.display = "none";
+      } else {
+        Constants.Panel.notifBadge.style.display = "flex";
+      }
+    } else {
+      e.preventDefault();
+      store.setItem("sa11y-panel", "Opened");
+      Constants.Panel.toggle.classList.add("on");
+      Constants.Panel.toggle.setAttribute("aria-expanded", "true");
+      resetAll();
+      checkAll();
+      isScrollable(Constants.Panel.outlineList, Constants.Panel.outlineContent);
+    }
+  });
+  if (store.getItem("sa11y-panel") === "Opened") {
+    Constants.Panel.toggle.classList.add("on");
+    Constants.Panel.toggle.setAttribute("aria-expanded", "true");
+    Constants.Panel.panel.style.transform = "";
+  }
+  document.onkeydown = (e) => {
+    const evt = e || window.event;
+    if (evt.altKey && evt.code === "KeyA") {
+      Constants.Panel.toggle.click();
+      Constants.Panel.toggle.focus();
+    }
+  };
+}
+const panelStyles = 'h1,h2,h3,div,p,span,ol,ul,li,a,label,button,svg,strong,kbd,pre,code{all:unset;box-sizing:border-box!important}:before,:after{all:unset}div{display:block}*{font-family:var(--sa11y-font-face)!important;-webkit-font-smoothing:auto!important}p,ol,ul,li,label{font-size:var(--sa11y-normal-text);text-align:start;letter-spacing:normal;word-break:break-word;font-weight:400;line-height:22px!important}.sa11y-overflow{overflow:auto}img,video,iframe{border:0;max-width:100%;height:auto;display:block}audio{max-width:100%}#toggle{bottom:var(--sa11y-toggle-y-offset);z-index:2147483644;color:#fff;cursor:pointer;background:linear-gradient(#00bcd4,#e040fb);background-color:var(--sa11y-setting-switch-bg-off);width:55px;height:55px;background-size:150% 150%;border-radius:50%;justify-content:center;align-items:center;margin:0;transition:all .2s ease-in-out;display:flex;position:fixed;inset-inline-end:var(--sa11y-toggle-x-offset);overflow:visible}#toggle.left,#toggle.top-left{inset-inline-start:var(--sa11y-toggle-x-offset)}#toggle.top-left,#toggle.top-right{top:var(--sa11y-toggle-y-offset);bottom:unset}@media screen and (forced-colors:active){#toggle{border:2px solid #0000;background:buttonface!important}}#toggle svg{width:35px;height:35px}#toggle svg path{fill:var(--sa11y-panel-bg)}#toggle:hover,#toggle:focus{animation:3s sa11y-toggle-gradient}#toggle:disabled:hover,#toggle:disabled:focus{animation:none}#toggle.on{background:linear-gradient(#e040fb,#00bcd4)}#toggle:disabled{cursor:not-allowed;background:unset;background-color:var(--sa11y-setting-switch-bg-off)}#notification-badge{color:#fff;text-wrap:nowrap;background-color:#eb0000;border:1px solid #0000;border-radius:12px;justify-content:center;align-items:center;min-width:20px;padding:2.5px;font-size:13.5px;font-weight:400;line-height:1;display:none;position:absolute;top:-5.5px;right:-3px}#notification-badge.notification-badge-warning{color:var(--sa11y-warning-text);background-color:var(--sa11y-warning-hover);border:1px solid var(--sa11y-warning)}#panel{bottom:calc(var(--sa11y-toggle-y-offset) + var(--sa11y-panel-y-gap));z-index:2147483643;visibility:hidden;background:var(--sa11y-panel-bg);opacity:0;transition:transform .2s, opacity .2s background .2s;transform-origin:100% 100%;border-radius:4px;position:fixed;inset-inline-end:calc(var(--sa11y-toggle-x-offset) + var(--sa11y-panel-x-gap));overflow:visible;transform:scale(0);box-shadow:0 0 20px 4px #9aa1b126,0 4px 80px -8px #24282f40,0 4px 4px -2px #5b5e6926}#panel.left,#panel.top-left{inset-inline-start:calc(var(--sa11y-toggle-x-offset) + var(--sa11y-panel-x-gap));inset-inline-end:unset}#panel.top-right,#panel.top-left{top:calc(var(--sa11y-toggle-y-offset) + var(--sa11y-panel-y-gap) + 10px);bottom:unset}#panel.active{visibility:visible;opacity:1;transform-origin:100% 100%;height:auto;transition:transform .2s,opacity .2s;transform:scale(1)}@media screen and (forced-colors:active){#panel{border:2px solid #0000}}#panel.active.left,[dir=rtl] #panel.active{transform-origin:0 100%}#panel.active.top-left{transform-origin:0 0}#panel.active.top-right{transform-origin:100% 0}#panel-alert{opacity:0;display:none}#panel-alert.active{opacity:1;display:block}#panel-alert-content{max-height:400px;color:var(--sa11y-panel-primary);border-bottom:1px solid var(--sa11y-panel-bg-splitter);align-items:center;padding:15px 20px 15px 15px;line-height:22px;position:relative;overflow-y:auto}:is(.top-left,.top-right) #panel-alert-content{border:0}#panel-alert-preview .close-tooltip{display:none}#panel-alert-preview,#panel-alert-text{font-family:var(--sa11y-font-face);font-size:var(--sa11y-normal-text);font-weight:400;line-height:22px}.panel-alert-preview{background:var(--sa11y-panel-bg-secondary);border:1px dashed var(--sa11y-panel-bg-splitter);border-radius:5px;margin-top:15px;padding:10px}.panel-alert-preview ul{margin:0;margin-block:0;padding:0;position:relative}.panel-alert-preview li{margin:5px 10px 0 20px;padding-bottom:5px;display:list-item}.element-preview{overflow-wrap:break-word;background-color:var(--sa11y-element-preview);border-radius:3.2px;margin-bottom:10px;padding:5px}.dismiss-alert,button[data-sa11y-dismiss]{color:var(--sa11y-panel-primary);cursor:pointer;background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-button-outline);margin:10px 5px 5px 0;border-radius:5px;margin-inline-end:15px;padding:4px 8px;display:block}:is(.dismiss-alert,button[data-sa11y-dismiss]):hover,:is(.dismiss-alert,button[data-sa11y-dismiss]):focus{background:var(--sa11y-shortcut-hover)}h2{font-size:var(--sa11y-large-text);margin-bottom:3px;font-weight:700;display:block}h3{font-size:calc(var(--sa11y-large-text) - 1px);margin-bottom:3px;font-weight:600;display:block}strong{font-weight:600}a:not(#outline-list a,#images-list a){color:var(--sa11y-hyperlink);cursor:pointer;border-bottom:0;font-weight:500;text-decoration:underline}a:hover,a:focus{text-decoration:none!important}hr{background:var(--sa11y-panel-bg-splitter);opacity:1;border:none;height:1px;margin:10px 0;padding:0}#dismiss-button,#skip-button{text-align:center;cursor:pointer;background:var(--sa11y-panel-bg-secondary);border:1px solid var(--sa11y-button-outline);border-radius:50px;width:36px;height:36px;margin-inline:2px 8px;transition:all .1s ease-in-out;display:none;position:relative;overflow:visible}:is(#dismiss-button,#skip-button).active{display:block}:is(#dismiss-button,#skip-button):disabled{cursor:default;box-shadow:none;background:0 0;border:0}:is(#dismiss-button,#skip-button):before{content:"";position:absolute;inset:-5px}:is(#dismiss-button,#skip-button):hover:not(:disabled),:is(#dismiss-button,#skip-button):focus:not(:disabled){background-color:var(--sa11y-shortcut-hover)}:is(#panel.top-left,#panel.left) #dismiss-button,:is(#panel.top-left,#panel.left) #skip-button{margin-inline:8px 2px}.dismiss-icon{background:var(--sa11y-setting-switch-bg-off);width:24px;height:24px;-webkit-mask:var(--sa11y-dismiss-icon) center no-repeat;mask:var(--sa11y-dismiss-icon) center no-repeat;margin-bottom:-4px;display:inline-block}.dismiss-group{display:flex}@media screen and (forced-colors:active){.dismiss-icon{filter:invert()}}#panel-content{color:var(--sa11y-panel-primary);align-items:center;padding:6px;display:flex}#panel-content.errors .panel-icon,#panel-content.good .panel-icon,#panel-content.warnings .panel-icon{width:26px;height:26px;margin:0 auto}#panel-content.errors .panel-icon{background:var(--sa11y-panel-error);-webkit-mask:var(--sa11y-error-svg) center no-repeat;mask:var(--sa11y-error-svg) center no-repeat;margin-top:-2px}#panel-content.good .panel-icon{background:var(--sa11y-good);-webkit-mask:var(--sa11y-good-svg) center no-repeat;mask:var(--sa11y-good-svg) center no-repeat}#panel-content.warnings .panel-icon{background:var(--sa11y-yellow-text);transform:scaleX(var(--sa11y-icon-direction));-webkit-mask:var(--sa11y-warning-svg) center no-repeat;mask:var(--sa11y-warning-svg) center no-repeat}@media screen and (forced-colors:active){#panel-content.errors .panel-icon,#panel-content.good .panel-icon,#panel-content.warnings .panel-icon{filter:invert()}}#panel.top-left #panel-content,#panel.left #panel-content{flex-direction:row-reverse}#status{font-size:var(--sa11y-large-text);color:var(--sa11y-panel-primary)}.panel-count{color:var(--sa11y-panel-primary);background-color:var(--sa11y-panel-badge);border-radius:4px;margin-left:3px;margin-right:3px;padding:2px 4px;font-size:15px;font-weight:400}#page-issues,#images-panel,#settings-panel,#outline-panel{color:var(--sa11y-panel-primary);opacity:0;display:none}#page-issues.active,#images-panel.active,#settings-panel.active,#outline-panel.active{opacity:1;display:block}.panel-header{text-align:start;justify-content:space-between;padding:10px 15px 0;display:flex}#about-content{padding-top:5px}#about-content p{margin-block-end:1em;display:block}#images-content,#page-issues-content,#settings-content,#outline-content{border-bottom:1px solid var(--sa11y-panel-bg-splitter);padding:0 15px 10px}.top-right :is(#images-content,#page-issues-content,#settings-content,#outline-content),.top-left :is(#images-content,#page-issues-content,#settings-content,#outline-content){border:0}#images-content{padding-inline:5px}#page-issues-content{max-height:160px;overflow-y:auto}#settings-content{max-height:400px;overflow-y:auto}#images-content,#outline-content{max-height:250px;overflow-y:auto}#settings-panel .sa11y-red-text,#outline-panel .outline-list-item.sa11y-red-text{color:var(--sa11y-red-text)}#outline-list{margin:0;padding:0;display:block}#outline-list button{cursor:pointer;text-decoration:none;display:block}#outline-list button:hover,#outline-list button:focus{background:var(--sa11y-panel-outline-hover);box-shadow:0 0 0 2px var(--sa11y-panel-outline-hover);border-radius:5px;display:block}#outline-list li{margin-top:0;margin-bottom:4.5px;padding:0;list-style-type:none;display:block}#outline-list li:first-child{margin-top:5px}#outline-list .outline-2{margin-inline-start:15px}#outline-list .outline-3{margin-inline-start:30px}#outline-list .outline-4{margin-inline-start:45px}#outline-list .outline-5{margin-inline-start:60px}#outline-list .outline-6{margin-inline-start:75px}#images-list{margin:0;padding:0;display:block}#images-list button{cursor:pointer;min-height:44px;margin:10px 5px;text-decoration:none;display:block}#images-list button:hover,#images-list button:focus{background:var(--sa11y-panel-outline-hover);box-shadow:0 0 0 2px var(--sa11y-panel-outline-hover);border-radius:5px;display:block}#images-list li{border-bottom:1px solid var(--sa11y-panel-bg-splitter);flex-direction:column;width:100%;list-style-type:none;display:flex;overflow:hidden}#images-list li.no-images{padding-inline:10px}#images-list li:last-child{border:none;margin-bottom:0}#images-list li .alt{padding:2px 5px 10px}#images-list li .edit-block{justify-content:flex-end;margin-bottom:15px;display:flex}#images-list li .edit{color:var(--sa11y-panel-primary);cursor:pointer;background:var(--sa11y-panel-bg-secondary);border:2px solid var(--sa11y-button-outline);border-radius:5px;margin-inline-end:5px;padding:4px 7px;text-decoration:none;position:relative}#images-list li .edit:hover,#images-list li .edit:focus{background-color:var(--sa11y-shortcut-hover)}#images-list li .edit:before{content:"";position:absolute;inset:-10px}#images-list li img{float:inline-start;border-radius:5px;max-width:110px;margin:5px}#images-list li.warning .alt{color:var(--sa11y-yellow-text)}#images-list li.warning .image-icon,#images-list li.warning img{background-color:var(--sa11y-yellow-text);border:5px solid var(--sa11y-yellow-text)}#images-list li.error .alt{color:var(--sa11y-error)}#images-list li.error .image-icon,#images-list li.error img{background-color:var(--sa11y-error);border:5px solid var(--sa11y-error)}#images-list li.good img{background-color:var(--sa11y-panel-badge);border:5px solid var(--sa11y-panel-badge)}@media screen and (forced-colors:active){#images-list li img{background-color:buttonborder!important}}.move-panel-icon{vertical-align:middle;background:var(--sa11y-setting-switch-bg-off);width:18px;height:18px;-webkit-mask:var(--sa11y-move-panel-icon);mask:var(--sa11y-move-panel-icon)}.info-icon{vertical-align:middle;background:var(--sa11y-setting-switch-bg-off);width:20px;height:20px;-webkit-mask:var(--sa11y-info-icon);mask:var(--sa11y-info-icon);margin-top:-2px}.sun-icon{vertical-align:middle;background:var(--sa11y-setting-switch-bg-off);width:18px;height:18px;-webkit-mask:var(--sa11y-sun-icon);mask:var(--sa11y-sun-icon)}.moon-icon{vertical-align:middle;background:var(--sa11y-setting-switch-bg-off);width:18px;height:18px;-webkit-mask:var(--sa11y-moon-icon);mask:var(--sa11y-moon-icon)}.error-icon{background:var(--sa11y-error-text);width:16px;height:16px;-webkit-mask:var(--sa11y-error-svg);mask:var(--sa11y-error-svg);margin-bottom:-4px}.hidden-icon{background:var(--sa11y-panel-primary);width:16px;height:16px;-webkit-mask:var(--sa11y-hidden-icon-svg);mask:var(--sa11y-hidden-icon-svg);margin-bottom:-3px}.link-icon{background:var(--sa11y-panel-primary);width:16px;height:16px;-webkit-mask:var(--sa11y-link-icon-svg);mask:var(--sa11y-link-icon-svg);margin-bottom:-3.5px}.image-icon{background:var(--sa11y-img-icon-color);width:50px;height:50px;-webkit-mask:var(--sa11y-img-icon);mask:var(--sa11y-img-icon);float:inline-start;outline:2px solid var(--sa11y-panel-badge);border-radius:5px;max-width:110px;margin:0 5px}.image-icon,.move-panel-icon,.info-icon,.sun-icon,.moon-icon,.error-icon,.hidden-icon,.link-icon{display:inline-block;-webkit-mask-position:50%;mask-position:50%;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat}.error-badge .link-icon,.error-badge .hidden-icon{background:var(--sa11y-error-text)!important}.warning-badge .link-icon,.warning-badge .hidden-icon{background:var(--sa11y-panel-bg)}.error .hidden-icon,.error .link-icon{background:var(--sa11y-error-text)}.warning .hidden-icon,.warning .link-icon{background:var(--sa11y-panel-bg)}@media screen and (forced-colors:active){.move-panel-icon,.sun-icon,.moon-icon,.info-icon,.error-icon,.link-icon,.hidden-icon{filter:invert()}}#outline-list [class$=-icon]{margin-inline-end:3px}#panel-controls{border-bottom:1px solid var(--sa11y-panel-bg-splitter);border-radius:0 0 4px 4px;display:flex;overflow:hidden}#panel-controls button{width:100%;height:30px;font-size:var(--sa11y-normal-text);color:var(--sa11y-panel-secondary);text-align:center;cursor:pointer;background:var(--sa11y-panel-bg-secondary);background-color:var(--sa11y-panel-bg-secondary);border-top:1px solid var(--sa11y-panel-bg-splitter);border-inline-end:1px solid var(--sa11y-panel-bg-splitter);opacity:1;outline:0;margin:0;padding:0;font-weight:400;line-height:0;transition:background .2s;display:block;position:relative}#panel-controls button:hover,#panel-controls button.active{background-color:var(--sa11y-shortcut-hover)}#panel-controls button.active{font-weight:600}#export-results-mode,label{width:100%;color:var(--sa11y-panel-primary);margin:0;font-weight:400;display:inline-block}label:not(#colour-filter-mode,#export-results-mode){cursor:pointer}#panel.right #panel-controls[data-image-panel]:after{content:"";width:80px}#panel.left #panel-controls[data-image-panel]:before{content:"";width:50px}#settings-panel .export-results-group,#settings-panel .appearance-group{margin:5px 0;display:flex}:is(#settings-panel .export-results-group,#settings-panel .appearance-group) button{text-align:center;white-space:nowrap;cursor:pointer;border:2px solid var(--sa11y-setting-switch-bg-off);border-radius:5px;justify-content:center;align-items:center;min-width:44px;min-height:34px;margin:2px 0;margin-inline:8px 4px;display:flex;position:relative}:is(#settings-panel .export-results-group,#settings-panel .appearance-group) button:hover,:is(#settings-panel .export-results-group,#settings-panel .appearance-group) button:focus,:is(#settings-panel .export-results-group,#settings-panel .appearance-group) button:focus-within{background:var(--sa11y-shortcut-hover)}:is(#settings-panel .export-results-group,#settings-panel .appearance-group) button:before{content:"";position:absolute;inset:-7px}:is(#settings-panel .export-results-group,#settings-panel .appearance-group) button .text{color:var(--sa11y-setting-switch-bg-off);padding:0 6px;font-weight:600}#settings-panel .switch{width:105px;height:44px;font-size:var(--sa11y-normal-text);color:var(--sa11y-setting-switch-bg-off);text-align:end;cursor:pointer;background:0 0;border:0;border-radius:5px;margin:0;padding:7px 10px;font-weight:600;position:relative}#settings-panel .switch[aria-pressed=true]:after,#settings-panel .switch[aria-pressed=false]:after{vertical-align:middle;content:"";width:27px;height:27px;margin:0 4px 4px;display:inline-block}#settings-panel .switch[aria-pressed=true]:after{background:var(--sa11y-setting-switch-bg-on);-webkit-mask:var(--sa11y-setting-switch-on-svg) center no-repeat;mask:var(--sa11y-setting-switch-on-svg) center no-repeat}#settings-panel .switch[aria-pressed=false]:after{background:var(--sa11y-setting-switch-bg-off);-webkit-mask:var(--sa11y-setting-switch-off-svg) center no-repeat;mask:var(--sa11y-setting-switch-off-svg) center no-repeat}@media screen and (forced-colors:active){#settings-panel .switch[aria-pressed=false]:after,#settings-panel .switch[aria-pressed=true]:after{filter:invert()}}#settings-panel #settings-options li{border-bottom:1px solid var(--sa11y-panel-bg-splitter);justify-content:space-between;align-items:center;padding:1px 0;list-style-type:none;display:flex}#settings-panel #settings-options li:last-child{border:none}#page-issues{color:var(--sa11y-panel-primary);align-items:center}#page-issues-list{margin-top:4px;display:block}#page-issues-list li{margin:0 0 10px;display:block}:is(.top-left,.top-right).has-page-issues #page-issues{border-top:1px solid var(--sa11y-panel-bg-splitter);margin-top:-1px}#panel-colour-filters{font-family:var(--sa11y-font-face);font-size:var(--sa11y-normal-text);color:var(--sa11y-panel-primary);align-items:center;font-weight:400;line-height:22px;display:none}#panel-colour-filters.active{display:flex}#panel-colour-filters p{width:100%;padding:6px 20px 6px 6px}#panel-colour-filters[data-colour=protanopia],#panel-colour-filters[data-colour=deuteranopia],#panel-colour-filters[data-colour=tritanopia],#panel-colour-filters[data-colour=monochromacy]{border-bottom:6px solid #0000;border-image-slice:1}#panel-colour-filters[data-colour=protanopia]{border-image:linear-gradient(94deg,#786719 11%,#e0c600 36% 47%,#0059e3 75%,#0042aa 91%)}#panel-colour-filters[data-colour=deuteranopia]{border-image:linear-gradient(270deg,#567fdb 0%,#a4a28d 48%,#c3ad14 69%,#a79505 100%)}#panel-colour-filters[data-colour=tritanopia]{border-image:linear-gradient(270deg,#b1506f 0%,#0696c1 35%,#f3a9ba 70%,#d91c5d 87%,#fe015c 100%)}#panel-colour-filters[data-colour=monochromacy]{border-image:linear-gradient(270deg,#000 0%,#a7a7a7 50%,#000 100%)}#panel-colour-filters[data-colour=protanopia] .panel-icon{background:var(--sa11y-panel-error)}#panel-colour-filters[data-colour=deuteranopia] .panel-icon{background:var(--sa11y-good-hover)}#panel-colour-filters[data-colour=tritanopia] .panel-icon{background:var(--sa11y-blue)}#panel-colour-filters[data-colour=monochromacy] .panel-icon{background:linear-gradient(90deg,#38a459 20%,red 50%,#0077c8 80%)}#panel-colour-filters .panel-icon{width:30px;height:30px;-webkit-mask:var(--sa11y-low-vision-icon) center no-repeat;mask:var(--sa11y-low-vision-icon) center no-repeat;margin-inline:10px 5px}@media screen and (forced-colors:active){#panel-colour-filters .panel-icon{forced-color-adjust:none}}.select-dropdown{align-items:center;display:flex;position:relative}.select-dropdown:after{content:" ";border-top:5px solid var(--sa11y-setting-switch-bg-off);border-left:5px solid #0000;border-right:5px solid #0000;position:absolute;inset-inline-end:14px}#colour-filter-select{appearance:none;height:30px;font-size:var(--sa11y-normal-text);color:var(--sa11y-setting-switch-bg-off);text-align:end;vertical-align:middle;cursor:pointer;background:var(--sa11y-panel-bg);border:2px solid var(--sa11y-setting-switch-bg-off);border-radius:5px;margin-inline-end:4px;padding-inline:5px 25px;font-weight:400;position:relative}#colour-filter-select:hover,#colour-filter-select:focus{background:var(--sa11y-shortcut-hover)}#colour-filter-select.active{box-shadow:0 0 0 2px var(--sa11y-setting-switch-bg-on)}#colour-filter-item label,#colour-filter-item select{margin-top:10px;margin-bottom:9px}#readability-panel{opacity:0;display:none}#readability-panel.active{opacity:1;display:block}:is(.top-left,.top-right) #readability-content{border-top:1px solid var(--sa11y-panel-bg-splitter)}:is(.left,.right) #readability-content{border-bottom:1px solid var(--sa11y-panel-bg-splitter)}#readability-content{width:100%;color:var(--sa11y-panel-primary);padding:10px 15px}#readability-details{white-space:normal;margin:0;padding:0;list-style-type:none;display:block}#readability-details li{margin:0;padding-inline-end:10px;list-style-type:none;display:inline-block}.readability-score{color:var(--sa11y-panel-primary);background-color:var(--sa11y-panel-badge);border-radius:4px;margin-inline-start:5px;padding:2px 5px}#readability-info{margin-inline-start:10px}#skip-to-page-issues{display:none}#panel.has-page-issues #skip-to-page-issues{clip:rect(0, 0, 0, 0);white-space:nowrap;background:var(--sa11y-panel-bg);border:0;border-radius:5px;width:1px;height:1px;margin:-1px;padding:0;font-weight:600;display:block;position:absolute;overflow:hidden}#panel.has-page-issues #skip-to-page-issues:focus{z-index:1;clip:auto;white-space:normal;width:auto;height:auto;margin:0;padding:7px 10px;overflow:visible}.hide-settings-border{border-bottom:0!important;padding:0 15px!important}.hide-settings-border li:not(#colour-filter-item){display:none!important}.hide-settings-border #about-content{display:none}.hide-settings-border.scrollable:before{all:unset}#contrast-tools{display:none}::-webkit-scrollbar{width:7px;height:6px}::-webkit-scrollbar-thumb{background-color:var(--sa11y-button-outline);border-radius:6px}*{scrollbar-color:var(--sa11y-button-outline);scrollbar-width:thin}.scrollable:before{z-index:-1;content:"";background:linear-gradient(180deg, #0000 70%, var(--sa11y-panel-scrollable) 100%);background-position:bottom;width:100%;height:250px;transition:opacity 1s ease-in-out;animation:1s ease-in-out fade;position:absolute;inset:auto 0}#settings-content.scrollable:before{height:400px}.top-right .scrollable:before,.top-left .scrollable:before{border-radius:5px}#page-issues-content.scrollable:before{height:160px}#panel-alert.scrollable:before{height:200px}@keyframes sa11y-toggle-gradient{0%{background-position:50% 0}50%{background-position:50% 100%}to{background-position:50% 0}}@keyframes fade{0%{opacity:0}to{opacity:1}}@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;transform:none!important}}#panel{width:440px}#container:lang(en) #panel{width:315px}:is(#container:lang(nb),#container:lang(da),#container:lang(pl),#container:lang(de),#container:lang(sv),#container:lang(zh)) #panel{width:365px}:is(#container:lang(bg),#container:lang(es)) .switch:not(#export-results-item *){width:230px!important}#container:not(:lang(en),:lang(de)) .switch{width:205px}';
+class ControlPanel extends HTMLElement {
+  connectedCallback() {
+    this.attachShadow({ mode: "open" });
+    const style = document.createElement("style");
+    style.textContent = panelStyles + sharedStyles;
+    this.shadowRoot.appendChild(style);
+    const MainToggleIcon = '<svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M256 48c114.953 0 208 93.029 208 208 0 114.953-93.029 208-208 208-114.953 0-208-93.029-208-208 0-114.953 93.029-208 208-208m0-40C119.033 8 8 119.033 8 256s111.033 248 248 248 248-111.033 248-248S392.967 8 256 8zm0 56C149.961 64 64 149.961 64 256s85.961 192 192 192 192-85.961 192-192S362.039 64 256 64zm0 44c19.882 0 36 16.118 36 36s-16.118 36-36 36-36-16.118-36-36 16.118-36 36-36zm117.741 98.023c-28.712 6.779-55.511 12.748-82.14 15.807.851 101.023 12.306 123.052 25.037 155.621 3.617 9.26-.957 19.698-10.217 23.315-9.261 3.617-19.699-.957-23.316-10.217-8.705-22.308-17.086-40.636-22.261-78.549h-9.686c-5.167 37.851-13.534 56.208-22.262 78.549-3.615 9.255-14.05 13.836-23.315 10.217-9.26-3.617-13.834-14.056-10.217-23.315 12.713-32.541 24.185-54.541 25.037-155.621-26.629-3.058-53.428-9.027-82.141-15.807-8.6-2.031-13.926-10.648-11.895-19.249s10.647-13.926 19.249-11.895c96.686 22.829 124.283 22.783 220.775 0 8.599-2.03 17.218 3.294 19.249 11.895 2.029 8.601-3.297 17.219-11.897 19.249z"/></svg>';
+    const rememberDeveloper = store.getItem("sa11y-developer") === "On";
+    const rememberReadability = store.getItem("sa11y-readability") === "On";
+    const rememberTheme = store.getItem("sa11y-theme");
+    const rememberPanelPosition = store.getItem("sa11y-position");
+    const checkAll2 = State.option.checkAllHideToggles;
+    const developerPlugin = State.option.developerPlugin ? `
+      <li id="developer-item" ${checkAll2 ? "hidden" : ""}>
+        <label id="check-developer" for="developer-toggle">
+          ${Lang._("DEVELOPER_CHECKS")} <span class="info-icon"></span>
+        </label>
+        <button type="button" id="developer-toggle" class="switch"
+          aria-labelledby="check-developer" aria-describedby="check-developer-desc"
+          aria-pressed="${rememberDeveloper ? "true" : "false"}"
+        >${rememberDeveloper ? Lang._("ON") : Lang._("OFF")}</button>
+        <div id="check-developer-desc" hidden>${Lang._("DEVELOPER_DESC")}</div>
+      </li>` : "";
+    const readabilityPlugin = Constants.Readability.Plugin ? `
+      <li id="readability-item">
+        <label id="check-readability" for="readability-toggle">${Lang._("READABILITY")} <span class="info-icon"></span></label>
+        <button type="button" id="readability-toggle" aria-labelledby="check-readability" class="switch"
+          aria-pressed="${rememberReadability ? "true" : "false"}"
+        >${rememberReadability ? Lang._("ON") : Lang._("OFF")}</button>
+        <div id="check-readability-desc" hidden>${Lang._("READABILITY_DESC")}</div>
+      </li>` : "";
+    const colourFilterPlugin = State.option.colourFilterPlugin ? `
+      <li id="colour-filter-item">
+        <label id="colour-filter-mode" for="colour-filter-select">${Lang._("COLOUR_FILTER")}</label>
+        <div class="select-dropdown">
+          <select id="colour-filter-select">
+            <option value="0">${Lang._("OFF")}</option>
+            <option value="1">${Lang._("PROTANOPIA")}</option>
+            <option value="2">${Lang._("DEUTERANOPIA")}</option>
+            <option value="3">${Lang._("TRITANOPIA")}</option>
+            <option value="4">${Lang._("MONOCHROMACY")}</option>
+          </select>
+        </div>
+      </li>` : "";
+    const colourFilterPanel = State.option.colourFilterPlugin ? `
+      <div id="panel-colour-filters" role="region" aria-labelledby="colour-filter-mode">
+        <div id="filter-icon" class="panel-icon" role="img"></div>
+        <p>${Lang._("COLOUR_FILTER_MESSAGE")}</p>
+      </div>` : "";
+    const exportResultsPlugin = State.option.exportResultsPlugin ? `
+      <li id="export-results-item">
+        <span id="export-results-mode">${Lang._("EXPORT_RESULTS")}</span>
+        <div class="export-results-group">
+          <button type="button" id="export-csv" aria-describedby="export-results-mode">
+            <span class="text">CSV</span>
+          </button>
+          <button type="button" id="export-html" aria-describedby="export-results-mode">
+            <span class="text">HTML</span>
+          </button>
+        </div>
+      </li>` : "";
+    const aboutSection = State.option.aboutContent ? `
+      <div id="about-content">${State.option.aboutContent}</div>` : "";
+    const mainToggle2 = `
+      <button type="button" aria-expanded="false" id="toggle" part="toggle" aria-describedby="notification-badge" aria-label="${Lang._("MAIN_TOGGLE_LABEL")}" class="${rememberPanelPosition}" disabled>
+        ${MainToggleIcon}
+        <div id="notification-badge">
+          <span id="notification-count"></span>
+          <span id="notification-text" class="visually-hidden"></span>
+        </div>
+      </button>`;
+    const pageIssues = `
+      <div id="page-issues">
+        <div class="panel-header">
+          <h2 id="page-issues-header" tabindex="-1">${Lang._("PAGE_ISSUES")}</h2>
+        </div>
+        <div id="page-issues-content">
+          <ul id="page-issues-list" role="list" aria-labelledby="page-issues-header"></ul>
+        </div>
+      </div>`;
+    const pageOutline = `
+      <div id="outline-panel" role="tabpanel" aria-labelledby="outline-header">
+        <div class="panel-header">
+          <h2 id="outline-header" tabindex="-1">${Lang._("OUTLINE")}</h2>
+        </div>
+        <div id="outline-content">
+          <ul id="outline-list" tabindex="0" role="list" aria-labelledby="outline-header"></ul>
+        </div>
+        <div id="readability-panel">
+          <div id="readability-content">
+            <h2 class="header-text-inline">${Lang._("READABILITY")}</h2>
+            <p id="readability-info"></p>
+            <ul id="readability-details"></ul>
+          </div>
+        </div>
+      </div>`;
+    const imagesOutline = State.option.showImageOutline ? `
+      <div id="images-panel" role="tabpanel" aria-labelledby="images-header">
+        <div class="panel-header">
+          <h2 id="images-header" tabindex="-1">${Lang._("IMAGES")}</h2>
+        </div>
+        <div id="images-content">
+          <ul id="images-list" tabindex="0" role="list" aria-labelledby="images-header"></ul>
+        </div>
+      </div>` : "";
+    const leftPressed = rememberPanelPosition === "left" || rememberPanelPosition === "top-left";
+    const panelMoved = leftPressed ? "true" : "false";
+    const panelPositionToggle = State.option.showMovePanelToggle ? `<button type="button" id="move-panel"
+          aria-label="${Lang._("MOVE_PANEL")}"
+          aria-pressed="${panelMoved}"
+          ><span class="move-panel-icon"></span>
+        </button>` : "";
+    const pageSettings = `
+      <div id="settings-panel" role="tabpanel" aria-labelledby="settings-header">
+        <div class="panel-header">
+          <h2 id="settings-header" tabindex="-1">${Lang._("SETTINGS")}</h2>
+        </div>
+        <div id="settings-content">
+          <ul id="settings-options">
+            ${developerPlugin}
+            ${readabilityPlugin}
+            <li id="appearance-item">
+              <span id="appearance-mode">${Lang._("APPEARANCE")}</span>
+              <div class="appearance-group">
+                <button type="button" id="theme-toggle"
+                  aria-label="${Lang._("DARK_MODE")}"
+                  aria-pressed=${rememberTheme === "dark" ? "true" : "false"}
+                ><span class="moon-icon"></span></button>
+                ${panelPositionToggle}
+              </div>
+            </li>
+            ${exportResultsPlugin}
+            ${colourFilterPlugin}
+          </ul>
+          ${aboutSection}
+        </div>
+      </div>`;
+    const panelAlerts = `
+      <div id="panel-alert" role="alertdialog" aria-labelledby="alert-heading" aria-describedby="panel-alert-text">
+        <div id="panel-alert-content">
+          <div class="header-text">
+            <button type="button" id="close-alert" class="close-btn" aria-label="${Lang._("ALERT_CLOSE")}"></button>
+            <h2 id="alert-heading">${Lang._("ALERT_TEXT")}</h2>
+          </div>
+          <p id="panel-alert-text"></p>
+          <div id="panel-alert-preview"></div>
+        </div>
+      </div>`;
+    const panelStatus = `
+      <div id="panel-content">
+        <button type="button" id="skip-to-page-issues">
+          ${Lang._("SKIP_TO_PAGE_ISSUES")}
+        </button>
+        <button type="button" id="skip-button">
+          <div class="panel-icon"></div>
+          <span class="visually-hidden">${Lang._("SHORTCUT_SR")}</span>
+        </button>
+        <button type="button" id="dismiss-button">
+          <div class="dismiss-icon"></div>
+          <span id="dismiss-tooltip" class="visually-hidden"></span>
+        </button>
+        <div id="panel-text">
+          <h1 class="visually-hidden">${Lang._("PANEL_HEADING")}</h1>
+          <p id="status" aria-live="polite"></p>
+        </div>
+      </div>`;
+    const imageToggleButton = `<button type="button" role="tab" aria-expanded="false" id="images-toggle" aria-controls="images-panel">${Lang._("IMAGES")}</button>`;
+    const imagePanelEnabled = State.option.showImageOutline ? "data-image-panel" : "";
+    const tabToggles = `
+      <div id="panel-controls" role="tablist" aria-orientation="horizontal" ${imagePanelEnabled}>
+        <button type="button" role="tab" aria-expanded="false" id="outline-toggle" aria-controls="outline-panel">${Lang._("OUTLINE")}</button>
+        ${State.option.showImageOutline ? imageToggleButton : ""}
+        <button type="button" role="tab" aria-expanded="false" id="settings-toggle" aria-controls="settings-panel">${Lang._("SETTINGS")}</button>
+      </div>`;
+    const container = document.createElement("div");
+    container.setAttribute("id", "container");
+    container.setAttribute("role", "region");
+    container.setAttribute("data-sa11y-version", "5.0.0");
+    container.setAttribute("lang", Lang._("LANG_CODE"));
+    container.setAttribute("aria-label", Lang._("CONTAINER_LABEL"));
+    container.setAttribute("dir", Constants.Global.langDirection);
+    if (rememberPanelPosition === "top-left" || rememberPanelPosition === "top-right") {
+      container.innerHTML = `
+        ${mainToggle2}
+        <div id="panel" class="${rememberPanelPosition}" part="panel">
+          ${panelStatus}
+          ${colourFilterPanel}
+          ${tabToggles}
+          ${pageOutline}
+          ${imagesOutline}
+          ${pageSettings}
+          ${panelAlerts}
+          ${pageIssues}
+        </div>`;
+    } else {
+      container.innerHTML = `
+        ${mainToggle2}
+        <div id="panel" class="${rememberPanelPosition}" part="panel">
+          ${pageIssues}
+          ${pageOutline}
+          ${imagesOutline}
+          ${pageSettings}
+          ${panelAlerts}
+          ${colourFilterPanel}
+          ${panelStatus}
+          ${tabToggles}
+        </div>`;
+    }
+    this.shadowRoot.appendChild(container);
+    Constants.initializePanelSelectors();
+  }
+}
+function settingsPanelToggles() {
+  if (State.option.showMovePanelToggle) {
+    Constants.Panel.movePanelToggle.onclick = async () => {
+      const panelPosition = store.getItem("sa11y-position");
+      const [position1, position2] = panelPosition.includes("top") ? ["top-right", "top-left"] : ["right", "left"];
+      const newPosition = panelPosition === position1 ? position2 : position1;
+      store.setItem("sa11y-position", newPosition);
+      [position1, position2].forEach((classname) => {
+        Constants.Panel.toggle.classList.replace(classname, newPosition);
+        Constants.Panel.panel.classList.replace(classname, newPosition);
+      });
+      Constants.Panel.movePanelToggle.setAttribute(
+        "aria-pressed",
+        panelPosition === position1 ? "true" : "false"
+      );
+    };
+  }
+  if (State.option.developerPlugin) {
+    Constants.Panel.developerToggle.onclick = async () => {
+      if (store.getItem("sa11y-developer") === "On") {
+        store.setItem("sa11y-developer", "Off");
+        Constants.Panel.developerToggle.textContent = `${Lang._("OFF")}`;
+        Constants.Panel.developerToggle.setAttribute("aria-pressed", "false");
+        resetAll(false);
+        await checkAll();
+      } else {
+        store.setItem("sa11y-developer", "On");
+        Constants.Panel.developerToggle.textContent = `${Lang._("ON")}`;
+        Constants.Panel.developerToggle.setAttribute("aria-pressed", "true");
+        resetAll(false);
+        await checkAll();
+      }
+    };
+  } else {
+    store.setItem("sa11y-developer", "Off");
+  }
+  if (Constants.Readability.Plugin) {
+    Constants.Panel.readabilityToggle.onclick = async () => {
+      if (store.getItem("sa11y-readability") === "On") {
+        store.setItem("sa11y-readability", "Off");
+        Constants.Panel.readabilityToggle.textContent = `${Lang._("OFF")}`;
+        Constants.Panel.readabilityToggle.setAttribute("aria-pressed", "false");
+        Constants.Panel.readability.classList.remove("active");
+        resetAll(false);
+        await checkAll();
+      } else {
+        store.setItem("sa11y-readability", "On");
+        Constants.Panel.readabilityToggle.textContent = `${Lang._("ON")}`;
+        Constants.Panel.readabilityToggle.setAttribute("aria-pressed", "true");
+        Constants.Panel.readability.classList.add("active");
+        resetAll(false);
+        await checkAll();
+      }
+    };
+    if (store.getItem("sa11y-readability") === "On") {
+      Constants.Panel.readability.classList.add("active");
+    }
+  }
+  const systemInitiatedDark = window.matchMedia("(prefers-color-scheme: dark)");
+  const { themeToggle } = Constants.Panel;
+  const { html } = Constants.Global;
+  const storeTheme = (theme) => {
+    html.setAttribute("data-sa11y-theme", theme);
+    store.setItem("sa11y-theme", theme);
+    const icon = themeToggle.querySelector("span").classList;
+    icon.toggle("moon-icon", theme === "light");
+    icon.toggle("sun-icon", theme === "dark");
+    themeToggle.setAttribute("aria-pressed", theme === "dark" ? "true" : "false");
+  };
+  const initialTheme = store.getItem("sa11y-theme") || (systemInitiatedDark.matches ? "dark" : "light");
+  storeTheme(initialTheme);
+  systemInitiatedDark.addEventListener("change", () => {
+    storeTheme(systemInitiatedDark.matches ? "dark" : "light");
+  });
+  themeToggle.onclick = () => {
+    const currentTheme = store.getItem("sa11y-theme") || (systemInitiatedDark.matches ? "dark" : "light");
+    const preferredTheme = currentTheme === "dark" ? "light" : "dark";
+    storeTheme(preferredTheme);
+  };
+  if (State.option.colourFilterPlugin) {
+    Constants.Panel.colourFilterSelect.addEventListener("change", async () => {
+      const option = parseInt(Constants.Panel.colourFilterSelect.value, 10);
+      const filters = ["protanopia", "deuteranopia", "tritanopia", "monochromacy"];
+      const icons = [
+        Lang._("RED_EYE"),
+        Lang._("GREEN_EYE"),
+        Lang._("BLUE_EYE"),
+        Lang._("MONO_EYE")
+      ];
+      if (option >= 1 && option <= 4) {
+        if (window.matchMedia("(forced-colors: active)").matches) {
+          createAlert(Lang._("COLOUR_FILTER_HIGH_CONTRAST"));
+        } else {
+          document.body.setAttribute("data-sa11y-filter", filters[option - 1]);
+          Constants.Panel.colourFilterIcon.setAttribute("aria-label", icons[option - 1]);
+          resetAttributes(
+            ["data-sa11y-error", "data-sa11y-warning", "data-sa11y-good", "data-sa11y-overflow"],
+            "document"
+          );
+          remove(["sa11y-annotation", "sa11y-tooltips", "sa11y-heading-label"], "document");
+          Constants.Panel.skipButton.disabled = true;
+          Constants.Panel.pageIssues.classList.remove("active");
+          Constants.Panel.settingsContent.classList.add("hide-settings-border");
+          Constants.Panel.controls.hidden = true;
+          Constants.Panel.colourFilterSelect.classList.add("active");
+          Constants.Panel.colourPanel.classList.add("active");
+          Constants.Panel.colourPanel.setAttribute("data-colour", filters[option - 1]);
+          Constants.Panel.content.hidden = true;
+        }
+      } else {
+        resetColourFilters();
+        resetAll(false);
+        await checkAll();
+      }
+    });
+  }
+}
+const openOutline = () => {
+  Constants.Panel.outlineToggle.classList.add("active");
+  Constants.Panel.outline.classList.add("active");
+  Constants.Panel.outlineToggle.setAttribute("aria-expanded", "true");
+  store.setItem("sa11y-outline", "Opened");
+  isScrollable(Constants.Panel.outlineList, Constants.Panel.outlineContent);
+  const headingLabels = find("sa11y-heading-label", "document");
+  headingLabels.forEach(($el) => {
+    $el.hidden = false;
+  });
+  const event = new CustomEvent("sa11y-build-heading-outline");
+  document.dispatchEvent(event);
+};
+const closeOutline = () => {
+  Constants.Panel.outline.classList.remove("active");
+  Constants.Panel.outlineToggle.classList.remove("active");
+  Constants.Panel.outlineToggle.setAttribute("aria-expanded", "false");
+  store.setItem("sa11y-outline", "Closed");
+  const headingLabels = find("sa11y-heading-label", "document");
+  headingLabels.forEach(($el) => {
+    $el.hidden = true;
+  });
+};
+const openImages = () => {
+  Constants.Panel.imagesToggle.classList.add("active");
+  Constants.Panel.images.classList.add("active");
+  Constants.Panel.imagesToggle.setAttribute("aria-expanded", "true");
+  store.setItem("sa11y-images", "Opened");
+  isScrollable(Constants.Panel.imagesList, Constants.Panel.imagesContent);
+  const event = new CustomEvent("sa11y-build-image-outline");
+  document.dispatchEvent(event);
+};
+const closeImages = () => {
+  if (State.option.showImageOutline) {
+    Constants.Panel.imagesToggle.classList.remove("active");
+    Constants.Panel.images.classList.remove("active");
+    Constants.Panel.imagesToggle.setAttribute("aria-expanded", "false");
+    store.setItem("sa11y-images", "Closed");
+  }
+};
+const openSettings = () => {
+  Constants.Panel.settingsToggle.classList.add("active");
+  Constants.Panel.settings.classList.add("active");
+  Constants.Panel.settingsToggle.setAttribute("aria-expanded", "true");
+  store.setItem("sa11y-settings", "Opened");
+  isScrollable(
+    Constants.Panel.settingsContent,
+    Constants.Panel.settingsContent,
+    Lang._("SETTINGS")
+  );
+};
+const closeSettings = () => {
+  Constants.Panel.settings.classList.remove("active");
+  Constants.Panel.settingsToggle.classList.remove("active");
+  Constants.Panel.settingsToggle.setAttribute("aria-expanded", "false");
+  store.setItem("sa11y-settings", "Closed");
+};
+function initializePanelToggles() {
+  Constants.Panel.outlineToggle.addEventListener("click", () => {
+    if (Constants.Panel.outlineToggle.getAttribute("aria-expanded") === "true") {
+      closeOutline();
+    } else {
+      openOutline();
+      closeSettings();
+      closeImages();
+    }
+    Constants.Panel.outlineHeader.focus();
+  });
+  if (store.getItem("sa11y-outline") === "Opened") {
+    openOutline();
+  }
+  if (State.option.showImageOutline) {
+    Constants.Panel.imagesToggle.addEventListener("click", () => {
+      if (Constants.Panel.imagesToggle.getAttribute("aria-expanded") === "true") {
+        closeImages();
+      } else {
+        openImages();
+        closeOutline();
+        closeSettings();
+      }
+      Constants.Panel.imagesHeader.focus();
+    });
+    if (store.getItem("sa11y-images") === "Opened") {
+      openImages();
+    }
+  }
+  Constants.Panel.settingsToggle.addEventListener("click", () => {
+    if (Constants.Panel.settingsToggle.getAttribute("aria-expanded") === "true") {
+      closeSettings();
+    } else {
+      openSettings();
+      closeOutline();
+      closeImages();
+    }
+    Constants.Panel.settingsHeader.focus();
+  });
+  if (store.getItem("sa11y-settings") === "Opened") {
+    openSettings();
+  }
+  Constants.Panel.skipToPageIssues.addEventListener("click", () => {
+    Constants.Panel.pageIssuesHeader.focus();
+  });
+  const tabs = Constants.Panel.panel.querySelectorAll("[role=tab]");
+  if (tabs.length !== 0) {
+    tabs.forEach((tab) => {
+      tab.addEventListener("keydown", (e) => {
+        if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") {
+          return;
+        }
+        e.preventDefault();
+        const currentIndex = Array.from(tabs).indexOf(e.currentTarget);
+        let nextIndex;
+        if (e.key === "ArrowRight") {
+          nextIndex = (currentIndex + 1) % tabs.length;
+        } else {
+          nextIndex = (currentIndex - 1 + tabs.length) % tabs.length;
+        }
+        tabs[nextIndex].focus();
+      });
+    });
+  }
+}
+class HeadingAnchor extends HTMLElement {
+  constructor() {
+    super();
+    this.attachShadow({ mode: "open" });
+  }
+}
+class HeadingLabel extends HTMLElement {
+  constructor() {
+    super();
+    this.attachShadow({ mode: "open" });
+  }
+  connectedCallback() {
+    const style = document.createElement("style");
+    style.textContent = `
+      span.heading-label {
+        background-color: #777678;
+        background-image: linear-gradient(to bottom right, #b629ce, #16aec2);
+        border-radius: 5px;
+        border: 1px solid #36a5c3;
+        color: white;
+        display: inline-block;
+        font-family: var(--sa11y-font-face);
+        font-weight: 500;
+        font-size: 18px;
+        line-height: normal;
+        letter-spacing: normal;
+        margin: -5px 0 0 5px;
+        padding: 3px;
+        position: absolute;
+        text-shadow: 1px 1px black;
+        -webkit-text-fill-color: white;
+        word-break: keep-all;
+        z-index: 200;
+      }
+      @media screen and (forced-colors: active) {
+        span.heading-label {
+          border: 2px solid transparent;
+        }
+      }`;
+    this.shadowRoot.appendChild(style);
+  }
+}
+function initialize() {
+  const { option } = State;
+  if (option.doNotRun?.trim() && document.querySelector(option.doNotRun)) return;
+  customElements.define("sa11y-heading-label", HeadingLabel);
+  customElements.define("sa11y-heading-anchor", HeadingAnchor);
+  customElements.define("sa11y-annotation", Annotations);
+  customElements.define("sa11y-tooltips", AnnotationTooltips);
+  customElements.define("sa11y-panel-tooltips", PanelTooltips);
+  customElements.define("sa11y-control-panel", ControlPanel);
+  customElements.define("sa11y-console-error", ConsoleErrors);
+  Constants.initializeGlobal();
+  Constants.initializeReadability();
+  Constants.initializeExclusions();
+  if (option.developerChecksOnByDefault) {
+    if (store.getItem("sa11y-developer") === null || option.checkAllHideToggles) {
+      store.setItem("sa11y-developer", "On");
+    }
+  }
+  documentLoadingCheck(() => {
+    if (option.headless) {
+      checkAll();
+      store.removeItem("sa11y-dismissed-digest");
+      return;
+    }
+    const savedPos = store.getItem("sa11y-position");
+    const position = Constants.Global.panelPosition;
+    const isTop = (position2) => position2.includes("top");
+    if (option.showMovePanelToggle && (!savedPos || isTop(savedPos) !== isTop(position))) {
+      store.setItem("sa11y-position", position);
+    }
+    const controlPanel = new ControlPanel();
+    document.body.appendChild(controlPanel);
+    settingsPanelToggles();
+    initializePanelToggles();
+    addColourFilters();
+    detectPageChanges();
+    mainToggle();
+    State.panelTooltips = new PanelTooltips();
+    document.body.appendChild(State.panelTooltips);
+    Constants.Panel.toggle.disabled = option.delayCheck >= 700;
+    setTimeout(() => {
+      resetAll();
+      checkAll();
+    }, option.delayCheck);
+  });
+}
 class Sa11y {
   constructor(options) {
-    const option = {
-      ...defaultOptions,
-      ...options,
-      checks: {
-        ...defaultOptions.checks,
-        ...options.checks
-      }
-    };
-    this.initialize = () => {
-      const checkRunPrevent = () => {
-        const { doNotRun } = option;
-        return doNotRun.trim().length > 0 ? document.querySelector(doNotRun) : false;
-      };
-      if (!checkRunPrevent()) {
-        customElements.define("sa11y-heading-label", HeadingLabel);
-        customElements.define("sa11y-heading-anchor", HeadingAnchor);
-        customElements.define("sa11y-annotation", Annotations);
-        customElements.define("sa11y-tooltips", AnnotationTooltips);
-        customElements.define("sa11y-panel-tooltips", PanelTooltips);
-        customElements.define("sa11y-control-panel", ControlPanel);
-        customElements.define("sa11y-console-error", ConsoleErrors);
-        Constants.initializeGlobal(option);
-        Constants.initializeReadability(option);
-        Constants.initializeExclusions(option);
-        if (option.developerChecksOnByDefault) {
-          if (store.getItem("sa11y-developer") === null || option.checkAllHideToggles) {
-            store.setItem("sa11y-developer", "On");
-          }
-        }
-        documentLoadingCheck(() => {
-          if (option.headless) {
-            this.checkAll();
-            store.removeItem("sa11y-dismissed");
-          } else {
-            const rememberPosition = store.getItem("sa11y-position");
-            const { panelPosition } = option;
-            if (option.showMovePanelToggle && (!rememberPosition || !rememberPosition.includes("top") !== !panelPosition.includes("top"))) {
-              store.setItem("sa11y-position", panelPosition);
-            }
-            const controlPanel = new ControlPanel();
-            document.body.appendChild(controlPanel);
-            settingsPanelToggles(this.checkAll, this.resetAll);
-            initializePanelToggles();
-            addColourFilters();
-            detectPageChanges(option.detectSPArouting, this.checkAll, this.resetAll);
-            this.panelTooltips = new PanelTooltips();
-            document.body.appendChild(this.panelTooltips);
-            Constants.Panel.toggle.disabled = false;
-            setTimeout(() => {
-              this.resetAll();
-              this.checkAll();
-            }, option.delayCheck);
-            if (option.delayCheck >= 700) {
-              Constants.Panel.toggle.disabled = true;
-            }
-            mainToggle(this.checkAll, this.resetAll);
-          }
-        });
-      }
-    };
-    this.checkAll = async (desiredRoot = option.checkRoot, desiredReadabilityRoot = option.readabilityRoot, fixedRoots = option.fixedRoots) => {
-      try {
-        this.results = [];
-        this.headingOutline = [];
-        this.errorCount = 0;
-        this.warningCount = 0;
-        this.customChecksRunning = false;
-        Constants.initializeRoot(desiredRoot, desiredReadabilityRoot, fixedRoots);
-        findShadowComponents(option);
-        Elements.initializeElements(option);
-        checkHeaders(this.results, option, this.headingOutline);
-        checkLinkText(this.results, option);
-        checkImages(this.results, option);
-        checkLabels(this.results, option);
-        checkQA(this.results, option);
-        checkDeveloper(this.results, option);
-        if (option.embeddedContentPlugin) {
-          checkEmbeddedContent(this.results, option);
-        }
-        if (option.contrastPlugin) {
-          checkContrast(this.results, option);
-        }
-        if (option.readabilityPlugin && store.getItem("sa11y-readability") === "On") {
-          checkReadability(this.results);
-        }
-        this.imageResults = Elements.Found.Images.map((image) => {
-          const match = this.results.find((i) => i.element === image);
-          return match && {
-            element: image,
-            type: match.type,
-            dismiss: match.dismiss,
-            developer: match.developer
-          };
-        }).filter(Boolean);
-        if (option.customChecks === true) {
-          checkCustom(this.results);
-        } else if (typeof option.customChecks === "object") {
-          this.results.push(...option.customChecks);
-        } else if (option.customChecks === "listen") {
-          this.customChecksRunning = true;
-          this.customChecksFinished = 0;
-          document.addEventListener("sa11y-resume", () => {
-            this.customChecksFinished += 1;
-            if (this.customChecksFinished === 1) {
-              this.customChecksRunning = false;
-              this.updateResults();
-            }
-          });
-          window.setTimeout(() => {
-            if (this.customChecksRunning === true) {
-              this.customChecksRunning = false;
-              this.updateResults();
-              throw Error("Sa11y: No custom checks were returned.");
-            }
-          }, option.delayCustomCheck);
-          window.setTimeout(() => {
-            const customChecks = new CustomEvent("sa11y-custom-checks");
-            document.dispatchEvent(customChecks);
-          }, 0);
-        }
-        if (!this.customChecksRunning) {
-          this.updateResults();
-        }
-      } catch (error) {
-        const consoleErrors = new ConsoleErrors(error);
-        document.body.appendChild(consoleErrors);
-        throw Error(error);
-      }
-    };
-    this.updateResults = () => {
-      this.results = this.results.filter((heading) => heading.isWithinRoot !== false);
-      const devChecks = store.getItem("sa11y-developer") === "Off" || store.getItem("sa11y-developer") === null;
-      if (devChecks || option.externalDeveloperChecks === true) {
-        this.results = this.results.filter((issue) => issue.developer !== true);
-      }
-      if (devChecks) {
-        this.results = this.results.filter((issue) => issue.external !== true);
-      }
-      this.results.forEach(($el, id) => {
-        const cssPath = option.selectorPath ? generateSelectorPath($el.element) : "";
-        const htmlPath = $el.element?.outerHTML.replace(/\s{2,}/g, " ").trim() || "";
-        Object.assign($el, { htmlPath, cssPath, id });
-      });
-      if (option.headless === false) {
-        const dismiss = dismissLogic(
-          this.results,
-          this.panelTooltips,
-          this.checkAll,
-          this.resetAll
-        );
-        this.results = dismiss.updatedResults;
-        this.dismissed = dismiss.dismissedIssues;
-        this.dismissedPageResults = dismiss.dismissedResults;
-        const count = updateCount(this.results, this.errorCount, this.warningCount);
-        updateBadge(count.error, count.warning);
-        if (store.getItem("sa11y-panel") === "Opened") {
-          const counts = /* @__PURE__ */ new Map();
-          this.results.forEach((issue) => {
-            let updatedIssue = issue;
-            if (issue.element && !issue.margin) {
-              const index2 = counts.get(issue.element) || 0;
-              counts.set(issue.element, index2 + 1);
-              const offset2 = issue.inline ? 0 : 15;
-              updatedIssue = { ...issue, margin: `${index2 * 20 + offset2}px` };
-            }
-            annotate(updatedIssue, option);
-          });
-          Elements.initializeAnnotations();
-          const tooltipComponent = new AnnotationTooltips();
-          document.body.appendChild(tooltipComponent);
-          dismissButtons(this.results, this.dismissed, this.checkAll, this.resetAll);
-          generatePageOutline(this.dismissedPageResults, this.headingOutline, option);
-          if (option.showImageOutline) {
-            generateImageOutline(this.dismissedPageResults, this.imageResults, option);
-          }
-          updatePanel(dismiss.dismissCount, count.error, count.warning);
-          skipToIssue(this.results);
-          if (option.exportResultsPlugin) {
-            exportResults(this.results, dismiss.dismissedResults);
-          }
-          isScrollable(Constants.Panel.pageIssuesList, Constants.Panel.pageIssuesContent);
-        }
-        Constants.Panel.toggle.disabled = false;
-      }
-      window.sa11yCheckComplete = null;
-      const event = new CustomEvent("sa11y-check-complete", {
-        detail: {
-          results: this.results,
-          page: window.location.pathname
-        }
-      });
-      window.sa11yCheckComplete = event.detail;
-      document.dispatchEvent(event);
-    };
-    this.resetAll = (restartPanel = true) => {
-      Constants.Global.html.removeAttribute("data-sa11y-active");
-      remove(
-        [
-          "sa11y-annotation",
-          "sa11y-heading-label",
-          "sa11y-heading-anchor",
-          "sa11y-image-anchor",
-          "sa11y-tooltips"
-        ],
-        "document"
-      );
-      if (supportsAnchorPositioning()) {
-        find("[data-sa11y-error], [data-sa11y-warning], [data-sa11y-good]", "document").forEach(
-          ($el) => {
-            const anchor = $el;
-            const anchors = (anchor.style.anchorName || "").split(",").map((s) => s.trim()).filter((s) => s && !s.startsWith("--sa11y-anchor"));
-            if (anchors.length) {
-              anchor.style.anchorName = anchors.join(", ");
-            } else {
-              anchor.style.removeProperty("anchor-name");
-              if (!anchor.style.length) {
-                anchor.removeAttribute("style");
-              }
-            }
-          }
-        );
-      }
-      resetAttributes(
-        [
-          "data-sa11y-parent",
-          "data-sa11y-error",
-          "data-sa11y-warning",
-          "data-sa11y-good",
-          "data-sa11y-overflow",
-          "data-sa11y-image",
-          "data-sa11y-pulse-border",
-          "data-sa11y-filter",
-          "data-sa11y-has-shadow-root"
-        ],
-        "document"
-      );
-      Constants.Panel.outlineList.innerHTML = "";
-      if (option.showImageOutline) {
-        Constants.Panel.imagesList.innerHTML = "";
-      }
-      Constants.Panel.pageIssuesList.innerHTML = "";
-      Constants.Panel.readabilityInfo.innerHTML = "";
-      Constants.Panel.readabilityDetails.innerHTML = "";
-      Constants.Panel.panel.classList.remove("has-page-issues");
-      Constants.Panel.pageIssues.classList.remove("active");
-      Constants.Panel.settingsContent.classList.remove("hide-settings-border");
-      Constants.Panel.panel.querySelector("#readability-alert")?.remove();
-      removeAlert();
-      removeSkipBtnListeners();
-      removeExportListeners();
-      removeDismissListeners();
-      resetColourFilters();
-      while (Constants.Panel.status.firstChild) {
-        Constants.Panel.status.removeChild(Constants.Panel.status.firstChild);
-      }
-      document.querySelectorAll("[data-sa11y-has-shadow-root]").forEach((el) => {
-        el.shadowRoot.querySelectorAll("style.sa11y-css-utilities").forEach((style) => {
-          style.remove();
-        });
-        el.removeAttribute("data-sa11y-has-shadow-root");
-      });
-      if (restartPanel) {
-        Constants.Panel.panel.classList.remove("active");
-      }
-    };
-    this.disabled = () => {
-      setTimeout(() => {
-        if (store.getItem("sa11y-panel") === "Opened") {
-          Constants.Panel.toggle.click();
-        }
-        Constants.Panel.toggle.disabled = true;
-      }, option.delayCheck + 10);
-    };
-    this.enabled = () => {
-      if (Constants.Panel.toggle) {
-        Constants.Panel.toggle.disabled = false;
-      }
-    };
-    this.find = (selector, desiredRoot, exclude) => find(selector, desiredRoot, exclude);
-    this.prepareDismissal = (string) => prepareDismissal(string);
-    this.sanitizeHTML = (string) => sanitizeHTML(string);
-    this.truncateString = (string, maxLength) => truncateString(string, maxLength);
-    this.initialize();
+    setState(options);
+    initialize();
+    Object.assign(this, Utils, {
+      checkAll,
+      resetAll,
+      find,
+      enabled,
+      disabled
+    });
+  }
+  // Get main results array.
+  get results() {
+    return State.results;
+  }
+  // Get found elements.
+  get elements() {
+    return Elements.Found;
   }
 }
 export {

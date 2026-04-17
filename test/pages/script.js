@@ -1,5 +1,5 @@
 import { Sa11y, Lang } from '../../src/js/sa11y.js';
-import Sa11yLangEn from '../../src/js/lang/en.js';
+import Sa11yLangEn from '../../src/lang/en.js';
 
 const isWarningsPage = window.location.pathname.includes('warnings.html');
 const warningsPageChecks = isWarningsPage
@@ -16,6 +16,7 @@ const warningsPageChecks = isWarningsPage
 // Instantiate
 Lang.addI18n(Sa11yLangEn.strings);
 const sa11y = new Sa11y({
+  unitTestMode: true,
   headerIgnore: '#nothing-ignore-this-heading *, .ignore-this-heading',
   autoDetectShadowComponents: true,
   linkIgnoreSpan: '.sr-only-example',
@@ -24,6 +25,9 @@ const sa11y = new Sa11y({
   imageIgnore: '.logo',
   customChecks: 'listen',
   linkStopWords: 'взнати більше',
+  langOfPartsPlugin: 1,
+  langOfPartsCache: 0,
+  exportResultsPlugin: 1,
 
   // Customize checks.
   checks: {
@@ -35,9 +39,15 @@ const sa11y = new Sa11y({
 });
 
 /* Console all results */
+let count = 0;
+let total = 0;
 document.addEventListener('sa11y-check-complete', (e) => {
+  count++;
+  total += parseFloat(e.detail.time);
   console.log(e.detail);
+  console.log(`Running Average (${count} samples): ${(total / count).toFixed(2)}ms`);
 });
+
 
 /**
  * Custom checks via event listeners.

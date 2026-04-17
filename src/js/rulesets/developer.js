@@ -3,35 +3,71 @@ import Constants from '../utils/constants';
 import Elements from '../utils/elements';
 import Lang from '../utils/lang';
 import * as Utils from '../utils/utils';
+import { State } from '../core/state';
 
-export default function checkDeveloper(results, option) {
+export default function checkDeveloper() {
   /* *************************************************************** */
-  /*  Error: Missing language tag. Lang should be at least 2 chars.  */
+  /* Error: Missing or invalid language tag.                        */
   /* *************************************************************** */
-  if (option.checks.META_LANG) {
-    if (!Elements.Found.Language || Elements.Found.Language.length < 2) {
-      results.push({
-        test: 'META_LANG',
-        type: option.checks.META_LANG.type || 'error',
-        content: Lang.sprintf(option.checks.META_LANG.content || 'META_LANG'),
-        dismiss: Utils.prepareDismissal('LANG'),
-        developer: option.checks.META_LANG.developer || true,
-      });
+  const report = (key, $el, ...args) => {
+    const rule = State.option.checks[key];
+    if (!rule) return;
+    const result = {
+      test: key,
+      type: rule.type || 'error',
+      content: Lang.sprintf(rule.content || key, ...args),
+      args: [...args],
+      dismiss: Utils.prepareDismissal(key),
+      developer: rule.developer || true,
+    };
+
+    if ($el) {
+      result.element = $el;
     }
+    State.results.push(result);
+  };
+
+  // 1. Check Document Language (from the <html> tag).
+  if (!Elements.Found.Language) {
+    report('META_LANG', null);
+  } else {
+    const { valid, suggest } = Utils.validateLang(Elements.Found.Language, Lang._('LANG_CODE'));
+    if (!valid) {
+      if (suggest) {
+        report('META_LANG_SUGGEST', null, Elements.Found.Language, suggest);
+      } else {
+        report('META_LANG_VALID', null, 'html', Elements.Found.Language);
+      }
+    }
+  }
+
+  // 2. Validate all [lang] attributes.
+  if (Elements.Found.LangTags && Elements.Found.LangTags.length > 0) {
+    Elements.Found.LangTags.forEach(($el) => {
+      const langValue = $el.getAttribute('lang')?.trim();
+      const { valid, suggest } = Utils.validateLang(langValue, Lang._('LANG_CODE'));
+      if (!valid) {
+        if (suggest) {
+          report('META_LANG_SUGGEST', $el, langValue, suggest);
+        } else {
+          report('META_LANG_VALID', $el, $el.tagName.toLowerCase(), langValue);
+        }
+      }
+    });
   }
 
   /* *************************************************************** */
   /*  Check for missing meta page title <title>                      */
   /* *************************************************************** */
-  if (option.checks.META_TITLE) {
+  if (State.option.checks.META_TITLE) {
     const metaTitle = document.querySelector('title:not(svg title)');
     if (!metaTitle || metaTitle.textContent.trim().length === 0) {
-      results.push({
+      State.results.push({
         test: 'META_TITLE',
-        type: option.checks.META_TITLE.type || 'error',
-        content: Lang.sprintf(option.checks.META_TITLE.content || 'META_TITLE'),
-        dismiss: Utils.prepareDismissal('TITLE'),
-        developer: option.checks.META_TITLE.developer || true,
+        type: State.option.checks.META_TITLE.type || 'error',
+        content: Lang.sprintf(State.option.checks.META_TITLE.content || 'META_TITLE'),
+        dismiss: Utils.prepareDismissal('META_TITLE'),
+        developer: State.option.checks.META_TITLE.developer || true,
       });
     }
   }
@@ -39,7 +75,7 @@ export default function checkDeveloper(results, option) {
   /* ********************************************* */
   /*  Zooming and scaling must not be disabled.    */
   /* ********************************************* */
-  if (option.checks.META_SCALABLE || option.checks.META_MAX) {
+  if (State.option.checks.META_SCALABLE || State.option.checks.META_MAX) {
     const metaViewport = document.querySelector('meta[name="viewport"]');
     if (metaViewport) {
       const content = metaViewport.getAttribute('content');
@@ -53,27 +89,27 @@ export default function checkDeveloper(results, option) {
 
         // Check for user-scalable parameter.
         if (
-          option.checks.META_SCALABLE &&
+          State.option.checks.META_SCALABLE &&
           (params['user-scalable'] === 'no' || params['user-scalable'] === '0')
         ) {
-          results.push({
+          State.results.push({
             test: 'META_SCALABLE',
-            type: option.checks.META_SCALABLE.type || 'error',
-            content: Lang.sprintf(option.checks.META_SCALABLE.content || 'META_SCALABLE'),
-            dismiss: Utils.prepareDismissal('SCALABLE'),
-            developer: option.checks.META_SCALABLE.developer || true,
+            type: State.option.checks.META_SCALABLE.type || 'error',
+            content: Lang.sprintf(State.option.checks.META_SCALABLE.content || 'META_SCALABLE'),
+            dismiss: Utils.prepareDismissal('META_SCALABLE'),
+            developer: State.option.checks.META_SCALABLE.developer || true,
           });
         }
 
         // Check maximum-scale parameter.
         const maxScale = parseFloat(params['maximum-scale']);
-        if (option.checks.META_MAX && !Number.isNaN(maxScale) && maxScale < 2) {
-          results.push({
+        if (State.option.checks.META_MAX && !Number.isNaN(maxScale) && maxScale < 2) {
+          State.results.push({
             test: 'META_MAX',
-            type: option.checks.META_MAX.type || 'error',
-            content: Lang.sprintf(option.checks.META_MAX.content || 'META_MAX'),
-            dismiss: Utils.prepareDismissal('MAXSCALE'),
-            developer: option.checks.META_MAX.developer || true,
+            type: State.option.checks.META_MAX.type || 'error',
+            content: Lang.sprintf(State.option.checks.META_MAX.content || 'META_MAX'),
+            dismiss: Utils.prepareDismissal('META_MAX'),
+            developer: State.option.checks.META_MAX.developer || true,
           });
         }
       }
@@ -83,15 +119,18 @@ export default function checkDeveloper(results, option) {
   /* ****************************************** */
   /*  Page shouldn't automatically refresh.     */
   /* ****************************************** */
-  if (option.checks.META_REFRESH) {
-    const metaRefresh = document.querySelector('meta[http-equiv="refresh"]');
-    if (metaRefresh) {
-      results.push({
+  if (State.option.checks.META_REFRESH) {
+    const actuallyRefreshes = Array.from(
+      document.querySelectorAll('meta[http-equiv="refresh" i]'),
+    ).some((tag) => parseInt(tag.getAttribute('content'), 10) > 0);
+    if (actuallyRefreshes) {
+      const option = State.option.checks.META_REFRESH;
+      State.results.push({
         test: 'META_REFRESH',
-        type: option.checks.META_REFRESH.type || 'error',
-        content: Lang.sprintf(option.checks.META_REFRESH.content || 'META_REFRESH'),
-        dismiss: Utils.prepareDismissal('REFRESH'),
-        developer: option.checks.META_REFRESH.developer || true,
+        type: option.type || 'error',
+        content: Lang.sprintf(option.content || 'META_REFRESH'),
+        dismiss: Utils.prepareDismissal('META_REFRESH'),
+        developer: option.developer ?? true,
       });
     }
   }
@@ -99,7 +138,7 @@ export default function checkDeveloper(results, option) {
   /* *************************************************************** */
   /*  Check for duplicate IDs that are referenced by other elements. */
   /* *************************************************************** */
-  if (option.checks.DUPLICATE_ID) {
+  if (State.option.checks.DUPLICATE_ID) {
     // Look for duplicate IDs within each DOM.
     const doms = document.querySelectorAll('body, [data-sa11y-has-shadow-root]');
     doms.forEach((dom) => {
@@ -127,14 +166,18 @@ export default function checkDeveloper(results, option) {
                 [aria-owns*="${id}"]`),
             );
             if (ariaReference.length > 0) {
-              results.push({
+              State.results.push({
                 test: 'DUPLICATE_ID',
                 element: $el,
-                type: option.checks.DUPLICATE_ID.type || 'error',
-                content: Lang.sprintf(option.checks.DUPLICATE_ID.content || 'DUPLICATE_ID', id),
-                dismiss: Utils.prepareDismissal(`DUPLICATEID${id}${$el.textContent}`),
-                dismissAll: option.checks.DUPLICATE_ID.dismissAll ? 'DUPLICATE_ID' : false,
-                developer: option.checks.DUPLICATE_ID.developer || true,
+                type: State.option.checks.DUPLICATE_ID.type || 'error',
+                content: Lang.sprintf(
+                  State.option.checks.DUPLICATE_ID.content || 'DUPLICATE_ID',
+                  id,
+                ),
+                args: [id],
+                dismiss: Utils.prepareDismissal(`DUPLICATE_ID ${id}${$el.textContent}`),
+                dismissAll: State.option.checks.DUPLICATE_ID.dismissAll ? 'DUPLICATE_ID' : false,
+                developer: State.option.checks.DUPLICATE_ID.developer || true,
               });
             }
           }
@@ -161,18 +204,24 @@ export default function checkDeveloper(results, option) {
   /*  Buttons must have an accessible name.        */
   /* ********************************************* */
   if (
-    option.checks.BTN_EMPTY ||
-    option.checks.BTN_EMPTY_LABELLEDBY ||
-    option.checks.BTN_LABEL ||
-    option.checks.HIDDEN_FOCUSABLE ||
-    option.checks.LABEL_IN_NAME
+    State.option.checks.BTN_EMPTY ||
+    State.option.checks.BTN_EMPTY_LABELLEDBY ||
+    State.option.checks.BTN_LABEL ||
+    State.option.checks.HIDDEN_FOCUSABLE ||
+    State.option.checks.LABEL_IN_NAME
   ) {
     Elements.Found.Buttons.forEach(($el) => {
+      // Explicitly hidden.
+      if (
+        Utils.isHiddenAndUnfocusable($el) ||
+        Utils.isElementHidden($el) ||
+        (Utils.isPresentational($el) && Utils.isDisabled($el))
+      )
+        return;
+
       const accName = computeAccessibleName($el);
       const buttonText = accName.replace(/'|"|-|\.|\s+/g, '').toLowerCase();
-
-      // Dismissal key.
-      const key = Utils.prepareDismissal(`BTN${$el.tagName + $el.id + $el.className + accName}`);
+      const textContent = Utils.getText($el);
 
       // Has ARIA
       const hasAria =
@@ -181,56 +230,37 @@ export default function checkDeveloper(results, option) {
         $el.getAttribute('aria-label');
       const hasAriaLabelledby =
         $el.querySelector(':scope [aria-labelledby]') || $el.getAttribute('aria-labelledby');
-      const ariaHidden = $el.getAttribute('aria-hidden') === 'true';
-      const negativeTabindex = $el.getAttribute('tabindex') === '-1';
-
-      // Button has aria-hidden but is still focusable.
-      if (ariaHidden) {
-        if (!negativeTabindex) {
-          if (option.checks.HIDDEN_FOCUSABLE) {
-            results.push({
-              test: 'HIDDEN_FOCUSABLE',
-              element: $el,
-              type: option.checks.HIDDEN_FOCUSABLE.type || 'error',
-              content: Lang.sprintf(option.checks.HIDDEN_FOCUSABLE.content || 'HIDDEN_FOCUSABLE'),
-              dismiss: key,
-              dismissAll: option.checks.HIDDEN_FOCUSABLE.dismissAll
-                ? 'BTN_HIDDEN_FOCUSABLE'
-                : false,
-              developer: option.checks.HIDDEN_FOCUSABLE.developer || true,
-            });
-          }
-        }
-        return;
-      }
 
       // Button doesn't have an accessible name.
       if (buttonText.length === 0) {
-        if (option.checks.BTN_EMPTY_LABELLEDBY && hasAriaLabelledby) {
-          results.push({
+        if (State.option.checks.BTN_EMPTY_LABELLEDBY && hasAriaLabelledby) {
+          State.results.push({
             test: 'BTN_EMPTY_LABELLEDBY',
             element: $el,
-            type: option.checks.BTN_EMPTY_LABELLEDBY.type || 'error',
-            content: option.checks.BTN_EMPTY_LABELLEDBY.content
-              ? Lang.sprintf(option.checks.BTN_EMPTY_LABELLEDBY.content)
-              : `${Lang.sprintf('BTN_EMPTY_LABELLEDBY')} ${Lang.sprintf('BTN_TIP')}`,
-            dismiss: Utils.prepareDismissal(key),
-            dismissAll: option.checks.BTN_EMPTY_LABELLEDBY.dismissAll
+            type: State.option.checks.BTN_EMPTY_LABELLEDBY.type || 'error',
+            content: Lang.sprintf(
+              State.option.checks.BTN_EMPTY_LABELLEDBY.content ||
+                Lang._('BTN_EMPTY_LABELLEDBY') + Lang._('BTN_TIP'),
+            ),
+            dismiss: Utils.prepareDismissal(
+              `BTN_EMPTY_LABELLEDBY ${$el.tagName + $el.id + $el.className + accName}`,
+            ),
+            dismissAll: State.option.checks.BTN_EMPTY_LABELLEDBY.dismissAll
               ? 'BTN_EMPTY_LABELLEDBY'
               : false,
-            developer: option.checks.BTN_EMPTY_LABELLEDBY.developer || true,
+            developer: State.option.checks.BTN_EMPTY_LABELLEDBY.developer || true,
           });
-        } else if (option.checks.BTN_EMPTY) {
-          results.push({
+        } else if (State.option.checks.BTN_EMPTY) {
+          State.results.push({
             test: 'BTN_EMPTY',
             element: $el,
-            type: option.checks.BTN_EMPTY.type || 'error',
-            content: option.checks.BTN_EMPTY.content
-              ? Lang.sprintf(option.checks.BTN_EMPTY.content)
-              : `${Lang.sprintf('BTN_EMPTY')} ${Lang.sprintf('BTN_TIP')}`,
-            dismiss: key,
-            dismissAll: option.checks.BTN_EMPTY.dismissAll ? 'BTN_EMPTY' : false,
-            developer: option.checks.BTN_EMPTY.developer || true,
+            type: State.option.checks.BTN_EMPTY.type || 'error',
+            content: Lang.sprintf(
+              State.option.checks.BTN_EMPTY.content || Lang._('BTN_EMPTY') + Lang._('BTN_TIP'),
+            ),
+            dismiss: Utils.prepareDismissal(`BTN_EMPTY ${$el.tagName + $el.id + $el.className}`),
+            dismissAll: State.option.checks.BTN_EMPTY.dismissAll ? 'BTN_EMPTY' : false,
+            developer: State.option.checks.BTN_EMPTY.developer || true,
           });
         }
         return;
@@ -238,34 +268,44 @@ export default function checkDeveloper(results, option) {
 
       /* Button must have visible label as part of their accessible name. */
       const isVisibleTextInAccName = Utils.isVisibleTextInAccName($el, accName);
-      if (option.checks.LABEL_IN_NAME && hasAria && isVisibleTextInAccName) {
-        const sanitizedText = Utils.sanitizeHTML(accName);
-        results.push({
+      if (State.option.checks.LABEL_IN_NAME && hasAria && isVisibleTextInAccName) {
+        State.results.push({
           test: 'LABEL_IN_NAME',
           element: $el,
-          type: option.checks.LABEL_IN_NAME.type || 'warning',
-          content: option.checks.LABEL_IN_NAME.content
-            ? Lang.sprintf(option.checks.LABEL_IN_NAME.content, sanitizedText)
-            : `${Lang.sprintf('LABEL_IN_NAME', sanitizedText)} ${Lang.sprintf('ACC_NAME_TIP')}`,
-          dismiss: key,
-          dismissAll: option.checks.LABEL_IN_NAME.dismissAll ? 'BTN_LABEL_IN_NAME' : false,
-          developer: option.checks.LABEL_IN_NAME.developer || true,
+          type: State.option.checks.LABEL_IN_NAME.type || 'warning',
+          content: Lang.sprintf(
+            State.option.checks.LABEL_IN_NAME.content ||
+              Lang._('LABEL_IN_NAME') + Lang._('ACC_NAME_TIP'),
+            textContent,
+            accName,
+          ),
+          args: [textContent, accName],
+          dismiss: Utils.prepareDismissal(
+            `LABEL_IN_NAME ${$el.tagName + $el.id + $el.className + accName}`,
+          ),
+          dismissAll: State.option.checks.LABEL_IN_NAME.dismissAll ? 'BTN_LABEL_IN_NAME' : false,
+          developer: State.option.checks.LABEL_IN_NAME.developer || true,
         });
         return;
       }
 
       // Has "button" in the accessible name.
-      if (option.checks.BTN_ROLE_IN_NAME && accName.includes(Lang._('BTN'))) {
-        results.push({
+      if (State.option.checks.BTN_ROLE_IN_NAME && accName.includes(Lang._('BTN'))) {
+        State.results.push({
           test: 'BTN_ROLE_IN_NAME',
           element: $el,
-          type: option.checks.BTN_ROLE_IN_NAME.type || 'warning',
-          content: option.checks.BTN_ROLE_IN_NAME.content
-            ? Lang.sprintf(option.checks.BTN_ROLE_IN_NAME.content)
-            : `${Lang.sprintf('BTN_ROLE_IN_NAME')} ${Lang.sprintf('BTN_TIP')}`,
-          dismiss: key,
-          dismissAll: option.checks.BTN_ROLE_IN_NAME.dismissAll ? 'BTN_ROLE_IN_NAME' : false,
-          developer: option.checks.BTN_ROLE_IN_NAME.developer || true,
+          type: State.option.checks.BTN_ROLE_IN_NAME.type || 'warning',
+          content: Lang.sprintf(
+            State.option.checks.BTN_ROLE_IN_NAME.content ||
+              Lang._('BTN_ROLE_IN_NAME') + Lang._('ACC_NAME_TIP') + Lang._('BTN_TIP'),
+            accName,
+          ),
+          args: [accName],
+          dismiss: Utils.prepareDismissal(
+            `BTN_ROLE_IN_NAME ${$el.tagName + $el.id + $el.className + accName}`,
+          ),
+          dismissAll: State.option.checks.BTN_ROLE_IN_NAME.dismissAll ? 'BTN_ROLE_IN_NAME' : false,
+          developer: State.option.checks.BTN_ROLE_IN_NAME.developer || true,
         });
       }
     });
@@ -274,17 +314,22 @@ export default function checkDeveloper(results, option) {
   /* ********************************************************** */
   /* <li> elements must be contained in a <ul>/<ol>/<menu>.     */
   /* ********************************************************** */
-  if (option.checks.UNCONTAINED_LI) {
+  if (State.option.checks.UNCONTAINED_LI) {
     Elements.Found.Lists.forEach(($el) => {
-      if (!$el.closest('ul, ol, menu')) {
-        results.push({
+      if (!Utils.getCachedClosest($el, 'ul, ol, menu')) {
+        const text = Utils.getText($el);
+        State.results.push({
           test: 'UNCONTAINED_LI',
           element: $el,
-          type: option.checks.UNCONTAINED_LI.type || 'error',
-          content: Lang.sprintf(option.checks.UNCONTAINED_LI.content || 'UNCONTAINED_LI'),
-          dismiss: Utils.prepareDismissal(`UNCONTAINEDLI${$el.textContent}`),
-          dismissAll: option.checks.UNCONTAINED_LI.dismissAll ? 'UNCONTAINED_LI' : false,
-          developer: option.checks.UNCONTAINED_LI.developer || true,
+          type: State.option.checks.UNCONTAINED_LI.type || 'error',
+          content: Lang.sprintf(
+            State.option.checks.UNCONTAINED_LI.content || 'UNCONTAINED_LI',
+            text,
+          ),
+          args: [text],
+          dismiss: Utils.prepareDismissal(`UNCONTAINED_LI ${$el.textContent}`),
+          dismissAll: State.option.checks.UNCONTAINED_LI.dismissAll ? 'UNCONTAINED_LI' : false,
+          developer: State.option.checks.UNCONTAINED_LI.developer || true,
         });
       }
     });
@@ -293,19 +338,53 @@ export default function checkDeveloper(results, option) {
   /* ****************************************** */
   /*  No tabindex values greater than 0.        */
   /* ****************************************** */
-  if (option.checks.TABINDEX_ATTR) {
+  if (State.option.checks.TABINDEX_ATTR) {
     Elements.Found.TabIndex.forEach(($el) => {
-      results.push({
+      if ($el.tabIndex <= 0) return;
+      State.results.push({
         test: 'TABINDEX_ATTR',
         element: $el,
-        type: option.checks.TABINDEX_ATTR.type || 'error',
-        content: Lang.sprintf(option.checks.TABINDEX_ATTR.content || 'TABINDEX_ATTR'),
-        dismiss: Utils.prepareDismissal(`TABINDEX${$el.tagName + $el.id + $el.className}`),
-        dismissAll: option.checks.TABINDEX_ATTR.dismissAll ? 'TABINDEX_ATTR' : false,
-        developer: option.checks.TABINDEX_ATTR.developer || true,
+        type: State.option.checks.TABINDEX_ATTR.type || 'error',
+        content: Lang.sprintf(State.option.checks.TABINDEX_ATTR.content || 'TABINDEX_ATTR'),
+        dismiss: Utils.prepareDismissal(`TABINDEX_ATTR ${$el.tagName + $el.id + $el.className}`),
+        dismissAll: State.option.checks.TABINDEX_ATTR.dismissAll ? 'TABINDEX_ATTR' : false,
+        developer: State.option.checks.TABINDEX_ATTR.developer || true,
       });
     });
   }
 
-  return results;
+  /* *************************************************************** */
+  /* Error: Focusable content hidden from screen readers.            */
+  /* *************************************************************** */
+  if (State.option.checks.HIDDEN_FOCUSABLE) {
+    const flaggedForAriaHidden = new Set();
+    Elements.Found.Focusable.forEach(($el) => {
+      if (flaggedForAriaHidden.has($el)) return;
+      if (Utils.isDisabled($el) || Utils.isNegativeTabindex($el) || Utils.isElementHidden($el))
+        return;
+
+      const hiddenContainer = Utils.getCachedClosest($el, '[aria-hidden="true"]');
+      if (hiddenContainer) {
+        const outerHTML = Utils.truncateString($el.outerHTML, 100);
+        State.results.push({
+          test: 'HIDDEN_FOCUSABLE',
+          element: $el,
+          type: State.option.checks.HIDDEN_FOCUSABLE.type || 'error',
+          content: Lang.sprintf(
+            State.option.checks.HIDDEN_FOCUSABLE.content || 'HIDDEN_FOCUSABLE',
+            outerHTML,
+          ),
+          args: [outerHTML],
+          dismiss: Utils.prepareDismissal(
+            `HIDDEN_FOCUSABLE ${$el.tagName + $el.id + $el.className}`,
+          ),
+          dismissAll: State.option.checks.HIDDEN_FOCUSABLE.dismissAll ? 'HIDDEN_FOCUSABLE' : false,
+          developer: State.option.checks.HIDDEN_FOCUSABLE.developer || true,
+        });
+        flaggedForAriaHidden.add($el);
+      }
+    });
+  }
+
+  return State.results;
 }

@@ -1,10 +1,9 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
+<html lang="ta" dir="ltr">
 
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-  <title>Testing</title>
   <link href="../docs/examples/assets/main.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css" />
   <meta http-equiv="refresh" content="1000" />
@@ -13,8 +12,833 @@
 <body>
   <header>
     <h2>Sandbox</h2>
+    <style>
+      #clear-sa11y-storage {
+        cursor: pointer;
+        display: inline;
+      }
+
+      @media print {
+        main a[href]:after {
+          content: " (" attr(href) ")";
+        }
+      }
+    </style>
+    <button id="clear-sa11y-storage">
+      Clear Sa11y local storage for testing
+    </button>
+    <script>
+      const btn = document.getElementById('clear-sa11y-storage');
+      const sync = () => {
+        const count = Object.keys(localStorage).filter(k => k.startsWith('sa11y-')).length;
+        btn.textContent = `Clear ${count} Sa11y local storage keys`;
+        btn.disabled = !count;
+      };
+      // Intercept storage changes on the current page
+      ['setItem', 'removeItem', 'clear'].forEach(method => {
+        const old = localStorage[method];
+        localStorage[method] = function () {
+          old.apply(this, arguments);
+          sync();
+        };
+      });
+      // Sync across tabs
+      window.onstorage = sync;
+      btn.onclick = () => {
+        Object.keys(localStorage).filter(k => k.startsWith('sa11y-'))
+          .forEach(k => localStorage.removeItem(k));
+      };
+      sync();
+    </script>
   </header>
   <main>
+
+    <img alt="1px" src="https://upload.wikimedia.org/wikipedia/commons/c/ca/1x1.png">
+
+    <p tabindex="0" aria-hidden="true">Some text</p>
+    <hr>
+
+    <div role="group" aria-disabled="true" style="color:#888; background: white;">
+      <label>
+        My name
+        <input>
+      </label>
+    </div>
+
+    <fieldset disabled="" style="color:#888; background: white;">
+      <label>
+        My name
+        <input>
+      </label>
+    </fieldset>
+
+    <hr>
+
+    <div role="button" style="color: rgb(85, 85, 85); background: rgb(238, 238, 238);">My button!</div>
+
+    <hr>
+
+    <a role='sds' href="https://www.w3.org/WAI"><img
+        src="/WAI/content-assets/wcag-act-rules/test-assets/shared/w3c-logo.png" title=""></a>
+
+    <hr>
+
+    <p style="color: #aaa; background: #fff;" id="p"></p>
+    <script>
+      const shadowRoot = document.getElementById('p').attachShadow({ mode: 'open' });
+      shadowRoot.innerHTML = 'Some text in English';
+    </script>
+
+
+    <p style="color: #333; background: #FFF;">
+      Helvetica is a widely used sans-serif typeface developed in 1957 by Max Miedinger and Eduard Hoffmann.
+    </p>
+
+    <p style="font-family: helvetica; background: #EEE; color: #555;">
+      The quick brown fox jumps over the lazy dog.
+    </p>
+
+    <hr>
+
+    <svg xmlns="http://www.w3.org/2000/svg">
+      <circle role="graphics-symbol" cx="50" cy="50" r="40" stroke="green" stroke-width="4" fill="yellow"></circle>
+    </svg>
+    <hr>
+    <svg xmlns="http://www.w3.org/2000/svg" role="img">
+      <title></title>
+      <circle cx="50" cy="50" r="40" fill="yellow"></circle>
+    </svg>
+
+    <hr>
+
+    <svg xmlns="http://www.w3.org/2000/svg" role="img">
+      <circle cx="50" cy="50" r="40" stroke="green" stroke-width="4" fill="yellow"></circle>
+    </svg>
+
+    <hr>
+
+    <img src="/sdasd/" alt="In iaculis mi in
+                  ligula interdum tincidunt. Vestibulum convallis tempus placerat. Interdum et malesuada fames ac ante
+                  ipsum primis in faucibus. Aliquam a vehicula nisl, vel fermentum nulla. Donec sed augue non risus" />
+
+    <div role="menu" hidden="">
+      <button role="menuitem">
+        <img src="/WAI/content-assets/wcag-act-rules/test-assets/shared/file.svg" alt="">
+      </button>
+    </div>
+
+    <hr>
+
+    <div role="menu" class="offscreen">
+      <button role="menuitem">
+        <img src="/WAI/content-assets/wcag-act-rules/test-assets/shared/file.svg" alt="">
+      </button>
+    </div>
+
+    <hr>
+
+    <div role="menu">
+      <button role="menuitem">
+        <img src="/WAI/content-assets/wcag-act-rules/test-assets/shared/file.svg" alt="">
+      </button>
+    </div>
+
+    <hr>
+
+    <table>
+      <thead>
+        <tr>
+          <td role="columnheader" id="header1">Projects</td>
+          <td role="columnheader" id="header2">Objective</td>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td headers="header1">15%</td>
+          <td headers="header2">10%</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <hr>
+
+    <table role="heading" aria-level="1">
+      <tbody>
+        <tr>
+          <td id="self" headers="self">World</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <hr>
+
+    <table>
+      <tbody>
+        <tr>
+          <td>
+            <span id="headerProject">Projects</span>
+          </td>
+          <td>
+            <span id="headerObjective">Objective</span>
+          </td>
+        </tr>
+        <tr>
+          <td headers="headerProject">
+            15%
+          </td>
+          <td headers="headerObjective">
+            10%
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <hr>
+    <table>
+      <tbody>
+        <tr>
+          <th>Event Type</th>
+        </tr>
+        <tr>
+          <td id="headerBday" headers="headerBday">
+            Birthday
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <hr>
+    <table>
+      <tbody>
+        <tr>
+          <th id="headerOfColumn1">Projects</th>
+          <th id="headerOfColumn2">Objective</th>
+        </tr>
+        <tr>
+          <td headers="headOfColumn1">15%</td>
+          <td headers="headOfColumn2">10%</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <hr>
+
+    <table>
+      <thead>
+        <tr>
+          <td role="columnheader" id="header1">Projects</td>
+          <td role="columnheader" id="header2">Objective</td>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td headers="header1">15%</td>
+          <td headers="header2">10%</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <hr>
+    <div aria-hidden="true">
+      <a href="/" on="something()"
+        class="somethingMaybeTesting1234adlknsdLoremIpsumsdasd ;jdkjasdl kjsd klajsdkl jlkasdj kljsdl">Linkypoo</a>
+    </div>
+
+    <hr>
+
+    <svg xmlns="http://www.w3.org/2000/svg" x="0" y="0">
+      <a href="#main">
+        <text x="20" y="20">
+          Go
+        </text>
+      </a>
+    </svg>
+
+    <hr>
+    <h2>Explicitely hidden button</h2>
+    <button style="display:none"></button>
+
+    <hr>
+
+    <p style="color: #000; font-size:14pt; font-weight:700; background: #666;">
+      Some text in English
+    </p>
+
+    <p style="color: #000; background: #666;">中文网</p>
+    <p style="color: #000; background: #666;">
+      ----=====++++++++___________***********%%%%%%%%%%%±±±±@@@@@@@@
+    </p>
+
+    <fieldset disabled style="color:#888; background: white;">
+      <label>
+        My name
+        <input />
+      </label>
+    </fieldset>
+
+    <p
+      style="background: #fff; color: #666; text-shadow: #aaa 2px 2px 4px, #aaa -2px 2px 4px, #aaa 2px -2px 4px, #aaa -2px -2px 4px;">
+      Some text in a human language
+    </p>
+
+    <hr>
+    <button style="color: #666; background-color: #000" aria-label="Close">X</button>
+    <hr>
+    <label id="my_pets_name" style="color:#888; background: white;">
+      My pet's name
+    </label>
+    <div role="textbox" aria-labelledby="my_pets_name" aria-disabled="true"
+      style="height:20px; width:100px; border:1px solid black;">
+      test
+    </div>
+
+    <hr>
+
+    <div role="button" style="color: #777; background: #EEE;" aria-disabled="true">something</div>
+
+    <hr>
+
+    <label style="color:#cbcbcb; background: white;">
+      My name
+      <input type="text" disabled />
+    </label>
+
+    <hr>
+
+    See [<a href="https://act-rules.github.io/" role="doc-biblioref"><img
+        src="https://github.com/act-rules/act-rules.github.io/blob/develop/test-assets/shared/act-logo.png"
+        alt="" /></a>]
+
+    <hr>
+
+    <p lang="i-lux">Lëtzebuerg ass e Land an Europa.</p>
+
+    <p lang="eng">I love ACT rules!</p>
+
+    <div lang="invalid">
+      <img src="/WAI/content-assets/wcag-act-rules/test-assets/shared/fireworks.jpg" alt="Fireworks over Paris" />
+    </div>
+
+    <article lang="en">
+      <div lang="invalid">
+        They wandered into a strange Tiki bar on the edge of the small beach town.
+      </div>
+    </article>
+
+    <article lang="English">
+      <p style="position: absolute; top: -9999px">
+        They wandered into a strange Tiki bar on the edge of the small beach town.
+      </p>
+    </article>
+
+    <article lang="english">
+      <p aria-hidden="true">
+        They wandered into a strange Tiki bar on the edge of the small beach town.
+      </p>
+    </article>
+
+    <article lang="  ">
+      They wandered into a strange Tiki bar on the edge of the small beach town.
+    </article>
+
+    <article lang="#!">
+      They wandered into a strange Tiki bar on the edge of the small beach town.
+    </article>
+
+    <article lang="dutch">
+      Zij liepen een vreemde Tiki bar binnen, aan de rand van een dorpje aan het strand.
+    </article>
+
+    <div id="nothing-select-rolenone">
+      <select role="none" disabled>
+        <option value="volvo">Volvo</option>
+        <option value="saab">Saab</option>
+        <option value="opel">Opel</option>
+      </select>
+    </div>
+
+    <div id="error-act">
+      <h1><img src="https://www.w3.org/WAI/content-assets/wcag-act-rules/test-assets/shared/act-logo.png"
+          alt="ACT rules" role="presentation" />
+      </h1>
+    </div>
+    <hr>
+    <h2>Heading has non-empty accessible name (role=presentation on image)</h2>
+    <div id="error-act-2">
+      <h1><img src="https://www.w3.org/WAI/content-assets/wcag-act-rules/test-assets/shared/act-logo.png"
+          alt="ACT rules" role="presentation" />
+      </h1>
+    </div>
+
+    <h2>Button with role=none and negative tabindex</h2>
+    <div id="nothing-role-tabindex-neg"><button role="none" tabindex="-5"></button></div>
+
+    <h2>Button with role=none and disabled</h2>
+    <div id="nothing-rolenone-disabled"><button role="none" disabled></button></div>
+
+    <h2>Button with only role=none</h2>
+    <div id="error-role-btn"><button role="none"></button></div>
+
+    <h2>Explicitely hidden button</h2>
+    <div id="nothing-hidden-btn"><button style="display: none;"></button></div>
+
+    <h2>Input type image with no accName</h2>
+    <div id="error-input-alt">
+      <input type="image" src="https://www.w3.org/WAI/content-assets/wcag-act-rules/test-assets/shared/w3c-logo.pn"
+        aria-labelledby="non-existing" />
+    </div>
+
+    <h2>Image made with div[role="img"] with no accName</h2>
+    <div id="error-alt-div">
+      <div role="img"
+        style="width:72px; height:48px; background-image: url(https://www.w3.org/WAI/content-assets/wcag-act-rules/test-assets/shared/w3c-logo.png)">
+      </div>
+    </div>
+
+    <h2>title attribute, but no alt</h2>
+    <div id="pass-title-fallback">
+      <img title="W3C logo" src="../docs/examples/assets/placeholder.svg" />
+    </div>
+
+    <h2>role="none"</h2>
+    <div id="nothing">
+      <img role="none" src="../docs/examples/assets/placeholder.svg" />
+    </div>
+
+    <hr>
+    <h2>Testing ignores</h2>
+    <h6 class="ignore-this-heading">asds</h6>
+    <img class="ignore-img" src="../docs/github-banner.png" />
+    <p class="sr-only" style="color:pink">Lorem ipsum dolor, sit amet consectetur adipisicing elit. Porro architecto
+      iure doloribus
+      reprehenderit dolor velit quae, quam in magnam eum ex vel esse autem dolore inventore dolores, ipsa possimus
+      numquam.</p>
+    <a href="#" class="ignore-link">Learn more</a>
+    <a href="https://www.example.com?sxxss">learn more <span class="ignore-span"
+        style="background:darkblue;color:white">something</span></a>
+    <a href="https://www.example.com?sxxss">learn more JKXLSKSK</a>
+    <h3>This will be ignored in outline: <span class="headerIgnoreSpan">something</span></h3>
+    <h3>This will be ignored in outline via string match: (Anchor)</h3>
+    <hr>
+
+    <div class="slider-nav">
+      <a href="#" class="slide">1</a>
+      <a href="#" class="slide">2</a>
+    </div>
+    </div>
+
+    <small style="font-size: 5px;">Lorem ipsum dolor sit amet consectetur adipisicing elit. Veniam dignissimos cum
+      provident blanditiis
+      temporibus quis eaque sit esse magni omnis inventore perferendis ea ab quam, tempora libero beatae odio
+      consequatur. Lorem ipsum dolor sit amet consectetur, adipisicing elit. Eos, voluptatem fugit, cum atque assumenda
+      iste ut sequi veniam, vero nostrum quae. Officia cumque sed aliquid consequatur quae quia id ratione!</small>
+    <h2>Acc Name different than link text</h2>
+    <a href="https://www.example.com/sdsdasd33515">learn more</a>
+
+    <h2>Improve verbiage of tooltip</h2>
+    <a href="https://google.com/something">Google</a> or <a href="https://google.com/something/asd" title="google"></a>
+
+    <br><br>
+    <a href="https://google.com/somethings">Frugal</a> or <a href="https://google.com/somethings/asd"
+      aria-label="frugal">Frugal</a>
+    <hr>
+    <h2>Ignore seperators with low contrast</h2>
+    <span class="separator" aria-hidden="true" style="color:hotpink">|</span>
+    <br><br>
+    <span class="separator" aria-hidden="true" style="color:hotpink">\</span>
+    <br><br>
+    <span class="separator" aria-hidden="true" style="color:hotpink">/</span>
+
+    <hr>
+
+    <h2>Contrast support for slotted elements</h2>
+    <div id="error-slotted-1">
+      <contrast-card bg-color="#f0f0f0">
+        <p style="color: hotpink">This is white text slotted into a light gray shadow box.</p>
+      </contrast-card>
+    </div>
+
+    <div id="nothing-slotted">
+      <contrast-card bg-color="#f0f0f0">
+        <p style="color: darkblue">This is dark text slotted into a light gray shadow box.</p>
+      </contrast-card>
+    </div>
+
+    <div id="error-slotted-2">
+      <contrast-card bg-color="#000" slotted-color="#222">
+        <span>This text is dark, but the background is black via Shadow CSS.</span>
+      </contrast-card>
+    </div>
+
+    <script>
+      // Define the Web Component
+      customElements.define('contrast-card', class extends HTMLElement {
+        constructor() {
+          super();
+          this.attachShadow({ mode: 'open' });
+        }
+
+        connectedCallback() {
+          const bg = this.getAttribute('bg-color') || '#fff';
+          const slottedColor = this.getAttribute('slotted-color') || 'inherit';
+
+          this.shadowRoot.innerHTML = `
+          <style>
+              :host { display: block; margin: 10px 0; }
+              .container {
+                  padding: 20px;
+                  background-color: ${bg}; /* Background is INSIDE shadow */
+                  border: 1px solid #ccc;
+              }
+              /* Styles applied to light DOM nodes via the shadow boundary */
+              ::slotted(*) {
+                  color: ${slottedColor};
+                  margin: 0;
+              }
+          </style>
+          <div class="container">
+              <slot></slot>
+          </div>
+          `;
+        }
+      });
+    </script>
+
+    <hr>
+
+    <h2>Exclude sup and sub from font size too small QA check</h2>
+    <style>
+      sub,
+      sup {
+        font-size: 75%;
+        line-height: 1.5;
+        position: relative;
+        vertical-align: baseline;
+      }
+    </style>
+
+    <sup>
+      <p><sup>1</sup>Joint 155th in the QS World University Rankings 2026 and 170th in the THE World Rankings 2026,
+        <sup>2</sup> The Graduate Market in 2025 report by High Fliers Research, <br><sup>3</sup>Times Higher Education
+        (THE) Impact Rankings 2025: Joint 2nd in the world for Responsible Consumption and Production; joint 17th for
+        Climate Action
+      </p>
+    </sup>
+
+    <hr>
+
+    <h2>New check <code>LINK_MAYBE_BUTTON</code></h2>
+
+    <a href="#">
+      MENU
+    </a>
+
+    <br><br>
+
+    <a href="#0">where is the menu</a>
+
+    <hr>
+    <h2>Disabled elements contrast</h2>
+    <button disabled>Disabled</button>
+
+    <hr>
+
+    <h2>Improved detection of nonsensical alt text</h2>
+
+    <img src="https://newsocietyinstitute.ca/wp-content/uploads/2025/11/nsi-hero-homeA-1920x1080.jpg"
+      alt="slide 1 image">
+
+    <img src="https://newsocietyinstitute.ca/wp-content/uploads/2025/11/nsi-hero-homeA-1920x1080.jpg"
+      alt="slide #25121 image">
+
+    <br>
+    <img src="https://newsocietyinstitute.ca/wp-content/uploads/2025/11/nsi-hero-homeA-1920x1080.jpg"
+      alt="*** New Product Alert ***">
+
+    <br>
+    <img src="https://newsocietyinstitute.ca/wp-content/uploads/2025/11/nsi-hero-homeA-1920x1080.jpg" alt="2015">
+
+    <br>
+    <img src="https://newsocietyinstitute.ca/wp-content/uploads/2025/11/nsi-hero-homeA-1920x1080.jpg"
+      alt="something-in-something-in-something assds">
+    <br>
+    <img src="https://newsocietyinstitute.ca/wp-content/uploads/2025/11/nsi-hero-homeA-1920x1080.jpg"
+      alt="202512111333499">
+    <br>
+    <img src="https://newsocietyinstitute.ca/wp-content/uploads/2025/11/nsi-hero-homeA-1920x1080.jpg"
+      alt="20251211_133349 copy">
+    <br>
+    <img src="https://newsocietyinstitute.ca/wp-content/uploads/2025/11/nsi-hero-homeA-1920x1080.jpg" alt="unnamed-3">
+    <br>
+    <img src="https://newsocietyinstitute.ca/wp-content/uploads/2025/11/nsi-hero-homeA-1920x1080.jpg"
+      alt="modeling-culture-gabi-claudia">
+    <br>
+    <img src="https://newsocietyinstitute.ca/wp-content/uploads/2025/11/nsi-hero-homeA-1920x1080.jpg"
+      alt="Betty Smith-Leydon-Whopper-Lord-of-the-Rings">
+
+    <h2>Normalize alt attribute</h2>
+    <div style="margin-bottom:40px;">
+      <code>&lt;img src="#" alt="                 Image of a photo of a turtledove."&gt;</code>
+    </div>
+    <img src="https://newsocietyinstitute.ca/wp-content/uploads/2025/11/nsi-hero-homeA-1920x1080.jpg"
+      alt="             Image of a photo of a turtledove.">
+    <hr>
+    <div id="nothing-english-prose">
+      <h3>1. English Prose (I/A start)</h3>
+      <p>I am planning to update the repository tomorrow morning.</p>
+      <p>A small update was pushed to the production server recently.</p>
+    </div>
+
+    <div id="warning-alpha-list">
+      <h3>2. Manual Alpha List</h3>
+      <p>a. Open the command terminal in the root directory.</p>
+      <p>b. Run the build command to generate the static files.</p>
+    </div>
+
+    <div id="nothing-romance-prose">
+      <h3>3. Romance Language Prose</h3>
+      <p>A medida que avanzamos, los requisitos se vuelven más claros.</p>
+      <p>E depois disso, fomos todos para o escritório trabalhar.</p>
+    </div>
+
+    <div id="warning-cyrillic-list">
+      <h3>4. Cyrillic Alpha List</h3>
+      <p>а) Откройте настройки вашего профиля.</p>
+      <p>б) Измените адрес электронной почты на новый.</p>
+    </div>
+
+    <div id="warning-bracket-list">
+      <h3>5. Bracket Style List</h3>
+      <p>[a] Review the security protocols for the API.</p>
+      <p>[b] Ensure all endpoints are properly authenticated.</p>
+    </div>
+
+    <div id="nothing-initials">
+      <h3>6. Initials in Names</h3>
+      <p>J. Doe contributed to the first half of the project.</p>
+      <p>K. Smith managed the deployment phase successfully.</p>
+    </div>
+
+    <div id="warning-roman-numerals">
+      <h3>7. Roman Numeral Structure</h3>
+      <p>I. Executive summary and project goals.</p>
+      <p>II. Detailed breakdown of the technical stack.</p>
+    </div>
+
+    <div id="nothing-numeric-prose">
+      <h3>8. Numeric Sentence Starters</h3>
+      <p>10 developers are working on this specific sprint.</p>
+      <p>1 apple per day keeps the doctor away.</p>
+    </div>
+
+    <div id="warning-parentheses-list">
+      <h3>9. Parentheses Alpha List</h3>
+      <p>(a) First requirement for system access.</p>
+      <p>(b) Second requirement for system access.</p>
+    </div>
+
+    <div id="nothing-abbreviations">
+      <h3>10. Common Abbreviations</h3>
+      <p>e.g. This is an example and should not be a list.</p>
+      <p>i.e. This is an explanation, not a list item.</p>
+    </div>
+
+    <div id="nothing-french-prose">
+      <h3>11. French/Italian Prose</h3>
+      <p>À mon avis, c'est une excellente idée pour le projet.</p>
+      <p>È necessario confermare l'accesso prima di continuare.</p>
+    </div>
+
+    <div id="warning-br-split-list">
+      <h3>12. List split by BR tags</h3>
+      <p>
+        a. First part of a break-line list.<br>
+        b. Second part of a break-line list.
+      </p>
+    </div>
+
+    <div id="warning-roman-numerals">
+      <h3>12A. More Roman Numeral Structure</h3>
+      <p>I) Executive summary and project goals.</p>
+      <p>II) Detailed breakdown of the technical stack.</p>
+    </div>
+
+    <div id="warning-roman-numerals">
+      <h3>12B. More Roman Numeral Structure</h3>
+      <p>I) Executive summary and project goals.<br>II) Detailed breakdown of the technical stack.</p>
+    </div>
+
+    <div id="nothing-list-like-prose">
+      <h3>13. Sentence starting with "A." (Initial)</h3>
+      <p>A. Smith was the lead developer on the legacy system.</p>
+      <p>M. Jones took over during the migration phase.</p>
+    </div>
+
+    <div id="nothing-list-like-prose">
+      <h3>14. Sentence starting with "A.M" (Initial)</h3>
+      <p>A.M. Smith was the lead developer on the legacy system.</p>
+      <p>B. Jones took over during the migration phase.</p>
+    </div>
+
+    <hr><img alt="ignore">
+    <p>A place</p>
+    <p>Along</p>
+    <hr><img alt="ignore">
+    <p>A place<br> Along</p>
+    <hr><img alt="ignore">
+    <p>A deeper</p>
+    <p>Beeson</p>
+    <hr>
+    <p class=""><span>I have accordingly been heartened by the strong support that Princeton faculty, students, staff,
+        and
+        alumni have given to academic freedom and higher education as part of our.
+    </p>
+    <p><span>I am grateful for your partnership on academic freedom and so many other issues.&nbsp; You have
+        strengthened
+        this University at a time when its mission and values are more important than ever.</span></p>
+
+    <h2>Unpronounceable link text/symbols</h2>
+    <a href="https://www.example.com/Ssssdsd">🤝</a>
+    <hr>
+    <a href="https://www.example.com/Sssxdsd">↣</a>
+    <hr>
+    <a href="https://www.example.com/Ssssdsd">learn more ↣</a>
+    <hr>
+    <a href="https://www.example.com/Ssscdsd">ok ↣</a>
+
+
+    <div hidden>
+      <iframe src="https://www.example.com"></iframe>
+      <h2>New prop <code>ignoreByTest</code></h2>
+      <p>Add specific exclusions by test name.</p>
+      <p class="ignore"><strong>Howdy there</strong><br>Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+        Architecto iste magnam
+        iusto ipsum, fugiat ad
+        voluptatibus repellat harum? Illum qui dolore eius voluptatem repellat delectus earum pariatur voluptatum
+        corporis
+        voluptates? Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quos sit quaerat tempore corporis
+        temporibus
+        ipsa dolores sunt molestias ratione est sint aut nostrum facilis eaque minima maiores, modi debitis ex?</p>
+
+      <p><strong>Howdy there</strong><br>Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+        Architecto iste magnam
+        iusto ipsum, fugiat ad
+        voluptatibus repellat harum? Illum qui dolore eius voluptatem repellat delectus earum pariatur voluptatum
+        corporis
+        voluptates? Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quos sit quaerat tempore corporis
+        temporibus
+        ipsa dolores sunt molestias ratione est sint aut nostrum facilis eaque minima maiores, modi debitis ex?</p>
+    </div>
+    <hr>
+    <h2>aria-labelledby on inputs shouldn't flag warning for invisible labels</h2>
+    <div id="lorem" hidden>Lorem</div>
+    <div id="ipsum">Ipsum</div>
+    <header>
+      <div class="filter-contents keyword-wrapper details-wrapper"><label for="cs-keyword"
+          id="filter-keywords-label">Keyword
+          Search</label> <input id="cs-keyword" class="form-control" name="keyword"
+          aria-labelledby="filter-keywords-label lorem ipsum" value="" type="search" on="alert(xss)">
+        <p><small>Search title, description, instructor, or subject &amp; catalog number (e.g.
+            COS126).</small></p>
+      </div>
+    </header>
+    <label for="cs-keyword2" id="filter-keywords-label2">Keyword
+      Search</label> <input id="cs-keyword2" class="form-control" name="keyword"
+      aria-labelledby="filter-keywords-label2" value="">
+    <p><small>Search title, description, instructor, or subject &amp; catalog number (e.g.
+        COS126).</small></p>
+    </div>
+
+    <hr>
+
+    <h2>Remove false positive for fake heading detection</h2>
+    <p><strong>New College West and Yeh College</strong><br> named for a gift from Jaimie and James Yeh '87,
+      opened
+      in
+      2022
+      near Poe Field, housing more than 1,000 students and featuring several named residence halls and community spaces.
+      Aliya Kanji '97 made a gift to name <strong>Kanji Hall</strong> in New College West, the first Princeton building
+      named for an Ismaili Muslim. The couple Kwanza Jones '93 and José E. Feliciano '94 made gifts to name
+      <strong>Kwanza
+        Jones Hall</strong> and <strong>José E. Feliciano Hall</strong> in New College West, the first two Princeton
+      buildings named after Black and Latino benefactors.
+    </p>
+
+
+    <p><strong>New College West and Yeh College</strong> named for a gift from Jaimie and James Yeh '87, opened in 2022
+      near Poe Field, housing more than 1,000 students and featuring several named residence halls and community spaces.
+      Aliya Kanji '97 made a gift to name <strong>Kanji Hall</strong> in New College West, the first Princeton building
+      named for an Ismaili Muslim. The couple Kwanza Jones '93 and José E. Feliciano '94 made gifts to name
+      <strong>Kwanza
+        Jones Hall</strong> and <strong>José E. Feliciano Hall</strong> in New College West, the first two Princeton
+      buildings named after Black and Latino benefactors.
+    </p>
+
+    <h2>Gradient backgrounds where all stops have sufficient contrast</h2>
+    <style>
+      .grd {
+        padding: 15px;
+      }
+
+      .gradient-1 {
+        color: white;
+        background-image: linear-gradient(160deg, rebeccapurple 0%, purple 78.66%);
+      }
+
+      .gradient-2 {
+        color: white;
+        background-image: linear-gradient(160deg, rgb(195, 195, 255) 0%, rgb(0, 0, 0) 78.66%);
+      }
+
+      .gradient-3 {
+        color: white;
+        background-image: linear-gradient(160deg, asdpojs 0%, rgb(0, 0, 0) 78.66%);
+      }
+
+      .gradient-4 {
+        color: white;
+        background-image: linear-gradient(160deg, green 0%, rgb(0, 0, 0) 25%, darkblue 50%, rgb(39, 39, 153) 100%);
+      }
+
+      .gradient-5 {
+        color: white;
+        background-image: linear-gradient(160deg, #3500c5 0%, hsl(305, 70%, 14%) 100%);
+      }
+    </style>
+
+    <div id="nothing-gradient">
+      <p class="gradient-1 grd">
+        Named colour codes that pass.
+      </p>
+    </div>
+
+    <div id="warning-gradient">
+      <p class="gradient-2 grd">
+        Failing contrast.
+      </p>
+    </div>
+
+    <div id="error-grad">
+      <p class="gradient-3 grd">
+        Broken colour codes.
+      </p>
+    </div>
+
+    <div id="nothing-gradient">
+      <p class="gradient-4 grd">
+        Multiple gradient stops.
+      </p>
+    </div>
+
+    <div id="nothing-gradient">
+      <p class="gradient-5 grd">
+        Sufficient contrast.
+      </p>
+    </div>
+
+    <div id="warning-contrast">
+      <p class="background-image">Text on background image requires manual review!</p>
+    </div>
 
     <h2>Testing non-descript text or link is only new window phrases</h2>
     <div id="error-new-tab-link-text-1">
@@ -161,7 +985,7 @@
     <h2>Fix contrast suggestion within tooltip</h2>
     <p>If one colour input is unknown, contrast won't be calculated based on fallback and will continue displaying
       "Unknown"</p>
-    <p style="background: color(display-p3 0.1098 0.6902 0.9647); color: color(display-p3 0.1098 0.6902 0.9647);">
+    <p style="background: color(display-p3 0.1098 0.9999 0.9647); color: color(display-p3 0.1098 0.6902 0.9647);">
       Lorem ipsum, dolor sit amet
       consectetur
       adipisicing elit. Asperiores fuga corrupti explicabo porro. Consequuntur, est minima aspernatur, nisi laudantium
@@ -537,11 +1361,6 @@
         gap: 0.2rem;
         color: blue;
       }
-
-      svg {
-        width: 2rem;
-        height: 2rem;
-      }
     </style>
 
     <a class="svg-inline" href="https://sa11y.netlify.app/">
@@ -568,8 +1387,7 @@
     </a>
 
     <div hidden>
-      <h4>Somthing</h4>
-
+      <h4>Something</h4>
       <svg fill="currentColor" id="svg_new_tab">
         <path
           d="M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z" />
@@ -579,6 +1397,9 @@
     <h2>Testing &lt;pre&gt; within tooltip</h2>
     <p class="sa11y-announcement-component">Announcement</p>
     <p class="sa11y-announcement-component">Lorem ipsum dulce, some really long text passage.</p>
+    <p class="sa11y-announcement-component">Lorem ipsum dulce, some really long text passage.</p>
+    <p class="sa11y-announcement-component">Lorem ipsum dulce, some really long text passage.</p>
+
 
     <h2>Improve link check</h2>
     <ul>
@@ -879,7 +1700,7 @@
       </style>
       <div class="card">
         <h3>
-          <slot name="user-name">Default User</slot>
+          <slot name="user-name" on="alert">Default User</slot>
         </h3>
         <p>
           <slot name="user-description">No description provided.</slot>

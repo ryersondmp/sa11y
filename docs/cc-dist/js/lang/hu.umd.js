@@ -13,6 +13,7 @@
       WARNING: "Figyelmeztetés",
       WARNINGS: "Figyelmeztetések",
       GOOD: "Jó",
+      REVIEW: "Ellenőrzés",
       ON: "A oldalon.",
       OFF: "Off",
       ALERT_TEXT: "Riasztás",
@@ -43,7 +44,7 @@
       MISSING_ROOT: "A teljes oldal elérhetőségi ellenőrzése azért történt, mert a célterület <code>%(root)</code> nem létezik.",
       MISSING_READABILITY_ROOT: "Az olvashatósági pontszám a <code>%(fallback)</code> tartalomterületen alapul, mert a célterület <code>%(root)</code> nem létezik.",
       SKIP_TO_PAGE_ISSUES: "Ugrás az oldalra problémák",
-      CONSOLE_ERROR: 'Sajnáljuk, de probléma van az oldal hozzáférhetőségi ellenőrzőjével. Megtenné, hogy <a href="%(link)">bejelenti ezen az űrlapon</a> vagy a <a href="%(link)">GitHubon</a>?',
+      CONSOLE_ERROR: 'Sajnáljuk, de probléma van az oldal hozzáférhetőségi ellenőrzőjével. Megtenné, hogy <a href="https://forms.gle/sjzK9XykETaoqZv99">bejelenti ezen az űrlapon</a> vagy a <a href="https://github.com/ryersondmp/sa11y/issues/new?title=Bug%20report">GitHubon</a>?',
       APPEARANCE: "Megjelenés",
       MOVE_PANEL: "Panel mozgatása",
       HIDDEN: "Rejtett",
@@ -58,7 +59,7 @@
       PAGE_TITLE: "Oldalcím",
       RESULTS: "Eredmények",
       EXPORT_RESULTS: "Eredmények exportálása",
-      GENERATED: "Eredmények generálva %(tool)-vel.",
+      GENERATED: 'Eredmények generálva <a href="https://sa11y.netlify.app">Sa11y</a>-vel.',
       PREVIEW: "Előnézet",
       ELEMENT: "Elem",
       PATH: "Útvonal",
@@ -147,7 +148,8 @@
         "ez a weboldal",
         "megtekintés",
         "nézze meg a",
-        "weboldal"
+        "weboldal",
+        "cikk"
       ],
       CLICK: ["click", "kattintás"],
       NEW_WINDOW_PHRASES: ["külső", "új lap", "új ablak", "pop-up", "felbukkan"],
@@ -197,7 +199,8 @@
       LINK_DOI: 'Weboldalak vagy kizárólag online elérhető források esetében az <a href="https://apastyle.apa.org/style-grammar-guidelines/paper-format/accessibility/urls#:~:text=descriptive%20links">APA Style guide</a> leíró linkek használatát javasolja, a mű URL-jét vagy DOI-ját a cím köré tekerve. A linkszövegként használt hosszabb, kevésbé érthető URL-címek nehezen érthetőek lehetnek a segédeszközökkel.',
       LINK_NEW_TAB: 'A link figyelmeztetés nélkül új lapon vagy ablakban nyílik meg. Ez zavaró lehet, különösen azok számára, akik nehezen érzékelik a vizuális tartalmakat. Másodszor, nem mindig jó gyakorlat, ha valakinek az élményét irányítjuk, vagy döntéseket hozunk helyettük. Jelezze, hogy a link új ablakban nyílik meg a link szövegében<hr><strong>Tipp!</strong> Ismerje meg a legjobb gyakorlatokat: <a href="https://www.nngroup.com/articles/new-browser-windows-and-tabs/">Hivatkozások megnyitása új böngészőablakban és lapon.</a>',
       LINK_FILE_EXT: "A link figyelmeztetés nélkül PDF vagy letölthető fájlra (pl. MP3, Zip, Word Doc) mutat. A hivatkozás szövegében tüntesse fel a fájl típusát. Ha nagyméretű fájlról van szó, fontolja meg a fájlméret feltüntetését. <hr> <strong>Példa:</strong> Vezetői jelentés (PDF, 3MB)",
-      LINK_IDENTICAL_NAME: "A link szövege megegyezik egy másik link szövegével, bár egy másik oldalra mutat. A több azonos szövegű hivatkozás zavart okozhat a képernyőolvasót használó emberek számára. <strong>Figyeljen arra, hogy a következő hivatkozás leíróbb legyen, hogy jobban megkülönböztethető legyen a többi hivatkozástól.</strong> <hr> <strong {B}>Hozzáférhető név</strong> <strong {C}>%(TEXT)</strong>",
+      LINK_IDENTICAL_NAME: "Az oldalon több hivatkozás ugyanazt a szöveget használja, de különböző helyekre mutatnak. Ez zavaró lehet a segítő technológiát használók számára. A javításhoz tegye leíróbbá a hivatkozás szövegét.",
+      LINK_UNPRONOUNCEABLE: "A hivatkozás szövege csak szimbólumokat tartalmaz. Ha úgy gondolja, hogy ez a hivatkozás másolási/beillesztési hiba miatt hibás, fontolja meg a törlését.",
       // Images
       ALT_UNPRONOUNCEABLE: "Az alt szöveg csak kiejthetetlen szimbólumokat és/vagy szóközöket tartalmaz. A képernyőolvasók bejelentik a képet, majd megállnak. Ha a kép dekoratív, győződjön meg róla, hogy az alt szöveg nem tartalmaz szóközöket. <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>",
       LINK_ALT_UNPRONOUNCEABLE: "A hivatkozott kép alt szövege csak kiejthetetlen szimbólumokat és/vagy szóközöket tartalmaz. A képernyőolvasók bejelentik a képet, majd megállnak. Győződjön meg róla, hogy az alt szöveg leírja a hivatkozás célját. <hr> {L} {ALT} <strong {C}>%(ALT_TEXT)</strong>",
@@ -230,18 +233,19 @@
       LABELS_NO_FOR_ATTRIBUTE: "Ehhez a bemenethez nincs címke társítva. Adjon hozzá egy <code>for</code> attribútumot a címkéhez, amely megfelel a bemenet <code>id</code> azonosítójának. <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>",
       LABELS_MISSING_LABEL: "Ehhez a bemenethez nincs címke társítva. Kérjük, adjon hozzá egy <code>id</code>-t ehhez a bemenethez, és adjon hozzá egy megfelelő <code>for</code> attribútumot a címkéhez.",
       LABELS_PLACEHOLDER: 'A eltűnő helyőrző szöveg megnehezíti az emberek számára, hogy emlékezzenek arra, hogy mely információk tartoznak egy mezőbe, és hogy azonosítsák és kijavítsák a validálási problémákat. Ehelyett fontolja meg, hogy állandóan látható tippet használjon a űrlapmező előtt. <hr> Tudjon meg többet: <a href="https://www.nngroup.com/articles/form-design-placeholders/">A helyőrzők a űrlapmezőkben károsak.</a>',
+      ARIA_INPUT_FIELD_NAME: "Az ARIA beviteli vagy kapcsolómezőnek nincs akadálymentes neve. A javításhoz adjon meg egy érvényes <code>aria-labelledby</code>, <code>aria-label</code> vagy <code>title</code> attribútumot. Ha a bemenet kapcsolható (pl. jelölőnégyzet, kapcsoló, választógomb), a látható belső szöveg hozzáadása is megoldja ezt. <hr> <strong {B}>Elem</strong> <pre><code>%(EL)</code></pre>",
       // Embedded content
       EMBED_VIDEO: "Kérjük, gondoskodjon arról, hogy <strong>minden videó feliratozással legyen ellátva.</strong> A feliratozás biztosítása minden hang- és videotartalomhoz kötelező A-szintű követelmény. A feliratozás a siket vagy nagyothalló embereket támogatja.",
       EMBED_AUDIO: "Kérjük, gondoskodjon arról, hogy minden podcasthoz <strong>átiratot adjon.</strong> A hanganyag átiratának megadása kötelező A-szintű követelmény. Az átiratok a siket/süket vagy nagyothalló embereket támogatják, de mindenki számára hasznosak lehetnek. Fontolja meg az átirat elhelyezését alul vagy egy harmonika panelen belül.",
       EMBED_DATA_VIZ: 'Az ilyen adatvizualizációs widgetek gyakran problémát jelentenek azok számára, akik billentyűzetet vagy képernyőolvasót használnak a navigáláshoz, és jelentős nehézségeket okozhatnak a gyengén látók vagy színvakok számára. Javasoljuk, hogy ugyanezt az információt alternatív (szöveges vagy táblázatos) formátumban adjuk meg a widget alatt. <hr> Tudjon meg többet a <a href="https://www.w3.org/WAI/tutorials/images/complex">komplex képekről.</a>',
       EMBED_MISSING_TITLE: 'A beágyazott tartalomhoz hozzáférhető névre van szükség, amely leírja annak tartalmát. Kérjük, adjon meg egyedi <code>title</code> vagy <code>aria-label</code> attribútumot az <code>iframe</code> elemen. További információkért látogasson el ide: <a href="https://web.dev/learn/accessibility/more-html#iframes">iFrame-ek.</a>',
-      EMBED_GENERAL: 'Beágyazott tartalom ellenőrzése nem lehetséges. Kérjük, győződjön meg róla, hogy a képek alt szöveggel, a videók felirattal, a szöveg megfelelő kontraszttal és az interaktív komponensek <a href="https://webaim.org/techniques/keyboard/">billentyűzettel elérhetőek</a>.',
+      EMBED_GENERAL: 'Beágyazott tartalom ellenőrzése nem lehetséges. Kérjük, győződjön meg róla, hogy a képek alt szöveggel, a videók felirattal, a szöveg megfelelő kontraszttal és az interaktív komponensek <a href="https://webaim.org/techniques/keyboard/">billentyűzettel elérhetőek.</a>',
       EMBED_UNFOCUSABLE: 'Azoknak a <code>&lt;iframe&gt;</code>-nek, amelyek nem fókuszálható elemekkel rendelkeznek, nem kell <code>tabindex="-1"</code> tulajdonságot rendelni. A beágyazott tartalom nem lesz billentyűzettel elérhető.',
       // QA
       QA_BAD_LINK: "Rossz linket találtunk. Úgy tűnik, hogy a link egy fejlesztői környezetre mutat. <hr> {L} <strong {C}>%(LINK)</strong>",
-      QA_IN_PAGE_LINK: "Sérült azonos oldalú link. A hivatkozás célja nem egyezik meg egyetlen elemmel sem ezen az oldalon.",
+      QA_IN_PAGE_LINK: "Hibás belső hivatkozás. Ez a hivatkozás az oldal egy olyan szakaszára próbál navigálni, amely nem található. A javításhoz győződjön meg arról, hogy a hivatkozás megegyezik annak az elemnek az <code>id</code> azonosítójával, amelyre ugrani szeretne.",
       QA_STRONG_ITALICS: "A vastag és dőlt betűs címkéknek szemantikai jelentésük van, és <strong>nem</strong> szabad egész bekezdések kiemelésére használni őket. A félkövérrel kiemelt szöveget egy szó vagy kifejezés erős <strong>kiemelésére</strong> kell használni. A dőlt betűt a tulajdonnevek (pl. könyv- és cikkcímek), idegen szavak, idézőjelek kiemelésére kell használni. A hosszú idézeteket blokkidézetként kell formázni.",
-      QA_PDF: 'Nem lehet ellenőrizni a PDF-ek hozzáférhetőségét. A PDF-ek webes tartalomnak minősülnek, és azokat is hozzáférhetővé kell tenni. A PDF-ek gyakran tartalmaznak problémákat a képernyőolvasót használók (hiányzó szerkezeti címkék vagy hiányzó űrlapmező-címkék) és a gyengén látók (a szöveg nagyításkor nem folyik vissza) számára. <ul><li>Ha ez egy űrlap, fontolja meg egy hozzáférhető HTML űrlap használatát alternatívaként.</li><li>Ha ez egy dokumentum, fontolja meg a weboldallá alakítását.</li></ul>Máskülönben ellenőrizze a <a href="https://helpx.adobe.com/acrobat/using/create-verify-pdf-accessibility.html">PDF hozzáférhetőségét az Acrobat DC-ben.</a>Megközelíthetőségét az <a href="https://helpx.adobe.com/acrobat/using/create-verify-pdf-accessibility.html">PDF-ben.</a>.',
+      QA_PDF: 'Nem lehet ellenőrizni a PDF-ek hozzáférhetőségét. A PDF-ek webes tartalomnak minősülnek, és azokat is hozzáférhetővé kell tenni. A PDF-ek gyakran tartalmaznak problémákat a képernyőolvasót használók (hiányzó szerkezeti címkék vagy hiányzó űrlapmező-címkék) és a gyengén látók (a szöveg nagyításkor nem folyik vissza) számára. <ul><li>Ha ez egy űrlap, fontolja meg egy hozzáférhető HTML űrlap használatát alternatívaként.</li><li>Ha ez egy dokumentum, fontolja meg a weboldallá alakítását.</li></ul>Máskülönben ellenőrizze a <a href="https://helpx.adobe.com/acrobat/using/create-verify-pdf-accessibility.html">PDF hozzáférhetőségét az Acrobat DC-ben.</a>Megközelíthetőségét az <a href="https://helpx.adobe.com/acrobat/using/create-verify-pdf-accessibility.html">PDF-ben.</a>',
       QA_DOCUMENT: 'Nem lehet ellenőrizni a dokumentum hozzáférhetőségét. A hivatkozott dokumentumok webes tartalomnak minősülnek, és azokat is hozzáférhetővé kell tenni. Kérjük, kézzel ellenőrizze a dokumentumot. <ul><li>Tegye hozzáférhetőbbé <a href="https://support.google.com/docs/answer/6199477?hl=hu">Google Workspace dokumentumát vagy prezentációját.</a></li><li>Tegye hozzáférhetőbbé <a href="https://support.microsoft.com/hu/office/create-accessible-office-documents-868ecfcd-4f00-4224-b881-a65537a7c155">Office-dokumentumait.</a></li></ul>',
       QA_BLOCKQUOTE: "Ez egy címszó? <strong {C}>%(TEXT)</strong> <hr> A blokkos idézőjeleket csak idézőjeleknél kell használni. Ha ez egy fejlécnek szánja, akkor ezt a blokkidézetet változtassa meg egy szemantikus fejlécre (pl. Fejléc 2 vagy Fejléc 3).",
       QA_FAKE_HEADING: "Ez egy címszó? <strong {C}>%(TEXT)</strong> <hr> Egy félkövér vagy nagyméretű szövegsor címnek tűnhet, de a képernyőolvasót használó személy nem tudja megállapítani, hogy ez fontos, vagy nem tud a tartalmára ugrani. A félkövér vagy nagyméretű szöveg soha nem helyettesítheti a szemantikus címsorokat (Címsor 2-től a Címsor 6-ig).",
@@ -253,9 +257,10 @@
       QA_JUSTIFY: "Kerülje az igazított szöveg használatát, amely mind a bal, mind a jobb margóhoz igazodik. Ez néhány ember számára nehezen olvasható lehet a szavak közötti egyenlőtlen távolságok miatt. Használjon balra igazított szöveget a jobb olvashatóság érdekében.",
       QA_SMALL_TEXT: "A kis betűméret nehezebben olvasható, különösen a gyengén látók számára. A jobb olvashatóság érdekében kerülje a kisebb betűméretek használatát az alapértelmezettnél.",
       // Shared
-      ACC_NAME: "<strong {B}>Hozzáférhető név</strong> %(TEXT)",
-      ACC_NAME_TIP: '<hr> <strong>Tippek!</strong> A "hozzáférhető név" az a végső címke, amelyet a segédeszközöket használó embereknek kommunikálnak, és amelyet az ARIA számít. Ez segít nekik megérteni a hivatkozás vagy gomb célját.',
-      HIDDEN_FOCUSABLE: 'A hivatkozás vagy a gomb <code>aria-hidden=&quot;true&quot;</code>, de még mindig elérhető a billentyűzettel. Ha egy duplikált hivatkozást vagy gombot szeretne elrejteni, adjon hozzá egy <code>tabindex=&quot;-1&quot;</code> értéket is. Ellenkező esetben az <code>aria-hidden=&quot;true&quot;</code> nem használható olyan elemeknél, amelyek fókuszt kaphatnak. <hr> További információ a <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">aria-hidden attribútumról.</a>',
+      LINK_TEXT: "<strong {B}>Hivatkozás szövege</strong> <strong {C}>%(TEXT)</strong>",
+      ACC_NAME: "<strong {B}>Hozzáférhető név</strong> <strong {C}>%(TEXT)</strong>",
+      ACC_NAME_TIP: "<hr><strong>Tipp!</strong> Az „akadálymentes név” az a végső címke, amelyet a segítő technológiát használók felé továbbítanak. Ez segít nekik megérteni az elem célját.",
+      HIDDEN_FOCUSABLE: 'Ez az elem kaphat billentyűzet-fókuszt, de a képernyőolvasók elől rejtve van egy <code>aria-hidden="true"</code> attribútummal (önmagán vagy egy szülő konténeren). A javításhoz távolítsa el az aria-hidden attribútumot, vagy vegye ki az elemet a tabulátor-sorrendből. <hr> <strong {B}>Elem</strong> <pre><code>%(EL)</code></pre> <hr> Tudjon meg többet az <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">aria-hidden attribútumról.</a>',
       // Developer
       DUPLICATE_ID: "Találtunk <strong>duplikált azonosítót</strong>. A duplikált azonosító hibák köztudottan problémákat okoznak a segítő technológiák számára, amikor azok megpróbálnak interakcióba lépni a tartalommal. Kérjük, távolítsa el vagy változtassa meg a következő azonosítót. <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>",
       UNCONTAINED_LI: "Minden <code>&lt;li&gt;</code> listatételt a <code>&lt;ul&gt;</code> rendezetlen vagy <code>&lt;ol&gt;</code> rendezett elemek belsejébe kell elhelyezni. Ez a struktúra segít a képernyőolvasóknak pontosan bejelenteni a listát és annak elemeit.",
@@ -266,17 +271,22 @@
       META_SCALABLE: 'Távolítsa el a <code>user-scalable="no"</code> paramétert a <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">nézet meta tagjében</a> a nagyítás engedélyezése érdekében.',
       META_MAX: 'Győződjön meg arról, hogy a <code>maximum-scale</code> paraméter a <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">nézet meta tagjében</a> nem kisebb, mint 2.',
       META_REFRESH: "Az oldalnak nem szabad automatikusan frissülnie meta címke segítségével.",
+      META_LANG_SUGGEST: "A következő nyelvkód <code>%(CODE)</code> nem érvényes. Erre gondolt: <code>%(CODE)</code>?",
+      META_LANG_VALID: 'Az elem nyelvi kódja nem érvényes. A javításhoz cserélje ki a lang attribútumot egy érvényes nyelvi kódra. <hr> <strong {B}>Elem</strong> <code>&lt;%(ELEMENT) lang="%(CODE)"&gt;</code> <hr> Tudjon meg többet a <a href="https://www.w3.org/International/questions/qa-html-language-declarations">nyelv deklarálásáról HTML-ben.</a>',
       // Buttons
       BTN_EMPTY: "A gomb hiányzik egy akadálymentes névvel, amely leírja annak célját.",
       BTN_EMPTY_LABELLEDBY: "A gombnak van egy <code>aria-labelledby</code> értéke, amely üres, vagy nem egyezik meg egy másik elem <code>id</code> értékével az oldalon.",
       BTN: "gomb",
       BTN_TIP: 'Tudja meg, hogyan készíthet egy <a href="https://www.sarasoueidan.com/blog/accessible-icon-buttons/">akadálymentes gombot.</a>',
       BTN_ROLE_IN_NAME: 'Ne tartalmazza a "gomb" szót a gomb nevében. A képernyőolvasók már közlik az elem szerepét annak neve mellett.',
-      LABEL_IN_NAME: "Ennek az elemnek a látható szövege eltérhet az akadálymentes névtől, ami zavart okozhat az akadálymentes technológiákat használó felhasználók számára. Kérem, ellenőrizze: <hr> <strong {B}>Akadálymentes Név</strong> <strong {C}>%(TEXT)</strong>",
+      LABEL_IN_NAME: "Ennek az elemnek a látható szövege eltérhet az akadálymentes névtől, ami zavart okozhat az akadálymentes technológiákat használó felhasználók számára. Kérem, ellenőrizze: <hr> <strong {B}>Szöveg</strong> <strong {C}>%(TEXT)</strong> <hr> <strong {B}>Akadálymentes Név</strong> <strong {C}>%(TEXT)</strong>",
+      LINK_MAYBE_BUTTON: 'Ez a hivatkozás érvénytelen céllal rendelkezik. Bár az akadálymentes név vagy az attribútumok arra utalnak, hogy ez egyáltalán nem hivatkozás, hanem ehelyett valamilyen szkriptelt viselkedést vezérel az oldalon. A javításhoz cserélje ki a hivatkozást egy <a href="https://www.w3.org/WAI/ARIA/apg/patterns/button/">akadálymentes gombra</a>, vagy javítsa ki a hivatkozás célját. <hr> <strong {B}>Akadálymentes név</strong> <strong {C}>%(TEXT)</strong> <hr> <strong>Tipp!</strong> A segítő technológiák eltérően kezelik a gombokat és a hivatkozásokat. A megfelelő HTML-elem használata biztosítja, hogy a felhasználók tudják, mely billentyűkombinációkat kell használniuk, és milyen művelet fog elindulni.',
+      POTENTIAL_UI_ELEMENTS: ["menü", "bezárás", "váltás", "megnyitás", "kibontás", "összecsukás", "következő", "előző", "lejátszás", "szünet", "almenü", "megjelenítés", "elrejtés", "legördülő", "vissza", "előre", "kihagyás", "beküldés", "mégse", "mentés", "szerkesztés", "törlés", "eltávolítás", "keresés", "szűrés", "rendezés", "leállítás", "némítás", "visszahangosítás", "teljes képernyő", "minimalizálás", "maximalizálás"],
       // Tables
       TABLES_MISSING_HEADINGS: 'Hiányzó táblázatfejlécek! A hozzáférhető táblázatokhoz olyan HTML-jelölésre van szükség, amely jelzi a fejléccellákat és az adatcellákat, amelyek meghatározzák a kapcsolatukat. Ez az információ kontextust biztosít a segítő technológiát használó emberek számára. A táblázatokat csak táblázatos adatokhoz szabad használni. <hr> Tudjon meg többet a <a href="https://www.w3.org/WAI/tutorials/tables/">hozzáférhető táblázatokról.</a>',
       TABLES_SEMANTIC_HEADING: 'Az olyan szemantikus címsorokat, mint a Heading 2 vagy Heading 3, csak a tartalmi részeknél szabad használni; <strong>nem</strong> a HTML táblázatokban. A táblázatcímeket ehelyett a <code>&lt;th&gt;</code> elemmel jelezze. <hr> Tudjon meg többet a <a href="https://www.w3.org/WAI/tutorials/tables/">elérhető táblázatokról.</a>',
       TABLES_EMPTY_HEADING: 'Üres asztali fejlécet találtunk! A táblázat fejlécének <strong>soha</strong> nem szabad üresnek lennie. Fontos a sor- és/vagy oszlopfejlécek kijelölése a kapcsolatuk érzékeltetése érdekében. Ez az információ kontextust biztosít a segítő technológiát használó emberek számára. Ne feledje, hogy a táblázatok csak táblázatos adatokhoz használhatók. <hr> Tudjon meg többet a <a href="https://www.w3.org/WAI/tutorials/tables/">elérhető táblázatokról.</a>',
+      TABLES_INVALID_HEADERS_REF: 'Ez a táblázat egy konkrét adatcellát próbál összekapcsolni egy konkrét fejléccellával, de a fejléc azonosítója (ID) nem található. Győződjön meg arról, hogy minden <code>headers</code> attribútum megegyezik egy ugyanazon táblázaton belüli fejléccella azonosítójával. <hr> <strong {B}>Fejlécek</strong> <code>%(VALUE)</code> <hr> <strong>Tipp!</strong> A <a href="https://www.w3.org/WAI/WCAG22/Techniques/html/H43">kézi ID-hivatkozások használata</a> az adatcellák és fejléccellák összekapcsolásához bonyolult és sérülékeny megoldás. Amikor csak lehetséges, bontsa a komplex adatokat kisebb táblázatokra, egyszerű fejléc-sorokkal és -oszlopokkal.',
       // Contrast
       CONTRAST_NORMAL: "Teks ukuran normal harus memiliki rasio kontras setidaknya %(RATIO).",
       CONTRAST_LARGE: "Teks ukuran besar harus memiliki rasio kontras setidaknya %(RATIO).",
@@ -296,7 +306,14 @@
       UNKNOWN: "Ismeretlen",
       FG: "Előtér",
       BG: "Háttér",
-      NO_SUGGESTION: "A szöveg színének módosításával nem található hozzáférhető kombináció. Próbálja meg módosítani a háttér színét."
+      NO_SUGGESTION: "A szöveg színének módosításával nem található hozzáférhető kombináció. Próbálja meg módosítani a háttér színét.",
+      // Page language
+      PAGE_LANG_CONFIDENCE: 'Az oldal szövegének több mint fele %(LIKELY_LANG) nyelvűnek tűnik, de a megadott oldalnyelv %(PAGE_LANG). Fontolja meg a <a href="https://www.w3.org/International/questions/qa-html-language-declarations">megadott oldalnyelv</a> frissítését a tartalomnak megfelelően.',
+      LANG_OF_PARTS: "Az oldal nyelve %(PAGE_LANG) ként lett megadva, de ez a tartalom %(LIKELY_LANG) nyelvűnek tűnik. Győződjön meg arról, hogy a tartalom megfelelően van megjelölve.",
+      LANG_MISMATCH: "Ez a tartalom %(DETECTED_LANG) nyelvűnek tűnik, azonban %(WRONG_LANG) nyelvűként lett megjelölve.",
+      LANG_OF_PARTS_ALT: "Ez az alternatív szöveg %(LIKELY_LANG) nyelvűnek tűnik, de az oldal nyelve %(PAGE_LANG) ként lett megadva. Győződjön meg arról, hogy az alternatív szöveg az oldal többi részével azonos nyelvű. <hr> {ALT} <strong {C}>%(ALT)</strong>",
+      LANG_TIP: "<hr><strong>Tipp!</strong> Képernyőolvasók nyelvi címkék alapján ejtik ki a szavakat. Egy nyelv nem megfelelő nyelvcsomaggal történő kiejtése érthetetlen beszédet eredményez.",
+      LANG_UNSUPPORTED: "A nyelvvel kapcsolatos akadálymentességi ellenőrzések kimaradtak, mert ez a böngésző nem támogatja az automatikus nyelvfelismerést."
     }
   };
   return hu;

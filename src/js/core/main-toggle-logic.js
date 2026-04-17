@@ -1,0 +1,50 @@
+import Constants from '../utils/constants';
+import { isScrollable, store } from '../utils/utils';
+import { resetAll } from './resetAll';
+import checkAll from './checkAll';
+
+/* ************************************** */
+/*  Initialize main toggle within panel.  */
+/* ************************************** */
+export default function mainToggle() {
+  // Keeps checker active when navigating between pages until it is toggled off.
+  Constants.Panel.toggle.addEventListener('click', (e) => {
+    if (store.getItem('sa11y-panel') === 'Opened') {
+      e.preventDefault();
+      store.setItem('sa11y-panel', 'Closed');
+      Constants.Panel.toggle.classList.remove('on');
+      Constants.Panel.toggle.setAttribute('aria-expanded', 'false');
+      resetAll();
+
+      if (Constants.Panel.notifCount.textContent.trim().length === 0) {
+        Constants.Panel.notifBadge.style.display = 'none';
+      } else {
+        Constants.Panel.notifBadge.style.display = 'flex';
+      }
+    } else {
+      e.preventDefault();
+      store.setItem('sa11y-panel', 'Opened');
+      Constants.Panel.toggle.classList.add('on');
+      Constants.Panel.toggle.setAttribute('aria-expanded', 'true');
+      resetAll(); // Make sure there's a clean slate.
+      checkAll();
+      isScrollable(Constants.Panel.outlineList, Constants.Panel.outlineContent);
+    }
+  });
+
+  // Remember to leave it open
+  if (store.getItem('sa11y-panel') === 'Opened') {
+    Constants.Panel.toggle.classList.add('on');
+    Constants.Panel.toggle.setAttribute('aria-expanded', 'true');
+    Constants.Panel.panel.style.transform = '';
+  }
+
+  // Alt + A to enable accessibility checker.
+  document.onkeydown = (e) => {
+    const evt = e || window.event;
+    if (evt.altKey && evt.code === 'KeyA') {
+      Constants.Panel.toggle.click();
+      Constants.Panel.toggle.focus();
+    }
+  };
+}

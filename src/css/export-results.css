@@ -172,6 +172,14 @@ details {
 summary {
   font-weight: bold;
   cursor: pointer;
+
+  div {
+    display: inline-block;
+  }
+
+  p {
+    margin: 0;
+  }
 }
 
 details[open] {

@@ -14,7 +14,12 @@ const defaultOptions = {
   linkIgnore: '',
   linkIgnoreSpan: '',
   linkIgnoreStrings: [],
+  paragraphIgnore: 'table p',
   ignoreContentOutsideRoots: false,
+  ignoreByTest: {
+    LABELS_ARIA_LABELS_INPUT: ':is(header, footer) [type="search"]',
+    LABELS_PLACEHOLDER: ':is(header, footer) [type="search"]',
+  },
 
   // Control panel settings
   aboutContent: '',
@@ -44,6 +49,8 @@ const defaultOptions = {
   selectorPath: false,
   shadowComponents: '',
   autoDetectShadowComponents: false,
+  pepper: window.location.hostname, // Provide a string to seed hashes.
+  unitTestMode: false,
 
   // Annotations
   showGoodImageButton: true,
@@ -82,6 +89,10 @@ const defaultOptions = {
   extraPlaceholderStopWords: '',
   imageWithinLightbox: '',
   initialHeadingLevel: [],
+
+  // Shared properties for page language detection
+  langOfPartsPlugin: false,
+  langOfPartsCache: true,
 
   // All checks
   checks: {
@@ -134,6 +145,8 @@ const defaultOptions = {
     LINK_ALT_MAYBE_BAD: {
       minLength: 15,
     },
+    ALT_MAYBE_BAD_WARNING: true,
+    LINK_ALT_MAYBE_BAD_WARNING: true,
 
     // Link checks
     DUPLICATE_TITLE: {
@@ -162,14 +175,16 @@ const defaultOptions = {
       dismissAll: true,
     },
     LINK_FILE_EXT: true,
+    LINK_UNPRONOUNCEABLE: true,
 
     // Form labels checks
     LABELS_MISSING_IMAGE_INPUT: true,
     LABELS_INPUT_RESET: true,
     LABELS_MISSING_LABEL: true,
-    LABELS_ARIA_LABEL_INPUT: true,
     LABELS_NO_FOR_ATTRIBUTE: true,
     LABELS_PLACEHOLDER: true,
+    LABELS_ARIA_LABEL_INPUT: true,
+    ARIA_INPUT_FIELD_NAME: true,
 
     // Embedded content checks
     EMBED_AUDIO: {
@@ -202,6 +217,7 @@ const defaultOptions = {
     TABLES_MISSING_HEADINGS: true,
     TABLES_SEMANTIC_HEADING: true,
     TABLES_EMPTY_HEADING: true,
+    TABLES_INVALID_HEADERS_REF: true,
     QA_FAKE_HEADING: true,
     QA_FAKE_LIST: true,
     QA_UPPERCASE: true,
@@ -210,14 +226,26 @@ const defaultOptions = {
     QA_NESTED_COMPONENTS: {
       sources: '',
     },
-    QA_JUSTIFY: true,
-    QA_SMALL_TEXT: true,
+    QA_JUSTIFY: {
+      dismissAll: true,
+    },
+    QA_SMALL_TEXT: {
+      dismissAll: true,
+    },
 
     // Meta checks
     META_LANG: true,
+    META_LANG_VALID: true,
+    META_LANG_SUGGEST: true,
     META_SCALABLE: true,
     META_MAX: true,
     META_REFRESH: true,
+    PAGE_LANG_CONFIDENCE: {
+      confidence: 0.95,
+    },
+    LANG_OF_PARTS: true,
+    LANG_MISMATCH: true,
+    LANG_OF_PARTS_ALT: true,
 
     // Developer checks
     DUPLICATE_ID: true,
@@ -229,6 +257,7 @@ const defaultOptions = {
     BTN_EMPTY: true,
     BTN_EMPTY_LABELLEDBY: true,
     BTN_ROLE_IN_NAME: true,
+    LINK_MAYBE_BUTTON: true,
 
     // Contrast checks
     CONTRAST_WARNING: {

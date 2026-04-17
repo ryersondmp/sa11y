@@ -9,6 +9,7 @@ const ko = {
     WARNING: "경고",
     WARNINGS: "경고",
     GOOD: "양호함",
+    REVIEW: "검토",
     ON: "켜짐",
     OFF: "꺼짐",
     ALERT_TEXT: "경고",
@@ -39,7 +40,7 @@ const ko = {
     MISSING_ROOT: "타겟 영역 <code>%(root)</code>이(가) 없기 때문에 전체 페이지에 대한 접근성을 확인했습니다.",
     MISSING_READABILITY_ROOT: "가독성 점수는 <code>%(fallback)</code> 콘텐츠 영역을 기반으로 합니다. 대상 영역 <code>%(root)</code>가 존재하지 않기 때문입니다.",
     SKIP_TO_PAGE_ISSUES: "페이지 문제로 건너뛰기",
-    CONSOLE_ERROR: '죄송합니다. 이 페이지에서 접근성 점검기에 문제가 있습니다. <a href="%(link)">이 양식</a>이나 <a href="%(link)">GitHub</a>을 통해 신고해 주십시오.',
+    CONSOLE_ERROR: '죄송합니다. 이 페이지에서 접근성 점검기에 문제가 있습니다. <a href="https://forms.gle/sjzK9XykETaoqZv99">이 양식</a>이나 <a href="https://github.com/ryersondmp/sa11y/issues/new?title=Bug%20report">GitHub</a>을 통해 신고해 주십시오.',
     APPEARANCE: "모양",
     MOVE_PANEL: "패널을 이동",
     HIDDEN: "숨김",
@@ -48,7 +49,7 @@ const ko = {
     PAGE_TITLE: "페이지 제목",
     RESULTS: "결과",
     EXPORT_RESULTS: "결과 내보내기",
-    GENERATED: "%(TOOL)로 생성된 결과입니다.",
+    GENERATED: '<a href="https://sa11y.netlify.app">Sa11y</a> 로 생성된 결과입니다.',
     PREVIEW: "미리 보기",
     ELEMENT: "요소",
     PATH: "경로",
@@ -144,7 +145,8 @@ const ko = {
       "이 웹사이트",
       "보기",
       "보기",
-      "웹사이트"
+      "웹사이트",
+      "기사"
     ],
     CLICK: ["click", "클릭"],
     NEW_WINDOW_PHRASES: ["외부", "새 탭", "새 창", "팝업", "팝업"],
@@ -194,7 +196,8 @@ const ko = {
     LINK_DOI: '웹 페이지 또는 온라인 전용 리소스의 경우 <a href="https://apastyle.apa.org/style-grammar-guidelines/paper-format/accessibility/urls#:~:text=descriptive%20links">APA 스타일 가이드</a>에서는 제목 주위에 저작물의 URL 또는 DOI를 감싸는 설명 링크를 사용할 것을 권장합니다. 링크 텍스트로 사용되는 길고 이해하기 어려운 URL은 보조 기술을 사용하여 이해하기 어려울 수 있습니다.',
     LINK_NEW_TAB: '경고 없이 새 탭 또는 새 창에서 링크가 열립니다. 특히 시각적 콘텐츠를 인식하는 데 어려움을 겪는 사람들에게는 혼란을 줄 수 있습니다. 둘째, 다른 사람의 경험을 통제하거나 대신 결정을 내리는 것은 항상 좋은 관행이 아닙니다. 링크 텍스트 내에 링크가 새 창에서 열림 <hr> <strong>팁!</strong> 모범 사례 알아보기임을 표시하세요: <a href="https://www.nngroup.com/articles/new-browser-windows-and-tabs/">새 브라우저 창 및 탭에서 링크 열기</a>',
     LINK_FILE_EXT: "링크는 경고 없이 PDF 또는 다운로드 가능한 파일(예: MP3, Zip, Word Doc)을 가리킵니다. 링크 텍스트에 파일 유형을 표시합니다. 대용량 파일인 경우 파일 크기를 포함하는 것이 좋습니다. <hr> <strong>예시:</strong> 임원 보고서(PDF, 3MB)",
-    LINK_IDENTICAL_NAME: "다른 페이지를 가리키지만 링크의 텍스트가 다른 링크와 동일합니다. 동일한 텍스트의 링크가 여러 개 있으면 화면 리더를 사용하는 사용자에게 혼란을 줄 수 있습니다. <strong>다음 링크를 다른 링크와 구분할 수 있도록 더 설명적으로 만드는 것을 고려하세요.</strong> <hr> <strong {B}>접근 가능한 이름</strong> <strong {C}>%(TEXT)</strong>",
+    LINK_IDENTICAL_NAME: "이 페이지의 여러 링크가 동일한 링크 텍스트를 사용하지만 서로 다른 위치를 가리킵니다. 이는 보조 기술 사용자에게 혼란을 줄 수 있습니다. 문제를 해결하려면 링크 텍스트를 더 구체적으로 수정하세요.",
+    LINK_UNPRONOUNCEABLE: "링크 텍스트에 기호만 포함되어 있습니다. 복사/붙여넣기 오류로 인한 링크라고 생각되면 삭제를 고려해 보세요.",
     // Images
     ALT_UNPRONOUNCEABLE: "대체 텍스트에는 발음할 수 없는 기호 및/또는 공백만 포함되어 있습니다. 화면 읽기 프로그램은 이미지를 알린 후 멈춥니다. 이미지가 장식용이라면 대체 텍스트에 공백이 없도록 하십시오. <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>",
     LINK_ALT_UNPRONOUNCEABLE: "이 링크된 이미지의 대체 텍스트에는 발음할 수 없는 기호 및/또는 공백만 포함되어 있습니다. 화면 읽기 프로그램은 이미지를 알린 후 멈춥니다. 대체 텍스트가 링크 목적지를 설명하는지 확인하십시오. <hr> {L} {ALT} <strong {C}>%(ALT_TEXT)</strong>",
@@ -227,6 +230,7 @@ const ko = {
     LABELS_NO_FOR_ATTRIBUTE: "이 입력과 연결된 레이블이 없습니다. 이 입력의 <code>ID</code>와 일치하는 레이블에 <code>용</code> 속성을 추가합니다. <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>",
     LABELS_MISSING_LABEL: "이 입력과 연결된 레이블이 없습니다. 이 입력에 <code>아이디</code>를 추가하고 레이블에 일치하는 <code>용</code> 속성을 추가하세요.",
     LABELS_PLACEHOLDER: '사라지는 자리 표시자 텍스트는 사람들이 필드에 어떤 정보가 들어가야 하는지 기억하는 데 어려움을 주며 유효성 검사 문제를 식별하고 수정하기 어렵게 만듭니다. 대신, 양식 필드 앞에 항상 표시되는 힌트를 사용하는 것을 고려하십시오. <hr> 자세히 알아보세요: <a href="https://www.nngroup.com/articles/form-design-placeholders/">양식 필드의 자리 표시자는 유해합니다.</a>',
+    ARIA_INPUT_FIELD_NAME: "ARIA 입력 또는 토글 필드에 액세스 가능한 이름이 누락되었습니다. 문제를 해결하려면 유효한 <code>aria-labelledby</code>, <code>aria-label</code> 또는 <code>title</code> 속성을 제공하세요. 입력이 토글 가능한 경우(예: 체크박스, 스위치, 라디오 버튼) 시각적인 내부 텍스트를 추가해도 이 문제가 해결됩니다. <hr> <strong {B}>요소</strong> <pre><code>%(EL)</code></pre>",
     // Embedded content
     EMBED_VIDEO: "모든 동영상에 자막이 있는지 확인하세요. 모든 오디오 및 동영상 콘텐츠에 자막을 제공하는 것은 필수 레벨 A 요건입니다. 자막은 청각 장애가 있거나 난청인 사용자를 지원합니다.",
     EMBED_AUDIO: "모든 팟캐스트에 <strong>대본을 제공해야 합니다.</strong> 오디오 콘텐츠에 대한 대본 제공은 필수 레벨 A 요건입니다. 대본은 청각 장애가 있거나 청각이 불편한 사람들을 지원하지만 모든 사람에게 도움이 될 수 있습니다. 대본을 아래 또는 아코디언 패널 안에 배치하는 것을 고려하세요.",
@@ -236,7 +240,7 @@ const ko = {
     EMBED_UNFOCUSABLE: '포커스할 수 없는 요소를 포함한 <code>&lt;iframe&gt;</code>은 <code>tabindex="-1"</code>을 가져서는 안 됩니다. 포함된 콘텐츠는 키보드로 접근할 수 없습니다.',
     // QA
     QA_BAD_LINK: "잘못된 링크를 찾았습니다. 링크가 개발 환경을 가리키는 것으로 보입니다. <hr> {L} <strong {C}>%(LINK)</strong>",
-    QA_IN_PAGE_LINK: "부서진 동일 페이지 링크입니다. 링크 대상이 이 페이지에 있는 어떤 요소와도 일치하지 않습니다.",
+    QA_IN_PAGE_LINK: "끊어진 페이지 내 링크입니다. 이 링크는 찾을 수 없는 페이지 섹션으로 이동하려고 시도합니다. 이 문제를 해결하려면 링크가 이동하려는 요소의 <code>id</code>와 일치하는지 확인하세요.",
     QA_STRONG_ITALICS: "굵게 및 이탤릭체 태그는 의미론적 의미가 있으며, 전체 단락을 강조할 때는 <강함>이 아닌 <강함>을 사용해야 합니다. 굵은 텍스트는 단어나 문구에 강한 <강한> 강조를 제공할 때 사용해야 합니다. 고유명사(예: 책 및 기사 제목), 외래어, 따옴표는 이탤릭체로 강조 표시해야 합니다. 긴 따옴표는 블록 따옴표로 서식을 지정해야 합니다.",
     QA_PDF: 'PDF의 접근성을 확인할 수 없습니다. PDF는 웹 콘텐츠로 간주되며 접근성을 확보해야 합니다. PDF에는 종종 스크린 리더를 사용하는 사람들을 위한 문제가 있습니다(구조 태그가 누락되거나 양식 필드 레이블이 누락됨) 및 시각이 낮은 사람들(텍스트가 확대되면 재배치되지 않음). <ul><li>이것이 양식이면 접근 가능한 HTML 양식을 대안으로 사용하는 것을 고려하십시오.</li><li>이것이 문서인 경우 웹 페이지로 변환하는 것을 고려하십시오.</li></ul>그렇지 않으면, <a href="https://helpx.adobe.com/acrobat/using/create-verify-pdf-accessibility.html">Acrobat DC에서 PDF의 접근성을 확인하세요.</a>',
     QA_DOCUMENT: '문서의 접근성을 확인할 수 없습니다. 링크된 문서는 웹 콘텐츠로 간주되므로 접근성을 제공해야 합니다. 이 문서를 수동으로 검토해 주세요. <a href="https://support.google.com/docs/answer/6199477?hl=ko">Google 스페이스 문서 또는 프레젠테이션에 더 쉽게 액세스할 수 있도록 설정하세요.</a></li><li><a href="https://support.microsoft.com/ko/office/create-accessible-office-documents-868ecfcd-4f00-4224-b881-a65537a7c155">Office 문서에 더 쉽게 액세스할 수 있도록 설정하세요.</a></li></ul>',
@@ -250,9 +254,10 @@ const ko = {
     QA_JUSTIFY: "왼쪽 및 오른쪽 여백에 맞춘 정렬된 텍스트를 사용하지 마십시오. 단어 사이의 불균등한 간격 때문에 일부 사람들에게는 읽기 어렵습니다. 더 나은 가독성을 위해 왼쪽 정렬된 텍스트를 사용하십시오.",
     QA_SMALL_TEXT: "작은 글씨는 특히 시력이 낮은 사람들에게 읽기 어렵습니다. 더 나은 가독성을 보장하려면 기본값보다 작은 글꼴 크기를 사용하지 마십시오.",
     // Shared
-    ACC_NAME: "<strong {B}>접근 가능한 이름</strong> %(TEXT)",
-    ACC_NAME_TIP: '<hr><strong>팁!</strong> "접근 가능한 이름"은 보조 기술을 사용하는 사람들에게 전달되는 최종 레이블이며 ARIA에 의해 계산됩니다. 이를 통해 링크 또는 버튼의 목적을 이해하는 데 도움이 됩니다.',
-    HIDDEN_FOCUSABLE: '링크 또는 버튼에 <code>aria-hidden=&quot;true&quot;</code> 속성이 있지만 여전히 키보드로 포커스할 수 있습니다. 중복된 링크 또는 버튼을 숨기려면 <code>tabindex=&quot;-1&quot;</code> 속성을 추가하세요. 그렇지 않으면, 포커스를 받을 수 있는 요소에 <code>aria-hidden=&quot;true&quot;</code>를 사용해서는 안 됩니다. <hr> <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">aria-hidden 속성</a>에 대해 더 알아보세요.',
+    LINK_TEXT: "<strong {B}>링크 텍스트</strong> <strong {C}>%(TEXT)</strong>",
+    ACC_NAME: "<strong {B}>접근 가능한 이름</strong> <strong {C}>%(TEXT)</strong>",
+    ACC_NAME_TIP: '<hr><strong>팁!</strong> "액세스 가능한 이름"은 보조 기술을 사용하는 사람들에게 전달되는 최종 레이블입니다. 이는 그들이 요소의 목적을 이해하는 데 도움이 됩니다.',
+    HIDDEN_FOCUSABLE: '이 요소는 키보드 포커스를 받을 수 있지만, 자신 또는 상위 컨테이너의 <code>aria-hidden="true"</code> 속성으로 인해 스크린 리더에서 숨겨져 있습니다. 문제를 해결하려면 aria-hidden 속성을 제거하거나 탭 순서에서 요소를 제거하세요. <hr> <strong {B}>요소</strong> <pre><code>%(EL)</code></pre> <hr> <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">aria-hidden 속성</a>에 대해 자세히 알아보세요.',
     // Developer
     DUPLICATE_ID: "중복 ID를 찾았습니다. 중복 ID 오류는 보조 기술이 콘텐츠와 상호 작용할 때 문제를 일으키는 것으로 알려져 있습니다. 다음 ID를 제거하거나 변경하세요. <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>",
     UNCONTAINED_LI: "모든 <code>&lt;li&gt;</code> 목록 항목은 <code>&lt;ul&gt;</code> 비정렬 목록 또는 <code>&lt;ol&gt;</code> 정렬 목록 요소 안에 배치해야 합니다. 이 구조는 스크린 리더가 목록과 항목을 정확하게 읽어주는 데 도움이 됩니다.",
@@ -263,17 +268,22 @@ const ko = {
     META_SCALABLE: '확대를 허용하기 위해 <a href="https://developer.mozilla.org/ko/docs/Web/HTML/Viewport_meta_tag">뷰포트 메타 태그</a>에서 <code>user-scalable="no"</code> 매개변수를 제거하십시오.',
     META_MAX: '<a href="https://developer.mozilla.org/ko/docs/Web/HTML/Viewport_meta_tag">뷰포트 메타 태그</a>에서 <code>maximum-scale</code> 매개변수가 2보다 작지 않도록 하십시오.',
     META_REFRESH: "페이지는 메타 태그를 사용하여 자동으로 새로고침되지 않아야 합니다.",
+    META_LANG_SUGGEST: "다음 언어 코드 <code>%(CODE)</code>가 유효하지 않습니다. <code>%(CODE)</code>를 의미하셨나요?",
+    META_LANG_VALID: '이 요소의 언어 코드가 유효하지 않습니다. 문제를 해결하려면 lang 속성을 유효한 언어 코드로 교체하세요. <hr> <strong {B}>요소</strong> <code>&lt;%(ELEMENT) lang="%(CODE)"&gt;</code> <hr> <a href="https://www.w3.org/International/questions/qa-html-language-declarations">HTML에서 언어 선언</a>에 대해 자세히 알아보세요.',
     // Buttons
     BTN_EMPTY: "버튼에 그 목적을 설명하는 접근 가능한 이름이 없습니다.",
     BTN_EMPTY_LABELLEDBY: "버튼에 비어 있는 <code>aria-labelledby</code> 값이 있거나, 페이지의 다른 요소의 <code>id</code> 값과 일치하지 않습니다.",
     BTN: "버튼",
     BTN_TIP: '접근 가능한 <a href="https://www.sarasoueidan.com/blog/accessible-icon-buttons/">버튼 만드는 법</a> 배우기.',
     BTN_ROLE_IN_NAME: '버튼 이름에 "버튼"이라는 단어를 포함하지 마십시오. 스크린 리더는 이름 외에도 요소의 역할을 전달합니다.',
-    LABEL_IN_NAME: "이 요소의 표시되는 텍스트가 접근 가능한 이름과 다른 것처럼 보이며, 지원 기술을 사용하는 사용자에게 혼란을 줄 수 있습니다. 검토해 주세요: <hr> <strong {B}>접근 가능한 이름</strong> <strong {C}>%(TEXT)</strong>",
+    LABEL_IN_NAME: "이 요소의 표시되는 텍스트가 접근 가능한 이름과 다른 것처럼 보이며, 지원 기술을 사용하는 사용자에게 혼란을 줄 수 있습니다. 검토해 주세요: <hr> <strong {B}>텍스트</strong> <strong {C}>%(TEXT)</strong> <hr> <strong {B}>접근 가능한 이름</strong> <strong {C}>%(TEXT)</strong>",
+    LINK_MAYBE_BUTTON: '이 링크의 대상이 유효하지 않습니다. 액세스 가능한 이름이나 속성으로 볼 때, 이것은 링크가 아니라 페이지의 스크립트 동작을 제어하는 요소일 가능성이 높습니다. 문제를 해결하려면 링크를 <a href="https://www.w3.org/WAI/ARIA/apg/patterns/button/">액세스 가능한 버튼</a>으로 교체하거나 링크의 목적지를 수정하세요. <hr> <strong {B}>액세스 가능한 이름</strong> <strong {C}>%(TEXT)</strong> <hr> <strong>팁!</strong> 보조 기술은 버튼과 링크를 다르게 처리합니다. 올바른 HTML 요소를 사용하면 사용자가 어떤 키보드 단축키를 사용해야 하는지, 어떤 동작이 실행될지 이해할 수 있습니다.',
+    POTENTIAL_UI_ELEMENTS: ["메뉴", "닫기", "토글", "열기", "확장", "축소", "다음", "이전", "재생", "일시 중지", "하위 메뉴", "표시", "숨기기", "드롭다운", "뒤로", "앞으로", "건너뛰기", "제출", "취소", "저장", "편집", "삭제", "제거", "검색", "필터", "정렬", "중지", "음소거", "음소거 해제", "전체 화면", "최소화", "최대화"],
     // Tables
     TABLES_MISSING_HEADINGS: '표 헤더가 누락되었습니다! 접근 가능한 표에는 머리글 셀과 데이터 셀의 관계를 정의하는 HTML 마크업이 필요합니다. 이 정보는 보조 기술을 사용하는 사람들에게 컨텍스트를 제공합니다. 표는 표 형식의 데이터에만 사용해야 합니다. <hr> <a href="https://www.w3.org/WAI/tutorials/tables/">액세스 가능한 표에 대해 자세히 알아보기.</a>',
     TABLES_SEMANTIC_HEADING: '제목 2 또는 제목 3과 같은 시맨틱 제목은 콘텐츠 섹션에만 사용해야 하며, HTML 표에는 <strong>이 아닌</strong>을 사용해야 합니다. 대신 <code>&lt;th&gt;</code> 요소를 사용하여 표 제목을 표시하세요. <hr> <a href="https://www.w3.org/WAI/tutorials/tables/">액세스 가능한 표에 대해 자세히 알아보기.</a>',
     TABLES_EMPTY_HEADING: '빈 테이블 헤더가 발견되었습니다! 테이블 헤더는 비어 있으면 안 됩니다. 행 및/또는 열 머리글을 지정하여 관계를 전달하는 것이 중요합니다. 이 정보는 보조 기술을 사용하는 사람들에게 맥락을 제공합니다. 표는 표 형식의 데이터에만 사용해야 한다는 점에 유의하세요. <hr> <a href="https://www.w3.org/WAI/tutorials/tables/">액세스 가능한 테이블에 대해 자세히 알아보기.</a>',
+    TABLES_INVALID_HEADERS_REF: '이 테이블은 특정 데이터 셀을 특정 헤더 셀로 레이블을 지정하려고 시도하지만, 헤더 ID를 찾을 수 없습니다. 각 <code>headers</code> 속성이 동일한 테이블 내의 헤더 셀 ID와 일치하는지 확인하세요. <hr> <strong {B}>헤더</strong> <code>%(VALUE)</code> <hr> <strong>팁!</strong> 데이터 셀을 헤더 셀과 연결하기 위해 <a href="https://www.w3.org/WAI/WCAG22/Techniques/html/H43">수동 ID 참조를 사용</a>하는 것은 복잡하고 관리가 어렵습니다. 가능하면 복잡한 데이터를 단순한 헤더 행과 열이 있는 작은 테이블로 나누세요.',
     // Contrast
     CONTRAST_NORMAL: "일반 크기의 텍스트는 최소 %(RATIO) 대비 비율을 가져야 합니다.",
     CONTRAST_LARGE: "큰 크기의 텍스트는 최소 %(RATIO) 대비 비율을 가져야 합니다.",
@@ -293,7 +303,14 @@ const ko = {
     UNKNOWN: "알 수 없음",
     FG: "전경",
     BG: "배경",
-    NO_SUGGESTION: "텍스트 색상만 변경하여는 접근 가능한 조합을 찾을 수 없습니다. 배경 색상을 변경해 보세요."
+    NO_SUGGESTION: "텍스트 색상만 변경하여는 접근 가능한 조합을 찾을 수 없습니다. 배경 색상을 변경해 보세요.",
+    // Page language
+    PAGE_LANG_CONFIDENCE: '이 페이지 텍스트의 절반 이상이 %(LIKELY_LANG)인 것으로 보이지만 선언된 페이지 언어는 %(PAGE_LANG)입니다. 콘텐츠와 일치하도록 <a href="https://www.w3.org/International/questions/qa-html-language-declarations">선언된 페이지 언어</a>를 업데이트하는 것이 좋습니다.',
+    LANG_OF_PARTS: "페이지 언어는 %(PAGE_LANG)로 선언되었으나 이 콘텐츠는 %(LIKELY_LANG)인 것으로 보입니다. 콘텐츠에 적절한 태그가 지정되었는지 확인하세요.",
+    LANG_MISMATCH: "이 콘텐츠는 %(DETECTED_LANG)인 것으로 보이지만 %(WRONG_LANG)로 태그가 지정되었습니다.",
+    LANG_OF_PARTS_ALT: "이 대체 텍스트는 %(LIKELY_LANG)인 것으로 보이지만 페이지 언어는 %(PAGE_LANG)로 선언되었습니다. 대체 텍스트가 페이지의 나머지 부분과 동일한 언어인지 확인하세요. <hr> {ALT} <strong {C}>%(ALT)</strong>",
+    LANG_TIP: "<hr><strong>팁!</strong> 스크린 리더는 언어 태그를 사용하여 단어를 발음합니다. 일치하지 않는 언어 팩으로 언어를 발음하면 알아들을 수 없는 음성이 생성됩니다.",
+    LANG_UNSUPPORTED: "이 브라우저에서 자동 언어 감지 기능이 지원되지 않아 언어 관련 접근성 검사를 건너뛰었습니다."
   }
 };
 export {

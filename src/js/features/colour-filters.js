@@ -1,4 +1,5 @@
 import Constants from '../utils/constants';
+import { State } from '../core/state';
 
 /* ************************************************************** */
 /*  DaltonLens SVG filters to simulate color vision deficiencies  */
@@ -9,8 +10,8 @@ import Constants from '../utils/constants';
 /* Sa11y 4.4.1: The original tritanopia filter from DaltonLens uses multiple SVG filter steps, which makes Firefox ESR flatten the page into an image and causes text to look blurry. Using a single colour matrix avoids that flattening, so text stays sharp. The tritanopia single matrix is from https://gist.github.com/Lokno/df7c3bfdc9ad32558bb7
  */
 export function addColourFilters() {
-  if (Constants.Global.colourFilterPlugin) {
-    if (Constants.Global.headless === false) {
+  if (State.option.colourFilterPlugin) {
+    if (State.option.headless === false) {
       const svg = document.createElement('div');
       svg.id = 'sa11y-colour-filters';
       // Note: Do not set 'display: none;' on parent container, otherwise it won't render in Firefox.
@@ -52,7 +53,7 @@ export function addColourFilters() {
 
 // Reset colour filters
 export function resetColourFilters() {
-  if (Constants.Global.colourFilterPlugin) {
+  if (State.option.colourFilterPlugin) {
     document.body.removeAttribute('data-sa11y-filter');
 
     // Restore Settings panel switches.

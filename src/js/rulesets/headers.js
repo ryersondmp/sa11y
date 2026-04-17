@@ -3,19 +3,19 @@ import Constants from '../utils/constants';
 import Elements from '../utils/elements';
 import Lang from '../utils/lang';
 import * as Utils from '../utils/utils';
+import { State } from '../core/state';
 
-export default function checkHeaders(results, option, headingOutline) {
+export default function checkHeaders() {
   let prevLevel;
   let prevHeadingText = '';
-  const stringExclusionPattern = Utils.generateRegexString(option.headerIgnoreStrings);
+  const stringExclusionPattern = Utils.generateRegexString(State.option.headerIgnoreStrings);
 
   // Start the loop!
   Elements.Found.Headings.forEach(($el, i) => {
     // Get accessible name of heading.
     const accName = computeAccessibleName($el, Constants.Exclusions.HeaderSpan);
     const stringMatchExclusions = accName.replace(stringExclusionPattern, '');
-    const removeWhitespace = Utils.removeWhitespace(stringMatchExclusions);
-    const headingText = Utils.sanitizeHTML(removeWhitespace);
+    const headingText = Utils.removeWhitespace(stringMatchExclusions);
 
     // Check if heading is within root target area.
     const rootContainsHeading = Constants.Root.areaToCheck.some((root) => root.contains($el));
@@ -32,8 +32,8 @@ export default function checkHeaders(results, option, headingOutline) {
 
     // Determine heading level.
     const level = parseInt($el.getAttribute('aria-level') || $el.tagName.slice(1), 10);
-    const headingLength = removeWhitespace.length;
-    const maxHeadingLength = option.checks.HEADING_LONG.maxLength || 160;
+    const headingLength = headingText.length;
+    const maxHeadingLength = State.option.checks.HEADING_LONG.maxLength || 160;
 
     // Default.
     let test = null;
@@ -42,82 +42,95 @@ export default function checkHeaders(results, option, headingOutline) {
     let developer = null;
     let dismissAll = null;
     let margin = null;
+    let args = null;
 
     // Rulesets.
     if (headingLength === 0) {
       const image = $el.querySelector('img');
       if (image) {
         const alt = image?.getAttribute('alt');
-        if (image && (!alt || alt.trim() === '')) {
-          if (option.checks.HEADING_EMPTY_WITH_IMAGE) {
+        if (image && (!alt || alt.trim() === '' || accName === '')) {
+          if (State.option.checks.HEADING_EMPTY_WITH_IMAGE) {
             test = 'HEADING_EMPTY_WITH_IMAGE';
-            type = option.checks.HEADING_EMPTY_WITH_IMAGE.type || 'error';
+            type = State.option.checks.HEADING_EMPTY_WITH_IMAGE.type || 'error';
             content = Lang.sprintf(
-              option.checks.HEADING_EMPTY_WITH_IMAGE.content || 'HEADING_EMPTY_WITH_IMAGE',
+              State.option.checks.HEADING_EMPTY_WITH_IMAGE.content || 'HEADING_EMPTY_WITH_IMAGE',
               level,
             );
-            developer = option.checks.HEADING_EMPTY_WITH_IMAGE.developer || false;
-            dismissAll = option.checks.HEADING_EMPTY_WITH_IMAGE.dismissAll
+            args = [level];
+            developer = State.option.checks.HEADING_EMPTY_WITH_IMAGE.developer || false;
+            dismissAll = State.option.checks.HEADING_EMPTY_WITH_IMAGE.dismissAll
               ? 'HEADING_EMPTY_WITH_IMAGE'
               : false;
             margin = '-15px 30px';
           }
         }
-      } else if (option.checks.HEADING_EMPTY) {
+      } else if (State.option.checks.HEADING_EMPTY) {
         test = 'HEADING_EMPTY';
-        type = option.checks.HEADING_EMPTY.type || 'error';
-        content = Lang.sprintf(option.checks.HEADING_EMPTY.content || 'HEADING_EMPTY', level);
-        developer = option.checks.HEADING_EMPTY.developer || false;
-        dismissAll = option.checks.HEADING_EMPTY.dismissAll ? 'HEADING_EMPTY' : false;
+        type = State.option.checks.HEADING_EMPTY.type || 'error';
+        content = Lang.sprintf(State.option.checks.HEADING_EMPTY.content || 'HEADING_EMPTY', level);
+        args = [level];
+        developer = State.option.checks.HEADING_EMPTY.developer || false;
+        dismissAll = State.option.checks.HEADING_EMPTY.dismissAll ? 'HEADING_EMPTY' : false;
         margin = '0';
       }
-    } else if (level - prevLevel > 1 && i !== 0) {
-      if (option.checks.HEADING_SKIPPED_LEVEL) {
+    } else if (level - prevLevel > 1 && (i !== 0 || headingStartsOverride)) {
+      if (State.option.checks.HEADING_SKIPPED_LEVEL) {
         test = 'HEADING_SKIPPED_LEVEL';
-        type = option.checks.HEADING_SKIPPED_LEVEL.type || 'error';
+        type = State.option.checks.HEADING_SKIPPED_LEVEL.type || 'error';
         content = Lang.sprintf(
-          option.checks.HEADING_SKIPPED_LEVEL.content || 'HEADING_SKIPPED_LEVEL',
+          State.option.checks.HEADING_SKIPPED_LEVEL.content || 'HEADING_SKIPPED_LEVEL',
           prevLevel,
           level,
           Utils.truncateString(headingText, 60),
           Utils.truncateString(prevHeadingText, 60),
           prevLevel + 1,
         );
-        developer = option.checks.HEADING_SKIPPED_LEVEL.developer || false;
-        dismissAll = option.checks.HEADING_SKIPPED_LEVEL.dismissAll
+        args = [
+          prevLevel,
+          level,
+          Utils.truncateString(headingText, 60),
+          Utils.truncateString(prevHeadingText, 60),
+          prevLevel + 1,
+        ];
+        developer = State.option.checks.HEADING_SKIPPED_LEVEL.developer || false;
+        dismissAll = State.option.checks.HEADING_SKIPPED_LEVEL.dismissAll
           ? 'HEADING_SKIPPED_LEVEL'
           : false;
       }
     } else if (i === 0 && level !== 1 && level !== 2) {
-      if (option.checks.HEADING_FIRST) {
+      if (State.option.checks.HEADING_FIRST) {
         test = 'HEADING_FIRST';
-        type = option.checks.HEADING_FIRST.type || 'error';
-        content = Lang.sprintf(option.checks.HEADING_FIRST.content || 'HEADING_FIRST');
-        developer = option.checks.HEADING_FIRST.developer || false;
-        dismissAll = option.checks.HEADING_FIRST.dismissAll ? 'HEADING_FIRST' : false;
+        type = State.option.checks.HEADING_FIRST.type || 'error';
+        content = Lang.sprintf(State.option.checks.HEADING_FIRST.content || 'HEADING_FIRST');
+        developer = State.option.checks.HEADING_FIRST.developer || false;
+        dismissAll = State.option.checks.HEADING_FIRST.dismissAll ? 'HEADING_FIRST' : false;
       }
     } else if (headingLength > maxHeadingLength) {
-      if (option.checks.HEADING_LONG) {
+      if (State.option.checks.HEADING_LONG) {
         test = 'HEADING_LONG';
-        type = option.checks.HEADING_LONG.type || 'warning';
+        type = State.option.checks.HEADING_LONG.type || 'warning';
         content = Lang.sprintf(
-          option.checks.HEADING_LONG.content || 'HEADING_LONG',
+          State.option.checks.HEADING_LONG.content || 'HEADING_LONG',
           maxHeadingLength,
           headingLength,
+          headingText,
         );
-        developer = option.checks.HEADING_LONG.developer || false;
-        dismissAll = option.checks.HEADING_LONG.dismissAll ? 'HEADING_LONG' : false;
+        args = [maxHeadingLength, headingLength, headingText];
+        developer = State.option.checks.HEADING_LONG.developer || false;
+        dismissAll = State.option.checks.HEADING_LONG.dismissAll ? 'HEADING_LONG' : false;
       }
     }
 
-    // Create results object.
+    // Create State.results object.
     if (content && type) {
-      results.push({
+      State.results.push({
         test,
         element: $el,
         type,
         content,
-        dismiss: Utils.prepareDismissal(`H${level + headingText}`),
+        args,
+        dismiss: Utils.prepareDismissal(`${test + level + headingText}`),
         dismissAll,
         isWithinRoot,
         developer,
@@ -132,26 +145,27 @@ export default function checkHeaders(results, option, headingOutline) {
     // Create an object for heading outline panel.
     // Filter out specified headings in outlineIgnore and headerIgnore props.
     if (!Elements.Found.OutlineIgnore.includes($el)) {
-      headingOutline.push({
+      State.headingOutline.push({
         element: $el,
         headingLevel: level,
         text: headingText,
         type,
-        dismiss: Utils.prepareDismissal(`H${level + headingText}`),
+        dismiss: Utils.prepareDismissal(`${test + level + headingText}`),
         isWithinRoot,
       });
     }
   });
 
   // Missing Heading 1
-  if (option.checks.HEADING_MISSING_ONE && Elements.Found.HeadingOne.length === 0) {
-    results.push({
+  if (State.option.checks.HEADING_MISSING_ONE && Elements.Found.HeadingOne.length === 0) {
+    State.results.push({
       test: 'HEADING_MISSING_ONE',
-      type: option.checks.HEADING_MISSING_ONE.type || 'warning',
-      content: Lang.sprintf(option.checks.HEADING_MISSING_ONE.content || 'HEADING_MISSING_ONE'),
-      dismiss: 'MISSINGH1',
-      developer: option.checks.HEADING_MISSING_ONE.developer || false,
+      type: State.option.checks.HEADING_MISSING_ONE.type || 'warning',
+      content: Lang.sprintf(
+        State.option.checks.HEADING_MISSING_ONE.content || 'HEADING_MISSING_ONE',
+      ),
+      dismiss: 'HEADING_MISSING_ONE',
+      developer: State.option.checks.HEADING_MISSING_ONE.developer || false,
     });
   }
-  return { results, headingOutline };
 }

@@ -9,6 +9,7 @@ const nl = {
     WARNING: "Waarschuwing",
     WARNINGS: "Waarschuwingen",
     GOOD: "Goed",
+    REVIEW: "Beoordelen",
     ON: "Aan",
     OFF: "Uit",
     ALERT_TEXT: "Waarschuwing",
@@ -39,7 +40,7 @@ const nl = {
     MISSING_ROOT: "De volledige pagina is gecontroleerd op toegankelijkheid omdat het doelgebied <code>%(root)</code> niet bestaat.",
     MISSING_READABILITY_ROOT: "De leesbaarheidsscore is gebaseerd op het inhoudsgebied <code>%(fallback)</code>, omdat het doelgebied <code>%(root)</code> niet bestaat.",
     SKIP_TO_PAGE_ISSUES: "Doorgaan naar paginaproblemen",
-    CONSOLE_ERROR: 'Sorry, maar er is een probleem met de toegankelijkheidscontrole op deze pagina. Kunt u dit alstublieft <a href="%(link)">melden via dit formulier</a> of op <a href="%(link)">GitHub</a>?',
+    CONSOLE_ERROR: 'Sorry, maar er is een probleem met de toegankelijkheidscontrole op deze pagina. Kunt u dit alstublieft <a href="https://forms.gle/sjzK9XykETaoqZv99">melden via dit formulier</a> of op <a href="https://github.com/ryersondmp/sa11y/issues/new?title=Bug%20report">GitHub</a>?',
     APPEARANCE: "Uiterlijk",
     MOVE_PANEL: "Verplaats paneel",
     HIDDEN: "Verborgen",
@@ -54,7 +55,7 @@ const nl = {
     PAGE_TITLE: "Paginatitel",
     RESULTS: "Resultaten",
     EXPORT_RESULTS: "Resultaten exporteren",
-    GENERATED: "Resultaten gegenereerd met %(tool).",
+    GENERATED: 'Resultaten gegenereerd met <a href="https://sa11y.netlify.app">Sa11y.</a>',
     PREVIEW: "Voorbeeld",
     ELEMENT: "Element",
     PATH: "Pad",
@@ -151,7 +152,8 @@ const nl = {
       "deze website",
       "bekijk",
       "bekijk onze",
-      "website"
+      "website",
+      "artikel"
     ],
     CLICK: ["click", "klik"],
     NEW_WINDOW_PHRASES: ["extern", "nieuw tabblad", "nieuw venster", "pop-up", "verschijnen"],
@@ -201,7 +203,8 @@ const nl = {
     LINK_DOI: `Voor webpagina's of online bronnen raadt de <a href="https://apastyle.apa.org/style-grammar-guidelines/paper-format/accessibility/urls#:~:text=descriptive%20links">APA stijlgids</a> aan om beschrijvende links te gebruiken door de URL of DOI van het werk rond de titel te plaatsen. Langere, minder begrijpelijke URL's die gebruikt worden als linktekst kunnen moeilijk te begrijpen zijn met hulptechnologie.`,
     LINK_NEW_TAB: 'Link opent in een nieuw tabblad of venster zonder waarschuwing. Dit kan desoriënterend zijn, vooral voor mensen die moeite hebben met het waarnemen van visuele inhoud. Ten tweede is het niet altijd een goede gewoonte om iemands ervaring te controleren of beslissingen voor hem te nemen. Geef in de tekst van de koppeling aan dat deze in een nieuw venster wordt geopend. <hr> <strong>Tip!</strong> Leer de beste werkwijzen: <a href="https://www.nngroup.com/articles/new-browser-windows-and-tabs/">links openen in nieuwe browservensters en tabbladen.</a>',
     LINK_FILE_EXT: "Link verwijst naar een PDF of downloadbaar bestand (bijv. MP3, Zip, Word Doc) zonder waarschuwing. Vermeld het bestandstype in de linktekst. Als het een groot bestand is, kun je overwegen de bestandsgrootte te vermelden. <hr> <strong>Voorbeeld:</strong> Uitvoerend rapport (PDF, 3 MB)",
-    LINK_IDENTICAL_NAME: "Link heeft dezelfde tekst als een andere link, maar verwijst naar een andere pagina. Meerdere links met dezelfde tekst kunnen verwarring veroorzaken voor mensen die schermlezers gebruiken. <strong>Overweeg om de volgende link beschrijvender te maken om hem te helpen onderscheiden van andere links.</strong> <hr> <strong {B}>Toegankelijk naam</strong> <strong {C}>%(TEXT)</strong>",
+    LINK_IDENTICAL_NAME: "Meerdere links op deze pagina gebruiken dezelfde tekst, maar verwijzen naar verschillende locaties. Dit kan verwarrend zijn voor gebruikers van ondersteunende technologieën. Maak deze linktekst beschrijvender om dit op te lossen.",
+    LINK_UNPRONOUNCEABLE: "Linktekst bevat alleen symbolen. Als je denkt dat deze link een fout is door een kopieer-/plakfout, overweeg dan om deze te verwijderen.",
     // Images
     ALT_UNPRONOUNCEABLE: "De alternatieve tekst bevat alleen onuitspreekbare symbolen en/of spaties. Schermlezers zullen de afbeelding aankondigen en daarna pauzeren. Als de afbeelding decoratief is, zorg ervoor dat de alternatieve tekst geen spaties bevat. <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>",
     LINK_ALT_UNPRONOUNCEABLE: "De alternatieve tekst in deze gekoppelde afbeelding bevat alleen onuitspreekbare symbolen en/of spaties. Schermlezers zullen de afbeelding aankondigen en daarna pauzeren. Zorg ervoor dat de alternatieve tekst de bestemming van de link beschrijft. <hr> {L} {ALT} <strong {C}>%(ALT_TEXT)</strong>",
@@ -214,7 +217,6 @@ const nl = {
     ALT_FILE_EXT: "Alternatieve tekst mag geen bestandsextensies of afbeeldingsdimensies bevatten. Als de afbeelding een verhaal, stemming of belangrijke informatie overbrengt, zorg er dan voor dat je de afbeelding beschrijft. Verwijderen: <strong {C}>%(ERROR)</strong> <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>",
     ALT_PLACEHOLDER: "Niet-beschrijvende of plaatshouder alt-tekst gevonden. Vervang de volgende alt-tekst door iets dat meer betekenis heeft. <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>",
     SUS_ALT: "Hulptechnologieën geven al aan dat dit een afbeelding is, dus &quot;<strong {C}>%(ERROR)</strong>&quot; kan overbodig zijn. <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>",
-    LINK_HIDDEN_FOCUSABLE: "De link heeft <code>aria-hidden=&quot;true&quot;</code>, maar is nog steeds toegankelijk met het toetsenbord. Als je van plan bent om een overbodige of dubbele link te verbergen, voeg dan ook <code>tabindex=&quot;-1&quot;</code> toe.",
     LINK_IMAGE_NO_ALT_TEXT: "De afbeelding in de link is gemarkeerd als decoratief en er is geen linktekst. Voeg alt-tekst toe aan de afbeelding die de bestemming van de link beschrijft.",
     LINK_IMAGE_TEXT: "Afbeelding is gemarkeerd als decoratief, hoewel de link de omringende tekst gebruikt als beschrijvend label.",
     LINK_IMAGE_LONG_ALT: "Alt-tekstbeschrijving op een gekoppelde afbeelding is <strong>te lang</strong>. De alt-tekst op gelinkte afbeeldingen moet beschrijven waar de link je naartoe brengt, niet een letterlijke beschrijving van de afbeelding. <strong>Overweeg om de titel van de pagina waarnaar wordt gelinkt als alt-tekst te gebruiken.</strong> <hr> {L} {ALT} <strong {B}>%(altLength) Tekens</strong> <strong {C}>%(ALT_TEXT)</strong>",
@@ -235,6 +237,7 @@ const nl = {
     LABELS_NO_FOR_ATTRIBUTE: "Er is geen label gekoppeld aan deze ingang. Voeg een <code>for</code>-attribuut toe aan het label dat overeenkomt met de <code>id</code> van deze ingang. <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>",
     LABELS_MISSING_LABEL: "Er is geen label gekoppeld aan deze ingang. Voeg een <code>id</code> toe aan deze invoer en voeg een overeenkomend <code>for</code> attribuut toe aan het label.",
     LABELS_PLACEHOLDER: 'Verdwijnen van placeholdertekst maakt het moeilijk voor mensen om te onthouden welke informatie in een veld thuishoort en maakt het uitdagend om fouten te identificeren en te corrigeren. Overweeg in plaats daarvan om een permanent zichtbare hint voor het formulier veld te gebruiken. <hr> Leer meer: <a href="https://www.nngroup.com/articles/form-design-placeholders/">Plaatsvervangers in formulier velden zijn schadelijk.</a>',
+    ARIA_INPUT_FIELD_NAME: "ARIA-invoerveld of schakelveld mist een toegankelijke naam. Om dit op te lossen, moet u een geldig <code>aria-labelledby</code>, <code>aria-label</code> of <code>title</code> attribuut opgeven. Als de invoer schakelbaar is (bijv. selectievakje, schakelaar, keuzerondje), lost het toevoegen van zichtbare innerlijke tekst dit ook op. <hr> <strong {B}>Element</strong> <pre><code>%(EL)</code></pre>",
     // Embedded content
     EMBED_VIDEO: "Zorg ervoor dat <strong>alle video's zijn voorzien van ondertiteling.</strong> Het leveren van ondertiteling voor alle audio- en video-inhoud is een verplichte Level A-vereiste. Ondertiteling ondersteunt mensen die doof of slechthorend zijn.",
     EMBED_AUDIO: "Zorg voor een <strong>transcript voor alle podcasts.</strong> Het leveren van transcripts voor audio-inhoud is een verplichte Level A-vereiste. Transcripties ondersteunen mensen die doof of slechthorend zijn, maar iedereen kan er baat bij hebben. Overweeg om het transcript onder of in een accordeonpaneel te plaatsen.",
@@ -244,7 +247,7 @@ const nl = {
     EMBED_UNFOCUSABLE: '<code>&lt;iframe&gt;</code> met niet-focusbare elementen mag geen <code>tabindex="-1"</code> hebben. De ingesloten inhoud zal niet toegankelijk zijn met het toetsenbord.',
     // QA
     QA_BAD_LINK: "Slechte link gevonden. Link lijkt te verwijzen naar een ontwikkelomgeving. <hr> {L} <strong {C}>%(LINK)</strong>",
-    QA_IN_PAGE_LINK: "Gebroken koppeling naar dezelfde pagina. Het koppelingsdoel komt niet overeen met enig element op deze pagina.",
+    QA_IN_PAGE_LINK: "Defecte link op dezelfde pagina. Deze link probeert te navigeren naar een gedeelte van de pagina dat niet kan worden gevonden. Zorg er voor dat de link overeenkomt met de <code>id</code> van het element waarnaar u wilt springen om dit op te lossen.",
     QA_STRONG_ITALICS: "Vetgedrukte en cursieve tags hebben een semantische betekenis en moeten <strong>niet</strong> worden gebruikt om hele alinea's te benadrukken. Vetgedrukte tekst moet worden gebruikt om een woord of zin sterk te <strong>accentueren</strong>. Cursief moet worden gebruikt om eigennamen (bijv. titels van boeken en artikelen), vreemde woorden en aanhalingstekens te benadrukken. Lange citaten moeten worden opgemaakt als een blokcitaat.",
     QA_PDF: `Kan PDF's niet controleren op toegankelijkheid. PDF's worden beschouwd als webinhoud en moeten ook toegankelijk worden gemaakt. PDF's bevatten vaak problemen voor mensen die screenreaders gebruiken (ontbrekende structurele tags of ontbrekende labels voor formuliervelden) en mensen die slecht zien (tekst wordt niet weergegeven als deze wordt vergroot). <ul><li>Als dit een formulier is, kunt u overwegen een toegankelijk HTML-formulier te gebruiken als alternatief.</li><li>Als dit een document is, kunt u overwegen het te converteren naar een webpagina.</li></ul> Ofwel controleer <a href="https://helpx.adobe.com/acrobat/using/create-verify-pdf-accessibility.html">PDF op toegankelijkheid in Acrobat DC.</a>`,
     QA_DOCUMENT: 'Kan document niet controleren op toegankelijkheid. Gekoppelde documenten worden beschouwd als webinhoud en moeten ook toegankelijk worden gemaakt. Controleer dit document handmatig. <ul><li>Maak uw <a href="https://support.google.com/docs/answer/6199477?hl=nl">Google Workspace-document of presentatie toegankelijker.</a></li><li>Maak uw <a href="https://support.microsoft.com/nl/office/create-accessible-office-documents-868ecfcd-4f00-4224-b881-a65537a7c155">Office-documenten toegankelijker.</a></li></ul>',
@@ -258,9 +261,10 @@ const nl = {
     QA_JUSTIFY: "Vermijd het gebruik van uitgevulde tekst, die zowel aan de linker- als aan de rechterkant is uitgelijnd. Dit kan moeilijk te lezen zijn voor sommige mensen vanwege de ongelijke ruimtes tussen de woorden. Gebruik links uitgelijnde tekst voor betere leesbaarheid.",
     QA_SMALL_TEXT: "Kleine tekst is moeilijker te lezen, vooral voor mensen met een verminderd gezichtsvermogen. Gebruik geen lettergroottes die kleiner zijn dan de standaard, om de leesbaarheid te verbeteren.",
     // Shared
-    ACC_NAME: "<strong {B}>Toegankelijk naam</strong> %(TEXT)",
-    ACC_NAME_TIP: '<hr><strong>Tip!</strong> De "toegankelijke naam" is het uiteindelijke label dat wordt gecommuniceerd aan mensen die gebruik maken van ondersteunende technologie. Dit helpt hen om het doel van de link of knop te begrijpen.',
-    HIDDEN_FOCUSABLE: 'De link of knop heeft <code>aria-hidden=&quot;true&quot;</code>, maar is nog steeds via het toetsenbord toegankelijk. Als u een dubbele link of knop wilt verbergen, voeg dan ook <code>tabindex=&quot;-1&quot;</code> toe. Anders moet <code>aria-hidden=&quot;true&quot;</code> niet worden gebruikt op elementen die focus kunnen ontvangen. <hr> Lees meer over het <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">aria-hidden-attribuut.</a>',
+    LINK_TEXT: "<strong {B}>Linktekst</strong> <strong {C}>%(TEXT)</strong>",
+    ACC_NAME: "<strong {B}>Toegankelijk naam</strong> <strong {C}>%(TEXT)</strong>",
+    ACC_NAME_TIP: '<hr><strong>Tip!</strong> De "toegankelijke naam" is het definitieve label dat wordt gecommuniceerd naar mensen die ondersteunende technologie gebruiken. Dit helpt hen het doel van het element te begrijpen.',
+    HIDDEN_FOCUSABLE: 'Dit element kan toetsenbordfocus ontvangen, maar is verborgen voor schermlezers door een <code>aria-hidden="true"</code> attribuut (op zichzelf of een bovenliggende container). Om dit op te lossen, verwijdert u het aria-hidden attribuut of verwijdert u het element uit de tabvolgorde. <hr> <strong {B}>Element</strong> <pre><code>%(EL)</code></pre> <hr> Lees meer over het <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">aria-hidden attribuut.</a>',
     // Developer
     DUPLICATE_ID: "<strong>Duplicate ID</strong> gevonden. Het is bekend dat dubbele ID-fouten problemen veroorzaken voor hulptechnologieën wanneer deze proberen te communiceren met inhoud. Verwijder of wijzig de volgende ID. <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>",
     UNCONTAINED_LI: "Alle <code>&lt;li&gt;</code> lijstitems moeten worden geplaatst binnen <code>&lt;ul&gt;</code> ongeordende of <code>&lt;ol&gt;</code> geordende elementen. Deze structuur helpt schermlezers om de lijst en de items ervan nauwkeurig aan te kondigen.",
@@ -271,17 +275,22 @@ const nl = {
     META_SCALABLE: 'Verwijder de parameter <code>user-scalable="no"</code> in de <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">meta-tag van het viewport</a> om inzoomen toe te staan.',
     META_MAX: 'Zorg ervoor dat de parameter <code>maximum-scale</code> in de <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">meta-tag van het viewport</a> niet kleiner is dan 2.',
     META_REFRESH: "De pagina mag niet automatisch verversen met behulp van een meta-tag.",
+    META_LANG_SUGGEST: "De volgende taalcode <code>%(CODE)</code> is niet geldig. Bedoelde u <code>%(CODE)</code>?",
+    META_LANG_VALID: 'De taalcode voor dit element is niet geldig. Vervang het lang-attribuut door een geldige taalcode om dit op te lossen. <hr> <strong {B}>Element</strong> <code>&lt;%(ELEMENT) lang="%(CODE)"&gt;</code> <hr> Lees meer over het <a href="https://www.w3.org/International/questions/qa-html-language-declarations">declareren van taal in HTML.</a>',
     // Buttons
     BTN_EMPTY: "De knop mist een toegankelijke naam die het doel beschrijft.",
     BTN_EMPTY_LABELLEDBY: "De knop heeft een <code>aria-labelledby</code> waarde die leeg is of niet overeenkomt met de <code>id</code> waarde van een ander element op de pagina.",
     BTN: "knop",
     BTN_TIP: 'Leer hoe u een <a href="https://www.sarasoueidan.com/blog/accessible-icon-buttons/">toegankelijke knop maakt.</a>',
     BTN_ROLE_IN_NAME: 'Gebruik het woord "knop" niet in de naam van een knop. Schermlezers vermelden al de rol van een element naast de naam.',
-    LABEL_IN_NAME: "De zichtbare tekst voor dit element lijkt te verschillen van de toegankelijke naam, wat verwarring kan veroorzaken voor gebruikers van ondersteunende technologieën. Controleer alstublieft: <hr> <strong {B}>Toegankelijke Naam</strong> <strong {C}>%(TEXT)</strong>",
+    LABEL_IN_NAME: "De zichtbare tekst voor dit element lijkt te verschillen van de toegankelijke naam, wat verwarring kan veroorzaken voor gebruikers van ondersteunende technologieën. Controleer alstublieft: <hr> <strong {B}>Tekst</strong> <strong {C}>%(TEXT)</strong> <hr> <strong {B}>Toegankelijke Naam</strong> <strong {C}>%(TEXT)</strong>",
+    LINK_MAYBE_BUTTON: 'Deze link heeft een ongeldig doel. Hoewel de toegankelijke naam of de attributen ervan suggereren dat dit misschien helemaal geen link is, maar in plaats daarvan gescript gedrag op de pagina aanstuurt. Vervang de link door een <a href="https://www.w3.org/WAI/ARIA/apg/patterns/button/">toegankelijke knop</a> om dit op te lossen, of corrigeer de bestemming van de link. <hr> <strong {B}>Toegankelijke naam</strong> <strong {C}>%(TEXT)</strong> <hr> <strong>Tip!</strong> Ondersteunende technologieën behandelen knoppen und links anders. Het gebruik van het juiste HTML-element zorgt ervoor dat gebruikers weten welke sneltoetsen ze moeten gebruiken en welke actie wordt geactiveerd.',
+    POTENTIAL_UI_ELEMENTS: ["menu", "sluiten", "schakelen", "openen", "uitvouwen", "samenvouwen", "volgende", "vorige", "afspelen", "pauzeren", "submenu", "tonen", "verbergen", "dropdown", "terug", "vooruit", "overslaan", "verzenden", "annuleren", "opslaan", "bewerken", "verwijderen", "verwijderen", "zoeken", "filteren", "sorteren", "stoppen", "dempen", "dempen opheffen", "volledig scherm", "minimaliseren", "maximaliseren"],
     // Tables
     TABLES_MISSING_HEADINGS: 'Tabelkoppen ontbreken! Voor toegankelijke tabellen is HTML-markup nodig die kopcellen en gegevenscellen aangeeft en hun relatie definieert. Deze informatie geeft context aan mensen die ondersteunende technologie gebruiken. Tabellen moeten alleen worden gebruikt voor gegevens in tabelvorm. <hr> Lees meer over <a href="https://www.w3.org/WAI/tutorials/tables/">toegankelijke tabellen.</a>',
     TABLES_SEMANTIC_HEADING: 'Semantische koppen zoals Kop 2 of Kop 3 mogen alleen worden gebruikt voor gedeelten van de inhoud; <strong>niet</strong> in HTML-tabellen. Geef tabelkoppen aan met het <code>&lt;th&gt;</code>-element. <hr> Meer informatie over <a href="https://www.w3.org/WAI/tutorials/tables/">toegankelijke tabellen.</a>',
     TABLES_EMPTY_HEADING: 'Lege tabelheader gevonden! Tabelkoppen mogen <strong>nooit</strong> leeg zijn. Het is belangrijk om rij- en/of kolomkoppen aan te geven om hun relatie duidelijk te maken. Deze informatie geeft context aan mensen die ondersteunende technologie gebruiken. Houd in gedachten dat tabellen alleen mogen worden gebruikt voor gegevens in tabelvorm. <hr> Meer informatie over <a href="https://www.w3.org/WAI/tutorials/tables/">toegankelijke tabellen.</a>',
+    TABLES_INVALID_HEADERS_REF: 'Deze tabel probeert een specifieke datacel te labelen met een specifieke kopcel, maar de kop-ID kan niet worden gevonden. Zorg ervoor dat elk <code>headers</code>-attribuut overeenkomt met de ID van een kopcel in dezelfde tabel. <hr> <strong {B}>Koppen</strong> <code>%(VALUE)</code> <hr> <strong>Tip!</strong> Het <a href="https://www.w3.org/WAI/WCAG22/Techniques/html/H43">gebruik van handmatige ID-verwijzingen</a> om datacellen te koppelen aan kopcellen is ingewikkeld en foutgevoelig. Splits complexe gegevens indien mogelijk op in kleinere tabellen met eenvoudige koprijen en -kolommen.',
     // Contrast
     CONTRAST_NORMAL: "Tekst met een normale grootte moet een contrastverhouding van minstens %(RATIO) hebben.",
     CONTRAST_LARGE: "Grote tekst moet een contrastverhouding van minstens %(RATIO) hebben.",
@@ -301,7 +310,14 @@ const nl = {
     UNKNOWN: "Onbekend",
     FG: "Voorgrond",
     BG: "Achtergrond",
-    NO_SUGGESTION: "Er kan geen toegankelijke combinatie worden gevonden door alleen de tekstkleur te wijzigen. Probeer de achtergrondkleur te wijzigen."
+    NO_SUGGESTION: "Er kan geen toegankelijke combinatie worden gevonden door alleen de tekstkleur te wijzigen. Probeer de achtergrondkleur te wijzigen.",
+    // Page language
+    PAGE_LANG_CONFIDENCE: 'Meer dan de helft van de tekst op deze pagina lijkt %(LIKELY_LANG) te zijn, maar de opgegeven paginataal is %(PAGE_LANG). Overweeg de <a href="https://www.w3.org/International/questions/qa-html-language-declarations">opgegeven paginataal</a> bij te werken zodat deze overeenkomt met de inhoud.',
+    LANG_OF_PARTS: "De paginataal is opgegeven als %(PAGE_LANG), maar deze inhoud lijkt %(LIKELY_LANG) te zijn. Zorg ervoor dat de inhoud correct is getagd.",
+    LANG_MISMATCH: "Deze inhoud lijkt %(DETECTED_LANG) te zijn, maar is getagd als %(WRONG_LANG).",
+    LANG_OF_PARTS_ALT: "Deze alt-tekst lijkt %(LIKELY_LANG) te zijn, maar de paginataal is opgegeven als %(PAGE_LANG). Zorg ervoor dat de alt-tekst in dezelfde taal is als de rest van de pagina. <hr> {ALT} <strong {C}>%(ALT)</strong>",
+    LANG_TIP: "<hr><strong>Tip!</strong> Schermlezers spreken woorden uit met behulp van taaltags. Het uitspreken van een taal met een niet-overeenkomend taalpakket levert onverstaanbare spraak op.",
+    LANG_UNSUPPORTED: "Taalgerelateerde toegankelijkheidscontroles zijn overgeslagen omdat automatische taaldetectie niet wordt ondersteund in deze browser."
   }
 };
 export {

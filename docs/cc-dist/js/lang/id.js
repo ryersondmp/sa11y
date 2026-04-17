@@ -8,7 +8,8 @@ const id = {
     ERRORS: "Kesalahan",
     WARNING: "Peringatan",
     WARNINGS: "Peringatan",
-    GOOD: "Bagus.",
+    GOOD: "Bagus",
+    REVIEW: "Tinjau",
     ON: "Pada",
     OFF: "Mati",
     ALERT_TEXT: "Waspada",
@@ -39,7 +40,7 @@ const id = {
     MISSING_ROOT: "Halaman penuh diperiksa aksesibilitasnya karena area target <code>%(root)</code> tidak ada.",
     MISSING_READABILITY_ROOT: "Skor keterbacaan didasarkan pada area konten <code>%(fallback)</code>, karena area target <code>%(root)</code> tidak ada.",
     SKIP_TO_PAGE_ISSUES: "Loncat ke Halaman Masalah",
-    CONSOLE_ERROR: 'Maaf, ada masalah dengan pemeriksa aksesibilitas di halaman ini. Bisakah Anda <a href="%(link)">melaporkannya melalui formulir ini</a> atau di <a href="%(link)">GitHub</a>?',
+    CONSOLE_ERROR: 'Maaf, ada masalah dengan pemeriksa aksesibilitas di halaman ini. Bisakah Anda <a href="https://forms.gle/sjzK9XykETaoqZv99">melaporkannya melalui formulir ini</a> atau di <a href="https://github.com/ryersondmp/sa11y/issues/new?title=Bug%20report">GitHub</a>?',
     APPEARANCE: "Tampilan",
     MOVE_PANEL: "Pindahkan panel",
     HIDDEN: "Tersembunyi",
@@ -54,7 +55,7 @@ const id = {
     PAGE_TITLE: "Judul Halaman",
     RESULTS: "Hasil",
     EXPORT_RESULTS: "Ekspor hasil",
-    GENERATED: "Hasil dihasilkan dengan %(tool).",
+    GENERATED: 'Hasil dihasilkan dengan <a href="https://sa11y.netlify.app">Sa11y.</a>',
     PREVIEW: "Pratinjau",
     ELEMENT: "Elemen",
     PATH: "Jalur",
@@ -142,7 +143,8 @@ const id = {
       "situs web ini",
       "melihat",
       "lihat kami",
-      "situs web"
+      "situs web",
+      "artikel"
     ],
     CLICK: ["click", "klik"],
     NEW_WINDOW_PHRASES: ["eksternal", "tab baru", "jendela baru", "pop-up", "muncul"],
@@ -190,9 +192,10 @@ const id = {
     LINK_SYMBOLS: "Hindari menggunakan simbol sebagai ajakan bertindak dalam teks tautan kecuali jika disembunyikan dari teknologi bantu. Pembaca layar dapat membaca simbol dengan keras, yang bisa membingungkan. Pertimbangkan untuk menghapus: <strong {C}>%(ERROR)</strong>",
     LINK_URL: "URL yang lebih panjang dan kurang dapat dipahami yang digunakan sebagai teks tautan mungkin sulit untuk disimak dengan teknologi bantuan. Dalam kebanyakan kasus, lebih baik menggunakan teks yang dapat dibaca manusia daripada URL. URL pendek (seperti beranda situs) tidak masalah.",
     LINK_DOI: 'Untuk halaman web atau sumber daya yang hanya tersedia secara online, <a href="https://apastyle.apa.org/style-grammar-guidelines/paper-format/accessibility/urls#:~:text=descriptive%20links">Panduan Gaya APA</a> merekomendasikan penggunaan pranala deskriptif dengan membungkus URL atau DOI karya di sekeliling judulnya. URL yang lebih panjang dan kurang dapat dipahami yang digunakan sebagai teks tautan mungkin sulit dipahami saat diakses dengan teknologi bantu.',
-    LINK_NEW_TAB: 'Tautan terbuka di tab atau jendela baru tanpa peringatan. Hal ini dapat membingungkan, terutama bagi orang yang mengalami kesulitan dalam memahami konten visual. Kedua, tidak selalu merupakan praktik yang baik untuk mengontrol pengalaman seseorang atau membuat keputusan untuk mereka. Tunjukkan bahwa tautan akan terbuka di jendela baru di dalam teks tautan. <hr> <strong>Tip!</strong> Pelajari praktik terbaik: <a href="https://www.nngroup.com/articles/new-browser-windows-and-tabs/">membuka tautan di jendela dan tab peramban baru</a>.',
+    LINK_NEW_TAB: 'Tautan terbuka di tab atau jendela baru tanpa peringatan. Hal ini dapat membingungkan, terutama bagi orang yang mengalami kesulitan dalam memahami konten visual. Kedua, tidak selalu merupakan praktik yang baik untuk mengontrol pengalaman seseorang atau membuat keputusan untuk mereka. Tunjukkan bahwa tautan akan terbuka di jendela baru di dalam teks tautan. <hr> <strong>Tip!</strong> Pelajari praktik terbaik: <a href="https://www.nngroup.com/articles/new-browser-windows-and-tabs/">membuka tautan di jendela dan tab peramban baru.</a>',
     LINK_FILE_EXT: "Tautan mengarah ke PDF atau file yang dapat diunduh (mis. MP3, Zip, Word Doc) tanpa peringatan. Tunjukkan jenis file di dalam teks tautan. Jika file berukuran besar, pertimbangkan untuk menyertakan ukuran file tersebut. <hr> <strong>Contoh:</strong> Laporan Eksekutif (PDF, 3MB)",
-    LINK_IDENTICAL_NAME: "Tautan memiliki teks yang sama dengan tautan lain, meskipun mengarah ke halaman yang berbeda. Beberapa tautan dengan teks yang sama dapat menyebabkan kebingungan bagi orang yang menggunakan pembaca layar. <strong>Pertimbangkan untuk membuat tautan berikut ini lebih deskriptif untuk membantu membedakannya dari tautan lain.</strong> <hr> <strong {B}>Nama yang dapat diakses</strong> <strong {C}>%(TEXT)</strong>",
+    LINK_IDENTICAL_NAME: "Beberapa tautan di halaman ini menggunakan teks yang sama tetapi mengarah ke tempat yang berbeda. Hal ini dapat membingungkan pengguna teknologi asistif. Untuk memperbaikinya, buatlah teks tautan ini lebih deskriptif.",
+    LINK_UNPRONOUNCEABLE: "Teks tautan hanya berisi simbol. Jika menurut Anda tautan ini salah karena bug salin/tempel, pertimbangkan untuk menghapusnya.",
     // Images
     ALT_UNPRONOUNCEABLE: "Teks alt hanya berisi simbol yang tidak dapat diucapkan dan/atau spasi. Pembaca layar akan mengumumkan gambar lalu berhenti. Jika gambar dekoratif, pastikan tidak ada spasi di dalam teks alt. <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>",
     LINK_ALT_UNPRONOUNCEABLE: "Teks alt dalam gambar tertaut ini hanya berisi simbol yang tidak dapat diucapkan dan/atau spasi. Pembaca layar akan mengumumkan gambar lalu berhenti. Pastikan teks alt menjelaskan tujuan tautan. <hr> {L} {ALT} <strong {C}>%(ALT_TEXT)</strong>",
@@ -225,6 +228,7 @@ const id = {
     LABELS_NO_FOR_ATTRIBUTE: "Tidak ada label yang terkait dengan input ini. Tambahkan atribut <code>untuk</code> ke label yang sesuai dengan <code>id</code> input ini. <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>",
     LABELS_MISSING_LABEL: "Tidak ada label yang terkait dengan input ini. Tambahkan <code>id</code> ke input ini, dan tambahkan atribut <code>untuk</code> yang sesuai ke label.",
     LABELS_PLACEHOLDER: 'Teks placeholder yang menghilang menyulitkan orang untuk mengingat informasi apa yang harus ada di dalam kolom dan untuk mengidentifikasi serta memperbaiki masalah validasi. Sebagai gantinya, pertimbangkan untuk menggunakan petunjuk yang selalu terlihat sebelum kolom formulir. <hr> Pelajari lebih lanjut: <a href="https://www.nngroup.com/articles/form-design-placeholders/">Placeholder di kolom formulir itu berbahaya.</a>',
+    ARIA_INPUT_FIELD_NAME: "Input ARIA atau bidang sakelar tidak memiliki nama yang dapat diakses. Untuk memperbaikinya, berikan atribut <code>aria-labelledby</code>, <code>aria-label</code>, или <code>title</code> yang valid. Jika input dapat dialihkan (misalnya, kotak centang, sakelar, radio), menambahkan teks bagian dalam yang terlihat juga akan mengatasi masalah ini. <hr> <strong {B}>Elemen</strong> <pre><code>%(EL)</code></pre>",
     // Embedded content
     EMBED_VIDEO: "Pastikan <strong>semua video memiliki teks tertutup.</strong> Menyediakan teks untuk semua konten audio dan video adalah persyaratan Level A wajib. Teks mendukung orang-orang yang tuli atau sulit mendengar.",
     EMBED_AUDIO: "Pastikan untuk menyediakan <strong>transkrip untuk semua podcast.</strong> Menyediakan transkrip untuk konten audio adalah persyaratan Level A wajib. Transkrip membantu orang-orang yang tuli atau sulit mendengar, tetapi dapat bermanfaat bagi semua orang. Pertimbangkan untuk menempatkan transkrip di bawah atau di dalam panel akordeon.",
@@ -234,7 +238,7 @@ const id = {
     EMBED_UNFOCUSABLE: '<code>&lt;iframe&gt;</code> dengan elemen yang tidak dapat difokuskan seharusnya tidak memiliki <code>tabindex="-1"</code>. Konten yang disematkan tidak akan dapat diakses menggunakan keyboard.',
     // QA
     QA_BAD_LINK: "Tautan buruk ditemukan. Tautan yang muncul mengarah ke lingkungan pengembangan. <hr> {L} <strong {C}>%(LINK)</strong>",
-    QA_IN_PAGE_LINK: "Tautan dalam halaman rusak. Tujuan tautan tidak cocok dengan elemen apa pun di halaman ini.",
+    QA_IN_PAGE_LINK: "Tautan halaman yang sama rusak. Tautan ini mencoba menavigasi ke bagian halaman yang tidak dapat ditemukan. Untuk memperbaikinya, pastikan tautan cocok dengan <code>id</code> elemen yang ingin Anda tuju.",
     QA_STRONG_ITALICS: "Tag cetak tebal dan miring memiliki makna semantik, dan tidak boleh digunakan untuk menyorot seluruh paragraf. Teks yang dicetak tebal harus digunakan untuk memberikan <strong>penekanan</strong> yang kuat pada sebuah kata atau frasa. Huruf miring harus digunakan untuk menyoroti nama diri (misalnya judul buku dan artikel), kata-kata asing, kutipan. Kutipan panjang harus diformat sebagai kutipan blok.",
     QA_PDF: 'Tidak dapat memeriksa aksesibilitas PDF. PDF dianggap sebagai konten web dan harus dapat diakses juga. PDF sering kali mengandung masalah bagi orang yang menggunakan pembaca layar (tag struktural yang hilang atau label bidang formulir yang hilang) dan orang yang memiliki penglihatan rendah (teks tidak dapat dilihat ketika diperbesar). <ul><li>Jika ini adalah formulir, pertimbangkan untuk menggunakan formulir HTML yang dapat diakses sebagai alternatif.</li><li>Jika ini adalah dokumen, pertimbangkan untuk mengonversinya menjadi halaman web.</li></ul> Jika tidak, periksa <a href="https://helpx.adobe.com/acrobat/using/create-verify-pdf-accessibility.html">PDF untuk aksesibilitas di Acrobat DC.</a>',
     QA_DOCUMENT: 'Tidak dapat memeriksa aksesibilitas dokumen. Dokumen yang ditautkan dianggap sebagai konten web dan harus dapat diakses juga. Silakan tinjau dokumen ini secara manual. <ul><li>Buat dokumen atau presentasi <a href="https://support.google.com/docs/answer/6199477?hl=id">Google Workspace Anda lebih mudah diakses.</a></li><li>Buat dokumen <a href="https://support.microsoft.com/id/office/create-accessible-office-documents-868ecfcd-4f00-4224-b881-a65537a7c155">Office Anda lebih mudah diakses.</a></li></ul>',
@@ -248,9 +252,10 @@ const id = {
     QA_JUSTIFY: "Hindari penggunaan teks rata kanan-kiri, yang sejajar dengan margin kiri dan kanan. Ini bisa sulit dibaca oleh beberapa orang karena spasi antar kata yang tidak merata. Gunakan teks rata kiri untuk keterbacaan yang lebih baik.",
     QA_SMALL_TEXT: "Teks kecil lebih sulit dibaca, terutama bagi mereka yang memiliki penglihatan rendah. Untuk memastikan keterbacaan yang lebih baik, hindari menggunakan ukuran font yang lebih kecil dari ukuran default.",
     // Shared
-    ACC_NAME: "<strong {B}>Nama yang dapat diakses</strong> %(TEXT)",
-    ACC_NAME_TIP: '<hr><strong>Tips!</strong> "Nama yang dapat diakses" adalah label akhir yang dikomunikasikan kepada orang-orang yang menggunakan teknologi bantuan dan dihitung oleh ARIA. Ini membantu mereka memahami tujuan tautan atau tombol.',
-    HIDDEN_FOCUSABLE: 'Tautan atau tombol memiliki <code>aria-hidden=&quot;true&quot;</code> namun masih bisa difokuskan melalui keyboard. Jika Anda berniat untuk menyembunyikan tautan atau tombol duplikat, tambahkan juga <code>tabindex=&quot;-1&quot;</code>. Jika tidak, <code>aria-hidden=&quot;true&quot;</code> tidak boleh digunakan pada elemen yang bisa menerima fokus. <hr> Pelajari lebih lanjut tentang <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">atribut aria-hidden.</a>',
+    LINK_TEXT: "<strong {B}>Teks tautan</strong> <strong {C}>%(TEXT)</strong>",
+    ACC_NAME: "<strong {B}>Nama yang dapat diakses</strong> <strong {C}>%(TEXT)</strong>",
+    ACC_NAME_TIP: '<hr><strong>Tips!</strong> "Nama yang dapat diakses" adalah label akhir yang dikomunikasikan kepada orang yang menggunakan teknologi bantu. Ini membantu mereka memahami tujuan elemen tersebut.',
+    HIDDEN_FOCUSABLE: 'Elemen ini dapat menerima fokus keyboard, tetapi disembunyikan dari pembaca layar oleh atribut <code>aria-hidden="true"</code> (pada dirinya sendiri atau wadah induk). Untuk memperbaikinya, hapus atribut aria-hidden atau hapus elemen dari urutan tab. <hr> <strong {B}>Elemen</strong> <pre><code>%(EL)</code></pre> <hr> Pelajari lebih lanjut tentang <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">atribut aria-hidden.</a>',
     // Developer
     DUPLICATE_ID: "Ditemukan <strong>duplikat ID</strong>. Kesalahan ID duplikat diketahui dapat menyebabkan masalah pada teknologi bantuan saat mencoba berinteraksi dengan konten. Harap hapus atau ubah ID berikut ini. <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>",
     UNCONTAINED_LI: "Semua item daftar <code>&lt;li&gt;</code> harus diletakkan di dalam elemen <code>&lt;ul&gt;</code> yang tidak terurut atau <code>&lt;ol&gt;</code> yang terurut. Struktur ini membantu pembaca layar mengumumkan daftar dan item-itemnya dengan akurat.",
@@ -261,17 +266,22 @@ const id = {
     META_SCALABLE: 'Hapus parameter <code>user-scalable="no"</code> dalam <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">tag meta viewport</a> untuk memungkinkan zoom.',
     META_MAX: 'Pastikan parameter <code>maximum-scale</code> dalam <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">tag meta viewport</a> tidak kurang dari 2.',
     META_REFRESH: "Halaman seharusnya tidak menyegarkan secara otomatis menggunakan tag meta.",
+    META_LANG_SUGGEST: "Kode bahasa berikut <code>%(CODE)</code> tidak valid. Apakah maksud Anda <code>%(CODE)</code>?",
+    META_LANG_VALID: 'Kode bahasa untuk elemen ini tidak valid. Untuk memperbaikinya, ganti atribut lang dengan kode bahasa yang valid. <hr> <strong {B}>Elemen</strong> <code>&lt;%(ELEMENT) lang="%(CODE)"&gt;</code> <hr> Pelajari lebih lanjut tentang <a href="https://www.w3.org/International/questions/qa-html-language-declarations">mendeklarasikan bahasa dalam HTML.</a>',
     // Buttons
     BTN_EMPTY: "Tombol tidak memiliki nama aksesibel yang menjelaskan tujuannya.",
     BTN_EMPTY_LABELLEDBY: "Tombol memiliki nilai <code>aria-labelledby</code> yang kosong atau tidak sesuai dengan nilai <code>id</code> dari elemen lain di halaman.",
     BTN: "tombol",
     BTN_TIP: 'Pelajari cara membuat <a href="https://www.sarasoueidan.com/blog/accessible-icon-buttons/">tombol aksesibel.</a>',
     BTN_ROLE_IN_NAME: 'Jangan sertakan kata "tombol" dalam nama tombol. Pembaca layar sudah menyampaikan peran elemen selain namanya.',
-    LABEL_IN_NAME: "Teks yang terlihat untuk elemen ini tampaknya berbeda dari nama aksesibel, yang dapat menyebabkan kebingungan bagi pengguna teknologi bantuan. Harap periksa: <hr> <strong {B}>Nama Aksesibel</strong> <strong {C}>%(TEXT)</strong>",
+    LABEL_IN_NAME: "Teks yang terlihat untuk elemen ini tampaknya berbeda dari nama aksesibel, yang dapat menyebabkan kebingungan bagi pengguna teknologi bantuan. Harap periksa: <hr> <strong {B}>Teks</strong> <strong {C}>%(TEXT)</strong> <hr> <strong {B}>Nama Aksesibel</strong> <strong {C}>%(TEXT)</strong>",
+    LINK_MAYBE_BUTTON: 'Tautan ini memiliki target yang tidak valid. Meskipun nama yang dapat diakses atau atributnya menunjukkan bahwa ini mungkin bukan tautan sama sekali, melainkan mengontrol beberapa perilaku skrip pada halaman. Untuk memperbaikinya, ganti tautan dengan <a href="https://www.w3.org/WAI/ARIA/apg/patterns/button/">tombol yang dapat diakses</a>, atau perbaiki tujuan tautan. <hr> <strong {B}>Nama yang Dapat Diakses</strong> <strong {C}>%(TEXT)</strong> <hr> <strong>Tips!</strong> Teknologi bantu memperlakukan tombol dan tautan secara berbeda. Menggunakan elemen HTML yang benar memastikan pengguna mengetahui pintasan keyboard mana yang harus digunakan dan tindakan apa yang akan dipicu.',
+    POTENTIAL_UI_ELEMENTS: ["menu", "tutup", "alihkan", "buka", "perluas", "ciutkan", "berikutnya", "sebelumnya", "putar", "jeda", "submenu", "tampilkan", "sembunyikan", "dropdown", "kembali", "maju", "lewati", "kirim", "batal", "simpan", "edit", "hapus", "hapus", "cari", "filter", "urutkan", "berhenti", "bisukan", "bunyikan", "layar penuh", "minimalkan", "maksimalkan"],
     // Tables
     TABLES_MISSING_HEADINGS: 'Header tabel yang hilang! Tabel yang dapat diakses membutuhkan markup HTML yang menunjukkan sel header dan sel data yang mendefinisikan hubungannya. Informasi ini memberikan konteks kepada orang yang menggunakan teknologi bantu. Tabel harus digunakan hanya untuk data tabular. <hr> Pelajari lebih lanjut tentang <a href="https://www.w3.org/WAI/tutorials/tables/">tabel yang dapat diakses.</a>',
     TABLES_SEMANTIC_HEADING: 'Judul semantik seperti Heading 2 atau Heading 3 hanya boleh digunakan untuk bagian konten; <strong>tidak</strong> dalam tabel HTML. Tunjukkan judul tabel dengan menggunakan elemen <code>&lt;th&gt;</code>. <hr> Pelajari lebih lanjut tentang <a href="https://www.w3.org/WAI/tutorials/tables/">tabel yang dapat diakses.</a>',
     TABLES_EMPTY_HEADING: 'Header tabel kosong ditemukan! Header tabel tidak boleh kosong. Penting untuk menentukan header baris dan/atau kolom untuk menyampaikan hubungan mereka. Informasi ini memberikan konteks kepada orang-orang yang menggunakan teknologi bantu. Harap diingat bahwa tabel harus digunakan hanya untuk data tabular. <hr> Pelajari lebih lanjut tentang <a href="https://www.w3.org/WAI/tutorials/tables/">tabel yang dapat diakses.</a>',
+    TABLES_INVALID_HEADERS_REF: 'Tabel ini mencoba melabeli sel data tertentu dengan sel tajuk tertentu, tetapi ID tajuk tidak dapat ditemukan. Pastikan setiap atribut <code>headers</code> cocok dengan ID sel tajuk dalam tabel yang sama. <hr> <strong {B}>Tajuk</strong> <code>%(VALUE)</code> <hr> <strong>Tips!</strong> <a href="https://www.w3.org/WAI/WCAG22/Techniques/html/H43">Menggunakan referensi ID manual</a> untuk mengaitkan sel data dengan sel tajuk itu rumit dan rentan kesalahan. Jika memungkinkan, pecah data yang kompleks menjadi tabel-tabel yang lebih kecil dengan baris dan kolom tajuk yang sederhana.',
     // Contrast
     CONTRAST_NORMAL: "Teks ukuran normal harus memiliki rasio kontras setidaknya %(RATIO).",
     CONTRAST_LARGE: "Teks ukuran besar harus memiliki rasio kontras setidaknya %(RATIO).",
@@ -291,7 +301,14 @@ const id = {
     UNKNOWN: "Tidak diketahui",
     FG: "Latar depan",
     BG: "Latar belakang",
-    NO_SUGGESTION: "Tidak ada kombinasi aksesibel yang dapat ditemukan dengan hanya mengubah warna teks. Coba ubah warna latar belakang."
+    NO_SUGGESTION: "Tidak ada kombinasi aksesibel yang dapat ditemukan dengan hanya mengubah warna teks. Coba ubah warna latar belakang.",
+    // Page language
+    PAGE_LANG_CONFIDENCE: 'Lebih dari separuh teks di halaman ini tampaknya menggunakan %(LIKELY_LANG), tetapi bahasa halaman yang dideklarasikan adalah %(PAGE_LANG). Pertimbangkan untuk memperbarui <a href="https://www.w3.org/International/questions/qa-html-language-declarations">bahasa halaman yang dideklarasikan</a> agar sesuai dengan konten.',
+    LANG_OF_PARTS: "Bahasa halaman dideklarasikan sebagai %(PAGE_LANG), tetapi konten ini tampaknya menggunakan %(LIKELY_LANG). Pastikan konten ditandai dengan tepat.",
+    LANG_MISMATCH: "Konten ini tampaknya menggunakan %(DETECTED_LANG), namun ditandai sebagai %(WRONG_LANG).",
+    LANG_OF_PARTS_ALT: "Teks alt ini tampaknya menggunakan %(LIKELY_LANG), tetapi bahasa halaman dideklarasikan sebagai %(PAGE_LANG). Pastikan teks alt menggunakan bahasa yang sama dengan bagian halaman lainnya. <hr> {ALT} <strong {C}>%(ALT)</strong>",
+    LANG_TIP: "<hr><strong>Tips!</strong> Pembaca layar mengucapkan kata-kata menggunakan tag bahasa. Mengucapkan bahasa dengan paket bahasa yang tidak cocok akan menghasilkan ucapan yang tidak dapat dimengerti.",
+    LANG_UNSUPPORTED: "Pemeriksaan aksesibilitas terkait bahasa dilewati karena deteksi bahasa otomatis tidak didukung di browser ini."
   }
 };
 export {

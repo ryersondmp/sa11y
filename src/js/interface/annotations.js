@@ -2,19 +2,16 @@ import annotationStyles from '../../css/annotations.css?inline';
 import sharedStyles from '../../css/shared.css?inline';
 import Constants from '../utils/constants';
 import Lang from '../utils/lang';
-import { findVisibleParent, supportsAnchorPositioning } from '../utils/utils';
+import { findVisibleParent, supportsAnchorPositioning, getCachedClosest } from '../utils/utils';
+import { State } from '../core/state';
 
+// Annotation wrapper <annotation>
 export class Annotations extends HTMLElement {
   connectedCallback() {
-    if (this.shadowRoot) {
-      return;
-    }
-
+    if (this.shadowRoot) return;
     const shadow = this.attachShadow({ mode: 'open' });
-
-    // Styles
     const style = document.createElement('style');
-    style.innerHTML = annotationStyles + sharedStyles;
+    style.textContent = annotationStyles + sharedStyles;
     shadow.appendChild(style);
   }
 }
@@ -25,9 +22,8 @@ export const annotationButtons = [];
 /**
  * Create annotation buttons.
  * @param {Object} issue The issue object.
- * @param {Object} option The options object.
  */
-export function annotate(issue, option) {
+export function annotate(issue) {
   // Get properties of issue object.
   const {
     element,
@@ -37,60 +33,43 @@ export function annotate(issue, option) {
     position = 'beforebegin',
     id,
     dismiss,
-    dismissAll,
-    contrastDetails,
     margin,
+    issueLabel,
   } = issue;
 
-  // Validate types to prevent errors.
-  const validTypes = ['error', 'warning', 'good'];
-  if (!type && !element) {
-    return; // Readability issue object.
-  }
-  if (validTypes.indexOf(type) === -1) {
-    throw Error(`Invalid type [${type}] for annotation`);
-  }
-
-  // Generate aria-label for annotations.
-  const ariaLabel = {
-    [validTypes[0]]: Lang._('ERROR'),
-    [validTypes[1]]: Lang._('WARNING'),
-    [validTypes[2]]: Lang._('GOOD'),
-  };
-
-  // Add dismiss button if prop enabled & has a dismiss key.
-  const dismissBtn =
-    option.dismissAnnotations && (type === 'warning' || type === 'good') && dismiss
-      ? `<button data-sa11y-dismiss='${id}' type='button'>${Lang._('DISMISS')}</button>`
-      : '';
+  // Readability issue object or page issue that does not correspond to an element.
+  if (!type && !element) return;
 
   // Generate HTML for painted annotations.
   if (element) {
     // Don't paint page with "Good" annotations (if prop enabled).
     if (type === 'good') {
-      if (!option.showGoodImageButton && element?.tagName === 'IMG') {
+      if (!State.option.showGoodImageButton && element?.tagName === 'IMG') {
         return;
       }
-      if (!option.showGoodLinkButton && element?.tagName === 'A') {
+      if (!State.option.showGoodLinkButton && element?.tagName === 'A') {
         return;
       }
     }
 
     // Tag element with border outline.
-    const tag = {
-      [validTypes[0]]: 'data-sa11y-error',
-      [validTypes[1]]: 'data-sa11y-warning',
-      [validTypes[2]]: 'data-sa11y-good',
+    const tagMap = {
+      error: 'data-sa11y-error',
+      warning: 'data-sa11y-warning',
+      good: 'data-sa11y-good',
     };
-    [type].forEach(($el) => {
-      if (tag[$el]) {
-        element.setAttribute(tag[$el], '');
-      }
-    });
+    if (tagMap[type]) {
+      element.setAttribute(tagMap[type], '');
+    }
 
     // Create 'sa11y-annotation' web component for each annotation.
     const annotation = document.createElement('sa11y-annotation');
     annotation.setAttribute('data-sa11y-annotation', id);
+
+    // For unit tests.
+    if (State.option.unitTestMode) {
+      annotation.setAttribute('data-content', `${issueLabel} ${content.textContent}`);
+    }
 
     // Add anchor positioning on <sa11y-annotation> web component to improve accuracy of positioning.
     if (supportsAnchorPositioning()) {
@@ -99,21 +78,14 @@ export function annotate(issue, option) {
       annotation.style.top = 'anchor(top)';
       annotation.style.left = 'anchor(left)';
 
-      // Preserve original anchor name.
-      const existing = element.style.anchorName;
-      element.style.anchorName = existing
-        ? `${existing}, --sa11y-anchor-${id}`
-        : `--sa11y-anchor-${id}`;
+      // Preserve existing anchor names.
+      const existingNames = element.style.anchorName
+        ? element.style.anchorName.split(',').map((name) => name.trim())
+        : [];
+      const filteredNames = existingNames.filter((name) => !name.startsWith('--sa11y-anchor-'));
+      filteredNames.push(`--sa11y-anchor-${id}`);
+      element.style.anchorName = filteredNames.join(', ');
     }
-
-    // Add dismiss all button if prop enabled & has addition check key.
-    const dismissAllBtn =
-      option.dismissAnnotations &&
-      option.dismissAll &&
-      typeof dismissAll === 'string' &&
-      (type === 'warning' || type === 'good')
-        ? `<button data-sa11y-dismiss='${id}' data-sa11y-dismiss-all type='button'>${Lang._('DISMISS_ALL')}</button>`
-        : '';
 
     // Create button annotations.
     const buttonWrapper = document.createElement('div');
@@ -121,23 +93,26 @@ export function annotate(issue, option) {
     const button = document.createElement('button');
     button.type = 'button';
     button.className = `${type}-btn`;
-    button.setAttribute('aria-label', ariaLabel[type]);
+    button.setAttribute('aria-label', issueLabel);
     button.setAttribute('aria-haspopup', 'dialog');
     button.style.margin = `${inline ? '-10px' : ''} ${margin}`;
-    button.dataset.tippyContent = `<div lang='${Lang._('LANG_CODE')}' class='${type}'><button type='button' class='close-btn close-tooltip' aria-label='${Lang._('ALERT_CLOSE')}'></button><h2>${ariaLabel[type]}</h2> ${content} ${contrastDetails ? '<div data-sa11y-contrast-details></div>' : ''} <div class='dismiss-group'>${dismissBtn}${dismissAllBtn}</div></div>`;
     buttonWrapper.appendChild(button);
     annotationButtons.push(button);
 
     // Make sure annotations always appended outside of SVGs and interactive elements.
-    const insertBefore = option.insertAnnotationBefore ? `, ${option.insertAnnotationBefore}` : '';
+    const insertBefore = State.option.insertAnnotationBefore
+      ? `, ${State.option.insertAnnotationBefore}`
+      : '';
     const location =
-      element.closest(`a, button, [role="link"], [role="button"] ${insertBefore}`) || element;
+      getCachedClosest(element, 'svg') ||
+      getCachedClosest(element, `a, button, [role="link"], [role="button"] ${insertBefore}`) ||
+      element;
     location.insertAdjacentElement(position, annotation);
     annotation.shadowRoot.appendChild(buttonWrapper);
 
     // Modifies the annotation's parent container with overflow: hidden, making it visible and scrollable so content authors can access it.
-    const ignoredElements = option.ignoreHiddenOverflow
-      ? option.ignoreHiddenOverflow
+    const ignoredElements = State.option.ignoreHiddenOverflow
+      ? State.option.ignoreHiddenOverflow
           .split(',')
           .flatMap((selector) => [...document.querySelectorAll(selector)])
       : [];
@@ -146,10 +121,31 @@ export function annotate(issue, option) {
       parent.setAttribute('data-sa11y-overflow', '');
     }
   } else {
-    // If no valid element, send issue to main panel.
+    // Dismiss button for warnings and good issues.
+    const dismissBtn =
+      State.option.dismissAnnotations && ['warning', 'good'].includes(type) && dismiss
+        ? Object.assign(document.createElement('button'), {
+            type: 'button',
+            textContent: Lang._('DISMISS'),
+          })
+        : null;
+    if (dismissBtn) dismissBtn.dataset.sa11yDismiss = id;
+
+    // Append to Page Issues.
     const listItem = document.createElement('li');
-    listItem.innerHTML = `<h3>${ariaLabel[type]}</h3> ${content}${dismissBtn}`;
-    Constants.Panel.pageIssuesList.insertAdjacentElement('afterbegin', listItem);
+    listItem.classList.add([type]);
+    const heading = document.createElement('h3');
+    heading.textContent = issueLabel;
+    listItem.appendChild(heading);
+    listItem.append(content, dismissBtn || '');
+
+    // Debug mode.
+    if (State.option.unitTestMode) {
+      const test = Lang.sprintf('<hr><strong>Test ID:</strong> <code>%(TEST)</code>', issue.test);
+      listItem.append(test);
+    }
+
+    Constants.Panel.pageIssuesList.prepend(listItem);
 
     // Display Page Issues panel.
     Constants.Panel.pageIssues.classList.add('active');

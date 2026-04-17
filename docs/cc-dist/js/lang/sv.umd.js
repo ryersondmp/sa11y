@@ -13,6 +13,7 @@
       WARNING: "Varning",
       WARNINGS: "Varningar",
       GOOD: "Bra",
+      REVIEW: "Granska",
       ON: "På",
       OFF: "Av",
       ALERT_TEXT: "Varning",
@@ -43,7 +44,7 @@
       MISSING_ROOT: "Hela sidan kontrolleras för tillgänglighet eftersom målområdet <code>%(root)</code> inte existerar.",
       MISSING_READABILITY_ROOT: "Läsbarhetspoängen baseras på innehållsområdet <code>%(fallback)</code>, eftersom målområdet <code>%(root)</code> inte existerar.",
       SKIP_TO_PAGE_ISSUES: "Hoppa till sidans problem",
-      CONSOLE_ERROR: 'Tyvärr, men det finns ett problem med tillgänglighetskontrollen på den här sidan. Kan du <a href="%(link)">rapportera det via det här formuläret</a> eller på <a href="%(link)">GitHub</a>?',
+      CONSOLE_ERROR: 'Tyvärr, men det finns ett problem med tillgänglighetskontrollen på den här sidan. Kan du <a href="https://forms.gle/sjzK9XykETaoqZv99">rapportera det via det här formuläret</a> eller på <a href="https://github.com/ryersondmp/sa11y/issues/new?title=Bug%20report">GitHub</a>?',
       APPEARANCE: "Utseende",
       MOVE_PANEL: "Flytta panel",
       HIDDEN: "Dold",
@@ -52,7 +53,7 @@
       PAGE_TITLE: "Sidtitel",
       RESULTS: "Resultat",
       EXPORT_RESULTS: "Exportera resultat",
-      GENERATED: "Resultat genererat med %(tool).",
+      GENERATED: 'Resultat genererat med <a href="https://sa11y.netlify.app">Sa11y.</a>',
       PREVIEW: "Förhandsvisning",
       ELEMENT: "Element",
       PATH: "Sökväg",
@@ -148,7 +149,8 @@
         "den här webbplatsen",
         "visa",
         "visa vår",
-        "webbplats"
+        "webbplats",
+        "artikel"
       ],
       CLICK: ["click", "klicka"],
       NEW_WINDOW_PHRASES: ["extern", "ny flik", "nytt fönster", "pop-up", "pop up"],
@@ -214,7 +216,8 @@
       LINK_DOI: 'För webbsidor eller resurser som endast finns online rekommenderar <a href="https://apastyle.apa.org/style-grammar-guidelines/paper-format/accessibility/urls#:~:text=descriptive%20links">APA Style Guide</a> att man använder beskrivande länkar genom att linda in URL:en eller DOI:en för arbetet runt dess titel. Längre, mindre begripliga webbadresser som används som länktext kan vara svåra att lyssna på med hjälpmedel.',
       LINK_NEW_TAB: 'Länken öppnas i en ny flik eller ett nytt fönster utan förvarning. Att göra det kan vara desorienterande, särskilt för personer som har svårt att uppfatta visuellt innehåll. För det andra är det inte alltid en bra praxis att styra någons erfarenhet eller fatta beslut åt dem. Ange att länken öppnas i ett nytt fönster i länktexten. <hr> <strong>Tips!</strong> Lär dig bästa praxis: <a href="https://www.nngroup.com/articles/new-browser-windows-and-tabs/">att öppna länkar i nya webbläsarfönster och flikar.</a>',
       LINK_FILE_EXT: "Länken pekar till en PDF eller nedladdningsbar fil (t.ex. MP3, Zip, Word Doc) utan förvarning. Ange filtypen i länktexten. Om det är en stor fil, överväg att ta med filstorleken. <hr> <strong>Exempel:</strong> Verkställande rapport (PDF, 3MB)",
-      LINK_IDENTICAL_NAME: "Länken har identisk text som en annan länk, även om den pekar på en annan sida. Flera länkar med samma text kan orsaka förvirring för personer som använder skärmläsare. <strong>Överväg att göra följande länk mer beskrivande för att hjälpa till att skilja den från andra länkar.</strong> <hr> <strong {B}>Tillgängligt namn</strong> <strong {C}>%(TEXT)</strong>",
+      LINK_IDENTICAL_NAME: "Flera länkar på den här sidan använder samma länktext men pekar på olika ställen. Detta kan orsaka förvirring för användare av hjälpmedelsteknik. För att åtgärda detta, gör länktexten mer beskrivande.",
+      LINK_UNPRONOUNCEABLE: "Länktexten innehåller endast symboler. Om du tror att den här länken är ett fel på grund av en kopiera/klistra in-bugg, bör du överväga att ta bort den.",
       // Images
       ALT_UNPRONOUNCEABLE: "Alternativtexten innehåller endast outtalbara symboler och/eller mellanslag. Skärmläsare meddelar bilden och pausar sedan. Om bilden är dekorativ, se till att det inte finns några mellanslag i alternativtexten. <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>",
       LINK_ALT_UNPRONOUNCEABLE: "Alternativtexten i denna länkade bild innehåller endast outtalbara symboler och/eller mellanslag. Skärmläsare meddelar bilden och pausar sedan. Se till att alternativtexten beskriver länkens mål. <hr> {L} {ALT} <strong {C}>%(ALT_TEXT)</strong>",
@@ -247,6 +250,7 @@
       LABELS_NO_FOR_ATTRIBUTE: "Det finns ingen etikett associerad med detta inmatningsfält. Lägg till ett <code>for</code>-attribut till etiketten som matchar <code>id</code> för detta inmatningsfält. <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>",
       LABELS_MISSING_LABEL: "Det finns ingen etikett associerad med detta inmatningsfält. Vänligen lägg till ett <code>id</code> till denna inmatning och lägg till ett matchande <code>for</code>-attribut till etiketten.",
       LABELS_PLACEHOLDER: 'Försvinnande platshållartext gör det svårt för människor att komma ihåg vilken information som tillhör ett fält och gör det utmanande att identifiera och åtgärda fel. Överväg istället att använda en permanent synlig hint före formulärfältet. <hr> Läs mer: <a href="https://www.nngroup.com/articles/form-design-placeholders/">Platshållare i formulärfält är skadliga.</a>',
+      ARIA_INPUT_FIELD_NAME: "ARIA-inmatningsfält eller växlingsfält saknar ett tillgängligt namn. För att åtgärda detta, ange ett giltigt <code>aria-labelledby</code>-, <code>aria-label</code>- eller <code>title</code>-attribut. Om inmatningen är växlingsbar (t.ex. kryssruta, strömbrytare, radioknapp) löser även synlig inre text detta. <hr> <strong {B}>Element</strong> <pre><code>%(EL)</code></pre>",
       // Embedded content
       EMBED_VIDEO: "Se till att <strong>alla videor har undertexter.</strong> Att tillhandahålla textning för allt ljud- och videoinnehåll är ett obligatoriskt krav för nivå A. Bildtexter stöder personer som är D/döva eller hörselskada.",
       EMBED_AUDIO: "Se till att tillhandahålla en <strong>transkription för alla poddsändningar.</strong> Att tillhandahålla transkriptioner för ljudinnehåll är ett obligatoriskt krav för nivå A. Avskrifter stöder personer som är D/döva eller hörselskada, men kan gynna alla. Överväg att placera utskriften under poddsändingen eller i en dragspelspanel.",
@@ -256,7 +260,7 @@
       EMBED_UNFOCUSABLE: '<code>&lt;iframe&gt;</code> med oväxlingsbara element bör inte ha <code>tabindex="-1"</code>. Det inbäddade innehållet kommer inte att vara tillgängligt med tangentbordet.',
       // Quality assurance
       QA_BAD_LINK: "Dålig länk hittades. Länk verkar peka till en utvecklingsmiljö. <hr> {L} <strong {C}>%(LINK)</strong>",
-      QA_IN_PAGE_LINK: "Bruten samma-sideslänk. Länkmålet matchar inte något element på denna sida.",
+      QA_IN_PAGE_LINK: "Trasig länk på samma sida. Den här länken försöker navigera till ett avsnitt på sidan som inte kan hittas. För att åtgärda detta, se till att länken matchar <code>id</code> för elementet du vill hoppa till.",
       QA_STRONG_ITALICS: "Feta och kursiva HTML-taggar har semantisk betydelse och bör <strong>inte</strong> användas för att markera hela stycken. Fetstil text bör användas för att ge ett ord eller en fras stark <strong>betoning</strong>. Kursiv stil ska användas för att markera egennamn (d.v.s. bok- och artikeltitlar), främmande ord, citat. Långa citat bör formateras som ett blockcitat.",
       QA_PDF: 'Det går inte att kontrollera PDF-filer för tillgänglighet. PDF-filer betraktas som webbinnehåll och måste också göras tillgängliga. PDF-filer är ofta problematiska för personer som använder skärmläsare (till exempel: saknade strukturella taggar eller saknade formulärfältetiketter) och personer som har nedsatt syn (texten anpassar sig inte när den förstoras). <ul><li>Om detta är ett formulär, överväg att använda ett tillgängligt HTML-formulär som ett alternativ.</li><li>Om detta är ett dokument, överväg att konvertera det till en webbsida.</li></ul> Annars kontrollerar du <a href="https://helpx.adobe.com/acrobat/using/create-verify-pdf-accessibility.html">PDF för tillgänglighet i Acrobat DC.</a>',
       QA_DOCUMENT: 'Det gick inte att kontrollera dokumentets tillgänglighet. Länkade dokument betraktas som webbinnehåll och måste också göras tillgängliga. Granska dokumentet manuellt. <ul><li>Gör ditt <a href="https://support.google.com/docs/answer/6199477?hl=sv">Google Workspace-dokument eller din presentation mer tillgänglig.</a></li><li>Gör dina <a href="https://support.microsoft.com/sv-se/office/create-accessible-office-documents-868ecfcd-4f00-4224-b881-a65537a7c155">Office-dokument mer tillgängliga.</a></li></ul>',
@@ -270,9 +274,10 @@
       QA_JUSTIFY: "Undvik att använda text som är både vänster- och högerjusterad. Detta kan vara svårt att läsa för vissa människor på grund av ojämna mellanrum mellan orden. Använd vänsterjusterad text för bättre läsbarhet.",
       QA_SMALL_TEXT: "Liten text är svårare att läsa, särskilt för dem med nedsatt syn. För att säkerställa bättre läsbarhet, undvik att använda teckenstorlekar mindre än standard.",
       // Shared
-      ACC_NAME: "<strong {B}>Tillgängligt namn</strong> %(TEXT)",
-      ACC_NAME_TIP: '<hr><strong>Tips!</strong> "Tillgängligt namn" är den slutliga etiketten som kommuniceras till personer som använder hjälpmedel och beräknas av ARIA. Detta hjälper dem att förstå syftet med länken eller knappen.',
-      HIDDEN_FOCUSABLE: 'Länken eller knappen har <code>aria-hidden=&quot;true&quot;</code>, men kan fortfarande fokuseras med hjälp av tangentbordet. Om du avser att dölja en duplicerad länk eller knapp, lägg även till <code>tabindex=&quot;-1&quot;</code>. Annars bör <code>aria-hidden=&quot;true&quot;</code> inte användas på element som kan ta emot fokus. <hr> Läs mer om <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">aria-hidden-attributet.</a>',
+      LINK_TEXT: "<strong {B}>Länktext</strong> <strong {C}>%(TEXT)</strong>",
+      ACC_NAME: "<strong {B}>Tillgängligt namn</strong> <strong {C}>%(TEXT)</strong>",
+      ACC_NAME_TIP: '<hr><strong>Tips!</strong> Det "tillgängliga namnet" är den slutliga etiketten som kommuniceras till personer som använder hjälpmedel. Detta hjälper dem att förstå elementets syfte.',
+      HIDDEN_FOCUSABLE: 'Det här elementet kan ta emot tangentbordsfokus, men är dolt för skärmläsare genom attributet <code>aria-hidden="true"</code> (på sig självt eller en överordnad behållare). För att åtgärda detta, ta antingen bort attributet aria-hidden eller ta bort elementet från tabbordningen. <hr> <strong {B}>Element</strong> <pre><code>%(EL)</code></pre> <hr> Läs mer om <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">attributet aria-hidden.</a>',
       // Developer
       DUPLICATE_ID: "Hittade <strong>duplicerat ID</strong>. Dubbletterade ID:n är kända för att orsaka problem för hjälpmedelsverktyg när de försöker interagera med innehåll. Ta bort eller ändra följande ID. <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>",
       UNCONTAINED_LI: "Alla <code>&lt;li&gt;</code> listobjekt måste placeras inuti <code>&lt;ul&gt;</code> oordnade eller <code>&lt;ol&gt;</code> ordnade element. Denna struktur hjälper skärmläsare att korrekt tillkännage listan och dess objekt.",
@@ -283,17 +288,22 @@
       META_SCALABLE: 'Ta bort parametern <code>user-scalable="no"</code> i <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">meta-taggen för vyport</a> för att tillåta zoomning.',
       META_MAX: 'Se till att parametern <code>maximum-scale</code> i <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">meta-taggen för vyport</a> inte är mindre än 2.',
       META_REFRESH: "Sidan ska inte automatiskt uppdateras med hjälp av en meta-tagg.",
+      META_LANG_SUGGEST: "Följande språkkod <code>%(CODE)</code> är inte giltig. Menade du <code>%(CODE)</code>?",
+      META_LANG_VALID: 'Språkkoden för detta element är inte giltig. För att åtgärda detta, ersätt lang-attributet med en giltig språkkod. <hr> <strong {B}>Element</strong> <code>&lt;%(ELEMENT) lang="%(CODE)"&gt;</code> <hr> Läs mer om att <a href="https://www.w3.org/International/questions/qa-html-language-declarations">deklarera språk i HTML.</a>',
       // Buttons
       BTN_EMPTY: "Knappen saknar ett tillgängligt namn som beskriver dess syfte.",
       BTN_EMPTY_LABELLEDBY: "Knappen har ett <code>aria-labelledby</code>-värde som är tomt eller inte matchar värdet <code>id</code> för ett annat element på sidan.",
       BTN: "knapp",
       BTN_TIP: 'Lär dig hur du skapar en <a href="https://www.sarasoueidan.com/blog/accessible-icon-buttons/">tillgänglig knapp.</a>',
       BTN_ROLE_IN_NAME: 'Inkludera inte ordet "knapp" i namnet på en knapp. Skärmläsare anger redan elementets roll utöver dess namn.',
-      LABEL_IN_NAME: "Den synliga texten för detta element verkar skilja sig från det tillgängliga namnet, vilket kan orsaka förvirring för användare av hjälpmedelstekniker. Vänligen granska: <hr> <strong {B}>Tillgängligt namn</strong> <strong {C}>%(TEXT)</strong>",
+      LABEL_IN_NAME: "Den synliga texten för detta element verkar skilja sig från det tillgängliga namnet, vilket kan orsaka förvirring för användare av hjälpmedelstekniker. Vänligen granska: <hr> <strong {B}>Text</strong> <strong {C}>%(TEXT)</strong> <hr> <strong {B}>Tillgängligt namn</strong> <strong {C}>%(TEXT)</strong>",
+      LINK_MAYBE_BUTTON: 'Den här länken har ett ogiltigt mål. Även om det tillgängliga namnet eller dess attribut tyder på att detta kanske inte är en länk alls, utan istället styr något skriptat beteende på sidan. För att åtgärda detta, ersätt länken med en <a href="https://www.w3.org/WAI/ARIA/apg/patterns/button/">tillgänglig knapp</a>, eller korrigera länkens mål. <hr> <strong {B}>Tillgängligt namn</strong> <strong {C}>%(TEXT)</strong> <hr> <strong>Tips!</strong> Hjälpmedel behandlar knappar och länkar på olika sätt. Genom att använda rätt HTML-element säkerställer du att användarna vet vilka tangentbordsgenvägar de ska använda och vilken åtgärd som kommer att utlösas.',
+      POTENTIAL_UI_ELEMENTS: ["meny", "stäng", "växla", "öppna", "expandera", "fäll ihop", "nästa", "föregående", "spela upp", "pausa", "undermeny", "visa", "dölj", "rullgardinsmeny", "bakåt", "framåt", "hoppa över", "skicka", "avbryt", "spara", "redigera", "radera", "ta bort", "sök", "filter", "sortera", "stopp", "ljud av", "ljud på", "helskärm", "minimera", "maximera"],
       // Tables
       TABLES_MISSING_HEADINGS: 'Tabellrubriker saknas! Tillgänglighetsanpassade tabeller behöver HTML-markup som indikerar rubrikceller och dataceller, vilket definierar deras relation. Informationen ger sammanhang till personer som använder hjälpmedelsverktyg. Tabeller bör endast användas för tabelldata. <hr> Läs mer om <a href="https://www.w3.org/WAI/tutorials/tables/">tillgängliga tabeller.</a>',
       TABLES_SEMANTIC_HEADING: 'Semantiska rubriker som Rubrik 2 eller Rubrik 3 bör endast användas för sektioner av innehåll; <strong>inte</strong> i HTML-tabeller. Ange tabellrubriker med <code>&lt;th&gt;</code>-elementet istället. <hr> Läs mer om <a href="https://www.w3.org/WAI/tutorials/tables/">tillgängliga tabeller.</a>',
       TABLES_EMPTY_HEADING: 'Tom tabellrubrik hittades! Tabellrubriker får <strong>aldrig</strong> vara tomma. Det är viktigt att ange rad- och/eller kolumnrubriker för att förmedla deras relation. Informationen ger sammanhang till personer som använder hjälpmedelsverktyg. Tänk på att tabeller endast ska användas för tabelldata. <hr> Läs mer om <a href="https://www.w3.org/WAI/tutorials/tables/">tillgängliga tabeller.</a>',
+      TABLES_INVALID_HEADERS_REF: 'Den här tabellen försöker koppla en specifik datacell till en specifik rubrikcell, men rubrikens ID kan inte hittas. Kontrollera att varje <code>headers</code>-attribut matchar ID för en rubrikcell i samma tabell. <hr> <strong {B}>Rubriker</strong> <code>%(VALUE)</code> <hr> <strong>Tips!</strong> Att <a href="https://www.w3.org/WAI/WCAG22/Techniques/html/H43">använda manuella ID-referenser</a> för att associera dataceller med rubrikceller är komplicerat och sårbart. Dela om möjligt upp komplexa data i mindre tabeller med enkla rubrikrader och -kolonner.',
       // Contrast
       CONTRAST_NORMAL: "Text i normal storlek bör ha en kontrastförhållande på minst %(RATIO).",
       CONTRAST_LARGE: "Text i stor storlek bör ha en kontrastförhållande på minst %(RATIO).",
@@ -313,7 +323,14 @@
       UNKNOWN: "Okänd",
       FG: "Förgrund",
       BG: "Bakgrund",
-      NO_SUGGESTION: "Ingen tillgänglig kombination kan hittas genom att endast ändra textfärgen. Försök att ändra bakgrundsfärgen."
+      NO_SUGGESTION: "Ingen tillgänglig kombination kan hittas genom att endast ändra textfärgen. Försök att ändra bakgrundsfärgen.",
+      // Page language
+      PAGE_LANG_CONFIDENCE: 'Mer än hälften av texten på den här sidan verkar vara på %(LIKELY_LANG), men det deklarerade sidoproget är %(PAGE_LANG). Överväg att uppdatera det <a href="https://www.w3.org/International/questions/qa-html-language-declarations">deklarerade sidoproget</a> så att det matchar innehållet.',
+      LANG_OF_PARTS: "Sidsproget deklarerades som %(PAGE_LANG), men det här innehållet verkar vara på %(LIKELY_LANG). Se till att innehållet är korrekt taggat.",
+      LANG_MISMATCH: "Det här innehållet verkar vara på %(DETECTED_LANG), men det taggades som %(WRONG_LANG).",
+      LANG_OF_PARTS_ALT: "Den här alt-texten verkar vara på %(LIKELY_LANG), men sidsproget deklarerades som %(PAGE_LANG). Se till att alt-texten är på samma språk som resten av sidan. <hr> {ALT} <strong {C}>%(ALT)</strong>",
+      LANG_TIP: "<hr><strong>Tips!</strong> Skärmläsare uttalar ord med hjälp av språktaggar. Att uttala ett språk med ett språkpaket som inte matchar ger obegripligt tal.",
+      LANG_UNSUPPORTED: "Språkrelaterade tillgänglighetskontroller hoppades över eftersom automatisk språkidentifiering inte stöds i den här webbläsaren."
     }
   };
   return sv;

@@ -13,6 +13,7 @@
       WARNING: "Upozornenie",
       WARNINGS: "Upozornenia",
       GOOD: "Dobrý",
+      REVIEW: "Kontrola",
       ON: "Na stránke",
       OFF: "Vypnuté",
       ALERT_TEXT: "Upozornenie",
@@ -43,7 +44,7 @@
       MISSING_ROOT: "Celá stránka bola skontrolovaná z hľadiska prístupnosti, pretože cieľová oblasť <code>%(root)</code> neexistuje.",
       MISSING_READABILITY_ROOT: "Skóre čitateľnosti je založené na obsahovej oblasti <code>%(fallback)</code>, pretože cieľová oblasť <code>%(root)</code> neexistuje.",
       SKIP_TO_PAGE_ISSUES: "Prejsť na stránku Problémy",
-      CONSOLE_ERROR: 'Je nám ľúto, ale na tejto stránke je problém s kontrolou prístupnosti. Môžete to prosím <a href="%(link)">nahlásiť prostredníctvom tohto formulára</a> alebo na <a href="%(link)">GitHub</a>?',
+      CONSOLE_ERROR: 'Je nám ľúto, ale na tejto stránke je problém s kontrolou prístupnosti. Môžete to prosím <a href="https://forms.gle/sjzK9XykETaoqZv99">nahlásiť prostredníctvom tohto formulára</a> alebo na <a href="https://github.com/ryersondmp/sa11y/issues/new?title=Bug%20report">GitHub</a>?',
       APPEARANCE: "Vzhľad",
       MOVE_PANEL: "Presunúť panel",
       HIDDEN: "Skryté",
@@ -58,7 +59,7 @@
       PAGE_TITLE: "Názov stránky",
       RESULTS: "Výsledky",
       EXPORT_RESULTS: "Exportovať výsledky",
-      GENERATED: "Výsledky vygenerované s %(tool).",
+      GENERATED: 'Výsledky vygenerované s <a href="https://sa11y.netlify.app">Sa11y.</a>',
       PREVIEW: "Náhľad",
       ELEMENT: "Prvok",
       PATH: "Cesta",
@@ -147,7 +148,8 @@
         "táto webová stránka",
         "zobraziť",
         "pozrite si náš",
-        "webová stránka"
+        "webová stránka",
+        "článok"
       ],
       CLICK: ["click", "kliknutie"],
       NEW_WINDOW_PHRASES: ["externé", "nová karta", "nové okno", "pop-up", "vyskakovať"],
@@ -197,7 +199,8 @@
       LINK_DOI: 'V prípade webových stránok alebo len online zdrojov odporúča <a href="https://apastyle.apa.org/style-grammar-guidelines/paper-format/accessibility/urls#:~:text=descriptive%20links">príručka štýlu APA</a> používať popisné odkazy tak, že okolo názvu diela uvediete jeho URL alebo DOI. Dlhšie, menej zrozumiteľné adresy URL použité ako text odkazu by mohli byť ťažko zrozumiteľné pomocou asistenčných technológií.',
       LINK_NEW_TAB: 'Odkaz sa otvorí v novej karte alebo okne bez upozornenia. Môže to byť dezorientujúce, najmä pre ľudí, ktorí majú problémy s vnímaním vizuálneho obsahu. Po druhé, nie vždy je dobrým postupom kontrolovať niečí zážitok alebo robiť rozhodnutia za neho. Uveďte, že sa odkaz otvára v novom okne, v texte odkazu. <hr> <strong>Tip!</strong> Naučte sa osvedčené postupy: <a href="https://www.nngroup.com/articles/new-browser-windows-and-tabs/">otváranie odkazov v nových oknách a kartách prehliadača.</a>',
       LINK_FILE_EXT: "Odkaz odkazuje na súbor PDF alebo súbor na stiahnutie (napr. MP3, Zip, Word Doc) bez upozornenia. Typ súboru uveďte v texte odkazu. Ak ide o veľký súbor, zvážte uvedenie jeho veľkosti. <hr> <strong>Príklad:</strong> Výkonná správa (PDF, 3 MB)",
-      LINK_IDENTICAL_NAME: "Odkaz má rovnaký text ako iný odkaz, hoci odkazuje na inú stránku. Viacero odkazov s rovnakým textom môže spôsobiť zmätok u ľudí, ktorí používajú čítačky obrazovky. <strong>Premyslite si, či by nasledujúci odkaz nemal byť viac popisný, aby ste ho odlíšili od ostatných odkazov.</strong> <hr> <strong {B}>Prístupné meno</strong> <strong {C}>%(TEXT)</strong>",
+      LINK_IDENTICAL_NAME: "Viacero odkazov na tejto stránke používa rovnaký text, ale smerujú na rôzne miesta. To môže zmiasť používateľov asistenčných technológií. Ak to chcete napraviť, upravte text tohto odkazu tak, aby bol popisnejší.",
+      LINK_UNPRONOUNCEABLE: "Text odkazu obsahuje iba symboly. Ak si myslíte, že tento odkaz je chybou spôsobenou kopírovaním/vložením, zvážte jeho odstránenie.",
       // Images
       ALT_UNPRONOUNCEABLE: "Alternatívny text obsahuje iba nevysloviteľné symboly a/alebo medzery. Čítačky obrazovky oznámia obrázok a potom sa zastavia. Ak je obrázok dekoratívny, uistite sa, že alternatívny text neobsahuje medzery. <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>",
       LINK_ALT_UNPRONOUNCEABLE: "Alternatívny text v tomto prepojenom obrázku obsahuje iba nevysloviteľné symboly a/alebo medzery. Čítačky obrazovky oznámia obrázok a potom sa zastavia. Uistite sa, že alternatívny text popisuje cieľ odkazu. <hr> {L} {ALT} <strong {C}>%(ALT_TEXT)</strong>",
@@ -230,6 +233,7 @@
       LABELS_NO_FOR_ATTRIBUTE: "K tomuto vstupu nie je priradený žiadny štítok. Pridajte atribút <code>for</code> k štítku, ktorý sa zhoduje s <code>id</code> tohto vstupu. <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>",
       LABELS_MISSING_LABEL: "K tomuto vstupu nie je priradený žiadny štítok. Prosím, pridajte <code>id</code> k tomuto vstupu a pridajte zodpovedajúci atribút <code>for</code> k štítku.",
       LABELS_PLACEHOLDER: 'Zmiznutie textu zástupcu sťažuje ľuďom pamätať si, aké informácie patrí do poľa, a sťažuje identifikáciu a opravu chýb. Namiesto toho zvážte použitie trvalo viditeľnej nápovedy pred formulárovým poľom. <hr> Viac informácií: <a href="https://www.nngroup.com/articles/form-design-placeholders/">Zástupcovia v poľách formulára sú škodliví.</a>',
+      ARIA_INPUT_FIELD_NAME: "Vstupné alebo prepínacie pole ARIA postráda prístupný názov. Ak to chcete napraviť, zadajte platný atribút <code>aria-labelledby</code>, <code>aria-label</code> alebo <code>title</code>. Ak je vstup prepínateľný (napr. zaškrtávacie políčko, prepínač, rádio), problém vyrieši aj pridanie viditeľného vnútorného textu. <hr> <strong {B}>Prvok</strong> <pre><code>%(EL)</code></pre>",
       // Embedded content
       EMBED_VIDEO: "Uistite sa, že <strong>všetky videá majú skryté titulky.</strong> Poskytovanie titulkov pre všetok zvukový a obrazový obsah je povinnou požiadavkou úrovne A. Titulky podporujú osoby s poruchou sluchu alebo nepočujúce osoby.",
       EMBED_AUDIO: "Zabezpečte <strong>prepis všetkých podcastov.</strong> Poskytovanie prepisov zvukového obsahu je povinnou požiadavkou úrovne A. Prepisy podporujú ľudí s poruchou sluchu alebo nepočujúcich, ale môžu byť prínosom pre všetkých. Zvážte umiestnenie prepisu pod alebo v rámci akordeónového panelu.",
@@ -239,7 +243,7 @@
       EMBED_UNFOCUSABLE: '<code>&lt;iframe&gt;</code> s nezamerateľnými prvkami by nemalo mať <code>tabindex="-1"</code>. Vložený obsah nebude dostupný pomocou klávesnice.',
       // QA
       QA_BAD_LINK: "Nájdené zlé prepojenie. Zdá sa, že odkaz smeruje na vývojové prostredie. <hr> {L} <strong {C}>%(LINK)</strong>",
-      QA_IN_PAGE_LINK: "Rozbitý odkaz na rovnakú stránku. Cieľ odkazu nezodpovedá žiadnemu prvku na tejto stránke.",
+      QA_IN_PAGE_LINK: "Nefunkčný odkaz na rovnakú stránku. Tento odkaz sa pokúša navigovať do sekcie stránky, ktorú nie je možné nájsť. Ak to chcete napraviť, uistite sa, že odkaz zodpovedá <code>id</code> prvku, na ktorý chcete prejsť.",
       QA_STRONG_ITALICS: "Tučné písmo a kurzíva majú sémantický význam a nemali by sa používať na zvýraznenie celých odsekov. Tučný text by sa mal používať na výrazné <strong>zdôraznenie</strong> slova alebo frázy. Kurzíva by sa mala používať na zvýraznenie vlastných mien (t. j. názvov kníh a článkov), cudzích slov, citátov. Dlhé citáty by sa mali formátovať ako blokové citáty.",
       QA_PDF: 'Nie je možné skontrolovať prístupnosť súborov PDF. Súbory PDF sa považujú za webový obsah a musia byť tiež prístupné. Súbory PDF často obsahujú problémy pre ľudí, ktorí používajú čítačky obrazovky (chýbajúce štrukturálne značky alebo chýbajúce označenia polí formulára), a ľudí so slabým zrakom (text sa po zväčšení nezobrazuje). <ul><li>Ak ide o formulár, zvážte použitie prístupného formulára HTML ako alternatívy.</li><li>Ak ide o dokument, zvážte jeho konverziu na webovú stránku.</li></ul> V opačnom prípade skontrolujte <a href="https://helpx.adobe.com/acrobat/using/create-verify-pdf-accessibility.html">PDF pre prístupnosť v Acrobat DC.</a>',
       QA_DOCUMENT: 'Nie je možné skontrolovať prístupnosť dokumentu. Prepojené dokumenty sa považujú za webový obsah a musia byť tiež prístupné. Skontrolujte tento dokument manuálne. <ul><li>Urobte svoj <a href="https://support.google.com/docs/answer/6199477?hl=sk">dokument alebo prezentáciu v službe Google Workspace prístupnejšou.</a></li><li>Urobte svoj <a href="https://support.microsoft.com/sk/office/create-accessible-office-documents-868ecfcd-4f00-4224-b881-a65537a7c155">dokument Office prístupnejším.</a></li></ul>',
@@ -253,9 +257,10 @@
       QA_JUSTIFY: "Vyhnite sa používaniu zarovnaného textu, ktorý je zarovnaný ako k ľavému, tak aj k pravému okraju. To môže byť pre niektorých ľudí ťažké čítať kvôli nerovnomerným medzerám medzi slovami. Použite text zarovnaný na ľavo pre lepšiu čitateľnosť.",
       QA_SMALL_TEXT: "Malý text je ťažšie čitateľný, najmä pre osoby so slabým zrakom. Aby ste zabezpečili lepšiu čitateľnosť, vyhnite sa používaniu veľkostí písma menších ako predvolené.",
       // Shared
-      ACC_NAME: "<strong {B}>Prístupné meno</strong> %(TEXT)",
-      ACC_NAME_TIP: '<hr><strong>Tip!</strong> "Prístupné meno" je konečná nálepka, ktorá sa komunikuje ľuďom používajúcim asistenčné technológie a ktorá sa počíta pomocou ARIA. Pomáha im to pochopiť účel odkazu alebo tlačidla.',
-      HIDDEN_FOCUSABLE: 'Odkaz alebo tlačidlo má <code>aria-hidden=&quot;true&quot;</code>, ale stále je prístupné cez klávesnicu. Ak chcete skryť duplikovaný odkaz alebo tlačidlo, pridajte aj <code>tabindex=&quot;-1&quot;</code>. Inak by sa <code>aria-hidden=&quot;true&quot;</code> nemalo používať na prvkoch, ktoré môžu získať fokus. <hr> Viac informácií o <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">atribúte aria-hidden.</a>',
+      LINK_TEXT: "<strong {B}>Text odkazu</strong> <strong {C}>%(TEXT)</strong>",
+      ACC_NAME: "<strong {B}>Prístupné meno</strong> <strong {C}>%(TEXT)</strong>",
+      ACC_NAME_TIP: "<hr><strong>Tip!</strong> „Prístupný názov“ je konečný popis, ktorý sa oznamuje ľuďom používajúcim asistívne technológie. Pomáha im to pochopiť účel prvku.",
+      HIDDEN_FOCUSABLE: 'Tento prvok môže prijať klávesový fokus, ale je skrytý pred čítačkami obrazovky atribútom <code>aria-hidden="true"</code> (na sebe alebo na nadradenom kontajneri). Ak to chcete napraviť, buď odstráňte atribút aria-hidden, alebo prvok odstráňte z poradia tabulátora. <hr> <strong {B}>Prvok</strong> <pre><code>%(EL)</code></pre> <hr> Ďalšie informácie o <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">atribúte aria-hidden.</a>',
       // Developer
       DUPLICATE_ID: "Nájdené <strong>duplicitné ID</strong>. Je známe, že chyby duplicitného ID spôsobujú problémy asistenčným technológiám pri pokusoch o interakciu s obsahom. Odstráňte alebo zmeňte nasledujúce ID. <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>",
       UNCONTAINED_LI: "Všetky položky zoznamu <code>&lt;li&gt;</code> musia byť umiestnené vo vnútri <code>&lt;ul&gt;</code> neusporiadaných alebo <code>&lt;ol&gt;</code> usporiadaných prvkov. Táto štruktúra pomáha čítačkám obrazovky presne oznamovať zoznam a jeho položky.",
@@ -266,17 +271,22 @@
       META_SCALABLE: 'Odstráňte parameter <code>user-scalable="no"</code> v <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">meta značke zobrazenia</a>, aby ste umožnili priblíženie.',
       META_MAX: 'Uistite sa, že parameter <code>maximum-scale</code> v <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">meta značke zobrazenia</a> nie je menší ako 2.',
       META_REFRESH: "Stránka by sa nemala automaticky obnovovať pomocou meta značky.",
+      META_LANG_SUGGEST: "Nasledujúci kód jazyka <code>%(CODE)</code> nie je platný. Mysleli ste <code>%(CODE)</code>?",
+      META_LANG_VALID: 'Kód jazyka pre tento prvok nie je platný. Ak to chcete napraviť, nahraďte atribút lang platným kódom jazyka. <hr> <strong {B}>Prvok</strong> <code>&lt;%(ELEMENT) lang="%(CODE)"&gt;</code> <hr> Ďalšie informácie o <a href="https://www.w3.org/International/questions/qa-html-language-declarations">deklarovaní jazyka v HTML.</a>',
       // Buttons
       BTN_EMPTY: "Tlačidlu chýba prístupné meno, ktoré popisuje jeho účel.",
       BTN_EMPTY_LABELLEDBY: "Tlačidlo má hodnotu <code>aria-labelledby</code>, ktorá je prázdna alebo nezodpovedá hodnote <code>id</code> iného prvku na stránke.",
       BTN: "tlačidlo",
       BTN_TIP: 'Naučte sa, ako vytvoriť <a href="https://www.sarasoueidan.com/blog/accessible-icon-buttons/">prístupné tlačidlo.</a>',
       BTN_ROLE_IN_NAME: "Nezahŕňajte slovo „tlačidlo“ v názve tlačidla. Čítačky obrazovky už oznamujú úlohu prvku spolu s jeho názvom.",
-      LABEL_IN_NAME: "Viditeľný text tohto prvku sa zdá byť iný ako prístupné meno, čo môže spôsobiť zmätok pre používateľov asistenčných technológií. Skontrolujte prosím: <hr> <strong {B}>Prístupné meno</strong> <strong {C}>%(TEXT)</strong>",
+      LABEL_IN_NAME: "Viditeľný text tohto prvku sa zdá byť iný ako prístupné meno, čo môže spôsobiť zmätok pre používateľov asistenčných technológií. Skontrolujte prosím: <hr> <strong {B}>Text</strong> <strong {C}>%(TEXT)</strong> <hr> <strong {B}>Prístupné meno</strong> <strong {C}>%(TEXT)</strong>",
+      LINK_MAYBE_BUTTON: 'Tento odkaz má neplatný cieľ. Hoci prístupný názov alebo jeho atribúty naznačujú, že by sa nemuselo jednať o odkaz, ale namiesto toho ovláda nejaké skriptované správanie na stránke. Ak to chcete napraviť, nahraďte odkaz <a href="https://www.w3.org/WAI/ARIA/apg/patterns/button/">prístupným tlačidlom</a> alebo opravte cieľ odkazu. <hr> <strong {B}>Prístupný názov</strong> <strong {C}>%(TEXT)</strong> <hr> <strong>Tip!</strong> Asistívne technológie pristupujú k tlačidlám a odkazom odlišne. Použitie správneho prvku HTML zaisťuje, že používatelia vedia, ktoré klávesové skratky majú použiť a aká akcia sa spustí.',
+      POTENTIAL_UI_ELEMENTS: ["menu", "zatvoriť", "prepnuť", "otvoriť", "rozbaliť", "zbaliť", "ďalší", "predchádzajúci", "prehrať", "pozastaviť", "podponuka", "zobraziť", "skryť", "rozbaľovacia ponuka", "späť", "vpred", "preskočiť", "odoslať", "zrušiť", "uložiť", "upraviť", "vymazať", "odstrániť", "hľadať", "filter", "zoradiť", "zastaviť", "stlmiť", "zrušiť stlmenie", "celá obrazovka", "minimalizovať", "maximalizovať"],
       // Tables
       TABLES_MISSING_HEADINGS: 'Chýbajúce záhlavia tabuliek! Prístupné tabuľky potrebujú značku HTML, ktorá označuje bunky záhlavia a dátové bunky, ktoré definujú ich vzťah. Tieto informácie poskytujú kontext ľuďom, ktorí používajú asistenčné technológie. Tabuľky by sa mali používať len na tabuľkové údaje. <hr> Ďalšie informácie o <a href="https://www.w3.org/WAI/tutorials/tables/">prístupných tabuľkách.</a>',
       TABLES_SEMANTIC_HEADING: 'Sémantické nadpisy, ako napríklad Nadpis 2 alebo Nadpis 3, by sa mali používať len pre časti obsahu; <strong>nie</strong> v tabuľkách HTML. Namiesto toho označte nadpisy tabuliek pomocou prvku <code>&lt;th&gt;</code>. <hr> Ďalšie informácie o <a href="https://www.w3.org/WAI/tutorials/tables/">prístupných tabuľkách.</a>',
       TABLES_EMPTY_HEADING: 'Nájdené prázdne záhlavie tabuľky! Hlavičky tabuliek by <strong>nikdy</strong> nemali byť prázdne. Je dôležité označiť záhlavia riadkov a/alebo stĺpcov, aby sa vyjadril ich vzťah. Tieto informácie poskytujú kontext ľuďom, ktorí používajú asistenčné technológie. Majte na pamäti, že tabuľky by sa mali používať len pre tabuľkové údaje. <hr> Ďalšie informácie o <a href="https://www.w3.org/WAI/tutorials/tables/">prístupných tabuľkách.</a>',
+      TABLES_INVALID_HEADERS_REF: 'Táto tabuľka sa pokúša označiť konkrétnu dátovú bunku konkrétnou bunkou hlavičky, ale ID hlavičky sa nepodarilo nájsť. Uistite sa, že každý atribút <code>headers</code> zodpovedá ID bunky hlavičky v tej istej tabuľke. <hr> <strong {B}>Hlavičky</strong> <code>%(VALUE)</code> <hr> <strong>Tip!</strong> <a href="https://www.w3.org/WAI/WCAG22/Techniques/html/H43">Používanie manuálnych odkazov na ID</a> na priradenie dátových buniek k bunkám hlavičky je komplikované a nespoľahlivé. Ak je to možné, rozdeľte zložité údaje do menších tabuliek s jednoduchými riadkami a stĺpcami hlavičky.',
       // Contrast
       CONTRAST_NORMAL: "Text normálnej veľkosti by mal mať kontrastný pomer aspoň %(RATIO).",
       CONTRAST_LARGE: "Text veľkej veľkosti by mal mať kontrastný pomer aspoň %(RATIO).",
@@ -296,7 +306,14 @@
       UNKNOWN: "Neznáme",
       FG: "Popredie",
       BG: "Pozadie",
-      NO_SUGGESTION: "Nie je možné nájsť dostupnú kombináciu iba zmenou farby textu. Skúste zmeniť farbu pozadia."
+      NO_SUGGESTION: "Nie je možné nájsť dostupnú kombináciu iba zmenou farby textu. Skúste zmeniť farbu pozadia.",
+      // Page language
+      PAGE_LANG_CONFIDENCE: 'Zdá sa, že viac ako polovica textu na tejto stránke je v jazyku %(LIKELY_LANG), ale deklarovaný jazyk stránky je %(PAGE_LANG). Zvážte aktualizáciu <a href="https://www.w3.org/International/questions/qa-html-language-declarations">deklarovaného jazyka stránky</a>, aby zodpovedal obsahu.',
+      LANG_OF_PARTS: "Jazyk stránky bol deklarovaný ako %(PAGE_LANG), ale tento obsah sa zdá byť v jazyku %(LIKELY_LANG). Uistite sa, že je obsah správne označený.",
+      LANG_MISMATCH: "Tento obsah sa zdá byť v jazyku %(DETECTED_LANG), ale bol označený ako %(WRONG_LANG).",
+      LANG_OF_PARTS_ALT: "Tento alternatívny text sa zdá byť v jazyku %(LIKELY_LANG), ale jazyk stránky bol deklarovaný ako %(PAGE_LANG). Uistite sa, že je alternatívny text v rovnakom jazyku ako zvyšok stránky. <hr> {ALT} <strong {C}>%(ALT)</strong>",
+      LANG_TIP: "<hr><strong>Tip!</strong> Čítačky obrazovky vyslovujú slová pomocou jazykových značiek. Výslovnosť jazyka s nezodpovedajúcim jazykovým balíkom vytvára nezrozumiteľnú reč.",
+      LANG_UNSUPPORTED: "Kontroly prístupnosti týkajúce sa jazyka boli vynechané, pretože tento prehliadač nepodporuje automatickú detekciu jazyka."
     }
   };
   return sk;

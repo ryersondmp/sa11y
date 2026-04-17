@@ -9,6 +9,7 @@ const tr = {
     WARNING: "Uyarı",
     WARNINGS: "Uyarılar",
     GOOD: "İyi",
+    REVIEW: "İncele",
     ON: "Açık",
     OFF: "Kapalı",
     ALERT_TEXT: "Uyarı",
@@ -39,7 +40,7 @@ const tr = {
     MISSING_ROOT: "<code>%(root)</code> hedef alanı mevcut olmadığı için sayfanın tamamı erişilebilirlik açısından kontrol edildi.",
     MISSING_READABILITY_ROOT: "Okunabilirlik puanı, <code>%(fallback)</code> içerik alanına dayanmaktadır çünkü hedef alan <code>%(root)</code> mevcut değildir.",
     SKIP_TO_PAGE_ISSUES: "Sayfa Sorunlarına Geç",
-    CONSOLE_ERROR: 'Üzgünüz, ancak bu sayfadaki erişilebilirlik denetleyicisinde bir sorun var. Lütfen <a href="%(link)">bu form</a> aracılığıyla veya <a href="%(link)">GitHub</a> üzerinden bildirebilir misiniz?',
+    CONSOLE_ERROR: 'Üzgünüz, ancak bu sayfadaki erişilebilirlik denetleyicisinde bir sorun var. Lütfen <a href="https://forms.gle/sjzK9XykETaoqZv99">bu form</a> aracılığıyla veya <a href="https://github.com/ryersondmp/sa11y/issues/new?title=Bug%20report">GitHub</a> üzerinden bildirebilir misiniz?',
     APPEARANCE: "Görünüm",
     MOVE_PANEL: "Paneli taşı",
     HIDDEN: "Gizli",
@@ -54,7 +55,7 @@ const tr = {
     PAGE_TITLE: "Sayfa başlığı",
     RESULTS: "Sonuçlar",
     EXPORT_RESULTS: "Sonuçları dışa aktar",
-    GENERATED: "%(tool) ile oluşturulan sonuçlar.",
+    GENERATED: '<a href="https://sa11y.netlify.app">Sa11y</a> ile oluşturulan sonuçlar.',
     PREVIEW: "Önizleme",
     ELEMENT: "Öğe",
     PATH: "Yol",
@@ -144,7 +145,8 @@ const tr = {
       "bu web sitesi",
       "görünüm",
       "bizi görüntüleyin",
-      "web sitesi"
+      "web sitesi",
+      "madde"
     ],
     CLICK: ["click", "tıklama"],
     NEW_WINDOW_PHRASES: ["dış", "yeni sekme", "yeni pencere", "açılır pencere"],
@@ -194,7 +196,8 @@ const tr = {
     LINK_DOI: `Web sayfaları veya yalnızca çevrimiçi kaynaklar için <a href="https://apastyle.apa.org/style-grammar-guidelines/paper-format/accessibility/urls#:~:text=descriptive%20links">APA Stil kılavuzu,</a> çalışmanın URL'sini veya DOI'sini başlığının etrafına sararak açıklayıcı bağlantılar kullanılmasını önerir. Bağlantı metni olarak kullanılan daha uzun, daha az anlaşılır URL'lerin yardımcı teknoloji ile erişildiğinde anlaşılması zor olabilir.`,
     LINK_NEW_TAB: 'Bağlantı uyarı vermeden yeni bir sekmede veya pencerede açılır. Bunu yapmak, özellikle görsel içeriği algılamakta zorluk çeken kişiler için kafa karıştırıcı olabilir. İkinci olarak, bir kişinin deneyimini kontrol etmek veya onun yerine karar vermek her zaman iyi bir uygulama değildir. Bağlantı metninde bağlantının yeni bir pencerede açıldığını belirtin. <hr> <strong>İpucu!</strong> En iyi uygulamaları öğrenin: <a href="https://www.nngroup.com/articles/new-browser-windows-and-tabs/">bağlantıları yeni tarayıcı pencerelerinde ve sekmelerinde açma.</a>',
     LINK_FILE_EXT: "Bağlantı, uyarı vermeden bir PDF veya indirilebilir dosyaya (örn. MP3, Zip, Word Doc) işaret ediyor. Bağlantı metni içinde dosya türünü belirtin. Büyük bir dosya ise, dosya boyutunu da eklemeyi düşünün. <hr> <strong>Örnek:</strong> Yönetici Raporu (PDF, 3MB)",
-    LINK_IDENTICAL_NAME: "Bağlantı, farklı bir sayfaya işaret etmesine rağmen başka bir bağlantıyla aynı metne sahip. Aynı metne sahip birden fazla bağlantı, ekran okuyucu kullanan kişiler için kafa karışıklığına neden olabilir. <strong>Aşağıdaki bağlantıyı diğer bağlantılardan ayırt etmeye yardımcı olmak için daha açıklayıcı hale getirmeyi düşünün.</strong> <hr> <strong {B}>Erişilebilir ad</strong> <strong {C}>%(TEXT)</strong>",
+    LINK_IDENTICAL_NAME: "Bu sayfadaki birden fazla bağlantı aynı metni kullanıyor ancak farklı yerlere gidiyor. Bu durum yardımcı teknoloji kullanıcıları için kafa karıştırıcı olabilir. Düzeltmek için bu bağlantı metnini daha açıklayıcı hale getirin.",
+    LINK_UNPRONOUNCEABLE: "Bağlantı metni yalnızca semboller içeriyor. Bu bağlantının kopyala/yapıştır hatasından kaynaklandığını düşünüyorsanız silmeyi düşünebilirsiniz.",
     // Images
     ALT_UNPRONOUNCEABLE: "Alternatif metin yalnızca telaffuz edilemeyen semboller ve/veya boşluklar içerir. Ekran okuyucular resmi bildirir ve ardından duraklar. Görsel dekoratif ise, alternatif metinde boşluk olmadığından emin olun. <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>",
     LINK_ALT_UNPRONOUNCEABLE: "Bu bağlantılı görseldeki alternatif metin yalnızca telaffuz edilemeyen semboller ve/veya boşluklar içerir. Ekran okuyucular resmi bildirir ve ardından duraklar. Alternatif metnin bağlantının hedefini tanımladığından emin olun. <hr> {L} {ALT} <strong {C}>%(ALT_TEXT)</strong>",
@@ -227,6 +230,7 @@ const tr = {
     LABELS_NO_FOR_ATTRIBUTE: "Bu girdiyle ilişkilendirilmiş bir etiket yok. Etikete, bu girdinin <code>id</code>'siyle eşleşen bir <code>for</code> niteliği ekleyin. <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>",
     LABELS_MISSING_LABEL: "Bu girdiyle ilişkilendirilmiş bir etiket yok. Lütfen bu girdiye bir <code>id</code> ekleyin ve etikete eşleşen bir <code>for</code> niteliği ekleyin.",
     LABELS_PLACEHOLDER: 'Kaybolan yer tutucu metin, insanların bir alana hangi bilginin ait olduğunu hatırlamalarını zorlaştırır ve hataları tanımlamayı ve düzeltmeyi zor hale getirir. Bunun yerine, form alanından önce kalıcı olarak görünür bir ipucu kullanmayı düşünün. <hr> Daha fazla bilgi: <a href="https://www.nngroup.com/articles/form-design-placeholders/">Form alanlarındaki yer tutucular zararlıdır.</a>',
+    ARIA_INPUT_FIELD_NAME: "ARIA giriş veya geçiş alanı erişilebilir bir ada sahip değil. Düzeltmek için geçerli bir <code>aria-labelledby</code>, <code>aria-label</code> veya <code>title</code> özniteliği sağlayın. Giriş değiştirilebilirse (örneğin, onay kutusu, anahtar, radyo düğmesi), görünür iç metin eklemek de bu sorunu çözecektir. <hr> <strong {B}>Öğe</strong> <pre><code>%(EL)</code></pre>",
     // Embedded content
     EMBED_VIDEO: "Lütfen <strong>tüm videolarda altyazı olduğundan emin olun.</strong> Tüm ses ve video içerikleri için altyazı sağlanması zorunlu bir A Düzeyi gerekliliğidir. Altyazılar, işitme engelli veya işitme güçlüğü çeken kişileri destekler.",
     EMBED_AUDIO: "Lütfen tüm podcast'ler için bir <strong>transkript sağladığınızdan emin olun.</strong> Ses içeriği için transkript sağlamak zorunlu bir Seviye A gerekliliğidir. Transkriptler işitme engelli veya işitme güçlüğü çeken kişileri destekler, ancak herkese fayda sağlayabilir. Transkripti aşağıya veya bir akordeon panel içine yerleştirmeyi düşünün.",
@@ -236,7 +240,7 @@ const tr = {
     EMBED_UNFOCUSABLE: 'Odaklanılamayan öğeler içeren <code>&lt;iframe&gt;</code>, <code>tabindex="-1"</code> olmamalıdır. Gömülü içerik klavye ile erişilebilir olmayacak.',
     // QA
     QA_BAD_LINK: "Kötü bağlantı bulundu. Bağlantı bir geliştirme ortamına işaret ediyor gibi görünüyor. <hr> {L} <strong {C}>%(LINK)</strong>",
-    QA_IN_PAGE_LINK: "Kırık aynı sayfa bağlantısı. Bağlantı hedefi, bu sayfadaki herhangi bir öğeyle eşleşmiyor.",
+    QA_IN_PAGE_LINK: "Bozuk sayfa içi bağlantı. Bu bağlantı, sayfanın bulunamayan ஒரு bölümüne gitmeye çalışıyor. Bunu düzeltmek için bağlantının, atlamak istediğiniz öğenin <code>id</code>'siyle eşleştiğinden emin olun.",
     QA_STRONG_ITALICS: "Kalın ve italik etiketlerinin anlamsal bir anlamı vardır ve paragrafların tamamını vurgulamak için <strong>kullanılmamalıdır</strong>. Kalınlaştırılmış metin, bir kelime veya cümleye güçlü bir <strong>vurgu</strong> yapmak için kullanılmalıdır. İtalik yazılar özel isimleri (kitap ve makale başlıkları gibi), yabancı kelimeleri ve alıntıları vurgulamak için kullanılmalıdır. Uzun alıntılar blok alıntı olarak biçimlendirilmelidir.",
     QA_PDF: `PDF'ler erişilebilirlik açısından kontrol edilemiyor. PDF'ler web içeriği olarak kabul edilir ve erişilebilir hale getirilmelidir. PDF'ler genellikle ekran okuyucu kullanan kişiler (eksik yapısal etiketler veya eksik form alanı etiketleri) ve az gören kişiler (metin büyütüldüğünde yeniden akmıyor) için sorunlar içerir. <ul><li>Bu bir form ise, alternatif olarak erişilebilir bir HTML formu kullanmayı düşünün.</li><li>Bu bir belge ise, bir web sayfasına dönüştürmeyi düşünün.</li></ul>Aksi takdirde, lütfen Acrobat DC'de erişilebilirlik için <a href="https://helpx.adobe.com/acrobat/using/create-verify-pdf-accessibility.html">PDF'yi kontrol edin.</a>`,
     QA_DOCUMENT: 'Belge erişilebilirlik açısından kontrol edilemiyor. Bağlantılı belgeler web içeriği olarak kabul edilir ve erişilebilir hale getirilmelidir. Lütfen bu belgeyi manuel olarak inceleyin. <ul><li><a href="https://support.google.com/docs/answer/6199477?hl=tr">Google Workspace belgenizi veya sunumunuzu daha erişilebilir hale getirin.</a></li><li><a href="https://support.microsoft.com/tr/office/create-accessible-office-documents-868ecfcd-4f00-4224-b881-a65537a7c155">Ofis belgelerinizi daha erişilebilir hale getirin.</a></li></ul>',
@@ -250,9 +254,10 @@ const tr = {
     QA_JUSTIFY: "Hem sol hem de sağ kenar boşluklarına hizalanan metinleri kullanmaktan kaçının. Kelimeler arasındaki düzensiz boşluklar nedeniyle bu, bazı insanlar için zor olabilir. Daha iyi okunabilirlik için sola hizalanmış metin kullanın.",
     QA_SMALL_TEXT: "Küçük metin, özellikle görme sorunu yaşayanlar için okumak daha zordur. Daha iyi okunabilirlik sağlamak için varsayılandan daha küçük yazı tipi boyutlarını kullanmaktan kaçının.",
     // Shared
-    ACC_NAME: "<strong {B}>Erişilebilir ad</strong> %(TEXT)",
-    ACC_NAME_TIP: '<hr><strong>İpucu!</strong> "Erişilebilir ad", yardımcı teknolojiyi kullanan kişilere iletilen son etikettir ve ARIA tarafından hesaplanır. Bu, bağlantının veya düğmenin amacını anlamalarına yardımcı olur.',
-    HIDDEN_FOCUSABLE: 'Bağlantı veya düğme <code>aria-hidden=&quot;true&quot;</code> değerine sahip ancak hâlâ klavye ile odaklanabilir durumda. Bir kopya bağlantı veya düğmeyi gizlemeyi düşünüyorsanız, <code>tabindex=&quot;-1&quot;</code> ekleyin. Aksi takdirde, odak alabilen öğelerde <code>aria-hidden=&quot;true&quot;</code> kullanılmamalıdır. <hr> <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">aria-hidden özelliği</a> hakkında daha fazla bilgi edinin.',
+    LINK_TEXT: "<strong {B}>Bağlantı metni</strong> <strong {C}>%(TEXT)</strong>",
+    ACC_NAME: "<strong {B}>Erişilebilir ad</strong> <strong {C}>%(TEXT)</strong>",
+    ACC_NAME_TIP: '<hr><strong>İpucu!</strong> "Erişilebilir ad", yardımcı teknoloji kullanan kişilere iletilen nihai etikettür. Bu, öğenin amacını anlamalarına yardımcı olur.',
+    HIDDEN_FOCUSABLE: 'Bu öğe klavye odağı alabilir, ancak <code>aria-hidden="true"</code> özniteliği (kendi üzerinde veya üst kapsayıcıda) nedeniyle ekran okuyuculardan gizlenmiştir. Düzeltmek için aria-hidden özniteliğini kaldırın veya öğeyi sekme sırasından çıkarın. <hr> <strong {B}>Öğe</strong> <pre><code>%(EL)</code></pre> <hr> <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">aria-hidden özniteliği</a> hakkında daha fazla bilgi edinin.',
     // Developer
     DUPLICATE_ID: "<strong>Yinelenen kimlik</strong> bulundu. Yinelenen kimlik hatalarının, içerikle etkileşime girmeye çalışan yardımcı teknolojiler için sorunlara neden olduğu bilinmektedir. Lütfen aşağıdaki kimliği kaldırın veya değiştirin. <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>",
     UNCONTAINED_LI: "Tüm <code>&lt;li&gt;</code> liste öğeleri, <code>&lt;ul&gt;</code> sırasız veya <code>&lt;ol&gt;</code> sıralı öğeler içinde yer almalıdır. Bu yapı, ekran okuyucularının listeyi ve öğelerini doğru bir şekilde duyurmasına yardımcı olur.",
@@ -263,17 +268,22 @@ const tr = {
     META_SCALABLE: '<a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">Görünüm meta etiketi</a> içindeki <code>user-scalable="no"</code> parametresini kaldırarak büyütmeye izin verin.',
     META_MAX: `<a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">Görünüm meta etiketi</a> içindeki <code>maximum-scale</code> parametresinin 2'den küçük olmadığından emin olun.`,
     META_REFRESH: "Sayfa bir meta etiketi kullanılarak otomatik olarak yenilenmemelidir.",
+    META_LANG_SUGGEST: "Aşağıdaki dil kodu <code>%(CODE)</code> geçerli değil. Bunu mu demek istediniz: <code>%(CODE)</code>?",
+    META_LANG_VALID: `Bu öğenin dil kodu geçerli değil. Düzeltmek için lang özniteliğini geçerli bir dil koduyla değiştirin. <hr> <strong {B}>Öğe</strong> <code>&lt;%(ELEMENT) lang="%(CODE)"&gt;</code> <hr> <a href="https://www.w3.org/International/questions/qa-html-language-declarations">HTML'de dil bildirme</a> hakkında daha fazla bilgi edinin.`,
     // Buttons
     BTN_EMPTY: "Düğme, amacını açıklayan erişilebilir bir ada sahip değil.",
     BTN_EMPTY_LABELLEDBY: "Düğmenin boş bir <code>aria-labelledby</code> değeri var veya sayfadaki başka bir öğenin <code>id</code> değeri ile eşleşmiyor.",
     BTN: "düğme",
     BTN_TIP: 'Bir <a href="https://www.sarasoueidan.com/blog/accessible-icon-buttons/">erişilebilir düğme</a> nasıl yapılacağını öğrenin.',
     BTN_ROLE_IN_NAME: 'Bir düğmenin adında "düğme" kelimesini içermeyin. Ekran okuyucular zaten öğenin rolünü adıyla birlikte iletir.',
-    LABEL_IN_NAME: "Bu öğe için görünen metin, erişilebilir ad ile farklı görünüyor, bu da yardımcı teknoloji kullanıcıları için kafa karışıklığına neden olabilir. Lütfen gözden geçirin: <hr> <strong {B}>Erişilebilir Ad</strong> <strong {C}>%(TEXT)</strong>",
+    LABEL_IN_NAME: "Bu öğe için görünen metin, erişilebilir ad ile farklı görünüyor, bu da yardımcı teknoloji kullanıcıları için kafa karışıklığına neden olabilir. Lütfen gözden geçirin: <hr> <strong {B}>Metin</strong> <strong {C}>%(TEXT)</strong> <hr> <strong {B}>Erişilebilir Ad</strong> <strong {C}>%(TEXT)</strong>",
+    LINK_MAYBE_BUTTON: 'Bu bağlantının geçersiz bir hedefi var. Erişilebilir ad veya öznitelikleri bunun hiç bir bağlantı olmadığını, bunun yerine sayfadaki bazı komut dosyası davranışlarını kontrol ettiğini gösteriyor. Düzeltmek için bağlantıyı <a href="https://www.w3.org/WAI/ARIA/apg/patterns/button/">erişilebilir bir düğme</a> ile değiştirin veya bağlantının hedefini düzeltin. <hr> <strong {B}>Erişilebilir Ad</strong> <strong {C}>%(TEXT)</strong> <hr> <strong>İpucu!</strong> Yardımcı teknolojiler düğmelere ve bağlantılara farklı şekilde davranır. Doğru HTML öğesini kullanmak, kullanıcıların hangi klavye kısayollarını kullanacaklarını ve hangi eylemin tetikleneceğini bilmelerini sağlar.',
+    POTENTIAL_UI_ELEMENTS: ["menü", "kapat", "değiştir", "aç", "genişlet", "daralt", "sonraki", "önceki", "oynat", "duraklat", "alt menü", "göster", "gizle", "açılır menü", "geri", "ileri", "atla", "gönder", "iptal", "kaydet", "düzenle", "sil", "kaldır", "ara", "filtre", "sırala", "dur", "sessiz", "sesi aç", "tam ekran", "küçült", "büyüt"],
     // Tables
     TABLES_MISSING_HEADINGS: 'Eksik tablo başlıkları! Erişilebilir tablolar, başlık hücrelerini ve aralarındaki ilişkiyi tanımlayan veri hücrelerini gösteren HTML işaretlemesine ihtiyaç duyar. Bu bilgi, yardımcı teknoloji kullanan kişilere bağlam sağlar. Tablolar yalnızca tablo verileri için kullanılmalıdır. <hr> <a href="https://www.w3.org/WAI/tutorials/tables/">erişilebilir tablolar hakkında daha fazla bilgi edinin.</a>',
     TABLES_SEMANTIC_HEADING: 'Heading 2 veya Heading 3 gibi anlamsal başlıklar yalnızca içerik bölümleri için kullanılmalıdır; HTML tablolarında <strong>değil</strong>. Bunun yerine tablo başlıklarını <code>&lt;th&gt;</code> öğesini kullanarak belirtin. <hr> <a href="https://www.w3.org/WAI/tutorials/tables/">erişilebilir tablolar hakkında daha fazla bilgi edinin.</a>',
     TABLES_EMPTY_HEADING: 'Boş tablo başlığı bulundu! Tablo başlıkları <strong>asla</strong> boş olmamalıdır. İlişkilerini aktarmak için satır ve/veya sütun başlıklarını belirlemek önemlidir. Bu bilgi, yardımcı teknoloji kullanan kişilere bağlam sağlar. Lütfen tabloların yalnızca tablo halindeki veriler için kullanılması gerektiğini unutmayın. <hr> <a href="https://www.w3.org/WAI/tutorials/tables/">erişilebilir tablolar hakkında daha fazla bilgi edinin.</a>',
+    TABLES_INVALID_HEADERS_REF: 'Bu tablo, belirli bir veri hücresini belirli bir başlık hücresiyle ilişkilendirmeye çalışıyor ancak başlık kimliği (ID) bulunamıyor. Her <code>headers</code> özniteliğinin aynı tablodaki bir başlık hücresinin kimliğiyle eşleştiğinden emin olun. <hr> <strong {B}>Başlıklar</strong> <code>%(VALUE)</code> <hr> <strong>İpucu!</strong> Veri hücrelerini başlık hücreleriyle ilişkilendirmek için <a href="https://www.w3.org/WAI/WCAG22/Techniques/html/H43">manuel kimlik (ID) referansları kullanmak</a> karmaşık ve kırılgandır. Mümkün olduğunda, karmaşık verileri basit başlık satırları ve sütunları olan daha küçük tablolara bölün.',
     // Contrast
     CONTRAST_NORMAL: "Normal boyuttaki metin en az %(RATIO) kontrast oranına sahip olmalıdır.",
     CONTRAST_LARGE: "Büyük boyuttaki metin en az %(RATIO) kontrast oranına sahip olmalıdır.",
@@ -293,7 +303,14 @@ const tr = {
     UNKNOWN: "Bilinmiyor",
     FG: "Ön plan",
     BG: "Arka plan",
-    NO_SUGGESTION: "Yalnızca metin rengini değiştirerek erişilebilir bir kombinasyon bulunamıyor. Arka plan rengini değiştirmeyi deneyin."
+    NO_SUGGESTION: "Yalnızca metin rengini değiştirerek erişilebilir bir kombinasyon bulunamıyor. Arka plan rengini değiştirmeyi deneyin.",
+    // Page language
+    PAGE_LANG_CONFIDENCE: 'Bu sayfadaki metnin yarısından fazlası %(LIKELY_LANG) gibi görünüyor, ancak beyan edilen sayfa dili %(PAGE_LANG). <a href="https://www.w3.org/International/questions/qa-html-language-declarations">Beyan edilen sayfa dilini</a> içerikle eşleşecek şekilde güncellemeyi düşünün.',
+    LANG_OF_PARTS: "Sayfa dili %(PAGE_LANG) olarak beyan edildi, ancak bu içerik %(LIKELY_LANG) gibi görünüyor. İçeriğin uygun şekilde etiketlendiğinden emin olun.",
+    LANG_MISMATCH: "Bu içerik %(DETECTED_LANG) gibi görünüyor, ancak %(WRONG_LANG) olarak etiketlenmiş.",
+    LANG_OF_PARTS_ALT: "Bu alternatif metin %(LIKELY_LANG) gibi görünüyor, ancak sayfa dili %(PAGE_LANG) olarak beyan edildi. Alternatif metnin sayfanın geri kalanıyla aynı dilde olduğundan emin olun. <hr> {ALT} <strong {C}>%(ALT)</strong>",
+    LANG_TIP: "<hr><strong>İpucu!</strong> Ekran okuyucular kelimeleri dil etiketlerini kullanarak telaffuz eder. Uyumsuz bir dil paketiyle bir dilin telaffuz edilmesi anlaşılmaz bir konuşma oluşturur.",
+    LANG_UNSUPPORTED: "Bu tarayıcıda otomatik dil algılama desteklenmediğinden dille ilgili erişilebilirlik kontrolleri atlandı."
   }
 };
 export {

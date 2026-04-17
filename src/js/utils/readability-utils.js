@@ -24,10 +24,10 @@ export default function computeReadability(textArray, lang) {
     const sentence = punctuation.includes(lastCharacter) ? text : `${text}.`;
     readabilityArray.push(sentence);
   });
-  const pageText = readabilityArray.join(' ');
-  if (pageText.length === 0) {
-    return null;
-  }
+
+  // biome-ignore lint/suspicious/noControlCharactersInRegex: Strip junk icons/PUA characters.
+  const pageText = readabilityArray.join(' ').replace(/[\u0000-\u001F\u007F-\u009F]/g, '');
+  if (pageText.length === 0) return null;
 
   // Flesch Reading Ease: English, French, German, Dutch, Italian, Spanish, Portuguese
   if (['en', 'es', 'fr', 'de', 'nl', 'it', 'pt'].includes(lang)) {
@@ -109,11 +109,11 @@ export default function computeReadability(textArray, lang) {
     const complexWords = Math.round(100 * ((words - (syllables1 + syllables2)) / words));
 
     let difficultyToken;
-    if (fleschScore >= 0 && fleschScore < 30) {
+    if (fleschScore <= 30) {
       difficultyToken = 'VERY_DIFFICULT';
-    } else if (fleschScore > 31 && fleschScore < 49) {
+    } else if (fleschScore <= 50) {
       difficultyToken = 'DIFFICULT';
-    } else if (fleschScore > 50 && fleschScore < 60) {
+    } else if (fleschScore <= 60) {
       difficultyToken = 'FAIRLY_DIFFICULT';
     } else {
       difficultyToken = 'GOOD';
@@ -151,11 +151,11 @@ export default function computeReadability(textArray, lang) {
     const complexWords = Math.round(100 * (longWordsCount / wordCount));
 
     let difficultyToken;
-    if (score >= 0 && score < 39) {
+    if (score <= 40) {
       difficultyToken = 'GOOD';
-    } else if (score > 40 && score < 50) {
+    } else if (score <= 50) {
       difficultyToken = 'FAIRLY_DIFFICULT';
-    } else if (score > 51 && score < 61) {
+    } else if (score <= 60) {
       difficultyToken = 'DIFFICULT';
     } else {
       difficultyToken = 'VERY_DIFFICULT';

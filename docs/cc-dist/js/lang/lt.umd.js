@@ -13,6 +13,7 @@
       WARNING: "Įspėjimas",
       WARNINGS: "Įspėjimai",
       GOOD: "Geras",
+      REVIEW: "Peržiūra",
       ON: "įjungta",
       OFF: "Išjungta",
       ALERT_TEXT: "Įspėjimas",
@@ -43,7 +44,7 @@
       MISSING_ROOT: "Buvo patikrintas viso puslapio prieinamumas, nes tikslinė sritis <code>%(root)</code> neegzistuoja.",
       MISSING_READABILITY_ROOT: "Skaitymo įvertinimas pagrįstas turinio sritimi <code>%(fallback)</code>, nes tikslinė sritis <code>%(root)</code> neegzistuoja.",
       SKIP_TO_PAGE_ISSUES: "Pereiti prie puslapio klausimų",
-      CONSOLE_ERROR: 'Atsiprašome, bet šiame puslapyje yra problema su prieinamumo tikrintuvu. Ar galite apie tai <a href="%(link)">pranešti per šią formą</a> arba <a href="%(link)">GitHub</a>?',
+      CONSOLE_ERROR: 'Atsiprašome, bet šiame puslapyje yra problema su prieinamumo tikrintuvu. Ar galite apie tai <a href="https://forms.gle/sjzK9XykETaoqZv99">pranešti per šią formą</a> arba <a href="https://github.com/ryersondmp/sa11y/issues/new?title=Bug%20report">GitHub</a>?',
       APPEARANCE: "Išvaizda",
       MOVE_PANEL: "Perkelti skydelį",
       HIDDEN: "Paslėpta",
@@ -58,7 +59,7 @@
       PAGE_TITLE: "Puslapio pavadinimas",
       RESULTS: "Rezultatai",
       EXPORT_RESULTS: "Eksportuoti rezultatus",
-      GENERATED: "Rezultatai sugeneruoti su %(tool).",
+      GENERATED: 'Rezultatai sugeneruoti su <a href="https://sa11y.netlify.app">Sa11y.</a>',
       PREVIEW: "Peržiūra",
       ELEMENT: "Elementas",
       PATH: "Kelias",
@@ -147,7 +148,8 @@
         "šioje svetainėje",
         "peržiūrėti",
         "peržiūrėti mūsų",
-        "svetainė"
+        "svetainė",
+        "straipsnis"
       ],
       CLICK: ["click", "spustelėkite"],
       NEW_WINDOW_PHRASES: ["išorinis", "naujas skirtukas", "naujas langas", "iššokantis", "iššokti"],
@@ -197,7 +199,8 @@
       LINK_DOI: 'Interneto puslapiuose arba tik internete esančiuose ištekliuose <a href="https://apastyle.apa.org/style-grammar-guidelines/paper-format/accessibility/urls#:~:text=descriptive%20links">APA stiliaus vadove</a> rekomenduojama naudoti aprašomąsias nuorodas, aplink kūrinio pavadinimą nurodant jo URL arba DOI. Ilgesni, mažiau suprantami URL adresai, naudojami kaip nuorodos tekstas, gali būti sunkiai suprantami naudojantis pagalbinėmis technologijomis.',
       LINK_NEW_TAB: 'Nuoroda atsidaro naujame skirtuke arba lange be įspėjimo. Tai gali trikdyti, ypač žmones, kuriems sunku suvokti vaizdinį turinį. Antra, ne visada yra gera praktika kontroliuoti kieno nors patirtį ar priimti sprendimus už jį. Nuorodos tekste nurodykite, kad nuoroda atidaroma naujame lange. <hr> <strong>Tipas!</strong> Išmokite geriausios praktikos: <a href="https://www.nngroup.com/articles/new-browser-windows-and-tabs/">atidaryti nuorodas naujuose naršyklės languose ir skirtukuose.</a>',
       LINK_FILE_EXT: 'Nuoroda nukreipia į PDF arba atsisiunčiamą failą (pvz., MP3, Zip, "Word" dokumentą) be įspėjimo. Nuorodos tekste nurodykite failo tipą. Jei tai didelis failas, apsvarstykite galimybę nurodyti failo dydį. <hr> <strong>Pavyzdys:</strong> Vykdomoji ataskaita (PDF, 3 MB)',
-      LINK_IDENTICAL_NAME: "Nuoroda turi tokį patį tekstą kaip ir kita nuoroda, nors nukreipia į kitą puslapį. Kelios nuorodos su tuo pačiu tekstu gali klaidinti ekrano skaitytuvus naudojančius žmones. <strong>Pagalvokite, ar nevertėtų šios nuorodos aprašyti labiau, kad ją būtų lengviau atskirti nuo kitų nuorodų.</strong> <hr> <strong {B}>Prieinamas pavadinimas</strong> <strong {C}>%(TEXT)</strong>",
+      LINK_IDENTICAL_NAME: "Kelios nuorodos šiame puslapyje naudoja tą patį tekstą, bet veda į skirtingas vietas. Tai gali suklaidinti pagalbinių technologijų naudotojus. Norėdami tai ištaisyti, padarykite šį nuorodos tekstą vaizdingesnį.",
+      LINK_UNPRONOUNCEABLE: "Nuorodos tekste yra tik simboliai. Jei manote, kad ši nuoroda yra klaida dėl kopijavimo / įklijavimo klaidos, apsvarstykite galimybę ją ištrinti.",
       // Images
       ALT_UNPRONOUNCEABLE: "Alternatyvus tekstas turi tik neištariamus simbolius ir/arba tarpus. Ekrano skaitytuvai praneš apie vaizdą ir tada sustos. Jei vaizdas dekoratyvinis, užtikrinkite, kad alternatyviame tekste nebūtų tarpų. <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>",
       LINK_ALT_UNPRONOUNCEABLE: "Šio susieto vaizdo alternatyvus tekstas turi tik neištariamus simbolius ir/arba tarpus. Ekrano skaitytuvai praneš apie vaizdą ir tada sustos. Įsitikinkite, kad alternatyvus tekstas aprašo nuorodos paskirtį. <hr> {L} {ALT} <strong {C}>%(ALT_TEXT)</strong>",
@@ -230,22 +233,23 @@
       LABELS_NO_FOR_ATTRIBUTE: "Su šia įvestimi nėra susieta jokia etiketė. Pridėkite <code>for</code> atributą prie etiketės, atitinkančios šios įvesties <code>id</code>. <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>",
       LABELS_MISSING_LABEL: "Su šia įvestimi nėra susieta jokia etiketė. Pridėkite <code>id</code> prie šios įvesties ir pridėkite atitinkamą <code>for</code> atributą prie etiketės.",
       LABELS_PLACEHOLDER: 'Dingstantis vietos laikiklio tekstas apsunkina žmonėms atsiminti, kokia informacija priklauso laukeliui, ir nustatyti bei ištaisyti galiojimo problemas. Vietoj to, apsvarstykite galimybę naudoti nuolat matomą užuominą prieš formos laukelį. <hr> Sužinokite daugiau: <a href="https://www.nngroup.com/articles/form-design-placeholders/">Vietos laikikliai formų laukeliuose yra žalingi.</a>',
+      ARIA_INPUT_FIELD_NAME: "ARIA įvesties arba perjungimo laukui trūksta prieinamo pavadinimo. Norėdami tai ištaisyti, pateikite galiojantį <code>aria-labelledby</code>, <code>aria-label</code> arba <code>title</code> atributą. Jei įvestis yra perjungiama (pvz., žymimasis langelis, jungiklis, radijo mygtukas), matomo vidinio teksto pridėjimas taip pat išspręs šią problemą. <hr> <strong {B}>Elementas</strong> <pre><code>%(EL)</code></pre>",
       // Embedded content
       EMBED_VIDEO: "Užtikrinkite, kad <strong>visuose vaizdo įrašuose būtų uždaros antraštės.</strong> Visų garso ir vaizdo įrašų titrų pateikimas yra privalomas A lygio reikalavimas. Titrai padeda kurtiesiems ir neprigirdintiesiems.",
       EMBED_AUDIO: "Užtikrinkite, kad pateiktumėte <strong>visų podkastų transkripciją.</strong> Garso turinio transkripcijų pateikimas yra privalomas A lygio reikalavimas. Transkripcijos padeda kurtiesiems ir neprigirdintiesiems, tačiau jos gali būti naudingos visiems. Apsvarstykite galimybę transkripciją pateikti žemiau arba akordeono skydelyje.",
       EMBED_DATA_VIZ: 'Tokie duomenų vizualizavimo valdikliai dažnai kelia problemų žmonėms, kurie naudojasi klaviatūra arba ekrano skaitytuvu, ir gali kelti didelių sunkumų silpnaregiams arba spalvinio aklumo žmonėms. Rekomenduojama tą pačią informaciją pateikti alternatyviu (teksto arba lentelės) formatu po valdikliu. <hr> Sužinokite daugiau apie <a href="https://www.w3.org/WAI/tutorials/images/complex">sudėtingus vaizdus.</a>',
-      EMBED_MISSING_TITLE: 'Įterptajam turiniui reikalingas prieinamas pavadinimas, apibūdinantis jo turinį. Elemente <code>iframe</code> nurodykite unikalų <code>title</code> arba <code>aria-label</code> atributą. Sužinokite daugiau apie <a href="https://web.dev/learn/accessibility/more-html#iframes">iRėmus.</a>.',
+      EMBED_MISSING_TITLE: 'Įterptajam turiniui reikalingas prieinamas pavadinimas, apibūdinantis jo turinį. Elemente <code>iframe</code> nurodykite unikalų <code>title</code> arba <code>aria-label</code> atributą. Sužinokite daugiau apie <a href="https://web.dev/learn/accessibility/more-html#iframes">iRėmus.</a>',
       EMBED_GENERAL: 'Nepavyksta patikrinti įterpto turinio. Įsitikinkite, kad paveikslėliuose yra "alt" tekstas, vaizdo įrašuose - antraštės, tekstas pakankamai kontrastingas, o interaktyvūs komponentai yra <a href="https://webaim.org/techniques/keyboard/">prieinami klaviatūra.</a>',
       EMBED_UNFOCUSABLE: '<code>&lt;iframe&gt;</code> su elementais, į kuriuos negalima sutelkti dėmesio, neturėtų turėti <code>tabindex="-1"</code>. Įterptasis turinys nebus pasiekiamas naudojant klaviatūrą.',
       // QA
       QA_BAD_LINK: "Rasta bloga nuoroda. Atrodo, kad nuoroda nukreipia į kūrimo aplinką. <hr> {L} <strong {C}>%(LINK)</strong>",
-      QA_IN_PAGE_LINK: "Nugriautas tos pačios puslapio nuorodas. Nuorodos tikslas nesutampa su jokiu šios puslapio elementu.",
+      QA_IN_PAGE_LINK: "Sugedusi nuoroda į tą patį puslapį. Ši nuoroda bando nuvesti į puslapio skiltį, kurios nepavyko rasti. Norėdami tai ištaisyti, įsitikinkite, kad nuoroda sutampa su elemento, į kurį norite nušokti, <code>id</code>.",
       QA_STRONG_ITALICS: "Paryškinimo ir kursyvo žymės turi semantinę reikšmę ir neturėtų būti naudojamos <strong>ne</strong> ištisoms pastraipoms paryškinti. Paryškintas tekstas turėtų būti naudojamas stipriai <strong>pabrėžti</strong> žodį ar frazę. Kursyvu reikėtų paryškinti tikruosius vardus (t. y. knygų ir straipsnių pavadinimus), svetimžodžius, kabutes. Ilgos citatos turėtų būti formatuojamos kaip blokinė citata.",
       QA_PDF: 'Nepavyksta patikrinti PDF failų prieinamumo. PDF yra laikomi žiniatinklio turiniu, todėl jie taip pat turi būti prieinami. PDF dažnai kyla problemų žmonėms, kurie naudojasi ekrano skaitytuvais (trūksta struktūrinių žymų arba formos laukų etikečių), ir silpnaregiams (padidinus tekstą, jis neatsinaujina). <ul><li>Jei tai yra forma, apsvarstykite galimybę kaip alternatyvą naudoti prieinamą HTML formą.</li><li>Jei tai yra dokumentas, apsvarstykite galimybę jį konvertuoti į tinklalapį.</li></ul>Kitu atveju patikrinkite <a href="https://helpx.adobe.com/acrobat/using/create-verify-pdf-accessibility.html">PDF prieinamumą programoje Acrobat DC.</a>',
       QA_DOCUMENT: 'Nepavyksta patikrinti dokumento prieinamumo. Susieti dokumentai laikomi žiniatinklio turiniu ir taip pat turi būti prieinami. Prašome peržiūrėti šį dokumentą rankiniu būdu. <ul><li>Padarykite savo <a href="https://support.google.com/docs/answer/6199477?hl=lt">Google Workspace dokumentą arba pristatymą prieinamesnį.</a></li><li>Padarykite savo <a href="https://support.microsoft.com/lt/office/create-accessible-office-documents-868ecfcd-4f00-4224-b881-a65537a7c155">Office dokumentus prieinamesnius.</a></li></ul>',
       QA_BLOCKQUOTE: "Ar tai antraštė? <strong {C}>%(TEXT)</strong> <hr> Blokinės kabutės turėtų būti naudojamos tik citatoms. Jei tai turi būti antraštė, pakeiskite šią blokinę kabutę į semantinę antraštę (pvz., 2 arba 3 antraštę).",
       QA_FAKE_HEADING: "Ar tai antraštė? <strong {C}>%(TEXT)</strong> <hr> Paryškinto ar didelio teksto eilutė gali atrodyti kaip antraštė, tačiau ekrano skaitytuvu besinaudojantis žmogus negali pasakyti, kad ji yra svarbi, arba pereiti prie jos turinio. Paryškintas ar didelis tekstas niekada neturėtų pakeisti semantinių antraščių (nuo 2 iki 6 antraštės).",
-      QA_FAKE_LIST: 'Ar bandote sudaryti sąrašą? Rastas galimas sąrašo elementas: <strong {C}>%(firstPrefix)</strong> <hr> Įsitikinkite, kad naudojate semantinius sąrašus, vietoj jų naudodami kulkų arba skaičių formatavimo mygtukus. Naudojant semantinį sąrašą pagalbinės technologijos gali perteikti tokią informaciją, kaip bendras elementų skaičius ir kiekvieno elemento santykinė padėtis sąraše. Sužinokite daugiau apie <a href="https://www.w3.org/WAI/tutorials/page-structure/content/#lists">semantinius sąrašus.</a>.',
+      QA_FAKE_LIST: 'Ar bandote sudaryti sąrašą? Rastas galimas sąrašo elementas: <strong {C}>%(firstPrefix)</strong> <hr> Įsitikinkite, kad naudojate semantinius sąrašus, vietoj jų naudodami kulkų arba skaičių formatavimo mygtukus. Naudojant semantinį sąrašą pagalbinės technologijos gali perteikti tokią informaciją, kaip bendras elementų skaičius ir kiekvieno elemento santykinė padėtis sąraše. Sužinokite daugiau apie <a href="https://www.w3.org/WAI/tutorials/page-structure/content/#lists">semantinius sąrašus.</a>',
       QA_UPPERCASE: "Rastos visos didžiosios raidės. Kai kurie ekrano skaitytuvai tekstą visomis didžiosiomis raidėmis gali interpretuoti kaip akronimą ir skaityti kiekvieną raidę atskirai. Be to, kai kurie žmonės mano, kad visos didžiosios raidės yra sunkiau įskaitomos, ir tai gali sudaryti šauksmo įspūdį.",
       QA_UNDERLINE: "Pabrauktą tekstą galima supainioti su nuorodomis. Apsvarstykite galimybę naudoti kitą stilių, pavyzdžiui, <code>&lt;strong&gt;</code><strong>strong svarba</strong><code>&lt;/strong&gt;</code> arba <code>&lt;em&gt;</code><em>pabrėžimas</em><code>&lt;/em&gt;</code>.",
       QA_SUBSCRIPT: "Subskripcijos ir superskripcijos formatavimo parinktys turėtų būti naudojamos tik teksto padėčiai pakeisti dėl tipografinių susitarimų ar standartų. Jos neturėtų būti <strong>nenaudojamos</strong> tik pateikimo ar išvaizdos tikslais. Formatuojant ištisus sakinius kyla skaitomumo problemų. Tinkami naudojimo atvejai būtų eksponentų, eilės numerių, pavyzdžiui, 4<sup>th</sup> vietoj fourth, ir cheminių formulių (pvz., H<sub>2</sub>O) rodymas.",
@@ -253,9 +257,10 @@
       QA_JUSTIFY: "Venkite naudoti lygiuotą tekstą, kuris sulygiuotas tiek prie kairiojo, tiek prie dešiniojo krašto. Tai gali būti sunkiai skaitoma dėl nevienodų tarpų tarp žodžių. Naudokite kairiuoju kraštu sulygiuotą tekstą, kad užtikrintumėte geresnį skaitomumą.",
       QA_SMALL_TEXT: "Mažas tekstas yra sunkiau skaitomas, ypač žmonėms, turintiems silpną regėjimą. Siekiant geresnio skaitomumo, venkite naudoti šrifto dydžių, mažesnių už numatytąjį.",
       // Shared
-      ACC_NAME: "<strong {B}>Prieinamas pavadinimas</strong> %(TEXT)",
-      ACC_NAME_TIP: '<hr><strong>Patarimas!</strong> "Prieinamas pavadinimas" yra galutinis etiketas, kuris perduodamas žmonėms, naudojantiems pagalbines technologijas, ir skaičiuojamas ARIA. Tai padeda jiems suprasti nuorodos ar mygtuko tikslą.',
-      HIDDEN_FOCUSABLE: 'Saites vai pogas atribūtam ir <code>aria-hidden=&quot;true&quot;</code>, bet tas ir joprojām fokusējams no tastatūras. Ja jūs vēlaties paslēpt dublējošu saiti vai pogu, pievienojiet arī <code>tabindex=&quot;-1&quot;</code>. Pretējā gadījumā <code>aria-hidden=&quot;true&quot;</code> nedrīkst izmantot elementiem, kas var saņemt fokusu. <hr> Uzziniet vairāk par <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">aria-hidden atribūtu.</a>',
+      LINK_TEXT: "<strong {B}>Nuorodos tekstas</strong> <strong {C}>%(TEXT)</strong>",
+      ACC_NAME: "<strong {B}>Prieinamas pavadinimas</strong> <strong {C}>%(TEXT)</strong>",
+      ACC_NAME_TIP: "<hr><strong>Patarimas!</strong> „Prieinamas pavadinimas“ yra galutinė etiketė, kuri perduodama žmonėms, naudojantiems pagalbines technologijas. Tai padeda jiems suprasti elemento paskirtį.",
+      HIDDEN_FOCUSABLE: 'Šis elementas gali gauti klaviatūros fokusavimą, tačiau jis yra paslėptas nuo ekrano skaitytuvų naudojant <code>aria-hidden="true"</code> atributą (pačiame elemente arba tėviniame konteineryje). Norėdami tai ištaisyti, pašalinkite atributą aria-hidden arba pašalinkite elementą iš tabuliavimo tvarkos. <hr> <strong {B}>Elementas</strong> <pre><code>%(EL)</code></pre> <hr> Sužinokite daugiau apie <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">atributą aria-hidden.</a>',
       // Developer
       DUPLICATE_ID: "Rastas <strong>dvigubas ID</strong>. Yra žinoma, kad pasikartojančio ID klaidos sukelia problemų pagalbinėms technologijoms, kai jos bando sąveikauti su turiniu. Prašome pašalinti arba pakeisti šį ID. <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>",
       UNCONTAINED_LI: "Visi <code>&lt;li&gt;</code> sąrašo elementai turi būti įdėti į <code>&lt;ul&gt;</code> nesurūšiuotus arba <code>&lt;ol&gt;</code> surūšiuotus elementus. Ši struktūra padeda ekranų skaitytuvams tiksliai paskelbti sąrašą ir jo elementus.",
@@ -266,17 +271,22 @@
       META_SCALABLE: 'Pašalinkite <code>user-scalable="no"</code> parametrą iš <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">meta žymos vaizde</a>, kad būtų galima priartinti.',
       META_MAX: 'Įsitikinkite, kad <code>maximum-scale</code> parametras <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">meta žymos vaizde</a> nėra mažesnis nei 2.',
       META_REFRESH: "Puslapis neturėtų automatiškai atsinaujinti naudojant meta žymę.",
+      META_LANG_SUGGEST: "Šis kalbos kodas <code>%(CODE)</code> yra negaliojantis. Ar turėjote omenyje <code>%(CODE)</code>?",
+      META_LANG_VALID: 'Šio elemento kalbos kodas negalioja. Norėdami tai ištaisyti, pakeiskite lang atributą galiojančiu kalbos kodu. <hr> <strong {B}>Elementas</strong> <code>&lt;%(ELEMENT) lang="%(CODE)"&gt;</code> <hr> Sužinokite daugiau apie <a href="https://www.w3.org/International/questions/qa-html-language-declarations">kalbos deklaravimą HTML.</a>',
       // Buttons
       BTN_EMPTY: "Mygtukas neturi prieinamo pavadinimo, kuris apibūdina jo paskirtį.",
       BTN_EMPTY_LABELLEDBY: "Mygtukas turi <code>aria-labelledby</code> vertę, kuri yra tuščia arba nesutampa su kito puslapio elemento <code>id</code> verte.",
       BTN: "mygtukas",
       BTN_TIP: 'Sužinokite, kaip sukurti <a href="https://www.sarasoueidan.com/blog/accessible-icon-buttons/">prieinamą mygtuką.</a>',
       BTN_ROLE_IN_NAME: "Nepalikite žodžio „mygtukas“ mygtuko pavadinime. Ekrano skaitytuvai jau praneša elemento vaidmenį be jo pavadinimo.",
-      LABEL_IN_NAME: "Matomas šio elemento tekstas atrodo skirtingas nei prieinamas pavadinimas, kas gali sukelti painiavą pagalbinių technologijų naudotojams. Peržiūrėkite: <hr> <strong {B}>Prieinamas Pavadinimas</strong> <strong {C}>%(TEXT)</strong>",
+      LABEL_IN_NAME: "Matomas šio elemento tekstas atrodo skirtingas nei prieinamas pavadinimas, kas gali sukelti painiavą pagalbinių technologijų naudotojams. Peržiūrėkite: <hr> <strong {B}>Tekstas</strong> <strong {C}>%(TEXT)</strong> <hr> <strong {B}>Prieinamas Pavadinimas</strong> <strong {C}>%(TEXT)</strong>",
+      LINK_MAYBE_BUTTON: 'Ši nuoroda turi negaliojantį tikslą. Nors prieinamas pavadinimas arba jo atributai rodo, kad tai gali būti visai ne nuoroda, o tam tikras puslapio scenarijaus elgsenos valdymas. Norėdami tai ištaisyti, pakeiskite nuorodą <a href="https://www.w3.org/WAI/ARIA/apg/patterns/button/">prieinamu mygtuku</a> arba pataisykite nuorodos tikslą. <hr> <strong {B}>Prieinamas pavadinimas</strong> <strong {C}>%(TEXT)</strong> <hr> <strong>Patarimas!</strong> Pagalbinės technologijos mygtukus ir nuorodas apdoroja skirtingai. Tinkamo HTML elemento naudojimas užtikrina, kad vartotojai žinotų, kokius klaviatūros sparčiuosius klavišus naudoti ir koks veiksmas bus atliktas.',
+      POTENTIAL_UI_ELEMENTS: ["meniu", "uždaryti", "perjungti", "atidaryti", "išskleisti", "suskleisti", "kitas", "ankstesnis", "leisti", "pauzė", "papildomas meniu", "rodyti", "slėpti", "išskleidžiamasis meniu", "atgal", "pirmyn", "praleisti", "pateikti", "atšaukti", "išsaugoti", "redaguoti", "ištrinti", "pašalinti", "ieškoti", "filtras", "rūšiuoti", "sustabdyti", "nutildyti", "atitildyti", "visas ekranas", "sumažinti", "padidinti"],
       // Tables
       TABLES_MISSING_HEADINGS: 'Trūksta lentelių antraščių! Prieinamoms lentelėms reikia HTML žymėjimo, kuris nurodo antraštės langelius ir duomenų langelius, apibrėžiančius jų ryšį. Ši informacija suteikia kontekstą žmonėms, kurie naudojasi pagalbinėmis technologijomis. Lentelės turėtų būti naudojamos tik lentelėms su duomenimis. <hr> Sužinokite daugiau apie <a href="https://www.w3.org/WAI/tutorials/tables/">prieinamas lenteles.</a>',
       TABLES_SEMANTIC_HEADING: 'Semantinės antraštės, pavyzdžiui, Heading 2 arba Heading 3, turėtų būti naudojamos tik turinio skyriams; <strong>ne</strong> HTML lentelėse. Vietoj to lentelių antraštes nurodykite naudodami elementą <code>&lt;th&gt;</code>. <hr> Sužinokite daugiau apie <a href="https://www.w3.org/WAI/tutorials/tables/">prieinamas lenteles.</a>',
       TABLES_EMPTY_HEADING: 'Rasta tuščia lentelės antraštė! Lentelės antraštės <strong>niekada</strong> neturėtų būti tuščios. Svarbu nurodyti eilučių ir (arba) stulpelių antraštes, kad būtų išreikštas jų ryšys. Ši informacija suteikia kontekstą žmonėms, kurie naudojasi pagalbinėmis technologijomis. Atminkite, kad lentelės turėtų būti naudojamos tik lentelėms su lentelių duomenimis. <hr> Sužinokite daugiau apie <a href="https://www.w3.org/WAI/tutorials/tables/">prieinamas lenteles.</a>',
+      TABLES_INVALID_HEADERS_REF: 'Ši lentelė bando susieti konkretų duomenų langelį su konkrečiu antraštės langeliu, tačiau antraštės ID nerastas. Įsitikinkite, kad kiekvienas <code>headers</code> atributas atitinka antraštės langelio ID toje pačioje lentelėje. <hr> <strong {B}>Antraštės</strong> <code>%(VALUE)</code> <hr> <strong>Patarimas!</strong> <a href="https://www.w3.org/WAI/WCAG22/Techniques/html/H43">Rankinių ID nuorodų naudojimas</a> duomenų langeliams susieti su antraščių langeliais yra sudėtingas ir nepatikimas. Jei įmanoma, suskaidykite sudėtingus duomenis į mažesnes lenteles su paprastomis antraščių eilutėmis ir stulpeliais.',
       // Contrast
       CONTRAST_NORMAL: "Normalus dydžio tekstas turėtų turėti bent %(RATIO) kontrasto santykį.",
       CONTRAST_LARGE: "Didelio dydžio tekstas turėtų turėti bent %(RATIO) kontrasto santykį.",
@@ -296,7 +306,14 @@
       UNKNOWN: "Nežinomas",
       FG: "Priekinis planas",
       BG: "Fonas",
-      NO_SUGGESTION: "Nėra prieinamos kombinacijos, keičiant tik teksto spalvą. Pabandykite pakeisti fono spalvą."
+      NO_SUGGESTION: "Nėra prieinamos kombinacijos, keičiant tik teksto spalvą. Pabandykite pakeisti fono spalvą.",
+      // Page language
+      PAGE_LANG_CONFIDENCE: 'Daugiau nei pusė šio puslapio teksto atrodo esanti %(LIKELY_LANG) kalba, tačiau deklaruota puslapio kalba yra %(PAGE_LANG). Apsvarstykite galimybę atnaujinti <a href="https://www.w3.org/International/questions/qa-html-language-declarations">deklaruotą puslapio kalbą</a>, kad ji atitiktų turinį.',
+      LANG_OF_PARTS: "Puslapio kalba deklaruota kaip %(PAGE_LANG), tačiau šis turinys atrodo esantis %(LIKELY_LANG) kalba. Įsitikinkite, kad turinys tinkamai pažymėtas.",
+      LANG_MISMATCH: "Šis turinys atrodo esantis %(DETECTED_LANG) kalba, tačiau jis buvo pažymėtas kaip %(WRONG_LANG).",
+      LANG_OF_PARTS_ALT: "Šis alternatyvusis tekstas atrodo esantis %(LIKELY_LANG) kalba, tačiau puslapio kalba deklaruota kaip %(PAGE_LANG). Įsitikinkite, kad alternatyvusis tekstas yra ta pačia kalba kaip ir likusi puslapio dalis. <hr> {ALT} <strong {C}>%(ALT)</strong>",
+      LANG_TIP: "<hr><strong>Patarimas!</strong> Ekrano skaitytuvai ištaria žodžius naudodami kalbos žymas. Tariant kalbą su neatitinkančiu kalbos paketu, gaunama nesuprantama kalba.",
+      LANG_UNSUPPORTED: "Su kalba susiję prieinamumo patikrinimai buvo praleisti, nes ši naršyklė nepalaiko automatinio kalbos aptikimo."
     }
   };
   return lt;

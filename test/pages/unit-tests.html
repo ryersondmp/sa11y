@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en-CA">
 
 <head>
   <meta charset="UTF-8">
@@ -28,8 +28,8 @@
 
     <h3>Skipped heading</h3>
     <div id="error-skipped-heading">
-      <h3>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Quas, asperiores esse ut quo adipisci.</h3>
-      <h6>Laboriosam hic corrupti repellendus nemo perferendis nesciunt at nostrum!</h6>
+      <h3>A skipped heading example</h3>
+      <h6>This is a Heading level six</h6>
     </div>
 
     <h3>Ignored headings</h3>
@@ -39,10 +39,8 @@
 
     <h3>Headings that are too long</h3>
     <div id="warning-headings-too-long">
-      <h4>Lorem ipsum dolor sit amet consectetur adipisicing elit. At ea ullam
-        reiciendis quis veritatis recusandae ducimus laudantium culpa incidunt?
-        Hic, dignissimos blanditiis accusantium sed accusamus voluptates
-        perferendis nobis fuga aliquid!</h4>
+      <h4>This is a super long heading, that really isn't much of a heading because of how long it is. This is pretty
+        much a small paragraph, and indeed, not a heading because of how many characters and words.</h4>
     </div>
 
     <h3>Blockquotes used as headings</h3>
@@ -67,49 +65,59 @@
     <h3>Bolded text used as heading</h3>
     <div id="warning-bold-fake-heading">
       <p><strong>About the team</strong></p>
-      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-        eiusmod tempor incididunt ut labore et dolore magna aliqua. Elit duis
-        tristique sollicitudin nibh. Etiam erat velit scelerisque in dictum
-        non
-        consectetur. Augue lacus viverra vitae congue eu consequat. Egestas
-        maecenas pharetra convallis posuere morbi leo urna.</p>
+      <p>Spatula tectonic gravity Tuesday towards underneath umbrella mahogany frequency. Eleven sideways pocket
+        vegetable
+        duration, unless phosphorus quickly sideways. Mirror mountain calendar, although velvet horizontal gravity,
+        specifically
+        furniture engine. Randomize potato calendar toward ancient rhythm, yet however frequency avocado.</p>
     </div>
 
     <div id="warning-bold-heading-br">
       <p><strong>This will be flagged</strong><br>
-        Because it's uses a line break and has a large paragraph following.
-        Lorem, ipsum dolor sit amet
-        consectetur adipisicing elit. Eum, harum? Sit ut quidem sequi odit
-        consequatur eveniet provident illo a voluptatibus suscipit obcaecati
-        praesentium necessitatibus, vero at excepturi sapiente nobis!</p>
+        Because it's uses a line break and has a large paragraph following. If you’re looking for a true "word
+        salad"—where the words are real but the grammar and meaning have completely left the
+        building—here is a dense wall of randomized English for you.
+
+        The Vocabulary Vortex
+        Spatula tectonic gravity Tuesday towards underneath umbrella mahogany frequency. Eleven sideways pocket
+        vegetable
+        duration, unless phosphorus quickly sideways. Mirror mountain calendar, although velvet horizontal gravity,
+        specifically
+        furniture engine. Randomize potato calendar toward ancient rhythm, yet however frequency avocado.
+
+        Opportune skyscraper vegetable, perhaps duration mahogany. Eleven elephant towards frequency vegetable, unless
+        spatula
+        mahogany. Mirror mountain calendar, although velvet horizontal gravity, specifically furniture engine. Randomize
+        potato
+        calendar toward ancient rhythm, yet however frequency avocado.</p>
     </div>
 
     <div id="nothing-long-bold-text">
       <p><strong>This shouldn't be flagged since it's long and not necessarily a
           heading but just a bolded sentence for extra emphasis.</strong></p>
-      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-        eiusmod tempor incididunt ut labore et dolore magna aliqua. Elit duis
-        tristique sollicitudin nibh. Etiam erat velit scelerisque in dictum
-        non
-        consectetur. Augue lacus viverra vitae congue eu consequat. Egestas
-        maecenas pharetra convallis posuere morbi leo urna.</p>
+      <p>Spatula tectonic gravity Tuesday towards underneath umbrella mahogany frequency. Eleven sideways pocket
+        vegetable
+        duration, unless phosphorus quickly sideways. Mirror mountain calendar, although velvet horizontal gravity,
+        specifically
+        furniture engine. Randomize potato calendar toward ancient rhythm, yet however frequency avocado.</p>
     </div>
 
     <h3>Large paragraph text as heading</h3>
     <div id="warning-large-p-heading">
       <p style="font-size: 24px">About us</p>
-      <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Corporis
-        blanditiis repellat ducimus dolores suscipit itaque provident eos,
-        mollitia explicabo maxime quae ab recusandae velit, odit quibusdam
-        incidunt quidem quas ipsum.</p>
+      <p>Spatula tectonic gravity Tuesday towards underneath umbrella mahogany frequency. Eleven sideways pocket
+        vegetable
+        duration, unless phosphorus quickly sideways. Mirror mountain calendar, although velvet horizontal gravity,
+        specifically
+        furniture engine. Randomize potato calendar toward ancient rhythm, yet however frequency avocado.</p>
     </div>
 
     <div id="nothing-large-p-punctuation">
       <p style="font-size: 24px">How are you doing?</p>
-      <p>Since it has punctuation, assume it's not a heading. Lorem
-        ipsum dolor sit amet, consectetur adipiscing elit. Curabitur ut
-        consectetur arcu, vitae luctus lacus. Ut euismod arcu sed leo porta
-        suscipit.</p>
+      <p>Spatula tectonic gravity Tuesday towards underneath umbrella mahogany frequency. Eleven sideways pocket
+        vegetable duration, unless phosphorus quickly sideways. Mirror mountain calendar, although velvet horizontal
+        gravity, specifically furniture engine. Randomize potato calendar toward ancient rhythm, yet however frequency
+        avocado.</p>
     </div>
 
     <hr>
@@ -244,8 +252,8 @@
     <h3>Linked image contains both alt and link text</h3>
     <div id="warning-alt-and-link-text">
       <a href="https://www.example.com?=5">
-        <img src="../../docs/examples/assets/placeholder.svg" alt="Lorem ipsum, dude!">
-        Learn more about, Lorem.
+        <img src="../../docs/examples/assets/placeholder.svg" alt="Donkeys and zebras!">
+        Learn more about, Stuff.
       </a>
     </div>
 
@@ -307,7 +315,7 @@
     <div id="error-missing-alt-contains-link-text">
       <a href="https://www.example.com?=9">
         <img src="../../docs/examples/assets/placeholder.svg">
-        Learn more about Lorem
+        Learn more about things
       </a>
     </div>
 
@@ -367,7 +375,7 @@
     <div id="warning-linked-figure-alt-without-figcaption">
       <a href="https://www.example.com?=11">
         <figure>
-          <img src="../../docs/examples/assets/placeholder.svg" alt="Lorem ipsum.">
+          <img src="../../docs/examples/assets/placeholder.svg" alt="Something else.">
         </figure>
       </a>
     </div>
@@ -418,7 +426,7 @@
 
     <h3>Image has aria-hidden</h3>
     <div id="nothing-image-has-aria-hidden-true">
-      <img src="../../docs/examples/assets/placeholder.svg" aria-hidden="true" alt="Lorem ipsum.">
+      <img src="../../docs/examples/assets/placeholder.svg" aria-hidden="true" alt="A red car.">
     </div>
 
     <h3>Linked image has aria-hidden and negative tabindex</h3>
@@ -486,6 +494,10 @@
         width="100" />
     </div>
     <h4>Non-english characters, single word, long alt text</h4>
+    <p>
+      <strongt>Note:</strongt> The error will not appear in unit tests because of unsupported language detection API in
+      headless browsers!
+    </p>
     <div id="pass-bad-alt">
       <img src="../../docs/examples/assets/placeholder.svg" alt="epäjärjestelmällistyttämättömyydellänsäkään!"
         width="100" />
@@ -566,10 +578,14 @@
     <h3>Empty links</h3>
     <div id="error-empty-1">Empty hyperlink: <a href="https://www.example.com?=26"></a></div>
     <div id="error-empty-2">Empty hyperlink with space: <a href="https://www.example.com?=27"> </a></div>
-    <div id="error-empty-3">Single character: <a href="https://www.example.com?=28">.</a></div>
-    <div id="error-empty-4">Non-breaking space: <a href="https://www.example.com?=29">&nbsp;</a></div>
-    <div id="error-empty-5">Empty href: <a href></a></div>
+    <div id="error-empty-3">Non-breaking space: <a href="https://www.example.com?=29">&nbsp;</a></div>
+    <div id="error-empty-4">Empty href: <a href></a></div>
 
+    <h3>Unpronounceable links</h3>
+    <div id="error-unpronounceable-1">Single character: <a href="https://www.example.com?=28">.</a></div>
+    <div id="error-unpronounceable-2">Single character (CTA): <a href="https://www.example.com/Sssxdsd">↣</a></div>
+    <div id="warning-unpronounceable-1">CTA with accompanying text <a href="https://www.example.com?=2pcxxx">howdy ↣</a>
+    </div>
 
     <h3>Empty icon links</h3>
     <div id="error-empty-icon-link-1">
@@ -970,11 +986,11 @@
     <h2>Justify-aligned text</h2>
     <div id="warning-justify">
       <p class="justify">
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Ex sequi tempora consequuntur debitis ratione quae quis
-        esse, iure numquam dolorum deleniti explicabo. Explicabo veritatis hic modi odio qui nisi rerum? Lorem ipsum
-        dolor
-        sit amet consectetur adipisicing elit. Consectetur nemo ipsa officiis, ad sit adipisci, totam illo, iusto
-        repudiandae natus quis temporibus deleniti doloremque necessitatibus at numquam qui! Quo, eveniet?
+        Spatula tectonic gravity Tuesday towards underneath umbrella mahogany frequency. Eleven sideways pocket
+        vegetable
+        duration, unless phosphorus quickly sideways. Mirror mountain calendar, although velvet horizontal gravity,
+        specifically
+        furniture engine. Randomize potato calendar toward ancient rhythm, yet however frequency avocado.
       </p>
     </div>
 
@@ -982,22 +998,25 @@
 
     <h3>1em</h3>
     <div id="nothing-small-text-1">
-      <p>Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>
+      <p>Pavement whistle oxygen rectangle, Tuesday bicycle furniture.</p>
     </div>
 
     <h3>.75em</h3>
     <div id="nothing-small-text-2">
-      <p style="font-size: 0.75em">Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>
+      <p style="font-size: 0.75em">Gravity eleven mahogany toward underneath, phosphorus
+        vegetable sideways duration.</p>
     </div>
 
     <h3>0.6em which is roughly 10px</h3>
     <div id="warning-small-text-1">
-      <p style="font-size: 0.6em">Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>
+      <p style="font-size: 0.6em">Skyscraper velvet ancient frequency, although calendar horizontal engine.</p>
     </div>
 
     <h3>50%</h3>
     <div id="warning-small-text-2">
-      <p style="font-size: 50%">Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>
+      <p style="font-size: 50%">Velocity pocket eleven, although umbrella furniture toward. Mahogany duration vegetable,
+        unless gravity phosphorus
+        Tuesday.</p>
     </div>
 
     <h3>Ignore if <code>font-size: 0;</code></h3>
@@ -1310,8 +1329,11 @@
     </div>
 
     <h3>Link used as button without roles</h3>
+    <p>This is a developer check!</p>
     <div id="error-broken-same-page">
-      <a href="#">User</a>
+      <a href="#0">
+        MENU maybe
+      </a>
     </div>
 
     <h3>Link used as button with proper role</h3>
@@ -1655,7 +1677,7 @@
     <h4>SVG with unsupported colour space foreground</h4>
     <div id="warning-svg-1">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" width="50">
-        <path fill="color(display-p3 1 0.5 0)"
+        <path fill="color(rec2020 0.9 0.4 0.2)"
           d="M320 576C461.4 576 576 461.4 576 320C576 178.6 461.4 64 320 64C178.6 64 64 178.6 64 320C64 461.4 178.6 576 320 576zM229.4 385.9C249.8 413.9 282.8 432 320 432C357.2 432 390.2 413.9 410.6 385.9C418.4 375.2 433.4 372.8 444.1 380.6C454.8 388.4 457.2 403.4 449.4 414.1C420.3 454 373.2 480 320 480C266.8 480 219.7 454 190.6 414.1C182.8 403.4 185.2 388.4 195.9 380.6C206.6 372.8 221.6 375.2 229.4 385.9zM208 272C208 254.3 222.3 240 240 240C257.7 240 272 254.3 272 272C272 289.7 257.7 304 240 304C222.3 304 208 289.7 208 272zM400 240C417.7 240 432 254.3 432 272C432 289.7 417.7 304 400 304C382.3 304 368 289.7 368 272C368 254.3 382.3 240 400 240z" />
       </svg>
     </div>
@@ -1663,7 +1685,7 @@
     <h4>SVG with unsupported colour space background</h4>
     <div id="warning-svg-2">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" width="50"
-        style="background: color(display-p3 1 0.5 0)">
+        style="background: color(rec2020 0.9 0.4 0.2);">
         <path fill="red"
           d="M320 576C461.4 576 576 461.4 576 320C576 178.6 461.4 64 320 64C178.6 64 64 178.6 64 320C64 461.4 178.6 576 320 576zM229.4 385.9C249.8 413.9 282.8 432 320 432C357.2 432 390.2 413.9 410.6 385.9C418.4 375.2 433.4 372.8 444.1 380.6C454.8 388.4 457.2 403.4 449.4 414.1C420.3 454 373.2 480 320 480C266.8 480 219.7 454 190.6 414.1C182.8 403.4 185.2 388.4 195.9 380.6C206.6 372.8 221.6 375.2 229.4 385.9zM208 272C208 254.3 222.3 240 240 240C257.7 240 272 254.3 272 272C272 289.7 257.7 304 240 304C222.3 304 208 289.7 208 272zM400 240C417.7 240 432 254.3 432 272C432 289.7 417.7 304 400 304C382.3 304 368 289.7 368 272C368 254.3 382.3 240 400 240z" />
       </svg>
@@ -1702,7 +1724,7 @@
         }
 
         #ig-2 {
-          background: color(display-p3 1 0.5 0);
+          background: color(rec2020 0.9 0.4 0.2);
         }
       </style>
       <svg id="ig-2" version="1.1" xmlns="http://www.w3.org/2000/svg" width="50" viewBox="0 0 32 32">
@@ -1723,7 +1745,7 @@
     <div id="warning-svg-6">
       <style>
         #ig-3 path {
-          fill: color(display-p3 0.5 0.5 1);
+          fill: color(rec2020 0.5 0.5 1);
         }
       </style>
       <svg id="ig-3" version="1.1" xmlns="http://www.w3.org/2000/svg" width="50" viewBox="0 0 32 32">
@@ -1933,6 +1955,11 @@
       </select>
     </div>
 
+    <h4>Single aria-labelledby reference</h4>
+    <div id="nothing-input-7">
+      <input aria-labelledby="vv" type="text">
+    </div>
+
     <h3>Inputs missing labels</h3>
 
     <h4>Input without a label or missing <code>id</code></h4>
@@ -1981,12 +2008,13 @@
     </div>
 
     <h3 id="vv">Input warnings</h3>
-    <h4>Input is using title, aria-label or aria-labelledby attribute</h4>
+    <h4 id="bb">Input is using title, aria-label or aria-labelledby attribute</h4>
     <div id="warning-input-1">
       <input aria-label="First name" type="text">
     </div>
     <div id="warning-input-2">
-      <input aria-labelledby="vv" type="text">
+      <p>Multiple <code>aria-labelledby</code> references, e.g. <code>aria-labelledby="a b"</code></p>
+      <input aria-labelledby="vv bb" type="text">
     </div>
     <div id="warning-input-3">
       <input type="text" title="Phone number">
@@ -2105,7 +2133,7 @@
 
     <h3>Button with aria-hidden</h3>
     <div id="error-button-ariahidden">
-      <button aria-hidden="true" class="btn-primary"><i class="bi bi-trash"></i></button>
+      <button aria-hidden="true" class="btn-primary">Trash <i class="bi bi-trash"></i></button>
     </div>
     <p>With negative tabindex</p>
     <div id="nothing-button-1">

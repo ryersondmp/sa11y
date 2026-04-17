@@ -9,6 +9,7 @@ const zh = {
     WARNING: "警告",
     WARNINGS: "警告",
     GOOD: "良好",
+    REVIEW: "审查",
     ON: "在",
     OFF: "关闭",
     ALERT_TEXT: "警报",
@@ -39,7 +40,7 @@ const zh = {
     MISSING_ROOT: "由于目标区域<code>%(root)</code>不存在, 全页面被检查为可访问性。",
     MISSING_READABILITY_ROOT: "可读性评分基于<code>%(fallback)</code>内容区域，因为目标区域<code>%(root)</code>不存在。",
     SKIP_TO_PAGE_ISSUES: "跳到页面问题",
-    CONSOLE_ERROR: '对不起, 本页面的可访问性检查器有问题。您能否<a href="%(link)">通过此表格</a>或<a href="%(link)">GitHub</a>报告?',
+    CONSOLE_ERROR: '对不起, 本页面的可访问性检查器有问题。您能否<a href="https://forms.gle/sjzK9XykETaoqZv99">通过此表格</a>或<a href="https://github.com/ryersondmp/sa11y/issues/new?title=Bug%20report">GitHub</a>报告?',
     APPEARANCE: "外观",
     MOVE_PANEL: "移动面板",
     HIDDEN: "隐藏",
@@ -54,7 +55,7 @@ const zh = {
     PAGE_TITLE: "页面标题",
     RESULTS: "结果",
     EXPORT_RESULTS: "导出结果",
-    GENERATED: "使用 %(tool) 生成的结果。",
+    GENERATED: '使用 <a href="https://sa11y.netlify.app">Sa11y</a> 生成的结果。',
     PREVIEW: "预览",
     ELEMENT: "元素",
     PATH: "路径",
@@ -145,7 +146,8 @@ const zh = {
       "本网站",
       "观点",
       "查看我们的",
-      "网站"
+      "网站",
+      "文章"
     ],
     CLICK: ["click", "点击"],
     NEW_WINDOW_PHRASES: ["外来的", "新标签", "新窗口", "弹出式", "弹出"],
@@ -195,7 +197,8 @@ const zh = {
     LINK_DOI: '对于网页或纯在线资源，<a href="https://apastyle.apa.org/style-grammar-guidelines/paper-format/accessibility/urls#:~:text=descriptive%20links">APA风格指南</a>建议使用描述性链接，将作品的URL或DOI包裹在其标题上。使用较长的、不易理解的URL作为链接文本，在使用辅助技术访问时可能难以理解。',
     LINK_NEW_TAB: '链接在新的标签或窗口中打开, 没有警告。这样做可能会使人迷失方向, 特别是对那些对视觉内容有感知困难的人来说。其次, 控制别人的体验或为他们做决定并不总是一种好的做法。在链接文本中指出该链接在新窗口中打开 <hr> <strong>提示！</strong>学习最佳做法: <a href="https://www.nngroup.com/articles/new-browser-windows-and-tabs/">在新的浏览器窗口和标签中打开链接。</a>',
     LINK_FILE_EXT: "链接指向PDF或可下载的文件 (如MP3、Zip、Word Doc) , 而没有警告。在链接文本中指出文件类型。如果是大文件, 可以考虑包括文件大小。<hr> <strong>示例:</strong>执行报告 (PDF, 3MB) 。",
-    LINK_IDENTICAL_NAME: "链接的文字与另一个链接相同, 但它指向不同的页面。<strong>考虑使以下链接更具描述性, 以帮助将其与其他链接区分开来。</strong> <hr> <strong {B}>可访问名称</strong> <strong {C}>%(TEXT)</strong>",
+    LINK_IDENTICAL_NAME: "此页面上的多个链接使用相同的文本，但指向不同的位置。这可能会给辅助技术用户带来困惑。要修复此问题，请使此链接文本更具描述性。",
+    LINK_UNPRONOUNCEABLE: "链接文本仅包含符号。如果您认为此链接由于复制/粘贴错误而出现异常，请考虑将其删除。",
     // Images
     ALT_UNPRONOUNCEABLE: "替代文字只包含无法发音的符号和/或空格。屏幕阅读器将宣布图像，然后暂停。如果图像为装饰性，请确保替代文字中没有空格。 <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>",
     LINK_ALT_UNPRONOUNCEABLE: "此链接图像的替代文字只包含无法发音的符号和/或空格。屏幕阅读器将宣布图像，然后暂停。请确保替代文字描述了链接的目标。 <hr> {L} {ALT} <strong {C}>%(ALT_TEXT)</strong>",
@@ -228,6 +231,7 @@ const zh = {
     LABELS_NO_FOR_ATTRIBUTE: "没有与此输入相关的标签。给标签添加一个<code>for</code>属性, 该属性与该输入的<code>id</code>相匹配。<hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>",
     LABELS_MISSING_LABEL: "没有与此输入相关的标签。请为这个输入添加一个<code>id</code>, 并为标签添加一个匹配的<code>for</code>属性。",
     LABELS_PLACEHOLDER: '消失的占位符文本使人们很难记住哪些信息属于某个字段，并使识别和纠正错误变得具有挑战性。相反，请考虑在表单字段之前使用永久可见的提示。<hr> 了解更多信息：<a href="https://www.nngroup.com/articles/form-design-placeholders/">表单字段中的占位符是有害的。</a>',
+    ARIA_INPUT_FIELD_NAME: "ARIA 输入或切换字段缺少可访问名称。要修复此问题，请提供有效的 <code>aria-labelledby</code>、<code>aria-label</code> 或 <code>title</code> 属性。如果输入是可切换的（例如：复选框、开关、单选按钮），添加可见的内部文本也将解决此问题。 <hr> <strong {B}>元素</strong> <pre><code>%(EL)</code></pre>",
     // Embedded content
     EMBED_VIDEO: "请确保<strong>所有视频都有闭合字幕。</strong>为所有音频和视频内容提供字幕是一项强制性的A级要求。字幕支持聋哑人或听力困难的人。",
     EMBED_AUDIO: "请确保为所有播客提供<strong>文字记录。</strong>为音频内容提供文字记录是一项强制性的A级要求。转录支持聋哑人或听力困难的人, 但也能使所有人受益。考虑将文字记录放在下面或放在一个手风琴面板内。",
@@ -237,7 +241,7 @@ const zh = {
     EMBED_UNFOCUSABLE: '带有无法聚焦元素的 <code>&lt;iframe&gt;</code> 不应具有 <code>tabindex="-1"</code>。嵌入内容将无法通过键盘访问。',
     // QA
     QA_BAD_LINK: "发现坏的链接。链接似乎指向一个开发环境。<hr> {L} <strong {C}>%(LINK)</strong>",
-    QA_IN_PAGE_LINK: "破损的同页链接。链接目标与此页面上的任何元素都不匹配。",
+    QA_IN_PAGE_LINK: "无效的同页面链接。此链接尝试跳转到页面中找不到的部分。要修复此问题，请确保链接与您要跳转的元素的 <code>id</code> 相匹配。",
     QA_STRONG_ITALICS: "粗体和斜体标签具有语义, 不应<strong></strong>用于突出整个段落。加粗的文字应该用于对一个词或短语进行强烈的<strong>强调</strong>。斜体字应该用来突出专有名词 (即书名和文章标题) 、外国词、引号。长篇引语应采用块状引语的格式。",
     QA_PDF: '无法检查PDF的可访问性。PDF被认为是网络内容, 也必须做到无障碍。对于使用屏幕阅读器的人 (缺失结构标签或缺失表格字段标签) 和低视力的人 (文本在放大时不回流) 来说, PDF经常包含一些问题。<ul><li>如果这是一个表格, 请考虑使用可访问的HTML表格作为替代。</li><li>如果这是一个文档, 请考虑将其转换为网页。</li></ul>否则, 请在Acrobat DC中检查<a href="https://helpx.adobe.com/acrobat/using/create-verify-pdf-accessibility.html">PDF的可访问性。</a>',
     QA_DOCUMENT: '无法检查文件的可访问性。链接文件被认为是网络内容, 也必须做到无障碍。请手动审查该文件。<ul><li>使您的<a href="https://support.google.com/docs/answer/6199477?hl=zh">Google Workspace文档或演示文稿更易于访问。</a></li><li>使您的<a href="https://support.microsoft.com/zh/office/create-accessible-office-documents-868ecfcd-4f00-4224-b881-a65537a7c155">Office文档更易于访问。</a></li></ul>。',
@@ -251,30 +255,36 @@ const zh = {
     QA_JUSTIFY: "避免使用两端对齐的文本，两端对齐的文本会同时对齐左侧和右侧边距。由于单词之间的间距不均匀，这可能会使一些人难以阅读。使用左对齐文本以提高可读性。",
     QA_SMALL_TEXT: "小号文字更难阅读，尤其是对于视力低下的人。为了确保更好的可读性，请避免使用小于默认大小的字体。",
     // Shared
-    ACC_NAME: "<strong {B}>可访问名称</strong> %(TEXT)",
-    ACC_NAME_TIP: "<hr> <strong>提示！</strong> “可访问名称”是传达给使用辅助技术的人的最终标签，并由 ARIA 计算。这有助于他们理解链接或按钮的目的。",
-    HIDDEN_FOCUSABLE: '链接或按钮已设置 <code>aria-hidden=&quot;true&quot;</code>，但仍然可以通过键盘聚焦。如果您打算隐藏重复的链接或按钮，请添加 <code>tabindex=&quot;-1&quot;</code>。否则，不应在可以接收焦点的元素上使用 <code>aria-hidden=&quot;true&quot;</code>。了解更多关于 <a href="https://developer.mozilla.org/zh-CH/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">aria-hidden 属性</a>。',
+    LINK_TEXT: "<strong {B}>链接文本</strong> <strong {C}>%(TEXT)</strong>",
+    ACC_NAME: "<strong {B}>可访问名称</strong> <strong {C}>%(TEXT)</strong>",
+    ACC_NAME_TIP: "<hr><strong>提示！</strong>“可访问名称”是传达给使用辅助技术的人员的最终标签。这有助于他们了解该元素的用途。",
+    HIDDEN_FOCUSABLE: '此元素可以接收键盘焦点，但由于 <code>aria-hidden="true"</code> 属性（在自身或父级容器上），它对屏幕阅读器是隐藏的。要修复此问题，请移除 aria-hidden 属性，或将该元素从 Tab 键顺序中移除。 <hr> <strong {B}>元素</strong> <pre><code>%(EL)</code></pre> <hr> 了解有关 <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">aria-hidden 属性</a> 的更多信息。',
     // Developer
     DUPLICATE_ID: "发现<strong>重复的ID</strong>。众所周知, 当辅助技术试图与内容互动时, 重复的ID错误会给辅助技术带来问题。请删除或更改以下ID. <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>",
     UNCONTAINED_LI: "所有 <code>&lt;li&gt;</code> 列表项必须放置在 <code>&lt;ul&gt;</code> 无序列表或 <code>&lt;ol&gt;</code> 有序列表元素内部。这个结构帮助屏幕阅读器准确地读取列表及其项。",
     TABINDEX_ATTR: "元素不应具有大于 0 的 <code>tabindex</code> 属性。",
     // Meta checks
-    META_LANG: '页面语言未声明!请<a href="https://www.w3.org/International/questions/qa-html-language-declarations">在HTML标签上声明语言。</a>',
+    META_LANG: '页面语言未声明!请<a href="https://www.w3.org/International/questions/qa-html-language-declarations.zh-hans.html">在HTML标签上声明语言。</a>',
     META_TITLE: '缺少页面标题!请提供一个<a href="https://developer.mozilla.org/zh/docs/Web/HTML/Element/title">页面标题。</a>',
     META_SCALABLE: '删除<a href="https://developer.mozilla.org/zh-CN/docs/Web/HTML/Viewport_meta_tag">视口元标签</a>中的 <code>user-scalable="no"</code> 参数，以允许缩放。',
     META_MAX: '确保<a href="https://developer.mozilla.org/zh-CN/docs/Web/HTML/Viewport_meta_tag">视口元标签</a>中的 <code>maximum-scale</code> 参数不少于 2。',
     META_REFRESH: "页面不应使用 meta 标签自动刷新。",
+    META_LANG_SUGGEST: "以下语言代码 <code>%(CODE)</code> 无效。您是指 <code>%(CODE)</code> 吗？",
+    META_LANG_VALID: '此元素的语言代码无效。要修复此问题，请将 lang 属性替换为有效的语言代码。 <hr> <strong {B}>元素</strong> <code>&lt;%(ELEMENT) lang="%(CODE)"&gt;</code> <hr> 了解有关 <a href="https://www.w3.org/International/questions/qa-html-language-declarations.zh-hans.html">在 HTML 中声明语言</a> 的更多信息。',
     // Buttons
     BTN_EMPTY: "按钮缺少一个描述其用途的可访问名称。",
     BTN_EMPTY_LABELLEDBY: "按钮的<code>aria-labelledby</code>值为空或不匹配页面上其他元素的<code>id</code>值。",
     BTN: "按钮",
     BTN_TIP: '了解如何制作一个<a href="https://www.sarasoueidan.com/blog/accessible-icon-buttons/">可访问的按钮。</a>',
     BTN_ROLE_IN_NAME: "不要在按钮的名称中包含“按钮”一词。屏幕阅读器已经会传达元素的角色和名称。",
-    LABEL_IN_NAME: "此元素的可见文本似乎与可访问名称不同，可能会对辅助技术用户造成混淆。请检查：<hr> <strong {B}>可访问名称</strong> <strong {C}>%(TEXT)</strong>",
+    LABEL_IN_NAME: "此元素的可见文本似乎与可访问名称不同，可能会对辅助技术用户造成混淆。请检查：<hr> <strong {B}>文本</strong> <strong {C}>%(TEXT)</strong> <hr> <strong {B}>可访问名称</strong> <strong {C}>%(TEXT)</strong>",
+    LINK_MAYBE_BUTTON: '此链接的目标无效。虽然可访问名称或其属性表明这可能根本不是链接，而是控制页面上的某些脚本行为。要修复此问题，请将链接替换为 <a href="https://www.w3.org/WAI/ARIA/apg/patterns/button/">可访问按钮</a>，或纠正链接的目的地。 <hr> <strong {B}>可访问名称</strong> <strong {C}>%(TEXT)</strong> <hr> <strong>提示！</strong> 辅助技术处理按钮和链接的方式不同。使用正确的 HTML 元素可确保用户知道应使用哪些键盘快捷键以及将触发什么操作。',
+    POTENTIAL_UI_ELEMENTS: ["菜单", "关闭", "切换", "打开", "展开", "折叠", "下一步", "上一步", "播放", "暂停", "子菜单", "显示", "隐藏", "下拉", "返回", "前进", "跳过", "提交", "取消", "保存", "编辑", "删除", "移除", "搜索", "筛选", "排序", "停止", "静音", "取消静音", "全屏", "最小化", "最大化"],
     // Tables
     TABLES_MISSING_HEADINGS: '缺少表头!可访问的表格需要HTML标记, 表明标题单元和数据单元, 定义它们的关系。这种信息为使用辅助技术的人提供了背景。表格应该只用于表格式的数据。<hr> 了解更多关于<a href="https://www.w3.org/WAI/tutorials/tables/">无障碍表格的信息。</a>',
     TABLES_SEMANTIC_HEADING: '语义标题, 如Heading 2或Heading 3, 只能用于内容的章节；<strong>不能</strong>用于HTML表格。使用<code>&lt;th&gt;</code>元素来表示表格的标题。<hr> 了解更多关于<a href="https://www.w3.org/WAI/tutorials/tables/">可访问的表格。</a>',
     TABLES_EMPTY_HEADING: '发现空的表头!表头应该<strong>永远不会</strong>是空的。指定行和/或列的标题以表达它们的关系是很重要的。这一信息为使用辅助技术的人提供了背景。请记住, 表格应该只用于表格式数据。<hr> 了解更多关于<a href="https://www.w3.org/WAI/tutorials/tables/">可访问的表格。</a>',
+    TABLES_INVALID_HEADERS_REF: '此表格尝试将特定数据单元格与特定表头单元格相关联，但找不到该表头的 ID。请确保每个 <code>headers</code> 属性都与同一表格中表头单元格的 ID 相匹配。 <hr> <strong {B}>表头</strong> <code>%(VALUE)</code> <hr> <strong>提示！</strong> <a href="https://www.w3.org/WAI/WCAG22/Techniques/html/H43">使用手动 ID 引用</a> 来关联数据单元格与表头单元格既复杂又脆弱。如果可能，请将复杂数据拆分为具有简单表头行和列的小型表格。',
     // Contrast
     CONTRAST_NORMAL: "普通大小的文本应至少具有 %(RATIO) 的对比度。",
     CONTRAST_LARGE: "大号文本应至少具有 %(RATIO) 的对比度。",
@@ -294,7 +304,14 @@ const zh = {
     UNKNOWN: "未知",
     FG: "前景",
     BG: "背景",
-    NO_SUGGESTION: "仅更改文本颜色无法找到可访问的组合。请尝试更改背景颜色。"
+    NO_SUGGESTION: "仅更改文本颜色无法找到可访问的组合。请尝试更改背景颜色。",
+    // Page language
+    PAGE_LANG_CONFIDENCE: '此页面超过一半的文本似乎是 %(LIKELY_LANG)，但声明的页面语言为 %(PAGE_LANG)。请考虑更新 <a href="https://www.w3.org/International/questions/qa-html-language-declarations.zh-hans.html">声明的页面语言</a> 以匹配内容。',
+    LANG_OF_PARTS: "页面语言声明为 %(PAGE_LANG)，但此内容似乎是 %(LIKELY_LANG)。请确保内容已正确标记。",
+    LANG_MISMATCH: "此内容似乎是 %(DETECTED_LANG)，但被标记为 %(WRONG_LANG)。",
+    LANG_OF_PARTS_ALT: "此替代文本似乎是 %(LIKELY_LANG)，但页面语言声明为 %(PAGE_LANG)。请确保替代文本与页面其他部分的语言一致。<hr> {ALT} <strong {C}>%(ALT)</strong>",
+    LANG_TIP: "<hr><strong>提示！</strong> 屏幕阅读器使用语言标签来发音。使用不匹配的语言包发音会导致无法理解的语音。",
+    LANG_UNSUPPORTED: "由于此浏览器不支持自动语言检测，已跳过与语言相关的无障碍检查。"
   }
 };
 export {

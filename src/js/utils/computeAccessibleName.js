@@ -1,4 +1,5 @@
-import Constants from './constants';
+import { State } from '../core/state';
+import * as Utils from '../utils/utils';
 
 /* Get text content of pseudo elements. */
 export const wrapPseudoContent = (element, string) => {
@@ -12,10 +13,8 @@ export const wrapPseudoContent = (element, string) => {
         : content.match(/"([^"]+)"/); // Content between quotes, e.g. "alt text";
     return match ? match[1] : '';
   };
-  const before = getAltText(
-    window.getComputedStyle(element, ':before').getPropertyValue('content'),
-  );
-  const after = getAltText(window.getComputedStyle(element, ':after').getPropertyValue('content'));
+  const before = getAltText(Utils.getCachedStyle(element, ':before').getPropertyValue('content'));
+  const after = getAltText(Utils.getCachedStyle(element, ':after').getPropertyValue('content'));
   return `${before}${string}${after}`;
 };
 
@@ -37,17 +36,11 @@ const nextTreeBranch = (tree) => {
 /* Compute ARIA attributes. */
 export const computeAriaLabel = (element, recursing = false) => {
   // Ignore ARIA on these elements.
-  if (
-    Constants.Global.ignoreAriaOnElements &&
-    element.matches(Constants.Global.ignoreAriaOnElements)
-  ) {
+  if (State.option.ignoreAriaOnElements && element.matches(State.option.ignoreAriaOnElements)) {
     return 'noAria';
   }
 
-  if (
-    Constants.Global.ignoreTextInElements &&
-    element.matches(Constants.Global.ignoreTextInElements)
-  ) {
+  if (State.option.ignoreTextInElements && element.matches(State.option.ignoreTextInElements)) {
     return '';
   }
 
@@ -86,8 +79,13 @@ export const computeAccessibleName = (element, exclusions = [], recursing = 0) =
   if (ariaLabel !== 'noAria') {
     return ariaLabel;
   }
+
   // Return immediately if there is only a text node.
   let computedText = '';
+  const and = (word) => {
+    computedText += ` ${word}`;
+  };
+
   if (!element.children.length) {
     computedText = wrapPseudoContent(element, element.textContent);
     if (!computedText.trim() && element.hasAttribute('title')) {
@@ -137,8 +135,8 @@ export const computeAccessibleName = (element, exclusions = [], recursing = 0) =
       const shadowChildren = node.shadowRoot.querySelectorAll('*');
       for (let i = 0; i < shadowChildren.length; i++) {
         const child = shadowChildren[i];
-        if (!excludeSelector || !child.closest(excludeSelector)) {
-          computedText += computeAccessibleName(child, exclusions, recursing + 1);
+        if (!excludeSelector || !Utils.getCachedClosest(child, excludeSelector)) {
+          and(computeAccessibleName(child, exclusions, recursing + 1));
         }
       }
     }
@@ -146,14 +144,14 @@ export const computeAccessibleName = (element, exclusions = [], recursing = 0) =
     // Return text from text nodes.
     if (node.nodeType === Node.TEXT_NODE) {
       if (node.parentNode.tagName !== 'SLOT') {
-        computedText += ` ${node.nodeValue}`;
+        and(node.nodeValue);
       }
       continue;
     }
 
-    if (addTitleIfNoName && !node.closest('a')) {
+    if (addTitleIfNoName && !Utils.getCachedClosest(node, 'a')) {
       if (aText === computedText) {
-        computedText += addTitleIfNoName;
+        and(addTitleIfNoName);
       }
       addTitleIfNoName = false;
       aText = false;
@@ -168,7 +166,7 @@ export const computeAccessibleName = (element, exclusions = [], recursing = 0) =
 
     const aria = computeAriaLabel(node, recursing);
     if (aria !== 'noAria') {
-      computedText += ` ${aria}`;
+      and(aria);
       if (!nextTreeBranch(treeWalker)) {
         continueWalker = false;
       }
@@ -176,18 +174,20 @@ export const computeAccessibleName = (element, exclusions = [], recursing = 0) =
     }
 
     switch (node.tagName) {
-      case 'IMG':
-        if (node.hasAttribute('alt') && node.role !== 'presentation') {
-          computedText += node.getAttribute('alt');
+      case 'IMG': {
+        const role = node.getAttribute('role');
+        if (node.hasAttribute('alt') && role !== 'presentation' && role !== 'none') {
+          and(node.getAttribute('alt'));
         }
         break;
+      }
       case 'SVG':
         if (node.role === 'img' || node.role === 'graphics-document') {
-          computedText += computeAriaLabel(node);
+          and(computeAriaLabel(node));
         } else {
           const title = node.querySelector('title');
           if (title) {
-            computedText += title.textContent;
+            and(title.textContent);
           }
         }
         break;
@@ -199,10 +199,10 @@ export const computeAccessibleName = (element, exclusions = [], recursing = 0) =
           addTitleIfNoName = false;
           aText = false;
         }
-        computedText += wrapPseudoContent(node, '');
+        and(wrapPseudoContent(node, ''));
         break;
       case 'INPUT':
-        computedText += wrapPseudoContent(treeWalker.currentNode, '');
+        and(wrapPseudoContent(treeWalker.currentNode, ''));
         if (treeWalker.currentNode.hasAttribute('title')) {
           addTitleIfNoName = treeWalker.currentNode.getAttribute('title');
         }
@@ -217,27 +217,37 @@ export const computeAccessibleName = (element, exclusions = [], recursing = 0) =
             slotText += child.nodeValue;
           }
         });
-        computedText += slotText;
-        computedText += wrapPseudoContent(node, '');
+        and(slotText);
+        and(wrapPseudoContent(node, ''));
+        break;
+      }
+      case 'SPAN': {
+        and(wrapPseudoContent(treeWalker.currentNode, ''));
+        if (treeWalker.currentNode.hasAttribute('title')) {
+          addTitleIfNoName = treeWalker.currentNode.getAttribute('title');
+        }
         break;
       }
       default:
-        computedText += wrapPseudoContent(node, '');
+        and(wrapPseudoContent(node, ''));
         break;
     }
   }
 
   if (addTitleIfNoName && !aText) {
-    computedText += ` ${addTitleIfNoName}`;
+    and(addTitleIfNoName);
   }
 
   // Replace Private Use Area (PUA) unicode characters.
   // https://www.unicode.org/faq/private_use.html
   computedText = computedText.replace(/[\uE000-\uF8FF]/gu, '');
 
-  // If computedText returns blank, fallback on title attribute.
-  if (!computedText.trim() && element.hasAttribute('title')) {
-    return element.getAttribute('title');
+  // If computedText returns blank, fallback on a) psuedo b) title attribute.
+  if (!computedText.trim()) {
+    computedText = wrapPseudoContent(element, '');
+    if (!computedText.trim() && element.hasAttribute('title')) {
+      return element.getAttribute('title');
+    }
   }
 
   return computedText;

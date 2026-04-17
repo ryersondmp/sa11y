@@ -13,6 +13,7 @@
       WARNING: "Opozorilo",
       WARNINGS: "Opozorila",
       GOOD: "Dobro",
+      REVIEW: "Pregled",
       ON: "Vklopljeno",
       OFF: "Izklopljeno",
       ALERT_TEXT: "Opozorilo",
@@ -43,7 +44,7 @@
       MISSING_ROOT: "Celotna stran je bila preverjena glede dostopnosti, ker ciljno območje <code>%(root)</code> ne obstaja.",
       MISSING_READABILITY_ROOT: "Ocena berljivosti temelji na vsebinski površini <code>%(fallback)</code>, ker ciljno območje <code>%(root)</code> ne obstaja.",
       SKIP_TO_PAGE_ISSUES: "Preskoči na stran Vprašanja",
-      CONSOLE_ERROR: 'Opravičujemo se, vendar je na tej strani prišlo do težave s preverjanjem dostopnosti. Ali jo lahko <a href="%(link)">prijavite prek tega obrazca</a> ali na <a href="%(link)">GitHub</a>?',
+      CONSOLE_ERROR: 'Opravičujemo se, vendar je na tej strani prišlo do težave s preverjanjem dostopnosti. Ali jo lahko <a href="https://forms.gle/sjzK9XykETaoqZv99">prijavite prek tega obrazca</a> ali na <a href="https://github.com/ryersondmp/sa11y/issues/new?title=Bug%20report">GitHub</a>?',
       APPEARANCE: "Izgled",
       MOVE_PANEL: "Premakni ploščo",
       HIDDEN: "Skrito",
@@ -58,7 +59,7 @@
       PAGE_TITLE: "Naslov strani",
       RESULTS: "Rezultati",
       EXPORT_RESULTS: "Izvozi rezultate",
-      GENERATED: "Rezultati, ustvarjeni s %(tool).",
+      GENERATED: 'Rezultati, ustvarjeni s <a href="https://sa11y.netlify.app">Sa11y.</a>',
       PREVIEW: "Predogled",
       ELEMENT: "Element",
       PATH: "Pot",
@@ -148,7 +149,8 @@
         "to spletno mesto",
         "ogled",
         "si oglejte naš",
-        "spletna stran"
+        "spletna stran",
+        "članek"
       ],
       CLICK: ["click", "klik"],
       NEW_WINDOW_PHRASES: ["zunanji", "nov zavihek", "novo okno", "pop-up", "pojaviti se"],
@@ -198,7 +200,8 @@
       LINK_DOI: 'Pri spletnih straneh ali spletnih virih vodnik <a href="https://apastyle.apa.org/style-grammar-guidelines/paper-format/accessibility/urls#:~:text=descriptive%20links">APA Style</a> priporoča uporabo opisnih povezav, tako da URL ali DOI dela ovijete okoli njegovega naslova. Daljši in manj razumljivi naslovi URL, ki se uporabljajo kot besedilo povezave, so lahko pri dostopu s pomožno tehnologijo težko razumljivi.',
       LINK_NEW_TAB: 'Povezava se brez opozorila odpre v novem zavihku ali oknu. To je lahko moteče, zlasti za ljudi, ki imajo težave z zaznavanjem vizualne vsebine. Drugič, ni vedno dobra praksa, da bi nadzorovali izkušnjo nekoga ali sprejemali odločitve namesto njega. Navedite, da se povezava odpre v novem oknu, v besedilu povezave. <hr> <strong>Tip!</strong> Spoznajte najboljše prakse: <a href="https://www.nngroup.com/articles/new-browser-windows-and-tabs/">odpiranje povezav v novih oknih in zavihkih brskalnika.</a>',
       LINK_FILE_EXT: "Povezava kaže na datoteko PDF ali datoteko za prenos (npr. MP3, Zip, Wordov dokument) brez opozorila. V besedilu povezave navedite vrsto datoteke. Če gre za veliko datoteko, razmislite o vključitvi velikosti datoteke. <hr> <strong>Primer:</strong> Izvršno poročilo (PDF, 3 MB)",
-      LINK_IDENTICAL_NAME: "Povezava ima enako besedilo kot druga povezava, čeprav kaže na drugo stran. Več povezav z enakim besedilom lahko povzroči zmedo pri ljudeh, ki uporabljajo bralnike zaslona. <strong>Premislite, ali naj bo naslednja povezava bolj opisna, da jo boste lažje razlikovali od drugih povezav.</strong> <hr> <strong {B}>Dostopno ime</strong> <strong {C}>%(TEXT)</strong>",
+      LINK_IDENTICAL_NAME: "Več povezav na tej strani uporablja isto besedilo, vendar kažejo na različna mesta. To lahko zmede uporabnike asistivne tehnologije. Če želite to popraviti, naredite besedilo te povezave bolj opisno.",
+      LINK_UNPRONOUNCEABLE: "Besedilo povezave vsebuje le simbole. Če menite, da je ta povezava napaka zaradi napake pri kopiranju/lepljenju, jo poskusite izbrisati.",
       // Images
       ALT_UNPRONOUNCEABLE: "Alternativno besedilo vsebuje samo neizgovorljive simbole in/ali presledke. Bralci zaslona bodo najavili sliko in se nato ustavili. Če je slika dekorativna, poskrbite, da v alternativnem besedilu ni presledkov. <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>",
       LINK_ALT_UNPRONOUNCEABLE: "Alternativno besedilo te povezane slike vsebuje samo neizgovorljive simbole in/ali presledke. Bralci zaslona bodo najavili sliko in se nato ustavili. Poskrbite, da alternativno besedilo opisuje cilj povezave. <hr> {L} {ALT} <strong {C}>%(ALT_TEXT)</strong>",
@@ -231,6 +234,7 @@
       LABELS_NO_FOR_ATTRIBUTE: "S tem vnosom ni povezana nobena oznaka. Dodajte atribut <code>for</code> oznaki, ki ustreza <code>id</code> tega vnosa. <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>",
       LABELS_MISSING_LABEL: "S tem vnosom ni povezana nobena oznaka. Dodajte <code>id</code> temu vnosu in dodajte ustrezen atribut <code>for</code> oznaki.",
       LABELS_PLACEHOLDER: 'Izginjajoči tekst zavor se težko spomni, katera informacija spada v polje in otežuje ugotavljanje in popravljanje napak. Namesto tega razmislite o uporabi trajno vidnega namiga pred poljem obrazca. <hr> Več informacij: <a href="https://www.nngroup.com/articles/form-design-placeholders/">Zavori v obrazcih so škodljivi.</a>',
+      ARIA_INPUT_FIELD_NAME: "Vnosno ali preklopno polje ARIA nima dostopnega imena. Če želite to popraviti, navedite veljaven atribut <code>aria-labelledby</code>, <code>aria-label</code> ali <code>title</code>. Če je vnos preklopen (npr. potrditveno polje, stikalo, radio), bo težavo rešilo tudi dodajanje vidnega notranjega besedila. <hr> <strong {B}>Element</strong> <pre><code>%(EL)</code></pre>",
       // Embedded content
       EMBED_VIDEO: "Poskrbite, da bodo <strong>vsi videoposnetki opremljeni s podnapisi.</strong> Zagotavljanje podnapisov za vse zvočne in video vsebine je obvezna zahteva na ravni A. Podnapisi so v pomoč gluhim in naglušnim osebam.",
       EMBED_AUDIO: "Za vse podcaste zagotovite <strong>prepis.</strong> Zagotavljanje prepisov za zvočne vsebine je obvezna zahteva na ravni A. Prepisi so v pomoč gluhim in naglušnim osebam, koristijo pa lahko vsem. Razmislite o tem, da bi prepis umestili pod ali v akordno ploščo.",
@@ -240,7 +244,7 @@
       EMBED_UNFOCUSABLE: '<code>&lt;iframe&gt;</code> z elementi, ki se jim ni mogoče osredotočiti, ne sme imeti <code>tabindex="-1"</code>. Vgrajena vsebina ne bo dostopna prek tipkovnice.',
       // QA
       QA_BAD_LINK: "Najdena slaba povezava. Zdi se, da povezava kaže na razvojno okolje. <hr> {L} <strong {C}>%(LINK)</strong>",
-      QA_IN_PAGE_LINK: "Okvarjena povezava na isto stran. Cilj povezave se ne ujema z nobenim elementom na tej strani.",
+      QA_IN_PAGE_LINK: "Nedelujoča povezava na isto stran. Ta povezava poskuša navigirati do razdelka strani, ki ga ni mogoče najti. Če želite to popraviti, se prepričajte, da se povezava ujema z <code>id</code>-jem elementa, na katerega želite skočiti.",
       QA_STRONG_ITALICS: "Oznake krepko in poševno imajo semantični pomen in se ne smejo uporabljati za poudarjanje celotnih odstavkov. Krepko označeno besedilo je treba uporabiti za močno <strong>izpostavitev</strong> besede ali besedne zveze. Ležečo pisavo je treba uporabljati za poudarjanje lastnih imen (npr. naslovov knjig in člankov), tujih besed, narekovajev. Dolgi citati morajo biti oblikovani kot blokovski citati.",
       QA_PDF: 'Ni mogoče preveriti dostopnosti datotek PDF. Datoteke PDF veljajo za spletno vsebino in morajo biti prav tako dostopne. Datoteke PDF pogosto vsebujejo težave za ljudi, ki uporabljajo bralnike zaslona (manjkajoče strukturne oznake ali manjkajoče oznake polj obrazca), in ljudi s slabim vidom (besedilo se ne preliva, ko je povečano). <ul><li>Če gre za obrazec, razmislite o uporabi dostopnega obrazca HTML kot alternative.</li><li>Če gre za dokument, razmislite o pretvorbi v spletno stran.</li></ul> V nasprotnem primeru preverite <a href="https://helpx.adobe.com/acrobat/using/create-verify-pdf-accessibility.html">PDF za dostopnost v programu Acrobat DC.</a>',
       QA_DOCUMENT: 'Dokumenta ni mogoče preveriti glede dostopnosti. Povezani dokumenti veljajo za spletno vsebino in morajo biti prav tako dostopni. Ta dokument preglejte ročno. <ul><li>Povečajte dostopnost svojega <a href="https://support.google.com/docs/answer/6199477?hl=sl">dokumenta ali predstavitve Google Workspace.</a></li><li>Povečajte dostopnost svojih <a href="https://support.microsoft.com/sl/office/create-accessible-office-documents-868ecfcd-4f00-4224-b881-a65537a7c155">dokumentov Office.</a></li></ul>',
@@ -254,9 +258,10 @@
       QA_JUSTIFY: "Izogibajte se uporabi poravnanega besedila, ki je poravnano tako na levi kot na desni rob. Zaradi neenakomernih presledkov med besedami je lahko za nekatere ljudi težko berljivo. Uporabite levo poravnano besedilo za boljšo berljivost.",
       QA_SMALL_TEXT: "Majhno besedilo je težje brati, zlasti za osebe s slabim vidom. Za boljšo berljivost se izogibajte uporabi velikosti pisave, ki so manjše od privzetih.",
       // Shared
-      ACC_NAME: "<strong {B}>Dostopno ime</strong> %(TEXT)",
-      ACC_NAME_TIP: '<hr> <strong>Nasvet!</strong> "Dostopno ime" je končna oznaka, ki se sporoča ljudem, ki uporabljajo pripomočke, in se izračuna z ARIA. To jim pomaga razumeti namen povezave ali gumba.',
-      HIDDEN_FOCUSABLE: 'Povezava ali gumb ima <code>aria-hidden=&quot;true&quot;</code>, vendar je še vedno dostopen s tipkovnico. Če nameravate skriti podvojeno povezavo ali gumb, dodajte tudi <code>tabindex=&quot;-1&quot;</code>. V nasprotnem primeru se <code>aria-hidden=&quot;true&quot;</code> ne sme uporabljati na elementih, ki lahko prejmejo fokus. <hr> Več o <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">atributu aria-hidden.</a>',
+      LINK_TEXT: "<strong {B}>Besedilo povezave</strong> <strong {C}>%(TEXT)</strong>",
+      ACC_NAME: "<strong {B}>Dostopno ime</strong> <strong {C}>%(TEXT)</strong>",
+      ACC_NAME_TIP: "<hr><strong>Nasvet!</strong> »Dostopno ime« je končna oznaka, ki se sporoči ljudem, ki uporabljajo podporno tehnologijo. To jim pomaga razumeti namen elementa.",
+      HIDDEN_FOCUSABLE: 'Ta element lahko prejme fokus tipkovnice, vendar je skrit pred bralniki zaslona z atributom <code>aria-hidden="true"</code> (na sebi ali na nadrejenem vsebniku). Če želite to popraviti, odstranite atribut aria-hidden ali odstranite element iz vrstnega reda zavihkov. <hr> <strong {B}>Element</strong> <pre><code>%(EL)</code></pre> <hr> Preberite več o <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">atributu aria-hidden.</a>',
       // Developer
       DUPLICATE_ID: "Najden <strong>podvojen ID</strong>. Znano je, da napake z dvojnim ID povzročajo težave podpornim tehnologijam, ko poskušajo sodelovati z vsebino. Prosimo, odstranite ali spremenite naslednji ID. <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>",
       UNCONTAINED_LI: "Vse <code>&lt;li&gt;</code> postavke seznama morajo biti nameščene znotraj <code>&lt;ul&gt;</code> neurejenih ali <code>&lt;ol&gt;</code> urejenih elementov. Ta struktura pomaga bralnikom zaslona natančno napovedati seznam in njegove postavke.",
@@ -267,17 +272,22 @@
       META_SCALABLE: 'Odstranite parameter <code>user-scalable="no"</code> v <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">meta oznaki pogleda</a>, da omogočite povečavo.',
       META_MAX: 'Poskrbite, da parameter <code>maximum-scale</code> v <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">meta oznaki pogleda</a> ni manjši od 2.',
       META_REFRESH: "Stran se ne sme samodejno osveževati z uporabo meta oznake.",
+      META_LANG_SUGGEST: "Naslednja jezikovna koda <code>%(CODE)</code> ni veljavna. Ali ste mislili <code>%(CODE)</code>?",
+      META_LANG_VALID: 'Jezikovna koda za ta element ni veljavna. Če želite to popraviti, zamenjajte atribut lang z veljavno jezikovno kodo. <hr> <strong {B}>Element</strong> <code>&lt;%(ELEMENT) lang="%(CODE)"&gt;</code> <hr> Preberite več o <a href="https://www.w3.org/International/questions/qa-html-language-declarations">deklariranju jezika v HTML.</a>',
       // Buttons
       BTN_EMPTY: "Gumb nima dostopnega imena, ki bi opisovalo njegov namen.",
       BTN_EMPTY_LABELLEDBY: "Gumb ima vrednost <code>aria-labelledby</code>, ki je prazna ali se ne ujema z vrednostjo <code>id</code> drugega elementa na strani.",
       BTN: "gumb",
       BTN_TIP: 'Naučite se, kako narediti <a href="https://www.sarasoueidan.com/blog/accessible-icon-buttons/">dostopen gumb.</a>',
       BTN_ROLE_IN_NAME: "Ne vključujte besede „gumb“ v ime gumba. Bralniki zaslona že posredujejo vlogo elementa poleg njegovega imena.",
-      LABEL_IN_NAME: "Vidno besedilo za ta element se zdi drugačno od dostopnega imena, kar lahko povzroči zmedo pri uporabnikih podpornih tehnologij. Preverite: <hr> <strong {B}>Dostopno ime</strong> <strong {C}>%(TEXT)</strong>",
+      LABEL_IN_NAME: "Vidno besedilo za ta element se zdi drugačno od dostopnega imena, kar lahko povzroči zmedo pri uporabnikih podpornih tehnologij. Preverite: <hr> <strong {B}>Besedilo</strong> <strong {C}>%(TEXT)</strong> <hr> <strong {B}>Dostopno ime</strong> <strong {C}>%(TEXT)</strong>",
+      LINK_MAYBE_BUTTON: 'Ta povezava ima neveljaven cilj. Čeprav dostopno ime ali njegovi atributi kažejo, da to sploh ni povezava, temveč nadzoruje neko skriptno vedenje na strani. Če želite to popraviti, zamenjajte povezavo z <a href="https://www.w3.org/WAI/ARIA/apg/patterns/button/">dostopnim gumbom</a> ali popravite cilj povezave. <hr> <strong {B}>Dostopno ime</strong> <strong {C}>%(TEXT)</strong> <hr> <strong>Nasvet!</strong> Podporne tehnologije gumbe in povezave obravnavajo drugače. Uporaba pravilnega elementa HTML zagotavlja, da uporabniki vedo, katere bližnjice na tipkovnici uporabiti in katero dejanje se bo sprožilo.',
+      POTENTIAL_UI_ELEMENTS: ["meni", "zapri", "preklopi", "odpri", "razširi", "strni", "naslednji", "prejšnji", "predvajaj", "premor", "podmeni", "pokaži", "skrij", "spustni meni", "nazaj", "naprej", "preskoči", "pošlji", "prekliči", "shrani", "uredi", "izbriši", "odstrani", "išči", "filter", "razvrsti", "ustavi", "nemo", "vklopi zvok", "celozaslonski način", "pomanjšaj", "povečaj"],
       // Tables
       TABLES_MISSING_HEADINGS: 'Manjkajo glave tabel! Dostopne tabele potrebujejo oznako HTML, ki označuje celice z glavo in podatkovne celice ter določa njihovo razmerje. Te informacije zagotavljajo kontekst ljudem, ki uporabljajo podporno tehnologijo. Tabele je treba uporabljati samo za tabelarne podatke. <hr> Preberite več o <a href="https://www.w3.org/WAI/tutorials/tables/">dostopnih tabelah.</a>',
       TABLES_SEMANTIC_HEADING: 'Semantične naslove, kot sta Heading 2 ali Heading 3, lahko uporabljate samo za dele vsebine; <strong>ne</strong> v tabelah HTML. Namesto tega naslove tabel označite z elementom <code>&lt;th&gt;</code>. <hr> Preberite več o <a href="https://www.w3.org/WAI/tutorials/tables/">dostopnih tabelah.</a>',
       TABLES_EMPTY_HEADING: 'Najden je prazen naglavni del tabele! Glave tabel ne smejo biti nikoli prazne. Pomembno je, da označite glave vrstic in/ali stolpcev in tako izrazite njihovo povezanost. Te informacije zagotavljajo kontekst za osebe, ki uporabljajo podporno tehnologijo. Ne pozabite, da je treba tabele uporabljati samo za tabelarične podatke. <hr> Preberite več o <a href="https://www.w3.org/WAI/tutorials/tables/">dostopnih tabelah.</a>',
+      TABLES_INVALID_HEADERS_REF: 'Ta tabela poskuša označiti določeno podatkovno celico z določeno celico glave, vendar ID-ja glave ni mogoče najti. Prepričajte se, da se vsak atribut <code>headers</code> ujema z ID-jem celice glave v isti tabeli. <hr> <strong {B}>Glave</strong> <code>%(VALUE)</code> <hr> <strong>Nasvet!</strong> <a href="https://www.w3.org/WAI/WCAG22/Techniques/html/H43">Uporaba ročnih sklicev na ID</a> za povezovanje podatkovnih celic s celicami glave je zapletena in nestabilna. Če je mogoče, razdelite zapletene podatke v manjše tabele s preprostimi vrsticami in stolpci glave.',
       // Contrast
       CONTRAST_NORMAL: "Besedilo običajne velikosti mora imeti kontrastno razmerje vsaj %(RATIO).",
       CONTRAST_LARGE: "Veliko besedilo mora imeti kontrastno razmerje vsaj %(RATIO).",
@@ -297,7 +307,14 @@
       UNKNOWN: "Neznano",
       FG: "Sprednji načrt",
       BG: "Ozadje",
-      NO_SUGGESTION: "Ni mogoče najti dostopne kombinacije samo s spremembo barve besedila. Poskusite spremeniti barvo ozadja."
+      NO_SUGGESTION: "Ni mogoče najti dostopne kombinacije samo s spremembo barve besedila. Poskusite spremeniti barvo ozadja.",
+      // Page language
+      PAGE_LANG_CONFIDENCE: 'Zdi se, da je več kot polovica besedila na tej strani v jeziku %(LIKELY_LANG), vendar je deklarirani jezik strani %(PAGE_LANG). Razmislite o posodobitvi <a href="https://www.w3.org/International/questions/qa-html-language-declarations">deklariranega jezika strani</a>, da bo ustrezal vsebini.',
+      LANG_OF_PARTS: "Jezik strani je bil deklariran kot %(PAGE_LANG), vendar se zdi, da je ta vsebina v jeziku %(LIKELY_LANG). Poskrbite, da je vsebina ustrezno označena.",
+      LANG_MISMATCH: "Zdi se, da je ta vsebina v jeziku %(DETECTED_LANG), vendar je bila označena kot %(WRONG_LANG).",
+      LANG_OF_PARTS_ALT: "Zdi se, da je to nadomestno besedilo v jeziku %(LIKELY_LANG), vendar je bil jezik strani deklariran kot %(PAGE_LANG). Poskrbite, da je nadomestno besedilo v istem jeziku kot preostali del strani. <hr> {ALT} <strong {C}>%(ALT)</strong>",
+      LANG_TIP: "<hr><strong>Nasvet!</strong> Bralniki zaslona izgovarjajo besede s pomočjo jezikovnih oznak. Izgovarjanje jezika z neujemajočim se jezikovnim paketom povzroči nerazumljiv govor.",
+      LANG_UNSUPPORTED: "Preverjanja dostopnosti, povezana z jezikom, so bila preskočena, ker ta brskalnik ne podpira samodejnega zaznavanja jezika."
     }
   };
   return sl;

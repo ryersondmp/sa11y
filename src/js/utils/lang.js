@@ -10,13 +10,23 @@ const Lang = {
   sprintf(string, ...args) {
     let transString = this._(string);
     transString = this.prepHTML(transString);
+    const el = document.createElement('div');
+    el.innerHTML = transString;
 
+    // Replace placeholders with span markers.
     if (args?.length) {
-      args.forEach((arg) => {
-        transString = transString.replace(/%\([a-zA-z]+\)/, arg);
+      args.forEach((_arg, index) => {
+        el.innerHTML = el.innerHTML.replace(/%\([a-zA-Z_]+\)/, `<span data-arg='${index}'></span>`);
+      });
+
+      // Inject the actual values as textContent.
+      args.forEach((arg, index) => {
+        const replacement = el.querySelector(`[data-arg="${index}"]`);
+        if (!replacement || arg === null) return;
+        replacement.textContent = this.truncateString(String(arg), 300);
       });
     }
-    return transString;
+    return el;
   },
   translate(string) {
     return this.langStrings[string] || string;
@@ -33,6 +43,10 @@ const Lang = {
         /{L}/g,
         `<strong class="badge"><span class="link-icon"></span><span class="visually-hidden">${Lang._('LINKED')}</span></strong>`,
       );
+  },
+  truncateString(string, maxLength) {
+    const truncatedString = string.substring(0, maxLength).trimEnd();
+    return string.length > maxLength ? `${truncatedString}...` : string;
   },
 };
 export default Lang;

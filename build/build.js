@@ -57,12 +57,12 @@ const runBuild = async (config) => {
 (async () => {
   console.log(`\n🚀 Starting build process for version ${pkg.version}\n`);
 
-  const languages = ['bg', 'cs', 'da', 'de', 'el', 'en', 'enUS', 'es', 'et', 'fi', 'fr', 'hu', 'id', 'it', 'ja', 'ko', 'lt', 'lv', 'nb', 'nl', 'pl', 'ptBR', 'ptPT', 'ro', 'sk', 'sl', 'sv', 'tr', 'ua', 'zh'];
+  const languages = ['bg', 'cs', 'da', 'de', 'el', 'en', 'enUS', 'es', 'et', 'fi', 'fr', 'hu', 'id', 'it', 'ja', 'ko', 'lt', 'lv', 'nb', 'nl', 'pl', 'ptBR', 'ptPT', 'ro', 'sk', 'sl', 'sv', 'ta', 'tr', 'ua', 'zh'];
 
   console.log(`Processing ${languages.length} language files...`);
 
   for (const lang of languages) {
-    const langEntry = path.resolve(dirname, `../src/js/lang/${lang}.js`);
+    const langEntry = path.resolve(dirname, `../src/lang/${lang}.js`);
 
     // Build ESM
     await runBuild({
@@ -164,6 +164,7 @@ const runBuild = async (config) => {
     { input: 'dev.js', name: 'Sa11yDevBookmarklet', file: 'dev.js' },
     { input: 'apca.js', name: 'Sa11yLangBookmarkletAPCA', file: 'apca.js' },
     { input: 'unminified.js', name: 'Sa11yLangBookmarkletUnminified', file: 'unminified.js' },
+    { input: 'v2-lang-detect.js', name: 'Sa11yLangDetectionBookmarklet', file: 'v2-lang-detect.js' },
   ];
 
   for (const b of bookmarklets) {

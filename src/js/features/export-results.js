@@ -1,13 +1,50 @@
+/** biome-ignore-all lint/correctness/noUndeclaredVariables: experimental browser api */
 import exportResultsStyles from '../../css/export-results.css?inline';
 import Constants from '../utils/constants';
 import Lang from '../utils/lang';
-import { decodeHTML, escapeHTML, generateElementPreview, stripHTMLtags } from '../utils/utils';
+import * as Utils from '../utils/utils';
+import { State } from '../core/state';
 
 /* ************************************************************ */
 /*  Export results as CSV or HTML via Blob API.                 */
 /* ************************************************************ */
 
-// Generate meta date for both HTML and CSV templates.
+/**
+ * Safe DOM element factory.
+ * Sets text via textContent (never innerHTML) and attributes via setAttribute.
+ * Accepts child nodes or plain strings (converted to TextNodes).
+ *
+ * @param {string} tag - HTML tag name
+ * @param {Object} props - { className, textContent, href, ... }
+ * @param {...(Node|string)} children
+ * @returns {HTMLElement}
+ */
+function el(tagOrNode, props = {}, ...children) {
+  const node = typeof tagOrNode === 'string' ? document.createElement(tagOrNode) : tagOrNode;
+
+  for (const [key, val] of Object.entries(props)) {
+    if (key === 'textContent') {
+      node.textContent = val;
+    } else if (key === 'className') {
+      node.className = val;
+    } else {
+      node.setAttribute(key, val);
+    }
+  }
+
+  for (const child of children) {
+    if (child == null) continue;
+    if (typeof child === 'string') {
+      node.appendChild(document.createTextNode(child));
+    } else {
+      node.appendChild(child);
+    }
+  }
+
+  return node;
+}
+
+// Generate metadata used in both HTML and CSV exports.
 function generateMetaData() {
   const today = new Date();
   const day = String(today.getDate()).padStart(2, '0');
@@ -15,139 +52,212 @@ function generateMetaData() {
   const year = today.getFullYear();
   const date = new Date().toLocaleString();
   const numericDate = `${month}-${day}-${year}`;
-
-  // Page title & URL
   const title = document.querySelector('head title');
   const titleCheck = !title || title.textContent.trim().length === 0;
   const metaTitle = !titleCheck ? title.textContent : '';
-  const pageURL = window.location.href;
-
+  const pageURL = Utils.sanitizeURL(window.location.href);
   return { date, numericDate, titleCheck, metaTitle, pageURL };
 }
 
-// Generate HTML template for download.
-async function generateHTMLTemplate(results, dismissResults) {
-  const errors = results.filter((issue) => issue.type === 'error');
-  const warnings = results.filter((issue) => issue.type === 'warning');
-  const count = { error: errors.length, warning: warnings.length, dismiss: dismissResults.length };
-
-  async function generateList(issues, type) {
-    const types = {
-      error: Lang._('ERRORS'),
-      warning: Lang._('WARNINGS'),
-      dismissed: Lang._('DISMISSED'),
-    };
-    const heading = types[type];
-    const hasIssues = issues.length > 0;
-
-    if (!hasIssues) {
-      return '';
-    }
-
-    let list = `<h2>${heading}</h2>`;
-    let listOpeningTag = `<ol class="${type}">`;
-    let listClosingTag = '</ol>';
-
-    if (type === 'dismissed') {
-      listOpeningTag = `<details><summary>${Lang.sprintf('PANEL_DISMISS_BUTTON', count.dismiss)}</summary><ol>`;
-      listClosingTag = '</details>';
-    }
-
-    // Opening tag.
-    list += listOpeningTag;
-
-    // Create an array of promises and wait for all of them to resolve.
-    const issuePromises = issues.map(async (issue) => {
-      let elementPreview = '';
-      if (issue.element) {
-        const allowedTags = ['IMG', 'IFRAME', 'AUDIO', 'VIDEO'];
-        const preview = await generateElementPreview(issue, true);
-        if (allowedTags.includes(issue.element.tagName)) {
-          elementPreview = `<li><strong>${Lang._('PREVIEW')}:</strong> ${preview}</li><li><strong>${Lang._('ELEMENT')}:</strong> <pre><code>${escapeHTML(issue.htmlPath)}</code></pre></li>`;
-        } else {
-          elementPreview = `<li><strong>${Lang._('ELEMENT')}:</strong> <pre><code>${escapeHTML(issue.htmlPath)}</code></pre></li>`;
-        }
-      }
-      const cssPath = issue.cssPath
-        ? `<li><strong>${Lang._('PATH')}:</strong> <pre><code>${issue.cssPath}</code></pre></li>`
-        : '';
-      return `<li>${issue.content} <ul>${elementPreview}${cssPath}</ul></li>`;
-    });
-
-    // Wait for all promises to resolve.
-    const resolvedIssues = await Promise.all(issuePromises);
-
-    // Add resolved issues to the list.
-    list += resolvedIssues.join('');
-
-    // Closing tag.
-    list += listClosingTag;
-    return list;
+// Sanitize a CSV cell value against CSV injection and escape internal quotes.
+function sanitizeCSVCell(value) {
+  const strValue = String(value ?? '');
+  const escaped = strValue.replaceAll('"', '""');
+  if (/^[=+\-@\t\r]/.test(escaped)) {
+    return `'${escaped}`;
   }
-
-  const errorsList = await generateList(errors, 'error');
-  const warningList = await generateList(warnings, 'warning');
-  const dismissedList = await generateList(dismissResults, 'dismissed');
-
-  // Meta information
-  const meta = generateMetaData();
-  const metaTitle = !meta.titleCheck
-    ? `<dt>${Lang._('PAGE_TITLE')}</dt><dd>${meta.metaTitle}</dd>`
-    : '';
-  const metaErrors = count.error !== 0 ? `<dt>${Lang._('ERRORS')}</dt><dd>${count.error}</dd>` : '';
-  const metaWarnings =
-    count.warning !== 0 ? `<dt>${Lang._('WARNINGS')}</dt><dd>${count.warning}</dd>` : '';
-  const metaDismissed =
-    count.dismiss !== 0 ? `<dt>${Lang._('DISMISSED')}</dt><dd>${count.dismiss}</dd>` : '';
-  const tool = '<a href="https://sa11y.netlify.app">Sa11y</a>';
-
-  const htmlTemplate = `
-      <!DOCTYPE html>
-      <html lang="${Lang._('LANG_CODE')}">
-      <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>${Lang._('RESULTS')}: ${meta.metaTitle}</title>
-        <style>${exportResultsStyles}</style>
-      </head>
-      <body>
-        <header>
-          <h1>${Lang._('RESULTS')}</h1>
-          <dl class="two-columns">
-            <div class="column">
-              ${metaTitle}
-              <dt>URL</dt>
-              <dd><a href="${meta.pageURL}">${meta.pageURL}</a></dd>
-              <dt>${Lang._('DATE')}</dt>
-              <dd>${meta.date}</dd>
-            </div>
-            <div class="column count">
-              ${metaErrors}
-              ${metaWarnings}
-              ${metaDismissed}
-            </div>
-        </dl>
-        </header>
-        <main>
-          ${errorsList}
-          ${warningList}
-          ${dismissedList}
-        </main>
-        <footer>
-          <p>${Lang.sprintf('GENERATED', tool)}</p>
-        </footer>
-      </body>
-      </html>
-    `;
-  return htmlTemplate;
+  return escaped;
 }
 
-/* HTML Blob */
-async function downloadHTMLTemplate(results, dismissResults) {
-  const htmlContent = await generateHTMLTemplate(results, dismissResults);
+/* ------------------------------------------------------------------ */
+/*  HTML export                                                       */
+/* ------------------------------------------------------------------ */
+
+/**
+ * Build a <fragment> containing an <h2> heading and an <ol> (or <details>/<ol> for dismissed) for a list of issues.
+ * @param {Array}  issues
+ * @param {string} type  'error' | 'warning' | 'dismissed'
+ * @returns {Promise<DocumentFragment|null>}
+ */
+async function generateList(issues, type) {
+  if (!issues.length) return null;
+
+  const typeLabels = {
+    error: Lang._('ERRORS'),
+    warning: Lang._('WARNINGS'),
+    dismissed: Lang._('DISMISSED'),
+  };
+
+  const fragment = document.createDocumentFragment();
+  fragment.appendChild(el('h2', { textContent: typeLabels[type] }));
+  const ol = el('ol', { className: type });
+
+  for (const issue of issues) {
+    const li = document.createElement('li');
+    const msgContainer = document.createElement('div');
+    const importedBody = document.importNode(issue.content, true);
+
+    // 2. Append the contents of that body to your container
+    msgContainer.append(...importedBody.childNodes);
+    li.appendChild(msgContainer);
+
+    const ul = document.createElement('ul');
+
+    if (issue.element) {
+      // Image preview — serialized & sanitized.
+      if (['IMG'].includes(issue.element.tagName)) {
+        const previewLi = document.createElement('li');
+        const strong = el('strong', { textContent: `${Lang._('PREVIEW')}: ` });
+        previewLi.appendChild(strong);
+        const previewNode = await Utils.generateElementPreview(issue, true);
+        const previewContainer = document.createElement('div');
+        previewContainer.appendChild(previewNode);
+        previewLi.appendChild(previewContainer);
+        ul.appendChild(previewLi);
+      }
+
+      // Element path — textContent escapes all HTML special characters.
+      const elemLi = document.createElement('li');
+      elemLi.appendChild(el('strong', { textContent: `${Lang._('ELEMENT')}: ` }));
+      const elemPre = document.createElement('pre');
+      elemPre.appendChild(el('code', { textContent: issue.htmlPath }));
+      elemLi.appendChild(elemPre);
+      ul.appendChild(elemLi);
+    }
+
+    // CSS path — textContent escapes all HTML special characters.
+    if (issue.cssPath) {
+      const pathLi = document.createElement('li');
+      pathLi.appendChild(el('strong', { textContent: `${Lang._('PATH')}: ` }));
+      const pathPre = document.createElement('pre');
+      pathPre.appendChild(el('code', { textContent: issue.cssPath }));
+      pathLi.appendChild(pathPre);
+      ul.appendChild(pathLi);
+    }
+
+    li.appendChild(ul);
+    ol.appendChild(li);
+  }
+
+  // Dismissed issues are wrapped in a <details> element.
+  if (type === 'dismissed') {
+    const details = document.createElement('details');
+    details.className = 'warning';
+    details.appendChild(
+      el('summary', {}, Lang.sprintf('PANEL_DISMISS_BUTTON', State.counts.dismissed)),
+    );
+    details.appendChild(ol);
+    fragment.appendChild(details);
+  } else {
+    fragment.appendChild(ol);
+  }
+  return fragment;
+}
+
+/**
+ * Build the full export HTML document using the DOM API. User-supplied values (page title, URL, issue content) are never directly into HTML strings — they go through textContent.
+ */
+async function generateHTMLTemplate() {
+  const errors = State.results.filter((issue) => issue.type === 'error');
+  const warnings = State.results.filter((issue) => issue.type === 'warning');
   const meta = generateMetaData();
 
-  // Create blob
+  // Create an isolated document so our work doesn't touch the live page.
+  const doc = document.implementation.createHTMLDocument('');
+  doc.documentElement.setAttribute('lang', Lang._('LANG_CODE'));
+
+  // Create the <head> of the document.
+  el('meta', { charset: 'UTF-8' });
+  const existingMeta = doc.querySelector('meta[charset]');
+  if (existingMeta) {
+    existingMeta.setAttribute('charset', 'UTF-8');
+  } else {
+    doc.head.insertBefore(el('meta', { charset: 'UTF-8' }), doc.head.firstChild);
+  }
+  doc.head.appendChild(
+    el('meta', { name: 'viewport', content: 'width=device-width, initial-scale=1.0' }),
+  );
+
+  // Page title.
+  doc.title = `${Lang._('RESULTS')}: ${meta.metaTitle}`;
+
+  // Inject page styles.
+  const styleEl = doc.createElement('style');
+  styleEl.textContent = exportResultsStyles;
+  doc.head.appendChild(styleEl);
+
+  // Build page <header>.
+  const header = doc.createElement('header');
+  header.appendChild(el('h1', { textContent: Lang._('RESULTS') }));
+  const dl = el('dl', { className: 'two-columns' });
+
+  // Left column: page metadata.
+  const leftCol = el('div', { className: 'column' });
+  if (!meta.titleCheck) {
+    leftCol.appendChild(el('dt', { textContent: Lang._('PAGE_TITLE') }));
+    leftCol.appendChild(el('dd', { textContent: meta.metaTitle }));
+  }
+  leftCol.appendChild(el('dt', { textContent: 'URL' }));
+  const urlAnchor = el('a', { href: meta.pageURL, textContent: meta.pageURL });
+  leftCol.appendChild(el('dd', {}, urlAnchor));
+  leftCol.appendChild(el('dt', { textContent: Lang._('DATE') }));
+  leftCol.appendChild(el('dd', { textContent: meta.date }));
+  dl.appendChild(leftCol);
+
+  // Right column: Issue counts.
+  const rightCol = el('div', { className: 'column count' });
+  if (State.counts.error !== 0) {
+    rightCol.appendChild(el('dt', { textContent: Lang._('ERRORS') }));
+    rightCol.appendChild(el('dd', { textContent: String(State.counts.error) }));
+  }
+  if (State.counts.warning !== 0) {
+    rightCol.appendChild(el('dt', { textContent: Lang._('WARNINGS') }));
+    rightCol.appendChild(el('dd', { textContent: String(State.counts.warning) }));
+  }
+  if (State.counts.dismissed !== 0) {
+    rightCol.appendChild(el('dt', { textContent: Lang._('DISMISSED') }));
+    rightCol.appendChild(el('dd', { textContent: String(State.counts.dismissed) }));
+  }
+  dl.appendChild(rightCol);
+
+  // Append all meta data and issue counts.
+  header.appendChild(dl);
+
+  // Create main content area.
+  const main = doc.createElement('main');
+  const listEntries = [
+    [errors, 'error'],
+    [warnings, 'warning'],
+    [State.dismissedResults, 'dismissed'],
+  ];
+
+  for (const [issues, type] of listEntries) {
+    const fragment = await generateList(issues, type);
+    if (fragment) main.appendChild(fragment);
+  }
+
+  // Create page footer.
+  const footer = document.createElement('footer');
+  const generatedBy = Lang.sprintf('GENERATED');
+  footer.appendChild(generatedBy);
+
+  // Append all to page.
+  doc.body.appendChild(header);
+  doc.body.appendChild(main);
+  doc.body.appendChild(footer);
+
+  // Serialize the fully constructed DOM to a string.
+  return new XMLSerializer().serializeToString(doc);
+}
+
+/* ------------------------------------------------------------------ */
+/*  Blob helpers                                                        */
+/* ------------------------------------------------------------------ */
+
+// Trigger an HTML file download.
+async function downloadHTMLTemplate() {
+  const htmlContent = await generateHTMLTemplate();
+  const meta = generateMetaData();
   const blob = new Blob([htmlContent], { type: 'text/html' });
   const link = document.createElement('a');
   const title = !meta.titleCheck ? `_${meta.metaTitle.trim().replace(/ /g, '')}` : '';
@@ -155,87 +265,87 @@ async function downloadHTMLTemplate(results, dismissResults) {
   link.download = `Sa11y_${meta.numericDate + title}.html`;
   document.body.appendChild(link);
   link.click();
-
-  // Remove blob
   setTimeout(() => {
     document.body.removeChild(link);
     window.URL.revokeObjectURL(link.href);
   }, 100);
 }
 
-/* CSV Blob */
-function downloadCSVTemplate(results) {
+// Trigger a CSV file download.
+function downloadCSVTemplate() {
   const meta = generateMetaData();
-  // CSV header row
-  const filteredObjects = results
+
+  const filteredObjects = State.results
     .filter((issue) => issue.type === 'warning' || issue.type === 'error')
     .map((issue) => {
       const { type, content, htmlPath, cssPath } = issue;
 
-      // Make issue messages more readable in CSV format.
-      const prepContent = content
-        .replaceAll(/<span\s+class="visually-hidden"[^>]*>.*?<\/span>/gi, '')
-        .replaceAll('<hr aria-hidden="true">', ' | ')
-        .replaceAll(/"/g, '""');
-      const stripHTML = stripHTMLtags(String(prepContent));
-      const encoded = decodeHTML(stripHTML);
+      // Strip HTML and decode entities to produce plain text for the CSV.
+      const clone = content.cloneNode(true);
+      clone.querySelectorAll('.visually-hidden').forEach((n) => {
+        n.remove();
+      });
+      clone.querySelectorAll('hr').forEach((hr) => {
+        hr.replaceWith(' | ');
+      });
+      const encoded = clone.textContent.replaceAll('"', '""');
 
       // Column headers.
       const columns = {
-        Title: `"${meta.metaTitle}"`,
-        URL: `"${meta.pageURL}"`,
-        Type: `"${String(type)}"`,
-        Issue: `"${encoded}"`,
-        Element: `"${htmlPath}"`,
+        Title: `"${sanitizeCSVCell(meta.metaTitle)}"`,
+        URL: `"${sanitizeCSVCell(meta.pageURL)}"`,
+        Type: `"${sanitizeCSVCell(String(type))}"`,
+        Issue: `"${sanitizeCSVCell(encoded)}"`,
+        Element: `"${sanitizeCSVCell(htmlPath)}"`,
       };
+
+      // CSS path of item.
       if (cssPath) {
-        columns.Path = `"${cssPath}"`;
+        columns.Path = `"${sanitizeCSVCell(cssPath)}"`;
       }
+
       return columns;
     });
 
-  // CSV content
   const headers = Object.keys(filteredObjects[0]);
-  const csvContent = `${headers.join(',')}\n${filteredObjects.map((obj) => headers.map((header) => obj[header]).join(',')).join('\n')}`;
+  const csvContent = `${headers.join(',')}\n${filteredObjects
+    .map((obj) => headers.map((header) => obj[header] ?? '""').join(','))
+    .join('\n')}`;
 
-  // Create blob.
+  // BOM ensures Excel opens UTF-8 files correctly.
   const bom = new Uint8Array([0xef, 0xbb, 0xbf]);
   const blob = new Blob([bom, csvContent], { type: 'text/csv;charset=utf-8;' });
   const url = window.URL.createObjectURL(blob);
   const link = document.createElement('a');
   link.href = url;
-  link.href = window.URL.createObjectURL(blob);
   const fileNameTitle = !meta.titleCheck ? `_${meta.metaTitle.trim().replace(/ /g, '')}` : '';
   link.setAttribute('download', `Sa11y_${meta.numericDate + fileNameTitle}.csv`);
   document.body.appendChild(link);
   link.click();
-
-  // Remove blob.
-  setTimeout(() => {
-    document.body.removeChild(link);
-    window.URL.revokeObjectURL(link.href);
-  }, 100);
+  link.href = '';
+  window.URL.revokeObjectURL(link.href);
 }
 
-// Attach event listeners.
 let exportHTMLHandler;
 let exportCSVHandler;
-export function exportResults(results, dismissResults) {
-  if (Constants.Global.exportResultsPlugin) {
-    exportHTMLHandler = async () => {
-      await downloadHTMLTemplate(results, dismissResults);
-    };
-    exportCSVHandler = () => {
-      downloadCSVTemplate(results, dismissResults);
-    };
-    Constants.Panel.exportHTML.addEventListener('click', exportHTMLHandler);
-    Constants.Panel.exportCSV.addEventListener('click', exportCSVHandler);
-  }
+
+export function exportResults() {
+  if (!State.option.exportResultsPlugin) return;
+
+  exportHTMLHandler = async () => {
+    await downloadHTMLTemplate();
+  };
+  exportCSVHandler = () => {
+    downloadCSVTemplate();
+  };
+
+  Constants.Panel.exportHTML.addEventListener('click', exportHTMLHandler);
+  Constants.Panel.exportCSV.addEventListener('click', exportCSVHandler);
 }
 
 // Imported by Reset function.
 export function removeExportListeners() {
-  if (Constants.Global.exportResultsPlugin) {
+  if (State.option.exportResultsPlugin) {
     Constants.Panel.exportHTML.removeEventListener('click', exportHTMLHandler);
     Constants.Panel.exportCSV.removeEventListener('click', exportCSVHandler);
   }

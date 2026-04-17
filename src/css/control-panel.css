@@ -303,6 +303,7 @@ audio {
 }
 
 /* Dismiss button for issues */
+.dismiss-alert,
 button[data-sa11y-dismiss] {
   display: block;
   padding: 4px 8px;
@@ -713,6 +714,7 @@ hr {
         color: var(--sa11y-yellow-text);
       }
 
+      .image-icon,
       img {
         background-color: var(--sa11y-yellow-text);
         border: 5px solid var(--sa11y-yellow-text);
@@ -724,6 +726,7 @@ hr {
         color: var(--sa11y-error);
       }
 
+      .image-icon,
       img {
         background-color: var(--sa11y-error);
         border: 5px solid var(--sa11y-error);
@@ -806,7 +809,21 @@ hr {
   mask: var(--sa11y-link-icon-svg);
 }
 
+/* Used for fallback within Image Outline. */
+.image-icon {
+  width: 50px;
+  height: 50px;
+  background: var(--sa11y-img-icon-color);
+  mask: var(--sa11y-img-icon);
+  float: inline-start;
+  border-radius: 5px;
+  max-width: 110px;
+  margin: 0 5px;
+  outline: 2px solid var(--sa11y-panel-badge);
+}
+
 /* Shared properties */
+.image-icon,
 .move-panel-icon,
 .info-icon,
 .sun-icon,
@@ -854,6 +871,10 @@ hr {
   .hidden-icon {
     filter: invert(1);
   }
+}
+
+#outline-list [class$="-icon"] {
+  margin-inline-end: 3px;
 }
 
 /* ***************************************** */

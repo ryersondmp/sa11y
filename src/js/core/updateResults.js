@@ -1,0 +1,234 @@
+import { initializeDismissals, dismissButtons } from '../features/dismissals';
+import { exportResults } from '../features/export-results';
+import generatePageOutline from '../interface/page-outline';
+import generateImageOutline from '../interface/image-outline';
+import { updatePanel, updateBadge, updateCount } from './update-panel';
+import { AnnotationTooltips } from '../interface/tooltips';
+import { annotate } from '../interface/annotations';
+import { skipToIssue } from './skip-to-issue';
+import * as Utils from '../utils/utils';
+import { State } from './state';
+import Elements from '../utils/elements';
+import Constants from '../utils/constants';
+import Lang from '../utils/lang';
+import { getLanguageDetector } from '../rulesets/page-language';
+import { createAlert } from '../interface/alert';
+
+/* *********************************************************** */
+/*  Update results array.                                      */
+/* *********************************************************** */
+export default async function updateResults() {
+  const { option } = State;
+
+  // Ignore by test key
+  const ignoreByTest = option.ignoreByTest || {};
+
+  // Get developer checks.
+  const devChecks = Utils.store.getItem('sa11y-developer');
+  const isDevOff = !devChecks || devChecks === 'Off';
+
+  // 1. Data filtering:
+  State.results = State.results.filter((issue, _, src) => {
+    // a) Filter out issues that are outside of the target root.
+    // b) Filter out dev checks if toggled off or using externally supplied developer checks.
+    if (
+      issue.isWithinRoot === false ||
+      ((isDevOff || option.externalDeveloperChecks) && issue.developer) ||
+      (isDevOff && issue.external)
+    )
+      return false;
+
+    // c) Filter out "Good" annotations for images that have an error or warning (page language detection conflict).
+    if (
+      State.option.langOfPartsPlugin &&
+      issue?.element?.tagName === 'IMG' &&
+      issue.type === 'good'
+    ) {
+      return !src.some(
+        (i) =>
+          i.element === issue.element &&
+          (i.type === 'error' || i.type === 'warning') &&
+          i.element?.alt === issue.element?.alt,
+      );
+    }
+
+    // d) Filter out page language confidence check if page lang isn't valid or missing.
+    if (State.option.langOfPartsPlugin && issue.test === 'PAGE_LANG_CONFIDENCE') {
+      return !src.some(
+        (i) =>
+          i.test === 'META_LANG' || i.test === 'META_LANG_SUGGEST' || i.test === 'META_LANG_VALID',
+      );
+    }
+
+    // e) Ignore by test key
+    if (ignoreByTest[issue.test] && issue.element) {
+      try {
+        if (issue.element.matches(ignoreByTest[issue.test])) return false;
+      } catch (e) {
+        console.error(`Sa11y: Invalid CSS selector for ignoreByTest prop "${issue.test}"`, e);
+      }
+    }
+
+    return true;
+  });
+
+  // 2. Data enrichment. Generate...
+  // a) ID
+  // b) (Optional) CSS selector path,
+  // c) HTML path of element.
+  // d) Encrypted dismiss keys.
+  // e) Ensure content property is always a DOM node.
+  // f) Validate type.
+  // g) Generate visible issue type/label.
+  await Promise.all(
+    State.results.map(async (item, id) => {
+      item.id = id;
+      item.cssPath = option.selectorPath ? Utils.generateSelectorPath(item.element) : '';
+      item.htmlPath = item.element?.outerHTML.replace(/\s{2,}/g, ' ').trim() || '';
+      if (item.dismiss) item.dismissDigest = await Utils.dismissDigest(item.dismiss);
+
+      // Convert content passed in via string (custom checks) into a DOM node.
+      if (typeof item.content === 'string') {
+        const wrapper = document.createElement('div');
+        wrapper.innerHTML = Utils.sanitizeHTML(item.content);
+        item.content = wrapper;
+      }
+
+      // Validate type.
+      const validTypes = ['error', 'warning', 'good'];
+      if (item.type && validTypes.indexOf(item.type) === -1) {
+        throw Error(`Invalid type [${item.type}] for annotation`);
+      }
+
+      // Generate visible label for issue.
+      const mapLabel = {
+        [validTypes[0]]: Lang._('ERROR'),
+        [validTypes[1]]: Lang._('WARNING'),
+        [validTypes[2]]: Lang._('GOOD'),
+      };
+      item.issueLabel = mapLabel[item.type];
+    }),
+  );
+
+  // 3. Update interface (if not headless mode))
+  if (!option.headless) syncUI();
+
+  // 4. Dispatch custom event that stores the results array.
+  const duration = `${(performance.now() - State.start).toFixed(2)}ms`;
+  const detail = { results: State.results, page: window.location.pathname, time: duration };
+  window.sa11yCheckComplete = detail;
+  document.dispatchEvent(new CustomEvent('sa11y-check-complete', { detail }));
+}
+
+/* *********************************************************** */
+/*  Sync all UI elements.                                      */
+/* *********************************************************** */
+async function syncUI() {
+  // Build array of images to be used for image panel.
+  State.imageResults = Elements.Found.Images.map((image) =>
+    State.results.find((i) => i.element === image),
+  )
+    .filter(Boolean)
+    .map(({ element, type, dismissDigest, developer }) => ({
+      element,
+      type,
+      dismissDigest,
+      developer,
+    }));
+
+  // Check for dismissed items and update results array.
+  initializeDismissals();
+
+  // Update count & badge.
+  updateCount();
+  updateBadge();
+
+  // If panel is OPENED.
+  if (Utils.store.getItem('sa11y-panel') === 'Opened') {
+    const counts = new Map();
+    State.results.forEach((issue) => {
+      // Prep for issues with a corresponding element.
+      if (issue.element) {
+        // Dynamically alter margins if an element has multiple issues.
+        if (!issue.margin) {
+          const index = counts.get(issue.element) || 0;
+          counts.set(issue.element, index + 1);
+          issue.margin = `${index * 20 + (issue.inline ? 0 : 15)}px`;
+        }
+
+        // Let's create a new property that will contain all final HTML for UI-based Sa11y.
+        issue.finalContent = issue?.content?.cloneNode(true);
+        issue.finalContent.setAttribute('lang', Lang._('LANG_CODE'));
+        issue.finalContent.className = issue.type;
+
+        // Header of tooltip content.
+        const reviewText =
+          issue.type === 'good' &&
+          ['IMAGE_PASS', 'LINK_LABEL'].some((val) => issue.test.includes(val))
+            ? Lang._('REVIEW')
+            : issue.issueLabel;
+        const header = document.createElement('h2');
+        header.textContent = reviewText;
+        issue.finalContent?.prepend(header);
+
+        // Append dismiss functionality.
+        const dismissable =
+          State.option.dismissAnnotations && (issue.type === 'warning' || issue.type === 'good');
+        const showDismissAll =
+          dismissable && State.option.dismissAll && typeof issue.dismissAll === 'string';
+        const showDismiss = dismissable && issue.dismiss;
+        if (showDismiss || showDismissAll) {
+          const container = document.createElement('div');
+          container.className = 'dismiss-group';
+          const createBtn = (text, isAll) => {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.textContent = Lang._(text);
+            btn.setAttribute('data-sa11y-dismiss', issue.id);
+            if (isAll) btn.setAttribute('data-sa11y-dismiss-all', '');
+            return btn;
+          };
+          if (showDismiss) container.append(createBtn('DISMISS', false));
+          if (showDismissAll) container.append(createBtn('DISMISS_ALL', true));
+          issue.finalContent.append(container);
+        }
+
+        // If unit test mode, add the test ID to the tooltips.
+        if (State.option.unitTestMode) {
+          const test = Lang.sprintf(
+            '<hr><strong>Test ID:</strong> <code>%(TEST)</code>',
+            issue.test,
+          );
+          issue.finalContent.append(test);
+        }
+      }
+
+      // Paint the page with annotations.
+      annotate(issue);
+    });
+
+    // After annotations are painted, find & cache.
+    Elements.initializeAnnotations();
+
+    // Initialize tooltips.
+    document.body.appendChild(new AnnotationTooltips());
+
+    dismissButtons();
+    generatePageOutline();
+    generateImageOutline();
+    updatePanel();
+    skipToIssue();
+    exportResults();
+
+    // Throw an alert for unavailable page language detection.
+    if (State.option.langOfPartsPlugin && (await getLanguageDetector()) === null) {
+      createAlert(Lang.sprintf('LANG_UNSUPPORTED'), null, null, true);
+    }
+
+    // Page issues: add gradient if scrollable list.
+    Utils.isScrollable(Constants.Panel.pageIssuesList, Constants.Panel.pageIssuesContent);
+  }
+
+  // Make sure toggle isn't disabled after checking.
+  Constants.Panel.toggle.disabled = false;
+}

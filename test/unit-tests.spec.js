@@ -16,12 +16,9 @@ async function checkTooltip(page, elementId, expectedText) {
     const annotations = element.querySelectorAll('sa11y-annotation');
     let foundMatch = false;
     annotations.forEach((annotation) => {
-      const annotationShadow = annotation.shadowRoot;
-      if (annotationShadow) {
-        const message = annotationShadow.querySelector('button')?.getAttribute('data-tippy-content');
-        if (message && message.includes(text)) {
-          foundMatch = true;
-        }
+      const message = annotation?.getAttribute('data-content');
+      if (message && message.includes(text)) {
+        foundMatch = true;
       }
     });
     return foundMatch;
@@ -58,13 +55,13 @@ test.describe('Sa11y Unit Tests', () => {
       localStorage.clear();
       sessionStorage.clear();
     });
+    // await page.pause();
     await page.close();
   });
 
   test('Navigate to unit test page and toggle Sa11y', async () => {
     // Navigate to unit tests page.
     await page.goto('http://localhost:8080/test/pages/unit-tests.html');
-
     // Toggle main toggle.
     await page.evaluate(async () => {
       await new Promise((resolve) => {
@@ -79,12 +76,8 @@ test.describe('Sa11y Unit Tests', () => {
   });
 
   test('Open status panel', async () => {
-    const panelOpen = await page.evaluate(() => {
-      const panel = document.querySelector('sa11y-control-panel').shadowRoot;
-      const item = panel.getElementById('panel');
-      return item.classList.contains('active');
-    });
-    expect(panelOpen).toBe(true);
+    const panel = page.locator('sa11y-control-panel #panel');
+    await expect(panel).toHaveClass(/active/);
   });
 
   test('Open Page Outline', async () => {
@@ -157,7 +150,7 @@ test.describe('Sa11y Unit Tests', () => {
 
   test('Empty heading', async () => {
     const issue = await checkTooltip(
-      page, 'error-empty-heading', 'Empty heading found',
+      page, 'error-empty-heading', 'Empty heading found!',
     );
     expect(issue).toBe(true);
   });
@@ -214,8 +207,8 @@ test.describe('Sa11y Unit Tests', () => {
   test('Skipped heading in the shadow DOM', async () => {
     const shadow = await page.evaluate(async () => {
       const shadowTest = document.querySelector('shadow-test').shadowRoot;
-      const annotation = shadowTest.querySelector('sa11y-annotation').shadowRoot;
-      const message = annotation.querySelector('button').getAttribute('data-tippy-content');
+      const annotation = shadowTest.querySelector('sa11y-annotation');
+      const message = annotation.getAttribute('data-content');
       return message.includes('Headings should not skip');
     });
     expect(shadow).toBe(true);
@@ -283,7 +276,7 @@ test.describe('Sa11y Unit Tests', () => {
 
   test('Decorative image', async () => {
     const issue = await checkTooltip(
-      page, 'warning-image-is-decorative', 'Image is marked as <strong>decorative</strong>',
+      page, 'warning-image-is-decorative', 'Image is marked as decorative',
     );
     expect(issue).toBe(true);
   });
@@ -297,14 +290,14 @@ test.describe('Sa11y Unit Tests', () => {
 
   test('Decorative image in a carousel, but only one image', async () => {
     const issue = await checkTooltip(
-      page, 'warning-carousel-decorative', 'Image is marked as <strong>decorative</strong>',
+      page, 'warning-carousel-decorative', 'Image is marked as decorative',
     );
     expect(issue).toBe(true);
   });
 
   test('Alt text is too long', async () => {
     const issue = await checkTooltip(
-      page, 'warning-alt-text-is-too-long', 'Alt text description is <strong>too long</strong>',
+      page, 'warning-alt-text-is-too-long', 'Alt text description is too long',
     );
     expect(issue).toBe(true);
   });
@@ -388,14 +381,14 @@ test.describe('Sa11y Unit Tests', () => {
 
   test('Linked image has long alt', async () => {
     const issue = await checkTooltip(
-      page, 'warning-link-alt-too-long', 'Alt text description on a linked image is <strong>too long</strong>',
+      page, 'warning-link-alt-too-long', 'Alt text description on a linked image is too long',
     );
     expect(issue).toBe(true);
   });
 
   test('Linked image contains both alt and link text', async () => {
     const issue = await checkTooltip(
-      page, 'warning-alt-and-link-text', 'Image link contains <strong>both alt text and surrounding link text.</strong>',
+      page, 'warning-alt-and-link-text', 'Image link contains both alt text and surrounding link text.',
     );
     expect(issue).toBe(true);
   });
@@ -500,14 +493,14 @@ test.describe('Sa11y Unit Tests', () => {
 
   test('Decorative figure image', async () => {
     const issue = await checkTooltip(
-      page, 'warning-decorative-figure-element', 'Image is marked as <strong>decorative</strong>',
+      page, 'warning-decorative-figure-element', 'Image is marked as decorative',
     );
     expect(issue).toBe(true);
   });
 
   test('Decorative figure image and figcaption', async () => {
     const issue = await checkTooltip(
-      page, 'warning-decorative-figure-element-with-figcaption', '<strong>caption</strong> was provided, the image should also have alt text in most cases',
+      page, 'warning-decorative-figure-element-with-figcaption', 'caption was provided, the image should also have alt text in most cases',
     );
     expect(issue).toBe(true);
   });
@@ -556,7 +549,7 @@ test.describe('Sa11y Unit Tests', () => {
 
   test('Linked image has aria-hidden, but still focusable', async () => {
     const issue = await checkTooltip(
-      page, 'error-hyperlinked-image-aria-hidden-focusable', 'still keyboard focusable.',
+      page, 'error-hyperlinked-image-aria-hidden-focusable', 'This element can receive keyboard focus, but is hidden from screen readers',
     );
     expect(issue).toBe(true);
   });
@@ -612,7 +605,7 @@ test.describe('Sa11y Unit Tests', () => {
 
   test('Image with valid aria-labelledby as alt', async () => {
     const issue = await checkTooltip(
-      page, 'pass-image-valid-aria-labelledby', '</strong> Learn more about apples',
+      page, 'pass-image-valid-aria-labelledby', 'Learn more about apples',
     );
     expect(issue).toBe(true);
   });
@@ -751,8 +744,18 @@ test.describe('Sa11y Unit Tests', () => {
     expect(issue3).toBe(true);
     const issue4 = await checkTooltip(page, 'error-empty-4', 'Remove empty links');
     expect(issue4).toBe(true);
-    const issue5 = await checkTooltip(page, 'error-empty-5', 'Remove empty links');
-    expect(issue5).toBe(true);
+  });
+
+  test('Unpronounceable links', async () => {
+    const issue1 = await checkTooltip(page, 'error-unpronounceable-1', 'Link text only contains symbols.');
+    expect(issue1).toBe(true);
+    const issue2 = await checkTooltip(page, 'error-unpronounceable-2', 'Link text only contains symbols.');
+    expect(issue2).toBe(true);
+  });
+
+  test('CTA symbol with accompanying text', async () => {
+    const issue1 = await checkTooltip(page, 'warning-unpronounceable-1', 'Avoid using symbols as calls to action within link text unless they are hidden from assistive technologies');
+    expect(issue1).toBe(true);
   });
 
   test('Empty icon links', async () => {
@@ -822,12 +825,12 @@ test.describe('Sa11y Unit Tests', () => {
 
   test('Links that have the same name but different URL', async () => {
     const issue = await checkTooltip(
-      page, 'warning-same-name-diff-url-1', 'Link has identical text as another link',
+      page, 'warning-same-name-diff-url-1', 'Multiple links on this page use the same link text',
     );
 
     // Uses ARIA-label
     const issue2 = await checkTooltip(
-      page, 'warning-same-name-diff-url-2', 'Link has identical text as another link',
+      page, 'warning-same-name-diff-url-2', 'Multiple links on this page use the same link text',
     );
     expect(issue).toBe(true);
     expect(issue2).toBe(true);
@@ -885,7 +888,7 @@ test.describe('Sa11y Unit Tests', () => {
     expect(issue2).toBe(true);
 
     const issue3 = await checkTooltip(page, 'pass-aria-link-3',
-      'Learn more about accessibility &#40;Links externally&#41;');
+      'Learn more about accessibility (Links externally)');
     expect(issue3).toBe(true);
 
     const issue4 = await checkTooltip(page, 'pass-aria-link-4',
@@ -901,13 +904,13 @@ test.describe('Sa11y Unit Tests', () => {
     expect(issue6).toBe(true);
 
     const issue7 = await checkTooltip(page, 'pass-aria-link-7',
-      'Learn more about the Return of the King &#40;LOTR&#41;');
+      'Learn more about the Return of the King (LOTR)');
     expect(issue7).toBe(true);
   });
 
   test('Links with aria-hidden, but focusable', async () => {
     const issue = await checkTooltip(
-      page, 'error-link-aria-hidden-focusable', 'still keyboard focusable',
+      page, 'error-link-aria-hidden-focusable', 'This element can receive keyboard focus, but is hidden from screen readers',
     );
     expect(issue).toBe(true);
   });
@@ -921,7 +924,7 @@ test.describe('Sa11y Unit Tests', () => {
 
   test('Link with aria-labelledby referencing invalid ID', async () => {
     const issue = await checkTooltip(
-      page, 'error-arialabelledby-invalid-reference', 'Link has an <code>aria-labelledby',
+      page, 'error-arialabelledby-invalid-reference', 'Link has an aria-labelledby',
     );
     expect(issue).toBe(true);
   });
@@ -1116,7 +1119,7 @@ test.describe('Sa11y Unit Tests', () => {
 
   test('Link used as button without roles (a href=#)', async () => {
     const issue = await checkTooltip(
-      page, 'error-broken-same-page', 'Broken same-page link',
+      page, 'error-broken-same-page', 'This link has an invalid target. Although the accessible name or its attributes suggests',
     );
     expect(issue).toBe(true);
   });
@@ -1180,8 +1183,8 @@ test.describe('Sa11y Unit Tests', () => {
   test('Duplicate ID within the Shadow DOM', async () => {
     const shadow = await page.evaluate(async () => {
       const shadowTest = document.querySelector('shadow-test-duplicate-id').shadowRoot;
-      const annotation = shadowTest.querySelector('sa11y-annotation').shadowRoot;
-      const message = annotation.querySelector('button').getAttribute('data-tippy-content');
+      const annotation = shadowTest.querySelector('sa11y-annotation');
+      const message = annotation.getAttribute('data-content');
       return message.includes('Duplicate ID');
     });
     expect(shadow).toBe(true);
@@ -1312,6 +1315,7 @@ test.describe('Sa11y Unit Tests', () => {
       'nothing-input-4',
       'nothing-input-5',
       'nothing-input-6',
+      'nothing-input-7'
     ];
     ids.forEach(async (id) => {
       const issue = await noAnnotation(page, id);
@@ -1333,7 +1337,7 @@ test.describe('Sa11y Unit Tests', () => {
     });
 
     const issue2 = await checkTooltip(
-      page, 'error-input-has-id', 'a <code>for</code> attribute to the label that matches',
+      page, 'error-input-has-id', 'a for attribute to the label that matches',
     );
     expect(issue2).toBe(true);
 
@@ -1447,7 +1451,7 @@ test.describe('Sa11y Unit Tests', () => {
 
   test('Positive tabindex attribute', async () => {
     const issue = await checkTooltip(
-      page, 'error-positive-tabindex', 'Element should not have a <code>tabindex</code> attribute',
+      page, 'error-positive-tabindex', 'Element should not have a tabindex attribute',
     );
     expect(issue).toBe(true);
   });
@@ -1478,14 +1482,14 @@ test.describe('Sa11y Unit Tests', () => {
     });
 
     const issue2 = await checkTooltip(
-      page, 'error-button-arialabelledby', 'Button has an <code>aria-labelledby',
+      page, 'error-button-arialabelledby', 'Button has an aria-labelledby',
     );
     expect(issue2).toBe(true);
   });
 
   test('Button has aria-hidden but still focusable', async () => {
     const issue = await checkTooltip(
-      page, 'error-button-ariahidden', 'Link or button has <code>aria-hidden',
+      page, 'error-button-ariahidden', 'This element can receive keyboard focus, but is hidden from screen readers',
     );
     expect(issue).toBe(true);
   });

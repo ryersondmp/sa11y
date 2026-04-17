@@ -13,6 +13,7 @@
       WARNING: "Warnung",
       WARNINGS: "Warnungen",
       GOOD: "Gut",
+      REVIEW: "Überprüfung",
       ON: "An",
       OFF: "Aus",
       ALERT_TEXT: "Alarm",
@@ -43,7 +44,7 @@
       MISSING_ROOT: "Die gesamte Seite wurde auf Barrierefreiheit geprüft, da der Zielbereich <code>%(root)</code> nicht existiert.",
       MISSING_READABILITY_ROOT: "Die Lesbarkeitsbewertung basiert auf dem Inhaltsbereich <code>%(fallback)</code>, da der Zielbereich <code>%(root)</code> nicht existiert.",
       SKIP_TO_PAGE_ISSUES: "Zu Seitenproblemen springen",
-      CONSOLE_ERROR: 'Leider liegt ein Problem mit der Barrierefreiheitsprüfung auf dieser Seite vor. Können Sie es bitte <a href="%(link)">über dieses Formular</a> oder auf <a href="%(link)">GitHub</a> melden?',
+      CONSOLE_ERROR: 'Leider liegt ein Problem mit der Barrierefreiheitsprüfung auf dieser Seite vor. Können Sie es bitte <a href="https://forms.gle/sjzK9XykETaoqZv99">über dieses Formular</a> oder auf <a href="https://github.com/ryersondmp/sa11y/issues/new?title=Bug%20report">GitHub</a> melden?',
       APPEARANCE: "Erscheinungsbild",
       MOVE_PANEL: "Panel verschieben",
       HIDDEN: "Versteckt",
@@ -58,7 +59,7 @@
       PAGE_TITLE: "Seitentitel",
       RESULTS: "Ergebnisse",
       EXPORT_RESULTS: "Ergebnisse exportieren",
-      GENERATED: "Ergebnisse generiert mit %(tool).",
+      GENERATED: 'Ergebnisse generiert mit <a href="https://sa11y.netlify.app">Sa11y.</a>',
       PREVIEW: "Vorschau",
       ELEMENT: "Element",
       PATH: "Pfad",
@@ -173,7 +174,9 @@
         "view",
         "anschauen",
         "view our",
-        "website"
+        "website",
+        "article",
+        "artikel"
       ],
       CLICK: ["click", "klicken"],
       NEW_WINDOW_PHRASES: [
@@ -243,7 +246,8 @@
       LINK_DOI: 'Für Webseiten oder reine Online-Ressourcen empfiehlt der <a href="https://apastyle.apa.org/style-grammar-guidelines/paper-format/accessibility/urls#:~:text=descriptive%20links">APA Style guide</a> die Verwendung von deskriptiven Links, indem die URL oder DOI des Werks um den Titel herumgeschrieben wird. Längere, weniger verständliche URLs, die als Linktext verwendet werden, könnten beim Zugriff mit Hilfe von Hilfsmitteln schwer zu verstehen sein.',
       LINK_NEW_TAB: 'Der Link öffnet sich in einem neuen Tab oder einem neuen Fenster ohne Warnung. Dies kann verwirrend sein, insbesondere für Menschen, die Schwierigkeiten haben, visuelle Inhalte wahrzunehmen. Zweitens ist es nicht immer eine gute Praxis, die Erfahrungen der anderen zu kontrollieren oder für sie Entscheidungen zu treffen. Gib im Linktext an, dass der Link in einem neuen Fenster geöffnet wird. <hr> <strong>Tipp!</strong> Lerne bewährte Praktiken kennen: <a href="https://www.nngroup.com/articles/new-browser-windows-and-tabs/">Öffnen von Links in neuen Browserfenstern und Tabs.</a>',
       LINK_FILE_EXT: "Der Link verweist ohne Warnung auf eine PDF- oder herunterladbare Datei (z. B. MP3, Zip, Word Doc). Gib den Dateityp im Linktext an. Wenn es sich um eine große Datei handelt, solltest Du die Dateigröße angeben. <hr> <strong>Beispiel:</strong> Bericht der Geschäftsführung (PDF, 3MB)",
-      LINK_IDENTICAL_NAME: "Der Link hat den gleichen Text wie ein anderer Link, obwohl er auf eine andere Seite verweist. Mehrere Links mit demselben Text können bei Personen, die Bildschirmlesegeräte verwenden, zu Verwirrung führen. <strong>Erwäge, den folgenden Link beschreibender zu gestalten, um ihn von anderen Links zu unterscheiden.</strong> <hr> <strong {B}>Zugänglicher Name</strong> <strong {C}>%(TEXT)</strong>",
+      LINK_IDENTICAL_NAME: "Mehrere Links auf dieser Seite verwenden denselben Linktext, führen aber zu unterschiedlichen Zielen. Dies kann bei Benutzern von Hilfsmitteln zu Verwirrung führen. Um dies zu beheben, machen Sie diesen Linktext aussagekräftiger.",
+      LINK_UNPRONOUNCEABLE: "Der Linktext enthält nur Symbole. Wenn du glaubst, dass dieser Link ein Fehler beim Kopieren/Einfügen ist, solltest du ihn löschen.",
       // Images
       ALT_UNPRONOUNCEABLE: "Der Alternativtext enthält nur unaussprechbare Symbole und/oder Leerzeichen. Screenreader geben das Bild aus und machen dann eine Pause. Wenn das Bild dekorativ ist, stellen Sie sicher, dass der Alternativtext keine Leerzeichen enthält. <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>",
       LINK_ALT_UNPRONOUNCEABLE: "Der Alternativtext in diesem verlinkten Bild enthält nur unaussprechbare Symbole und/oder Leerzeichen. Screenreader geben das Bild aus und machen dann eine Pause. Stellen Sie sicher, dass der Alternativtext das Ziel des Links beschreibt. <hr> {L} {ALT} <strong {C}>%(ALT_TEXT)</strong>",
@@ -276,6 +280,7 @@
       LABELS_NO_FOR_ATTRIBUTE: "Dieser Eingabe ist kein Label zugeordnet. Füge dem Label ein <code>for</code>-Attribut hinzu, das der <code>id</code> dieser Eingabe entspricht. <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>",
       LABELS_MISSING_LABEL: "Dieser Eingabe ist kein Label zugeordnet. Bitte füge dieser Eingabe eine <code>id</code> hinzu und füge dem Label ein passendes <code>for</code>-Attribut hinzu.",
       LABELS_PLACEHOLDER: 'Verschwindender Platzhaltertext erschwert es den Menschen, sich daran zu erinnern, welche Informationen in ein Feld gehören, und Probleme mit der Validierung zu identifizieren und zu beheben. Erwägen Sie stattdessen, einen dauerhaft sichtbaren Hinweis vor dem Formularfeld zu verwenden. <hr> Erfahren Sie mehr: <a href="https://www.nngroup.com/articles/form-design-placeholders/">Platzhalter in Formularfeldern sind schädlich.</a>',
+      ARIA_INPUT_FIELD_NAME: "Dem ARIA-Eingabe- oder Umschaltfeld fehlt ein barrierefreier Name. Um dies zu beheben, geben Sie ein gültiges Attribut <code>aria-labelledby</code>, <code>aria-label</code> oder <code>title</code> an. Wenn die Eingabe umschaltbar е (z. B. Checkbox, Switch, Radiobutton), löst das Hinzufügen von sichtbarem innerem Text dieses Problem ebenfalls. <hr> <strong {B}>Element</strong> <pre><code>%(EL)</code></pre>",
       // Embedded content
       EMBED_VIDEO: "Bitte stelle sicher, dass <strong>alle Videos Untertitel haben.</strong> Das Bereitstellen von Untertiteln für alle Audio- und Videoinhalte ist eine obligatorische Anforderung der Stufe-A. Bildunterschriften unterstützen Menschen, die Taub oder schwerhörig sind.",
       EMBED_AUDIO: "Bitte stelle sicher, dass Du ein <strong>Transkript für alle Podcasts bereitstellst.</strong> Das Bereitstellen von Transkripten für Audioinhalte ist eine obligatorische Anforderung der Stufe-A. Transkripte unterstützen Menschen, die gehörlos oder schwerhörig sind, können aber allen zugute kommen. Erwäge, das Transkript unter- oder innerhalb eines Akkordeonfelds zu platzieren.",
@@ -285,7 +290,7 @@
       EMBED_UNFOCUSABLE: '<code>&lt;iframe&gt;</code> mit nicht fokussierbaren Elementen sollte kein <code>tabindex="-1"</code> haben. Der eingebettete Inhalt wird nicht mit der Tastatur erreichbar sein.',
       // Quality assurance
       QA_BAD_LINK: "Ungültiger Link gefunden. Link scheint auf eine Entwicklungsumgebung zu verweisen. <hr> {L} <strong {C}>%(LINK)</strong>",
-      QA_IN_PAGE_LINK: "Defekter Verweis innerhalb der Seite. Das Ziel des Verweises stimmt mit keinem Element auf dieser Seite überein.",
+      QA_IN_PAGE_LINK: "Defekter Anker-Link. Dieser Link versucht, zu einem Abschnitt der Seite zu navigieren, der nicht gefunden werden kann. Um dies zu beheben, stellen Sie sicher, dass der Link mit der <code>id</code> des Elements übereinstimmt, zu dem Sie springen möchten.",
       QA_STRONG_ITALICS: "Fett- und Kursiv-Tags haben semantische Bedeutung und sollten <strong>nicht</strong> verwendet werden, um ganze Absätze hervorzuheben. Fettgedruckter Text sollte verwendet werden, um ein Wort oder einen Ausdruck stark <strong>zu betonen</strong>. Kursiv sollte verwendet werden, um Eigennamen (z. B. Buch- und Artikeltitel), Fremdwörter, Zitate hervorzuheben. Lange Zitate sollten als Blockquote formatiert werden.",
       QA_PDF: 'PDFs können nicht auf Barrierefreiheit geprüft werden. PDFs gelten als Webinhalte und müssen ebenfalls zugänglich gemacht werden. PDFs enthalten oft Probleme für Personen, die Screenreader verwenden (fehlende Struktur-Tags oder fehlende Beschriftungen von Formularfeldern) und Personen mit Sehbehinderung (Text umfließt beim Vergrößern nicht ). <ul><li>Wenn es sich um ein Formular handelt, solltest Du alternativ ein barrierefreies HTML-Formular verwenden.</li><li>Wenn es sich um ein Dokument handelt, solltest Du es in eine Webseite umwandeln.</li></ul> Andernfalls überprüfe bitte <a href="https://helpx.adobe.com/acrobat/using/create-verify-pdf-accessibility.html">PDF für Barrierefreiheit in Acrobat DC.</a>',
       QA_DOCUMENT: 'Das Dokument kann nicht auf Zugänglichkeit geprüft werden. Verknüpfte Dokumente gelten als Webinhalte und müssen ebenfalls zugänglich gemacht werden. Bitte überprüfen Sie dieses Dokument manuell. <ul><li>Machen Sie Ihr <a href="https://support.google.com/docs/answer/6199477?hl=de">Google Workspace-Dokument oder Ihre Präsentation besser zugänglich.</a></li><li>Machen Sie Ihre <a href="https://support.microsoft.com/de-de/office/create-accessible-office-documents-868ecfcd-4f00-4224-b881-a65537a7c155">Office-Dokumente besser zugänglich.</a></li></ul>',
@@ -299,30 +304,36 @@
       QA_JUSTIFY: "Vermeiden Sie die Verwendung von Blocksatz, der sowohl am linken als auch am rechten Rand ausgerichtet ist. Dies kann für einige Menschen aufgrund der ungleichmäßigen Abstände zwischen den Wörtern schwer lesbar sein. Verwenden Sie linksbündigen Text für eine bessere Lesbarkeit.",
       QA_SMALL_TEXT: "Kleiner Text ist schwieriger zu lesen, insbesondere für Menschen mit Sehbehinderungen. Um eine bessere Lesbarkeit zu gewährleisten, vermeiden Sie die Verwendung von Schriftgrößen, die kleiner als die Standardeinstellung sind.",
       // Shared
-      ACC_NAME: "<strong {B}>Zugänglicher Name</strong> %(TEXT)",
-      ACC_NAME_TIP: '<hr> <strong>Hinweis!</strong> Der "zugängliche Name" ist das endgültige Etikett, das an Personen kommuniziert wird, die Hilfstechnologien verwenden. Dies hilft ihnen, den Zweck des Links oder der Schaltfläche zu verstehen.',
-      HIDDEN_FOCUSABLE: 'Der Link oder die Schaltfläche hat <code>aria-hidden=&quot;true&quot;</code>, ist jedoch weiterhin über die Tastatur fokussierbar. Wenn Sie beabsichtigen, einen doppelten Link oder eine Schaltfläche zu verstecken, fügen Sie auch <code>tabindex=&quot;-1&quot;</code> hinzu. Andernfalls sollte <code>aria-hidden=&quot;true&quot;</code> nicht bei fokussierbaren Elementen verwendet werden. <hr> Erfahren Sie mehr über das <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">aria-hidden-Attribut.</a>',
+      LINK_TEXT: "<strong {B}>Linktext</strong> <strong {C}>%(TEXT)</strong>",
+      ACC_NAME: "<strong {B}>Zugänglicher Name</strong> <strong {C}>%(TEXT)</strong>",
+      ACC_NAME_TIP: "<hr><strong>Tipp!</strong> Der „barrierefreie Name“ ist die endgültige Bezeichnung, die an Personen übermittelt wird, die unterstützende Technologien verwenden. Dies hilft ihnen, den Zweck des Elements zu verstehen.",
+      HIDDEN_FOCUSABLE: 'Dieses Element kann den Tastaturfokus erhalten, ist aber durch ein <code>aria-hidden="true"</code>-Attribut (bei sich selbst oder einem übergeordneten Container) vor Screenreadern verborgen. Um dies zu beheben, entfernen Sie entweder das aria-hidden-Attribut oder entfernen Sie das Element aus der Tab-Reihenfolge. <hr> <strong {B}>Element</strong> <pre><code>%(EL)</code></pre> <hr> Erfahren Sie mehr über das <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">aria-hidden-Attribut.</a>',
       // Developer
       DUPLICATE_ID: "<strong>Doppelte ID</strong> gefunden. Doppelte ID-Fehler verursachen bekanntermaßen Probleme für Hilfstechnologien, wenn man versucht, mit Inhalten zu interagieren. Bitte entferne oder ändere die folgende ID. <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>",
       UNCONTAINED_LI: "Alle <code>&lt;li&gt;</code> Listenelemente müssen innerhalb von <code>&lt;ul&gt;</code> ungeordneten oder <code>&lt;ol&gt;</code> geordneten Elementen platziert werden. Diese Struktur hilft Bildschirmlesern, die Liste und ihre Elemente genau anzukündigen.",
       TABINDEX_ATTR: "Das Element sollte kein <code>tabindex</code>-Attribut größer als 0 haben.",
       // Meta checks
-      META_LANG: 'Seitensprache nicht angegeben! Bitte <a href="https://www.w3.org/International/questions/qa-html-language-declarations">deklariere die Sprache im HTML-Tag.</a>',
+      META_LANG: 'Seitensprache nicht angegeben! Bitte <a href="https://www.w3.org/International/questions/qa-html-language-declarations.de.html">deklariere die Sprache im HTML-Tag.</a>',
       META_TITLE: 'Seitentitel fehlt! Bitte gib einen <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/title">Seitentitel</a> an.',
       META_SCALABLE: 'Entfernen Sie den Parameter <code>user-scalable="no"</code> im <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">Viewport-Meta-Tag</a>, um das Zoomen zu ermöglichen.',
       META_MAX: 'Stellen Sie sicher, dass der Parameter <code>maximum-scale</code> im <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">Viewport-Meta-Tag</a> nicht kleiner als 2 ist.',
       META_REFRESH: "Die Seite sollte nicht automatisch mithilfe eines Meta-Tags aktualisiert werden.",
+      META_LANG_SUGGEST: "Der folgende Sprachcode <code>%(CODE)</code> ist ungültig. Meinten Sie <code>%(CODE)</code>?",
+      META_LANG_VALID: 'Der Sprachcode für dieses Element ist ungültig. Um dies zu beheben, ersetzen Sie das lang-Attribut durch einen gültigen Sprachcode. <hr> <strong {B}>Element</strong> <code>&lt;%(ELEMENT) lang="%(CODE)"&gt;</code> <hr> Erfahren Sie mehr über die <a href="https://www.w3.org/International/questions/qa-html-language-declarations.de.html">Sprachdeklaration in HTML.</a>',
       // Buttons
       BTN_EMPTY: "Der Schaltfläche fehlt ein zugänglicher Name, der ihren Zweck beschreibt.",
       BTN_EMPTY_LABELLEDBY: "Die Schaltfläche hat einen <code>aria-labelledby</code>-Wert, der leer ist oder nicht mit dem <code>id</code>-Wert eines anderen Elements auf der Seite übereinstimmt.",
       BTN: "Schaltfläche",
       BTN_TIP: 'Erfahren Sie, wie Sie eine <a href="https://www.sarasoueidan.com/blog/accessible-icon-buttons/">zugängliche Schaltfläche</a> erstellen.',
       BTN_ROLE_IN_NAME: "Fügen Sie das Wort „Schaltfläche“ nicht in den Namen einer Schaltfläche ein. Bildschirmlesegeräte geben bereits die Rolle eines Elements zusätzlich zu seinem Namen an.",
-      LABEL_IN_NAME: "Der sichtbare Text dieses Elements scheint sich vom zugänglichen Namen zu unterscheiden, was für Benutzer von Hilfstechnologien verwirrend sein kann. Bitte überprüfen: <hr> <strong {B}>Zugänglicher Name</strong> <strong {C}>%(TEXT)</strong>",
+      LABEL_IN_NAME: "Der sichtbare Text dieses Elements scheint sich vom zugänglichen Namen zu unterscheiden, was für Benutzer von Hilfstechnologien verwirrend sein kann. Bitte überprüfen: <hr> <strong {B}>Text</strong> <strong {C}>%(TEXT)</strong> <hr> <strong {B}>Zugänglicher Name</strong> <strong {C}>%(TEXT)</strong>",
+      LINK_MAYBE_BUTTON: 'Dieser Link hat ein ungültiges Ziel. Der barrierefreie Name oder die Attribute deuten darauf hin, dass es sich möglicherweise gar nicht um einen Link handelt, sondern stattdessen ein skriptgesteuertes Verhalten auf der Seite steuert. Um dies zu beheben, ersetzen Sie den Link durch eine <a href="https://www.w3.org/WAI/ARIA/apg/patterns/button/">barrierefreie Schaltfläche</a> oder korrigieren Sie das Ziel des Links. <hr> <strong {B}>Barrierefreier Name</strong> <strong {C}>%(TEXT)</strong> <hr> <strong>Tipp!</strong> Unterstützende Technologien behandeln Schaltflächen und Links unterschiedlich. Die Verwendung des richtigen HTML-Elements stellt sicher, dass die Benutzer wissen, welche Tastaturkürzel sie verwenden müssen und welche Aktion ausgelöst wird.',
+      POTENTIAL_UI_ELEMENTS: ["menü", "schließen", "umschalten", "öffnen", "erweitern", "reduzieren", "weiter", "zurück", "abspielen", "pause", "untermenü", "anzeigen", "ausblenden", "dropdown", "zurück", "vorwärts", "überspringen", "absenden", "abbrechen", "speichern", "bearbeiten", "löschen", "entfernen", "suche", "filter", "sortieren", "stopp", "stummschalten", "ton an", "vollbild", "minimieren", "maximieren"],
       // Tables
       TABLES_MISSING_HEADINGS: 'Fehlende Tabellenüberschriften! Barrierefreie Tabellen benötigen eine HTML-Auszeichnung, die Kopfzellen und Datenzellen kennzeichnet und ihre Beziehung zueinander definiert. Diese Informationen liefern den Kontext für Menschen, die Hilfsmittel verwenden. Tabellen sollten nur für tabellarische Daten verwendet werden. <hr> Erfahre mehr über <a href="https://www.w3.org/WAI/tutorials/tables/">barrierefreie Tabellen.</a>',
       TABLES_SEMANTIC_HEADING: 'Semantische Überschriften wie Überschrift 2 oder Überschrift 3 sollten nur für Abschnitte des Inhalts verwendet werden; <strong>not</strong> in HTML-Tabellen. Gebe Tabellenüberschriften stattdessen mit dem <code>&lt;th&gt;</code> Element an. <hr> Erfahre mehr über <a href="https://www.w3.org/WAI/tutorials/tables/">barrierefreie Tabellen.</a>',
       TABLES_EMPTY_HEADING: 'Leerer Tabellenkopf gefunden! Tabellenüberschriften sollten <strong>niemals</strong> leer sein. Es ist wichtig, Zeilen- und/oder Spaltenüberschriften zu benennen, um ihre Beziehung zu verdeutlichen. Diese Informationen bieten Menschen, die Hilfsmittel verwenden, einen Kontext. Bitte beachte, dass Tabellen nur für tabellarische Daten verwendet werden sollten. <hr> Erfahre mehr über <a href="https://www.w3.org/WAI/tutorials/tables/">barrierefreie Tabellen.</a>',
+      TABLES_INVALID_HEADERS_REF: 'Diese Tabelle versucht, eine bestimmte Datenzelle mit einer bestimmten Kopfzeilenzelle zu verknüpfen, aber die Kopfzeilen-ID kann nicht gefunden werden. Stellen Sie sicher, dass jedes <code>headers</code>-Attribut mit der ID einer Kopfzeilenzelle in derselben Tabelle übereinstimmt. <hr> <strong {B}>Kopfzeilen</strong> <code>%(VALUE)</code> <hr> <strong>Tipp!</strong> Die <a href="https://www.w3.org/WAI/WCAG22/Techniques/html/H43">Verwendung manueller ID-Referenzen</a> zur Verknüpfung von Datenzellen mit Kopfzeilenzellen ist kompliziert und fehleranfällig. Wenn möglich, unterteilen Sie komplexe Daten in kleinere Tabellen mit einfachen Kopfzeilen und -spalten.',
       // Contrast
       CONTRAST_NORMAL: "Normal großer Text sollte ein Kontrastverhältnis von mindestens %(RATIO) haben.",
       CONTRAST_LARGE: "Großer Text sollte ein Kontrastverhältnis von mindestens %(RATIO) haben.",
@@ -342,7 +353,14 @@
       UNKNOWN: "Unbekannt",
       FG: "Vordergrund",
       BG: "Hintergrund",
-      NO_SUGGESTION: "Es kann keine barrierefreie Kombination durch Ändern der Textfarbe gefunden werden. Versuchen Sie, die Hintergrundfarbe zu ändern."
+      NO_SUGGESTION: "Es kann keine barrierefreie Kombination durch Ändern der Textfarbe gefunden werden. Versuchen Sie, die Hintergrundfarbe zu ändern.",
+      // Page language
+      PAGE_LANG_CONFIDENCE: 'Mehr als die Hälfte des Textes auf dieser Seite scheint in %(LIKELY_LANG) zu sein, aber die deklarierte Seitensprache ist %(PAGE_LANG). Erwägen Sie, die <a href="https://www.w3.org/International/questions/qa-html-language-declarations.de.html">deklarierte Seitensprache</a> so zu aktualisieren, dass sie dem Inhalt entspricht.',
+      LANG_OF_PARTS: "Die Seitensprache wurde als %(PAGE_LANG) deklariert, aber dieser Inhalt scheint in %(LIKELY_LANG) zu sein. Stellen Sie sicher, dass der Inhalt entsprechend gekennzeichnet ist.",
+      LANG_MISMATCH: "Dieser Inhalt scheint in %(DETECTED_LANG) zu sein, wurde jedoch als %(WRONG_LANG) gekennzeichnet.",
+      LANG_OF_PARTS_ALT: "Dieser Alternativtext scheint in %(LIKELY_LANG) zu sein, aber die Seitensprache wurde als %(PAGE_LANG) deklariert. Stellen Sie sicher, dass der Alternativtext in derselben Sprache wie der Rest der Seite verfasst ist. <hr> {ALT} <strong {C}>%(ALT)</strong>",
+      LANG_TIP: "<hr><strong>Tipp!</strong> Screenreader sprechen Wörter mithilfe von Sprach-Tags aus. Die Aussprache einer Sprache mit einem nicht passenden Sprachpaket führt zu unverständlicher Sprache.",
+      LANG_UNSUPPORTED: "Sprachbezogene Barrierefreiheitsprüfungen wurden übersprungen, da die automatische Spracherkennung in diesem Browser nicht unterstützt wird."
     }
   };
   return de;
