@@ -242,7 +242,7 @@ export const computeAccessibleName = (element, exclusions = [], recursing = 0) =
   // https://www.unicode.org/faq/private_use.html
   computedText = computedText.replace(/[\uE000-\uF8FF]/gu, '');
 
-  // If computedText returns blank, fallback on a) psuedo b) title attribute.
+  // If computedText returns blank, fallback on a) pseudo b) title attribute.
   if (!computedText.trim()) {
     computedText = wrapPseudoContent(element, '');
     if (!computedText.trim() && element.hasAttribute('title')) {
