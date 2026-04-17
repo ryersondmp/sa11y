@@ -105,7 +105,7 @@ const initialize = () => {
   // Sa11y is available in the following languages.
   const supportedLang = [
     'bg', 'cs', 'da', 'de', 'el', 'en', 'es', 'et', 'fi', 'fr', 'hu', 'id', 'it', 'ja', 'ko',
-    'lt', 'lv', 'nb', 'nl', 'pl', 'pt', 'ro', 'sl', 'sk', 'sv', 'tr', 'uk', 'ua', 'zh',
+    'lt', 'lv', 'nb', 'nl', 'pl', 'pt', 'ro', 'sl', 'sk', 'sv', 'ta', 'tr', 'uk', 'ua', 'zh',
   ];
 
   // Check if Sa11y supports language.
