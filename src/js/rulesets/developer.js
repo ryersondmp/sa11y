@@ -1,56 +1,65 @@
+/** biome-ignore-all lint/complexity/noUselessEscapeInRegex: Ignore. */
 import { computeAccessibleName } from '../utils/computeAccessibleName';
 import Constants from '../utils/constants';
 import Elements from '../utils/elements';
 import Lang from '../utils/lang';
 import * as Utils from '../utils/utils';
 import { State } from '../core/state';
+import { pushResult } from '../utils/pushResult';
 
 export default function checkDeveloper() {
   /* *************************************************************** */
   /* Error: Missing or invalid language tag.                        */
   /* *************************************************************** */
-  const report = (key, $el, ...args) => {
-    const rule = State.option.checks[key];
-    if (!rule) return;
-    const result = {
-      test: key,
-      type: rule.type || 'error',
-      content: Lang.sprintf(rule.content || key, ...args),
-      args: [...args],
-      dismiss: Utils.prepareDismissal(key),
-      developer: rule.developer || true,
-    };
-
-    if ($el) {
-      result.element = $el;
-    }
-    State.results.push(result);
-  };
-
-  // 1. Check Document Language (from the <html> tag).
   if (!Elements.Found.Language) {
-    report('META_LANG', null);
+    pushResult({ test: 'META_LANG' });
   } else {
     const { valid, suggest } = Utils.validateLang(Elements.Found.Language, Lang._('LANG_CODE'));
     if (!valid) {
       if (suggest) {
-        report('META_LANG_SUGGEST', null, Elements.Found.Language, suggest);
+        pushResult({
+          test: 'META_LANG_SUGGEST',
+          args: [Elements.Found.Language, suggest],
+          developer: true,
+        });
       } else {
-        report('META_LANG_VALID', null, 'html', Elements.Found.Language);
+        pushResult({
+          test: 'META_LANG_VALID',
+          args: ['html', Elements.Found.Language],
+          developer: true,
+        });
       }
     }
   }
 
-  // 2. Validate all [lang] attributes.
-  if (Elements.Found.LangTags && Elements.Found.LangTags.length > 0) {
+  // Validate all [lang] attributes on the page.
+  if (Elements.Found.LangTags?.length > 0) {
     Elements.Found.LangTags.forEach(($el) => {
       const langValue = $el.getAttribute('lang')?.trim();
       const { valid, suggest } = Utils.validateLang(langValue, Lang._('LANG_CODE'));
       if (!valid) {
+        const text =
+          $el.tagName === 'IMG'
+            ? $el.getAttribute('alt') || ''
+            : $el.nodeType === 3
+              ? Utils.getText($el)
+              : '';
         if (suggest) {
-          report('META_LANG_SUGGEST', $el, langValue, suggest);
+          pushResult({
+            test: 'META_LANG_SUGGEST',
+            element: $el,
+            args: [langValue, suggest],
+            developer: true,
+            dismiss: langValue + text,
+          });
         } else {
-          report('META_LANG_VALID', $el, $el.tagName.toLowerCase(), langValue);
+          pushResult({
+            test: 'META_LANG_VALID',
+            element: $el,
+            args: [$el.tagName.toLowerCase(), langValue],
+            developer: true,
+            dismiss: langValue + text,
+          });
         }
       }
     });
@@ -59,140 +68,82 @@ export default function checkDeveloper() {
   /* *************************************************************** */
   /*  Check for missing meta page title <title>                      */
   /* *************************************************************** */
-  if (State.option.checks.META_TITLE) {
-    const metaTitle = document.querySelector('title:not(svg title)');
-    if (!metaTitle || metaTitle.textContent.trim().length === 0) {
-      State.results.push({
-        test: 'META_TITLE',
-        type: State.option.checks.META_TITLE.type || 'error',
-        content: Lang.sprintf(State.option.checks.META_TITLE.content || 'META_TITLE'),
-        dismiss: Utils.prepareDismissal('META_TITLE'),
-        developer: State.option.checks.META_TITLE.developer || true,
-      });
-    }
+  const metaTitle = document.querySelector('title:not(svg title)');
+  if (!metaTitle || Utils.getText(metaTitle).length === 0) {
+    pushResult({ test: 'META_TITLE', developer: true });
   }
 
   /* ********************************************* */
   /*  Zooming and scaling must not be disabled.    */
   /* ********************************************* */
-  if (State.option.checks.META_SCALABLE || State.option.checks.META_MAX) {
-    const metaViewport = document.querySelector('meta[name="viewport"]');
-    if (metaViewport) {
-      const content = metaViewport.getAttribute('content');
-      if (content) {
-        // Parse the content attribute to extract parameters.
-        const params = content.split(',').reduce((acc, param) => {
-          const [key, value] = param.split('=').map((s) => s.trim());
-          acc[key] = value;
-          return acc;
-        }, {});
+  const content = document.querySelector('meta[name="viewport"]')?.getAttribute('content');
+  if (content) {
+    // Parse the content attribute to extract parameters.
+    const params = content.split(',').reduce((acc, param) => {
+      const [key, value] = param.split('=').map((s) => s.trim());
+      acc[key] = value;
+      return acc;
+    }, {});
 
-        // Check for user-scalable parameter.
-        if (
-          State.option.checks.META_SCALABLE &&
-          (params['user-scalable'] === 'no' || params['user-scalable'] === '0')
-        ) {
-          State.results.push({
-            test: 'META_SCALABLE',
-            type: State.option.checks.META_SCALABLE.type || 'error',
-            content: Lang.sprintf(State.option.checks.META_SCALABLE.content || 'META_SCALABLE'),
-            dismiss: Utils.prepareDismissal('META_SCALABLE'),
-            developer: State.option.checks.META_SCALABLE.developer || true,
-          });
-        }
+    // Check for user-scalable parameter.
+    if (['no', '0'].includes(params['user-scalable'])) {
+      pushResult({ test: 'META_SCALABLE', developer: true });
+    }
 
-        // Check maximum-scale parameter.
-        const maxScale = parseFloat(params['maximum-scale']);
-        if (State.option.checks.META_MAX && !Number.isNaN(maxScale) && maxScale < 2) {
-          State.results.push({
-            test: 'META_MAX',
-            type: State.option.checks.META_MAX.type || 'error',
-            content: Lang.sprintf(State.option.checks.META_MAX.content || 'META_MAX'),
-            dismiss: Utils.prepareDismissal('META_MAX'),
-            developer: State.option.checks.META_MAX.developer || true,
-          });
-        }
-      }
+    // Check maximum-scale parameter.
+    const maxScale = parseFloat(params['maximum-scale']);
+    if (!Number.isNaN(maxScale) && maxScale < 2) {
+      pushResult({ test: 'META_MAX', developer: true });
     }
   }
 
   /* ****************************************** */
   /*  Page shouldn't automatically refresh.     */
   /* ****************************************** */
-  if (State.option.checks.META_REFRESH) {
-    const actuallyRefreshes = Array.from(
-      document.querySelectorAll('meta[http-equiv="refresh" i]'),
-    ).some((tag) => parseInt(tag.getAttribute('content'), 10) > 0);
-    if (actuallyRefreshes) {
-      const option = State.option.checks.META_REFRESH;
-      State.results.push({
-        test: 'META_REFRESH',
-        type: option.type || 'error',
-        content: Lang.sprintf(option.content || 'META_REFRESH'),
-        dismiss: Utils.prepareDismissal('META_REFRESH'),
-        developer: option.developer ?? true,
-      });
-    }
+  const actuallyRefreshes = Array.from(
+    document.querySelectorAll('meta[http-equiv="refresh" i]'),
+  ).some((tag) => parseInt(tag.getAttribute('content'), 10) > 0);
+  if (actuallyRefreshes) {
+    pushResult({ test: 'META_REFRESH', developer: true });
   }
 
   /* *************************************************************** */
   /*  Check for duplicate IDs that are referenced by other elements. */
   /* *************************************************************** */
   if (State.option.checks.DUPLICATE_ID) {
-    // Look for duplicate IDs within each DOM.
-    const doms = document.querySelectorAll('body, [data-sa11y-has-shadow-root]');
-    doms.forEach((dom) => {
+    document.querySelectorAll('body, [data-sa11y-has-shadow-root]').forEach((dom) => {
       const allIds = new Set();
       const findDuplicateIds = (ids, withinDOM) => {
         ids.forEach(($el) => {
           const { id } = $el;
-
-          // Ignore empty IDs.
-          if (typeof id !== 'string' || id.trim().length === 0) {
-            return;
-          }
-
-          // Only flag duplicate IDs being referenced by same-page links, aria or a label.
-          // Reference: https://accessibilityinsights.io/info-examples/web/duplicate-id-aria/
-          if (id && !allIds.has(id)) {
+          if (typeof id !== 'string' || id.trim().length === 0) return;
+          if (!allIds.has(id)) {
             allIds.add(id);
           } else {
             const ariaReference = Array.from(
-              withinDOM.querySelectorAll(`
-                a[href*="${id}"],
-                label[for*="${id}"],
-                [aria-labelledby*="${id}"],
-                [aria-controls*="${id}"],
-                [aria-owns*="${id}"]`),
+              withinDOM.querySelectorAll(
+                `a[href*="${id}"], label[for*="${id}"], [aria-labelledby*="${id}"], [aria-controls*="${id}"], [aria-owns*="${id}"]`,
+              ),
             );
             if (ariaReference.length > 0) {
-              State.results.push({
+              pushResult({
                 test: 'DUPLICATE_ID',
                 element: $el,
-                type: State.option.checks.DUPLICATE_ID.type || 'error',
-                content: Lang.sprintf(
-                  State.option.checks.DUPLICATE_ID.content || 'DUPLICATE_ID',
-                  id,
-                ),
                 args: [id],
-                dismiss: Utils.prepareDismissal(`DUPLICATE_ID ${id}${$el.textContent}`),
-                dismissAll: State.option.checks.DUPLICATE_ID.dismissAll ? 'DUPLICATE_ID' : false,
-                developer: State.option.checks.DUPLICATE_ID.developer || true,
+                dismiss: `${id}${$el.textContent}`,
+                developer: true,
               });
             }
           }
         });
       };
 
-      // Look for duplicate IDs within shadow DOMs.
       if (dom.shadowRoot) {
         const shadowRootIds = Array.from(
           dom.shadowRoot.querySelectorAll(`[id]:not(${Constants.Exclusions.Container})`),
         );
         findDuplicateIds(shadowRootIds, dom.shadowRoot);
       }
-
-      // Look for duplicates IDs in document body.
       const regularIds = Array.from(
         dom.querySelectorAll(`[id]:not(${Constants.Exclusions.Container})`),
       );
@@ -203,188 +154,128 @@ export default function checkDeveloper() {
   /* ********************************************* */
   /*  Buttons must have an accessible name.        */
   /* ********************************************* */
-  if (
-    State.option.checks.BTN_EMPTY ||
-    State.option.checks.BTN_EMPTY_LABELLEDBY ||
-    State.option.checks.BTN_LABEL ||
-    State.option.checks.HIDDEN_FOCUSABLE ||
-    State.option.checks.LABEL_IN_NAME
-  ) {
-    Elements.Found.Buttons.forEach(($el) => {
-      // Explicitly hidden.
-      if (
-        Utils.isHiddenAndUnfocusable($el) ||
-        Utils.isElementHidden($el) ||
-        (Utils.isPresentational($el) && Utils.isDisabled($el))
-      )
-        return;
+  Elements.Found.Buttons.forEach(($el) => {
+    // Ignore explicitly hidden.
+    const presentation = Utils.isPresentational($el) && Utils.isDisabled($el);
+    if (presentation || Utils.isHiddenAndUnfocusable($el) || Utils.isElementHidden($el)) return;
 
-      const accName = computeAccessibleName($el);
-      const buttonText = accName.replace(/'|"|-|\.|\s+/g, '').toLowerCase();
-      const textContent = Utils.getText($el);
+    // Has ARIA.
+    const accName = computeAccessibleName($el);
+    const buttonText = accName.replace(/['"-\.\s]+/g, '').toLowerCase();
+    const textContent = Utils.getText($el);
+    const dismissBase = $el.tagName + $el.id + $el.className;
+    const hasAria =
+      $el.querySelector(':scope [aria-labelledby], :scope [aria-label]') ||
+      $el.getAttribute('aria-labelledby') ||
+      $el.getAttribute('aria-label');
+    const hasAriaLabelledby =
+      $el.querySelector(':scope [aria-labelledby]') || $el.getAttribute('aria-labelledby');
 
-      // Has ARIA
-      const hasAria =
-        $el.querySelector(':scope [aria-labelledby], :scope [aria-label]') ||
-        $el.getAttribute('aria-labelledby') ||
-        $el.getAttribute('aria-label');
-      const hasAriaLabelledby =
-        $el.querySelector(':scope [aria-labelledby]') || $el.getAttribute('aria-labelledby');
-
-      // Button doesn't have an accessible name.
-      if (buttonText.length === 0) {
-        if (State.option.checks.BTN_EMPTY_LABELLEDBY && hasAriaLabelledby) {
-          State.results.push({
-            test: 'BTN_EMPTY_LABELLEDBY',
-            element: $el,
-            type: State.option.checks.BTN_EMPTY_LABELLEDBY.type || 'error',
-            content: Lang.sprintf(
-              State.option.checks.BTN_EMPTY_LABELLEDBY.content ||
-                Lang._('BTN_EMPTY_LABELLEDBY') + Lang._('BTN_TIP'),
-            ),
-            dismiss: Utils.prepareDismissal(
-              `BTN_EMPTY_LABELLEDBY ${$el.tagName + $el.id + $el.className + accName}`,
-            ),
-            dismissAll: State.option.checks.BTN_EMPTY_LABELLEDBY.dismissAll
-              ? 'BTN_EMPTY_LABELLEDBY'
-              : false,
-            developer: State.option.checks.BTN_EMPTY_LABELLEDBY.developer || true,
-          });
-        } else if (State.option.checks.BTN_EMPTY) {
-          State.results.push({
-            test: 'BTN_EMPTY',
-            element: $el,
-            type: State.option.checks.BTN_EMPTY.type || 'error',
-            content: Lang.sprintf(
-              State.option.checks.BTN_EMPTY.content || Lang._('BTN_EMPTY') + Lang._('BTN_TIP'),
-            ),
-            dismiss: Utils.prepareDismissal(`BTN_EMPTY ${$el.tagName + $el.id + $el.className}`),
-            dismissAll: State.option.checks.BTN_EMPTY.dismissAll ? 'BTN_EMPTY' : false,
-            developer: State.option.checks.BTN_EMPTY.developer || true,
-          });
-        }
-        return;
-      }
-
-      /* Button must have visible label as part of their accessible name. */
-      const isVisibleTextInAccName = Utils.isVisibleTextInAccName($el, accName);
-      if (State.option.checks.LABEL_IN_NAME && hasAria && isVisibleTextInAccName) {
-        State.results.push({
-          test: 'LABEL_IN_NAME',
+    // Button doesn't have an accessible name.
+    if (buttonText.length === 0) {
+      if (hasAriaLabelledby) {
+        pushResult({
+          test: 'BTN_EMPTY_LABELLEDBY',
           element: $el,
-          type: State.option.checks.LABEL_IN_NAME.type || 'warning',
-          content: Lang.sprintf(
-            State.option.checks.LABEL_IN_NAME.content ||
-              Lang._('LABEL_IN_NAME') + Lang._('ACC_NAME_TIP'),
-            textContent,
-            accName,
-          ),
-          args: [textContent, accName],
-          dismiss: Utils.prepareDismissal(
-            `LABEL_IN_NAME ${$el.tagName + $el.id + $el.className + accName}`,
-          ),
-          dismissAll: State.option.checks.LABEL_IN_NAME.dismissAll ? 'BTN_LABEL_IN_NAME' : false,
-          developer: State.option.checks.LABEL_IN_NAME.developer || true,
+          content: Lang._('BTN_EMPTY_LABELLEDBY') + Lang._('BTN_TIP'),
+          dismiss: dismissBase + accName,
+          developer: true,
         });
-        return;
-      }
-
-      // Has "button" in the accessible name.
-      if (State.option.checks.BTN_ROLE_IN_NAME && accName.includes(Lang._('BTN'))) {
-        State.results.push({
-          test: 'BTN_ROLE_IN_NAME',
+      } else {
+        pushResult({
+          test: 'BTN_EMPTY',
           element: $el,
-          type: State.option.checks.BTN_ROLE_IN_NAME.type || 'warning',
-          content: Lang.sprintf(
-            State.option.checks.BTN_ROLE_IN_NAME.content ||
-              Lang._('BTN_ROLE_IN_NAME') + Lang._('ACC_NAME_TIP') + Lang._('BTN_TIP'),
-            accName,
-          ),
-          args: [accName],
-          dismiss: Utils.prepareDismissal(
-            `BTN_ROLE_IN_NAME ${$el.tagName + $el.id + $el.className + accName}`,
-          ),
-          dismissAll: State.option.checks.BTN_ROLE_IN_NAME.dismissAll ? 'BTN_ROLE_IN_NAME' : false,
-          developer: State.option.checks.BTN_ROLE_IN_NAME.developer || true,
+          content: Lang._('BTN_EMPTY') + Lang._('BTN_TIP'),
+          dismiss: dismissBase,
+          developer: true,
         });
       }
-    });
-  }
+      return;
+    }
+
+    // Button must have visible label as part of their accessible name.
+    const isVisibleTextInAccName = Utils.isVisibleTextInAccName($el, accName);
+    if (hasAria && isVisibleTextInAccName) {
+      pushResult({
+        test: 'LABEL_IN_NAME',
+        element: $el,
+        type: 'warning',
+        args: [textContent, accName],
+        content: Lang._('LABEL_IN_NAME') + Lang._('ACC_NAME_TIP'),
+        dismiss: dismissBase + accName,
+        developer: true,
+      });
+      return;
+    }
+
+    // Has "button" in the accessible name.
+    if (accName.includes(Lang._('BTN'))) {
+      pushResult({
+        test: 'BTN_ROLE_IN_NAME',
+        element: $el,
+        type: 'warning',
+        args: [accName],
+        content: Lang._('BTN_ROLE_IN_NAME') + Lang._('ACC_NAME_TIP') + Lang._('BTN_TIP'),
+        dismiss: dismissBase + accName,
+        developer: true,
+      });
+    }
+  });
 
   /* ********************************************************** */
   /* <li> elements must be contained in a <ul>/<ol>/<menu>.     */
   /* ********************************************************** */
-  if (State.option.checks.UNCONTAINED_LI) {
-    Elements.Found.Lists.forEach(($el) => {
-      if (!Utils.getCachedClosest($el, 'ul, ol, menu')) {
-        const text = Utils.getText($el);
-        State.results.push({
-          test: 'UNCONTAINED_LI',
-          element: $el,
-          type: State.option.checks.UNCONTAINED_LI.type || 'error',
-          content: Lang.sprintf(
-            State.option.checks.UNCONTAINED_LI.content || 'UNCONTAINED_LI',
-            text,
-          ),
-          args: [text],
-          dismiss: Utils.prepareDismissal(`UNCONTAINED_LI ${$el.textContent}`),
-          dismissAll: State.option.checks.UNCONTAINED_LI.dismissAll ? 'UNCONTAINED_LI' : false,
-          developer: State.option.checks.UNCONTAINED_LI.developer || true,
-        });
-      }
-    });
-  }
+  Elements.Found.Lists.forEach(($el) => {
+    if (!Utils.getCachedClosest($el, 'ul, ol, menu')) {
+      const text = Utils.getText($el);
+      pushResult({
+        test: 'UNCONTAINED_LI',
+        element: $el,
+        args: [text],
+        dismiss: text,
+        developer: true,
+      });
+    }
+  });
 
   /* ****************************************** */
   /*  No tabindex values greater than 0.        */
   /* ****************************************** */
-  if (State.option.checks.TABINDEX_ATTR) {
-    Elements.Found.TabIndex.forEach(($el) => {
-      if ($el.tabIndex <= 0) return;
-      State.results.push({
+  Elements.Found.TabIndex.forEach(($el) => {
+    if ($el.tabIndex > 0) {
+      pushResult({
         test: 'TABINDEX_ATTR',
         element: $el,
-        type: State.option.checks.TABINDEX_ATTR.type || 'error',
-        content: Lang.sprintf(State.option.checks.TABINDEX_ATTR.content || 'TABINDEX_ATTR'),
-        dismiss: Utils.prepareDismissal(`TABINDEX_ATTR ${$el.tagName + $el.id + $el.className}`),
-        dismissAll: State.option.checks.TABINDEX_ATTR.dismissAll ? 'TABINDEX_ATTR' : false,
-        developer: State.option.checks.TABINDEX_ATTR.developer || true,
+        dismiss: $el.tagName + $el.id + $el.className,
+        developer: true,
       });
-    });
-  }
+    }
+  });
 
   /* *************************************************************** */
   /* Error: Focusable content hidden from screen readers.            */
   /* *************************************************************** */
-  if (State.option.checks.HIDDEN_FOCUSABLE) {
-    const flaggedForAriaHidden = new Set();
-    Elements.Found.Focusable.forEach(($el) => {
-      if (flaggedForAriaHidden.has($el)) return;
-      if (Utils.isDisabled($el) || Utils.isNegativeTabindex($el) || Utils.isElementHidden($el))
-        return;
+  const flaggedForAriaHidden = new Set();
+  Elements.Found.Focusable.forEach(($el) => {
+    if (
+      flaggedForAriaHidden.has($el) ||
+      Utils.isDisabled($el) ||
+      Utils.isNegativeTabindex($el) ||
+      Utils.isElementHidden($el)
+    ) {
+      return;
+    }
 
-      const hiddenContainer = Utils.getCachedClosest($el, '[aria-hidden="true"]');
-      if (hiddenContainer) {
-        const outerHTML = Utils.truncateString($el.outerHTML, 100);
-        State.results.push({
-          test: 'HIDDEN_FOCUSABLE',
-          element: $el,
-          type: State.option.checks.HIDDEN_FOCUSABLE.type || 'error',
-          content: Lang.sprintf(
-            State.option.checks.HIDDEN_FOCUSABLE.content || 'HIDDEN_FOCUSABLE',
-            outerHTML,
-          ),
-          args: [outerHTML],
-          dismiss: Utils.prepareDismissal(
-            `HIDDEN_FOCUSABLE ${$el.tagName + $el.id + $el.className}`,
-          ),
-          dismissAll: State.option.checks.HIDDEN_FOCUSABLE.dismissAll ? 'HIDDEN_FOCUSABLE' : false,
-          developer: State.option.checks.HIDDEN_FOCUSABLE.developer || true,
-        });
-        flaggedForAriaHidden.add($el);
-      }
-    });
-  }
-
-  return State.results;
+    if (Utils.getCachedClosest($el, '[aria-hidden="true"]')) {
+      pushResult({
+        test: 'HIDDEN_FOCUSABLE',
+        element: $el,
+        args: [Utils.truncateString($el.outerHTML, 100)],
+        dismiss: $el.tagName + $el.id + $el.className,
+        developer: true,
+        margin: '0',
+      });
+      flaggedForAriaHidden.add($el);
+    }
+  });
 }

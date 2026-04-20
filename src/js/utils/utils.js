@@ -1127,7 +1127,7 @@ export function generateRegexString(input, matchStart = false) {
   const finalPattern = matchStart ? `^(?:${joinedPatterns})` : joinedPatterns;
 
   // Compile final case-insensitive regex.
-  return new RegExp(finalPattern, 'gi');
+  return new RegExp(finalPattern, 'i');
 }
 
 /**

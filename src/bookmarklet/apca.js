@@ -70,15 +70,21 @@ const onLoadScript = (lang) => {
   };
 
   // Vendor specific work-arounds...
-  const url = window.location.href;
   const loadingEl = document.getElementById('sa11y-loading');
-  const iframe = document.querySelector('iframe.player');
-  const src = iframe?.getAttribute('src') || '';
-  const isSafe = src.startsWith('https://360.articulate.com') || src.startsWith('https://articulate.com');
-  if (url.includes('https://360.articulate.com/review/content') && isSafe) {
+  const iframeSrc = document.querySelector('iframe.player')?.getAttribute('src') || '';
+  let isSafe = false;
+  try {
+    const { protocol, hostname } = new URL(iframeSrc);
+    isSafe = protocol === 'https:' && ['360.articulate.com', 'articulate.com'].includes(hostname);
+  } catch {
+    isSafe = false; // Fails safely if src is malformed or empty
+  }
+  const { origin, pathname } = window.location;
+  const isTargetPage = origin === 'https://360.articulate.com' && pathname.startsWith('/review/content');
+  if (isTargetPage && isSafe) {
     loadingEl?.remove();
     if (confirm('Redirect to check accessibility in a new tab?')) {
-      window.open(src, '_blank', 'noopener,noreferrer');
+      window.open(iframeSrc, '_blank', 'noopener,noreferrer');
     }
   } else {
     instantiate();

@@ -33,7 +33,7 @@ export default function computeReadability(textArray, lang) {
   if (['en', 'es', 'fr', 'de', 'nl', 'it', 'pt'].includes(lang)) {
     const numberOfSyllables = (el) => {
       let wordCheck = el;
-      wordCheck = wordCheck.toLowerCase().replace('.', '').replace('\n', '');
+      wordCheck = wordCheck.toLowerCase().replaceAll('.', '').replaceAll('\n', '');
       if (wordCheck.length <= 3) {
         return 1;
       }

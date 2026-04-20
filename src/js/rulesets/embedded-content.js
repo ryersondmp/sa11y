@@ -1,146 +1,103 @@
 import { computeAriaLabel } from '../utils/computeAccessibleName';
 import Elements from '../utils/elements';
-import Lang from '../utils/lang';
 import * as Utils from '../utils/utils';
 import { State } from '../core/state';
+import { pushResult } from '../utils/pushResult';
 
 export default function checkEmbeddedContent() {
   if (!State.option.embeddedContentPlugin) return;
 
-  // iFrame's SRC attribute.
+  // iFrame's SRC attribute helper.
   const src = ($el) =>
     $el.getAttribute('src') ||
     $el.querySelector('source[src]')?.getAttribute('src') ||
     $el.querySelector('[src]')?.getAttribute('src') ||
     null;
 
-  // Warning: Audio content.
-  if (State.option.checks.EMBED_AUDIO) {
-    Elements.Found.Audio.forEach(($el) => {
-      // General warning for audio content.
-      State.results.push({
-        test: 'EMBED_AUDIO',
+  // Audio content.
+  Elements.Found.Audio.forEach(($el) => {
+    pushResult({
+      test: 'EMBED_AUDIO',
+      element: $el,
+      type: 'warning',
+      dismiss: src($el),
+    });
+  });
+
+  // Video content.
+  Elements.Found.Videos.forEach(($el) => {
+    const track = $el.querySelector('track');
+    const trackSrc = track?.getAttribute('src');
+    if (!track || !trackSrc || trackSrc.trim().length === 0) {
+      pushResult({
+        test: 'EMBED_VIDEO',
         element: $el,
-        type: State.option.checks.EMBED_AUDIO.type || 'warning',
-        content: Lang.sprintf(State.option.checks.EMBED_AUDIO.content || 'EMBED_AUDIO'),
-        dismiss: Utils.prepareDismissal(`EMBED_AUDIO ${src($el)}`),
-        dismissAll: State.option.checks.EMBED_AUDIO.dismissAll ? 'EMBED_AUDIO' : false,
-        developer: State.option.checks.EMBED_AUDIO.developer || false,
+        type: 'warning',
+        dismiss: src($el),
       });
-    });
-  }
+    }
+  });
 
-  // Warning: Video content.
-  if (State.option.checks.EMBED_VIDEO) {
-    Elements.Found.Videos.forEach(($el) => {
-      // Warning if <track> doesn't exist, or the <track>'s src is empty.
-      const track = $el.querySelector('track');
-      const trackSrc = track?.getAttribute('src');
-      if (track === null || trackSrc === null || trackSrc.trim().length === 0) {
-        State.results.push({
-          test: 'EMBED_VIDEO',
-          element: $el,
-          type: State.option.checks.EMBED_VIDEO.type || 'warning',
-          content: Lang.sprintf(State.option.checks.EMBED_VIDEO.content || 'EMBED_VIDEO'),
-          dismiss: Utils.prepareDismissal(`EMBED_VIDEO ${src($el)}`),
-          dismissAll: State.option.checks.EMBED_VIDEO.dismissAll ? 'EMBED_VIDEO' : false,
-          developer: State.option.checks.EMBED_VIDEO.developer || false,
-        });
-      }
+  // Data visualizations.
+  Elements.Found.Visualizations.forEach(($el) => {
+    pushResult({
+      test: 'EMBED_DATA_VIZ',
+      element: $el,
+      type: 'warning',
+      dismiss: src($el),
     });
-  }
+  });
 
-  // Warning: Data visualizations.
-  if (State.option.checks.EMBED_DATA_VIZ) {
-    Elements.Found.Visualizations.forEach(($el) => {
-      // General warning for data visualization widgets.
-      State.results.push({
-        test: 'EMBED_DATA_VIZ',
-        element: $el,
-        type: State.option.checks.EMBED_DATA_VIZ.type || 'warning',
-        content: Lang.sprintf(State.option.checks.EMBED_DATA_VIZ.content || 'EMBED_DATA_VIZ'),
-        dismiss: Utils.prepareDismissal(`EMBED_DATA_VIZ ${src($el)}`),
-        dismissAll: State.option.checks.EMBED_DATA_VIZ.dismissAll ? 'EMBED_DATA_VIZ' : false,
-        developer: State.option.checks.EMBED_DATA_VIZ.developer || false,
-      });
-    });
-  }
-
-  /* Error: Check all iFrames for a missing accessible name. */
+  // iFrames
   Elements.Found.iframes.forEach(($el) => {
     // Ignore hidden elements and video/audio.
-    const videoAudio = $el.tagName === 'VIDEO' || $el.tagName === 'AUDIO';
     if (
       Utils.isElementHidden($el) ||
-      videoAudio ||
       Utils.isHiddenAndUnfocusable($el) ||
-      Utils.isPresentational($el)
+      Utils.isPresentational($el) ||
+      ['VIDEO', 'AUDIO'].includes($el.tagName)
     ) {
       return;
     }
 
-    // Warning if element only has negative tabindex (without aria-hidden). Axe rulecheck.
+    // Warning if element only has negative tabindex.
     if (Utils.isNegativeTabindex($el)) {
-      if (State.option.checks.EMBED_UNFOCUSABLE) {
-        State.results.push({
-          test: 'EMBED_UNFOCUSABLE',
-          element: $el,
-          type: State.option.checks.EMBED_UNFOCUSABLE.type || 'error',
-          content: Lang.sprintf(
-            State.option.checks.EMBED_UNFOCUSABLE.content || 'EMBED_UNFOCUSABLE',
-          ),
-          dismiss: Utils.prepareDismissal(`EMBED_UNFOCUSABLE ${src($el)}`),
-          dismissAll: State.option.checks.EMBED_UNFOCUSABLE.dismissAll
-            ? 'EMBED_UNFOCUSABLE'
-            : false,
-          developer: State.option.checks.EMBED_UNFOCUSABLE.developer || true,
-        });
-      }
+      pushResult({
+        test: 'EMBED_UNFOCUSABLE',
+        element: $el,
+        dismiss: src($el),
+        developer: true,
+      });
       return;
     }
 
-    if (State.option.checks.EMBED_MISSING_TITLE) {
-      // Accessible name is missing for iFrame.
-      const aria = computeAriaLabel($el);
-      const checkTitle = aria === 'noAria' ? $el.getAttribute('title') || '' : aria;
-      const accessibleName = Utils.removeWhitespace(checkTitle);
-      if (accessibleName.length === 0) {
-        State.results.push({
-          test: 'EMBED_MISSING_TITLE',
-          element: $el,
-          type: State.option.checks.EMBED_MISSING_TITLE.type || 'error',
-          content: Lang.sprintf(
-            State.option.checks.EMBED_MISSING_TITLE.content || 'EMBED_MISSING_TITLE',
-          ),
-          dismiss: Utils.prepareDismissal(`EMBED_MISSING_TITLE ${src($el)}`),
-          dismissAll: State.option.checks.EMBED_MISSING_TITLE.dismissAll
-            ? 'EMBED_MISSING_TITLE'
-            : false,
-          developer: State.option.checks.EMBED_MISSING_TITLE.developer || true,
-        });
-      }
+    const aria = computeAriaLabel($el);
+    const checkTitle = aria === 'noAria' ? $el.getAttribute('title') || '' : aria;
+    if (Utils.removeWhitespace(checkTitle).length === 0) {
+      pushResult({
+        test: 'EMBED_MISSING_TITLE',
+        element: $el,
+        dismiss: src($el),
+        developer: true,
+      });
     }
   });
 
-  /* Warning: for all iFrames (except video, audio, or data visualizations). */
-  if (State.option.checks.EMBED_GENERAL) {
-    Elements.Found.EmbeddedContent.forEach(($el) => {
-      // Ignore explicitly hidden elements.
-      if (Utils.isElementHidden($el) || Utils.isHiddenAndUnfocusable($el)) return;
+  // General warning for embedded content.
+  Elements.Found.EmbeddedContent.forEach(($el) => {
+    if (
+      Utils.isElementHidden($el) ||
+      Utils.isHiddenAndUnfocusable($el) ||
+      ['VIDEO', 'AUDIO'].includes($el.tagName)
+    ) {
+      return;
+    }
 
-      // Ignore video & audio elements.
-      if ($el.tagName === 'VIDEO' || $el.tagName === 'AUDIO') return;
-
-      State.results.push({
-        test: 'EMBED_GENERAL',
-        element: $el,
-        type: State.option.checks.EMBED_GENERAL.type || 'warning',
-        content: Lang.sprintf(State.option.checks.EMBED_GENERAL.content || 'EMBED_GENERAL'),
-        dismiss: Utils.prepareDismissal(`EMBED_GENERAL ${src($el)}`),
-        dismissAll: State.option.checks.EMBED_GENERAL.dismissAll ? 'EMBED_GENERAL' : false,
-        developer: State.option.checks.EMBED_GENERAL.developer || false,
-      });
+    pushResult({
+      test: 'EMBED_GENERAL',
+      element: $el,
+      type: 'warning',
+      dismiss: src($el),
     });
-  }
-  return State.results;
+  });
 }

@@ -4,6 +4,7 @@ import Lang from '../utils/lang';
 import Elements from '../utils/elements';
 import { State } from '../core/state';
 import find from '../utils/find';
+import { pushResult } from '../utils/pushResult';
 
 // FIFO cache for language detection.
 const STORAGE_KEY = 'sa11y-lang-detection';
@@ -153,7 +154,7 @@ export default async function checkPageLanguage() {
         contentContainer.append(' ', Lang.sprintf('LANG_TIP'));
       }
 
-      State.results.push({
+      pushResult({
         element: getElement || null,
         test: cached.test,
         type: State.option.checks[cached.test].type || cached.type,
@@ -336,7 +337,7 @@ export default async function checkPageLanguage() {
     wrapper.append(content, ' ', Lang.sprintf('LANG_TIP'));
 
     // Push result.
-    State.results.push({
+    pushResult({
       element: element,
       test: test,
       type: State.option.checks[test].type || type,

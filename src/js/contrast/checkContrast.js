@@ -5,6 +5,7 @@ import * as Utils from '../utils/utils';
 import * as Contrast from './utils';
 import { convertToRGBA } from './convertColors';
 import { State } from '../core/state';
+import { pushResult } from '../utils/pushResult';
 
 /**
  * Rulesets: Contrast
@@ -388,189 +389,129 @@ export default function checkContrast() {
     const ratioToDisplay = item.isLargeText ? large : normal;
     const ratioRequirementKey = item.isLargeText ? 'CONTRAST_LARGE' : 'CONTRAST_NORMAL';
 
+    // Push to results array.
+    const logResult = (params) =>
+      pushResult({
+        element: $el,
+        type: params.type || 'warning',
+        dismiss: params.dismiss || previewText,
+        contrastDetails: updatedItem,
+        ...params,
+      });
+
     // Iterate through contrast results based on type.
     switch (item.type) {
       case 'text':
-        if (State.option.checks.CONTRAST_ERROR) {
-          State.results.push({
-            test: 'CONTRAST_ERROR',
-            element: $el,
-            type: State.option.checks.CONTRAST_ERROR.type || 'error',
-            content: Lang.sprintf(
-              State.option.checks.CONTRAST_ERROR.content ||
-                (isWcag
-                  ? `${Lang._('CONTRAST_ERROR')} ${Lang._(ratioRequirementKey)}`
-                  : Lang._('CONTRAST_ERROR')),
-              ratioToDisplay,
-            ),
-            dismiss: Utils.prepareDismissal(`CONTRAST_ERROR ${previewText}`),
-            dismissAll: State.option.checks.CONTRAST_ERROR.dismissAll ? 'CONTRAST_ERROR' : false,
-            developer: State.option.checks.CONTRAST_ERROR.developer || false,
-            contrastDetails: updatedItem,
-          });
-        }
+        logResult({
+          test: 'CONTRAST_ERROR',
+          type: 'error',
+          content: Lang.sprintf(
+            isWcag
+              ? `${Lang._('CONTRAST_ERROR')} ${Lang._(ratioRequirementKey)}`
+              : Lang._('CONTRAST_ERROR'),
+            ratioToDisplay,
+          ),
+          args: [ratioToDisplay],
+        });
         break;
       case 'input':
-        if (State.option.checks.CONTRAST_INPUT) {
-          State.results.push({
-            test: 'CONTRAST_INPUT',
-            element,
-            type: State.option.checks.CONTRAST_INPUT.type || 'error',
-            content: Lang.sprintf(
-              State.option.checks.CONTRAST_INPUT.content ||
-                (isWcag
-                  ? `${Lang._('CONTRAST_INPUT')} ${Lang._(ratioRequirementKey)}`
-                  : Lang._('CONTRAST_INPUT')),
-              ratio,
-              ratioToDisplay,
-            ),
-            dismiss: Utils.prepareDismissal(`CONTRAST_INPUT ${$el.outerHTML}`),
-            dismissAll: State.option.checks.CONTRAST_INPUT.dismissAll ? 'CONTRAST_INPUT' : false,
-            developer: State.option.checks.CONTRAST_INPUT.developer || true,
-            contrastDetails: updatedItem,
-          });
-        }
+        logResult({
+          test: 'CONTRAST_INPUT',
+          type: 'error',
+          content: Lang.sprintf(
+            isWcag
+              ? `${Lang._('CONTRAST_INPUT')} ${Lang._(ratioRequirementKey)}`
+              : Lang._('CONTRAST_INPUT'),
+            ratio,
+            ratioToDisplay,
+          ),
+          args: [ratio, ratioToDisplay],
+          dismiss: $el.tagName + ($el.name || '') + ($el.id || ''),
+          developer: true,
+        });
         break;
       case 'placeholder':
-        if (State.option.checks.CONTRAST_PLACEHOLDER) {
-          State.results.push({
-            test: 'CONTRAST_PLACEHOLDER',
-            element: $el,
-            type: State.option.checks.CONTRAST_PLACEHOLDER.type || 'error',
-            content: Lang.sprintf(
-              State.option.checks.CONTRAST_PLACEHOLDER.content ||
-                (isWcag
-                  ? `${Lang._('CONTRAST_PLACEHOLDER')} ${Lang._(ratioRequirementKey)}`
-                  : Lang._('CONTRAST_PLACEHOLDER')),
-              ratioToDisplay,
-            ),
-            position: 'afterend',
-            dismiss: Utils.prepareDismissal(`CONTRAST_PLACEHOLDER ${$el.outerHTML}`),
-            dismissAll: State.option.checks.CONTRAST_PLACEHOLDER.dismissAll
-              ? 'CONTRAST_PLACEHOLDER'
-              : false,
-            developer: State.option.checks.CONTRAST_PLACEHOLDER.developer || true,
-            contrastDetails: updatedItem,
-          });
-        }
+        logResult({
+          test: 'CONTRAST_PLACEHOLDER',
+          type: 'error',
+          content: Lang.sprintf(
+            isWcag
+              ? `${Lang._('CONTRAST_PLACEHOLDER')} ${Lang._(ratioRequirementKey)}`
+              : Lang._('CONTRAST_PLACEHOLDER'),
+            ratioToDisplay,
+          ),
+          args: [ratioToDisplay],
+          position: 'afterend',
+          dismiss: $el.tagName + ($el.id || '') + previewText,
+          developer: true,
+        });
         break;
-
-      case 'placeholder-unsupported':
-        if (State.option.checks.CONTRAST_PLACEHOLDER_UNSUPPORTED) {
-          State.results.push({
-            test: 'CONTRAST_PLACEHOLDER_UNSUPPORTED',
-            element: $el,
-            type: State.option.checks.CONTRAST_PLACEHOLDER_UNSUPPORTED.type || 'warning',
-            content: Lang.sprintf(
-              State.option.checks.CONTRAST_PLACEHOLDER_UNSUPPORTED.content ||
-                (isWcag
-                  ? `${Lang._('CONTRAST_PLACEHOLDER_UNSUPPORTED')} ${Lang._(ratioRequirementKey)}`
-                  : Lang._('CONTRAST_PLACEHOLDER_UNSUPPORTED')),
-              ratioToDisplay,
-            ),
-            position: 'afterend',
-            dismiss: Utils.prepareDismissal(`CONTRAST_PLACEHOLDER_UNSUPPORTED ${$el.outerHTML}`),
-            dismissAll: State.option.checks.CONTRAST_PLACEHOLDER_UNSUPPORTED.dismissAll
-              ? 'CONTRAST_PLACEHOLDER_UNSUPPORTED'
-              : false,
-            developer: State.option.checks.CONTRAST_PLACEHOLDER_UNSUPPORTED.developer || true,
-            contrastDetails: updatedItem,
-          });
-        }
-        break;
-
       case 'svg-error':
-        if (State.option.checks.CONTRAST_ERROR_GRAPHIC) {
-          State.results.push({
-            test: 'CONTRAST_ERROR_GRAPHIC',
-            element: $el,
-            type: State.option.checks.CONTRAST_ERROR_GRAPHIC.type || 'error',
-            content: Lang.sprintf(
-              State.option.checks.CONTRAST_ERROR_GRAPHIC.content ||
-                (State.option.contrastAlgorithm !== 'APCA'
-                  ? `${Lang._('CONTRAST_ERROR_GRAPHIC')} ${Lang._('CONTRAST_TIP_GRAPHIC')}`
-                  : Lang._('CONTRAST_ERROR_GRAPHIC')),
-            ),
-            dismiss: Utils.prepareDismissal(`CONTRAST_ERROR_GRAPHIC ${$el.outerHTML}`),
-            dismissAll: State.option.checks.CONTRAST_ERROR_GRAPHIC.dismissAll
-              ? 'CONTRAST_ERROR_GRAPHIC'
-              : false,
-            developer: State.option.checks.CONTRAST_ERROR_GRAPHIC.developer || true,
-            contrastDetails: updatedItem,
-            margin: '-25px',
-          });
-        }
+        logResult({
+          test: 'CONTRAST_ERROR_GRAPHIC',
+          type: 'error',
+          content: Lang.sprintf(
+            State.option.contrastAlgorithm !== 'APCA'
+              ? `${Lang._('CONTRAST_ERROR_GRAPHIC')} ${Lang._('CONTRAST_TIP_GRAPHIC')}`
+              : Lang._('CONTRAST_ERROR_GRAPHIC'),
+          ),
+          dismiss: $el.outerHTML,
+          developer: true,
+          margin: '-25px',
+        });
         break;
-
+      case 'placeholder-unsupported':
+        logResult({
+          test: 'CONTRAST_PLACEHOLDER_UNSUPPORTED',
+          content: Lang.sprintf(
+            isWcag
+              ? `${Lang._('CONTRAST_PLACEHOLDER_UNSUPPORTED')} ${Lang._(ratioRequirementKey)}`
+              : Lang._('CONTRAST_PLACEHOLDER_UNSUPPORTED'),
+            ratioToDisplay,
+          ),
+          args: [ratioToDisplay],
+          position: 'afterend',
+          dismiss: $el.tagName + ($el.id || '') + previewText,
+          developer: true,
+        });
+        break;
       case 'svg-warning':
-        if (State.option.checks.CONTRAST_WARNING_GRAPHIC) {
-          State.results.push({
-            test: 'CONTRAST_WARNING_GRAPHIC',
-            element: $el,
-            type: State.option.checks.CONTRAST_WARNING_GRAPHIC.type || 'warning',
-            content: Lang.sprintf(
-              State.option.checks.CONTRAST_WARNING_GRAPHIC.content ||
-                (State.option.contrastAlgorithm !== 'APCA'
-                  ? `${Lang._('CONTRAST_WARNING_GRAPHIC')} ${Lang._('CONTRAST_TIP_GRAPHIC')}`
-                  : Lang._('CONTRAST_WARNING_GRAPHIC')),
-            ),
-            dismiss: Utils.prepareDismissal(`CONTRAST_WARNING_GRAPHIC ${$el.outerHTML}`),
-            dismissAll: State.option.checks.CONTRAST_WARNING_GRAPHIC.dismissAll
-              ? 'CONTRAST_WARNING_GRAPHIC'
-              : false,
-            developer: State.option.checks.CONTRAST_WARNING_GRAPHIC.developer || true,
-            contrastDetails: updatedItem,
-            margin: '-25px',
-          });
-        }
+        logResult({
+          test: 'CONTRAST_WARNING_GRAPHIC',
+          content: Lang.sprintf(
+            State.option.contrastAlgorithm !== 'APCA'
+              ? `${Lang._('CONTRAST_WARNING_GRAPHIC')} ${Lang._('CONTRAST_TIP_GRAPHIC')}`
+              : Lang._('CONTRAST_WARNING_GRAPHIC'),
+          ),
+          dismiss: $el.outerHTML,
+          developer: true,
+          margin: '-25px',
+        });
         break;
-
       case 'background-image':
-        if (State.option.checks.CONTRAST_WARNING) {
-          State.results.push({
-            test: 'CONTRAST_WARNING',
-            element,
-            type: State.option.checks.CONTRAST_WARNING.type || 'warning',
-            content: Lang.sprintf(
-              State.option.checks.CONTRAST_WARNING.content ||
-                (isWcag
-                  ? `${Lang._('CONTRAST_WARNING')} ${Lang._(ratioRequirementKey)}`
-                  : Lang._('CONTRAST_WARNING')),
-              ratioToDisplay,
-            ),
-            dismiss: Utils.prepareDismissal(`CONTRAST_WARNING ${previewText}`),
-            dismissAll: State.option.checks.CONTRAST_WARNING.dismissAll
-              ? 'CONTRAST_WARNING'
-              : false,
-            developer: State.option.checks.CONTRAST_WARNING.developer || false,
-            contrastDetails: updatedItem,
-          });
-        }
+        logResult({
+          test: 'CONTRAST_WARNING',
+          content: Lang.sprintf(
+            isWcag
+              ? `${Lang._('CONTRAST_WARNING')} ${Lang._(ratioRequirementKey)}`
+              : Lang._('CONTRAST_WARNING'),
+            ratioToDisplay,
+          ),
+          args: [ratioToDisplay],
+        });
         break;
-
       case 'unsupported':
-        if (State.option.checks.CONTRAST_UNSUPPORTED) {
-          State.results.push({
-            test: 'CONTRAST_UNSUPPORTED',
-            element,
-            type: State.option.checks.CONTRAST_UNSUPPORTED.type || 'warning',
-            content: Lang.sprintf(
-              State.option.checks.CONTRAST_UNSUPPORTED.content ||
-                (isWcag
-                  ? `${Lang._('CONTRAST_WARNING')} ${Lang._(ratioRequirementKey)}`
-                  : Lang._('CONTRAST_WARNING')),
-              ratioToDisplay,
-            ),
-            dismiss: Utils.prepareDismissal(`CONTRAST_UNSUPPORTED ${previewText}`),
-            dismissAll: State.option.checks.CONTRAST_UNSUPPORTED.dismissAll
-              ? 'CONTRAST_UNSUPPORTED'
-              : false,
-            developer: State.option.checks.CONTRAST_UNSUPPORTED.developer || false,
-            contrastDetails: updatedItem,
-          });
-        }
+        logResult({
+          test: 'CONTRAST_UNSUPPORTED',
+          content: Lang.sprintf(
+            isWcag
+              ? `${Lang._('CONTRAST_WARNING')} ${Lang._(ratioRequirementKey)}`
+              : Lang._('CONTRAST_WARNING'),
+            ratioToDisplay,
+          ),
+          args: [ratioToDisplay],
+        });
         break;
-
       default:
         break;
     }

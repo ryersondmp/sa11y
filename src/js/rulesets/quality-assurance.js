@@ -1,7 +1,8 @@
+/** biome-ignore-all lint/complexity/noUselessEscapeInRegex: Ignore. */
 import Elements from '../utils/elements';
-import Lang from '../utils/lang';
 import * as Utils from '../utils/utils';
 import { State } from '../core/state';
+import { pushResult } from '../utils/pushResult';
 
 export default function checkQA() {
   /* *********************************************************** */
@@ -10,16 +11,12 @@ export default function checkQA() {
   if (State.option.checks.QA_BAD_LINK) {
     Elements.Found.CustomErrorLinks.forEach(($el) => {
       const text = Utils.getText($el);
-      State.results.push({
+      pushResult({
         test: 'QA_BAD_LINK',
         element: $el,
-        type: State.option.checks.QA_BAD_LINK.type || 'error',
-        content: Lang.sprintf(State.option.checks.QA_BAD_LINK.content || 'QA_BAD_LINK', $el, text),
         args: [$el, text],
         inline: true,
-        dismiss: Utils.prepareDismissal(`QA_BAD_LINK ${$el.tagName + $el.textContent}`),
-        dismissAll: State.option.checks.QA_BAD_LINK.dismissAll ? 'QA_BAD_LINK' : false,
-        developer: State.option.checks.QA_BAD_LINK.developer || false,
+        dismiss: $el.tagName + $el.textContent,
       });
     });
   }
@@ -31,20 +28,12 @@ export default function checkQA() {
     Elements.Found.StrongItalics.forEach(($el) => {
       const text = Utils.getText($el);
       if (text.length !== 0 && text.length > 400) {
-        State.results.push({
+        pushResult({
           test: 'QA_STRONG_ITALICS',
           element: $el.parentNode,
-          type: State.option.checks.QA_STRONG_ITALICS.type || 'warning',
-          content: Lang.sprintf(
-            State.option.checks.QA_STRONG_ITALICS.content || 'QA_STRONG_ITALICS',
-            text,
-          ),
+          type: 'warning',
           args: [text],
-          dismiss: Utils.prepareDismissal(`QA_STRONG_ITALICS ${$el.tagName + $el.textContent}`),
-          dismissAll: State.option.checks.QA_STRONG_ITALICS.dismissAll
-            ? 'QA_STRONG_ITALICS'
-            : false,
-          developer: State.option.checks.QA_STRONG_ITALICS.developer || false,
+          dismiss: $el.tagName + $el.textContent,
         });
       }
     });
@@ -57,15 +46,12 @@ export default function checkQA() {
     Elements.Found.Blockquotes.forEach(($el) => {
       const text = Utils.getText($el);
       if (text.length !== 0 && text.length < 25) {
-        State.results.push({
+        pushResult({
           test: 'QA_BLOCKQUOTE',
           element: $el,
-          type: State.option.checks.QA_BLOCKQUOTE.type || 'warning',
-          content: Lang.sprintf(State.option.checks.QA_BLOCKQUOTE.content || 'QA_BLOCKQUOTE', text),
+          type: 'warning',
           args: [text],
-          dismiss: Utils.prepareDismissal(`QA_BLOCKQUOTE ${text}`),
-          dismissAll: State.option.checks.QA_BLOCKQUOTE.dismissAll ? 'QA_BLOCKQUOTE' : false,
-          developer: State.option.checks.QA_BLOCKQUOTE.developer || false,
+          dismiss: text,
         });
       }
     });
@@ -75,24 +61,19 @@ export default function checkQA() {
   /*  Errors: Check HTML tables for issues.                          */
   /* *************************************************************** */
   Elements.Found.Tables.forEach(($el) => {
-    // Ignore explicitly hidden tables.
     if (Utils.isElementHidden($el)) return;
 
-    // If overridden semantics.
     const role = $el.getAttribute('role')?.trim().toLowerCase();
     if (role && !['table', 'grid', 'treegrid'].includes(role)) return;
 
-    // Otherwise query headers.
     const tableHeaders = $el.querySelectorAll('th, [role="columnheader"]');
     const semanticHeadings = $el.querySelectorAll('h1, h2, h3, h4, h5, h6');
     const firstRow = $el.querySelector('tr') ? $el.querySelector('tr').innerHTML : $el.innerHTML;
 
     // Check for valid 'headers' references.
     const invalidIds = [];
-    const cellsWithHeaders = $el.querySelectorAll('[headers]');
-    cellsWithHeaders.forEach((cell) => {
-      const headersAttr = cell.getAttribute('headers');
-      const headerIds = headersAttr.trim().split(/\s+/);
+    $el.querySelectorAll('[headers]').forEach((cell) => {
+      const headerIds = cell.getAttribute('headers').trim().split(/\s+/);
       headerIds.forEach((id) => {
         const referencedElement = $el.querySelector(`#${id}`);
         const doesNotExist = !referencedElement;
@@ -100,81 +81,48 @@ export default function checkQA() {
         let isNotHeader = true;
         if (referencedElement) {
           const tagName = referencedElement.tagName.toLowerCase();
-          const role = referencedElement.getAttribute('role')?.trim().toLowerCase();
-          if (tagName === 'th' || role === 'rowheader' || role === 'columnheader')
+          const refRole = referencedElement.getAttribute('role')?.trim().toLowerCase();
+          if (tagName === 'th' || refRole === 'rowheader' || refRole === 'columnheader') {
             isNotHeader = false;
+          }
         }
         if (doesNotExist || isNotInTable || isNotHeader) invalidIds.push(id);
       });
     });
 
-    if (State.option.checks.TABLES_INVALID_HEADERS_REF && invalidIds.length > 0) {
-      State.results.push({
+    if (invalidIds.length > 0) {
+      pushResult({
         test: 'TABLES_INVALID_HEADERS_REF',
         element: $el,
-        type: State.option.checks.TABLES_INVALID_HEADERS_REF.type || 'error',
-        content: Lang.sprintf(
-          State.option.checks.TABLES_INVALID_HEADERS_REF.content || 'TABLES_INVALID_HEADERS_REF',
-          invalidIds.join(', '),
-        ),
         args: [invalidIds.join(', ')],
-        dismiss: Utils.prepareDismissal(`TABLES_INVALID_HEADERS_REF ${firstRow}`),
-        dismissAll: State.option.checks.TABLES_INVALID_HEADERS_REF.dismissAll
-          ? 'TABLES_INVALID_HEADERS_REF'
-          : false,
-        developer: State.option.checks.TABLES_INVALID_HEADERS_REF.developer || true,
+        dismiss: firstRow,
+        devFallback: true,
       });
     }
 
-    if (State.option.checks.TABLES_MISSING_HEADINGS && tableHeaders.length === 0) {
-      State.results.push({
+    if (tableHeaders.length === 0) {
+      pushResult({
         test: 'TABLES_MISSING_HEADINGS',
         element: $el,
-        type: State.option.checks.TABLES_MISSING_HEADINGS.type || 'error',
-        content: Lang.sprintf(
-          State.option.checks.TABLES_MISSING_HEADINGS.content || 'TABLES_MISSING_HEADINGS',
-        ),
-        dismiss: Utils.prepareDismissal(`TABLES_MISSING_HEADINGS ${firstRow}`),
-        dismissAll: State.option.checks.TABLES_MISSING_HEADINGS.dismissAll
-          ? 'TABLES_MISSING_HEADINGS'
-          : false,
-        developer: State.option.checks.TABLES_MISSING_HEADINGS.developer || false,
+        dismiss: firstRow,
       });
     }
 
-    if (State.option.checks.TABLES_SEMANTIC_HEADING && semanticHeadings.length > 0) {
-      semanticHeadings.forEach((heading) => {
-        State.results.push({
-          test: 'TABLES_SEMANTIC_HEADING',
-          element: heading,
-          type: State.option.checks.TABLES_SEMANTIC_HEADING.type || 'error',
-          content: Lang.sprintf(
-            State.option.checks.TABLES_SEMANTIC_HEADING.content || 'TABLES_SEMANTIC_HEADING',
-          ),
-          dismiss: Utils.prepareDismissal(`TABLES_SEMANTIC_HEADING ${firstRow}`),
-          dismissAll: State.option.checks.TABLES_SEMANTIC_HEADING.dismissAll
-            ? 'TABLES_SEMANTIC_HEADING'
-            : false,
-          developer: State.option.checks.TABLES_SEMANTIC_HEADING.developer || false,
-        });
+    semanticHeadings.forEach((heading) => {
+      pushResult({
+        test: 'TABLES_SEMANTIC_HEADING',
+        element: heading,
+        dismiss: firstRow,
       });
-    }
+    });
 
     tableHeaders.forEach((th) => {
-      if (State.option.checks.TABLES_EMPTY_HEADING && th.textContent.trim().length === 0) {
-        State.results.push({
+      if (th.textContent.trim().length === 0) {
+        pushResult({
           test: 'TABLES_EMPTY_HEADING',
           element: th,
-          type: State.option.checks.TABLES_EMPTY_HEADING.type || 'error',
-          content: Lang.sprintf(
-            State.option.checks.TABLES_EMPTY_HEADING.content || 'TABLES_EMPTY_HEADING',
-          ),
+          dismiss: firstRow,
           position: 'afterbegin',
-          dismiss: Utils.prepareDismissal(`TABLES_EMPTY_HEADING ${firstRow}`),
-          dismissAll: State.option.checks.TABLES_EMPTY_HEADING.dismissAll
-            ? 'TABLES_EMPTY_HEADING'
-            : false,
-          developer: State.option.checks.TABLES_EMPTY_HEADING.developer || false,
         });
       }
     });
@@ -185,32 +133,25 @@ export default function checkQA() {
   /* ****************************************************************** */
   if (State.option.checks.QA_FAKE_HEADING) {
     const addResult = (element, text) => {
-      State.results.push({
+      pushResult({
         test: 'QA_FAKE_HEADING',
         element,
-        type: State.option.checks.QA_FAKE_HEADING.type || 'warning',
-        content: Lang.sprintf(
-          State.option.checks.QA_FAKE_HEADING.content || 'QA_FAKE_HEADING',
-          text,
-        ),
+        type: 'warning',
         args: [text],
-        dismiss: Utils.prepareDismissal(`QA_FAKE_HEADING ${text}`),
+        dismiss: text,
         inline: true,
-        dismissAll: State.option.checks.QA_FAKE_HEADING.dismissAll ? 'QA_FAKE_HEADING' : false,
-        developer: State.option.checks.QA_FAKE_HEADING.developer || false,
       });
     };
 
-    // To minimize false positives/number of warnings...
     const isPreviousElementAHeading = (p) => {
       const previousElement = p.previousElementSibling;
-      if (!previousElement) return false;
-      const headingTags = ['H1', 'H2', 'H3', 'H4', 'H5', 'H6'];
-      return headingTags.includes(previousElement.tagName);
+      return (
+        previousElement && ['H1', 'H2', 'H3', 'H4', 'H5', 'H6'].includes(previousElement.tagName)
+      );
     };
 
-    // Find large text as heading.
     const ignoreParents = 'h1, h2, h3, h4, h5, h6, [role="heading"][aria-level], blockquote, table';
+
     const computeLargeParagraphs = (p) => {
       const size = parseFloat(Utils.getCachedStyle(p).fontSize);
       const getText = Utils.getText(p);
@@ -228,33 +169,23 @@ export default function checkQA() {
       }
     };
 
-    // Find bolded text as headings.
     const computeBoldTextParagraphs = (p) => {
       const html = p.innerHTML.trim();
-
-      // Quick check before doing heavier regex match.
       if (html[0] !== '<') return;
 
-      // <p><strong>...</strong></p> or <p><strong>...</strong><br>...</p>
       const likelyFakeHeading =
         /^<\s*(?:strong|b)\b[^>]*>[\s\S]*?<\/\s*(?:strong|b)\s*>(?:<\s*\/?\s*br\s*>|$)/i.test(html);
-
-      // Don't proceed if no match.
       if (!likelyFakeHeading || Utils.getCachedClosest(p, ignoreParents)) return;
 
-      // Get fake heading text.
       const possibleHeading = p.querySelector('strong, b');
       if (!possibleHeading) return;
-      const text = Utils.getText(possibleHeading);
 
-      // Ignore if the bolded text is potentially a sentence.
+      const text = Utils.getText(possibleHeading);
       if (text.length < 3 || text.length > 120 || /[.:;?!"']/.test(text)) return;
 
-      // Be a little forgiving if it's a small paragraph.
       const paragraph = Utils.fnIgnore(p, ['strong', 'b']).textContent.trim();
       if (paragraph && paragraph.length <= 250) return;
 
-      // Ok, it's most likely a fake heading.
       addResult(possibleHeading, text);
     };
 
@@ -266,41 +197,26 @@ export default function checkQA() {
 
   /* *************************************************************** */
   /*  Warning: Detect paragraphs that should be lists.               */
-  /*  Thanks to John Jameson from PrincetonU for this ruleset!       */
   /* *************************************************************** */
   if (State.option.checks.QA_FAKE_LIST) {
-    const numberMatch = new RegExp(/(([023456789][\d\s])|(1\d))/, ''); // All numbers but 1.
-    // biome-ignore lint/complexity/noUselessEscapeInRegex: Escape is indeed needed!
+    const numberMatch = new RegExp(/(([023456789][\d\s])|(1\d))/, '');
     const alphabeticMatch = new RegExp(/(^[aA1αаΑ]|[^\p{Alphabetic}\s])[-\s.)\]]/, 'u');
-    // biome-ignore lint/complexity/noUselessEscapeInRegex: Escape is indeed needed!
     const emojiMatch = new RegExp(/\p{Extended_Pictographic}/, 'u');
     const secondTextNoMatch = ['a', 'A', 'α', 'Α', 'а', 'А', '1'];
     const specialCharsMatch = /[([{#]/;
-    const prefixDecrement = {
-      2: '1',
-      b: 'a',
-      B: 'A',
-      β: 'α',
-      Β: 'Α',
-      б: 'а',
-      Б: 'А',
-    };
+    const prefixDecrement = { 2: '1', b: 'a', B: 'A', β: 'α', Β: 'Α', б: 'а', Б: 'А' };
     const decrement = (element) =>
       element.replace(/^b|^B|^б|^Б|^β|^В|^[2-9]/, (match) => prefixDecrement[match]);
 
-    // Variables to carry in loop.
-    let activeMatch = ''; // Carried in loop for second paragraph.
-    let firstText = ''; // Text of previous paragraph.
+    let activeMatch = '';
+    let firstText = '';
     let lastHitWasEmoji = false;
 
     Elements.Found.Paragraphs.forEach((p, i) => {
       let secondText = false;
       let hit = false;
-
-      firstText = firstText || Utils.getText(p).replace(/[([]/, '');
+      firstText = firstText || Utils.getText(p).replace(/[([]/g, '');
       const firstPrefix = firstText.substring(0, 2);
-
-      // Grab first two characters.
       const isAlphabetic = firstPrefix.match(alphabeticMatch);
       const isNumber = firstPrefix.match(numberMatch);
       const isEmoji = firstPrefix.match(emojiMatch);
@@ -313,52 +229,36 @@ export default function checkQA() {
         !isNumber &&
         (isAlphabetic || isEmoji || isSpecialChar || isRoman)
       ) {
-        // Ignore paragraphs that have double initialis, e.g. A.M. Smith
         if (/^[A-Z]\.[A-Z]\./.test(firstText)) return;
 
-        // We have a prefix and a possible hit; check next detected paragraph.
         const secondP = Elements.Found.Paragraphs[i + 1];
         if (secondP) {
-          secondText = Utils.getText(secondP).replace(/[([]/, '').substring(0, 2);
-          if (secondTextNoMatch.includes(secondText?.toLowerCase().trim())) {
-            // A sentence. Another sentence. (A sentence). 1 apple, 1 banana.
-            return;
-          }
+          secondText = Utils.getText(secondP).replace(/[([]/g, '').substring(0, 2);
+          if (secondTextNoMatch.includes(secondText?.toLowerCase().trim())) return;
           const secondPrefix = decrement(secondText);
-
           if (isRoman) {
-            // If first is I. or I), secondText (which is 2 chars) should just be "II" or "ii"
-            if (secondText.toLowerCase() === 'ii') {
-              hit = true;
-            }
+            if (secondText.toLowerCase() === 'ii') hit = true;
           } else if (isAlphabetic) {
             const firstChar = firstPrefix.charAt(0);
             const secondChar = secondText.charAt(0);
-
-            // Ensure we are only looking at the very first char and it's a valid sequence.
-            if (decrement(secondChar) === firstChar && !/\w/.test(secondText.charAt(1))) {
-              hit = true;
-            }
+            if (decrement(secondChar) === firstChar && !/\w/.test(secondText.charAt(1))) hit = true;
           } else if (isEmoji && !lastHitWasEmoji) {
-            // Check for two paragraphs in a row that start with emoji.
             if (secondPrefix.match(emojiMatch)) {
               hit = true;
               lastHitWasEmoji = true;
-              // This is carried; better miss than have lots of positives.
             }
           }
         }
+
         if (!hit) {
-          // Split p by carriage return if there was a firstPrefix and compare.
           let textAfterBreak = p?.querySelector('br')?.nextSibling?.nodeValue;
           if (textAfterBreak) {
             textAfterBreak = textAfterBreak
               .replace(/<\/?[^>]+(>|$)/g, '')
               .trim()
               .substring(0, 2);
-            const checkForOtherPrefixChars = specialCharsMatch.test(textAfterBreak.charAt(0));
             if (
-              checkForOtherPrefixChars ||
+              specialCharsMatch.test(textAfterBreak.charAt(0)) ||
               firstPrefix === decrement(textAfterBreak) ||
               (isRoman && textAfterBreak.toLowerCase() === 'ii') ||
               (!lastHitWasEmoji && textAfterBreak.match(emojiMatch))
@@ -367,20 +267,14 @@ export default function checkQA() {
             }
           }
         }
+
         if (hit) {
-          State.results.push({
+          pushResult({
             test: 'QA_FAKE_LIST',
             element: p,
-            type: State.option.checks.QA_FAKE_LIST.type || 'warning',
-            content: Lang.sprintf(
-              State.option.checks.QA_FAKE_LIST.content || 'QA_FAKE_LIST',
-              firstPrefix,
-              firstText,
-            ),
+            type: 'warning',
             args: [firstPrefix, firstText],
-            dismiss: Utils.prepareDismissal(`QA_FAKE_LIST ${p.textContent}`),
-            dismissAll: State.option.checks.QA_FAKE_LIST.dismissAll ? 'QA_FAKE_LIST' : false,
-            developer: State.option.checks.QA_FAKE_LIST.developer || false,
+            dismiss: p.textContent,
           });
           activeMatch = firstPrefix;
         } else {
@@ -389,7 +283,6 @@ export default function checkQA() {
       } else {
         activeMatch = '';
       }
-      // Reset for next loop, carry over text query if available.
       firstText = secondText ? '' : secondText;
     });
   }
@@ -401,163 +294,102 @@ export default function checkQA() {
     const checkCaps = ($el) => {
       let thisText = '';
       if ($el.tagName === 'LI') {
-        // Prevent recursion through nested lists.
         $el.childNodes.forEach((node) => {
-          if (node.nodeType === 3) {
-            thisText += node.textContent;
-          }
+          if (node.nodeType === 3) thisText += node.textContent;
         });
       } else {
         thisText = Utils.getText($el);
       }
 
-      // Patterns
       const uppercasePattern = /([A-Z]{2,}[ ])([A-Z]{2,}[ ])([A-Z]{2,}[ ])([A-Z]{2,})/g;
       const detectUpperCase = thisText.match(uppercasePattern);
-
       if (detectUpperCase && detectUpperCase[0].length > 10) {
-        State.results.push({
+        pushResult({
           test: 'QA_UPPERCASE',
           element: $el,
-          type: State.option.checks.QA_UPPERCASE.type || 'warning',
-          content: Lang.sprintf(
-            State.option.checks.QA_UPPERCASE.content || 'QA_UPPERCASE',
-            thisText,
-          ),
+          type: 'warning',
           args: [thisText],
-          dismiss: Utils.prepareDismissal(`QA_UPPERCASE ${thisText}`),
-          dismissAll: State.option.checks.QA_UPPERCASE.dismissAll ? 'QA_UPPERCASE' : false,
-          developer: State.option.checks.QA_UPPERCASE.developer || false,
+          dismiss: thisText,
         });
       }
     };
-    Elements.Found.Paragraphs.forEach(($el) => {
-      checkCaps($el);
-    });
-    Elements.Found.Headings.forEach(($el) => {
-      checkCaps($el);
-    });
-    Elements.Found.Lists.forEach(($el) => {
-      checkCaps($el);
-    });
-    Elements.Found.Blockquotes.forEach(($el) => {
-      checkCaps($el);
-    });
+
+    Elements.Found.Paragraphs.forEach(checkCaps);
+    Elements.Found.Headings.forEach(checkCaps);
+    Elements.Found.Lists.forEach(checkCaps);
+    Elements.Found.Blockquotes.forEach(checkCaps);
   }
 
   /* ************************************************************** */
   /*  Various checks: underlines, justify-aligned, and small text.  */
   /* ************************************************************** */
-  // Check underlined text. Created by Brian Teeman!
-  const addUnderlineResult = ($el) => {
-    const text = Utils.getText($el);
-    State.results.push({
-      test: 'QA_UNDERLINE',
-      element: $el,
-      type: State.option.checks.QA_UNDERLINE.type || 'warning',
-      content: Lang.sprintf(State.option.checks.QA_UNDERLINE.content || 'QA_UNDERLINE', text),
-      args: [text],
-      inline: true,
-      dismiss: Utils.prepareDismissal(`QA_UNDERLINE ${text}`),
-      dismissAll: State.option.checks.QA_UNDERLINE.dismissAll ? 'QA_UNDERLINE' : false,
-      developer: State.option.checks.QA_UNDERLINE.developer || false,
-    });
-  };
-
-  const addJustifyResult = ($el) => {
-    const text = Utils.getText($el);
-    State.results.push({
-      test: 'QA_JUSTIFY',
-      element: $el,
-      type: State.option.checks.QA_JUSTIFY.type || 'warning',
-      content: Lang.sprintf(State.option.checks.QA_JUSTIFY.content || 'QA_JUSTIFY', text),
-      args: [text],
-      dismiss: Utils.prepareDismissal(`QA_JUSTIFY ${text}`),
-      dismissAll: State.option.checks.QA_JUSTIFY.dismissAll ? 'QA_JUSTIFY' : true,
-      developer: State.option.checks.QA_JUSTIFY.developer || false,
-    });
-  };
-
-  const addSmallTextResult = ($el) => {
-    const text = Utils.getText($el);
-    State.results.push({
-      test: 'QA_SMALL_TEXT',
-      element: $el,
-      type: State.option.checks.QA_SMALL_TEXT.type || 'warning',
-      content: Lang.sprintf(State.option.checks.QA_SMALL_TEXT.content || 'QA_SMALL_TEXT', text),
-      args: [text],
-      dismiss: Utils.prepareDismissal(`QA_SMALL_TEXT ${text}`),
-      dismissAll: State.option.checks.QA_SMALL_TEXT.dismissAll ? 'QA_SMALL_TEXT' : true,
-      developer: State.option.checks.QA_SMALL_TEXT.developer || false,
-    });
-  };
-
   const checkUnderline = State.option.checks.QA_UNDERLINE;
   const checkSmallText = State.option.checks.QA_SMALL_TEXT;
   const checkJustify = State.option.checks.QA_JUSTIFY;
-
   if (checkUnderline || checkJustify || checkSmallText) {
     const defaultSize = checkSmallText?.fontSize || 10;
     const interactiveSelector =
       'a[href], button, abbr, [role="link"], [role="button"], [tabindex="0"], [onclick]';
-
-    // 3. Fast, allocation-free check for non-empty direct text nodes
     const hasDirectText = (el) => {
       let node = el.firstChild;
       while (node) {
-        // nodeType 3 is a Text Node
-        if (node.nodeType === 3 && node.nodeValue.trim().length > 0) {
-          return true;
-        }
+        if (node.nodeType === 3 && node.nodeValue.trim().length > 0) return true;
         node = node.nextSibling;
       }
       return false;
     };
 
-    // 4. Loop through elements
     for (let i = 0; i < Elements.Found.Everything.length; i++) {
       const $el = Elements.Found.Everything[i];
-
-      // Skip computing styles entirely if there's no text
       if (!hasDirectText($el)) continue;
-
-      // Fetch styles using the cache
       const style = Utils.getCachedStyle($el);
       const parentStyle = Utils.getCachedStyle($el.parentElement);
-
-      /* Check: Underlined text */
+      const text = Utils.getText($el);
       if (checkUnderline) {
-        // Evaluate cheap style checks before triggering expensive closest traversals.
         if (
           (style.textDecorationLine === 'underline' || Utils.getCachedClosest($el, 'u')) &&
           !$el.matches(interactiveSelector) &&
           !Utils.getCachedClosest($el, interactiveSelector)
         ) {
-          addUnderlineResult($el);
+          pushResult({
+            test: 'QA_UNDERLINE',
+            element: $el,
+            type: 'warning',
+            args: [text],
+            dismiss: text,
+            inline: true,
+          });
         }
       }
 
-      /* Check: Font size is greater than 0 and less than 10 */
       if (checkSmallText) {
         const computedFontSize = parseFloat(style.fontSize);
-
         if (computedFontSize > 1 && computedFontSize <= defaultSize) {
           const parentFontSize = parentStyle ? parseFloat(parentStyle.fontSize) : null;
-          const isInherited = parentFontSize === computedFontSize;
-
-          if (!isInherited && !Utils.getCachedClosest($el, 'sup, sub')) {
-            addSmallTextResult($el);
+          if (parentFontSize !== computedFontSize && !Utils.getCachedClosest($el, 'sup, sub')) {
+            pushResult({
+              test: 'QA_SMALL_TEXT',
+              element: $el,
+              type: 'warning',
+              args: [text],
+              dismiss: text,
+              dismissAll: true,
+            });
           }
         }
       }
 
-      /* Check: Text is justify-aligned */
       if (checkJustify && style.textAlign === 'justify') {
         const parentJustify = parentStyle ? parentStyle.textAlign : null;
-        const justifyInherited = parentJustify === style.textAlign;
-
-        if (!justifyInherited) {
-          addJustifyResult($el);
+        if (parentJustify !== style.textAlign) {
+          pushResult({
+            test: 'QA_JUSTIFY',
+            element: $el,
+            type: 'warning',
+            args: [text],
+            dismiss: text,
+            dismissAll: true,
+          });
         }
       }
     }
@@ -570,16 +402,13 @@ export default function checkQA() {
     Elements.Found.Subscripts.forEach(($el) => {
       const text = Utils.getText($el);
       if (text.length >= 80) {
-        State.results.push({
+        pushResult({
           test: 'QA_SUBSCRIPT',
           element: $el,
-          type: State.option.checks.QA_SUBSCRIPT.type || 'warning',
-          content: Lang.sprintf(State.option.checks.QA_SUBSCRIPT.content || 'QA_SUBSCRIPT', text),
+          type: 'warning',
           args: [text],
+          dismiss: $el.tagName + text,
           inline: true,
-          dismiss: Utils.prepareDismissal(`QA_SUBSCRIPT ${$el.tagName + text}`),
-          dismissAll: State.option.checks.QA_SUBSCRIPT.dismissAll ? 'QA_SUBSCRIPT' : false,
-          developer: State.option.checks.QA_SUBSCRIPT.developer || false,
         });
       }
     });
@@ -592,20 +421,12 @@ export default function checkQA() {
     Elements.Found.NestedComponents.forEach(($el) => {
       const sources =
         State.option.checks.QA_NESTED_COMPONENTS.sources || '[role="tablist"], details';
-      const component = $el.querySelector(sources);
-      if (component) {
-        State.results.push({
+      if ($el.querySelector(sources)) {
+        pushResult({
           test: 'QA_NESTED_COMPONENTS',
           element: $el,
-          type: State.option.checks.QA_NESTED_COMPONENTS.type || 'warning',
-          content: Lang.sprintf(
-            State.option.checks.QA_NESTED_COMPONENTS.content || 'QA_NESTED_COMPONENTS',
-          ),
-          dismiss: Utils.prepareDismissal(`QA_NESTED_COMPONENTS ${$el.textContent}`),
-          dismissAll: State.option.checks.QA_NESTED_COMPONENTS.dismissAll
-            ? 'QA_NESTED_COMPONENTS'
-            : false,
-          developer: State.option.checks.QA_NESTED_COMPONENTS.developer || false,
+          type: 'warning',
+          dismiss: $el.textContent,
         });
       }
     });

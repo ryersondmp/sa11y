@@ -104,8 +104,8 @@ export function annotate(issue) {
       ? `, ${State.option.insertAnnotationBefore}`
       : '';
     const location =
-      getCachedClosest(element, 'svg') ||
       getCachedClosest(element, `a, button, [role="link"], [role="button"] ${insertBefore}`) ||
+      getCachedClosest(element, 'svg') ||
       element;
     location.insertAdjacentElement(position, annotation);
     annotation.shadowRoot.appendChild(buttonWrapper);

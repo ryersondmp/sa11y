@@ -1,6 +1,7 @@
 import { createAlert } from '../interface/alert';
 import Lang from './lang';
 import { State } from '../core/state';
+import { generateRegexString } from './utils';
 
 const Constants = (function myConstants() {
   /* **************** */
@@ -40,6 +41,75 @@ const Constants = (function myConstants() {
     } else {
       Global.documentSources = defaultDocumentSources;
     }
+
+    /* ********************** */
+    /*  Alt text module       */
+    /* ********************** */
+    // Generate suspicious alt stop words list.
+    Global.susAltWords = State.option.susAltStopWords
+      ? State.option.susAltStopWords
+          .split(',')
+          .map((word) => word.trim().toLowerCase())
+          .filter(Boolean)
+      : Lang._('SUS_ALT_STOPWORDS');
+
+    // Generate placeholder stop words set.
+    Global.placeholderAltSet = new Set(Lang._('PLACEHOLDER_ALT_STOPWORDS'));
+
+    // Generate placeholder stop words that are that the START of an alt string.
+    Global.altPlaceholderPattern = generateRegexString(State.option.altPlaceholder, true);
+    Global.linkIgnoreStringPattern = generateRegexString(State.option.linkIgnoreStrings);
+
+    // Generate supplied placeholder stop words.
+    Global.extraPlaceholderStopWords = State.option.extraPlaceholderStopWords
+      .split(',')
+      .map((word) => word.trim().toLowerCase())
+      .filter(Boolean);
+
+    /* ********************** */
+    /*  Heading module.       */
+    /* ********************** */
+    Global.headerStringExclusionPattern = generateRegexString(State.option.headerIgnoreStrings);
+
+    /* ********************** */
+    /*  Link text module.     */
+    /* ********************** */
+    const customStopWords = State.option.linkStopWords
+      ? State.option.linkStopWords.split(',').map((word) => word.toLowerCase().trim())
+      : [];
+    Global.linkStopWords = new Set([...Lang._('LINK_STOPWORDS'), ...customStopWords]);
+    Global.linkIgnoreStrings = new Set(
+      State.option.linkIgnoreStrings.map((word) => word.toLowerCase()),
+    );
+
+    // Generate regex patterns from arrays.
+    Global.clickRegex = generateRegexString(Lang._('CLICK'));
+    Global.newWindowRegex = generateRegexString(Lang._('NEW_WINDOW_PHRASES'));
+    const defaultFileTypes = [
+      'pdf',
+      'doc',
+      'docx',
+      'word',
+      'mp3',
+      'ppt',
+      'text',
+      'pptx',
+      'txt',
+      'exe',
+      'dmg',
+      'rtf',
+      'windows',
+      'macos',
+      'csv',
+      'xls',
+      'xlsx',
+      'mp4',
+      'mov',
+      'avi',
+      'zip',
+    ];
+    Global.fileTypeRegex = generateRegexString(defaultFileTypes);
+    Global.linkIgnorePattern = generateRegexString(State.option.linkIgnoreStrings);
 
     /* ********************** */
     /* Embedded Content Setup */

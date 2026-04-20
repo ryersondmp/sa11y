@@ -211,6 +211,7 @@ const defaultOptions = {
       dismissAll: true,
     },
     QA_PDF: {
+      sources: '',
       dismissAll: true,
     },
     QA_BLOCKQUOTE: true,

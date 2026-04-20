@@ -4,233 +4,139 @@ import Lang from '../utils/lang';
 import * as Utils from '../utils/utils';
 import { State } from '../core/state';
 import find from '../utils/find';
+import { pushResult } from '../utils/pushResult';
 
 export default function checkLabels() {
-  if (State.option.formLabelsPlugin) {
-    Elements.Found.Inputs.forEach(($el) => {
-      // Ignore completely hidden elements.
-      if (
-        Utils.isElementHidden($el) ||
-        Utils.isHiddenAndUnfocusable($el) ||
-        (Utils.isPresentational($el) && Utils.isDisabled($el))
-      )
-        return;
+  if (!State.option.formLabelsPlugin) return;
 
-      // Compute accessible name on input.
-      const computeName = computeAccessibleName($el);
-      const inputName = Utils.removeWhitespace(computeName);
+  Elements.Found.Inputs.forEach(($el) => {
+    // Ignore completely hidden elements.
+    const presentation = Utils.isPresentational($el) && Utils.isDisabled($el);
+    if (Utils.isElementHidden($el) || Utils.isHiddenAndUnfocusable($el) || presentation) return;
 
-      // Get attributes.
-      const type = $el.getAttribute('type');
-      const hasTitle = $el.getAttribute('title');
-      const hasAria = $el.getAttribute('aria-label') || $el.getAttribute('aria-labelledby');
+    // Compute accessible name on input.
+    const computeName = computeAccessibleName($el);
+    const inputName = Utils.removeWhitespace(computeName);
 
-      // Native input?
-      const nativeTags = ['INPUT', 'TEXTAREA', 'SELECT', 'METER', 'PROGRESS'];
-      const isNativeInput = nativeTags.includes($el.tagName.toUpperCase());
+    // Get attributes.
+    const type = $el.getAttribute('type');
+    const hasTitle = $el.getAttribute('title');
+    const hasAria = $el.getAttribute('aria-label') || $el.getAttribute('aria-labelledby');
 
-      // Pass: Ignore if it's a submit or hidden button.
-      if (type === 'submit' || type === 'button' || type === 'hidden') {
-        return;
-      }
+    // Native input.
+    const nativeTags = ['INPUT', 'TEXTAREA', 'SELECT', 'METER', 'PROGRESS'];
+    const isNativeInput = nativeTags.includes($el.tagName.toUpperCase());
 
-      // Error: Input with type="image" without accessible name or alt.
-      if (type === 'image') {
-        if (State.option.checks.LABELS_MISSING_IMAGE_INPUT && inputName === '') {
-          State.results.push({
-            test: 'LABELS_MISSING_IMAGE_INPUT',
-            element: $el,
-            type: State.option.checks.LABELS_MISSING_IMAGE_INPUT.type || 'error',
-            content: Lang.sprintf(
-              State.option.checks.LABELS_MISSING_IMAGE_INPUT.content ||
-                'LABELS_MISSING_IMAGE_INPUT',
-            ),
-            dismiss: Utils.prepareDismissal(`LABELS_MISSING_IMAGE_INPUT ${type + inputName}`),
-            dismissAll: State.option.checks.LABELS_MISSING_IMAGE_INPUT.dismissAll
-              ? 'LABELS_MISSING_IMAGE_INPUT'
-              : false,
-            developer: State.option.checks.LABELS_MISSING_IMAGE_INPUT.developer || true,
-          });
-        }
-        return;
-      }
+    // Ignore if it's a submit or hidden button.
+    if (['submit', 'button', 'hidden'].includes(type)) return;
 
-      // Warning: to remove reset buttons.
-      if (type === 'reset') {
-        if (State.option.checks.LABELS_INPUT_RESET) {
-          State.results.push({
-            test: 'LABELS_INPUT_RESET',
-            element: $el,
-            type: State.option.checks.LABELS_INPUT_RESET.type || 'warning',
-            content: Lang.sprintf(
-              State.option.checks.LABELS_INPUT_RESET.content || 'LABELS_INPUT_RESET',
-            ),
-            dismiss: Utils.prepareDismissal(`LABELS_INPUT_RESET ${type + inputName}`),
-            dismissAll: State.option.checks.LABELS_INPUT_RESET.dismissAll
-              ? 'LABELS_INPUT_RESET'
-              : false,
-            developer: State.option.checks.LABELS_INPUT_RESET.developer || false,
-          });
-        }
-        return;
-      }
+    // Push to results array.
+    const logResult = (params) =>
+      pushResult({
+        element: $el,
+        type: params.type || 'error',
+        developer: params.developer || true,
+        dismiss: type + inputName,
+        ...params,
+      });
 
-      // Warning: Uses placeholder.
-      const hasPlaceholder = $el.placeholder && $el.placeholder !== 0;
-      if (hasPlaceholder && State.option.checks.LABELS_PLACEHOLDER) {
-        State.results.push({
-          test: 'LABELS_PLACEHOLDER',
-          element: $el,
-          type: State.option.checks.LABELS_PLACEHOLDER.type || 'warning',
-          content: Lang.sprintf(
-            State.option.checks.LABELS_PLACEHOLDER.content || 'LABELS_PLACEHOLDER',
-          ),
-          dismiss: Utils.prepareDismissal(`LABELS_PLACEHOLDER ${type + inputName}`),
-          dismissAll: State.option.checks.LABELS_PLACEHOLDER.dismissAll
-            ? 'LABELS_PLACEHOLDER'
-            : false,
-          developer: State.option.checks.LABELS_PLACEHOLDER.developer || true,
+    // Error: Input with type="image" without accessible name or alt.
+    if (type === 'image') {
+      if (inputName === '') logResult({ test: 'LABELS_MISSING_IMAGE_INPUT' });
+      return;
+    }
+
+    // Warning: to remove reset buttons.
+    if (type === 'reset') {
+      logResult({ test: 'LABELS_INPUT_RESET', type: 'warning', developer: false });
+      return;
+    }
+
+    // Warning: against placeholder attributes.
+    const hasPlaceholder = $el.placeholder && $el.placeholder !== 0;
+    if (hasPlaceholder) {
+      logResult({ test: 'LABELS_PLACEHOLDER', type: 'warning' });
+    }
+
+    // ARIA role based inputs.
+    if (!isNativeInput && State.option.checks.ARIA_INPUT_FIELD_NAME) {
+      const toggles = [
+        'checkbox',
+        'menu',
+        'menuitemcheckbox',
+        'menuitemradio',
+        'radio',
+        'radiogroup',
+        'switch',
+      ];
+      const role = $el.getAttribute('role')?.trim().toLowerCase() || '';
+
+      // If it's a toggle AND it has an accessible name (like inner text), it passes.
+      if (toggles.includes(role) && inputName.length !== 0) return;
+
+      // Accessibile name returns nothing.
+      if (inputName.length === 0) {
+        const outerHTML = Utils.truncateString($el.outerHTML, 100);
+        const rule = State.option.checks.ARIA_INPUT_FIELD_NAME;
+        const message = rule.content
+          ? Lang.sprintf(rule.content)
+          : Lang.sprintf(Lang._('ARIA_INPUT_FIELD_NAME') + Lang._('ACC_NAME_TIP'), outerHTML);
+        logResult({
+          test: 'ARIA_INPUT_FIELD_NAME',
+          args: [outerHTML],
+          content: message,
         });
+        return;
       }
+    }
 
-      // ARIA role based input without an accessible name.
-      if (State.option.checks.ARIA_INPUT_FIELD_NAME && !isNativeInput) {
-        const toggles = [
-          'checkbox',
-          'menu',
-          'menuitemcheckbox',
-          'menuitemradio',
-          'radio',
-          'radiogroup',
-          'switch',
-        ];
-        const role = $el.getAttribute('role')?.trim().toLowerCase() || '';
-        const toggleRole = toggles.includes(role);
-
-        // If it's a toggle AND it has an accessible name (like inner text), it passes.
-        if (toggleRole && inputName.length !== 0) return;
-
-        // If it has no accessible name (applies to both toggles and standard inputs).
-        if (inputName.length === 0) {
-          const outerHTML = Utils.truncateString($el.outerHTML, 100);
-          State.results.push({
-            test: 'ARIA_INPUT_FIELD_NAME',
-            element: $el,
-            type: State.option.checks.ARIA_INPUT_FIELD_NAME.type || 'error',
-            content: State.option.checks.ARIA_INPUT_FIELD_NAME.content
-              ? Lang.sprintf(State.option.checks.ARIA_INPUT_FIELD_NAME.content)
-              : Lang.sprintf(Lang._('ARIA_INPUT_FIELD_NAME') + Lang._('ACC_NAME_TIP'), outerHTML),
-            args: [outerHTML],
-            dismiss: Utils.prepareDismissal(`ARIA_INPUT_FIELD_NAME ${outerHTML}`),
-            dismissAll: State.option.checks.ARIA_INPUT_FIELD_NAME.dismissAll
-              ? 'ARIA_INPUT_FIELD_NAME'
-              : false,
-            developer: State.option.checks.ARIA_INPUT_FIELD_NAME.developer || true,
-          });
-          return;
+    // Uses ARIA or title attr.
+    if (hasAria || hasTitle) {
+      if (inputName.length === 0) {
+        logResult({ test: 'LABELS_MISSING_LABEL' });
+      } else {
+        const ariaLabelledBy = $el.getAttribute('aria-labelledby');
+        if (ariaLabelledBy) {
+          const ids = ariaLabelledBy.trim().split(/\s+/);
+          if (ids.length === 1) {
+            const target = find(`#${ids[0]}`, 'root')?.[0];
+            if (target && !Utils.isElementHidden(target)) return;
+          }
         }
-      }
 
-      // Uses ARIA or title attribute. Warn them to ensure there's a visible label.
-      if (hasAria || hasTitle) {
-        if (inputName.length === 0) {
-          if (State.option.checks.LABELS_MISSING_LABEL) {
-            State.results.push({
-              test: 'LABELS_MISSING_LABEL',
-              element: $el,
-              type: State.option.checks.LABELS_MISSING_LABEL.type || 'error',
-              content: Lang.sprintf(
-                State.option.checks.LABELS_MISSING_LABEL.content || 'LABELS_MISSING_LABEL',
-              ),
-              dismiss: Utils.prepareDismissal(`LABELS_MISSING_LABEL ${type + inputName}`),
-              dismissAll: State.option.checks.LABELS_MISSING_LABEL.dismissAll
-                ? 'LABELS_MISSING_LABEL'
-                : false,
-              developer: State.option.checks.LABELS_MISSING_LABEL.developer || true,
-            });
-          }
-        } else if (State.option.checks.LABELS_ARIA_LABEL_INPUT) {
-          // Deal with aria-labelledby attributes. More complex (multi value) will throw a warning.
-          const ariaLabelledBy = $el.getAttribute('aria-labelledby');
-          if (ariaLabelledBy) {
-            const ids = ariaLabelledBy.trim().split(/\s+/);
-            if (ids.length === 1) {
-              const target = find(`#${ids[0]}`, 'root')?.[0];
-              if (target && !Utils.isElementHidden(target)) return;
-            }
-          }
-
-          // Everything else that is not visible (aria-label, title, placeholder).
-          State.results.push({
+        const rule = State.option.checks.LABELS_ARIA_LABEL_INPUT;
+        if (rule) {
+          const message = rule.content
+            ? Lang.sprintf(rule.content, inputName)
+            : Lang.sprintf(Lang._('LABELS_ARIA_LABEL_INPUT') + Lang._('ACC_NAME_TIP'), inputName);
+          logResult({
             test: 'LABELS_ARIA_LABEL_INPUT',
-            element: $el,
-            type: State.option.checks.LABELS_ARIA_LABEL_INPUT.type || 'warning',
-            content: State.option.checks.LABELS_ARIA_LABEL_INPUT.content
-              ? Lang.sprintf(State.option.checks.LABELS_ARIA_LABEL_INPUT.content, inputName)
-              : Lang.sprintf(Lang._('LABELS_ARIA_LABEL_INPUT') + Lang._('ACC_NAME_TIP'), inputName),
+            type: 'warning',
             args: [inputName],
-            dismiss: Utils.prepareDismissal(`LABELS_ARIA_LABEL_INPUT ${type + inputName}`),
-            dismissAll: State.option.checks.LABELS_ARIA_LABEL_INPUT.dismissAll
-              ? 'LABELS_ARIA_LABEL_INPUT'
-              : false,
-            developer: State.option.checks.LABELS_ARIA_LABEL_INPUT.developer || true,
+            content: message,
           });
         }
-        return;
       }
+      return;
+    }
 
-      // Implicit label: <label>First name: <input type="text"/><label>
-      // Only allow implicit label & placeholder checks for native inputs.
-      if (isNativeInput) {
-        const closestLabel = Utils.getCachedClosest($el, 'label');
-        const labelName = closestLabel ? computeAccessibleName(closestLabel) : '';
-        if ((closestLabel && labelName.length) || hasPlaceholder) return;
-      }
+    // Only allow implicit label & placeholder checks for native inputs.
+    if (isNativeInput) {
+      const closestLabel = Utils.getCachedClosest($el, 'label');
+      const labelName = closestLabel ? computeAccessibleName(closestLabel) : '';
+      if ((closestLabel && labelName.length) || hasPlaceholder) return;
+    }
 
-      // Error: Matching for and id attribute?
-      const id = $el.getAttribute('id');
-      if (id) {
-        // Has match.
-        const hasMatchingLabel = Elements.Found.Labels.some(
-          (label) => label.getAttribute('for') === id,
-        );
-        if (hasMatchingLabel) return;
-
-        // Labels without a match.
-        if (State.option.checks.LABELS_NO_FOR_ATTRIBUTE) {
-          State.results.push({
-            test: 'LABELS_NO_FOR_ATTRIBUTE',
-            element: $el,
-            type: State.option.checks.LABELS_NO_FOR_ATTRIBUTE.type || 'error',
-            content: Lang.sprintf(
-              State.option.checks.LABELS_NO_FOR_ATTRIBUTE.content || 'LABELS_NO_FOR_ATTRIBUTE',
-              id,
-            ),
-            args: [id],
-            dismiss: Utils.prepareDismissal(`LABELS_NO_FOR_ATTRIBUTE ${type + inputName}`),
-            dismissAll: State.option.checks.LABELS_NO_FOR_ATTRIBUTE.dismissAll
-              ? 'LABELS_NO_FOR_ATTRIBUTE'
-              : false,
-            developer: State.option.checks.LABELS_NO_FOR_ATTRIBUTE.developer || true,
-          });
-        }
-      } else if (State.option.checks.LABELS_MISSING_LABEL) {
-        // No id!
-        State.results.push({
-          test: 'LABELS_MISSING_LABEL',
-          element: $el,
-          type: State.option.checks.LABELS_MISSING_LABEL.type || 'error',
-          content: Lang.sprintf(
-            State.option.checks.LABELS_MISSING_LABEL.content || 'LABELS_MISSING_LABEL',
-          ),
-          dismiss: Utils.prepareDismissal(`LABELS_MISSING_LABEL ${type + inputName}`),
-          dismissAll: State.option.checks.LABELS_MISSING_LABEL.dismissAll
-            ? 'LABELS_MISSING_LABEL'
-            : false,
-          developer: State.option.checks.LABELS_MISSING_LABEL.developer || true,
-        });
-      }
-    });
-  }
-  return State.results;
+    // Missing labels & for attr.
+    const id = $el.getAttribute('id');
+    if (id) {
+      const hasMatchingLabel = Elements.Found.Labels.some(
+        (label) => label.getAttribute('for') === id,
+      );
+      if (hasMatchingLabel) return;
+      logResult({ test: 'LABELS_NO_FOR_ATTRIBUTE', args: [id] });
+    } else {
+      logResult({ test: 'LABELS_MISSING_LABEL' });
+    }
+  });
 }

@@ -1,6 +1,6 @@
 /*!
       * Sa11y, the accessibility quality assurance assistant.
-      * @version 5.0.0
+      * @version 5.0.1
       * @author Adam Chaboryk
       * @license GPL-2.0-or-later
       * @copyright © 2020 - 2026 Toronto Metropolitan University.
@@ -211,6 +211,7 @@
         dismissAll: true
       },
       QA_PDF: {
+        sources: "",
         dismissAll: true
       },
       QA_BLOCKQUOTE: true,
@@ -323,12 +324,14 @@
     sprintf(string, ...args) {
       let transString = this._(string);
       transString = this.prepHTML(transString);
+      if (args?.length) {
+        args.forEach((_arg, index2) => {
+          transString = transString.replace(/%\([a-zA-Z_]+\)/, `<span data-arg='${index2}'></span>`);
+        });
+      }
       const el2 = document.createElement("div");
       el2.innerHTML = transString;
       if (args?.length) {
-        args.forEach((_arg, index2) => {
-          el2.innerHTML = el2.innerHTML.replace(/%\([a-zA-Z_]+\)/, `<span data-arg='${index2}'></span>`);
-        });
         args.forEach((arg, index2) => {
           const replacement = el2.querySelector(`[data-arg="${index2}"]`);
           if (!replacement || arg === null) return;
@@ -455,6 +458,44 @@
       } else {
         Global.documentSources = defaultDocumentSources;
       }
+      Global.susAltWords = State.option.susAltStopWords ? State.option.susAltStopWords.split(",").map((word) => word.trim().toLowerCase()).filter(Boolean) : Lang._("SUS_ALT_STOPWORDS");
+      Global.placeholderAltSet = new Set(Lang._("PLACEHOLDER_ALT_STOPWORDS"));
+      Global.altPlaceholderPattern = generateRegexString(State.option.altPlaceholder, true);
+      Global.linkIgnoreStringPattern = generateRegexString(State.option.linkIgnoreStrings);
+      Global.extraPlaceholderStopWords = State.option.extraPlaceholderStopWords.split(",").map((word) => word.trim().toLowerCase()).filter(Boolean);
+      Global.headerStringExclusionPattern = generateRegexString(State.option.headerIgnoreStrings);
+      const customStopWords = State.option.linkStopWords ? State.option.linkStopWords.split(",").map((word) => word.toLowerCase().trim()) : [];
+      Global.linkStopWords = /* @__PURE__ */ new Set([...Lang._("LINK_STOPWORDS"), ...customStopWords]);
+      Global.linkIgnoreStrings = new Set(
+        State.option.linkIgnoreStrings.map((word) => word.toLowerCase())
+      );
+      Global.clickRegex = generateRegexString(Lang._("CLICK"));
+      Global.newWindowRegex = generateRegexString(Lang._("NEW_WINDOW_PHRASES"));
+      const defaultFileTypes = [
+        "pdf",
+        "doc",
+        "docx",
+        "word",
+        "mp3",
+        "ppt",
+        "text",
+        "pptx",
+        "txt",
+        "exe",
+        "dmg",
+        "rtf",
+        "windows",
+        "macos",
+        "csv",
+        "xls",
+        "xlsx",
+        "mp4",
+        "mov",
+        "avi",
+        "zip"
+      ];
+      Global.fileTypeRegex = generateRegexString(defaultFileTypes);
+      Global.linkIgnorePattern = generateRegexString(State.option.linkIgnoreStrings);
       const videoSources = State.option.checks.EMBED_VIDEO.sources;
       const defaultVideoSources = 'video, [src*="Video"], [src*="video"], [src*="watch"], [src*="youtube.com"], [src*="vimeo.com"], [src*="panopto.com"], [src*="wistia.com"], [src*="dailymotion.com"], [src*="brightcove.com"], [src*="vidyard.com"]';
       if (videoSources) {
@@ -1453,7 +1494,7 @@
     };
     const joinedPatterns = patterns.map(escapeRegExp).join("|");
     const finalPattern = matchStart ? `^(?:${joinedPatterns})` : joinedPatterns;
-    return new RegExp(finalPattern, "gi");
+    return new RegExp(finalPattern, "i");
   }
   async function dismissDigest(pepper, message) {
     const msgUint8 = new TextEncoder().encode(pepper + message);
@@ -1950,7 +1991,7 @@ ${JSON.stringify(State.option)}
 
 ## Details
 - **URL:** ${url2}
-- **Version:** ${"5.0.0"}
+- **Version:** ${"5.0.1"}
 
 ## Comments
 `;
@@ -1967,7 +2008,7 @@ ${JSON.stringify(State.option)}
         this.error.stack,
         document.createElement("br"),
         document.createElement("br"),
-        `Version: ${"5.0.0"}`,
+        `Version: ${"5.0.1"}`,
         document.createElement("br"),
         `URL: ${url2}`,
         document.createElement("br"),
@@ -2495,7 +2536,7 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
       buttonWrapper.appendChild(button);
       annotationButtons.push(button);
       const insertBefore = State.option.insertAnnotationBefore ? `, ${State.option.insertAnnotationBefore}` : "";
-      const location = getCachedClosest(element, "svg") || getCachedClosest(element, `a, button, [role="link"], [role="button"] ${insertBefore}`) || element;
+      const location = getCachedClosest(element, `a, button, [role="link"], [role="button"] ${insertBefore}`) || getCachedClosest(element, "svg") || element;
       location.insertAdjacentElement(position, annotation);
       annotation.shadowRoot.appendChild(buttonWrapper);
       const ignoredElements = State.option.ignoreHiddenOverflow ? State.option.ignoreHiddenOverflow.split(",").flatMap((selector) => [...document.querySelectorAll(selector)]) : [];
@@ -3863,9 +3904,6 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
     const hasBackgroundColor = background && background.type !== "image";
     const backgroundHex = hasBackgroundColor ? getHex(background) : "#000000";
     const foregroundHex = color ? getHex(color) : "#000000";
-    const hasFontWeight = fontWeight ? `font-weight:${fontWeight};` : "";
-    const hasFontSize = fontSize ? `font-size:${fontSize}px;` : "";
-    const textDecoration = textUnderline ? `text-decoration:${textUnderline};` : "";
     const unknownFG = color ? "" : 'class="unknown"';
     const unknownBG = background && background.type !== "image" ? "" : 'class="unknown"';
     const unknownFGText = color ? "" : `<span id="fg-input-unknown" class="visually-hidden">(${Lang._("UNKNOWN")})</span>`;
@@ -3883,7 +3921,7 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
       <div id="contrast" class="badge">${Lang._("CONTRAST")}</div>
       <div id="value" class="badge">${displayedRatio}</div>
       <div id="good" class="badge good-contrast" hidden>${Lang._("GOOD")} <span class="good-icon"></span></div>
-      <div id="contrast-preview" style="color:${foregroundHex};${hasBackgroundColor ? `background:${backgroundHex};` : ""}${hasFontWeight + hasFontSize + textDecoration}"></div>
+      <div id="contrast-preview"></div>
       <div id="color-pickers">
         <label for="fg-text">${Lang._("FG")} ${unknownFGText}
           <div id="fg-color-wrapper" ${unknownFG}>
@@ -3896,7 +3934,13 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
           </div>
         </label>
       </div>`;
-    contrastTools.querySelector("#contrast-preview").textContent = previewText;
+    const preview = contrastTools.querySelector("#contrast-preview");
+    preview.textContent = previewText;
+    preview.style.color = foregroundHex;
+    if (hasBackgroundColor) preview.style.background = backgroundHex;
+    if (fontWeight) preview.style.fontWeight = fontWeight;
+    if (fontSize) preview.style.fontSize = `${fontSize}px`;
+    if (textUnderline) preview.style.textDecoration = textUnderline;
     return contrastTools;
   }
   function initializeContrastTools(container, contrastDetails) {
@@ -5837,6 +5881,41 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
       }
     }
   }
+  function pushResult({
+    test,
+    element = null,
+    type = "error",
+    args = [],
+    content = null,
+    dismiss = "",
+    dismissAll = false,
+    developer = false,
+    margin = null,
+    inline = false,
+    position = null,
+    ...customProps
+  }) {
+    const rule = State.option.checks[test];
+    if (!rule) return null;
+    const rawContent = rule.content || content || test;
+    const finalContent = typeof rawContent === "string" ? Lang.sprintf(rawContent, ...args) : rawContent;
+    const result = {
+      test,
+      ...element && { element },
+      type: rule.type || type,
+      content: finalContent,
+      ...args.length && { args },
+      inline: rule.inline || inline,
+      ...position && { position },
+      dismiss: prepareDismissal(test + dismiss),
+      dismissAll: rule.dismissAll ? test : dismissAll,
+      developer: rule.developer ?? developer,
+      ...margin && { margin },
+      ...customProps
+    };
+    State.results.push(result);
+    return result;
+  }
   const STORAGE_KEY = "sa11y-lang-detection";
   const MAX_CACHE_SIZE = 200;
   let detectorPromise = null;
@@ -5934,7 +6013,7 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
         if (cached.element) {
           contentContainer.append(" ", Lang.sprintf("LANG_TIP"));
         }
-        State.results.push({
+        pushResult({
           element: getElement || null,
           test: cached.test,
           type: State.option.checks[cached.test].type || cached.type,
@@ -6069,7 +6148,7 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
     if (test) {
       const wrapper = document.createElement("div");
       wrapper.append(content, " ", Lang.sprintf("LANG_TIP"));
-      State.results.push({
+      pushResult({
         element,
         test,
         type: State.option.checks[test].type || type,
@@ -6223,540 +6302,322 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
     ".heic",
     "http"
   ];
-  function checkImages() {
-    const susAltWords = State.option.susAltStopWords ? State.option.susAltStopWords.split(",").map((word) => word.trim().toLowerCase()).filter(Boolean) : Lang._("SUS_ALT_STOPWORDS");
-    const placeholderAltSet = new Set(Lang._("PLACEHOLDER_ALT_STOPWORDS"));
-    const altPlaceholderPattern = generateRegexString(State.option.altPlaceholder, true);
-    const linkIgnoreStringPattern = generateRegexString(State.option.linkIgnoreStrings);
-    const extraPlaceholderStopWords = State.option.extraPlaceholderStopWords.split(",").map((word) => word.trim().toLowerCase()).filter(Boolean);
-    const containsAltTextStopWords = (alt) => {
-      const altLowerCase = removeWhitespace(alt).toLowerCase();
-      const altOnlyLetters = removeWhitespace(altLowerCase.replace(/[^\p{L}\s]/gu, ""));
-      const hit = [null, null, null];
-      for (const urlHit of url) {
-        if (altLowerCase.includes(urlHit)) {
-          hit[0] = urlHit;
-          break;
-        }
+  const containsAltTextStopWords = (alt) => {
+    const altLowerCase = removeWhitespace(alt).toLowerCase();
+    const altOnlyLetters = removeWhitespace(altLowerCase.replace(/[^\p{L}\s]/gu, ""));
+    const hit = [null, null, null];
+    for (const urlHit of url) {
+      if (altLowerCase.includes(urlHit)) {
+        hit[0] = urlHit;
+        break;
       }
-      if (!hit[0]) {
-        const match = altLowerCase.match(/\b\d{2,6}\s*x\s*\d{2,6}\b/);
-        if (match) hit[0] = match[0];
+    }
+    if (!hit[0]) {
+      const match = altLowerCase.match(/\b\d{2,6}\s*x\s*\d{2,6}\b/);
+      if (match) hit[0] = match[0];
+    }
+    for (const word of Constants.Global.susAltWords) {
+      const index2 = altLowerCase.indexOf(word);
+      if (index2 > -1 && index2 < 6) {
+        hit[1] = word;
+        break;
       }
-      for (const word of susAltWords) {
+    }
+    if (Constants.Global.placeholderAltSet.has(altLowerCase) || Constants.Global.placeholderAltSet.has(altOnlyLetters)) {
+      hit[2] = alt;
+    }
+    if (Constants.Global.extraPlaceholderStopWords.length) {
+      for (const word of Constants.Global.extraPlaceholderStopWords) {
         const index2 = altLowerCase.indexOf(word);
         if (index2 > -1 && index2 < 6) {
-          hit[1] = word;
+          hit[2] = word;
           break;
         }
       }
-      if (placeholderAltSet.has(altLowerCase) || placeholderAltSet.has(altOnlyLetters)) {
-        hit[2] = alt;
-      }
-      if (extraPlaceholderStopWords.length) {
-        for (const word of extraPlaceholderStopWords) {
-          const index2 = altLowerCase.indexOf(word);
-          if (index2 > -1 && index2 < 6) {
-            hit[2] = word;
-            break;
-          }
-        }
-      }
-      return hit;
-    };
+    }
+    return hit;
+  };
+  function checkImages() {
     Elements.Found.Images.forEach(($el) => {
       const alt = computeAriaLabel($el) === "noAria" ? $el.getAttribute("alt") ?? $el.getAttribute("title") : computeAriaLabel($el);
-      if ($el.height < 2 && $el.width < 2 && (isElementHidden($el) || alt === "")) {
-        return;
-      }
+      if ($el.height < 2 && $el.width < 2 && (isElementHidden($el) || alt === "")) return;
       const link = getCachedClosest(
         $el,
         State.option.imageWithinLightbox ? `a[href]:not(${State.option.imageWithinLightbox})` : "a[href]"
       );
       if (isHiddenAndUnfocusable(link)) return;
-      const src = $el.getAttribute("src") ? $el.getAttribute("src").split("?")[0] : $el.getAttribute("srcset");
+      const srcAttr = $el.getAttribute("src");
+      const src = srcAttr ? srcAttr.split("?")[0] : $el.getAttribute("srcset");
       const linkText = link ? fnIgnore(link, Constants.Exclusions.LinkSpan).textContent.replace(
-        linkIgnoreStringPattern,
+        Constants.Global.linkIgnoreStringPattern,
         ""
       ) : "";
       const linkTextLength = removeWhitespace(linkText).length;
+      const logResult = (params) => pushResult({
+        element: $el,
+        type: params.type || "error",
+        dismiss: params.dismiss || src,
+        ...params
+      });
+      let test;
+      let key;
+      let type;
       if (alt === null) {
         if (link) {
-          const hasAriaHiddenOrPresentationRole = linkTextLength > 0 && (isPresentational($el) || isAriaHidden($el));
-          if (!hasAriaHiddenOrPresentationRole) {
-            const rule = linkTextLength === 0 ? State.option.checks.MISSING_ALT_LINK : State.option.checks.MISSING_ALT_LINK_HAS_TEXT;
-            const conditional = linkTextLength === 0 ? "MISSING_ALT_LINK" : "MISSING_ALT_LINK_HAS_TEXT";
-            if (rule) {
-              State.results.push({
-                test: conditional,
-                element: $el,
-                type: rule.type || "error",
-                content: Lang.sprintf(rule.content || conditional),
-                dismiss: prepareDismissal(`${conditional + src + linkTextLength}`),
-                dismissAll: rule.dismissAll ? conditional : false,
-                developer: rule.developer || false
-              });
-            }
-          }
-        } else if (State.option.checks.MISSING_ALT) {
-          State.results.push({
-            test: "MISSING_ALT",
-            element: $el,
-            type: State.option.checks.MISSING_ALT.type || "error",
-            content: Lang.sprintf(State.option.checks.MISSING_ALT.content || "MISSING_ALT"),
-            dismiss: prepareDismissal(`MISSING_ALT ${src}`),
-            dismissAll: State.option.checks.MISSING_ALT.dismissAll ? "MISSING_ALT" : false,
-            developer: State.option.checks.MISSING_ALT.developer || false
-          });
+          if (linkTextLength > 0 && (isPresentational($el) || isAriaHidden($el))) return;
+          test = linkTextLength === 0 ? "MISSING_ALT_LINK" : "MISSING_ALT_LINK_HAS_TEXT";
+          key = src + linkTextLength;
+        } else {
+          test = "MISSING_ALT";
+          key = src;
         }
-        return;
+      } else if (alt === "") {
+        const hasAria = $el.getAttribute("aria-label") || $el.getAttribute("aria-labelledby");
+        if (hasAria) {
+          test = "MISSING_ALT";
+          key = hasAria + src;
+        }
       }
+      if (test && logResult({ test, dismiss: key })) return;
       const altText = removeWhitespace(alt);
-      const hasAria = $el.getAttribute("aria-label") || $el.getAttribute("aria-labelledby");
-      if (State.option.checks.MISSING_ALT) {
-        if (hasAria && alt === "") {
-          State.results.push({
-            test: "MISSING_ALT",
-            element: $el,
-            type: State.option.checks.MISSING_ALT.type || "error",
-            content: Lang.sprintf(State.option.checks.MISSING_ALT.content || "MISSING_ALT"),
-            dismiss: prepareDismissal(`MISSING_ALT ${hasAria + src}`),
-            dismissAll: State.option.checks.MISSING_ALT.dismissAll ? "MISSING_ALT" : false,
-            developer: State.option.checks.MISSING_ALT.developer || false
-          });
-          return;
-        }
-      }
-      let decorative = alt === "";
       const figure = getCachedClosest($el, "figure");
       const figcaption = figure?.querySelector("figcaption");
       const figcaptionText = figcaption ? getText(figcaption) : "";
-      const maxAltCharactersLinks = State.option.checks.LINK_IMAGE_LONG_ALT.maxLength || 250;
-      const maxAltCharacters = State.option.checks.IMAGE_ALT_TOO_LONG.maxLength || 250;
+      let decorative = alt === "";
       if (!decorative && State.option.altPlaceholder.length) {
-        decorative = alt.match(altPlaceholderPattern)?.[0];
+        decorative = !!alt.match(Constants.Global.altPlaceholderPattern);
       }
       if (decorative) {
         if (getCachedClosest($el, `button, [role='button']`)) return;
-        const carouselSources = State.option.checks.IMAGE_DECORATIVE_CAROUSEL.sources;
-        const carousel = carouselSources ? getCachedClosest($el, carouselSources) : "";
+        const carouselSources = State.option.checks.IMAGE_DECORATIVE_CAROUSEL?.sources;
+        const carousel = carouselSources ? getCachedClosest($el, carouselSources) : null;
         if (carousel) {
-          const numberOfSlides = carousel.querySelectorAll("img");
-          const rule = numberOfSlides.length === 1 ? State.option.checks.IMAGE_DECORATIVE : State.option.checks.IMAGE_DECORATIVE_CAROUSEL;
-          const conditional = numberOfSlides.length === 1 ? "IMAGE_DECORATIVE" : "IMAGE_DECORATIVE_CAROUSEL";
-          if (rule) {
-            State.results.push({
-              test: conditional,
-              element: $el,
-              type: rule.type || "warning",
-              content: Lang.sprintf(rule.content || conditional),
-              dismiss: prepareDismissal(conditional + src),
-              dismissAll: rule.dismissAll ? conditional : false,
-              developer: rule.developer || false
-            });
-          }
+          test = carousel.querySelectorAll("img").length === 1 ? "IMAGE_DECORATIVE" : "IMAGE_DECORATIVE_CAROUSEL";
+          type = "warning";
         } else if (link) {
-          const rule = linkTextLength === 0 ? State.option.checks.LINK_IMAGE_NO_ALT_TEXT : State.option.checks.LINK_IMAGE_TEXT;
-          const conditional = linkTextLength === 0 ? "LINK_IMAGE_NO_ALT_TEXT" : "LINK_IMAGE_TEXT";
-          if (rule) {
-            State.results.push({
-              test: conditional,
-              element: $el,
-              type: rule.type || (linkTextLength === 0 ? "error" : "good"),
-              content: Lang.sprintf(rule.content || conditional),
-              dismiss: prepareDismissal(`${conditional + src + linkTextLength}`),
-              dismissAll: rule.dismissAll ? conditional : false,
-              developer: rule.developer || false
-            });
-          }
-        } else if (figure) {
-          const rule = figcaption && figcaptionText.length ? State.option.checks.IMAGE_FIGURE_DECORATIVE : State.option.checks.IMAGE_DECORATIVE;
-          const conditional = figcaption && figcaptionText.length ? "IMAGE_FIGURE_DECORATIVE" : "IMAGE_DECORATIVE";
-          if (rule) {
-            State.results.push({
-              test: conditional,
-              element: $el,
-              type: rule.type || "warning",
-              content: Lang.sprintf(rule.content || conditional),
-              dismiss: prepareDismissal(`${conditional + src + figcaptionText}`),
-              dismissAll: rule.dismissAll ? conditional : false,
-              developer: rule.developer || false
-            });
-          }
-        } else if (State.option.checks.IMAGE_DECORATIVE) {
-          State.results.push({
-            test: "IMAGE_DECORATIVE",
-            element: $el,
-            type: State.option.checks.IMAGE_DECORATIVE.type || "warning",
-            content: Lang.sprintf(State.option.checks.IMAGE_DECORATIVE.content || "IMAGE_DECORATIVE"),
-            dismiss: prepareDismissal(`IMAGE_DECORATIVE ${src}`),
-            dismissAll: State.option.checks.IMAGE_DECORATIVE.dismissAll ? "IMAGE_DECORATIVE" : false,
-            developer: State.option.checks.IMAGE_DECORATIVE.developer || false
-          });
+          test = linkTextLength === 0 ? "LINK_IMAGE_NO_ALT_TEXT" : "LINK_IMAGE_TEXT";
+          type = linkTextLength === 0 ? "error" : "good";
+          key = src + linkTextLength;
+        } else if (figure && figcaptionText.length) {
+          test = "IMAGE_FIGURE_DECORATIVE";
+          type = "warning";
+          key = src + figcaptionText;
+        } else {
+          test = "IMAGE_DECORATIVE";
+          type = "warning";
         }
+        if (test && logResult({
+          test,
+          type,
+          dismiss: key || src
+        }))
+          return;
+      }
+      if (alt.replace(/"|'|\?|\.|-|\s+/g, "") === "" && linkTextLength === 0) {
+        logResult({
+          test: link ? "LINK_ALT_UNPRONOUNCEABLE" : "ALT_UNPRONOUNCEABLE",
+          args: [altText]
+        });
         return;
       }
-      const unpronounceable = link ? State.option.checks.LINK_ALT_UNPRONOUNCEABLE : State.option.checks.ALT_UNPRONOUNCEABLE;
-      if (unpronounceable) {
-        if (alt.replace(/"|'|\?|\.|-|\s+/g, "") === "" && linkTextLength === 0) {
-          const conditional = link ? "LINK_ALT_UNPRONOUNCEABLE" : "ALT_UNPRONOUNCEABLE";
-          State.results.push({
-            test: conditional,
-            element: $el,
-            type: unpronounceable.type || "error",
-            content: Lang.sprintf(unpronounceable.content || conditional, altText),
-            args: [altText],
-            dismiss: prepareDismissal(`${conditional + src}`),
-            dismissAll: unpronounceable.dismissAll ? "ALT_UNPRONOUNCEABLE" : false,
-            developer: unpronounceable.developer || false
-          });
-          return;
-        }
-      }
       const error = containsAltTextStopWords(altText);
-      const maybeBadAlt = link ? State.option.checks.LINK_ALT_MAYBE_BAD : State.option.checks.ALT_MAYBE_BAD;
-      const isTooLongSingleWord = new RegExp(`^\\S{${maybeBadAlt.minLength || 15},}$`);
-      const containsNonAlphaChar = /[^\p{L}\-,.!? ]/u.test(altText);
-      const isBadFilename = new RegExp(
-        `^(?=[^_-]*([_-][^_-]*){3,})\\S{${maybeBadAlt.minLength || 15},}$`
-      ).test(altText);
-      const hasTooMuchNoise = /^(?:\s*\d){5,}\s*$/.test(altText) || // Is a number longer than 5 digits.
-      (altText.match(/[_-]/g) || []).length >= 3;
       if (error[0] !== null) {
-        const rule = link ? State.option.checks.LINK_ALT_FILE_EXT : State.option.checks.ALT_FILE_EXT;
-        const conditional = link ? "LINK_ALT_FILE_EXT" : "ALT_FILE_EXT";
-        if (rule) {
-          State.results.push({
-            test: conditional,
-            element: $el,
-            type: rule.type || "error",
-            content: Lang.sprintf(rule.content || conditional, error[0], altText),
-            args: [error[0], altText],
-            dismiss: prepareDismissal(`${conditional + src + alt}`),
-            dismissAll: rule.dismissAll ? conditional : false,
-            developer: rule.developer || false
-          });
-        }
+        logResult({
+          test: link ? "LINK_ALT_FILE_EXT" : "ALT_FILE_EXT",
+          args: [error[0], altText],
+          dismiss: src + alt
+        });
+        return;
       } else if (error[2] !== null) {
-        const rule = link ? State.option.checks.LINK_PLACEHOLDER_ALT : State.option.checks.ALT_PLACEHOLDER;
-        const conditional = link ? "LINK_PLACEHOLDER_ALT" : "ALT_PLACEHOLDER";
-        if (rule) {
-          State.results.push({
-            test: conditional,
-            element: $el,
-            type: rule.type || "error",
-            content: Lang.sprintf(rule.content || conditional, altText),
-            args: [altText],
-            dismiss: prepareDismissal(`${conditional + src + alt}`),
-            dismissAll: rule.dismissAll ? conditional : false,
-            developer: rule.developer || false
-          });
-        }
+        logResult({
+          test: link ? "LINK_PLACEHOLDER_ALT" : "ALT_PLACEHOLDER",
+          args: [altText],
+          dismiss: src + alt
+        });
+        return;
       } else if (error[1] !== null) {
-        const rule = link ? State.option.checks.LINK_SUS_ALT : State.option.checks.SUS_ALT;
-        const conditional = link ? "LINK_SUS_ALT" : "SUS_ALT";
-        if (rule) {
-          State.results.push({
-            test: conditional,
-            element: $el,
-            type: rule.type || "warning",
-            content: Lang.sprintf(rule.content || conditional, error[1], altText),
-            args: [error[1], altText],
-            dismiss: prepareDismissal(`${conditional + src + alt}`),
-            dismissAll: rule.dismissAll ? conditional : false,
-            developer: rule.developer || false
-          });
-        }
-      } else if (isBadFilename || maybeBadAlt && isTooLongSingleWord.test(alt) && containsNonAlphaChar) {
-        const rule = link ? State.option.checks.LINK_ALT_MAYBE_BAD : State.option.checks.ALT_MAYBE_BAD;
-        const conditional = link ? "LINK_ALT_MAYBE_BAD" : "ALT_MAYBE_BAD";
-        if (rule) {
-          State.results.push({
-            test: conditional,
-            element: $el,
-            type: rule.type || "error",
-            content: Lang.sprintf(rule.content || conditional, altText),
-            args: [altText],
-            dismiss: prepareDismissal(`${conditional + src + alt}`),
-            dismissAll: rule.dismissAll ? conditional : false,
-            developer: rule.developer || false
-          });
-        }
-      } else if (hasTooMuchNoise) {
-        const conditional = link ? "LINK_ALT_MAYBE_BAD" : "ALT_MAYBE_BAD";
-        const rule = link ? State.option.checks.LINK_ALT_MAYBE_BAD_WARNING : State.option.checks.ALT_MAYBE_BAD_WARNING;
-        if (rule) {
-          State.results.push({
-            test: link ? "LINK_ALT_MAYBE_BAD_WARNING" : "ALT_MAYBE_BAD_WARNING",
-            element: $el,
-            type: rule.type || "warning",
-            content: Lang.sprintf(rule.content || conditional, altText),
-            args: [altText],
-            dismiss: prepareDismissal(`${conditional}WARNING${src + alt} `),
-            dismissAll: rule.dismissAll ? conditional : false,
-            developer: rule.developer || false
-          });
-        }
-      } else if (link ? alt.length > maxAltCharactersLinks : alt.length > maxAltCharacters) {
-        const rule = link ? State.option.checks.LINK_IMAGE_LONG_ALT : State.option.checks.IMAGE_ALT_TOO_LONG;
-        const conditional = link ? "LINK_IMAGE_LONG_ALT" : "IMAGE_ALT_TOO_LONG";
-        if (rule) {
-          State.results.push({
-            test: conditional,
-            element: $el,
-            type: rule.type || "warning",
-            content: Lang.sprintf(rule.content || conditional, alt.length, altText),
-            args: [alt.length, altText],
-            dismiss: prepareDismissal(`${conditional + src + alt}`),
-            dismissAll: rule.dismissAll ? conditional : false,
-            developer: rule.developer || false
-          });
-        }
-      } else if (link) {
-        const rule = linkTextLength === 0 ? State.option.checks.LINK_IMAGE_ALT : State.option.checks.LINK_IMAGE_ALT_AND_TEXT;
-        const conditional = linkTextLength === 0 ? "LINK_IMAGE_ALT" : "LINK_IMAGE_ALT_AND_TEXT";
-        if (rule) {
-          const linkAccName = computeAccessibleName(link);
-          const accName = removeWhitespace(linkAccName);
+        logResult({
+          test: link ? "LINK_SUS_ALT" : "SUS_ALT",
+          type: "warning",
+          args: [error[1], altText],
+          dismiss: src + alt
+        });
+        return;
+      }
+      const badAltTest = link ? "LINK_ALT_MAYBE_BAD" : "ALT_MAYBE_BAD";
+      const minLength = State.option.checks[badAltTest]?.minLength || 15;
+      const isTooLongSingleWord = new RegExp(`^\\S{${minLength},}$`);
+      const containsNonAlphaChar = /[^\p{L}\-,.!? ]/u.test(altText);
+      const isBadFilename = new RegExp(`^(?=[^_-]*([_-][^_-]*){3,})\\S{${minLength},}$`).test(
+        altText
+      );
+      if (isBadFilename || isTooLongSingleWord.test(alt) && containsNonAlphaChar) {
+        logResult({
+          test: badAltTest,
+          args: [altText],
+          dismiss: src + alt
+        });
+        return;
+      }
+      const warningTest = link ? "LINK_ALT_MAYBE_BAD_WARNING" : "ALT_MAYBE_BAD_WARNING";
+      const wordCount = altText.trim().split(/\s+/).length;
+      const delimiterCount = (altText.match(/[_-]/g) || []).length;
+      const hasTooMuchNoise = /^(?:\s*\d){5,}\s*$/.test(altText) || delimiterCount >= 3 && wordCount <= 2;
+      if (hasTooMuchNoise) {
+        logResult({
+          test: warningTest,
+          type: "warning",
+          content: badAltTest,
+          // We re-use this key for the tooltip.
+          args: [altText],
+          dismiss: `WARNING${src + alt}`
+        });
+        return;
+      }
+      const tooLongTest = link ? "LINK_IMAGE_LONG_ALT" : "IMAGE_ALT_TOO_LONG";
+      const maxAltChars = State.option.checks[tooLongTest]?.maxLength || 250;
+      if (alt.length > maxAltChars) {
+        logResult({
+          test: tooLongTest,
+          type: "warning",
+          args: [alt.length, altText],
+          dismiss: src + alt
+        });
+        return;
+      }
+      if (link && !Constants.Global.linkIgnoreStringPattern.test(alt)) {
+        const latTestName = linkTextLength === 0 ? "LINK_IMAGE_ALT" : "LINK_IMAGE_ALT_AND_TEXT";
+        const latRule = State.option.checks[latTestName];
+        if (latRule) {
+          const linkAccName = computeAccessibleName(link, Constants.Exclusions.LinkSpan);
+          const accName = removeWhitespace(
+            linkAccName.replace(Constants.Global.linkIgnoreStringPattern, "")
+          );
           const tooltip = Lang.sprintf(
             linkTextLength === 0 ? Lang._("LINK_IMAGE_ALT") : Lang._("LINK_IMAGE_ALT_AND_TEXT") + Lang._("ACC_NAME_TIP"),
             altText,
             accName
           );
-          State.results.push({
-            test: conditional,
-            element: $el,
-            type: rule.type || "warning",
-            content: rule.content ? Lang.sprintf(rule.content, altText, accName) : tooltip,
+          logResult({
+            test: latTestName,
+            type: "warning",
             args: [altText, accName],
-            dismiss: prepareDismissal(`${conditional + src + alt}`),
-            dismissAll: rule.dismissAll ? conditional : false,
-            developer: rule.developer || false
+            content: latRule.content ? Lang.sprintf(latRule.content, altText, accName) : tooltip,
+            dismiss: src + alt
           });
-        }
-      } else if (figure) {
-        const duplicate = !!figcaption && figcaptionText.toLowerCase() === alt.toLowerCase();
-        if (duplicate) {
-          if (State.option.checks.IMAGE_FIGURE_DUPLICATE_ALT) {
-            State.results.push({
-              test: "IMAGE_FIGURE_DUPLICATE_ALT",
-              element: $el,
-              type: State.option.checks.IMAGE_FIGURE_DUPLICATE_ALT.type || "warning",
-              content: Lang.sprintf(
-                State.option.checks.IMAGE_FIGURE_DUPLICATE_ALT.content || "IMAGE_FIGURE_DUPLICATE_ALT",
-                altText
-              ),
-              args: [altText],
-              dismiss: prepareDismissal(`IMAGE_FIGURE_DUPLICATE_ALT ${src}`),
-              dismissAll: State.option.checks.IMAGE_FIGURE_DUPLICATE_ALT.dismissAll ? "IMAGE_FIGURE_DUPLICATE_ALT" : false,
-              developer: State.option.checks.IMAGE_FIGURE_DUPLICATE_ALT.developer || false
-            });
-          }
-        } else if (State.option.checks.IMAGE_PASS) {
-          State.results.push({
-            test: "IMAGE_PASS",
-            element: $el,
-            type: State.option.checks.IMAGE_PASS.type || "good",
-            content: Lang.sprintf(State.option.checks.IMAGE_PASS.content || "IMAGE_PASS", altText),
-            args: [altText],
-            dismiss: prepareDismissal(`IMAGE_PASS FIGURE ${src + alt}`),
-            dismissAll: State.option.checks.IMAGE_PASS.dismissAll ? "IMAGE_PASS" : false,
-            developer: State.option.checks.IMAGE_PASS.developer || false
-          });
-        }
-      } else if (State.option.checks.IMAGE_PASS) {
-        const button = getCachedClosest($el, 'button, [role="button"]');
-        if (!button) {
-          State.results.push({
-            test: "IMAGE_PASS",
-            element: $el,
-            type: State.option.checks.IMAGE_PASS.type || "good",
-            content: Lang.sprintf(State.option.checks.IMAGE_PASS.content || "IMAGE_PASS", altText),
-            args: [altText],
-            dismiss: prepareDismissal(`IMAGE_PASS ${src + alt}`),
-            dismissAll: State.option.checks.IMAGE_PASS.dismissAll ? "IMAGE_PASS" : false,
-            developer: State.option.checks.IMAGE_PASS.developer || false
-          });
+          return;
         }
       }
-      const title = $el.getAttribute("title");
-      if (title !== null && title.trim().toLowerCase() === $el.getAttribute("alt")?.trim().toLowerCase()) {
-        if (State.option.checks.DUPLICATE_TITLE) {
-          State.results.push({
-            test: "DUPLICATE_TITLE",
-            element: $el,
-            type: State.option.checks.DUPLICATE_TITLE.type || "warning",
-            content: Lang.sprintf(State.option.checks.DUPLICATE_TITLE.content || "DUPLICATE_TITLE"),
-            inline: true,
-            dismiss: prepareDismissal(`DUPLICATE_TITLE ${alt}`),
-            dismissAll: State.option.checks.DUPLICATE_TITLE.dismissAll ? "DUPLICATE_TITLE" : false,
-            developer: State.option.checks.DUPLICATE_TITLE.developer || false
-          });
-        }
+      if (figure && figcaption && figcaptionText.toLowerCase() === alt.toLowerCase()) {
+        logResult({
+          test: "IMAGE_FIGURE_DUPLICATE_ALT",
+          type: "warning",
+          args: [altText]
+        });
+        return;
+      }
+      const getVal = (attr) => $el.getAttribute(attr)?.trim().toLowerCase();
+      if ($el.hasAttribute("title") && getVal("title") === getVal("alt")) {
+        logResult({
+          test: "DUPLICATE_TITLE",
+          type: "warning",
+          inline: true,
+          dismiss: alt
+        });
+        return;
+      }
+      if (!getCachedClosest($el, 'button, [role="button"]')) {
+        if (Constants.Global.linkIgnoreStringPattern.test(alt)) return;
+        logResult({
+          test: "IMAGE_PASS",
+          type: "good",
+          args: [altText],
+          dismiss: src + alt
+        });
       }
     });
   }
   function checkHeaders() {
     let prevLevel;
     let prevHeadingText = "";
-    const stringExclusionPattern = generateRegexString(State.option.headerIgnoreStrings);
     Elements.Found.Headings.forEach(($el, i) => {
       const accName = computeAccessibleName($el, Constants.Exclusions.HeaderSpan);
-      const stringMatchExclusions = accName.replace(stringExclusionPattern, "");
-      const headingText = removeWhitespace(stringMatchExclusions);
+      const headingText = removeWhitespace(
+        accName.replace(Constants.Global.headerStringExclusionPattern, "")
+      );
       const rootContainsHeading = Constants.Root.areaToCheck.some((root) => root.contains($el));
       const rootContainsShadowHeading = Constants.Root.areaToCheck.some(
         (root) => root.contains($el.getRootNode().host)
       );
       const isWithinRoot = rootContainsHeading || rootContainsShadowHeading;
       const headingStartsOverride = Elements.Found.HeadingOverrideStart.get($el);
-      if (headingStartsOverride) {
-        prevLevel = headingStartsOverride;
-      }
+      if (headingStartsOverride) prevLevel = headingStartsOverride;
       const level = parseInt($el.getAttribute("aria-level") || $el.tagName.slice(1), 10);
       const headingLength = headingText.length;
-      const maxHeadingLength = State.option.checks.HEADING_LONG.maxLength || 160;
-      let test = null;
-      let type = null;
-      let content = null;
-      let developer = null;
-      let dismissAll = null;
-      let margin = null;
-      let args = null;
+      const maxHeadingLength = State.option.checks.HEADING_LONG?.maxLength || 160;
+      const logResult = (params) => pushResult({
+        element: $el,
+        dismiss: level + headingText,
+        ...params
+      });
+      let result = null;
       if (headingLength === 0) {
         const image = $el.querySelector("img");
-        if (image) {
-          const alt = image?.getAttribute("alt");
-          if (image && (!alt || alt.trim() === "" || accName === "")) {
-            if (State.option.checks.HEADING_EMPTY_WITH_IMAGE) {
-              test = "HEADING_EMPTY_WITH_IMAGE";
-              type = State.option.checks.HEADING_EMPTY_WITH_IMAGE.type || "error";
-              content = Lang.sprintf(
-                State.option.checks.HEADING_EMPTY_WITH_IMAGE.content || "HEADING_EMPTY_WITH_IMAGE",
-                level
-              );
-              args = [level];
-              developer = State.option.checks.HEADING_EMPTY_WITH_IMAGE.developer || false;
-              dismissAll = State.option.checks.HEADING_EMPTY_WITH_IMAGE.dismissAll ? "HEADING_EMPTY_WITH_IMAGE" : false;
-              margin = "-15px 30px";
-            }
-          }
-        } else if (State.option.checks.HEADING_EMPTY) {
-          test = "HEADING_EMPTY";
-          type = State.option.checks.HEADING_EMPTY.type || "error";
-          content = Lang.sprintf(State.option.checks.HEADING_EMPTY.content || "HEADING_EMPTY", level);
-          args = [level];
-          developer = State.option.checks.HEADING_EMPTY.developer || false;
-          dismissAll = State.option.checks.HEADING_EMPTY.dismissAll ? "HEADING_EMPTY" : false;
-          margin = "0";
+        const alt = image?.getAttribute("alt");
+        if (image && (!alt || alt.trim() === "" || accName === "")) {
+          result = logResult({
+            test: "HEADING_EMPTY_WITH_IMAGE",
+            args: [level],
+            margin: "-15px 30px"
+          });
+        } else {
+          result = logResult({
+            test: "HEADING_EMPTY",
+            args: [level],
+            margin: "0"
+          });
         }
       } else if (level - prevLevel > 1 && (i !== 0 || headingStartsOverride)) {
-        if (State.option.checks.HEADING_SKIPPED_LEVEL) {
-          test = "HEADING_SKIPPED_LEVEL";
-          type = State.option.checks.HEADING_SKIPPED_LEVEL.type || "error";
-          content = Lang.sprintf(
-            State.option.checks.HEADING_SKIPPED_LEVEL.content || "HEADING_SKIPPED_LEVEL",
+        result = logResult({
+          test: "HEADING_SKIPPED_LEVEL",
+          args: [
             prevLevel,
             level,
             truncateString(headingText, 60),
             truncateString(prevHeadingText, 60),
             prevLevel + 1
-          );
-          args = [
-            prevLevel,
-            level,
-            truncateString(headingText, 60),
-            truncateString(prevHeadingText, 60),
-            prevLevel + 1
-          ];
-          developer = State.option.checks.HEADING_SKIPPED_LEVEL.developer || false;
-          dismissAll = State.option.checks.HEADING_SKIPPED_LEVEL.dismissAll ? "HEADING_SKIPPED_LEVEL" : false;
-        }
+          ]
+        });
       } else if (i === 0 && level !== 1 && level !== 2) {
-        if (State.option.checks.HEADING_FIRST) {
-          test = "HEADING_FIRST";
-          type = State.option.checks.HEADING_FIRST.type || "error";
-          content = Lang.sprintf(State.option.checks.HEADING_FIRST.content || "HEADING_FIRST");
-          developer = State.option.checks.HEADING_FIRST.developer || false;
-          dismissAll = State.option.checks.HEADING_FIRST.dismissAll ? "HEADING_FIRST" : false;
-        }
+        result = logResult({ test: "HEADING_FIRST" });
       } else if (headingLength > maxHeadingLength) {
-        if (State.option.checks.HEADING_LONG) {
-          test = "HEADING_LONG";
-          type = State.option.checks.HEADING_LONG.type || "warning";
-          content = Lang.sprintf(
-            State.option.checks.HEADING_LONG.content || "HEADING_LONG",
-            maxHeadingLength,
-            headingLength,
-            headingText
-          );
-          args = [maxHeadingLength, headingLength, headingText];
-          developer = State.option.checks.HEADING_LONG.developer || false;
-          dismissAll = State.option.checks.HEADING_LONG.dismissAll ? "HEADING_LONG" : false;
-        }
-      }
-      if (content && type) {
-        State.results.push({
-          test,
-          element: $el,
-          type,
-          content,
-          args,
-          dismiss: prepareDismissal(`${test + level + headingText}`),
-          dismissAll,
-          isWithinRoot,
-          developer,
-          margin
+        result = logResult({
+          test: "HEADING_LONG",
+          type: "warning",
+          args: [maxHeadingLength, headingLength, headingText]
         });
       }
-      prevLevel = level;
-      prevHeadingText = headingText;
       if (!Elements.Found.OutlineIgnore.includes($el)) {
         State.headingOutline.push({
           element: $el,
           headingLevel: level,
           text: headingText,
-          type,
-          dismiss: prepareDismissal(`${test + level + headingText}`),
+          type: result?.type || null,
+          dismiss: prepareDismissal(`${result?.test || ""}${level}${headingText}`.trim()),
           isWithinRoot
         });
       }
+      prevLevel = level;
+      prevHeadingText = headingText;
     });
     if (State.option.checks.HEADING_MISSING_ONE && Elements.Found.HeadingOne.length === 0) {
-      State.results.push({
+      pushResult({
         test: "HEADING_MISSING_ONE",
-        type: State.option.checks.HEADING_MISSING_ONE.type || "warning",
-        content: Lang.sprintf(
-          State.option.checks.HEADING_MISSING_ONE.content || "HEADING_MISSING_ONE"
-        ),
-        dismiss: "HEADING_MISSING_ONE",
-        developer: State.option.checks.HEADING_MISSING_ONE.developer || false
+        type: "warning",
+        dismiss: "HEADING_MISSING_ONE"
       });
     }
   }
-  const defaultFileTypes = [
-    "pdf",
-    "doc",
-    "docx",
-    "word",
-    "mp3",
-    "ppt",
-    "text",
-    "pptx",
-    "txt",
-    "exe",
-    "dmg",
-    "rtf",
-    "windows",
-    "macos",
-    "csv",
-    "xls",
-    "xlsx",
-    "mp4",
-    "mov",
-    "avi",
-    "zip"
-  ];
   const cssFileTypeSelectors = 'a[href$=".pdf"], a[href$=".doc"], a[href$=".docx"], a[href$=".zip"], a[href$=".mp3"], a[href$=".txt"], a[href$=".exe"], a[href$=".dmg"], a[href$=".rtf"], a[href$=".pptx"], a[href$=".ppt"], a[href$=".xls"], a[href$=".xlsx"], a[href$=".csv"], a[href$=".mp4"], a[href$=".mov"], a[href$=".avi"]';
   const citationPattern = /(doi\.org\/|dl\.acm\.org\/|link\.springer\.com\/|pubmed\.ncbi\.nlm\.nih\.gov\/|scholar\.google\.com\/|ieeexplore\.ieee\.org\/|researchgate\.net\/publication\/|sciencedirect\.com\/science\/article\/|10\.\d{4,}\/)[a-z0-9/.-]+/i;
   const urlEndings = /\b(?:\.edu\/|\.gob\/|\.gov\/|\.app\/|\.com\/|\.net\/|\.org\/|\.us\/|\.ca\/|\.de\/|\.icu\/|\.uk\/|\.ru\/|\.info\/|\.top\/|\.xyz\/|\.tk\/|\.cn\/|\.ga\/|\.cf\/|\.nl\/|\.io\/|\.fr\/|\.pe\/|\.nz\/|\.pt\/|\.es\/|\.pl\/|\.ua\/)\b/i;
@@ -6768,15 +6629,6 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
     return null;
   };
   function checkLinkText() {
-    const customStopWords = State.option.linkStopWords ? State.option.linkStopWords.split(",").map((word) => word.toLowerCase().trim()) : [];
-    const linkStopWords = /* @__PURE__ */ new Set([...Lang._("LINK_STOPWORDS"), ...customStopWords]);
-    const linkIgnoreStrings = new Set(
-      State.option.linkIgnoreStrings.map((word) => word.toLowerCase())
-    );
-    const clickRegex = generateRegexString(Lang._("CLICK"));
-    const newWindowRegex = generateRegexString(Lang._("NEW_WINDOW_PHRASES"));
-    const fileTypeRegex = generateRegexString(defaultFileTypes);
-    const ignorePattern = generateRegexString(State.option.linkIgnoreStrings);
     const seen = {};
     Elements.Found.Links.forEach(($el) => {
       const href = $el.href ? standardizeHref($el) : "";
@@ -6790,124 +6642,101 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
       const accName = removeWhitespace(
         computeAccessibleName($el, Constants.Exclusions.LinkSpan)
       );
-      const linkText = accName.replace(ignorePattern, "");
+      const linkText = accName.replace(Constants.Global.linkIgnorePattern, "");
       const lowercaseLinkText = linkText.toLowerCase();
       const strippedLinkText = stripAllSpecialCharacters(lowercaseLinkText);
-      const textContent = getText($el).toLowerCase();
+      const rawTextContent = getText($el);
+      const textContent = rawTextContent.toLowerCase();
       const textContentIgnoredStrings = getText(
         fnIgnore($el, Constants.Exclusions.LinkSpan)
-      ).replace(ignorePattern, "");
-      const containsNewWindowPhrases = lowercaseLinkText.match(newWindowRegex)?.[0] || textContent.match(newWindowRegex)?.[0];
-      const containsFileTypePhrases = lowercaseLinkText.match(fileTypeRegex)?.[0] || textContent.match(fileTypeRegex)?.[0];
+      ).replace(Constants.Global.linkIgnorePattern, "");
+      const containsNewWindowPhrases = lowercaseLinkText.match(Constants.Global.newWindowRegex)?.[0] || textContent.match(Constants.Global.newWindowRegex)?.[0];
+      const containsFileTypePhrases = lowercaseLinkText.match(Constants.Global.fileTypeRegex)?.[0] || textContent.match(Constants.Global.fileTypeRegex)?.[0];
       const fileTypeMatch = $el.matches(cssFileTypeSelectors);
+      const logResult = (params) => pushResult({
+        element: $el,
+        type: params.type || "warning",
+        dismiss: params.dismiss || href,
+        inline: true,
+        ...params
+      });
       if (!$el.querySelector("img")) {
         if (hasAria && linkText.length !== 0) {
           const excludeSpan = fnIgnore($el, Constants.Exclusions.LinkSpan);
-          const visibleLinkText = getText(excludeSpan).replace(ignorePattern, "");
-          const cleanedString = stripAllSpecialCharacters(visibleLinkText);
-          const stopword = checkStopWords(cleanedString, linkStopWords);
+          const visibleLinkText = getText(excludeSpan).replace(
+            Constants.Global.linkIgnorePattern,
+            ""
+          );
+          const stopword = checkStopWords(
+            stripAllSpecialCharacters(visibleLinkText),
+            Constants.Global.linkStopWords
+          );
           const visibleTextInName = isVisibleTextInAccName(
             $el,
             accName,
             Constants.Exclusions.LinkSpan,
             State.option.linkIgnoreStrings
           );
-          if (State.option.checks.LINK_STOPWORD_ARIA && stopword !== null) {
-            State.results.push({
+          if (stopword !== null) {
+            logResult({
               test: "LINK_STOPWORD_ARIA",
-              element: $el,
-              type: State.option.checks.LINK_STOPWORD_ARIA.type || "warning",
-              content: Lang.sprintf(
-                State.option.checks.LINK_STOPWORD_ARIA.content || Lang._("LINK_STOPWORD_ARIA") + Lang._("LINK_TIP"),
-                stopword,
-                linkText
-              ),
               args: [stopword, linkText],
-              inline: true,
-              dismiss: prepareDismissal(`LINK_STOPWORD_ARIA ${strippedLinkText}`),
-              dismissAll: State.option.checks.LINK_STOPWORD_ARIA.dismissAll ? " LINK_STOPWORD_ARIA" : false,
-              developer: State.option.checks.LINK_STOPWORD_ARIA.developer || true
+              content: Lang._("LINK_STOPWORD_ARIA") + Lang._("LINK_TIP"),
+              dismiss: strippedLinkText,
+              developer: true
             });
-          } else if (State.option.checks.LABEL_IN_NAME && visibleTextInName && textContent.length !== 0) {
-            State.results.push({
+          } else if (visibleTextInName && textContent.length !== 0) {
+            logResult({
               test: "LABEL_IN_NAME",
-              element: $el,
-              type: State.option.checks.LABEL_IN_NAME.type || "warning",
-              content: Lang.sprintf(
-                State.option.checks.LABEL_IN_NAME.content || Lang._("LABEL_IN_NAME") + Lang._("ACC_NAME_TIP"),
-                textContentIgnoredStrings,
-                linkText
-              ),
               args: [textContentIgnoredStrings, linkText],
-              inline: true,
+              content: Lang._("LABEL_IN_NAME") + Lang._("ACC_NAME_TIP"),
+              dismiss: strippedLinkText,
               position: "afterend",
-              dismiss: prepareDismissal(`LABEL_IN_NAME ${strippedLinkText}`),
-              dismissAll: State.option.checks.LABEL_IN_NAME.dismissAll ? "BTN_LABEL_IN_NAME" : false,
-              developer: State.option.checks.LABEL_IN_NAME.developer || true
+              developer: true
             });
-          } else if (State.option.checks.LINK_LABEL) {
-            State.results.push({
+          } else {
+            const accessibleName = removeWhitespace(computeAccessibleName($el));
+            logResult({
               test: "LINK_LABEL",
-              element: $el,
-              type: State.option.checks.LINK_LABEL.type || "good",
-              content: Lang.sprintf(
-                State.option.checks.LINK_LABEL.content || Lang._("ACC_NAME") + Lang._("ACC_NAME_TIP"),
-                linkText
-              ),
-              args: [linkText],
-              inline: true,
+              type: "good",
+              args: [accessibleName],
+              content: Lang._("ACC_NAME") + Lang._("ACC_NAME_TIP"),
+              dismiss: strippedLinkText,
               position: "afterend",
-              dismiss: prepareDismissal(`LINK_LABEL ${strippedLinkText}`),
-              dismissAll: State.option.checks.LINK_LABEL.dismissAll ? "LINK_LABEL" : false,
-              developer: State.option.checks.LINK_LABEL.developer || true
+              developer: true
             });
           }
         }
-        let oneStop;
-        const addStopWordResult = (element) => {
-          if (State.option.checks.LINK_STOPWORD && !oneStop) {
+        let oneStop = false;
+        const triggerStopWord = () => {
+          if (!oneStop && State.option.checks.LINK_STOPWORD) {
             oneStop = true;
-            State.results.push({
+            const textToDisplay = linkText.length === 0 ? rawTextContent : linkText;
+            logResult({
               test: "LINK_STOPWORD",
-              element,
-              type: State.option.checks.LINK_STOPWORD.type || "error",
-              content: Lang.sprintf(
-                State.option.checks.LINK_STOPWORD.content || Lang._("LINK_STOPWORD") + Lang._("LINK_TIP"),
-                linkText
-              ),
-              args: [linkText],
-              inline: true,
-              position: "afterend",
-              dismiss: prepareDismissal(`LINK_STOPWORD ${strippedLinkText}`),
-              dismissAll: State.option.checks.LINK_STOPWORD.dismissAll ? "LINK_STOPWORD" : false,
-              developer: State.option.checks.LINK_STOPWORD.developer || false
+              type: "error",
+              args: [textToDisplay],
+              content: Lang._("LINK_STOPWORD") + Lang._("LINK_TIP"),
+              dismiss: strippedLinkText,
+              position: "afterend"
             });
           }
         };
-        const isLinkIgnoreStrings = checkStopWords(textContent, linkIgnoreStrings);
+        const isLinkIgnoreStrings = checkStopWords(textContent, Constants.Global.linkIgnoreStrings);
         if (isLinkIgnoreStrings === textContent || isLinkIgnoreStrings === strippedLinkText) {
-          addStopWordResult($el);
+          triggerStopWord();
         } else if (containsNewWindowPhrases === textContent || containsNewWindowPhrases === strippedLinkText) {
-          addStopWordResult($el);
+          triggerStopWord();
           return;
         }
         if (linkText.length === 0) {
           if (hasAriaLabelledby) {
-            if (State.option.checks.LINK_EMPTY_LABELLEDBY) {
-              State.results.push({
-                test: "LINK_EMPTY_LABELLEDBY",
-                element: $el,
-                type: State.option.checks.LINK_EMPTY_LABELLEDBY.type || "error",
-                content: Lang.sprintf(
-                  State.option.checks.LINK_EMPTY_LABELLEDBY.content || "LINK_EMPTY_LABELLEDBY"
-                ),
-                inline: true,
-                position: "afterend",
-                dismiss: prepareDismissal(`LINK_EMPTY_LABELLEDBY ${href}`),
-                dismissAll: State.option.checks.LINK_EMPTY_LABELLEDBY.dismissAll ? "LINK_EMPTY_LABELLEDBY" : false,
-                developer: State.option.checks.LINK_EMPTY_LABELLEDBY.developer || true
-              });
-            }
+            logResult({
+              test: "LINK_EMPTY_LABELLEDBY",
+              type: "error",
+              position: "afterend",
+              developer: true
+            });
           } else if ($el.children.length) {
             let hasStopWordWarning = false;
             if (State.option.linkIgnoreSpan) {
@@ -6915,155 +6744,81 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
               if (spanEl) {
                 const spanText = stripAllSpecialCharacters(spanEl.textContent).trim().toLowerCase();
                 if (spanText === textContent) {
-                  addStopWordResult($el);
+                  triggerStopWord();
                   hasStopWordWarning = true;
                 }
               }
             }
-            if (!hasStopWordWarning && State.option.checks.LINK_EMPTY_NO_LABEL) {
-              State.results.push({
+            if (!hasStopWordWarning) {
+              logResult({
                 test: "LINK_EMPTY_NO_LABEL",
-                element: $el,
-                type: State.option.checks.LINK_EMPTY_NO_LABEL.type || "error",
-                content: Lang.sprintf(
-                  State.option.checks.LINK_EMPTY_NO_LABEL.content || "LINK_EMPTY_NO_LABEL"
-                ),
-                inline: true,
-                position: "afterend",
-                dismiss: prepareDismissal(`LINK_EMPTY_NO_LABEL ${href}`),
-                dismissAll: State.option.checks.LINK_EMPTY_NO_LABEL.dismissAll ? "LINK_EMPTY_NO_LABEL" : false,
-                developer: State.option.checks.LINK_EMPTY_NO_LABEL.developer || false
+                type: "error",
+                position: "afterend"
               });
             }
-          } else if (!isLinkIgnoreStrings && State.option.checks.LINK_EMPTY) {
-            State.results.push({
+          } else if (!isLinkIgnoreStrings) {
+            logResult({
               test: "LINK_EMPTY",
-              element: $el,
-              type: State.option.checks.LINK_EMPTY.type || "error",
-              content: Lang.sprintf(State.option.checks.LINK_EMPTY.content || "LINK_EMPTY"),
-              inline: true,
-              position: "afterend",
-              dismiss: prepareDismissal(`LINK_EMPTY ${href}`),
-              dismissAll: State.option.checks.LINK_EMPTY.dismissAll ? "LINK_EMPTY" : false,
-              developer: State.option.checks.LINK_EMPTY.developer || false
+              type: "error",
+              position: "afterend"
             });
           }
           return;
         }
-        const isStopWord = checkStopWords(strippedLinkText, linkStopWords, newWindowRegex);
-        const hasClickWord = strippedLinkText.match(clickRegex)?.[0] || textContent.match(clickRegex)?.[0];
+        const isStopWord = checkStopWords(
+          strippedLinkText,
+          Constants.Global.linkStopWords,
+          Constants.Global.newWindowRegex
+        );
+        const hasClickWord = strippedLinkText.match(Constants.Global.clickRegex)?.[0] || textContent.match(Constants.Global.clickRegex)?.[0];
         const isCitation = lowercaseLinkText.match(citationPattern)?.[0];
-        const hasUrlPrefix = lowercaseLinkText.startsWith("www.") || lowercaseLinkText.startsWith("http");
-        const hasUrlEnding = Boolean(lowercaseLinkText.match(urlEndings));
-        const isUrlFragment = hasUrlPrefix || hasUrlEnding;
+        const isUrlFragment = lowercaseLinkText.startsWith("www.") || lowercaseLinkText.startsWith("http") || Boolean(lowercaseLinkText.match(urlEndings));
         const isSingleSpecialChar = linkText.length === 1 && specialCharPattern.test(linkText);
         const matchedSymbol = lowercaseLinkText.match(htmlSymbols)?.[0];
         if (isStopWord) {
-          addStopWordResult($el);
-        } else if (isCitation) {
-          if (linkText.length > 8) {
-            if (State.option.checks.LINK_DOI) {
-              State.results.push({
-                test: "LINK_DOI",
-                element: $el,
-                type: State.option.checks.LINK_DOI.type || "warning",
-                content: Lang.sprintf(State.option.checks.LINK_DOI.content || "LINK_DOI", linkText),
-                args: [linkText],
-                inline: true,
-                dismiss: prepareDismissal(`LINK_DOI ${strippedLinkText}`),
-                dismissAll: State.option.checks.LINK_DOI.dismissAll ? "LINK_DOI" : false,
-                developer: State.option.checks.LINK_DOI.developer || false
-              });
-            }
-          }
-        } else if (isUrlFragment) {
-          if (!hasAria && linkText.length > (State.option.checks.LINK_URL.maxLength || 40)) {
-            if (State.option.checks.LINK_URL) {
-              State.results.push({
-                test: "LINK_URL",
-                element: $el,
-                type: State.option.checks.LINK_URL.type || "warning",
-                content: Lang.sprintf(
-                  State.option.checks.LINK_URL.content || Lang._("LINK_URL") + Lang._("LINK_TIP"),
-                  linkText
-                ),
-                args: [linkText],
-                inline: true,
-                dismiss: prepareDismissal(`LINK_URL ${strippedLinkText}`),
-                dismissAll: State.option.checks.LINK_URL.dismissAll ? "LINK_URL" : false,
-                developer: State.option.checks.LINK_URL.developer || false
-              });
-            }
-          }
+          triggerStopWord();
+        } else if (isCitation && linkText.length > 8) {
+          logResult({
+            test: "LINK_DOI",
+            args: [linkText],
+            dismiss: strippedLinkText
+          });
+        } else if (isUrlFragment && !hasAria && linkText.length > (State.option.checks.LINK_URL?.maxLength || 40)) {
+          logResult({
+            test: "LINK_URL",
+            args: [linkText],
+            content: Lang._("LINK_URL") + Lang._("LINK_TIP"),
+            dismiss: strippedLinkText
+          });
         } else if (matchedSymbol && linkText.length > 1) {
-          if (State.option.checks.LINK_SYMBOLS) {
-            State.results.push({
-              test: "LINK_SYMBOLS",
-              element: $el,
-              type: State.option.checks.LINK_SYMBOLS.type || "warning",
-              content: Lang.sprintf(
-                State.option.checks.LINK_SYMBOLS.content || "LINK_SYMBOLS",
-                matchedSymbol,
-                linkText
-              ),
-              args: [matchedSymbol, linkText],
-              inline: true,
-              dismiss: prepareDismissal(`LINK_SYMBOLS ${strippedLinkText}`),
-              dismissAll: State.option.checks.LINK_SYMBOLS.dismissAll ? "LINK_SYMBOLS" : false,
-              developer: State.option.checks.LINK_SYMBOLS.developer || false
-            });
-          }
+          logResult({
+            test: "LINK_SYMBOLS",
+            args: [matchedSymbol, linkText],
+            dismiss: strippedLinkText
+          });
         } else if ((isSingleSpecialChar || matchedSymbol) && !titleAttr) {
-          if (State.option.checks.LINK_UNPRONOUNCEABLE) {
-            State.results.push({
-              test: "LINK_UNPRONOUNCEABLE",
-              element: $el,
-              type: State.option.checks.LINK_UNPRONOUNCEABLE.type || "error",
-              content: Lang.sprintf(
-                State.option.checks.LINK_UNPRONOUNCEABLE.content || Lang._("LINK_UNPRONOUNCEABLE") + Lang._("LINK_TIP"),
-                linkText
-              ),
-              args: [linkText],
-              inline: true,
-              position: "afterend",
-              dismiss: prepareDismissal(`LINK_UNPRONOUNCEABLE ${href}`),
-              dismissAll: State.option.checks.LINK_UNPRONOUNCEABLE.dismissAll ? "LINK_UNPRONOUNCEABLE" : false,
-              developer: State.option.checks.LINK_UNPRONOUNCEABLE.developer || false
-            });
-          }
+          logResult({
+            test: "LINK_UNPRONOUNCEABLE",
+            type: "error",
+            args: [linkText],
+            content: Lang._("LINK_UNPRONOUNCEABLE") + Lang._("LINK_TIP"),
+            position: "afterend"
+          });
           return;
         }
         if (hasClickWord) {
-          if (State.option.checks.LINK_CLICK_HERE) {
-            State.results.push({
-              test: "LINK_CLICK_HERE",
-              element: $el,
-              type: State.option.checks.LINK_CLICK_HERE.type || "warning",
-              content: Lang.sprintf(
-                State.option.checks.LINK_CLICK_HERE.content || Lang._("LINK_CLICK_HERE") + Lang._("LINK_TIP"),
-                linkText
-              ),
-              args: [linkText],
-              inline: true,
-              dismiss: prepareDismissal(`LINK_CLICK_HERE ${strippedLinkText}`),
-              dismissAll: State.option.checks.LINK_CLICK_HERE.dismissAll ? "LINK_CLICK_HERE" : false,
-              developer: State.option.checks.LINK_CLICK_HERE.developer || false
-            });
-          }
+          logResult({
+            test: "LINK_CLICK_HERE",
+            args: [linkText],
+            content: Lang._("LINK_CLICK_HERE") + Lang._("LINK_TIP"),
+            dismiss: strippedLinkText
+          });
         }
         if (textContent.length !== 0 && titleAttr?.toLowerCase() === linkText.toLowerCase()) {
-          if (State.option.checks.DUPLICATE_TITLE) {
-            State.results.push({
-              test: "DUPLICATE_TITLE",
-              element: $el,
-              type: State.option.checks.DUPLICATE_TITLE.type || "warning",
-              content: Lang.sprintf(State.option.checks.DUPLICATE_TITLE.content || "DUPLICATE_TITLE"),
-              inline: true,
-              dismiss: prepareDismissal(`DUPLICATE_TITLE ${strippedLinkText}`),
-              dismissAll: State.option.checks.DUPLICATE_TITLE.dismissAll ? "DUPLICATE_TITLE" : false,
-              developer: State.option.checks.DUPLICATE_TITLE.developer || false
-            });
-          }
+          logResult({
+            test: "DUPLICATE_TITLE",
+            dismiss: strippedLinkText
+          });
         }
       }
       if (strippedLinkText.length !== 0) {
@@ -7071,22 +6826,12 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
           const ignored = isHiddenAndUnfocusable($el);
           const hasAttributes = $el.hasAttribute("role") || isDisabled($el);
           const condition = linkText.toLowerCase() !== textContentIgnoredStrings.toLowerCase();
-          const diffAccName = condition ? `<hr> ${Lang._("ACC_NAME")}` : `<hr> ${Lang._("LINK_TEXT")}`;
-          const variable = condition ? linkText : textContentIgnoredStrings;
-          if (State.option.checks.LINK_IDENTICAL_NAME && !hasAttributes && !ignored) {
-            State.results.push({
+          if (!hasAttributes && !ignored) {
+            logResult({
               test: "LINK_IDENTICAL_NAME",
-              element: $el,
-              type: State.option.checks.LINK_IDENTICAL_NAME.type || "warning",
-              content: Lang.sprintf(
-                State.option.checks.LINK_IDENTICAL_NAME.content || Lang._("LINK_IDENTICAL_NAME") + diffAccName + Lang._("LINK_TIP"),
-                variable
-              ),
               args: [textContentIgnoredStrings, linkText],
-              inline: true,
-              dismiss: prepareDismissal(`LINK_IDENTICAL_NAME ${strippedLinkText}`),
-              dismissAll: State.option.checks.LINK_IDENTICAL_NAME.dismissAll ? "LINK_IDENTICAL_NAME" : false,
-              developer: State.option.checks.LINK_IDENTICAL_NAME.developer || false
+              content: Lang._("LINK_IDENTICAL_NAME") + (condition ? `<hr> ${Lang._("ACC_NAME")}` : `<hr> ${Lang._("LINK_TEXT")}`) + Lang._("LINK_TIP"),
+              dismiss: strippedLinkText
             });
           }
         } else {
@@ -7095,122 +6840,66 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
         }
         if (targetBlank && !fileTypeMatch && !containsNewWindowPhrases) {
           const condition = linkText.toLowerCase() !== textContentIgnoredStrings.toLowerCase();
-          const diffAccName = condition ? `<hr> ${Lang._("ACC_NAME") + Lang._("ACC_NAME_TIP")}` : `<hr> ${Lang._("LINK_TEXT")}`;
-          if (State.option.checks.LINK_NEW_TAB) {
-            State.results.push({
-              test: "LINK_NEW_TAB",
-              element: $el,
-              type: State.option.checks.LINK_NEW_TAB.type || "warning",
-              content: Lang.sprintf(
-                State.option.checks.LINK_NEW_TAB.content || Lang._("LINK_NEW_TAB") + diffAccName,
-                linkText
-              ),
-              args: [linkText],
-              inline: true,
-              dismiss: prepareDismissal(`LINK_NEW_TAB ${strippedLinkText}`),
-              dismissAll: State.option.checks.LINK_NEW_TAB.dismissAll ? "LINK_NEW_TAB" : false,
-              developer: State.option.checks.LINK_NEW_TAB.developer || false
-            });
-          }
+          logResult({
+            test: "LINK_NEW_TAB",
+            args: [linkText],
+            content: Lang._("LINK_NEW_TAB") + (condition ? `<hr> ${Lang._("ACC_NAME") + Lang._("ACC_NAME_TIP")}` : `<hr> ${Lang._("LINK_TEXT")}`),
+            dismiss: strippedLinkText
+          });
         }
         if (fileTypeMatch && !containsFileTypePhrases) {
-          if (State.option.checks.LINK_FILE_EXT) {
-            State.results.push({
-              test: "LINK_FILE_EXT",
-              element: $el,
-              type: State.option.checks.LINK_FILE_EXT.type || "warning",
-              content: Lang.sprintf(
-                State.option.checks.LINK_FILE_EXT.content || "LINK_FILE_EXT",
-                linkText
-              ),
-              args: [linkText],
-              inline: true,
-              dismiss: prepareDismissal(`LINK_FILE_EXT ${strippedLinkText}`),
-              dismissAll: State.option.checks.LINK_FILE_EXT.dismissAll ? "LINK_FILE_EXT" : false,
-              developer: State.option.checks.LINK_FILE_EXT.developer || false
-            });
-          }
+          logResult({
+            test: "LINK_FILE_EXT",
+            args: [linkText],
+            dismiss: strippedLinkText
+          });
         }
       }
       const hasExtension = $el.matches(Constants.Global.documentSources);
-      const hasPDF = $el.matches('a[href$=".pdf"], a[href*=".pdf?"]');
-      if (State.option.checks.QA_DOCUMENT && hasExtension) {
-        State.results.push({
+      const hasPDF = State.option.checks.QA_PDF?.sources ? $el.matches(State.option.checks.QA_PDF.sources) : $el.matches('a[href$=".pdf"], a[href*=".pdf?"]');
+      if (hasExtension) {
+        logResult({
           test: "QA_DOCUMENT",
-          element: $el,
-          type: State.option.checks.QA_DOCUMENT.type || "warning",
-          content: Lang.sprintf(State.option.checks.QA_DOCUMENT.content || "QA_DOCUMENT", linkText),
           args: [linkText],
-          inline: true,
-          dismiss: prepareDismissal(`QA_DOCUMENT ${href}`),
-          dismissAll: State.option.checks.QA_DOCUMENT.dismissAll ? "QA_DOCUMENT" : false,
-          developer: State.option.checks.QA_DOCUMENT.developer || false
+          dismissSuffix: href
         });
-      } else if (State.option.checks.QA_PDF && hasPDF) {
-        State.results.push({
+      } else if (hasPDF) {
+        logResult({
           test: "QA_PDF",
-          element: $el,
-          type: State.option.checks.QA_PDF.type || "warning",
-          content: Lang.sprintf(State.option.checks.QA_PDF.content || "QA_PDF", linkText),
           args: [linkText],
-          inline: true,
-          dismiss: prepareDismissal(`QA_PDF ${href}`),
-          dismissAll: State.option.checks.QA_PDF.dismissAll ? "QA_PDF" : false,
-          developer: State.option.checks.QA_PDF.developer || false
+          dismissSuffix: href
         });
       }
       if (State.option.checks.QA_IN_PAGE_LINK || State.option.checks.LINK_MAYBE_BUTTON) {
-        const hasText = getText($el).length !== 0;
-        const ignored = isHiddenAndUnfocusable($el);
-        const hasAttributes = $el.hasAttribute("role") || $el.hasAttribute("aria-haspopup") || $el.hasAttribute("aria-expanded") || $el.hasAttribute("onclick") || isDisabled($el) || !!getCachedClosest($el, 'nav, [role="navigation"]');
         const rawHref = $el.getAttribute("href");
-        if ((!rawHref || rawHref.startsWith("#")) && hasText && !ignored && !hasAttributes) {
-          const targetId = rawHref.substring(1);
+        const hasAttributes = $el.hasAttribute("role") || $el.hasAttribute("aria-haspopup") || $el.hasAttribute("aria-expanded") || $el.hasAttribute("onclick") || isDisabled($el) || !!getCachedClosest($el, 'nav, [role="navigation"]');
+        if ((!rawHref || rawHref.startsWith("#")) && getText($el).length !== 0 && !isHiddenAndUnfocusable($el) && !hasAttributes) {
+          const targetId = rawHref?.substring(1);
           const ariaControls = $el.getAttribute("aria-controls");
-          const decoded = targetId ? decodeURIComponent(targetId) : "";
-          const encoded = targetId ? encodeURIComponent(targetId) : "";
-          const targetElement = targetId && (document.getElementById(targetId) || ariaControls && document.getElementById(ariaControls) || decoded !== targetId && document.getElementById(decoded) || encoded !== targetId && document.getElementById(encoded) || document.querySelector(`a[name="${CSS.escape(targetId)}"]`));
+          const targetElement = targetId && (document.getElementById(targetId) || ariaControls && document.getElementById(ariaControls) || decodeURIComponent(targetId) !== targetId && document.getElementById(decodeURIComponent(targetId)) || encodeURIComponent(targetId) !== targetId && document.getElementById(encodeURIComponent(targetId)) || document.querySelector(`a[name="${CSS.escape(targetId)}"]`));
           if (!targetElement) {
             let isFauxButton = false;
-            if (State.option.checks.LINK_MAYBE_BUTTON) {
-              const keywords = Lang._("POTENTIAL_UI_ELEMENTS");
-              const matchedKeyword = keywords.find((word) => accName.toLowerCase().includes(word));
-              const isSlide = Object.keys($el.dataset).some(
-                (key) => key.toLowerCase().includes("slide")
-              );
-              if ((matchedKeyword || isSlide) && accName.length <= 15) {
-                isFauxButton = true;
-                State.results.push({
-                  test: "LINK_MAYBE_BUTTON",
-                  element: $el,
-                  type: State.option.checks.LINK_MAYBE_BUTTON.type || "error",
-                  content: Lang.sprintf(
-                    State.option.checks.LINK_MAYBE_BUTTON.content || "LINK_MAYBE_BUTTON",
-                    accName
-                  ),
-                  args: [accName],
-                  inline: true,
-                  dismiss: prepareDismissal(`LINK_MAYBE_BUTTON_${matchedKeyword}`),
-                  dismissAll: State.option.checks.LINK_MAYBE_BUTTON.dismissAll ? "LINK_MAYBE_BUTTON" : false,
-                  developer: State.option.checks.LINK_MAYBE_BUTTON.developer || true
-                });
-              }
+            const matchedKeyword = Lang._("POTENTIAL_UI_ELEMENTS").find(
+              (word) => accName.toLowerCase().includes(word)
+            );
+            const isSlide = Object.keys($el.dataset).some(
+              (key) => key.toLowerCase().includes("slide")
+            );
+            if ((matchedKeyword || isSlide) && accName.length <= 15) {
+              isFauxButton = true;
+              logResult({
+                test: "LINK_MAYBE_BUTTON",
+                type: "error",
+                args: [accName],
+                dismiss: matchedKeyword,
+                developer: true
+              });
             }
-            if (State.option.checks.QA_IN_PAGE_LINK && !isFauxButton) {
-              State.results.push({
+            if (!isFauxButton) {
+              logResult({
                 test: "QA_IN_PAGE_LINK",
-                element: $el,
-                type: State.option.checks.QA_IN_PAGE_LINK.type || "error",
-                content: Lang.sprintf(
-                  State.option.checks.QA_IN_PAGE_LINK.content || "QA_IN_PAGE_LINK",
-                  targetId,
-                  accName
-                ),
-                args: [targetId, accName],
-                inline: true,
-                dismiss: prepareDismissal(`QA_IN_PAGE_LINK ${href}`),
-                dismissAll: State.option.checks.QA_IN_PAGE_LINK.dismissAll ? "QA_IN_PAGE_LINK" : false,
-                developer: State.option.checks.QA_IN_PAGE_LINK.developer || false
+                type: "error",
+                args: [targetId, accName]
               });
             }
           }
@@ -7473,317 +7162,209 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
       const large = State.option.contrastAlgorithm === "AAA" ? "4.5:1" : "3:1";
       const ratioToDisplay2 = item.isLargeText ? large : normal;
       const ratioRequirementKey = item.isLargeText ? "CONTRAST_LARGE" : "CONTRAST_NORMAL";
+      const logResult = (params) => pushResult({
+        element: $el,
+        type: params.type || "warning",
+        dismiss: params.dismiss || previewText,
+        contrastDetails: updatedItem,
+        ...params
+      });
       switch (item.type) {
         case "text":
-          if (State.option.checks.CONTRAST_ERROR) {
-            State.results.push({
-              test: "CONTRAST_ERROR",
-              element: $el,
-              type: State.option.checks.CONTRAST_ERROR.type || "error",
-              content: Lang.sprintf(
-                State.option.checks.CONTRAST_ERROR.content || (isWcag ? `${Lang._("CONTRAST_ERROR")} ${Lang._(ratioRequirementKey)}` : Lang._("CONTRAST_ERROR")),
-                ratioToDisplay2
-              ),
-              dismiss: prepareDismissal(`CONTRAST_ERROR ${previewText}`),
-              dismissAll: State.option.checks.CONTRAST_ERROR.dismissAll ? "CONTRAST_ERROR" : false,
-              developer: State.option.checks.CONTRAST_ERROR.developer || false,
-              contrastDetails: updatedItem
-            });
-          }
+          logResult({
+            test: "CONTRAST_ERROR",
+            type: "error",
+            content: Lang.sprintf(
+              isWcag ? `${Lang._("CONTRAST_ERROR")} ${Lang._(ratioRequirementKey)}` : Lang._("CONTRAST_ERROR"),
+              ratioToDisplay2
+            ),
+            args: [ratioToDisplay2]
+          });
           break;
         case "input":
-          if (State.option.checks.CONTRAST_INPUT) {
-            State.results.push({
-              test: "CONTRAST_INPUT",
-              element,
-              type: State.option.checks.CONTRAST_INPUT.type || "error",
-              content: Lang.sprintf(
-                State.option.checks.CONTRAST_INPUT.content || (isWcag ? `${Lang._("CONTRAST_INPUT")} ${Lang._(ratioRequirementKey)}` : Lang._("CONTRAST_INPUT")),
-                ratio,
-                ratioToDisplay2
-              ),
-              dismiss: prepareDismissal(`CONTRAST_INPUT ${$el.outerHTML}`),
-              dismissAll: State.option.checks.CONTRAST_INPUT.dismissAll ? "CONTRAST_INPUT" : false,
-              developer: State.option.checks.CONTRAST_INPUT.developer || true,
-              contrastDetails: updatedItem
-            });
-          }
+          logResult({
+            test: "CONTRAST_INPUT",
+            type: "error",
+            content: Lang.sprintf(
+              isWcag ? `${Lang._("CONTRAST_INPUT")} ${Lang._(ratioRequirementKey)}` : Lang._("CONTRAST_INPUT"),
+              ratio,
+              ratioToDisplay2
+            ),
+            args: [ratio, ratioToDisplay2],
+            dismiss: $el.tagName + ($el.name || "") + ($el.id || ""),
+            developer: true
+          });
           break;
         case "placeholder":
-          if (State.option.checks.CONTRAST_PLACEHOLDER) {
-            State.results.push({
-              test: "CONTRAST_PLACEHOLDER",
-              element: $el,
-              type: State.option.checks.CONTRAST_PLACEHOLDER.type || "error",
-              content: Lang.sprintf(
-                State.option.checks.CONTRAST_PLACEHOLDER.content || (isWcag ? `${Lang._("CONTRAST_PLACEHOLDER")} ${Lang._(ratioRequirementKey)}` : Lang._("CONTRAST_PLACEHOLDER")),
-                ratioToDisplay2
-              ),
-              position: "afterend",
-              dismiss: prepareDismissal(`CONTRAST_PLACEHOLDER ${$el.outerHTML}`),
-              dismissAll: State.option.checks.CONTRAST_PLACEHOLDER.dismissAll ? "CONTRAST_PLACEHOLDER" : false,
-              developer: State.option.checks.CONTRAST_PLACEHOLDER.developer || true,
-              contrastDetails: updatedItem
-            });
-          }
-          break;
-        case "placeholder-unsupported":
-          if (State.option.checks.CONTRAST_PLACEHOLDER_UNSUPPORTED) {
-            State.results.push({
-              test: "CONTRAST_PLACEHOLDER_UNSUPPORTED",
-              element: $el,
-              type: State.option.checks.CONTRAST_PLACEHOLDER_UNSUPPORTED.type || "warning",
-              content: Lang.sprintf(
-                State.option.checks.CONTRAST_PLACEHOLDER_UNSUPPORTED.content || (isWcag ? `${Lang._("CONTRAST_PLACEHOLDER_UNSUPPORTED")} ${Lang._(ratioRequirementKey)}` : Lang._("CONTRAST_PLACEHOLDER_UNSUPPORTED")),
-                ratioToDisplay2
-              ),
-              position: "afterend",
-              dismiss: prepareDismissal(`CONTRAST_PLACEHOLDER_UNSUPPORTED ${$el.outerHTML}`),
-              dismissAll: State.option.checks.CONTRAST_PLACEHOLDER_UNSUPPORTED.dismissAll ? "CONTRAST_PLACEHOLDER_UNSUPPORTED" : false,
-              developer: State.option.checks.CONTRAST_PLACEHOLDER_UNSUPPORTED.developer || true,
-              contrastDetails: updatedItem
-            });
-          }
+          logResult({
+            test: "CONTRAST_PLACEHOLDER",
+            type: "error",
+            content: Lang.sprintf(
+              isWcag ? `${Lang._("CONTRAST_PLACEHOLDER")} ${Lang._(ratioRequirementKey)}` : Lang._("CONTRAST_PLACEHOLDER"),
+              ratioToDisplay2
+            ),
+            args: [ratioToDisplay2],
+            position: "afterend",
+            dismiss: $el.tagName + ($el.id || "") + previewText,
+            developer: true
+          });
           break;
         case "svg-error":
-          if (State.option.checks.CONTRAST_ERROR_GRAPHIC) {
-            State.results.push({
-              test: "CONTRAST_ERROR_GRAPHIC",
-              element: $el,
-              type: State.option.checks.CONTRAST_ERROR_GRAPHIC.type || "error",
-              content: Lang.sprintf(
-                State.option.checks.CONTRAST_ERROR_GRAPHIC.content || (State.option.contrastAlgorithm !== "APCA" ? `${Lang._("CONTRAST_ERROR_GRAPHIC")} ${Lang._("CONTRAST_TIP_GRAPHIC")}` : Lang._("CONTRAST_ERROR_GRAPHIC"))
-              ),
-              dismiss: prepareDismissal(`CONTRAST_ERROR_GRAPHIC ${$el.outerHTML}`),
-              dismissAll: State.option.checks.CONTRAST_ERROR_GRAPHIC.dismissAll ? "CONTRAST_ERROR_GRAPHIC" : false,
-              developer: State.option.checks.CONTRAST_ERROR_GRAPHIC.developer || true,
-              contrastDetails: updatedItem,
-              margin: "-25px"
-            });
-          }
+          logResult({
+            test: "CONTRAST_ERROR_GRAPHIC",
+            type: "error",
+            content: Lang.sprintf(
+              State.option.contrastAlgorithm !== "APCA" ? `${Lang._("CONTRAST_ERROR_GRAPHIC")} ${Lang._("CONTRAST_TIP_GRAPHIC")}` : Lang._("CONTRAST_ERROR_GRAPHIC")
+            ),
+            dismiss: $el.outerHTML,
+            developer: true,
+            margin: "-25px"
+          });
+          break;
+        case "placeholder-unsupported":
+          logResult({
+            test: "CONTRAST_PLACEHOLDER_UNSUPPORTED",
+            content: Lang.sprintf(
+              isWcag ? `${Lang._("CONTRAST_PLACEHOLDER_UNSUPPORTED")} ${Lang._(ratioRequirementKey)}` : Lang._("CONTRAST_PLACEHOLDER_UNSUPPORTED"),
+              ratioToDisplay2
+            ),
+            args: [ratioToDisplay2],
+            position: "afterend",
+            dismiss: $el.tagName + ($el.id || "") + previewText,
+            developer: true
+          });
           break;
         case "svg-warning":
-          if (State.option.checks.CONTRAST_WARNING_GRAPHIC) {
-            State.results.push({
-              test: "CONTRAST_WARNING_GRAPHIC",
-              element: $el,
-              type: State.option.checks.CONTRAST_WARNING_GRAPHIC.type || "warning",
-              content: Lang.sprintf(
-                State.option.checks.CONTRAST_WARNING_GRAPHIC.content || (State.option.contrastAlgorithm !== "APCA" ? `${Lang._("CONTRAST_WARNING_GRAPHIC")} ${Lang._("CONTRAST_TIP_GRAPHIC")}` : Lang._("CONTRAST_WARNING_GRAPHIC"))
-              ),
-              dismiss: prepareDismissal(`CONTRAST_WARNING_GRAPHIC ${$el.outerHTML}`),
-              dismissAll: State.option.checks.CONTRAST_WARNING_GRAPHIC.dismissAll ? "CONTRAST_WARNING_GRAPHIC" : false,
-              developer: State.option.checks.CONTRAST_WARNING_GRAPHIC.developer || true,
-              contrastDetails: updatedItem,
-              margin: "-25px"
-            });
-          }
+          logResult({
+            test: "CONTRAST_WARNING_GRAPHIC",
+            content: Lang.sprintf(
+              State.option.contrastAlgorithm !== "APCA" ? `${Lang._("CONTRAST_WARNING_GRAPHIC")} ${Lang._("CONTRAST_TIP_GRAPHIC")}` : Lang._("CONTRAST_WARNING_GRAPHIC")
+            ),
+            dismiss: $el.outerHTML,
+            developer: true,
+            margin: "-25px"
+          });
           break;
         case "background-image":
-          if (State.option.checks.CONTRAST_WARNING) {
-            State.results.push({
-              test: "CONTRAST_WARNING",
-              element,
-              type: State.option.checks.CONTRAST_WARNING.type || "warning",
-              content: Lang.sprintf(
-                State.option.checks.CONTRAST_WARNING.content || (isWcag ? `${Lang._("CONTRAST_WARNING")} ${Lang._(ratioRequirementKey)}` : Lang._("CONTRAST_WARNING")),
-                ratioToDisplay2
-              ),
-              dismiss: prepareDismissal(`CONTRAST_WARNING ${previewText}`),
-              dismissAll: State.option.checks.CONTRAST_WARNING.dismissAll ? "CONTRAST_WARNING" : false,
-              developer: State.option.checks.CONTRAST_WARNING.developer || false,
-              contrastDetails: updatedItem
-            });
-          }
+          logResult({
+            test: "CONTRAST_WARNING",
+            content: Lang.sprintf(
+              isWcag ? `${Lang._("CONTRAST_WARNING")} ${Lang._(ratioRequirementKey)}` : Lang._("CONTRAST_WARNING"),
+              ratioToDisplay2
+            ),
+            args: [ratioToDisplay2]
+          });
           break;
         case "unsupported":
-          if (State.option.checks.CONTRAST_UNSUPPORTED) {
-            State.results.push({
-              test: "CONTRAST_UNSUPPORTED",
-              element,
-              type: State.option.checks.CONTRAST_UNSUPPORTED.type || "warning",
-              content: Lang.sprintf(
-                State.option.checks.CONTRAST_UNSUPPORTED.content || (isWcag ? `${Lang._("CONTRAST_WARNING")} ${Lang._(ratioRequirementKey)}` : Lang._("CONTRAST_WARNING")),
-                ratioToDisplay2
-              ),
-              dismiss: prepareDismissal(`CONTRAST_UNSUPPORTED ${previewText}`),
-              dismissAll: State.option.checks.CONTRAST_UNSUPPORTED.dismissAll ? "CONTRAST_UNSUPPORTED" : false,
-              developer: State.option.checks.CONTRAST_UNSUPPORTED.developer || false,
-              contrastDetails: updatedItem
-            });
-          }
+          logResult({
+            test: "CONTRAST_UNSUPPORTED",
+            content: Lang.sprintf(
+              isWcag ? `${Lang._("CONTRAST_WARNING")} ${Lang._(ratioRequirementKey)}` : Lang._("CONTRAST_WARNING"),
+              ratioToDisplay2
+            ),
+            args: [ratioToDisplay2]
+          });
           break;
       }
     });
   }
   function checkLabels() {
-    if (State.option.formLabelsPlugin) {
-      Elements.Found.Inputs.forEach(($el) => {
-        if (isElementHidden($el) || isHiddenAndUnfocusable($el) || isPresentational($el) && isDisabled($el))
-          return;
-        const computeName = computeAccessibleName($el);
-        const inputName = removeWhitespace(computeName);
-        const type = $el.getAttribute("type");
-        const hasTitle = $el.getAttribute("title");
-        const hasAria = $el.getAttribute("aria-label") || $el.getAttribute("aria-labelledby");
-        const nativeTags = ["INPUT", "TEXTAREA", "SELECT", "METER", "PROGRESS"];
-        const isNativeInput = nativeTags.includes($el.tagName.toUpperCase());
-        if (type === "submit" || type === "button" || type === "hidden") {
-          return;
-        }
-        if (type === "image") {
-          if (State.option.checks.LABELS_MISSING_IMAGE_INPUT && inputName === "") {
-            State.results.push({
-              test: "LABELS_MISSING_IMAGE_INPUT",
-              element: $el,
-              type: State.option.checks.LABELS_MISSING_IMAGE_INPUT.type || "error",
-              content: Lang.sprintf(
-                State.option.checks.LABELS_MISSING_IMAGE_INPUT.content || "LABELS_MISSING_IMAGE_INPUT"
-              ),
-              dismiss: prepareDismissal(`LABELS_MISSING_IMAGE_INPUT ${type + inputName}`),
-              dismissAll: State.option.checks.LABELS_MISSING_IMAGE_INPUT.dismissAll ? "LABELS_MISSING_IMAGE_INPUT" : false,
-              developer: State.option.checks.LABELS_MISSING_IMAGE_INPUT.developer || true
-            });
-          }
-          return;
-        }
-        if (type === "reset") {
-          if (State.option.checks.LABELS_INPUT_RESET) {
-            State.results.push({
-              test: "LABELS_INPUT_RESET",
-              element: $el,
-              type: State.option.checks.LABELS_INPUT_RESET.type || "warning",
-              content: Lang.sprintf(
-                State.option.checks.LABELS_INPUT_RESET.content || "LABELS_INPUT_RESET"
-              ),
-              dismiss: prepareDismissal(`LABELS_INPUT_RESET ${type + inputName}`),
-              dismissAll: State.option.checks.LABELS_INPUT_RESET.dismissAll ? "LABELS_INPUT_RESET" : false,
-              developer: State.option.checks.LABELS_INPUT_RESET.developer || false
-            });
-          }
-          return;
-        }
-        const hasPlaceholder = $el.placeholder && $el.placeholder !== 0;
-        if (hasPlaceholder && State.option.checks.LABELS_PLACEHOLDER) {
-          State.results.push({
-            test: "LABELS_PLACEHOLDER",
-            element: $el,
-            type: State.option.checks.LABELS_PLACEHOLDER.type || "warning",
-            content: Lang.sprintf(
-              State.option.checks.LABELS_PLACEHOLDER.content || "LABELS_PLACEHOLDER"
-            ),
-            dismiss: prepareDismissal(`LABELS_PLACEHOLDER ${type + inputName}`),
-            dismissAll: State.option.checks.LABELS_PLACEHOLDER.dismissAll ? "LABELS_PLACEHOLDER" : false,
-            developer: State.option.checks.LABELS_PLACEHOLDER.developer || true
-          });
-        }
-        if (State.option.checks.ARIA_INPUT_FIELD_NAME && !isNativeInput) {
-          const toggles = [
-            "checkbox",
-            "menu",
-            "menuitemcheckbox",
-            "menuitemradio",
-            "radio",
-            "radiogroup",
-            "switch"
-          ];
-          const role = $el.getAttribute("role")?.trim().toLowerCase() || "";
-          const toggleRole = toggles.includes(role);
-          if (toggleRole && inputName.length !== 0) return;
-          if (inputName.length === 0) {
-            const outerHTML = truncateString($el.outerHTML, 100);
-            State.results.push({
-              test: "ARIA_INPUT_FIELD_NAME",
-              element: $el,
-              type: State.option.checks.ARIA_INPUT_FIELD_NAME.type || "error",
-              content: State.option.checks.ARIA_INPUT_FIELD_NAME.content ? Lang.sprintf(State.option.checks.ARIA_INPUT_FIELD_NAME.content) : Lang.sprintf(Lang._("ARIA_INPUT_FIELD_NAME") + Lang._("ACC_NAME_TIP"), outerHTML),
-              args: [outerHTML],
-              dismiss: prepareDismissal(`ARIA_INPUT_FIELD_NAME ${outerHTML}`),
-              dismissAll: State.option.checks.ARIA_INPUT_FIELD_NAME.dismissAll ? "ARIA_INPUT_FIELD_NAME" : false,
-              developer: State.option.checks.ARIA_INPUT_FIELD_NAME.developer || true
-            });
-            return;
-          }
-        }
-        if (hasAria || hasTitle) {
-          if (inputName.length === 0) {
-            if (State.option.checks.LABELS_MISSING_LABEL) {
-              State.results.push({
-                test: "LABELS_MISSING_LABEL",
-                element: $el,
-                type: State.option.checks.LABELS_MISSING_LABEL.type || "error",
-                content: Lang.sprintf(
-                  State.option.checks.LABELS_MISSING_LABEL.content || "LABELS_MISSING_LABEL"
-                ),
-                dismiss: prepareDismissal(`LABELS_MISSING_LABEL ${type + inputName}`),
-                dismissAll: State.option.checks.LABELS_MISSING_LABEL.dismissAll ? "LABELS_MISSING_LABEL" : false,
-                developer: State.option.checks.LABELS_MISSING_LABEL.developer || true
-              });
-            }
-          } else if (State.option.checks.LABELS_ARIA_LABEL_INPUT) {
-            const ariaLabelledBy = $el.getAttribute("aria-labelledby");
-            if (ariaLabelledBy) {
-              const ids = ariaLabelledBy.trim().split(/\s+/);
-              if (ids.length === 1) {
-                const target = find(`#${ids[0]}`, "root")?.[0];
-                if (target && !isElementHidden(target)) return;
-              }
-            }
-            State.results.push({
-              test: "LABELS_ARIA_LABEL_INPUT",
-              element: $el,
-              type: State.option.checks.LABELS_ARIA_LABEL_INPUT.type || "warning",
-              content: State.option.checks.LABELS_ARIA_LABEL_INPUT.content ? Lang.sprintf(State.option.checks.LABELS_ARIA_LABEL_INPUT.content, inputName) : Lang.sprintf(Lang._("LABELS_ARIA_LABEL_INPUT") + Lang._("ACC_NAME_TIP"), inputName),
-              args: [inputName],
-              dismiss: prepareDismissal(`LABELS_ARIA_LABEL_INPUT ${type + inputName}`),
-              dismissAll: State.option.checks.LABELS_ARIA_LABEL_INPUT.dismissAll ? "LABELS_ARIA_LABEL_INPUT" : false,
-              developer: State.option.checks.LABELS_ARIA_LABEL_INPUT.developer || true
-            });
-          }
-          return;
-        }
-        if (isNativeInput) {
-          const closestLabel = getCachedClosest($el, "label");
-          const labelName = closestLabel ? computeAccessibleName(closestLabel) : "";
-          if (closestLabel && labelName.length || hasPlaceholder) return;
-        }
-        const id = $el.getAttribute("id");
-        if (id) {
-          const hasMatchingLabel = Elements.Found.Labels.some(
-            (label) => label.getAttribute("for") === id
-          );
-          if (hasMatchingLabel) return;
-          if (State.option.checks.LABELS_NO_FOR_ATTRIBUTE) {
-            State.results.push({
-              test: "LABELS_NO_FOR_ATTRIBUTE",
-              element: $el,
-              type: State.option.checks.LABELS_NO_FOR_ATTRIBUTE.type || "error",
-              content: Lang.sprintf(
-                State.option.checks.LABELS_NO_FOR_ATTRIBUTE.content || "LABELS_NO_FOR_ATTRIBUTE",
-                id
-              ),
-              args: [id],
-              dismiss: prepareDismissal(`LABELS_NO_FOR_ATTRIBUTE ${type + inputName}`),
-              dismissAll: State.option.checks.LABELS_NO_FOR_ATTRIBUTE.dismissAll ? "LABELS_NO_FOR_ATTRIBUTE" : false,
-              developer: State.option.checks.LABELS_NO_FOR_ATTRIBUTE.developer || true
-            });
-          }
-        } else if (State.option.checks.LABELS_MISSING_LABEL) {
-          State.results.push({
-            test: "LABELS_MISSING_LABEL",
-            element: $el,
-            type: State.option.checks.LABELS_MISSING_LABEL.type || "error",
-            content: Lang.sprintf(
-              State.option.checks.LABELS_MISSING_LABEL.content || "LABELS_MISSING_LABEL"
-            ),
-            dismiss: prepareDismissal(`LABELS_MISSING_LABEL ${type + inputName}`),
-            dismissAll: State.option.checks.LABELS_MISSING_LABEL.dismissAll ? "LABELS_MISSING_LABEL" : false,
-            developer: State.option.checks.LABELS_MISSING_LABEL.developer || true
-          });
-        }
+    if (!State.option.formLabelsPlugin) return;
+    Elements.Found.Inputs.forEach(($el) => {
+      const presentation = isPresentational($el) && isDisabled($el);
+      if (isElementHidden($el) || isHiddenAndUnfocusable($el) || presentation) return;
+      const computeName = computeAccessibleName($el);
+      const inputName = removeWhitespace(computeName);
+      const type = $el.getAttribute("type");
+      const hasTitle = $el.getAttribute("title");
+      const hasAria = $el.getAttribute("aria-label") || $el.getAttribute("aria-labelledby");
+      const nativeTags = ["INPUT", "TEXTAREA", "SELECT", "METER", "PROGRESS"];
+      const isNativeInput = nativeTags.includes($el.tagName.toUpperCase());
+      if (["submit", "button", "hidden"].includes(type)) return;
+      const logResult = (params) => pushResult({
+        element: $el,
+        type: params.type || "error",
+        developer: params.developer || true,
+        dismiss: type + inputName,
+        ...params
       });
-    }
-    return State.results;
+      if (type === "image") {
+        if (inputName === "") logResult({ test: "LABELS_MISSING_IMAGE_INPUT" });
+        return;
+      }
+      if (type === "reset") {
+        logResult({ test: "LABELS_INPUT_RESET", type: "warning", developer: false });
+        return;
+      }
+      const hasPlaceholder = $el.placeholder && $el.placeholder !== 0;
+      if (hasPlaceholder) {
+        logResult({ test: "LABELS_PLACEHOLDER", type: "warning" });
+      }
+      if (!isNativeInput && State.option.checks.ARIA_INPUT_FIELD_NAME) {
+        const toggles = [
+          "checkbox",
+          "menu",
+          "menuitemcheckbox",
+          "menuitemradio",
+          "radio",
+          "radiogroup",
+          "switch"
+        ];
+        const role = $el.getAttribute("role")?.trim().toLowerCase() || "";
+        if (toggles.includes(role) && inputName.length !== 0) return;
+        if (inputName.length === 0) {
+          const outerHTML = truncateString($el.outerHTML, 100);
+          const rule = State.option.checks.ARIA_INPUT_FIELD_NAME;
+          const message = rule.content ? Lang.sprintf(rule.content) : Lang.sprintf(Lang._("ARIA_INPUT_FIELD_NAME") + Lang._("ACC_NAME_TIP"), outerHTML);
+          logResult({
+            test: "ARIA_INPUT_FIELD_NAME",
+            args: [outerHTML],
+            content: message
+          });
+          return;
+        }
+      }
+      if (hasAria || hasTitle) {
+        if (inputName.length === 0) {
+          logResult({ test: "LABELS_MISSING_LABEL" });
+        } else {
+          const ariaLabelledBy = $el.getAttribute("aria-labelledby");
+          if (ariaLabelledBy) {
+            const ids = ariaLabelledBy.trim().split(/\s+/);
+            if (ids.length === 1) {
+              const target = find(`#${ids[0]}`, "root")?.[0];
+              if (target && !isElementHidden(target)) return;
+            }
+          }
+          const rule = State.option.checks.LABELS_ARIA_LABEL_INPUT;
+          if (rule) {
+            const message = rule.content ? Lang.sprintf(rule.content, inputName) : Lang.sprintf(Lang._("LABELS_ARIA_LABEL_INPUT") + Lang._("ACC_NAME_TIP"), inputName);
+            logResult({
+              test: "LABELS_ARIA_LABEL_INPUT",
+              type: "warning",
+              args: [inputName],
+              content: message
+            });
+          }
+        }
+        return;
+      }
+      if (isNativeInput) {
+        const closestLabel = getCachedClosest($el, "label");
+        const labelName = closestLabel ? computeAccessibleName(closestLabel) : "";
+        if (closestLabel && labelName.length || hasPlaceholder) return;
+      }
+      const id = $el.getAttribute("id");
+      if (id) {
+        const hasMatchingLabel = Elements.Found.Labels.some(
+          (label) => label.getAttribute("for") === id
+        );
+        if (hasMatchingLabel) return;
+        logResult({ test: "LABELS_NO_FOR_ATTRIBUTE", args: [id] });
+      } else {
+        logResult({ test: "LABELS_MISSING_LABEL" });
+      }
+    });
   }
   function computeReadability(textArray, lang) {
     const readabilityArray = [];
@@ -7798,7 +7379,7 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
     if (["en", "es", "fr", "de", "nl", "it", "pt"].includes(lang)) {
       const numberOfSyllables = (el2) => {
         let wordCheck = el2;
-        wordCheck = wordCheck.toLowerCase().replace(".", "").replace("\n", "");
+        wordCheck = wordCheck.toLowerCase().replaceAll(".", "").replaceAll("\n", "");
         if (wordCheck.length <= 3) {
           return 1;
         }
@@ -7928,132 +7509,97 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
       };
       State.results.push(result);
     }
-    if (State.option.headless === false) {
-      if (computed && result.wordCount > 30) {
-        Constants.Panel.readabilityInfo.innerHTML = `${Math.ceil(result.score)} <span class="readability-score">${result.difficultyLevel}</span>`;
-        Constants.Panel.readabilityDetails.innerHTML = `<li><strong>${Lang._("AVG_SENTENCE")}</strong> ${Math.ceil(result.averageWordsPerSentence)}</li><li><strong>${Lang._("COMPLEX_WORDS")}</strong> ${result.complexWords}%</li><li><strong>${Lang._("TOTAL_WORDS")}</strong> ${result.wordCount}</li>`;
-      } else {
-        Constants.Panel.readabilityInfo.innerHTML = `<br>${Lang._("READABILITY_NOT_ENOUGH")}`;
-      }
+    if (State.option.headless) return;
+    if (computed && result.wordCount > 30) {
+      const { score, difficultyLevel, averageWordsPerSentence, complexWords, wordCount } = result;
+      Constants.Panel.readabilityInfo.innerHTML = `${Math.ceil(score)} <span class="readability-score">${difficultyLevel}</span>`;
+      const details = [
+        [Lang._("AVG_SENTENCE"), Math.ceil(averageWordsPerSentence)],
+        [Lang._("COMPLEX_WORDS"), `${complexWords}%`],
+        [Lang._("TOTAL_WORDS"), wordCount]
+      ].map(([label, value]) => `<li><strong>${label}</strong> ${value}</li>`).join("");
+      Constants.Panel.readabilityDetails.innerHTML = details;
+    } else {
+      Constants.Panel.readabilityInfo.innerHTML = `<br>${Lang._("READABILITY_NOT_ENOUGH")}`;
     }
   }
   function checkEmbeddedContent() {
     if (!State.option.embeddedContentPlugin) return;
     const src = ($el) => $el.getAttribute("src") || $el.querySelector("source[src]")?.getAttribute("src") || $el.querySelector("[src]")?.getAttribute("src") || null;
-    if (State.option.checks.EMBED_AUDIO) {
-      Elements.Found.Audio.forEach(($el) => {
-        State.results.push({
-          test: "EMBED_AUDIO",
+    Elements.Found.Audio.forEach(($el) => {
+      pushResult({
+        test: "EMBED_AUDIO",
+        element: $el,
+        type: "warning",
+        dismiss: src($el)
+      });
+    });
+    Elements.Found.Videos.forEach(($el) => {
+      const track = $el.querySelector("track");
+      const trackSrc = track?.getAttribute("src");
+      if (!track || !trackSrc || trackSrc.trim().length === 0) {
+        pushResult({
+          test: "EMBED_VIDEO",
           element: $el,
-          type: State.option.checks.EMBED_AUDIO.type || "warning",
-          content: Lang.sprintf(State.option.checks.EMBED_AUDIO.content || "EMBED_AUDIO"),
-          dismiss: prepareDismissal(`EMBED_AUDIO ${src($el)}`),
-          dismissAll: State.option.checks.EMBED_AUDIO.dismissAll ? "EMBED_AUDIO" : false,
-          developer: State.option.checks.EMBED_AUDIO.developer || false
+          type: "warning",
+          dismiss: src($el)
         });
+      }
+    });
+    Elements.Found.Visualizations.forEach(($el) => {
+      pushResult({
+        test: "EMBED_DATA_VIZ",
+        element: $el,
+        type: "warning",
+        dismiss: src($el)
       });
-    }
-    if (State.option.checks.EMBED_VIDEO) {
-      Elements.Found.Videos.forEach(($el) => {
-        const track = $el.querySelector("track");
-        const trackSrc = track?.getAttribute("src");
-        if (track === null || trackSrc === null || trackSrc.trim().length === 0) {
-          State.results.push({
-            test: "EMBED_VIDEO",
-            element: $el,
-            type: State.option.checks.EMBED_VIDEO.type || "warning",
-            content: Lang.sprintf(State.option.checks.EMBED_VIDEO.content || "EMBED_VIDEO"),
-            dismiss: prepareDismissal(`EMBED_VIDEO ${src($el)}`),
-            dismissAll: State.option.checks.EMBED_VIDEO.dismissAll ? "EMBED_VIDEO" : false,
-            developer: State.option.checks.EMBED_VIDEO.developer || false
-          });
-        }
-      });
-    }
-    if (State.option.checks.EMBED_DATA_VIZ) {
-      Elements.Found.Visualizations.forEach(($el) => {
-        State.results.push({
-          test: "EMBED_DATA_VIZ",
-          element: $el,
-          type: State.option.checks.EMBED_DATA_VIZ.type || "warning",
-          content: Lang.sprintf(State.option.checks.EMBED_DATA_VIZ.content || "EMBED_DATA_VIZ"),
-          dismiss: prepareDismissal(`EMBED_DATA_VIZ ${src($el)}`),
-          dismissAll: State.option.checks.EMBED_DATA_VIZ.dismissAll ? "EMBED_DATA_VIZ" : false,
-          developer: State.option.checks.EMBED_DATA_VIZ.developer || false
-        });
-      });
-    }
+    });
     Elements.Found.iframes.forEach(($el) => {
-      const videoAudio = $el.tagName === "VIDEO" || $el.tagName === "AUDIO";
-      if (isElementHidden($el) || videoAudio || isHiddenAndUnfocusable($el) || isPresentational($el)) {
+      if (isElementHidden($el) || isHiddenAndUnfocusable($el) || isPresentational($el) || ["VIDEO", "AUDIO"].includes($el.tagName)) {
         return;
       }
       if (isNegativeTabindex($el)) {
-        if (State.option.checks.EMBED_UNFOCUSABLE) {
-          State.results.push({
-            test: "EMBED_UNFOCUSABLE",
-            element: $el,
-            type: State.option.checks.EMBED_UNFOCUSABLE.type || "error",
-            content: Lang.sprintf(
-              State.option.checks.EMBED_UNFOCUSABLE.content || "EMBED_UNFOCUSABLE"
-            ),
-            dismiss: prepareDismissal(`EMBED_UNFOCUSABLE ${src($el)}`),
-            dismissAll: State.option.checks.EMBED_UNFOCUSABLE.dismissAll ? "EMBED_UNFOCUSABLE" : false,
-            developer: State.option.checks.EMBED_UNFOCUSABLE.developer || true
-          });
-        }
+        pushResult({
+          test: "EMBED_UNFOCUSABLE",
+          element: $el,
+          dismiss: src($el),
+          developer: true
+        });
         return;
       }
-      if (State.option.checks.EMBED_MISSING_TITLE) {
-        const aria = computeAriaLabel($el);
-        const checkTitle = aria === "noAria" ? $el.getAttribute("title") || "" : aria;
-        const accessibleName = removeWhitespace(checkTitle);
-        if (accessibleName.length === 0) {
-          State.results.push({
-            test: "EMBED_MISSING_TITLE",
-            element: $el,
-            type: State.option.checks.EMBED_MISSING_TITLE.type || "error",
-            content: Lang.sprintf(
-              State.option.checks.EMBED_MISSING_TITLE.content || "EMBED_MISSING_TITLE"
-            ),
-            dismiss: prepareDismissal(`EMBED_MISSING_TITLE ${src($el)}`),
-            dismissAll: State.option.checks.EMBED_MISSING_TITLE.dismissAll ? "EMBED_MISSING_TITLE" : false,
-            developer: State.option.checks.EMBED_MISSING_TITLE.developer || true
-          });
-        }
+      const aria = computeAriaLabel($el);
+      const checkTitle = aria === "noAria" ? $el.getAttribute("title") || "" : aria;
+      if (removeWhitespace(checkTitle).length === 0) {
+        pushResult({
+          test: "EMBED_MISSING_TITLE",
+          element: $el,
+          dismiss: src($el),
+          developer: true
+        });
       }
     });
-    if (State.option.checks.EMBED_GENERAL) {
-      Elements.Found.EmbeddedContent.forEach(($el) => {
-        if (isElementHidden($el) || isHiddenAndUnfocusable($el)) return;
-        if ($el.tagName === "VIDEO" || $el.tagName === "AUDIO") return;
-        State.results.push({
-          test: "EMBED_GENERAL",
-          element: $el,
-          type: State.option.checks.EMBED_GENERAL.type || "warning",
-          content: Lang.sprintf(State.option.checks.EMBED_GENERAL.content || "EMBED_GENERAL"),
-          dismiss: prepareDismissal(`EMBED_GENERAL ${src($el)}`),
-          dismissAll: State.option.checks.EMBED_GENERAL.dismissAll ? "EMBED_GENERAL" : false,
-          developer: State.option.checks.EMBED_GENERAL.developer || false
-        });
+    Elements.Found.EmbeddedContent.forEach(($el) => {
+      if (isElementHidden($el) || isHiddenAndUnfocusable($el) || ["VIDEO", "AUDIO"].includes($el.tagName)) {
+        return;
+      }
+      pushResult({
+        test: "EMBED_GENERAL",
+        element: $el,
+        type: "warning",
+        dismiss: src($el)
       });
-    }
-    return State.results;
+    });
   }
   function checkQA() {
     if (State.option.checks.QA_BAD_LINK) {
       Elements.Found.CustomErrorLinks.forEach(($el) => {
         const text = getText($el);
-        State.results.push({
+        pushResult({
           test: "QA_BAD_LINK",
           element: $el,
-          type: State.option.checks.QA_BAD_LINK.type || "error",
-          content: Lang.sprintf(State.option.checks.QA_BAD_LINK.content || "QA_BAD_LINK", $el, text),
           args: [$el, text],
           inline: true,
-          dismiss: prepareDismissal(`QA_BAD_LINK ${$el.tagName + $el.textContent}`),
-          dismissAll: State.option.checks.QA_BAD_LINK.dismissAll ? "QA_BAD_LINK" : false,
-          developer: State.option.checks.QA_BAD_LINK.developer || false
+          dismiss: $el.tagName + $el.textContent
         });
       });
     }
@@ -8061,18 +7607,12 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
       Elements.Found.StrongItalics.forEach(($el) => {
         const text = getText($el);
         if (text.length !== 0 && text.length > 400) {
-          State.results.push({
+          pushResult({
             test: "QA_STRONG_ITALICS",
             element: $el.parentNode,
-            type: State.option.checks.QA_STRONG_ITALICS.type || "warning",
-            content: Lang.sprintf(
-              State.option.checks.QA_STRONG_ITALICS.content || "QA_STRONG_ITALICS",
-              text
-            ),
+            type: "warning",
             args: [text],
-            dismiss: prepareDismissal(`QA_STRONG_ITALICS ${$el.tagName + $el.textContent}`),
-            dismissAll: State.option.checks.QA_STRONG_ITALICS.dismissAll ? "QA_STRONG_ITALICS" : false,
-            developer: State.option.checks.QA_STRONG_ITALICS.developer || false
+            dismiss: $el.tagName + $el.textContent
           });
         }
       });
@@ -8081,15 +7621,12 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
       Elements.Found.Blockquotes.forEach(($el) => {
         const text = getText($el);
         if (text.length !== 0 && text.length < 25) {
-          State.results.push({
+          pushResult({
             test: "QA_BLOCKQUOTE",
             element: $el,
-            type: State.option.checks.QA_BLOCKQUOTE.type || "warning",
-            content: Lang.sprintf(State.option.checks.QA_BLOCKQUOTE.content || "QA_BLOCKQUOTE", text),
+            type: "warning",
             args: [text],
-            dismiss: prepareDismissal(`QA_BLOCKQUOTE ${text}`),
-            dismissAll: State.option.checks.QA_BLOCKQUOTE.dismissAll ? "QA_BLOCKQUOTE" : false,
-            developer: State.option.checks.QA_BLOCKQUOTE.developer || false
+            dismiss: text
           });
         }
       });
@@ -8102,10 +7639,8 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
       const semanticHeadings = $el.querySelectorAll("h1, h2, h3, h4, h5, h6");
       const firstRow = $el.querySelector("tr") ? $el.querySelector("tr").innerHTML : $el.innerHTML;
       const invalidIds = [];
-      const cellsWithHeaders = $el.querySelectorAll("[headers]");
-      cellsWithHeaders.forEach((cell) => {
-        const headersAttr = cell.getAttribute("headers");
-        const headerIds = headersAttr.trim().split(/\s+/);
+      $el.querySelectorAll("[headers]").forEach((cell) => {
+        const headerIds = cell.getAttribute("headers").trim().split(/\s+/);
         headerIds.forEach((id) => {
           const referencedElement = $el.querySelector(`#${id}`);
           const doesNotExist = !referencedElement;
@@ -8113,95 +7648,62 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
           let isNotHeader = true;
           if (referencedElement) {
             const tagName = referencedElement.tagName.toLowerCase();
-            const role2 = referencedElement.getAttribute("role")?.trim().toLowerCase();
-            if (tagName === "th" || role2 === "rowheader" || role2 === "columnheader")
+            const refRole = referencedElement.getAttribute("role")?.trim().toLowerCase();
+            if (tagName === "th" || refRole === "rowheader" || refRole === "columnheader") {
               isNotHeader = false;
+            }
           }
           if (doesNotExist || isNotInTable || isNotHeader) invalidIds.push(id);
         });
       });
-      if (State.option.checks.TABLES_INVALID_HEADERS_REF && invalidIds.length > 0) {
-        State.results.push({
+      if (invalidIds.length > 0) {
+        pushResult({
           test: "TABLES_INVALID_HEADERS_REF",
           element: $el,
-          type: State.option.checks.TABLES_INVALID_HEADERS_REF.type || "error",
-          content: Lang.sprintf(
-            State.option.checks.TABLES_INVALID_HEADERS_REF.content || "TABLES_INVALID_HEADERS_REF",
-            invalidIds.join(", ")
-          ),
           args: [invalidIds.join(", ")],
-          dismiss: prepareDismissal(`TABLES_INVALID_HEADERS_REF ${firstRow}`),
-          dismissAll: State.option.checks.TABLES_INVALID_HEADERS_REF.dismissAll ? "TABLES_INVALID_HEADERS_REF" : false,
-          developer: State.option.checks.TABLES_INVALID_HEADERS_REF.developer || true
+          dismiss: firstRow,
+          devFallback: true
         });
       }
-      if (State.option.checks.TABLES_MISSING_HEADINGS && tableHeaders.length === 0) {
-        State.results.push({
+      if (tableHeaders.length === 0) {
+        pushResult({
           test: "TABLES_MISSING_HEADINGS",
           element: $el,
-          type: State.option.checks.TABLES_MISSING_HEADINGS.type || "error",
-          content: Lang.sprintf(
-            State.option.checks.TABLES_MISSING_HEADINGS.content || "TABLES_MISSING_HEADINGS"
-          ),
-          dismiss: prepareDismissal(`TABLES_MISSING_HEADINGS ${firstRow}`),
-          dismissAll: State.option.checks.TABLES_MISSING_HEADINGS.dismissAll ? "TABLES_MISSING_HEADINGS" : false,
-          developer: State.option.checks.TABLES_MISSING_HEADINGS.developer || false
+          dismiss: firstRow
         });
       }
-      if (State.option.checks.TABLES_SEMANTIC_HEADING && semanticHeadings.length > 0) {
-        semanticHeadings.forEach((heading) => {
-          State.results.push({
-            test: "TABLES_SEMANTIC_HEADING",
-            element: heading,
-            type: State.option.checks.TABLES_SEMANTIC_HEADING.type || "error",
-            content: Lang.sprintf(
-              State.option.checks.TABLES_SEMANTIC_HEADING.content || "TABLES_SEMANTIC_HEADING"
-            ),
-            dismiss: prepareDismissal(`TABLES_SEMANTIC_HEADING ${firstRow}`),
-            dismissAll: State.option.checks.TABLES_SEMANTIC_HEADING.dismissAll ? "TABLES_SEMANTIC_HEADING" : false,
-            developer: State.option.checks.TABLES_SEMANTIC_HEADING.developer || false
-          });
+      semanticHeadings.forEach((heading) => {
+        pushResult({
+          test: "TABLES_SEMANTIC_HEADING",
+          element: heading,
+          dismiss: firstRow
         });
-      }
+      });
       tableHeaders.forEach((th) => {
-        if (State.option.checks.TABLES_EMPTY_HEADING && th.textContent.trim().length === 0) {
-          State.results.push({
+        if (th.textContent.trim().length === 0) {
+          pushResult({
             test: "TABLES_EMPTY_HEADING",
             element: th,
-            type: State.option.checks.TABLES_EMPTY_HEADING.type || "error",
-            content: Lang.sprintf(
-              State.option.checks.TABLES_EMPTY_HEADING.content || "TABLES_EMPTY_HEADING"
-            ),
-            position: "afterbegin",
-            dismiss: prepareDismissal(`TABLES_EMPTY_HEADING ${firstRow}`),
-            dismissAll: State.option.checks.TABLES_EMPTY_HEADING.dismissAll ? "TABLES_EMPTY_HEADING" : false,
-            developer: State.option.checks.TABLES_EMPTY_HEADING.developer || false
+            dismiss: firstRow,
+            position: "afterbegin"
           });
         }
       });
     });
     if (State.option.checks.QA_FAKE_HEADING) {
       const addResult = (element, text) => {
-        State.results.push({
+        pushResult({
           test: "QA_FAKE_HEADING",
           element,
-          type: State.option.checks.QA_FAKE_HEADING.type || "warning",
-          content: Lang.sprintf(
-            State.option.checks.QA_FAKE_HEADING.content || "QA_FAKE_HEADING",
-            text
-          ),
+          type: "warning",
           args: [text],
-          dismiss: prepareDismissal(`QA_FAKE_HEADING ${text}`),
-          inline: true,
-          dismissAll: State.option.checks.QA_FAKE_HEADING.dismissAll ? "QA_FAKE_HEADING" : false,
-          developer: State.option.checks.QA_FAKE_HEADING.developer || false
+          dismiss: text,
+          inline: true
         });
       };
       const isPreviousElementAHeading = (p) => {
         const previousElement = p.previousElementSibling;
-        if (!previousElement) return false;
-        const headingTags = ["H1", "H2", "H3", "H4", "H5", "H6"];
-        return headingTags.includes(previousElement.tagName);
+        return previousElement && ["H1", "H2", "H3", "H4", "H5", "H6"].includes(previousElement.tagName);
       };
       const ignoreParents = 'h1, h2, h3, h4, h5, h6, [role="heading"][aria-level], blockquote, table';
       const computeLargeParagraphs = (p) => {
@@ -8237,15 +7739,7 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
       const emojiMatch = new RegExp(/\p{Extended_Pictographic}/, "u");
       const secondTextNoMatch = ["a", "A", "α", "Α", "а", "А", "1"];
       const specialCharsMatch = /[([{#]/;
-      const prefixDecrement = {
-        2: "1",
-        b: "a",
-        B: "A",
-        β: "α",
-        Β: "Α",
-        б: "а",
-        Б: "А"
-      };
+      const prefixDecrement = { 2: "1", b: "a", B: "A", β: "α", Β: "Α", б: "а", Б: "А" };
       const decrement = (element) => element.replace(/^b|^B|^б|^Б|^β|^В|^[2-9]/, (match) => prefixDecrement[match]);
       let activeMatch = "";
       let firstText = "";
@@ -8253,7 +7747,7 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
       Elements.Found.Paragraphs.forEach((p, i) => {
         let secondText = false;
         let hit = false;
-        firstText = firstText || getText(p).replace(/[([]/, "");
+        firstText = firstText || getText(p).replace(/[([]/g, "");
         const firstPrefix = firstText.substring(0, 2);
         const isAlphabetic = firstPrefix.match(alphabeticMatch);
         const isNumber = firstPrefix.match(numberMatch);
@@ -8264,21 +7758,15 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
           if (/^[A-Z]\.[A-Z]\./.test(firstText)) return;
           const secondP = Elements.Found.Paragraphs[i + 1];
           if (secondP) {
-            secondText = getText(secondP).replace(/[([]/, "").substring(0, 2);
-            if (secondTextNoMatch.includes(secondText?.toLowerCase().trim())) {
-              return;
-            }
+            secondText = getText(secondP).replace(/[([]/g, "").substring(0, 2);
+            if (secondTextNoMatch.includes(secondText?.toLowerCase().trim())) return;
             const secondPrefix = decrement(secondText);
             if (isRoman) {
-              if (secondText.toLowerCase() === "ii") {
-                hit = true;
-              }
+              if (secondText.toLowerCase() === "ii") hit = true;
             } else if (isAlphabetic) {
               const firstChar = firstPrefix.charAt(0);
               const secondChar = secondText.charAt(0);
-              if (decrement(secondChar) === firstChar && !/\w/.test(secondText.charAt(1))) {
-                hit = true;
-              }
+              if (decrement(secondChar) === firstChar && !/\w/.test(secondText.charAt(1))) hit = true;
             } else if (isEmoji && !lastHitWasEmoji) {
               if (secondPrefix.match(emojiMatch)) {
                 hit = true;
@@ -8290,26 +7778,18 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
             let textAfterBreak = p?.querySelector("br")?.nextSibling?.nodeValue;
             if (textAfterBreak) {
               textAfterBreak = textAfterBreak.replace(/<\/?[^>]+(>|$)/g, "").trim().substring(0, 2);
-              const checkForOtherPrefixChars = specialCharsMatch.test(textAfterBreak.charAt(0));
-              if (checkForOtherPrefixChars || firstPrefix === decrement(textAfterBreak) || isRoman && textAfterBreak.toLowerCase() === "ii" || !lastHitWasEmoji && textAfterBreak.match(emojiMatch)) {
+              if (specialCharsMatch.test(textAfterBreak.charAt(0)) || firstPrefix === decrement(textAfterBreak) || isRoman && textAfterBreak.toLowerCase() === "ii" || !lastHitWasEmoji && textAfterBreak.match(emojiMatch)) {
                 hit = true;
               }
             }
           }
           if (hit) {
-            State.results.push({
+            pushResult({
               test: "QA_FAKE_LIST",
               element: p,
-              type: State.option.checks.QA_FAKE_LIST.type || "warning",
-              content: Lang.sprintf(
-                State.option.checks.QA_FAKE_LIST.content || "QA_FAKE_LIST",
-                firstPrefix,
-                firstText
-              ),
+              type: "warning",
               args: [firstPrefix, firstText],
-              dismiss: prepareDismissal(`QA_FAKE_LIST ${p.textContent}`),
-              dismissAll: State.option.checks.QA_FAKE_LIST.dismissAll ? "QA_FAKE_LIST" : false,
-              developer: State.option.checks.QA_FAKE_LIST.developer || false
+              dismiss: p.textContent
             });
             activeMatch = firstPrefix;
           } else {
@@ -8326,9 +7806,7 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
         let thisText = "";
         if ($el.tagName === "LI") {
           $el.childNodes.forEach((node) => {
-            if (node.nodeType === 3) {
-              thisText += node.textContent;
-            }
+            if (node.nodeType === 3) thisText += node.textContent;
           });
         } else {
           thisText = getText($el);
@@ -8336,74 +7814,20 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
         const uppercasePattern = /([A-Z]{2,}[ ])([A-Z]{2,}[ ])([A-Z]{2,}[ ])([A-Z]{2,})/g;
         const detectUpperCase = thisText.match(uppercasePattern);
         if (detectUpperCase && detectUpperCase[0].length > 10) {
-          State.results.push({
+          pushResult({
             test: "QA_UPPERCASE",
             element: $el,
-            type: State.option.checks.QA_UPPERCASE.type || "warning",
-            content: Lang.sprintf(
-              State.option.checks.QA_UPPERCASE.content || "QA_UPPERCASE",
-              thisText
-            ),
+            type: "warning",
             args: [thisText],
-            dismiss: prepareDismissal(`QA_UPPERCASE ${thisText}`),
-            dismissAll: State.option.checks.QA_UPPERCASE.dismissAll ? "QA_UPPERCASE" : false,
-            developer: State.option.checks.QA_UPPERCASE.developer || false
+            dismiss: thisText
           });
         }
       };
-      Elements.Found.Paragraphs.forEach(($el) => {
-        checkCaps($el);
-      });
-      Elements.Found.Headings.forEach(($el) => {
-        checkCaps($el);
-      });
-      Elements.Found.Lists.forEach(($el) => {
-        checkCaps($el);
-      });
-      Elements.Found.Blockquotes.forEach(($el) => {
-        checkCaps($el);
-      });
+      Elements.Found.Paragraphs.forEach(checkCaps);
+      Elements.Found.Headings.forEach(checkCaps);
+      Elements.Found.Lists.forEach(checkCaps);
+      Elements.Found.Blockquotes.forEach(checkCaps);
     }
-    const addUnderlineResult = ($el) => {
-      const text = getText($el);
-      State.results.push({
-        test: "QA_UNDERLINE",
-        element: $el,
-        type: State.option.checks.QA_UNDERLINE.type || "warning",
-        content: Lang.sprintf(State.option.checks.QA_UNDERLINE.content || "QA_UNDERLINE", text),
-        args: [text],
-        inline: true,
-        dismiss: prepareDismissal(`QA_UNDERLINE ${text}`),
-        dismissAll: State.option.checks.QA_UNDERLINE.dismissAll ? "QA_UNDERLINE" : false,
-        developer: State.option.checks.QA_UNDERLINE.developer || false
-      });
-    };
-    const addJustifyResult = ($el) => {
-      const text = getText($el);
-      State.results.push({
-        test: "QA_JUSTIFY",
-        element: $el,
-        type: State.option.checks.QA_JUSTIFY.type || "warning",
-        content: Lang.sprintf(State.option.checks.QA_JUSTIFY.content || "QA_JUSTIFY", text),
-        args: [text],
-        dismiss: prepareDismissal(`QA_JUSTIFY ${text}`),
-        dismissAll: State.option.checks.QA_JUSTIFY.dismissAll ? "QA_JUSTIFY" : true,
-        developer: State.option.checks.QA_JUSTIFY.developer || false
-      });
-    };
-    const addSmallTextResult = ($el) => {
-      const text = getText($el);
-      State.results.push({
-        test: "QA_SMALL_TEXT",
-        element: $el,
-        type: State.option.checks.QA_SMALL_TEXT.type || "warning",
-        content: Lang.sprintf(State.option.checks.QA_SMALL_TEXT.content || "QA_SMALL_TEXT", text),
-        args: [text],
-        dismiss: prepareDismissal(`QA_SMALL_TEXT ${text}`),
-        dismissAll: State.option.checks.QA_SMALL_TEXT.dismissAll ? "QA_SMALL_TEXT" : true,
-        developer: State.option.checks.QA_SMALL_TEXT.developer || false
-      });
-    };
     const checkUnderline = State.option.checks.QA_UNDERLINE;
     const checkSmallText = State.option.checks.QA_SMALL_TEXT;
     const checkJustify = State.option.checks.QA_JUSTIFY;
@@ -8413,9 +7837,7 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
       const hasDirectText = (el2) => {
         let node = el2.firstChild;
         while (node) {
-          if (node.nodeType === 3 && node.nodeValue.trim().length > 0) {
-            return true;
-          }
+          if (node.nodeType === 3 && node.nodeValue.trim().length > 0) return true;
           node = node.nextSibling;
         }
         return false;
@@ -8425,26 +7847,46 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
         if (!hasDirectText($el)) continue;
         const style = getCachedStyle($el);
         const parentStyle = getCachedStyle($el.parentElement);
+        const text = getText($el);
         if (checkUnderline) {
           if ((style.textDecorationLine === "underline" || getCachedClosest($el, "u")) && !$el.matches(interactiveSelector) && !getCachedClosest($el, interactiveSelector)) {
-            addUnderlineResult($el);
+            pushResult({
+              test: "QA_UNDERLINE",
+              element: $el,
+              type: "warning",
+              args: [text],
+              dismiss: text,
+              inline: true
+            });
           }
         }
         if (checkSmallText) {
           const computedFontSize = parseFloat(style.fontSize);
           if (computedFontSize > 1 && computedFontSize <= defaultSize) {
             const parentFontSize = parentStyle ? parseFloat(parentStyle.fontSize) : null;
-            const isInherited = parentFontSize === computedFontSize;
-            if (!isInherited && !getCachedClosest($el, "sup, sub")) {
-              addSmallTextResult($el);
+            if (parentFontSize !== computedFontSize && !getCachedClosest($el, "sup, sub")) {
+              pushResult({
+                test: "QA_SMALL_TEXT",
+                element: $el,
+                type: "warning",
+                args: [text],
+                dismiss: text,
+                dismissAll: true
+              });
             }
           }
         }
         if (checkJustify && style.textAlign === "justify") {
           const parentJustify = parentStyle ? parentStyle.textAlign : null;
-          const justifyInherited = parentJustify === style.textAlign;
-          if (!justifyInherited) {
-            addJustifyResult($el);
+          if (parentJustify !== style.textAlign) {
+            pushResult({
+              test: "QA_JUSTIFY",
+              element: $el,
+              type: "warning",
+              args: [text],
+              dismiss: text,
+              dismissAll: true
+            });
           }
         }
       }
@@ -8453,16 +7895,13 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
       Elements.Found.Subscripts.forEach(($el) => {
         const text = getText($el);
         if (text.length >= 80) {
-          State.results.push({
+          pushResult({
             test: "QA_SUBSCRIPT",
             element: $el,
-            type: State.option.checks.QA_SUBSCRIPT.type || "warning",
-            content: Lang.sprintf(State.option.checks.QA_SUBSCRIPT.content || "QA_SUBSCRIPT", text),
+            type: "warning",
             args: [text],
-            inline: true,
-            dismiss: prepareDismissal(`QA_SUBSCRIPT ${$el.tagName + text}`),
-            dismissAll: State.option.checks.QA_SUBSCRIPT.dismissAll ? "QA_SUBSCRIPT" : false,
-            developer: State.option.checks.QA_SUBSCRIPT.developer || false
+            dismiss: $el.tagName + text,
+            inline: true
           });
         }
       });
@@ -8470,158 +7909,111 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
     if (State.option.checks.QA_NESTED_COMPONENTS) {
       Elements.Found.NestedComponents.forEach(($el) => {
         const sources = State.option.checks.QA_NESTED_COMPONENTS.sources || '[role="tablist"], details';
-        const component = $el.querySelector(sources);
-        if (component) {
-          State.results.push({
+        if ($el.querySelector(sources)) {
+          pushResult({
             test: "QA_NESTED_COMPONENTS",
             element: $el,
-            type: State.option.checks.QA_NESTED_COMPONENTS.type || "warning",
-            content: Lang.sprintf(
-              State.option.checks.QA_NESTED_COMPONENTS.content || "QA_NESTED_COMPONENTS"
-            ),
-            dismiss: prepareDismissal(`QA_NESTED_COMPONENTS ${$el.textContent}`),
-            dismissAll: State.option.checks.QA_NESTED_COMPONENTS.dismissAll ? "QA_NESTED_COMPONENTS" : false,
-            developer: State.option.checks.QA_NESTED_COMPONENTS.developer || false
+            type: "warning",
+            dismiss: $el.textContent
           });
         }
       });
     }
   }
   function checkDeveloper() {
-    const report = (key, $el, ...args) => {
-      const rule = State.option.checks[key];
-      if (!rule) return;
-      const result = {
-        test: key,
-        type: rule.type || "error",
-        content: Lang.sprintf(rule.content || key, ...args),
-        args: [...args],
-        dismiss: prepareDismissal(key),
-        developer: rule.developer || true
-      };
-      if ($el) {
-        result.element = $el;
-      }
-      State.results.push(result);
-    };
     if (!Elements.Found.Language) {
-      report("META_LANG", null);
+      pushResult({ test: "META_LANG" });
     } else {
       const { valid, suggest } = validateLang(Elements.Found.Language, Lang._("LANG_CODE"));
       if (!valid) {
         if (suggest) {
-          report("META_LANG_SUGGEST", null, Elements.Found.Language, suggest);
+          pushResult({
+            test: "META_LANG_SUGGEST",
+            args: [Elements.Found.Language, suggest],
+            developer: true
+          });
         } else {
-          report("META_LANG_VALID", null, "html", Elements.Found.Language);
+          pushResult({
+            test: "META_LANG_VALID",
+            args: ["html", Elements.Found.Language],
+            developer: true
+          });
         }
       }
     }
-    if (Elements.Found.LangTags && Elements.Found.LangTags.length > 0) {
+    if (Elements.Found.LangTags?.length > 0) {
       Elements.Found.LangTags.forEach(($el) => {
         const langValue = $el.getAttribute("lang")?.trim();
         const { valid, suggest } = validateLang(langValue, Lang._("LANG_CODE"));
         if (!valid) {
+          const text = $el.tagName === "IMG" ? $el.getAttribute("alt") || "" : $el.nodeType === 3 ? getText($el) : "";
           if (suggest) {
-            report("META_LANG_SUGGEST", $el, langValue, suggest);
+            pushResult({
+              test: "META_LANG_SUGGEST",
+              element: $el,
+              args: [langValue, suggest],
+              developer: true,
+              dismiss: langValue + text
+            });
           } else {
-            report("META_LANG_VALID", $el, $el.tagName.toLowerCase(), langValue);
+            pushResult({
+              test: "META_LANG_VALID",
+              element: $el,
+              args: [$el.tagName.toLowerCase(), langValue],
+              developer: true,
+              dismiss: langValue + text
+            });
           }
         }
       });
     }
-    if (State.option.checks.META_TITLE) {
-      const metaTitle = document.querySelector("title:not(svg title)");
-      if (!metaTitle || metaTitle.textContent.trim().length === 0) {
-        State.results.push({
-          test: "META_TITLE",
-          type: State.option.checks.META_TITLE.type || "error",
-          content: Lang.sprintf(State.option.checks.META_TITLE.content || "META_TITLE"),
-          dismiss: prepareDismissal("META_TITLE"),
-          developer: State.option.checks.META_TITLE.developer || true
-        });
+    const metaTitle = document.querySelector("title:not(svg title)");
+    if (!metaTitle || getText(metaTitle).length === 0) {
+      pushResult({ test: "META_TITLE", developer: true });
+    }
+    const content = document.querySelector('meta[name="viewport"]')?.getAttribute("content");
+    if (content) {
+      const params = content.split(",").reduce((acc, param) => {
+        const [key, value] = param.split("=").map((s) => s.trim());
+        acc[key] = value;
+        return acc;
+      }, {});
+      if (["no", "0"].includes(params["user-scalable"])) {
+        pushResult({ test: "META_SCALABLE", developer: true });
+      }
+      const maxScale = parseFloat(params["maximum-scale"]);
+      if (!Number.isNaN(maxScale) && maxScale < 2) {
+        pushResult({ test: "META_MAX", developer: true });
       }
     }
-    if (State.option.checks.META_SCALABLE || State.option.checks.META_MAX) {
-      const metaViewport = document.querySelector('meta[name="viewport"]');
-      if (metaViewport) {
-        const content = metaViewport.getAttribute("content");
-        if (content) {
-          const params = content.split(",").reduce((acc, param) => {
-            const [key, value] = param.split("=").map((s) => s.trim());
-            acc[key] = value;
-            return acc;
-          }, {});
-          if (State.option.checks.META_SCALABLE && (params["user-scalable"] === "no" || params["user-scalable"] === "0")) {
-            State.results.push({
-              test: "META_SCALABLE",
-              type: State.option.checks.META_SCALABLE.type || "error",
-              content: Lang.sprintf(State.option.checks.META_SCALABLE.content || "META_SCALABLE"),
-              dismiss: prepareDismissal("META_SCALABLE"),
-              developer: State.option.checks.META_SCALABLE.developer || true
-            });
-          }
-          const maxScale = parseFloat(params["maximum-scale"]);
-          if (State.option.checks.META_MAX && !Number.isNaN(maxScale) && maxScale < 2) {
-            State.results.push({
-              test: "META_MAX",
-              type: State.option.checks.META_MAX.type || "error",
-              content: Lang.sprintf(State.option.checks.META_MAX.content || "META_MAX"),
-              dismiss: prepareDismissal("META_MAX"),
-              developer: State.option.checks.META_MAX.developer || true
-            });
-          }
-        }
-      }
-    }
-    if (State.option.checks.META_REFRESH) {
-      const actuallyRefreshes = Array.from(
-        document.querySelectorAll('meta[http-equiv="refresh" i]')
-      ).some((tag) => parseInt(tag.getAttribute("content"), 10) > 0);
-      if (actuallyRefreshes) {
-        const option = State.option.checks.META_REFRESH;
-        State.results.push({
-          test: "META_REFRESH",
-          type: option.type || "error",
-          content: Lang.sprintf(option.content || "META_REFRESH"),
-          dismiss: prepareDismissal("META_REFRESH"),
-          developer: option.developer ?? true
-        });
-      }
+    const actuallyRefreshes = Array.from(
+      document.querySelectorAll('meta[http-equiv="refresh" i]')
+    ).some((tag) => parseInt(tag.getAttribute("content"), 10) > 0);
+    if (actuallyRefreshes) {
+      pushResult({ test: "META_REFRESH", developer: true });
     }
     if (State.option.checks.DUPLICATE_ID) {
-      const doms = document.querySelectorAll("body, [data-sa11y-has-shadow-root]");
-      doms.forEach((dom) => {
+      document.querySelectorAll("body, [data-sa11y-has-shadow-root]").forEach((dom) => {
         const allIds = /* @__PURE__ */ new Set();
         const findDuplicateIds = (ids, withinDOM) => {
           ids.forEach(($el) => {
             const { id } = $el;
-            if (typeof id !== "string" || id.trim().length === 0) {
-              return;
-            }
-            if (id && !allIds.has(id)) {
+            if (typeof id !== "string" || id.trim().length === 0) return;
+            if (!allIds.has(id)) {
               allIds.add(id);
             } else {
               const ariaReference = Array.from(
-                withinDOM.querySelectorAll(`
-                a[href*="${id}"],
-                label[for*="${id}"],
-                [aria-labelledby*="${id}"],
-                [aria-controls*="${id}"],
-                [aria-owns*="${id}"]`)
+                withinDOM.querySelectorAll(
+                  `a[href*="${id}"], label[for*="${id}"], [aria-labelledby*="${id}"], [aria-controls*="${id}"], [aria-owns*="${id}"]`
+                )
               );
               if (ariaReference.length > 0) {
-                State.results.push({
+                pushResult({
                   test: "DUPLICATE_ID",
                   element: $el,
-                  type: State.option.checks.DUPLICATE_ID.type || "error",
-                  content: Lang.sprintf(
-                    State.option.checks.DUPLICATE_ID.content || "DUPLICATE_ID",
-                    id
-                  ),
                   args: [id],
-                  dismiss: prepareDismissal(`DUPLICATE_ID ${id}${$el.textContent}`),
-                  dismissAll: State.option.checks.DUPLICATE_ID.dismissAll ? "DUPLICATE_ID" : false,
-                  developer: State.option.checks.DUPLICATE_ID.developer || true
+                  dismiss: `${id}${$el.textContent}`,
+                  developer: true
                 });
               }
             }
@@ -8639,147 +8031,99 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
         findDuplicateIds(regularIds, dom);
       });
     }
-    if (State.option.checks.BTN_EMPTY || State.option.checks.BTN_EMPTY_LABELLEDBY || State.option.checks.BTN_LABEL || State.option.checks.HIDDEN_FOCUSABLE || State.option.checks.LABEL_IN_NAME) {
-      Elements.Found.Buttons.forEach(($el) => {
-        if (isHiddenAndUnfocusable($el) || isElementHidden($el) || isPresentational($el) && isDisabled($el))
-          return;
-        const accName = computeAccessibleName($el);
-        const buttonText = accName.replace(/'|"|-|\.|\s+/g, "").toLowerCase();
-        const textContent = getText($el);
-        const hasAria = $el.querySelector(":scope [aria-labelledby], :scope [aria-label]") || $el.getAttribute("aria-labelledby") || $el.getAttribute("aria-label");
-        const hasAriaLabelledby = $el.querySelector(":scope [aria-labelledby]") || $el.getAttribute("aria-labelledby");
-        if (buttonText.length === 0) {
-          if (State.option.checks.BTN_EMPTY_LABELLEDBY && hasAriaLabelledby) {
-            State.results.push({
-              test: "BTN_EMPTY_LABELLEDBY",
-              element: $el,
-              type: State.option.checks.BTN_EMPTY_LABELLEDBY.type || "error",
-              content: Lang.sprintf(
-                State.option.checks.BTN_EMPTY_LABELLEDBY.content || Lang._("BTN_EMPTY_LABELLEDBY") + Lang._("BTN_TIP")
-              ),
-              dismiss: prepareDismissal(
-                `BTN_EMPTY_LABELLEDBY ${$el.tagName + $el.id + $el.className + accName}`
-              ),
-              dismissAll: State.option.checks.BTN_EMPTY_LABELLEDBY.dismissAll ? "BTN_EMPTY_LABELLEDBY" : false,
-              developer: State.option.checks.BTN_EMPTY_LABELLEDBY.developer || true
-            });
-          } else if (State.option.checks.BTN_EMPTY) {
-            State.results.push({
-              test: "BTN_EMPTY",
-              element: $el,
-              type: State.option.checks.BTN_EMPTY.type || "error",
-              content: Lang.sprintf(
-                State.option.checks.BTN_EMPTY.content || Lang._("BTN_EMPTY") + Lang._("BTN_TIP")
-              ),
-              dismiss: prepareDismissal(`BTN_EMPTY ${$el.tagName + $el.id + $el.className}`),
-              dismissAll: State.option.checks.BTN_EMPTY.dismissAll ? "BTN_EMPTY" : false,
-              developer: State.option.checks.BTN_EMPTY.developer || true
-            });
-          }
-          return;
-        }
-        const isVisibleTextInAccName$1 = isVisibleTextInAccName($el, accName);
-        if (State.option.checks.LABEL_IN_NAME && hasAria && isVisibleTextInAccName$1) {
-          State.results.push({
-            test: "LABEL_IN_NAME",
+    Elements.Found.Buttons.forEach(($el) => {
+      const presentation = isPresentational($el) && isDisabled($el);
+      if (presentation || isHiddenAndUnfocusable($el) || isElementHidden($el)) return;
+      const accName = computeAccessibleName($el);
+      const buttonText = accName.replace(/['"-\.\s]+/g, "").toLowerCase();
+      const textContent = getText($el);
+      const dismissBase = $el.tagName + $el.id + $el.className;
+      const hasAria = $el.querySelector(":scope [aria-labelledby], :scope [aria-label]") || $el.getAttribute("aria-labelledby") || $el.getAttribute("aria-label");
+      const hasAriaLabelledby = $el.querySelector(":scope [aria-labelledby]") || $el.getAttribute("aria-labelledby");
+      if (buttonText.length === 0) {
+        if (hasAriaLabelledby) {
+          pushResult({
+            test: "BTN_EMPTY_LABELLEDBY",
             element: $el,
-            type: State.option.checks.LABEL_IN_NAME.type || "warning",
-            content: Lang.sprintf(
-              State.option.checks.LABEL_IN_NAME.content || Lang._("LABEL_IN_NAME") + Lang._("ACC_NAME_TIP"),
-              textContent,
-              accName
-            ),
-            args: [textContent, accName],
-            dismiss: prepareDismissal(
-              `LABEL_IN_NAME ${$el.tagName + $el.id + $el.className + accName}`
-            ),
-            dismissAll: State.option.checks.LABEL_IN_NAME.dismissAll ? "BTN_LABEL_IN_NAME" : false,
-            developer: State.option.checks.LABEL_IN_NAME.developer || true
+            content: Lang._("BTN_EMPTY_LABELLEDBY") + Lang._("BTN_TIP"),
+            dismiss: dismissBase + accName,
+            developer: true
           });
-          return;
-        }
-        if (State.option.checks.BTN_ROLE_IN_NAME && accName.includes(Lang._("BTN"))) {
-          State.results.push({
-            test: "BTN_ROLE_IN_NAME",
+        } else {
+          pushResult({
+            test: "BTN_EMPTY",
             element: $el,
-            type: State.option.checks.BTN_ROLE_IN_NAME.type || "warning",
-            content: Lang.sprintf(
-              State.option.checks.BTN_ROLE_IN_NAME.content || Lang._("BTN_ROLE_IN_NAME") + Lang._("ACC_NAME_TIP") + Lang._("BTN_TIP"),
-              accName
-            ),
-            args: [accName],
-            dismiss: prepareDismissal(
-              `BTN_ROLE_IN_NAME ${$el.tagName + $el.id + $el.className + accName}`
-            ),
-            dismissAll: State.option.checks.BTN_ROLE_IN_NAME.dismissAll ? "BTN_ROLE_IN_NAME" : false,
-            developer: State.option.checks.BTN_ROLE_IN_NAME.developer || true
+            content: Lang._("BTN_EMPTY") + Lang._("BTN_TIP"),
+            dismiss: dismissBase,
+            developer: true
           });
         }
-      });
-    }
-    if (State.option.checks.UNCONTAINED_LI) {
-      Elements.Found.Lists.forEach(($el) => {
-        if (!getCachedClosest($el, "ul, ol, menu")) {
-          const text = getText($el);
-          State.results.push({
-            test: "UNCONTAINED_LI",
-            element: $el,
-            type: State.option.checks.UNCONTAINED_LI.type || "error",
-            content: Lang.sprintf(
-              State.option.checks.UNCONTAINED_LI.content || "UNCONTAINED_LI",
-              text
-            ),
-            args: [text],
-            dismiss: prepareDismissal(`UNCONTAINED_LI ${$el.textContent}`),
-            dismissAll: State.option.checks.UNCONTAINED_LI.dismissAll ? "UNCONTAINED_LI" : false,
-            developer: State.option.checks.UNCONTAINED_LI.developer || true
-          });
-        }
-      });
-    }
-    if (State.option.checks.TABINDEX_ATTR) {
-      Elements.Found.TabIndex.forEach(($el) => {
-        if ($el.tabIndex <= 0) return;
-        State.results.push({
+        return;
+      }
+      const isVisibleTextInAccName$1 = isVisibleTextInAccName($el, accName);
+      if (hasAria && isVisibleTextInAccName$1) {
+        pushResult({
+          test: "LABEL_IN_NAME",
+          element: $el,
+          type: "warning",
+          args: [textContent, accName],
+          content: Lang._("LABEL_IN_NAME") + Lang._("ACC_NAME_TIP"),
+          dismiss: dismissBase + accName,
+          developer: true
+        });
+        return;
+      }
+      if (accName.includes(Lang._("BTN"))) {
+        pushResult({
+          test: "BTN_ROLE_IN_NAME",
+          element: $el,
+          type: "warning",
+          args: [accName],
+          content: Lang._("BTN_ROLE_IN_NAME") + Lang._("ACC_NAME_TIP") + Lang._("BTN_TIP"),
+          dismiss: dismissBase + accName,
+          developer: true
+        });
+      }
+    });
+    Elements.Found.Lists.forEach(($el) => {
+      if (!getCachedClosest($el, "ul, ol, menu")) {
+        const text = getText($el);
+        pushResult({
+          test: "UNCONTAINED_LI",
+          element: $el,
+          args: [text],
+          dismiss: text,
+          developer: true
+        });
+      }
+    });
+    Elements.Found.TabIndex.forEach(($el) => {
+      if ($el.tabIndex > 0) {
+        pushResult({
           test: "TABINDEX_ATTR",
           element: $el,
-          type: State.option.checks.TABINDEX_ATTR.type || "error",
-          content: Lang.sprintf(State.option.checks.TABINDEX_ATTR.content || "TABINDEX_ATTR"),
-          dismiss: prepareDismissal(`TABINDEX_ATTR ${$el.tagName + $el.id + $el.className}`),
-          dismissAll: State.option.checks.TABINDEX_ATTR.dismissAll ? "TABINDEX_ATTR" : false,
-          developer: State.option.checks.TABINDEX_ATTR.developer || true
+          dismiss: $el.tagName + $el.id + $el.className,
+          developer: true
         });
-      });
-    }
-    if (State.option.checks.HIDDEN_FOCUSABLE) {
-      const flaggedForAriaHidden = /* @__PURE__ */ new Set();
-      Elements.Found.Focusable.forEach(($el) => {
-        if (flaggedForAriaHidden.has($el)) return;
-        if (isDisabled($el) || isNegativeTabindex($el) || isElementHidden($el))
-          return;
-        const hiddenContainer = getCachedClosest($el, '[aria-hidden="true"]');
-        if (hiddenContainer) {
-          const outerHTML = truncateString($el.outerHTML, 100);
-          State.results.push({
-            test: "HIDDEN_FOCUSABLE",
-            element: $el,
-            type: State.option.checks.HIDDEN_FOCUSABLE.type || "error",
-            content: Lang.sprintf(
-              State.option.checks.HIDDEN_FOCUSABLE.content || "HIDDEN_FOCUSABLE",
-              outerHTML
-            ),
-            args: [outerHTML],
-            dismiss: prepareDismissal(
-              `HIDDEN_FOCUSABLE ${$el.tagName + $el.id + $el.className}`
-            ),
-            dismissAll: State.option.checks.HIDDEN_FOCUSABLE.dismissAll ? "HIDDEN_FOCUSABLE" : false,
-            developer: State.option.checks.HIDDEN_FOCUSABLE.developer || true
-          });
-          flaggedForAriaHidden.add($el);
-        }
-      });
-    }
-    return State.results;
+      }
+    });
+    const flaggedForAriaHidden = /* @__PURE__ */ new Set();
+    Elements.Found.Focusable.forEach(($el) => {
+      if (flaggedForAriaHidden.has($el) || isDisabled($el) || isNegativeTabindex($el) || isElementHidden($el)) {
+        return;
+      }
+      if (getCachedClosest($el, '[aria-hidden="true"]')) {
+        pushResult({
+          test: "HIDDEN_FOCUSABLE",
+          element: $el,
+          args: [truncateString($el.outerHTML, 100)],
+          dismiss: $el.tagName + $el.id + $el.className,
+          developer: true,
+          margin: "0"
+        });
+        flaggedForAriaHidden.add($el);
+      }
+    });
   }
   function checkCustom(results) {
     return results;
@@ -9067,7 +8411,7 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
       const container = document.createElement("div");
       container.setAttribute("id", "container");
       container.setAttribute("role", "region");
-      container.setAttribute("data-sa11y-version", "5.0.0");
+      container.setAttribute("data-sa11y-version", "5.0.1");
       container.setAttribute("lang", Lang._("LANG_CODE"));
       container.setAttribute("aria-label", Lang._("CONTAINER_LABEL"));
       container.setAttribute("dir", Constants.Global.langDirection);

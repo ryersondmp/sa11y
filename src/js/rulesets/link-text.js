@@ -4,31 +4,7 @@ import Elements from '../utils/elements';
 import Lang from '../utils/lang';
 import * as Utils from '../utils/utils';
 import { State } from '../core/state';
-
-// Link that points to a file type and indicates as such.
-const defaultFileTypes = [
-  'pdf',
-  'doc',
-  'docx',
-  'word',
-  'mp3',
-  'ppt',
-  'text',
-  'pptx',
-  'txt',
-  'exe',
-  'dmg',
-  'rtf',
-  'windows',
-  'macos',
-  'csv',
-  'xls',
-  'xlsx',
-  'mp4',
-  'mov',
-  'avi',
-  'zip',
-];
+import { pushResult } from '../utils/pushResult';
 
 const cssFileTypeSelectors =
   'a[href$=".pdf"], a[href$=".doc"], a[href$=".docx"], a[href$=".zip"], a[href$=".mp3"], a[href$=".txt"], a[href$=".exe"], a[href$=".dmg"], a[href$=".rtf"], a[href$=".pptx"], a[href$=".ppt"], a[href$=".xls"], a[href$=".xlsx"], a[href$=".csv"], a[href$=".mp4"], a[href$=".mov"], a[href$=".avi"]';
@@ -63,22 +39,6 @@ const checkStopWords = (textContent, stopWordsSet, stripStrings) => {
 
 // Main check link text function.
 export default function checkLinkText() {
-  // Generate full list of EXACT stop words. These will leverage Set() instead of regex for slightly better performance.
-  const customStopWords = State.option.linkStopWords
-    ? State.option.linkStopWords.split(',').map((word) => word.toLowerCase().trim())
-    : [];
-  const linkStopWords = new Set([...Lang._('LINK_STOPWORDS'), ...customStopWords]);
-  const linkIgnoreStrings = new Set(
-    State.option.linkIgnoreStrings.map((word) => word.toLowerCase()),
-  );
-
-  // Generate regex patterns from arrays.
-  const clickRegex = Utils.generateRegexString(Lang._('CLICK'));
-  const newWindowRegex = Utils.generateRegexString(Lang._('NEW_WINDOW_PHRASES'));
-  const fileTypeRegex = Utils.generateRegexString(defaultFileTypes);
-  const ignorePattern = Utils.generateRegexString(State.option.linkIgnoreStrings);
-
-  // Start the loop!
   const seen = {};
   Elements.Found.Links.forEach(($el) => {
     // Attributes.
@@ -86,20 +46,20 @@ export default function checkLinkText() {
     const titleAttr = $el.getAttribute('title');
     const targetBlank = $el.getAttribute('target')?.trim()?.toLowerCase() === '_blank';
 
-    // Get ARIA attributes: caches attributes and uses short-circuit logic to prevent redundant DOM queries.
+    // Get ARIA attributes.
     const ariaLabel = $el.getAttribute('aria-label');
     const ariaLabelledby = $el.getAttribute('aria-labelledby');
     const childLabelledby = !ariaLabelledby ? $el.querySelector('[aria-labelledby]') : null;
     const hasAriaLabelledby = ariaLabelledby || childLabelledby;
     const hasAria = hasAriaLabelledby || ariaLabel || $el.querySelector('[aria-label]');
 
-    // Link text based on COMPUTED ACCESSIBLE NAME.
+    // Link text computation.
     const accName = Utils.removeWhitespace(
       computeAccessibleName($el, Constants.Exclusions.LinkSpan),
     );
 
     // Strip away text from linkIgnoreStrings prop.
-    const linkText = accName.replace(ignorePattern, '');
+    const linkText = accName.replace(Constants.Global.linkIgnorePattern, '');
 
     // Accessible name (lower case) for regex matching.
     const lowercaseLinkText = linkText.toLowerCase();
@@ -108,31 +68,45 @@ export default function checkLinkText() {
     const strippedLinkText = Utils.stripAllSpecialCharacters(lowercaseLinkText);
 
     // Original preserved text to lowercase.
-    const textContent = Utils.getText($el).toLowerCase();
+    const rawTextContent = Utils.getText($el);
+    const textContent = rawTextContent.toLowerCase();
     const textContentIgnoredStrings = Utils.getText(
       Utils.fnIgnore($el, Constants.Exclusions.LinkSpan),
-    ).replace(ignorePattern, '');
+    ).replace(Constants.Global.linkIgnorePattern, '');
 
     // Shared tests.
     const containsNewWindowPhrases =
-      lowercaseLinkText.match(newWindowRegex)?.[0] || textContent.match(newWindowRegex)?.[0];
+      lowercaseLinkText.match(Constants.Global.newWindowRegex)?.[0] ||
+      textContent.match(Constants.Global.newWindowRegex)?.[0];
     const containsFileTypePhrases =
-      lowercaseLinkText.match(fileTypeRegex)?.[0] || textContent.match(fileTypeRegex)?.[0];
+      lowercaseLinkText.match(Constants.Global.fileTypeRegex)?.[0] ||
+      textContent.match(Constants.Global.fileTypeRegex)?.[0];
     const fileTypeMatch = $el.matches(cssFileTypeSelectors);
 
-    /**
-     * Don't overlap with Alt Text module.
-     */
+    // Push to results array.
+    const logResult = (params) =>
+      pushResult({
+        element: $el,
+        type: params.type || 'warning',
+        dismiss: params.dismiss || href,
+        inline: true,
+        ...params,
+      });
+
+    // Do not conflict with alt text module.
     if (!$el.querySelector('img')) {
-      /**
-       * Links with ARIA
-       */
+      // Links with ARIA
       if (hasAria && linkText.length !== 0) {
         // General warning for visible non-descript link text, regardless of ARIA label.
         const excludeSpan = Utils.fnIgnore($el, Constants.Exclusions.LinkSpan);
-        const visibleLinkText = Utils.getText(excludeSpan).replace(ignorePattern, '');
-        const cleanedString = Utils.stripAllSpecialCharacters(visibleLinkText);
-        const stopword = checkStopWords(cleanedString, linkStopWords);
+        const visibleLinkText = Utils.getText(excludeSpan).replace(
+          Constants.Global.linkIgnorePattern,
+          '',
+        );
+        const stopword = checkStopWords(
+          Utils.stripAllSpecialCharacters(visibleLinkText),
+          Constants.Global.linkStopWords,
+        );
 
         // Label in name.
         const visibleTextInName = Utils.isVisibleTextInAccName(
@@ -142,135 +116,86 @@ export default function checkLinkText() {
           State.option.linkIgnoreStrings,
         );
 
-        // ARIA label contains stop word.
-        if (State.option.checks.LINK_STOPWORD_ARIA && stopword !== null) {
-          State.results.push({
+        if (stopword !== null) {
+          // ARIA label contains stop word.
+          logResult({
             test: 'LINK_STOPWORD_ARIA',
-            element: $el,
-            type: State.option.checks.LINK_STOPWORD_ARIA.type || 'warning',
-            content: Lang.sprintf(
-              State.option.checks.LINK_STOPWORD_ARIA.content ||
-                Lang._('LINK_STOPWORD_ARIA') + Lang._('LINK_TIP'),
-              stopword,
-              linkText,
-            ),
             args: [stopword, linkText],
-            inline: true,
-            dismiss: Utils.prepareDismissal(`LINK_STOPWORD_ARIA ${strippedLinkText}`),
-            dismissAll: State.option.checks.LINK_STOPWORD_ARIA.dismissAll
-              ? ' LINK_STOPWORD_ARIA'
-              : false,
-            developer: State.option.checks.LINK_STOPWORD_ARIA.developer || true,
+            content: Lang._('LINK_STOPWORD_ARIA') + Lang._('LINK_TIP'),
+            dismiss: strippedLinkText,
+            developer: true,
           });
-        } else if (
-          State.option.checks.LABEL_IN_NAME &&
-          visibleTextInName &&
-          textContent.length !== 0
-        ) {
+        } else if (visibleTextInName && textContent.length !== 0) {
           // Link must have visible label as part of their accessible name.
-          State.results.push({
+          logResult({
             test: 'LABEL_IN_NAME',
-            element: $el,
-            type: State.option.checks.LABEL_IN_NAME.type || 'warning',
-            content: Lang.sprintf(
-              State.option.checks.LABEL_IN_NAME.content ||
-                Lang._('LABEL_IN_NAME') + Lang._('ACC_NAME_TIP'),
-              textContentIgnoredStrings,
-              linkText,
-            ),
             args: [textContentIgnoredStrings, linkText],
-            inline: true,
+            content: Lang._('LABEL_IN_NAME') + Lang._('ACC_NAME_TIP'),
+            dismiss: strippedLinkText,
             position: 'afterend',
-            dismiss: Utils.prepareDismissal(`LABEL_IN_NAME ${strippedLinkText}`),
-            dismissAll: State.option.checks.LABEL_IN_NAME.dismissAll ? 'BTN_LABEL_IN_NAME' : false,
-            developer: State.option.checks.LABEL_IN_NAME.developer || true,
+            developer: true,
           });
-        } else if (State.option.checks.LINK_LABEL) {
+        } else {
           // If the link has any ARIA, append a "Good" link button.
-          State.results.push({
+          // Developer check: so full accessible name is exposed (without ignores).
+          const accessibleName = Utils.removeWhitespace(computeAccessibleName($el));
+          logResult({
             test: 'LINK_LABEL',
-            element: $el,
-            type: State.option.checks.LINK_LABEL.type || 'good',
-            content: Lang.sprintf(
-              State.option.checks.LINK_LABEL.content || Lang._('ACC_NAME') + Lang._('ACC_NAME_TIP'),
-              linkText,
-            ),
-            args: [linkText],
-            inline: true,
+            type: 'good',
+            args: [accessibleName],
+            content: Lang._('ACC_NAME') + Lang._('ACC_NAME_TIP'),
+            dismiss: strippedLinkText,
             position: 'afterend',
-            dismiss: Utils.prepareDismissal(`LINK_LABEL ${strippedLinkText}`),
-            dismissAll: State.option.checks.LINK_LABEL.dismissAll ? 'LINK_LABEL' : false,
-            developer: State.option.checks.LINK_LABEL.developer || true,
+            developer: true,
           });
         }
       }
 
-      /**
-       * If link text is only "new window" or similar phrases.
-       */
-      let oneStop;
-      const addStopWordResult = (element) => {
-        if (State.option.checks.LINK_STOPWORD && !oneStop) {
+      // If link text is only "new window" or similar phrases.
+      let oneStop = false;
+      const triggerStopWord = () => {
+        if (!oneStop && State.option.checks.LINK_STOPWORD) {
           oneStop = true;
-          State.results.push({
+          const textToDisplay = linkText.length === 0 ? rawTextContent : linkText;
+          logResult({
             test: 'LINK_STOPWORD',
-            element,
-            type: State.option.checks.LINK_STOPWORD.type || 'error',
-            content: Lang.sprintf(
-              State.option.checks.LINK_STOPWORD.content ||
-                Lang._('LINK_STOPWORD') + Lang._('LINK_TIP'),
-              linkText,
-            ),
-            args: [linkText],
-            inline: true,
+            type: 'error',
+            args: [textToDisplay],
+            content: Lang._('LINK_STOPWORD') + Lang._('LINK_TIP'),
+            dismiss: strippedLinkText,
             position: 'afterend',
-            dismiss: Utils.prepareDismissal(`LINK_STOPWORD ${strippedLinkText}`),
-            dismissAll: State.option.checks.LINK_STOPWORD.dismissAll ? 'LINK_STOPWORD' : false,
-            developer: State.option.checks.LINK_STOPWORD.developer || false,
           });
         }
       };
 
       // Find exact stop word matches that are passed via linkIgnoreStrings prop.
-      const isLinkIgnoreStrings = checkStopWords(textContent, linkIgnoreStrings);
+      const isLinkIgnoreStrings = checkStopWords(textContent, Constants.Global.linkIgnoreStrings);
 
-      /**
-       * If link text is ONLY strings that were passed in via prop.
-       * Note: these two MUST come before empty hyperlink checks.
-       */
+      // If link text is ONLY strings that were passed in via prop.
+      // Note: these two MUST come before empty hyperlink checks.
       if (isLinkIgnoreStrings === textContent || isLinkIgnoreStrings === strippedLinkText) {
-        addStopWordResult($el);
+        triggerStopWord();
       } else if (
         containsNewWindowPhrases === textContent ||
         containsNewWindowPhrases === strippedLinkText
       ) {
-        addStopWordResult($el);
+        triggerStopWord();
         return;
       }
 
-      /**
-       * Empty hyperlinks.
-       */
+      /* ******************* */
+      /*  Empty hyperlinks   */
+      /* ******************* */
+
       if (linkText.length === 0) {
         if (hasAriaLabelledby) {
           // Has ariaLabelledby attribute but empty accessible name.
-          if (State.option.checks.LINK_EMPTY_LABELLEDBY) {
-            State.results.push({
-              test: 'LINK_EMPTY_LABELLEDBY',
-              element: $el,
-              type: State.option.checks.LINK_EMPTY_LABELLEDBY.type || 'error',
-              content: Lang.sprintf(
-                State.option.checks.LINK_EMPTY_LABELLEDBY.content || 'LINK_EMPTY_LABELLEDBY',
-              ),
-              inline: true,
-              position: 'afterend',
-              dismiss: Utils.prepareDismissal(`LINK_EMPTY_LABELLEDBY ${href}`),
-              dismissAll: State.option.checks.LINK_EMPTY_LABELLEDBY.dismissAll
-                ? 'LINK_EMPTY_LABELLEDBY'
-                : false,
-              developer: State.option.checks.LINK_EMPTY_LABELLEDBY.developer || true,
-            });
-          }
+          logResult({
+            test: 'LINK_EMPTY_LABELLEDBY',
+            type: 'error',
+            position: 'afterend',
+            developer: true,
+          });
         } else if ($el.children.length) {
           // Add correct warning when link text is only linkIgnoreSpan text.
           let hasStopWordWarning = false;
@@ -281,66 +206,54 @@ export default function checkLinkText() {
                 .trim()
                 .toLowerCase();
               if (spanText === textContent) {
-                addStopWordResult($el);
+                triggerStopWord();
                 hasStopWordWarning = true;
               }
             }
           }
-
-          // Has child elements (e.g. SVG or SPAN) <a><i></i></a>
-          if (!hasStopWordWarning && State.option.checks.LINK_EMPTY_NO_LABEL) {
-            State.results.push({
+          if (!hasStopWordWarning) {
+            // Has child elements (e.g. SVG or SPAN) <a><i></i></a>
+            logResult({
               test: 'LINK_EMPTY_NO_LABEL',
-              element: $el,
-              type: State.option.checks.LINK_EMPTY_NO_LABEL.type || 'error',
-              content: Lang.sprintf(
-                State.option.checks.LINK_EMPTY_NO_LABEL.content || 'LINK_EMPTY_NO_LABEL',
-              ),
-              inline: true,
+              type: 'error',
               position: 'afterend',
-              dismiss: Utils.prepareDismissal(`LINK_EMPTY_NO_LABEL ${href}`),
-              dismissAll: State.option.checks.LINK_EMPTY_NO_LABEL.dismissAll
-                ? 'LINK_EMPTY_NO_LABEL'
-                : false,
-              developer: State.option.checks.LINK_EMPTY_NO_LABEL.developer || false,
             });
           }
-        } else if (!isLinkIgnoreStrings && State.option.checks.LINK_EMPTY) {
+        } else if (!isLinkIgnoreStrings) {
           // Completely empty <a></a>
-          State.results.push({
+          logResult({
             test: 'LINK_EMPTY',
-            element: $el,
-            type: State.option.checks.LINK_EMPTY.type || 'error',
-            content: Lang.sprintf(State.option.checks.LINK_EMPTY.content || 'LINK_EMPTY'),
-            inline: true,
+            type: 'error',
             position: 'afterend',
-            dismiss: Utils.prepareDismissal(`LINK_EMPTY ${href}`),
-            dismissAll: State.option.checks.LINK_EMPTY.dismissAll ? 'LINK_EMPTY' : false,
-            developer: State.option.checks.LINK_EMPTY.developer || false,
           });
         }
         return;
       }
 
-      /**
-       * Alt quality/stop word checks.
-       */
+      /* ************************** */
+      /*  Link text quality checks. */
+      /* ************************** */
 
       // 1. Check for exact stop words. Strip "new window" phrases by default.
-      const isStopWord = checkStopWords(strippedLinkText, linkStopWords, newWindowRegex);
+      const isStopWord = checkStopWords(
+        strippedLinkText,
+        Constants.Global.linkStopWords,
+        Constants.Global.newWindowRegex,
+      );
 
       // 2. Check for "click" words anywhere within string.
       const hasClickWord =
-        strippedLinkText.match(clickRegex)?.[0] || textContent.match(clickRegex)?.[0];
+        strippedLinkText.match(Constants.Global.clickRegex)?.[0] ||
+        textContent.match(Constants.Global.clickRegex)?.[0];
 
       // 3. Check for citations/references.
       const isCitation = lowercaseLinkText.match(citationPattern)?.[0];
 
       // 4. If link text resembles a URL.
-      const hasUrlPrefix =
-        lowercaseLinkText.startsWith('www.') || lowercaseLinkText.startsWith('http');
-      const hasUrlEnding = Boolean(lowercaseLinkText.match(urlEndings));
-      const isUrlFragment = hasUrlPrefix || hasUrlEnding;
+      const isUrlFragment =
+        lowercaseLinkText.startsWith('www.') ||
+        lowercaseLinkText.startsWith('http') ||
+        Boolean(lowercaseLinkText.match(urlEndings));
 
       // 5. Match special characters exactly 1 character in length.
       const isSingleSpecialChar = linkText.length === 1 && specialCharPattern.test(linkText);
@@ -350,157 +263,79 @@ export default function checkLinkText() {
 
       if (isStopWord) {
         // Link is exact stop word.
-        addStopWordResult($el);
-      } else if (isCitation) {
+        triggerStopWord();
+      } else if (isCitation && linkText.length > 8) {
         // Contains DOI URL in link text.
-        if (linkText.length > 8) {
-          if (State.option.checks.LINK_DOI) {
-            State.results.push({
-              test: 'LINK_DOI',
-              element: $el,
-              type: State.option.checks.LINK_DOI.type || 'warning',
-              content: Lang.sprintf(State.option.checks.LINK_DOI.content || 'LINK_DOI', linkText),
-              args: [linkText],
-              inline: true,
-              dismiss: Utils.prepareDismissal(`LINK_DOI ${strippedLinkText}`),
-              dismissAll: State.option.checks.LINK_DOI.dismissAll ? 'LINK_DOI' : false,
-              developer: State.option.checks.LINK_DOI.developer || false,
-            });
-          }
-        }
-      } else if (isUrlFragment) {
+        logResult({
+          test: 'LINK_DOI',
+          args: [linkText],
+          dismiss: strippedLinkText,
+        });
+      } else if (
+        isUrlFragment &&
+        !hasAria &&
+        linkText.length > (State.option.checks.LINK_URL?.maxLength || 40)
+      ) {
         // Contains URL in link text (for non ARIA links)
-        if (!hasAria && linkText.length > (State.option.checks.LINK_URL.maxLength || 40)) {
-          if (State.option.checks.LINK_URL) {
-            State.results.push({
-              test: 'LINK_URL',
-              element: $el,
-              type: State.option.checks.LINK_URL.type || 'warning',
-              content: Lang.sprintf(
-                State.option.checks.LINK_URL.content || Lang._('LINK_URL') + Lang._('LINK_TIP'),
-                linkText,
-              ),
-              args: [linkText],
-              inline: true,
-              dismiss: Utils.prepareDismissal(`LINK_URL ${strippedLinkText}`),
-              dismissAll: State.option.checks.LINK_URL.dismissAll ? 'LINK_URL' : false,
-              developer: State.option.checks.LINK_URL.developer || false,
-            });
-          }
-        }
+        logResult({
+          test: 'LINK_URL',
+          args: [linkText],
+          content: Lang._('LINK_URL') + Lang._('LINK_TIP'),
+          dismiss: strippedLinkText,
+        });
       } else if (matchedSymbol && linkText.length > 1) {
         // If link contains a special character used as a CTA.
-        if (State.option.checks.LINK_SYMBOLS) {
-          State.results.push({
-            test: 'LINK_SYMBOLS',
-            element: $el,
-            type: State.option.checks.LINK_SYMBOLS.type || 'warning',
-            content: Lang.sprintf(
-              State.option.checks.LINK_SYMBOLS.content || 'LINK_SYMBOLS',
-              matchedSymbol,
-              linkText,
-            ),
-            args: [matchedSymbol, linkText],
-            inline: true,
-            dismiss: Utils.prepareDismissal(`LINK_SYMBOLS ${strippedLinkText}`),
-            dismissAll: State.option.checks.LINK_SYMBOLS.dismissAll ? 'LINK_SYMBOLS' : false,
-            developer: State.option.checks.LINK_SYMBOLS.developer || false,
-          });
-        }
+        logResult({
+          test: 'LINK_SYMBOLS',
+          args: [matchedSymbol, linkText],
+          dismiss: strippedLinkText,
+        });
       } else if ((isSingleSpecialChar || matchedSymbol) && !titleAttr) {
         // Link is ONLY a period, comma, or special character.
-        if (State.option.checks.LINK_UNPRONOUNCEABLE) {
-          State.results.push({
-            test: 'LINK_UNPRONOUNCEABLE',
-            element: $el,
-            type: State.option.checks.LINK_UNPRONOUNCEABLE.type || 'error',
-            content: Lang.sprintf(
-              State.option.checks.LINK_UNPRONOUNCEABLE.content ||
-                Lang._('LINK_UNPRONOUNCEABLE') + Lang._('LINK_TIP'),
-              linkText,
-            ),
-            args: [linkText],
-            inline: true,
-            position: 'afterend',
-            dismiss: Utils.prepareDismissal(`LINK_UNPRONOUNCEABLE ${href}`),
-            dismissAll: State.option.checks.LINK_UNPRONOUNCEABLE.dismissAll
-              ? 'LINK_UNPRONOUNCEABLE'
-              : false,
-            developer: State.option.checks.LINK_UNPRONOUNCEABLE.developer || false,
-          });
-        }
+        logResult({
+          test: 'LINK_UNPRONOUNCEABLE',
+          type: 'error',
+          args: [linkText],
+          content: Lang._('LINK_UNPRONOUNCEABLE') + Lang._('LINK_TIP'),
+          position: 'afterend',
+        });
         return;
       }
 
-      /**
-       * Uses "click here" in the link text or accessible name.
-       */
+      // Uses "click here" in the link text or accessible name.
       if (hasClickWord) {
-        if (State.option.checks.LINK_CLICK_HERE) {
-          State.results.push({
-            test: 'LINK_CLICK_HERE',
-            element: $el,
-            type: State.option.checks.LINK_CLICK_HERE.type || 'warning',
-            content: Lang.sprintf(
-              State.option.checks.LINK_CLICK_HERE.content ||
-                Lang._('LINK_CLICK_HERE') + Lang._('LINK_TIP'),
-              linkText,
-            ),
-            args: [linkText],
-            inline: true,
-            dismiss: Utils.prepareDismissal(`LINK_CLICK_HERE ${strippedLinkText}`),
-            dismissAll: State.option.checks.LINK_CLICK_HERE.dismissAll ? 'LINK_CLICK_HERE' : false,
-            developer: State.option.checks.LINK_CLICK_HERE.developer || false,
-          });
-        }
+        logResult({
+          test: 'LINK_CLICK_HERE',
+          args: [linkText],
+          content: Lang._('LINK_CLICK_HERE') + Lang._('LINK_TIP'),
+          dismiss: strippedLinkText,
+        });
       }
 
-      /**
-       * Link's title attribute is the same as the link text.
-       */
+      //  Link's title attribute is the same as the link text.
       if (textContent.length !== 0 && titleAttr?.toLowerCase() === linkText.toLowerCase()) {
-        if (State.option.checks.DUPLICATE_TITLE) {
-          State.results.push({
-            test: 'DUPLICATE_TITLE',
-            element: $el,
-            type: State.option.checks.DUPLICATE_TITLE.type || 'warning',
-            content: Lang.sprintf(State.option.checks.DUPLICATE_TITLE.content || 'DUPLICATE_TITLE'),
-            inline: true,
-            dismiss: Utils.prepareDismissal(`DUPLICATE_TITLE ${strippedLinkText}`),
-            dismissAll: State.option.checks.DUPLICATE_TITLE.dismissAll ? 'DUPLICATE_TITLE' : false,
-            developer: State.option.checks.DUPLICATE_TITLE.developer || false,
-          });
-        }
+        logResult({
+          test: 'DUPLICATE_TITLE',
+          dismiss: strippedLinkText,
+        });
       }
     }
 
+    // Links with identical accessible names have equivalent purpose.
     if (strippedLinkText.length !== 0) {
-      // Links with identical accessible names have equivalent purpose.
       if (seen[strippedLinkText] && !seen[href]) {
         const ignored = Utils.isHiddenAndUnfocusable($el);
         const hasAttributes = $el.hasAttribute('role') || Utils.isDisabled($el);
         const condition = linkText.toLowerCase() !== textContentIgnoredStrings.toLowerCase();
-        const diffAccName = condition
-          ? `<hr> ${Lang._('ACC_NAME')}`
-          : `<hr> ${Lang._('LINK_TEXT')}`;
-        const variable = condition ? linkText : textContentIgnoredStrings;
-        if (State.option.checks.LINK_IDENTICAL_NAME && !hasAttributes && !ignored) {
-          State.results.push({
+        if (!hasAttributes && !ignored) {
+          logResult({
             test: 'LINK_IDENTICAL_NAME',
-            element: $el,
-            type: State.option.checks.LINK_IDENTICAL_NAME.type || 'warning',
-            content: Lang.sprintf(
-              State.option.checks.LINK_IDENTICAL_NAME.content ||
-                Lang._('LINK_IDENTICAL_NAME') + diffAccName + Lang._('LINK_TIP'),
-              variable,
-            ),
             args: [textContentIgnoredStrings, linkText],
-            inline: true,
-            dismiss: Utils.prepareDismissal(`LINK_IDENTICAL_NAME ${strippedLinkText}`),
-            dismissAll: State.option.checks.LINK_IDENTICAL_NAME.dismissAll
-              ? 'LINK_IDENTICAL_NAME'
-              : false,
-            developer: State.option.checks.LINK_IDENTICAL_NAME.developer || false,
+            content:
+              Lang._('LINK_IDENTICAL_NAME') +
+              (condition ? `<hr> ${Lang._('ACC_NAME')}` : `<hr> ${Lang._('LINK_TEXT')}`) +
+              Lang._('LINK_TIP'),
+            dismiss: strippedLinkText,
           });
         }
       } else {
@@ -511,87 +346,53 @@ export default function checkLinkText() {
       // Link opens in new tab without warning.
       if (targetBlank && !fileTypeMatch && !containsNewWindowPhrases) {
         const condition = linkText.toLowerCase() !== textContentIgnoredStrings.toLowerCase();
-        const diffAccName = condition
-          ? `<hr> ${Lang._('ACC_NAME') + Lang._('ACC_NAME_TIP')}`
-          : `<hr> ${Lang._('LINK_TEXT')}`;
-        if (State.option.checks.LINK_NEW_TAB) {
-          State.results.push({
-            test: 'LINK_NEW_TAB',
-            element: $el,
-            type: State.option.checks.LINK_NEW_TAB.type || 'warning',
-            content: Lang.sprintf(
-              State.option.checks.LINK_NEW_TAB.content || Lang._('LINK_NEW_TAB') + diffAccName,
-              linkText,
-            ),
-            args: [linkText],
-            inline: true,
-            dismiss: Utils.prepareDismissal(`LINK_NEW_TAB ${strippedLinkText}`),
-            dismissAll: State.option.checks.LINK_NEW_TAB.dismissAll ? 'LINK_NEW_TAB' : false,
-            developer: State.option.checks.LINK_NEW_TAB.developer || false,
-          });
-        }
+        logResult({
+          test: 'LINK_NEW_TAB',
+          args: [linkText],
+          content:
+            Lang._('LINK_NEW_TAB') +
+            (condition
+              ? `<hr> ${Lang._('ACC_NAME') + Lang._('ACC_NAME_TIP')}`
+              : `<hr> ${Lang._('LINK_TEXT')}`),
+          dismiss: strippedLinkText,
+        });
       }
 
       // Link points to file (non HTML resource) without warning.
       if (fileTypeMatch && !containsFileTypePhrases) {
-        if (State.option.checks.LINK_FILE_EXT) {
-          State.results.push({
-            test: 'LINK_FILE_EXT',
-            element: $el,
-            type: State.option.checks.LINK_FILE_EXT.type || 'warning',
-            content: Lang.sprintf(
-              State.option.checks.LINK_FILE_EXT.content || 'LINK_FILE_EXT',
-              linkText,
-            ),
-            args: [linkText],
-            inline: true,
-            dismiss: Utils.prepareDismissal(`LINK_FILE_EXT ${strippedLinkText}`),
-            dismissAll: State.option.checks.LINK_FILE_EXT.dismissAll ? 'LINK_FILE_EXT' : false,
-            developer: State.option.checks.LINK_FILE_EXT.developer || false,
-          });
-        }
+        logResult({
+          test: 'LINK_FILE_EXT',
+          args: [linkText],
+          dismiss: strippedLinkText,
+        });
       }
     }
 
     /* ************************************************************** */
     /*  Additional link checks previously from quality-assurance.js   */
     /* ************************************************************** */
-
-    // Has file extension.
     const hasExtension = $el.matches(Constants.Global.documentSources);
-    const hasPDF = $el.matches('a[href$=".pdf"], a[href*=".pdf?"]');
+    const hasPDF = State.option.checks.QA_PDF?.sources
+      ? $el.matches(State.option.checks.QA_PDF.sources)
+      : $el.matches('a[href$=".pdf"], a[href*=".pdf?"]');
 
-    // Manually inspect documents & PDF for accessibility.
-    if (State.option.checks.QA_DOCUMENT && hasExtension) {
-      State.results.push({
+    if (hasExtension) {
+      logResult({
         test: 'QA_DOCUMENT',
-        element: $el,
-        type: State.option.checks.QA_DOCUMENT.type || 'warning',
-        content: Lang.sprintf(State.option.checks.QA_DOCUMENT.content || 'QA_DOCUMENT', linkText),
         args: [linkText],
-        inline: true,
-        dismiss: Utils.prepareDismissal(`QA_DOCUMENT ${href}`),
-        dismissAll: State.option.checks.QA_DOCUMENT.dismissAll ? 'QA_DOCUMENT' : false,
-        developer: State.option.checks.QA_DOCUMENT.developer || false,
+        dismissSuffix: href,
       });
-    } else if (State.option.checks.QA_PDF && hasPDF) {
-      State.results.push({
+    } else if (hasPDF) {
+      logResult({
         test: 'QA_PDF',
-        element: $el,
-        type: State.option.checks.QA_PDF.type || 'warning',
-        content: Lang.sprintf(State.option.checks.QA_PDF.content || 'QA_PDF', linkText),
         args: [linkText],
-        inline: true,
-        dismiss: Utils.prepareDismissal(`QA_PDF ${href}`),
-        dismissAll: State.option.checks.QA_PDF.dismissAll ? 'QA_PDF' : false,
-        developer: State.option.checks.QA_PDF.developer || false,
+        dismissSuffix: href,
       });
     }
 
     // Check for broken same-page links and missing interactive semantics.
     if (State.option.checks.QA_IN_PAGE_LINK || State.option.checks.LINK_MAYBE_BUTTON) {
-      const hasText = Utils.getText($el).length !== 0;
-      const ignored = Utils.isHiddenAndUnfocusable($el);
+      const rawHref = $el.getAttribute('href');
       const hasAttributes =
         $el.hasAttribute('role') ||
         $el.hasAttribute('aria-haspopup') ||
@@ -600,72 +401,51 @@ export default function checkLinkText() {
         Utils.isDisabled($el) ||
         !!Utils.getCachedClosest($el, 'nav, [role="navigation"]');
 
-      // We need non-normalized href value for this test.
-      const rawHref = $el.getAttribute('href');
-
-      if ((!rawHref || rawHref.startsWith('#')) && hasText && !ignored && !hasAttributes) {
-        const targetId = rawHref.substring(1);
+      if (
+        (!rawHref || rawHref.startsWith('#')) &&
+        Utils.getText($el).length !== 0 &&
+        !Utils.isHiddenAndUnfocusable($el) &&
+        !hasAttributes
+      ) {
+        const targetId = rawHref?.substring(1);
         const ariaControls = $el.getAttribute('aria-controls');
-        const decoded = targetId ? decodeURIComponent(targetId) : '';
-        const encoded = targetId ? encodeURIComponent(targetId) : '';
         const targetElement =
           targetId &&
           (document.getElementById(targetId) ||
             (ariaControls && document.getElementById(ariaControls)) ||
-            (decoded !== targetId && document.getElementById(decoded)) ||
-            (encoded !== targetId && document.getElementById(encoded)) ||
+            (decodeURIComponent(targetId) !== targetId &&
+              document.getElementById(decodeURIComponent(targetId))) ||
+            (encodeURIComponent(targetId) !== targetId &&
+              document.getElementById(encodeURIComponent(targetId))) ||
             document.querySelector(`a[name="${CSS.escape(targetId)}"]`));
 
-        // If reference ID doesn't exist (Target failed)
         if (!targetElement) {
           let isFauxButton = false;
+          const matchedKeyword = Lang._('POTENTIAL_UI_ELEMENTS').find((word) =>
+            accName.toLowerCase().includes(word),
+          );
+          const isSlide = Object.keys($el.dataset).some((key) =>
+            key.toLowerCase().includes('slide'),
+          );
 
-          // 1. Broken same page link AND most likely a button!
-          if (State.option.checks.LINK_MAYBE_BUTTON) {
-            const keywords = Lang._('POTENTIAL_UI_ELEMENTS');
-            const matchedKeyword = keywords.find((word) => accName.toLowerCase().includes(word));
-            const isSlide = Object.keys($el.dataset).some((key) =>
-              key.toLowerCase().includes('slide'),
-            );
-            if ((matchedKeyword || isSlide) && accName.length <= 15) {
-              isFauxButton = true;
-              State.results.push({
-                test: 'LINK_MAYBE_BUTTON',
-                element: $el,
-                type: State.option.checks.LINK_MAYBE_BUTTON.type || 'error',
-                content: Lang.sprintf(
-                  State.option.checks.LINK_MAYBE_BUTTON.content || 'LINK_MAYBE_BUTTON',
-                  accName,
-                ),
-                args: [accName],
-                inline: true,
-                dismiss: Utils.prepareDismissal(`LINK_MAYBE_BUTTON_${matchedKeyword}`),
-                dismissAll: State.option.checks.LINK_MAYBE_BUTTON.dismissAll
-                  ? 'LINK_MAYBE_BUTTON'
-                  : false,
-                developer: State.option.checks.LINK_MAYBE_BUTTON.developer || true,
-              });
-            }
+          // Broken same page link BUT most likely a button!
+          if ((matchedKeyword || isSlide) && accName.length <= 15) {
+            isFauxButton = true;
+            logResult({
+              test: 'LINK_MAYBE_BUTTON',
+              type: 'error',
+              args: [accName],
+              dismiss: matchedKeyword,
+              developer: true,
+            });
           }
 
-          // 2. Mostly likely broken same-page link.
-          if (State.option.checks.QA_IN_PAGE_LINK && !isFauxButton) {
-            State.results.push({
+          // Mostly likely broken same-page link.
+          if (!isFauxButton) {
+            logResult({
               test: 'QA_IN_PAGE_LINK',
-              element: $el,
-              type: State.option.checks.QA_IN_PAGE_LINK.type || 'error',
-              content: Lang.sprintf(
-                State.option.checks.QA_IN_PAGE_LINK.content || 'QA_IN_PAGE_LINK',
-                targetId,
-                accName,
-              ),
+              type: 'error',
               args: [targetId, accName],
-              inline: true,
-              dismiss: Utils.prepareDismissal(`QA_IN_PAGE_LINK ${href}`),
-              dismissAll: State.option.checks.QA_IN_PAGE_LINK.dismissAll
-                ? 'QA_IN_PAGE_LINK'
-                : false,
-              developer: State.option.checks.QA_IN_PAGE_LINK.developer || false,
             });
           }
         }
