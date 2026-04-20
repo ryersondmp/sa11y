@@ -48,9 +48,10 @@ export default function checkContrast() {
     if (Utils.isScreenReaderOnly($el)) continue;
 
     // Disabled elements.
+    const getControl = (label) => (label?.getAttribute('for') === '' ? null : label?.control);
     if (
       Utils.isDisabled($el) ||
-      Utils.isDisabled(Utils.getCachedClosest($el, 'label')?.control) ||
+      Utils.isDisabled(getControl(Utils.getCachedClosest($el, 'label'))) ||
       Utils.isDisabled(Utils.getCachedClosest($el, 'fieldset')) ||
       Utils.isDisabled(Utils.getCachedClosest($el, '[role="group"]'))
     )

@@ -1,6 +1,6 @@
 /*!
       * Sa11y, the accessibility quality assurance assistant.
-      * @version 5.0.1
+      * @version 5.0.2
       * @author Adam Chaboryk
       * @license GPL-2.0-or-later
       * @copyright © 2020 - 2026 Toronto Metropolitan University.
@@ -1987,7 +1987,7 @@ ${JSON.stringify(State.option)}
 
 ## Details
 - **URL:** ${url2}
-- **Version:** ${"5.0.1"}
+- **Version:** ${"5.0.2"}
 
 ## Comments
 `;
@@ -2004,7 +2004,7 @@ ${JSON.stringify(State.option)}
       this.error.stack,
       document.createElement("br"),
       document.createElement("br"),
-      `Version: ${"5.0.1"}`,
+      `Version: ${"5.0.2"}`,
       document.createElement("br"),
       `URL: ${url2}`,
       document.createElement("br"),
@@ -6481,7 +6481,7 @@ function checkImages() {
       });
       return;
     }
-    if (link && !Constants.Global.linkIgnoreStringPattern.test(alt)) {
+    if (link && !Constants.Global.linkIgnoreStringPattern?.test(alt)) {
       const latTestName = linkTextLength === 0 ? "LINK_IMAGE_ALT" : "LINK_IMAGE_ALT_AND_TEXT";
       const latRule = State.option.checks[latTestName];
       if (latRule) {
@@ -6523,7 +6523,7 @@ function checkImages() {
       return;
     }
     if (!getCachedClosest($el, 'button, [role="button"]')) {
-      if (Constants.Global.linkIgnoreStringPattern.test(alt)) return;
+      if (Constants.Global.linkIgnoreStringPattern?.test(alt)) return;
       logResult({
         test: "IMAGE_PASS",
         type: "good",
@@ -6927,7 +6927,8 @@ function checkContrast() {
     const fontSize = parseFloat(style.fontSize);
     if (opacity === 0 || fontSize === 0 || isElementHidden($el)) continue;
     if (isScreenReaderOnly($el)) continue;
-    if (isDisabled($el) || isDisabled(getCachedClosest($el, "label")?.control) || isDisabled(getCachedClosest($el, "fieldset")) || isDisabled(getCachedClosest($el, '[role="group"]')))
+    const getControl = (label) => label?.getAttribute("for") === "" ? null : label?.control;
+    if (isDisabled($el) || isDisabled(getControl(getCachedClosest($el, "label"))) || isDisabled(getCachedClosest($el, "fieldset")) || isDisabled(getCachedClosest($el, '[role="group"]')))
       continue;
     if (!checkInputs && !/[\p{L}\p{N}]/u.test(text)) continue;
     const color = convertToRGBA(style.color, opacity);
@@ -8407,7 +8408,7 @@ class ControlPanel extends HTMLElement {
     const container = document.createElement("div");
     container.setAttribute("id", "container");
     container.setAttribute("role", "region");
-    container.setAttribute("data-sa11y-version", "5.0.1");
+    container.setAttribute("data-sa11y-version", "5.0.2");
     container.setAttribute("lang", Lang._("LANG_CODE"));
     container.setAttribute("aria-label", Lang._("CONTAINER_LABEL"));
     container.setAttribute("dir", Constants.Global.langDirection);

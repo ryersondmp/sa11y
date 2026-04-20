@@ -263,7 +263,7 @@ export default function checkImages() {
     }
 
     // Has alt text and accompanying text.
-    if (link && !Constants.Global.linkIgnoreStringPattern.test(alt)) {
+    if (link && !Constants.Global.linkIgnoreStringPattern?.test(alt)) {
       const latTestName = linkTextLength === 0 ? 'LINK_IMAGE_ALT' : 'LINK_IMAGE_ALT_AND_TEXT';
       const latRule = State.option.checks[latTestName];
       if (latRule) {
@@ -313,7 +313,7 @@ export default function checkImages() {
 
     // Passes.
     if (!Utils.getCachedClosest($el, 'button, [role="button"]')) {
-      if (Constants.Global.linkIgnoreStringPattern.test(alt)) return;
+      if (Constants.Global.linkIgnoreStringPattern?.test(alt)) return;
       logResult({
         test: 'IMAGE_PASS',
         type: 'good',
