@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>No Errors - Sa11y Unit Tests</title>
+  <link rel="stylesheet" href="../../docs/examples/assets/main.css">
+  <script src="assets/nav.js"></script>
+</head>
+
+<body>
+  <header>
+    <h1>Sa11y Unit Tests</h1>
+    <p>Testing language pack</p>
+  </header>
+  <main>
+
+    <h2>Placeholder stop word</h2>
+    <div id="error-image">
+      <img src="../../docs/examples/assets/placeholder.svg" alt="фото" width="100">
+    </div>
+
+    <h2>Testing <code>linkIgnoreStrings</code></h2>
+    <div id="error-link-test">
+      <a href="https://www.example.com">дізнатися більше (ignore this English text)</a>
+    </div>
+
+  </main>
+  <footer>
+
+  </footer>
+  <!-- Sa11y -->
+  <link rel="stylesheet" href="../../src/css/sa11y.css" />
+  <script type="module">
+    import { Sa11y, Lang } from '../../src/js/sa11y.js';
+    import Sa11yLangUa from '../../src/lang/ua.js';
+
+    // Instantiate
+    Lang.addI18n(Sa11yLangUa.strings);
+    const sa11y = new Sa11y({
+      unitTestMode: true,
+      linkIgnoreStrings: ['(ignore this English text)']
+    });
+  </script>
+</body>
+
+</html>

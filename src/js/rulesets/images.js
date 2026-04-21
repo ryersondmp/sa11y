@@ -98,9 +98,9 @@ export default function checkImages() {
     // Process link text exclusions.
     const linkText = link
       ? Utils.fnIgnore(link, Constants.Exclusions.LinkSpan).textContent.replace(
-          Constants.Global.linkIgnoreStringPattern,
-          '',
-        )
+        Constants.Global.linkIgnoreStringPattern,
+        '',
+      )
       : '';
     const linkTextLength = Utils.removeWhitespace(linkText).length;
 

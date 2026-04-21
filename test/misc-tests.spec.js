@@ -275,4 +275,46 @@ test.describe('Sa11y miscellaneous tests', () => {
     );
     expect(issue).toBe(true);
   });
+
+  test('Check that i18n (Cyrillic) page loaded Ukrainian language pack', async () => {
+    await page.goto('http://localhost:8080/test/pages/i18n-cyrillic.html');
+    const status = await page.evaluate(() => {
+      const control = document.querySelector('sa11y-control-panel').shadowRoot;
+      const panel = control.getElementById('outline-toggle').textContent;
+      const textHas = panel.match(/Структура/g);
+      return textHas;
+    });
+    expect(status).toBeTruthy();
+
+    const warningStatus = await page.evaluate(() => {
+      const host = document.querySelector('sa11y-control-panel');
+      const panel = host.shadowRoot;
+      const el = panel.getElementById('notification-count');
+      return el && el.textContent === '2';
+    });
+    expect(warningStatus).toBe(true);
+
+    // Readability shouldn't appear at all.
+    const noReadability = await page.evaluate(() => {
+      const host = document.querySelector('sa11y-control-panel');
+      const panel = host.shadowRoot;
+      const el = panel.getElementById('readability-item');
+      return el === null;
+    });
+    expect(noReadability).toBe(true);
+  });
+
+  test('Ukrainian language file check for alt placeholder stopword', async () => {
+    const issue = await checkTooltip(
+      page, 'error-image', 'Помилка Виявлено не описовий або заповнюючий текст заміщення. Замініть наступний текст заміщення чимось більш значущим.  АЛЬТ фото',
+    );
+    expect(issue).toBe(true);
+  });
+
+  test('Ukrainian language file check for non-descript link text', async () => {
+    const issue = await checkTooltip(
+      page, 'error-link-test', 'Помилка Текст посилання може бути недостатньо описовим без контексту: дізнатися більше  Порада! Використовуйте чіткий і унікальний текст посилання, що описує призначення посилання, зазвичай заголовок сторінки або документа.',
+    );
+    expect(issue).toBe(true);
+  });
 });
