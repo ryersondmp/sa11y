@@ -257,9 +257,10 @@ export default function checkDeveloper() {
   /* *************************************************************** */
   const flaggedForAriaHidden = new Set();
   Elements.Found.Focusable.forEach(($el) => {
+    const isNativeDisabled = $el.hasAttribute('disabled') || $el.disabled === true;
     if (
       flaggedForAriaHidden.has($el) ||
-      Utils.isDisabled($el) ||
+      isNativeDisabled ||
       Utils.isNegativeTabindex($el) ||
       Utils.isElementHidden($el)
     ) {

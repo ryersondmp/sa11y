@@ -8110,7 +8110,8 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
     });
     const flaggedForAriaHidden = /* @__PURE__ */ new Set();
     Elements.Found.Focusable.forEach(($el) => {
-      if (flaggedForAriaHidden.has($el) || isDisabled($el) || isNegativeTabindex($el) || isElementHidden($el)) {
+      const isNativeDisabled = $el.hasAttribute("disabled") || $el.disabled === true;
+      if (flaggedForAriaHidden.has($el) || isNativeDisabled || isNegativeTabindex($el) || isElementHidden($el)) {
         return;
       }
       const ariaHiddenContainer = getCachedClosest($el, '[aria-hidden="true"]');
