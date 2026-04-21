@@ -1,6 +1,6 @@
 /*!
       * Sa11y, the accessibility quality assurance assistant.
-      * @version 5.0.2
+      * @version 5.0.3
       * @author Adam Chaboryk
       * @license GPL-2.0-or-later
       * @copyright © 2020 - 2026 Toronto Metropolitan University.
@@ -1991,7 +1991,7 @@ ${JSON.stringify(State.option)}
 
 ## Details
 - **URL:** ${url2}
-- **Version:** ${"5.0.2"}
+- **Version:** ${"5.0.3"}
 
 ## Comments
 `;
@@ -2008,7 +2008,7 @@ ${JSON.stringify(State.option)}
         this.error.stack,
         document.createElement("br"),
         document.createElement("br"),
-        `Version: ${"5.0.2"}`,
+        `Version: ${"5.0.3"}`,
         document.createElement("br"),
         `URL: ${url2}`,
         document.createElement("br"),
@@ -8110,19 +8110,24 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
     });
     const flaggedForAriaHidden = /* @__PURE__ */ new Set();
     Elements.Found.Focusable.forEach(($el) => {
-      if (flaggedForAriaHidden.has($el) || isDisabled($el) || isNegativeTabindex($el) || isElementHidden($el)) {
+      const isNativeDisabled = $el.hasAttribute("disabled") || $el.disabled === true;
+      if (flaggedForAriaHidden.has($el) || isNativeDisabled || isNegativeTabindex($el) || isElementHidden($el)) {
         return;
       }
-      if (getCachedClosest($el, '[aria-hidden="true"]')) {
-        pushResult({
-          test: "HIDDEN_FOCUSABLE",
-          element: $el,
-          args: [truncateString($el.outerHTML, 100)],
-          dismiss: $el.tagName + $el.id + $el.className,
-          developer: true,
-          margin: "0"
-        });
-        flaggedForAriaHidden.add($el);
+      const ariaHiddenContainer = getCachedClosest($el, '[aria-hidden="true"]');
+      if (ariaHiddenContainer) {
+        const isContainerHidden = isElementHidden(ariaHiddenContainer);
+        if (!isContainerHidden) {
+          pushResult({
+            test: "HIDDEN_FOCUSABLE",
+            element: $el,
+            args: [truncateString($el.outerHTML, 100)],
+            dismiss: $el.tagName + $el.id + $el.className,
+            developer: true,
+            margin: "0"
+          });
+          flaggedForAriaHidden.add($el);
+        }
       }
     });
   }
@@ -8412,7 +8417,7 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
       const container = document.createElement("div");
       container.setAttribute("id", "container");
       container.setAttribute("role", "region");
-      container.setAttribute("data-sa11y-version", "5.0.2");
+      container.setAttribute("data-sa11y-version", "5.0.3");
       container.setAttribute("lang", Lang._("LANG_CODE"));
       container.setAttribute("aria-label", Lang._("CONTAINER_LABEL"));
       container.setAttribute("dir", Constants.Global.langDirection);
