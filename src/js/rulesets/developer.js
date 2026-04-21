@@ -266,16 +266,21 @@ export default function checkDeveloper() {
       return;
     }
 
-    if (Utils.getCachedClosest($el, '[aria-hidden="true"]')) {
-      pushResult({
-        test: 'HIDDEN_FOCUSABLE',
-        element: $el,
-        args: [Utils.truncateString($el.outerHTML, 100)],
-        dismiss: $el.tagName + $el.id + $el.className,
-        developer: true,
-        margin: '0',
-      });
-      flaggedForAriaHidden.add($el);
+    const ariaHiddenContainer = Utils.getCachedClosest($el, '[aria-hidden="true"]');
+    if (ariaHiddenContainer) {
+      // Only push error if container is not hidden.
+      const isContainerHidden = Utils.isElementHidden(ariaHiddenContainer);
+      if (!isContainerHidden) {
+        pushResult({
+          test: 'HIDDEN_FOCUSABLE',
+          element: $el,
+          args: [Utils.truncateString($el.outerHTML, 100)],
+          dismiss: $el.tagName + $el.id + $el.className,
+          developer: true,
+          margin: '0',
+        });
+        flaggedForAriaHidden.add($el);
+      }
     }
   });
 }
