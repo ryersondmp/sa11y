@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="enf">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>No Errors - Sa11y Unit Tests</title>
+  <link rel="stylesheet" href="../../docs/examples/assets/main.css">
+  <script src="assets/nav.js"></script>
+</head>
+
+<body>
+  <header>
+    <h1>Sa11y Unit Tests</h1>
+    <p>No props configured</p>
+  </header>
+  <main>
+    <h2>This page has no props configured</h2>
+    <pre><code>const sa11y = new Sa11y({});</code></pre>
+
+    <h2>Example image error</h2>
+    <div id="error-image">
+      <img src="../../docs/examples/assets/placeholder.svg" alt="placeholder" width="100">
+    </div>
+
+    <h2>Example heading error</h2>
+    <div id="error-heading">
+      <h4>Some gibberish</h4>
+      <p>The flim-flam gloaming skittered past the bumber-snatcher, wobbling in a state of high-fructose glibberish.
+        Every
+        time
+        the quibble-muffins reached a frothy crescendo, the zither-pated flabbergast would simply recalibrate its own
+        wonky
+        sprocket. It wasn’t a matter of sprocket-science, mind you; it was more of a squizzle-drip dilemma involving a
+        very
+        confused pair of plaid galoshes and a sentient jar of marmalade. Without a single glurp of hesitation, the
+        wibble-wobble
+        flapped its whiskers and dissolved into a puddle of neon-tinted syntax error.</p>
+    </div>
+  </main>
+  <footer>
+
+  </footer>
+  <!-- Sa11y -->
+  <link rel="stylesheet" href="../../src/css/sa11y.css" />
+  <script type="module">
+    import { Sa11y, Lang } from '../../src/js/sa11y.js';
+    import Sa11yLangEn from '../../src/lang/en.js';
+
+    // Instantiate
+    Lang.addI18n(Sa11yLangEn.strings);
+    const sa11y = new Sa11y({});
+  </script>
+</body>
+
+</html>

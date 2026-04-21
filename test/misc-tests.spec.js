@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { checkTooltip, noAnnotation } from './unit-test-utils';
 
 test.describe.configure({ mode: 'serial' });
 
@@ -210,5 +211,68 @@ test.describe('Sa11y miscellaneous tests', () => {
       });
     });
     expect(status).toBe(true);
+  });
+
+  /* Navigate to Warnings page. */
+  test('Navigate to page with no props configured', async () => {
+    await page.goto('http://localhost:8080/test/pages/no-props.html');
+    await page.waitForFunction(() => {
+      const host = document.querySelector('sa11y-control-panel');
+      if (!host || !host.shadowRoot) return false;
+      return !!host.shadowRoot.getElementById('notification-count');
+    });
+    const warningStatus = await page.evaluate(() => {
+      const host = document.querySelector('sa11y-control-panel');
+      const panel = host.shadowRoot;
+      const el = panel.getElementById('notification-count');
+      return el && el.textContent === '3';
+    });
+    expect(warningStatus).toBe(true);
+  });
+
+  test('Check for page issue on No Props page', async () => {
+    const status = await page.evaluate(async () => {
+      const panel = document.querySelector('sa11y-control-panel').shadowRoot;
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          const issue = panel.getElementById('page-issues-list').textContent.includes('The language code for this element is not valid. To fix, replace the lang attribute with a valid language code.');
+          resolve(issue);
+        }, 100);
+      });
+    });
+    expect(status).toBe(true);
+  });
+
+  test('Check that i18n page loaded with Spanish language pack. ', async () => {
+    await page.goto('http://localhost:8080/test/pages/i18n.html');
+    const status = await page.evaluate(() => {
+      const control = document.querySelector('sa11y-control-panel').shadowRoot;
+      const panel = control.getElementById('outline-toggle').textContent;
+      const textHas = panel.match(/Esquema/g);
+      return textHas;
+    });
+    expect(status).toBeTruthy();
+
+    const warningStatus = await page.evaluate(() => {
+      const host = document.querySelector('sa11y-control-panel');
+      const panel = host.shadowRoot;
+      const el = panel.getElementById('notification-count');
+      return el && el.textContent === '2';
+    });
+    expect(warningStatus).toBe(true);
+  });
+
+  test('Spanish language file check for alt placeholder stopword', async () => {
+    const issue = await checkTooltip(
+      page, 'error-image', 'Error Se encontró texto alternativo no descriptivo o de marcador de posición.',
+    );
+    expect(issue).toBe(true);
+  });
+
+  test('Spanish language file check for non-descript link text', async () => {
+    const issue = await checkTooltip(
+      page, 'error-link-test', 'El texto del enlace puede no ser lo suficientemente descriptivo fuera de contexto: leer más',
+    );
+    expect(issue).toBe(true);
   });
 });

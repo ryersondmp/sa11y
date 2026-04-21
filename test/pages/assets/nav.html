@@ -1,0 +1,68 @@
+<nav>
+  <ul class="nav-list">
+    <li><a href="./unit-tests.html">Unit tests</a></li>
+    <li><a href="./no-errors.html">No errors</a></li>
+    <li><a href="./warnings.html">Warnings</a></li>
+    <li><a href="./no-props.html">No props</a></li>
+    <li><a href="./i18n.html">i18n</a></li>
+  </ul>
+</nav>
+
+<style>
+  :root {
+    --nav-bg: #ffffff;
+    --nav-text: #374151;
+    --nav-accent: #16448d;
+    --nav-hover-bg: #f3f4f6;
+  }
+
+  .main-nav {
+    background: var(--nav-bg);
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid #e5e7eb;
+    font-family: system-ui, -apple-system, sans-serif;
+  }
+
+  .nav-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: center;
+  }
+
+  .nav-list a {
+    text-decoration: none;
+    color: var(--nav-text);
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    font-size: 0.95rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: inline-block;
+  }
+
+  /* Hover and Focus states */
+  .nav-list a:hover,
+  .nav-list a:focus-visible {
+    background-color: #003b87;
+    color: white;
+    outline: none;
+  }
+
+  /* Active page styling */
+  .nav-list a[aria-current="page"] {
+    background-color: #003b87;
+    color: white;
+    font-weight: 800;
+  }
+
+  /* Responsive adjustment for very small screens */
+  @media (max-width: 480px) {
+    .nav-list {
+      justify-content: center;
+    }
+  }
+</style>
