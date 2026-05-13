@@ -378,13 +378,7 @@ export default function checkLinkText() {
 
     if (hasExtension) {
       logResult({
-        test: 'QA_DOCUMENT',
-        args: [linkText],
-        dismissSuffix: href,
-      });
-    } else if (hasPDF) {
-      logResult({
-        test: 'QA_PDF',
+        test: hasPdf ? 'QA_PDF' : 'QA_DOCUMENT',
         args: [linkText],
         dismissSuffix: href,
       });
