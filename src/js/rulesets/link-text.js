@@ -371,20 +371,15 @@ export default function checkLinkText() {
     /* ************************************************************** */
     /*  Additional link checks previously from quality-assurance.js   */
     /* ************************************************************** */
-    const hasExtension = $el.matches(Constants.Global.documentSources);
-    const hasPDF = State.option.checks.QA_PDF?.sources
-      ? $el.matches(State.option.checks.QA_PDF.sources)
-      : $el.matches('a[href$=".pdf"], a[href*=".pdf?"]');
-
-    if (hasExtension) {
-      logResult({
-        test: 'QA_DOCUMENT',
+    if (Constants.Global.pdfSources && $el.matches(Constants.Global.pdfSources)) {
+        logResult({
+        test: 'QA_PDF',
         args: [linkText],
         dismissSuffix: href,
       });
-    } else if (hasPDF) {
+    } else if (Constants.Global.documentSources && $el.matches(Constants.Global.documentSources)) {
       logResult({
-        test: 'QA_PDF',
+        test: 'QA_DOCUMENT',
         args: [linkText],
         dismissSuffix: href,
       });
