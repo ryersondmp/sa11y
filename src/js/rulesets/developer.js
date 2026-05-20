@@ -193,6 +193,18 @@ export default function checkDeveloper() {
       return;
     }
 
+    // Button has unpronounceable text.
+    if (!Constants.Global.unpronounceablePattern.test(buttonText)) {
+      pushResult({
+        test: 'BTN_UNPRONOUNCEABLE',
+        element: $el,
+        content: Lang._('BTN_UNPRONOUNCEABLE') + Lang._('BTN_TIP'),
+        args: [accName],
+        dismiss: dismissBase,
+        developer: true,
+      })
+    }
+
     // Button must have visible label as part of their accessible name.
     const isVisibleTextInAccName = Utils.isVisibleTextInAccName($el, accName);
     if (hasAria && isVisibleTextInAccName) {
@@ -205,7 +217,6 @@ export default function checkDeveloper() {
         dismiss: dismissBase + accName,
         developer: true,
       });
-      return;
     }
 
     // Has "button" in the accessible name.
@@ -219,17 +230,6 @@ export default function checkDeveloper() {
         dismiss: dismissBase + accName,
         developer: true,
       });
-    }
-
-    if (!Constants.Global.unpronounceablePattern.test(buttonText)) {
-      pushResult({
-        test: 'BTN_UNPRONOUNCEABLE',
-        element: $el,
-        content: Lang._('BTN_UNPRONOUNCEABLE') + Lang._('BTN_TIP'),
-        args: [accName],
-        dismiss: dismissBase,
-        developer: true,
-      })
     }
   });
 
