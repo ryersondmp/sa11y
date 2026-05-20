@@ -221,7 +221,7 @@
       IMAGE_DECORATIVE: "Bildet er merket som <strong>dekorativt</strong> og vil bli ignorert av hjelpemidler. Hvis bildet formidler en historie, en stemning eller viktig informasjon - husk å legge til alt-tekst.",
       IMAGE_DECORATIVE_CAROUSEL: "Bildet er merket som dekorativt, men alle bilder i en karusell eller galleri bør inkludere beskrivende alt-tekst for å sikre en likeverdig opplevelse for alle.",
       IMAGE_ALT_TOO_LONG: "Alt-tekstbeskrivelsen er <strong>for lang</strong>. Alt-teksten bør være kortfattet, men likevel meningsfull, som en <em>tweet</em> (rundt 100 tegn). Hvis dette er et komplekst bilde eller en graf, bør du vurdere å legge den lange beskrivelsen av bildet i teksten nedenfor eller i en trekkspillkomponent. <hr> {ALT} <strong {B}>%(altLength) Tegn</strong> <strong {C}>%(ALT_TEXT)</strong>",
-      IMAGE_PASS: "{ALT} %(ALT_TEXT)",
+      IMAGE_PASS: "{ALT} <strong {C}>%(ALT_TEXT)</strong>",
       LINK_ALT_MAYBE_BAD: "Bildelenken kan ha alternativ tekst som ikke gir nyttig informasjon eller er lite beskrivende. Sørg for at alt-teksten beskriver lenkens mål. <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>",
       ALT_MAYBE_BAD: "Alt-teksten gir kanskje ikke nyttig informasjon eller er lite beskrivende. Forbedre følgende alt-tekst: <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>",
       // Form labels

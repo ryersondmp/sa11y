@@ -216,7 +216,7 @@ const ptBR = {
     IMAGE_DECORATIVE: "A imagem é marcada como <strong>decorativa</strong> e será ignorada pela tecnologia assistiva. Se a imagem transmitir uma história, um clima ou informações importantes, não se esqueça de adicionar um texto alternativo.",
     IMAGE_DECORATIVE_CAROUSEL: "A imagem está marcada como decorativa, mas todas as imagens em um carrossel ou galeria devem incluir texto alternativo descritivo para garantir uma experiência equivalente para todos.",
     IMAGE_ALT_TOO_LONG: "A descrição do texto alternativo é <strong>muito longa</strong>. O texto alternativo deve ser conciso, mas significativo, como um <em>tweet</em> (cerca de 100 caracteres). Se essa for uma imagem complexa ou um gráfico, considere colocar a descrição longa da imagem no texto abaixo ou em um componente de acordeão. <hr> {ALT} <strong {B}>%(altLength) Caracteres</strong> <strong {C}>%(ALT_TEXT)</strong>",
-    IMAGE_PASS: "{ALT} %(ALT_TEXT)",
+    IMAGE_PASS: "{ALT} <strong {C}>%(ALT_TEXT)</strong>",
     LINK_ALT_MAYBE_BAD: "O link da imagem pode ter um texto alternativo que não fornece informações úteis ou não é descritivo. Certifique-se de que o texto alt descreve o destino do link. <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>",
     ALT_MAYBE_BAD: "O texto alt pode não fornecer informações úteis ou não ser descritivo. Melhore o texto alt a seguir: <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>",
     // Form labels

@@ -105,6 +105,7 @@ const defaultOptions = {
       maxLength: 170,
     },
     HEADING_MISSING_ONE: true,
+    HEADING_UNPRONOUNCEABLE: true,
 
     // Image checks
     MISSING_ALT_LINK: true,
@@ -259,6 +260,7 @@ const defaultOptions = {
     BTN_EMPTY_LABELLEDBY: true,
     BTN_ROLE_IN_NAME: true,
     LINK_MAYBE_BUTTON: true,
+    BTN_UNPRONOUNCEABLE: true,
 
     // Contrast checks
     CONTRAST_WARNING: {

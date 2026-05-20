@@ -198,6 +198,7 @@ export default {
       'Heading 1. Heading 1 seharusnya menjadi awal dari area konten utama, dan merupakan heading utama yang menjelaskan tujuan keseluruhan halaman. Pelajari lebih lanjut tentang <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">Struktur Judul.</a>',
     HEADING_EMPTY_WITH_IMAGE:
       'Judul tidak memiliki teks, namun berisi gambar. Jika ini bukan judul, ubah formatnya dari <strong {C}>Judul %(level)</strong> ke <strong>Normal</strong> atau <strong>Paragraf</strong>. Jika tidak, tambahkan teks alt ke gambar jika tidak bersifat dekoratif.',
+    HEADING_UNPRONOUNCEABLE: 'Teks tajuk hanya berisi simbol atau karakter yang tidak dapat diucapkan. Jika Anda rasa ini adalah kesalahan karena masalah salin/tempel, pertimbangkan untuk menghapusnya. <hr> <strong {B}>Teks tajuk</strong> <strong {C}>%(TEXT)</strong>',
     PANEL_HEADING_MISSING_ONE: 'Hilang Heading 1!',
     PANEL_NO_HEADINGS: 'Tidak ada judul ditemukan.',
 
@@ -274,7 +275,7 @@ export default {
       'Gambar ditandai sebagai dekoratif, tetapi semua gambar di carousel atau galeri harus menyertakan teks alt deskriptif untuk memastikan pengalaman yang setara bagi semua orang.',
     IMAGE_ALT_TOO_LONG:
       'Deskripsi teks alt terlalu panjang. Teks alt harus ringkas, namun bermakna seperti <em>tweet</em> (sekitar 100 karakter). Jika ini adalah gambar yang rumit atau grafik, pertimbangkan untuk meletakkan deskripsi gambar yang panjang dalam teks di bawah ini atau komponen akordeon. <hr> {ALT} <strong {B}>%(altLength) Karakter</strong> <strong {C}>%(ALT_TEXT)</strong>',
-    IMAGE_PASS: '{ALT} %(ALT_TEXT)',
+    IMAGE_PASS: '{ALT} <strong {C}>%(ALT_TEXT)</strong>',
     LINK_ALT_MAYBE_BAD:
       'Tautan gambar memiliki teks alt yang mungkin tidak memberikan informasi berguna atau tidak deskriptif. Pastikan teks alt menjelaskan tujuan tautan. <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
     ALT_MAYBE_BAD:
@@ -366,6 +367,7 @@ export default {
     META_LANG_VALID: 'Kode bahasa untuk elemen ini tidak valid. Untuk memperbaikinya, ganti atribut lang dengan kode bahasa yang valid. <hr> <strong {B}>Elemen</strong> <code>&lt;%(ELEMENT) lang="%(CODE)"&gt;</code> <hr> Pelajari lebih lanjut tentang <a href="https://www.w3.org/International/questions/qa-html-language-declarations">mendeklarasikan bahasa dalam HTML.</a>',
 
     // Buttons
+    BTN_UNPRONOUNCEABLE: 'Teks tombol hanya berisi simbol atau karakter yang tidak dapat diucapkan. <hr> <strong {B}>Nama yang dapat diakses</strong> <strong {C}>%(TEXT)</strong> <hr>',
     BTN_EMPTY: 'Tombol tidak memiliki nama aksesibel yang menjelaskan tujuannya.',
     BTN_EMPTY_LABELLEDBY:
       'Tombol memiliki nilai <code>aria-labelledby</code> yang kosong atau tidak sesuai dengan nilai <code>id</code> dari elemen lain di halaman.',

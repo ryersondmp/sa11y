@@ -201,6 +201,7 @@ export default {
       'Chybějící nadpis 1. Nadpis 1 by měl být začátkem hlavní oblasti obsahu a je to hlavní nadpis, který popisuje celkový účel stránky. Více informací o <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">Struktuře nadpisů.</a>',
     HEADING_EMPTY_WITH_IMAGE:
       'Nadpis neobsahuje žádný text, ale obrázek. Pokud se nejedná o nadpis, změňte jeho formát z <strong {C}>Nadpis %(level)</strong> na <strong>Normální</strong> nebo <strong>Odstavec</strong>. V opačném případě přidejte k obrázku alt text, pokud není ozdobný.',
+    HEADING_UNPRONOUNCEABLE: 'Text nadpisu obsahuje pouze symboly nebo nevyslovitelné znaky. Pokud si myslíte, že se jedná o chybu způsobenou chybou při kopírování/vkládání, zvažte jeho smazání. <hr> <strong {B}>Text nadpisu</strong> <strong {C}>%(TEXT)</strong>',
     PANEL_HEADING_MISSING_ONE: 'Chybí nadpis 1!',
     PANEL_NO_HEADINGS: 'Nebyly nalezeny žádné záhlaví.',
 
@@ -277,7 +278,7 @@ export default {
       'Alt text popisu je <strong>příliš dlouhý</strong>. Alt text by měl být stručný, ale výstižný jako <em>tweet</em> (přibližně 100 znaků). Pokud se jedná o složitý obrázek nebo graf, zvažte umístění dlouhého popisu obrázku do textu pod ním nebo do akordeonové komponenty. <hr> {ALT} <strong {B}>%(altLength) Znaků</strong> <strong {C}>%(ALT_TEXT)</strong>',
     IMAGE_DECORATIVE_CAROUSEL:
       'Obrázek je označen jako dekorativní, ale všechny obrázky v kolotoči nebo galerii by měly obsahovat popisný alternativní text, aby byla zajištěna rovnocenná zkušenost pro každého.',
-    IMAGE_PASS: '{ALT} %(ALT_TEXT)',
+    IMAGE_PASS: '{ALT} <strong {C}>%(ALT_TEXT)</strong>',
     LINK_ALT_MAYBE_BAD:
       'Odkaz na obrázek může mít alternativní text, který neposkytuje užitečné informace nebo není popisný. Ujistěte se, že alt text popisuje cíl odkazu. <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
     ALT_MAYBE_BAD:
@@ -368,6 +369,7 @@ export default {
     META_LANG_VALID: 'Kód jazyka pro tento prvek není platný. Chcete-li to napravit, nahraďte atribut lang platným kódem jazyka. <hr> <strong {B}>Prvek</strong> <code>&lt;%(ELEMENT) lang="%(CODE)"&gt;</code> <hr> Další informace o <a href="https://www.w3.org/International/questions/qa-html-language-declarations">deklarování jazyka v HTML.</a>',
 
     // Buttons
+    BTN_UNPRONOUNCEABLE: 'Text tlačítka obsahuje pouze symboly nebo nevyslovitelné znaky. <hr> <strong {B}>Přístupný název</strong> <strong {C}>%(TEXT)</strong> <hr>',
     BTN_EMPTY: 'Tlačítku chybí přístupné jméno, které popisuje jeho účel.',
     BTN_EMPTY_LABELLEDBY:
       'Tlačítko má hodnotu <code>aria-labelledby</code>, která je prázdná nebo neodpovídá hodnotě <code>id</code> jiného prvku na stránce.',

@@ -516,24 +516,31 @@ let parentCache = new WeakMap();
  * @returns {Element|null} The matching parent or null.
  */
 export function getCachedClosest(element, selector) {
-  // Safety check.
-  if (!element || !selector) return null;
+  // Validate element.
+  if (!(element instanceof Element)) return null;
 
-  // Get or create cache for this element.
-  if (!parentCache.has(element)) {
-    parentCache.set(element, new Map());
+  // Validate selector.
+  if (typeof selector !== 'string' || selector.trim() === '') return null;
+
+  try {
+    // Initialize the per-element cache if missing.
+    if (!parentCache.has(element)) {
+      parentCache.set(element, new Map());
+    }
+
+    const elementCache = parentCache.get(element);
+    // Return cached result (including nulls, as they are valid results).
+    if (elementCache.has(selector)) {
+      return elementCache.get(selector);
+    }
+
+    // Execute and cache.
+    const result = element.closest(selector);
+    elementCache.set(selector, result);
+    return result;
+  } catch {
+    return null;
   }
-
-  const elementCache = parentCache.get(element);
-
-  // Check if already cached.
-  if (elementCache.has(selector)) {
-    return elementCache.get(selector);
-  }
-
-  const result = element.closest(selector);
-  elementCache.set(selector, result);
-  return result;
 }
 
 // Garbage collection.
@@ -887,19 +894,7 @@ export function generateElementPreview(issueObject, convertBase64 = false) {
     return pre;
   };
 
-  const simple = (element) => {
-    const text = getText(element);
-    if (text.length > 0) {
-      const span = document.createElement('span');
-      span.textContent = truncateString(text, 150);
-      return span;
-    }
-    return createCodeFallback();
-  };
-
   const tagHandlers = {
-    SPAN: simple,
-    P: simple,
     A: (element) => {
       const text = getText(element);
       if (text.length > 1 && element.href && !element.hasAttribute('role')) {
@@ -1159,7 +1154,7 @@ export function validateLang(code, displayLangCode) {
   if (!langCache && typeof Intl !== 'undefined') {
     try {
       langCache = new Intl.DisplayNames([displayLangCode], { type: 'language', fallback: 'none' });
-    } catch {}
+    } catch { }
   }
 
   if (langCache) {

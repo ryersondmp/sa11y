@@ -198,6 +198,7 @@ export default {
       'Manglende overskrift 1. Overskrift 1 skal være starten på hovedinnholdsområdet, og er hovedoverskriften som beskriver det overordnede formålet med siden. Les mer om <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">Overskriftsstruktur.</a>',
     HEADING_EMPTY_WITH_IMAGE:
       'Overskrift har ingen tekst, men inneholder et bilde. Hvis dette ikke er en overskrift, endrer du formatet fra <strong {C}>Overskrift %(level)</strong> til <strong>Normal</strong> eller <strong>Avsnitt</strong>. Ellers kan du legge til alt-tekst til bildet hvis det ikke er dekorativt.',
+    HEADING_UNPRONOUNCEABLE: 'Overskriftsteksten inneholder bare symboler eller utalbare tegn. Hvis du tror dette er en feil som skyldes en kopier/lim inn-feil, bør du vurdere å slette den. <hr> <strong {B}>Overskriftstekst</strong> <strong {C}>%(TEXT)</strong>',
     PANEL_HEADING_MISSING_ONE: 'Manglende overskrift 1!',
     PANEL_NO_HEADINGS: 'Ingen overskrifter funnet.',
 
@@ -274,7 +275,7 @@ export default {
       'Bildet er merket som dekorativt, men alle bilder i en karusell eller galleri bør inkludere beskrivende alt-tekst for å sikre en likeverdig opplevelse for alle.',
     IMAGE_ALT_TOO_LONG:
       'Alt-tekstbeskrivelsen er <strong>for lang</strong>. Alt-teksten bør være kortfattet, men likevel meningsfull, som en <em>tweet</em> (rundt 100 tegn). Hvis dette er et komplekst bilde eller en graf, bør du vurdere å legge den lange beskrivelsen av bildet i teksten nedenfor eller i en trekkspillkomponent. <hr> {ALT} <strong {B}>%(altLength) Tegn</strong> <strong {C}>%(ALT_TEXT)</strong>',
-    IMAGE_PASS: '{ALT} %(ALT_TEXT)',
+    IMAGE_PASS: '{ALT} <strong {C}>%(ALT_TEXT)</strong>',
     LINK_ALT_MAYBE_BAD:
       'Bildelenken kan ha alternativ tekst som ikke gir nyttig informasjon eller er lite beskrivende. Sørg for at alt-teksten beskriver lenkens mål. <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
     ALT_MAYBE_BAD:
@@ -365,6 +366,7 @@ export default {
     META_LANG_VALID: 'Språkkoden for dette elementet er ikke gyldig. For å fikse dette, erstatt lang-attributtet med en gyldig språkkode. <hr> <strong {B}>Element</strong> <code>&lt;%(ELEMENT) lang="%(CODE)"&gt;</code> <hr> Lær mer om <a href="https://www.w3.org/International/questions/qa-html-language-declarations">deklarering av språk i HTML.</a>',
 
     // Buttons
+    BTN_UNPRONOUNCEABLE: 'Knappeteksten inneholder bare symboler eller utalbare tegn. <hr> <strong {B}>Tilgjengelig navn</strong> <strong {C}>%(TEXT)</strong> <hr>',
     BTN_EMPTY: 'Knappen mangler et tilgjengelig navn som beskriver dens formål.',
     BTN_EMPTY_LABELLEDBY:
       'Knappen har en <code>aria-labelledby</code> verdi som er tom eller ikke samsvarer med <code>id</code> verdien til et annet element på siden.',

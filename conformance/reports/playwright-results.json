@@ -1,0 +1,1567 @@
+{
+  "config": {
+    "configFile": "/Users/adam.chaboryk/Documents/GitHub/sa11y/conformance/playwright.config.js",
+    "rootDir": "/Users/adam.chaboryk/Documents/GitHub/sa11y/conformance/tests",
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/Users/adam.chaboryk/Documents/GitHub/sa11y/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "/Users/adam.chaboryk/Documents/GitHub/sa11y/conformance/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 500
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "./reports/playwright-results.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.59.1",
+    "workers": 4,
+    "webServer": {
+      "command": "node conformance/scripts/serve-testcases.js",
+      "port": 8844,
+      "reuseExistingServer": true,
+      "cwd": "/Users/adam.chaboryk/Documents/GitHub/sa11y"
+    }
+  },
+  "suites": [
+    {
+      "title": "act-conformance.spec.js",
+      "file": "act-conformance.spec.js",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "ACT Rule 23a2a8: Image has non-empty accessible name",
+          "file": "act-conformance.spec.js",
+          "line": 145,
+          "column": 8,
+          "specs": [
+            {
+              "title": "all test cases",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 500,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "timedOut",
+                      "duration": 527,
+                      "error": {
+                        "message": "\u001b[31mTest timeout of 500ms exceeded.\u001b[39m",
+                        "stack": "\u001b[31mTest timeout of 500ms exceeded.\u001b[39m"
+                      },
+                      "errors": [
+                        {
+                          "message": "\u001b[31mTest timeout of 500ms exceeded.\u001b[39m"
+                        },
+                        {
+                          "location": {
+                            "file": "/Users/adam.chaboryk/Documents/GitHub/sa11y/conformance/tests/act-conformance.spec.js",
+                            "column": 11,
+                            "line": 255
+                          },
+                          "message": "Error: Image has non-empty accessible name: 0/18 consistent\nInconsistent cases:\n  Passed Example 1 (expected: passed, Sa11y keys: [])\n  Passed Example 2 (expected: passed, Sa11y keys: [])\n  Passed Example 3 (expected: passed, Sa11y keys: [])\n  Passed Example 4 (expected: passed, Sa11y keys: [])\n  Passed Example 5 (expected: passed, Sa11y keys: [])\n  Passed Example 6 (expected: passed, Sa11y keys: [])\n  Passed Example 7 (expected: passed, Sa11y keys: [])\n  Passed Example 8 (expected: passed, Sa11y keys: [])\n  Failed Example 1 (expected: failed, Sa11y keys: [])\n  Failed Example 2 (expected: failed, Sa11y keys: [])\n  Failed Example 3 (expected: failed, Sa11y keys: [])\n  Failed Example 4 (expected: failed, Sa11y keys: [])\n  Failed Example 5 (expected: failed, Sa11y keys: [])\n  Inapplicable Example 1 (expected: inapplicable, Sa11y keys: [])\n  Inapplicable Example 2 (expected: inapplicable, Sa11y keys: [])\n  Inapplicable Example 3 (expected: inapplicable, Sa11y keys: [])\n  Inapplicable Example 4 (expected: inapplicable, Sa11y keys: [])\n  Inapplicable Example 5 (expected: inapplicable, Sa11y keys: [])\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m18\u001b[39m\nReceived: \u001b[31m0\u001b[39m\n\n\u001b[0m \u001b[90m 253 |\u001b[39m           \u001b[32m`${ruleConfig.ruleName}: ${consistent}/${total} consistent\\n`\u001b[39m \u001b[33m+\u001b[39m\n \u001b[90m 254 |\u001b[39m           \u001b[32m`Inconsistent cases:\\n${details}`\u001b[39m\u001b[33m,\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 255 |\u001b[39m         )\u001b[33m.\u001b[39mtoBe(total)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m           \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 256 |\u001b[39m       }\n \u001b[90m 257 |\u001b[39m     })\u001b[33m;\u001b[39m\n \u001b[90m 258 |\u001b[39m   })\u001b[33m;\u001b[39m\u001b[0m\n\u001b[2m    at /Users/adam.chaboryk/Documents/GitHub/sa11y/conformance/tests/act-conformance.spec.js:255:11\u001b[22m"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-04-25T03:12:26.807Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/Users/adam.chaboryk/Documents/GitHub/sa11y/test-results/act-conformance-ACT-Rule-2-bfcbf-essible-name-all-test-cases/error-context.md"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "6efeefd7d6aecc0e099d-27dcba5dfa95c32afff8",
+              "file": "act-conformance.spec.js",
+              "line": 146,
+              "column": 5
+            }
+          ]
+        },
+        {
+          "title": "ACT Rule 59796f: Image button has non-empty accessible name",
+          "file": "act-conformance.spec.js",
+          "line": 145,
+          "column": 8,
+          "specs": [
+            {
+              "title": "all test cases",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 500,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "timedOut",
+                      "duration": 521,
+                      "error": {
+                        "message": "\u001b[31mTest timeout of 500ms exceeded.\u001b[39m",
+                        "stack": "\u001b[31mTest timeout of 500ms exceeded.\u001b[39m"
+                      },
+                      "errors": [
+                        {
+                          "message": "\u001b[31mTest timeout of 500ms exceeded.\u001b[39m"
+                        },
+                        {
+                          "location": {
+                            "file": "/Users/adam.chaboryk/Documents/GitHub/sa11y/conformance/tests/act-conformance.spec.js",
+                            "column": 11,
+                            "line": 255
+                          },
+                          "message": "Error: Image button has non-empty accessible name: 0/12 consistent\nInconsistent cases:\n  Passed Example 1 (expected: passed, Sa11y keys: [])\n  Passed Example 2 (expected: passed, Sa11y keys: [])\n  Passed Example 3 (expected: passed, Sa11y keys: [])\n  Passed Example 4 (expected: passed, Sa11y keys: [])\n  Failed Example 1 (expected: failed, Sa11y keys: [])\n  Failed Example 2 (expected: failed, Sa11y keys: [])\n  Failed Example 3 (expected: failed, Sa11y keys: [])\n  Inapplicable Example 1 (expected: inapplicable, Sa11y keys: [])\n  Inapplicable Example 2 (expected: inapplicable, Sa11y keys: [])\n  Inapplicable Example 3 (expected: inapplicable, Sa11y keys: [])\n  Inapplicable Example 4 (expected: inapplicable, Sa11y keys: [])\n  Inapplicable Example 5 (expected: inapplicable, Sa11y keys: [])\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m12\u001b[39m\nReceived: \u001b[31m0\u001b[39m\n\n\u001b[0m \u001b[90m 253 |\u001b[39m           \u001b[32m`${ruleConfig.ruleName}: ${consistent}/${total} consistent\\n`\u001b[39m \u001b[33m+\u001b[39m\n \u001b[90m 254 |\u001b[39m           \u001b[32m`Inconsistent cases:\\n${details}`\u001b[39m\u001b[33m,\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 255 |\u001b[39m         )\u001b[33m.\u001b[39mtoBe(total)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m           \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 256 |\u001b[39m       }\n \u001b[90m 257 |\u001b[39m     })\u001b[33m;\u001b[39m\n \u001b[90m 258 |\u001b[39m   })\u001b[33m;\u001b[39m\u001b[0m\n\u001b[2m    at /Users/adam.chaboryk/Documents/GitHub/sa11y/conformance/tests/act-conformance.spec.js:255:11\u001b[22m"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-04-25T03:12:27.960Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/Users/adam.chaboryk/Documents/GitHub/sa11y/test-results/act-conformance-ACT-Rule-5-8da9c-essible-name-all-test-cases/error-context.md"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "6efeefd7d6aecc0e099d-473e6397cee43985f39c",
+              "file": "act-conformance.spec.js",
+              "line": 146,
+              "column": 5
+            }
+          ]
+        },
+        {
+          "title": "ACT Rule 9eb3f6: Image filename is accessible name for image",
+          "file": "act-conformance.spec.js",
+          "line": 145,
+          "column": 8,
+          "specs": [
+            {
+              "title": "all test cases",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 500,
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "location": {
+                        "file": "/Users/adam.chaboryk/Documents/GitHub/sa11y/conformance/tests/act-conformance.spec.js",
+                        "line": 161,
+                        "column": 14
+                      }
+                    }
+                  ],
+                  "expectedStatus": "skipped",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "skipped",
+                      "duration": 44,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-04-25T03:12:28.977Z",
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "location": {
+                            "file": "/Users/adam.chaboryk/Documents/GitHub/sa11y/conformance/tests/act-conformance.spec.js",
+                            "line": 161,
+                            "column": 14
+                          }
+                        }
+                      ],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "6efeefd7d6aecc0e099d-bd947738715f194e1457",
+              "file": "act-conformance.spec.js",
+              "line": 146,
+              "column": 5
+            }
+          ]
+        },
+        {
+          "title": "ACT Rule 7d6734: SVG element with explicit role has non-empty accessible name",
+          "file": "act-conformance.spec.js",
+          "line": 145,
+          "column": 8,
+          "specs": [
+            {
+              "title": "all test cases",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 500,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "timedOut",
+                      "duration": 522,
+                      "error": {
+                        "message": "\u001b[31mTest timeout of 500ms exceeded.\u001b[39m",
+                        "stack": "\u001b[31mTest timeout of 500ms exceeded.\u001b[39m"
+                      },
+                      "errors": [
+                        {
+                          "message": "\u001b[31mTest timeout of 500ms exceeded.\u001b[39m"
+                        },
+                        {
+                          "location": {
+                            "file": "/Users/adam.chaboryk/Documents/GitHub/sa11y/conformance/tests/act-conformance.spec.js",
+                            "column": 11,
+                            "line": 255
+                          },
+                          "message": "Error: SVG element with explicit role has non-empty accessible name: 0/10 consistent\nInconsistent cases:\n  Passed Example 1 (expected: passed, Sa11y keys: [])\n  Passed Example 2 (expected: passed, Sa11y keys: [])\n  Passed Example 3 (expected: passed, Sa11y keys: [])\n  Failed Example 1 (expected: failed, Sa11y keys: [])\n  Failed Example 2 (expected: failed, Sa11y keys: [])\n  Failed Example 3 (expected: failed, Sa11y keys: [])\n  Failed Example 4 (expected: failed, Sa11y keys: [])\n  Inapplicable Example 1 (expected: inapplicable, Sa11y keys: [])\n  Inapplicable Example 2 (expected: inapplicable, Sa11y keys: [])\n  Inapplicable Example 3 (expected: inapplicable, Sa11y keys: [])\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m10\u001b[39m\nReceived: \u001b[31m0\u001b[39m\n\n\u001b[0m \u001b[90m 253 |\u001b[39m           \u001b[32m`${ruleConfig.ruleName}: ${consistent}/${total} consistent\\n`\u001b[39m \u001b[33m+\u001b[39m\n \u001b[90m 254 |\u001b[39m           \u001b[32m`Inconsistent cases:\\n${details}`\u001b[39m\u001b[33m,\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 255 |\u001b[39m         )\u001b[33m.\u001b[39mtoBe(total)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m           \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 256 |\u001b[39m       }\n \u001b[90m 257 |\u001b[39m     })\u001b[33m;\u001b[39m\n \u001b[90m 258 |\u001b[39m   })\u001b[33m;\u001b[39m\u001b[0m\n\u001b[2m    at /Users/adam.chaboryk/Documents/GitHub/sa11y/conformance/tests/act-conformance.spec.js:255:11\u001b[22m"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-04-25T03:12:29.121Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/Users/adam.chaboryk/Documents/GitHub/sa11y/test-results/act-conformance-ACT-Rule-7-c227d-essible-name-all-test-cases/error-context.md"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "6efeefd7d6aecc0e099d-ae034959dffd5a2fe25c",
+              "file": "act-conformance.spec.js",
+              "line": 146,
+              "column": 5
+            }
+          ]
+        },
+        {
+          "title": "ACT Rule c487ae: Link has non-empty accessible name",
+          "file": "act-conformance.spec.js",
+          "line": 145,
+          "column": 8,
+          "specs": [
+            {
+              "title": "all test cases",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 500,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 0,
+                      "status": "timedOut",
+                      "duration": 529,
+                      "error": {
+                        "message": "\u001b[31mTest timeout of 500ms exceeded.\u001b[39m",
+                        "stack": "\u001b[31mTest timeout of 500ms exceeded.\u001b[39m"
+                      },
+                      "errors": [
+                        {
+                          "message": "\u001b[31mTest timeout of 500ms exceeded.\u001b[39m"
+                        },
+                        {
+                          "location": {
+                            "file": "/Users/adam.chaboryk/Documents/GitHub/sa11y/conformance/tests/act-conformance.spec.js",
+                            "column": 11,
+                            "line": 255
+                          },
+                          "message": "Error: Link has non-empty accessible name: 0/28 consistent\nInconsistent cases:\n  Passed Example 1 (expected: passed, Sa11y keys: [])\n  Passed Example 2 (expected: passed, Sa11y keys: [])\n  Passed Example 3 (expected: passed, Sa11y keys: [])\n  Passed Example 4 (expected: passed, Sa11y keys: [])\n  Passed Example 5 (expected: passed, Sa11y keys: [])\n  Passed Example 6 (expected: passed, Sa11y keys: [])\n  Passed Example 7 (expected: passed, Sa11y keys: [])\n  Passed Example 8 (expected: passed, Sa11y keys: [])\n  Passed Example 9 (expected: passed, Sa11y keys: [])\n  Passed Example 10 (expected: passed, Sa11y keys: [])\n  Failed Example 1 (expected: failed, Sa11y keys: [])\n  Failed Example 2 (expected: failed, Sa11y keys: [])\n  Failed Example 3 (expected: failed, Sa11y keys: [])\n  Failed Example 4 (expected: failed, Sa11y keys: [])\n  Failed Example 5 (expected: failed, Sa11y keys: [])\n  Failed Example 6 (expected: failed, Sa11y keys: [])\n  Failed Example 7 (expected: failed, Sa11y keys: [])\n  Failed Example 8 (expected: failed, Sa11y keys: [])\n  Failed Example 9 (expected: failed, Sa11y keys: [])\n  Failed Example 10 (expected: failed, Sa11y keys: [])\n  Inapplicable Example 1 (expected: inapplicable, Sa11y keys: [])\n  Inapplicable Example 2 (expected: inapplicable, Sa11y keys: [])\n  Inapplicable Example 3 (expected: inapplicable, Sa11y keys: [])\n  Inapplicable Example 4 (expected: inapplicable, Sa11y keys: [])\n  Inapplicable Example 5 (expected: inapplicable, Sa11y keys: [])\n  Inapplicable Example 6 (expected: inapplicable, Sa11y keys: [])\n  Passed Example 11 (expected: passed, Sa11y keys: [])\n  Failed Example 11 (expected: failed, Sa11y keys: [])\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m28\u001b[39m\nReceived: \u001b[31m0\u001b[39m\n\n\u001b[0m \u001b[90m 253 |\u001b[39m           \u001b[32m`${ruleConfig.ruleName}: ${consistent}/${total} consistent\\n`\u001b[39m \u001b[33m+\u001b[39m\n \u001b[90m 254 |\u001b[39m           \u001b[32m`Inconsistent cases:\\n${details}`\u001b[39m\u001b[33m,\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 255 |\u001b[39m         )\u001b[33m.\u001b[39mtoBe(total)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m           \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 256 |\u001b[39m       }\n \u001b[90m 257 |\u001b[39m     })\u001b[33m;\u001b[39m\n \u001b[90m 258 |\u001b[39m   })\u001b[33m;\u001b[39m\u001b[0m\n\u001b[2m    at /Users/adam.chaboryk/Documents/GitHub/sa11y/conformance/tests/act-conformance.spec.js:255:11\u001b[22m"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-04-25T03:12:30.050Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/Users/adam.chaboryk/Documents/GitHub/sa11y/test-results/act-conformance-ACT-Rule-c-1f06c-essible-name-all-test-cases/error-context.md"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "6efeefd7d6aecc0e099d-58176578fb14a162dd9a",
+              "file": "act-conformance.spec.js",
+              "line": 146,
+              "column": 5
+            }
+          ]
+        },
+        {
+          "title": "ACT Rule 97a4e1: Button has non-empty accessible name",
+          "file": "act-conformance.spec.js",
+          "line": 145,
+          "column": 8,
+          "specs": [
+            {
+              "title": "all test cases",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 500,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 4,
+                      "parallelIndex": 0,
+                      "status": "timedOut",
+                      "duration": 528,
+                      "error": {
+                        "message": "\u001b[31mTest timeout of 500ms exceeded.\u001b[39m",
+                        "stack": "\u001b[31mTest timeout of 500ms exceeded.\u001b[39m"
+                      },
+                      "errors": [
+                        {
+                          "message": "\u001b[31mTest timeout of 500ms exceeded.\u001b[39m"
+                        },
+                        {
+                          "location": {
+                            "file": "/Users/adam.chaboryk/Documents/GitHub/sa11y/conformance/tests/act-conformance.spec.js",
+                            "column": 11,
+                            "line": 255
+                          },
+                          "message": "Error: Button has non-empty accessible name: 0/17 consistent\nInconsistent cases:\n  Passed Example 1 (expected: passed, Sa11y keys: [])\n  Passed Example 2 (expected: passed, Sa11y keys: [])\n  Passed Example 3 (expected: passed, Sa11y keys: [])\n  Passed Example 4 (expected: passed, Sa11y keys: [])\n  Passed Example 5 (expected: passed, Sa11y keys: [])\n  Passed Example 6 (expected: passed, Sa11y keys: [])\n  Passed Example 7 (expected: passed, Sa11y keys: [])\n  Failed Example 1 (expected: failed, Sa11y keys: [])\n  Failed Example 2 (expected: failed, Sa11y keys: [])\n  Failed Example 3 (expected: failed, Sa11y keys: [])\n  Failed Example 4 (expected: failed, Sa11y keys: [])\n  Failed Example 5 (expected: failed, Sa11y keys: [])\n  Inapplicable Example 1 (expected: inapplicable, Sa11y keys: [])\n  Inapplicable Example 2 (expected: inapplicable, Sa11y keys: [])\n  Inapplicable Example 3 (expected: inapplicable, Sa11y keys: [])\n  Inapplicable Example 4 (expected: inapplicable, Sa11y keys: [])\n  Inapplicable Example 5 (expected: inapplicable, Sa11y keys: [])\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m17\u001b[39m\nReceived: \u001b[31m0\u001b[39m\n\n\u001b[0m \u001b[90m 253 |\u001b[39m           \u001b[32m`${ruleConfig.ruleName}: ${consistent}/${total} consistent\\n`\u001b[39m \u001b[33m+\u001b[39m\n \u001b[90m 254 |\u001b[39m           \u001b[32m`Inconsistent cases:\\n${details}`\u001b[39m\u001b[33m,\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 255 |\u001b[39m         )\u001b[33m.\u001b[39mtoBe(total)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m           \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 256 |\u001b[39m       }\n \u001b[90m 257 |\u001b[39m     })\u001b[33m;\u001b[39m\n \u001b[90m 258 |\u001b[39m   })\u001b[33m;\u001b[39m\u001b[0m\n\u001b[2m    at /Users/adam.chaboryk/Documents/GitHub/sa11y/conformance/tests/act-conformance.spec.js:255:11\u001b[22m"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-04-25T03:12:31.084Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/Users/adam.chaboryk/Documents/GitHub/sa11y/test-results/act-conformance-ACT-Rule-9-0135d-essible-name-all-test-cases/error-context.md"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "6efeefd7d6aecc0e099d-42d422405b2364cb171d",
+              "file": "act-conformance.spec.js",
+              "line": 146,
+              "column": 5
+            }
+          ]
+        },
+        {
+          "title": "ACT Rule e086e5: Form field has non-empty accessible name",
+          "file": "act-conformance.spec.js",
+          "line": 145,
+          "column": 8,
+          "specs": [
+            {
+              "title": "all test cases",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 500,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 5,
+                      "parallelIndex": 0,
+                      "status": "timedOut",
+                      "duration": 528,
+                      "error": {
+                        "message": "\u001b[31mTest timeout of 500ms exceeded.\u001b[39m",
+                        "stack": "\u001b[31mTest timeout of 500ms exceeded.\u001b[39m"
+                      },
+                      "errors": [
+                        {
+                          "message": "\u001b[31mTest timeout of 500ms exceeded.\u001b[39m"
+                        },
+                        {
+                          "location": {
+                            "file": "/Users/adam.chaboryk/Documents/GitHub/sa11y/conformance/tests/act-conformance.spec.js",
+                            "column": 11,
+                            "line": 255
+                          },
+                          "message": "Error: Form field has non-empty accessible name: 0/22 consistent\nInconsistent cases:\n  Passed Example 1 (expected: passed, Sa11y keys: [])\n  Passed Example 2 (expected: passed, Sa11y keys: [])\n  Passed Example 3 (expected: passed, Sa11y keys: [])\n  Passed Example 4 (expected: passed, Sa11y keys: [])\n  Passed Example 5 (expected: passed, Sa11y keys: [])\n  Passed Example 6 (expected: passed, Sa11y keys: [])\n  Passed Example 7 (expected: passed, Sa11y keys: [])\n  Failed Example 1 (expected: failed, Sa11y keys: [])\n  Failed Example 2 (expected: failed, Sa11y keys: [])\n  Failed Example 3 (expected: failed, Sa11y keys: [])\n  Failed Example 4 (expected: failed, Sa11y keys: [])\n  Failed Example 5 (expected: failed, Sa11y keys: [])\n  Failed Example 6 (expected: failed, Sa11y keys: [])\n  Failed Example 7 (expected: failed, Sa11y keys: [])\n  Inapplicable Example 1 (expected: inapplicable, Sa11y keys: [])\n  Inapplicable Example 2 (expected: inapplicable, Sa11y keys: [])\n  Inapplicable Example 3 (expected: inapplicable, Sa11y keys: [])\n  Passed Example 8 (expected: passed, Sa11y keys: [])\n  Failed Example 8 (expected: failed, Sa11y keys: [])\n  Passed Example 8 (expected: passed, Sa11y keys: [])\n  Passed Example 9 (expected: passed, Sa11y keys: [])\n  Failed Example 9 (expected: failed, Sa11y keys: [])\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m22\u001b[39m\nReceived: \u001b[31m0\u001b[39m\n\n\u001b[0m \u001b[90m 253 |\u001b[39m           \u001b[32m`${ruleConfig.ruleName}: ${consistent}/${total} consistent\\n`\u001b[39m \u001b[33m+\u001b[39m\n \u001b[90m 254 |\u001b[39m           \u001b[32m`Inconsistent cases:\\n${details}`\u001b[39m\u001b[33m,\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 255 |\u001b[39m         )\u001b[33m.\u001b[39mtoBe(total)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m           \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 256 |\u001b[39m       }\n \u001b[90m 257 |\u001b[39m     })\u001b[33m;\u001b[39m\n \u001b[90m 258 |\u001b[39m   })\u001b[33m;\u001b[39m\u001b[0m\n\u001b[2m    at /Users/adam.chaboryk/Documents/GitHub/sa11y/conformance/tests/act-conformance.spec.js:255:11\u001b[22m"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-04-25T03:12:32.095Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/Users/adam.chaboryk/Documents/GitHub/sa11y/test-results/act-conformance-ACT-Rule-e-4706d-essible-name-all-test-cases/error-context.md"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "6efeefd7d6aecc0e099d-ab789e05c99ccadebe31",
+              "file": "act-conformance.spec.js",
+              "line": 146,
+              "column": 5
+            }
+          ]
+        },
+        {
+          "title": "ACT Rule ffd0e9: Heading has non-empty accessible name",
+          "file": "act-conformance.spec.js",
+          "line": 145,
+          "column": 8,
+          "specs": [
+            {
+              "title": "all test cases",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 500,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 6,
+                      "parallelIndex": 0,
+                      "status": "timedOut",
+                      "duration": 518,
+                      "error": {
+                        "message": "\u001b[31mTest timeout of 500ms exceeded.\u001b[39m",
+                        "stack": "\u001b[31mTest timeout of 500ms exceeded.\u001b[39m"
+                      },
+                      "errors": [
+                        {
+                          "message": "\u001b[31mTest timeout of 500ms exceeded.\u001b[39m"
+                        },
+                        {
+                          "location": {
+                            "file": "/Users/adam.chaboryk/Documents/GitHub/sa11y/conformance/tests/act-conformance.spec.js",
+                            "column": 11,
+                            "line": 255
+                          },
+                          "message": "Error: Heading has non-empty accessible name: 0/15 consistent\nInconsistent cases:\n  Passed Example 1 (expected: passed, Sa11y keys: [])\n  Passed Example 2 (expected: passed, Sa11y keys: [])\n  Passed Example 3 (expected: passed, Sa11y keys: [])\n  Passed Example 4 (expected: passed, Sa11y keys: [])\n  Passed Example 5 (expected: passed, Sa11y keys: [])\n  Failed Example 1 (expected: failed, Sa11y keys: [])\n  Failed Example 2 (expected: failed, Sa11y keys: [])\n  Failed Example 3 (expected: failed, Sa11y keys: [])\n  Failed Example 4 (expected: failed, Sa11y keys: [])\n  Failed Example 5 (expected: failed, Sa11y keys: [])\n  Failed Example 6 (expected: failed, Sa11y keys: [])\n  Failed Example 7 (expected: failed, Sa11y keys: [])\n  Failed Example 8 (expected: failed, Sa11y keys: [])\n  Inapplicable Example 1 (expected: inapplicable, Sa11y keys: [])\n  Inapplicable Example 2 (expected: inapplicable, Sa11y keys: [])\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m15\u001b[39m\nReceived: \u001b[31m0\u001b[39m\n\n\u001b[0m \u001b[90m 253 |\u001b[39m           \u001b[32m`${ruleConfig.ruleName}: ${consistent}/${total} consistent\\n`\u001b[39m \u001b[33m+\u001b[39m\n \u001b[90m 254 |\u001b[39m           \u001b[32m`Inconsistent cases:\\n${details}`\u001b[39m\u001b[33m,\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 255 |\u001b[39m         )\u001b[33m.\u001b[39mtoBe(total)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m           \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 256 |\u001b[39m       }\n \u001b[90m 257 |\u001b[39m     })\u001b[33m;\u001b[39m\n \u001b[90m 258 |\u001b[39m   })\u001b[33m;\u001b[39m\u001b[0m\n\u001b[2m    at /Users/adam.chaboryk/Documents/GitHub/sa11y/conformance/tests/act-conformance.spec.js:255:11\u001b[22m"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-04-25T03:12:33.112Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/Users/adam.chaboryk/Documents/GitHub/sa11y/test-results/act-conformance-ACT-Rule-f-1eb40-essible-name-all-test-cases/error-context.md"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "6efeefd7d6aecc0e099d-ca17fd7436d4226c6ff8",
+              "file": "act-conformance.spec.js",
+              "line": 146,
+              "column": 5
+            }
+          ]
+        },
+        {
+          "title": "ACT Rule cae760: Iframe element has non-empty accessible name",
+          "file": "act-conformance.spec.js",
+          "line": 145,
+          "column": 8,
+          "specs": [
+            {
+              "title": "all test cases",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 500,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 7,
+                      "parallelIndex": 0,
+                      "status": "timedOut",
+                      "duration": 530,
+                      "error": {
+                        "message": "\u001b[31mTest timeout of 500ms exceeded.\u001b[39m",
+                        "stack": "\u001b[31mTest timeout of 500ms exceeded.\u001b[39m"
+                      },
+                      "errors": [
+                        {
+                          "message": "\u001b[31mTest timeout of 500ms exceeded.\u001b[39m"
+                        },
+                        {
+                          "location": {
+                            "file": "/Users/adam.chaboryk/Documents/GitHub/sa11y/conformance/tests/act-conformance.spec.js",
+                            "column": 11,
+                            "line": 255
+                          },
+                          "message": "Error: Iframe element has non-empty accessible name: 0/11 consistent\nInconsistent cases:\n  Passed Example 1 (expected: passed, Sa11y keys: [])\n  Passed Example 2 (expected: passed, Sa11y keys: [])\n  Passed Example 3 (expected: passed, Sa11y keys: [])\n  Failed Example 1 (expected: failed, Sa11y keys: [])\n  Failed Example 2 (expected: failed, Sa11y keys: [])\n  Failed Example 3 (expected: failed, Sa11y keys: [])\n  Failed Example 4 (expected: failed, Sa11y keys: [])\n  Inapplicable Example 1 (expected: inapplicable, Sa11y keys: [])\n  Inapplicable Example 2 (expected: inapplicable, Sa11y keys: [])\n  Inapplicable Example 3 (expected: inapplicable, Sa11y keys: [])\n  Inapplicable Example 4 (expected: inapplicable, Sa11y keys: [])\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m11\u001b[39m\nReceived: \u001b[31m0\u001b[39m\n\n\u001b[0m \u001b[90m 253 |\u001b[39m           \u001b[32m`${ruleConfig.ruleName}: ${consistent}/${total} consistent\\n`\u001b[39m \u001b[33m+\u001b[39m\n \u001b[90m 254 |\u001b[39m           \u001b[32m`Inconsistent cases:\\n${details}`\u001b[39m\u001b[33m,\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 255 |\u001b[39m         )\u001b[33m.\u001b[39mtoBe(total)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m           \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 256 |\u001b[39m       }\n \u001b[90m 257 |\u001b[39m     })\u001b[33m;\u001b[39m\n \u001b[90m 258 |\u001b[39m   })\u001b[33m;\u001b[39m\u001b[0m\n\u001b[2m    at /Users/adam.chaboryk/Documents/GitHub/sa11y/conformance/tests/act-conformance.spec.js:255:11\u001b[22m"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-04-25T03:12:34.133Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/Users/adam.chaboryk/Documents/GitHub/sa11y/test-results/act-conformance-ACT-Rule-c-29238-essible-name-all-test-cases/error-context.md"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "6efeefd7d6aecc0e099d-e905c0843046de67448a",
+              "file": "act-conformance.spec.js",
+              "line": 146,
+              "column": 5
+            }
+          ]
+        },
+        {
+          "title": "ACT Rule 2779a5: HTML page has non-empty title",
+          "file": "act-conformance.spec.js",
+          "line": 145,
+          "column": 8,
+          "specs": [
+            {
+              "title": "all test cases",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 500,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 8,
+                      "parallelIndex": 0,
+                      "status": "timedOut",
+                      "duration": 524,
+                      "error": {
+                        "message": "\u001b[31mTest timeout of 500ms exceeded.\u001b[39m",
+                        "stack": "\u001b[31mTest timeout of 500ms exceeded.\u001b[39m"
+                      },
+                      "errors": [
+                        {
+                          "message": "\u001b[31mTest timeout of 500ms exceeded.\u001b[39m"
+                        },
+                        {
+                          "location": {
+                            "file": "/Users/adam.chaboryk/Documents/GitHub/sa11y/conformance/tests/act-conformance.spec.js",
+                            "column": 11,
+                            "line": 255
+                          },
+                          "message": "Error: HTML page has non-empty title: 1/13 consistent\nInconsistent cases:\n  Passed Example 1 (expected: passed, Sa11y keys: [])\n  Passed Example 2 (expected: passed, Sa11y keys: [])\n  Passed Example 3 (expected: passed, Sa11y keys: [])\n  Passed Example 4 (expected: passed, Sa11y keys: [])\n  Passed Example 5 (expected: passed, Sa11y keys: [])\n  Failed Example 1 (expected: failed, Sa11y keys: [])\n  Failed Example 2 (expected: failed, Sa11y keys: [])\n  Failed Example 3 (expected: failed, Sa11y keys: [])\n  Failed Example 4 (expected: failed, Sa11y keys: [])\n  Failed Example 5 (expected: failed, Sa11y keys: [])\n  Passed Example 2 (expected: passed, Sa11y keys: [])\n  Failed Example 6 (expected: failed, Sa11y keys: [])\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m13\u001b[39m\nReceived: \u001b[31m1\u001b[39m\n\n\u001b[0m \u001b[90m 253 |\u001b[39m           \u001b[32m`${ruleConfig.ruleName}: ${consistent}/${total} consistent\\n`\u001b[39m \u001b[33m+\u001b[39m\n \u001b[90m 254 |\u001b[39m           \u001b[32m`Inconsistent cases:\\n${details}`\u001b[39m\u001b[33m,\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 255 |\u001b[39m         )\u001b[33m.\u001b[39mtoBe(total)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m           \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 256 |\u001b[39m       }\n \u001b[90m 257 |\u001b[39m     })\u001b[33m;\u001b[39m\n \u001b[90m 258 |\u001b[39m   })\u001b[33m;\u001b[39m\u001b[0m\n\u001b[2m    at /Users/adam.chaboryk/Documents/GitHub/sa11y/conformance/tests/act-conformance.spec.js:255:11\u001b[22m"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-04-25T03:12:35.172Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/Users/adam.chaboryk/Documents/GitHub/sa11y/test-results/act-conformance-ACT-Rule-2-122f8--empty-title-all-test-cases/error-context.md"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "6efeefd7d6aecc0e099d-651bc673e70ec305de2a",
+              "file": "act-conformance.spec.js",
+              "line": 146,
+              "column": 5
+            }
+          ]
+        },
+        {
+          "title": "ACT Rule b5c3f8: HTML page has lang attribute",
+          "file": "act-conformance.spec.js",
+          "line": 145,
+          "column": 8,
+          "specs": [
+            {
+              "title": "all test cases",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 500,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 9,
+                      "parallelIndex": 0,
+                      "status": "timedOut",
+                      "duration": 527,
+                      "error": {
+                        "message": "\u001b[31mTest timeout of 500ms exceeded.\u001b[39m",
+                        "stack": "\u001b[31mTest timeout of 500ms exceeded.\u001b[39m"
+                      },
+                      "errors": [
+                        {
+                          "message": "\u001b[31mTest timeout of 500ms exceeded.\u001b[39m"
+                        },
+                        {
+                          "location": {
+                            "file": "/Users/adam.chaboryk/Documents/GitHub/sa11y/conformance/tests/act-conformance.spec.js",
+                            "column": 11,
+                            "line": 255
+                          },
+                          "message": "Error: HTML page has lang attribute: 2/7 consistent\nInconsistent cases:\n  Passed Example 1 (expected: passed, Sa11y keys: [])\n  Failed Example 1 (expected: failed, Sa11y keys: [])\n  Failed Example 2 (expected: failed, Sa11y keys: [])\n  Failed Example 3 (expected: failed, Sa11y keys: [])\n  Failed Example 4 (expected: failed, Sa11y keys: [])\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m7\u001b[39m\nReceived: \u001b[31m2\u001b[39m\n\n\u001b[0m \u001b[90m 253 |\u001b[39m           \u001b[32m`${ruleConfig.ruleName}: ${consistent}/${total} consistent\\n`\u001b[39m \u001b[33m+\u001b[39m\n \u001b[90m 254 |\u001b[39m           \u001b[32m`Inconsistent cases:\\n${details}`\u001b[39m\u001b[33m,\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 255 |\u001b[39m         )\u001b[33m.\u001b[39mtoBe(total)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m           \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 256 |\u001b[39m       }\n \u001b[90m 257 |\u001b[39m     })\u001b[33m;\u001b[39m\n \u001b[90m 258 |\u001b[39m   })\u001b[33m;\u001b[39m\u001b[0m\n\u001b[2m    at /Users/adam.chaboryk/Documents/GitHub/sa11y/conformance/tests/act-conformance.spec.js:255:11\u001b[22m"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-04-25T03:12:36.189Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/Users/adam.chaboryk/Documents/GitHub/sa11y/test-results/act-conformance-ACT-Rule-b-4c5ff-ng-attribute-all-test-cases/error-context.md"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "6efeefd7d6aecc0e099d-7879b294a54a4f24cfef",
+              "file": "act-conformance.spec.js",
+              "line": 146,
+              "column": 5
+            }
+          ]
+        },
+        {
+          "title": "ACT Rule bf051a: HTML page lang attribute has valid language tag",
+          "file": "act-conformance.spec.js",
+          "line": 145,
+          "column": 8,
+          "specs": [
+            {
+              "title": "all test cases",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 500,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 10,
+                      "parallelIndex": 0,
+                      "status": "timedOut",
+                      "duration": 527,
+                      "error": {
+                        "message": "\u001b[31mTest timeout of 500ms exceeded.\u001b[39m",
+                        "stack": "\u001b[31mTest timeout of 500ms exceeded.\u001b[39m"
+                      },
+                      "errors": [
+                        {
+                          "message": "\u001b[31mTest timeout of 500ms exceeded.\u001b[39m"
+                        },
+                        {
+                          "location": {
+                            "file": "/Users/adam.chaboryk/Documents/GitHub/sa11y/conformance/tests/act-conformance.spec.js",
+                            "column": 11,
+                            "line": 255
+                          },
+                          "message": "Error: HTML page lang attribute has valid language tag: 1/7 consistent\nInconsistent cases:\n  Passed Example 1 (expected: passed, Sa11y keys: [])\n  Passed Example 2 (expected: passed, Sa11y keys: [])\n  Failed Example 1 (expected: failed, Sa11y keys: [])\n  Failed Example 2 (expected: failed, Sa11y keys: [])\n  Failed Example 3 (expected: failed, Sa11y keys: [])\n  Failed Example 4 (expected: failed, Sa11y keys: [])\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m7\u001b[39m\nReceived: \u001b[31m1\u001b[39m\n\n\u001b[0m \u001b[90m 253 |\u001b[39m           \u001b[32m`${ruleConfig.ruleName}: ${consistent}/${total} consistent\\n`\u001b[39m \u001b[33m+\u001b[39m\n \u001b[90m 254 |\u001b[39m           \u001b[32m`Inconsistent cases:\\n${details}`\u001b[39m\u001b[33m,\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 255 |\u001b[39m         )\u001b[33m.\u001b[39mtoBe(total)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m           \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 256 |\u001b[39m       }\n \u001b[90m 257 |\u001b[39m     })\u001b[33m;\u001b[39m\n \u001b[90m 258 |\u001b[39m   })\u001b[33m;\u001b[39m\u001b[0m\n\u001b[2m    at /Users/adam.chaboryk/Documents/GitHub/sa11y/conformance/tests/act-conformance.spec.js:255:11\u001b[22m"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-04-25T03:12:37.218Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/Users/adam.chaboryk/Documents/GitHub/sa11y/test-results/act-conformance-ACT-Rule-b-b46b9-language-tag-all-test-cases/error-context.md"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "6efeefd7d6aecc0e099d-5567fa0aac155e25e5ed",
+              "file": "act-conformance.spec.js",
+              "line": 146,
+              "column": 5
+            }
+          ]
+        },
+        {
+          "title": "ACT Rule b4f0c3: Meta viewport allows for zoom",
+          "file": "act-conformance.spec.js",
+          "line": 145,
+          "column": 8,
+          "specs": [
+            {
+              "title": "all test cases",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 500,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 11,
+                      "parallelIndex": 0,
+                      "status": "timedOut",
+                      "duration": 529,
+                      "error": {
+                        "message": "\u001b[31mTest timeout of 500ms exceeded.\u001b[39m",
+                        "stack": "\u001b[31mTest timeout of 500ms exceeded.\u001b[39m"
+                      },
+                      "errors": [
+                        {
+                          "message": "\u001b[31mTest timeout of 500ms exceeded.\u001b[39m"
+                        },
+                        {
+                          "location": {
+                            "file": "/Users/adam.chaboryk/Documents/GitHub/sa11y/conformance/tests/act-conformance.spec.js",
+                            "column": 11,
+                            "line": 255
+                          },
+                          "message": "Error: Meta viewport allows for zoom: 0/16 consistent\nInconsistent cases:\n  Passed Example 1 (expected: passed, Sa11y keys: [])\n  Passed Example 2 (expected: passed, Sa11y keys: [])\n  Passed Example 3 (expected: passed, Sa11y keys: [])\n  Failed Example 1 (expected: failed, Sa11y keys: [])\n  Failed Example 2 (expected: failed, Sa11y keys: [])\n  Failed Example 3 (expected: failed, Sa11y keys: [])\n  Failed Example 4 (expected: failed, Sa11y keys: [])\n  Inapplicable Example 1 (expected: inapplicable, Sa11y keys: [])\n  Inapplicable Example 2 (expected: inapplicable, Sa11y keys: [])\n  Inapplicable Example 3 (expected: inapplicable, Sa11y keys: [])\n  Inapplicable Example 4 (expected: inapplicable, Sa11y keys: [])\n  Passed Example 2 (expected: passed, Sa11y keys: [])\n  Passed Example 5 (expected: passed, Sa11y keys: [])\n  Failed Example 2 (expected: failed, Sa11y keys: [])\n  Failed Example 3 (expected: failed, Sa11y keys: [])\n  Failed Example 7 (expected: failed, Sa11y keys: [])\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m16\u001b[39m\nReceived: \u001b[31m0\u001b[39m\n\n\u001b[0m \u001b[90m 253 |\u001b[39m           \u001b[32m`${ruleConfig.ruleName}: ${consistent}/${total} consistent\\n`\u001b[39m \u001b[33m+\u001b[39m\n \u001b[90m 254 |\u001b[39m           \u001b[32m`Inconsistent cases:\\n${details}`\u001b[39m\u001b[33m,\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 255 |\u001b[39m         )\u001b[33m.\u001b[39mtoBe(total)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m           \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 256 |\u001b[39m       }\n \u001b[90m 257 |\u001b[39m     })\u001b[33m;\u001b[39m\n \u001b[90m 258 |\u001b[39m   })\u001b[33m;\u001b[39m\u001b[0m\n\u001b[2m    at /Users/adam.chaboryk/Documents/GitHub/sa11y/conformance/tests/act-conformance.spec.js:255:11\u001b[22m"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-04-25T03:12:38.245Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/Users/adam.chaboryk/Documents/GitHub/sa11y/test-results/act-conformance-ACT-Rule-b-e74f3-ows-for-zoom-all-test-cases/error-context.md"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "6efeefd7d6aecc0e099d-25686865cd090fad56d1",
+              "file": "act-conformance.spec.js",
+              "line": 146,
+              "column": 5
+            }
+          ]
+        },
+        {
+          "title": "ACT Rule bc659a: Meta element has no refresh delay",
+          "file": "act-conformance.spec.js",
+          "line": 145,
+          "column": 8,
+          "specs": [
+            {
+              "title": "all test cases",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 500,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 12,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 345,
+                      "error": {
+                        "message": "Error: Meta element has no refresh delay: 0/15 consistent\nInconsistent cases:\n  Passed Example 1 (expected: passed, Sa11y keys: [])\n  Passed Example 2 (expected: passed, Sa11y keys: [])\n  Passed Example 3 (expected: passed, Sa11y keys: [])\n  Failed Example 1 (expected: failed, Sa11y keys: [])\n  Failed Example 2 (expected: failed, Sa11y keys: [])\n  Failed Example 3 (expected: failed, Sa11y keys: [])\n  Failed Example 4 (expected: failed, Sa11y keys: [])\n  Inapplicable Example 1 (expected: inapplicable, Sa11y keys: [])\n  Inapplicable Example 2 (expected: inapplicable, Sa11y keys: [])\n  Inapplicable Example 3 (expected: inapplicable, Sa11y keys: [])\n  Inapplicable Example 4 (expected: inapplicable, Sa11y keys: [])\n  Inapplicable Example 5 (expected: inapplicable, Sa11y keys: [])\n  Inapplicable Example 6 (expected: inapplicable, Sa11y keys: [])\n  Inapplicable Example 7 (expected: inapplicable, Sa11y keys: [])\n  Inapplicable Example 8 (expected: inapplicable, Sa11y keys: [])\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m15\u001b[39m\nReceived: \u001b[31m0\u001b[39m",
+                        "stack": "Error: Meta element has no refresh delay: 0/15 consistent\nInconsistent cases:\n  Passed Example 1 (expected: passed, Sa11y keys: [])\n  Passed Example 2 (expected: passed, Sa11y keys: [])\n  Passed Example 3 (expected: passed, Sa11y keys: [])\n  Failed Example 1 (expected: failed, Sa11y keys: [])\n  Failed Example 2 (expected: failed, Sa11y keys: [])\n  Failed Example 3 (expected: failed, Sa11y keys: [])\n  Failed Example 4 (expected: failed, Sa11y keys: [])\n  Inapplicable Example 1 (expected: inapplicable, Sa11y keys: [])\n  Inapplicable Example 2 (expected: inapplicable, Sa11y keys: [])\n  Inapplicable Example 3 (expected: inapplicable, Sa11y keys: [])\n  Inapplicable Example 4 (expected: inapplicable, Sa11y keys: [])\n  Inapplicable Example 5 (expected: inapplicable, Sa11y keys: [])\n  Inapplicable Example 6 (expected: inapplicable, Sa11y keys: [])\n  Inapplicable Example 7 (expected: inapplicable, Sa11y keys: [])\n  Inapplicable Example 8 (expected: inapplicable, Sa11y keys: [])\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m15\u001b[39m\nReceived: \u001b[31m0\u001b[39m\n    at /Users/adam.chaboryk/Documents/GitHub/sa11y/conformance/tests/act-conformance.spec.js:255:11",
+                        "location": {
+                          "file": "/Users/adam.chaboryk/Documents/GitHub/sa11y/conformance/tests/act-conformance.spec.js",
+                          "column": 11,
+                          "line": 255
+                        },
+                        "snippet": "\u001b[0m \u001b[90m 253 |\u001b[39m           \u001b[32m`${ruleConfig.ruleName}: ${consistent}/${total} consistent\\n`\u001b[39m \u001b[33m+\u001b[39m\n \u001b[90m 254 |\u001b[39m           \u001b[32m`Inconsistent cases:\\n${details}`\u001b[39m\u001b[33m,\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 255 |\u001b[39m         )\u001b[33m.\u001b[39mtoBe(total)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m           \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 256 |\u001b[39m       }\n \u001b[90m 257 |\u001b[39m     })\u001b[33m;\u001b[39m\n \u001b[90m 258 |\u001b[39m   })\u001b[33m;\u001b[39m\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/Users/adam.chaboryk/Documents/GitHub/sa11y/conformance/tests/act-conformance.spec.js",
+                            "column": 11,
+                            "line": 255
+                          },
+                          "message": "Error: Meta element has no refresh delay: 0/15 consistent\nInconsistent cases:\n  Passed Example 1 (expected: passed, Sa11y keys: [])\n  Passed Example 2 (expected: passed, Sa11y keys: [])\n  Passed Example 3 (expected: passed, Sa11y keys: [])\n  Failed Example 1 (expected: failed, Sa11y keys: [])\n  Failed Example 2 (expected: failed, Sa11y keys: [])\n  Failed Example 3 (expected: failed, Sa11y keys: [])\n  Failed Example 4 (expected: failed, Sa11y keys: [])\n  Inapplicable Example 1 (expected: inapplicable, Sa11y keys: [])\n  Inapplicable Example 2 (expected: inapplicable, Sa11y keys: [])\n  Inapplicable Example 3 (expected: inapplicable, Sa11y keys: [])\n  Inapplicable Example 4 (expected: inapplicable, Sa11y keys: [])\n  Inapplicable Example 5 (expected: inapplicable, Sa11y keys: [])\n  Inapplicable Example 6 (expected: inapplicable, Sa11y keys: [])\n  Inapplicable Example 7 (expected: inapplicable, Sa11y keys: [])\n  Inapplicable Example 8 (expected: inapplicable, Sa11y keys: [])\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m15\u001b[39m\nReceived: \u001b[31m0\u001b[39m\n\n\u001b[0m \u001b[90m 253 |\u001b[39m           \u001b[32m`${ruleConfig.ruleName}: ${consistent}/${total} consistent\\n`\u001b[39m \u001b[33m+\u001b[39m\n \u001b[90m 254 |\u001b[39m           \u001b[32m`Inconsistent cases:\\n${details}`\u001b[39m\u001b[33m,\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 255 |\u001b[39m         )\u001b[33m.\u001b[39mtoBe(total)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m           \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 256 |\u001b[39m       }\n \u001b[90m 257 |\u001b[39m     })\u001b[33m;\u001b[39m\n \u001b[90m 258 |\u001b[39m   })\u001b[33m;\u001b[39m\u001b[0m\n\u001b[2m    at /Users/adam.chaboryk/Documents/GitHub/sa11y/conformance/tests/act-conformance.spec.js:255:11\u001b[22m"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-04-25T03:12:39.270Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/Users/adam.chaboryk/Documents/GitHub/sa11y/test-results/act-conformance-ACT-Rule-b-cc28e-efresh-delay-all-test-cases/error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/Users/adam.chaboryk/Documents/GitHub/sa11y/conformance/tests/act-conformance.spec.js",
+                        "column": 11,
+                        "line": 255
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "6efeefd7d6aecc0e099d-a53bc942a686e606895c",
+              "file": "act-conformance.spec.js",
+              "line": 146,
+              "column": 5
+            }
+          ]
+        },
+        {
+          "title": "ACT Rule bisz58: Meta element has no refresh delay (no exception)",
+          "file": "act-conformance.spec.js",
+          "line": 145,
+          "column": 8,
+          "specs": [
+            {
+              "title": "all test cases",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 500,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 13,
+                      "parallelIndex": 0,
+                      "status": "timedOut",
+                      "duration": 1004,
+                      "error": {
+                        "message": "\u001b[31mTest timeout of 500ms exceeded.\u001b[39m",
+                        "stack": "\u001b[31mTest timeout of 500ms exceeded.\u001b[39m"
+                      },
+                      "errors": [
+                        {
+                          "message": "\u001b[31mTest timeout of 500ms exceeded.\u001b[39m"
+                        },
+                        {
+                          "location": {
+                            "file": "/Users/adam.chaboryk/Documents/GitHub/sa11y/conformance/tests/act-conformance.spec.js",
+                            "column": 11,
+                            "line": 255
+                          },
+                          "message": "Error: Meta element has no refresh delay (no exception): 0/13 consistent\nInconsistent cases:\n  Passed Example 1 (expected: passed, Sa11y keys: [])\n  Passed Example 2 (expected: passed, Sa11y keys: [])\n  Failed Example 1 (expected: failed, Sa11y keys: [])\n  Failed Example 2 (expected: failed, Sa11y keys: [])\n  Failed Example 3 (expected: failed, Sa11y keys: [])\n  Inapplicable Example 1 (expected: inapplicable, Sa11y keys: [])\n  Inapplicable Example 2 (expected: inapplicable, Sa11y keys: [])\n  Inapplicable Example 3 (expected: inapplicable, Sa11y keys: [])\n  Inapplicable Example 4 (expected: inapplicable, Sa11y keys: [])\n  Inapplicable Example 5 (expected: inapplicable, Sa11y keys: [])\n  Inapplicable Example 6 (expected: inapplicable, Sa11y keys: [])\n  Inapplicable Example 7 (expected: inapplicable, Sa11y keys: [])\n  Inapplicable Example 8 (expected: inapplicable, Sa11y keys: [])\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m13\u001b[39m\nReceived: \u001b[31m0\u001b[39m\n\n\u001b[0m \u001b[90m 253 |\u001b[39m           \u001b[32m`${ruleConfig.ruleName}: ${consistent}/${total} consistent\\n`\u001b[39m \u001b[33m+\u001b[39m\n \u001b[90m 254 |\u001b[39m           \u001b[32m`Inconsistent cases:\\n${details}`\u001b[39m\u001b[33m,\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 255 |\u001b[39m         )\u001b[33m.\u001b[39mtoBe(total)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m           \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 256 |\u001b[39m       }\n \u001b[90m 257 |\u001b[39m     })\u001b[33m;\u001b[39m\n \u001b[90m 258 |\u001b[39m   })\u001b[33m;\u001b[39m\u001b[0m\n\u001b[2m    at /Users/adam.chaboryk/Documents/GitHub/sa11y/conformance/tests/act-conformance.spec.js:255:11\u001b[22m"
+                        },
+                        {
+                          "message": "\u001b[31mTearing down \"context\" exceeded the test timeout of 500ms.\u001b[39m"
+                        },
+                        {
+                          "message": "Error: browserContext.close: Target page, context or browser has been closed"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-04-25T03:12:40.099Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/Users/adam.chaboryk/Documents/GitHub/sa11y/test-results/act-conformance-ACT-Rule-b-523c0-no-exception-all-test-cases/error-context.md"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "6efeefd7d6aecc0e099d-4b3463d42df3c9fa59a1",
+              "file": "act-conformance.spec.js",
+              "line": 146,
+              "column": 5
+            }
+          ]
+        },
+        {
+          "title": "ACT Rule 6cfa84: Element with aria-hidden has no content in sequential focus order",
+          "file": "act-conformance.spec.js",
+          "line": 145,
+          "column": 8,
+          "specs": [
+            {
+              "title": "all test cases",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 500,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 14,
+                      "parallelIndex": 0,
+                      "status": "timedOut",
+                      "duration": 524,
+                      "error": {
+                        "message": "\u001b[31mTest timeout of 500ms exceeded.\u001b[39m",
+                        "stack": "\u001b[31mTest timeout of 500ms exceeded.\u001b[39m"
+                      },
+                      "errors": [
+                        {
+                          "message": "\u001b[31mTest timeout of 500ms exceeded.\u001b[39m"
+                        },
+                        {
+                          "location": {
+                            "file": "/Users/adam.chaboryk/Documents/GitHub/sa11y/conformance/tests/act-conformance.spec.js",
+                            "column": 11,
+                            "line": 255
+                          },
+                          "message": "Error: Element with aria-hidden has no content in sequential focus order: 0/15 consistent\nInconsistent cases:\n  Passed Example 1 (expected: passed, Sa11y keys: [])\n  Passed Example 2 (expected: passed, Sa11y keys: [])\n  Passed Example 3 (expected: passed, Sa11y keys: [])\n  Passed Example 4 (expected: passed, Sa11y keys: [])\n  Passed Example 5 (expected: passed, Sa11y keys: [])\n  Passed Example 6 (expected: passed, Sa11y keys: [])\n  Failed Example 1 (expected: failed, Sa11y keys: [])\n  Failed Example 2 (expected: failed, Sa11y keys: [])\n  Failed Example 3 (expected: failed, Sa11y keys: [])\n  Failed Example 4 (expected: failed, Sa11y keys: [])\n  Failed Example 5 (expected: failed, Sa11y keys: [])\n  Failed Example 6 (expected: failed, Sa11y keys: [])\n  Inapplicable Example 1 (expected: inapplicable, Sa11y keys: [])\n  Inapplicable Example 2 (expected: inapplicable, Sa11y keys: [])\n  Inapplicable Example 3 (expected: inapplicable, Sa11y keys: [])\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m15\u001b[39m\nReceived: \u001b[31m0\u001b[39m\n\n\u001b[0m \u001b[90m 253 |\u001b[39m           \u001b[32m`${ruleConfig.ruleName}: ${consistent}/${total} consistent\\n`\u001b[39m \u001b[33m+\u001b[39m\n \u001b[90m 254 |\u001b[39m           \u001b[32m`Inconsistent cases:\\n${details}`\u001b[39m\u001b[33m,\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 255 |\u001b[39m         )\u001b[33m.\u001b[39mtoBe(total)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m           \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 256 |\u001b[39m       }\n \u001b[90m 257 |\u001b[39m     })\u001b[33m;\u001b[39m\n \u001b[90m 258 |\u001b[39m   })\u001b[33m;\u001b[39m\u001b[0m\n\u001b[2m    at /Users/adam.chaboryk/Documents/GitHub/sa11y/conformance/tests/act-conformance.spec.js:255:11\u001b[22m"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-04-25T03:12:41.605Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/Users/adam.chaboryk/Documents/GitHub/sa11y/test-results/act-conformance-ACT-Rule-6-87e76--focus-order-all-test-cases/error-context.md"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "6efeefd7d6aecc0e099d-2a469bf4d40e49ca814f",
+              "file": "act-conformance.spec.js",
+              "line": 146,
+              "column": 5
+            }
+          ]
+        },
+        {
+          "title": "ACT Rule de46e4: Element with lang attribute has valid language tag",
+          "file": "act-conformance.spec.js",
+          "line": 145,
+          "column": 8,
+          "specs": [
+            {
+              "title": "all test cases",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 500,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 15,
+                      "parallelIndex": 0,
+                      "status": "timedOut",
+                      "duration": 530,
+                      "error": {
+                        "message": "\u001b[31mTest timeout of 500ms exceeded.\u001b[39m",
+                        "stack": "\u001b[31mTest timeout of 500ms exceeded.\u001b[39m"
+                      },
+                      "errors": [
+                        {
+                          "message": "\u001b[31mTest timeout of 500ms exceeded.\u001b[39m"
+                        },
+                        {
+                          "location": {
+                            "file": "/Users/adam.chaboryk/Documents/GitHub/sa11y/conformance/tests/act-conformance.spec.js",
+                            "column": 11,
+                            "line": 255
+                          },
+                          "message": "Error: Element with lang attribute has valid language tag: 0/19 consistent\nInconsistent cases:\n  Passed Example 1 (expected: passed, Sa11y keys: [])\n  Passed Example 2 (expected: passed, Sa11y keys: [])\n  Passed Example 3 (expected: passed, Sa11y keys: [])\n  Passed Example 4 (expected: passed, Sa11y keys: [])\n  Passed Example 5 (expected: passed, Sa11y keys: [])\n  Failed Example 1 (expected: failed, Sa11y keys: [])\n  Failed Example 2 (expected: failed, Sa11y keys: [])\n  Failed Example 3 (expected: failed, Sa11y keys: [])\n  Failed Example 4 (expected: failed, Sa11y keys: [])\n  Failed Example 5 (expected: failed, Sa11y keys: [])\n  Failed Example 6 (expected: failed, Sa11y keys: [])\n  Failed Example 7 (expected: failed, Sa11y keys: [])\n  Failed Example 8 (expected: failed, Sa11y keys: [])\n  Failed Example 9 (expected: failed, Sa11y keys: [])\n  Inapplicable Example 1 (expected: inapplicable, Sa11y keys: [])\n  Inapplicable Example 2 (expected: inapplicable, Sa11y keys: [])\n  Inapplicable Example 3 (expected: inapplicable, Sa11y keys: [])\n  Inapplicable Example 4 (expected: inapplicable, Sa11y keys: [])\n  Inapplicable Example 5 (expected: inapplicable, Sa11y keys: [])\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m19\u001b[39m\nReceived: \u001b[31m0\u001b[39m\n\n\u001b[0m \u001b[90m 253 |\u001b[39m           \u001b[32m`${ruleConfig.ruleName}: ${consistent}/${total} consistent\\n`\u001b[39m \u001b[33m+\u001b[39m\n \u001b[90m 254 |\u001b[39m           \u001b[32m`Inconsistent cases:\\n${details}`\u001b[39m\u001b[33m,\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 255 |\u001b[39m         )\u001b[33m.\u001b[39mtoBe(total)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m           \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 256 |\u001b[39m       }\n \u001b[90m 257 |\u001b[39m     })\u001b[33m;\u001b[39m\n \u001b[90m 258 |\u001b[39m   })\u001b[33m;\u001b[39m\u001b[0m\n\u001b[2m    at /Users/adam.chaboryk/Documents/GitHub/sa11y/conformance/tests/act-conformance.spec.js:255:11\u001b[22m"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-04-25T03:12:42.644Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/Users/adam.chaboryk/Documents/GitHub/sa11y/test-results/act-conformance-ACT-Rule-d-aaefd-language-tag-all-test-cases/error-context.md"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "6efeefd7d6aecc0e099d-b16f644e06a6734f57d1",
+              "file": "act-conformance.spec.js",
+              "line": 146,
+              "column": 5
+            }
+          ]
+        },
+        {
+          "title": "ACT Rule afw4f7: Text has minimum contrast",
+          "file": "act-conformance.spec.js",
+          "line": 145,
+          "column": 8,
+          "specs": [
+            {
+              "title": "all test cases",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 500,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 16,
+                      "parallelIndex": 0,
+                      "status": "timedOut",
+                      "duration": 529,
+                      "error": {
+                        "message": "\u001b[31mTest timeout of 500ms exceeded.\u001b[39m",
+                        "stack": "\u001b[31mTest timeout of 500ms exceeded.\u001b[39m"
+                      },
+                      "errors": [
+                        {
+                          "message": "\u001b[31mTest timeout of 500ms exceeded.\u001b[39m"
+                        },
+                        {
+                          "location": {
+                            "file": "/Users/adam.chaboryk/Documents/GitHub/sa11y/conformance/tests/act-conformance.spec.js",
+                            "column": 11,
+                            "line": 255
+                          },
+                          "message": "Error: Text has minimum contrast: 0/34 consistent\nInconsistent cases:\n  Passed Example 1 (expected: passed, Sa11y keys: [])\n  Passed Example 2 (expected: passed, Sa11y keys: [])\n  Passed Example 3 (expected: passed, Sa11y keys: [])\n  Passed Example 4 (expected: passed, Sa11y keys: [])\n  Passed Example 5 (expected: passed, Sa11y keys: [])\n  Passed Example 6 (expected: passed, Sa11y keys: [])\n  Passed Example 7 (expected: passed, Sa11y keys: [])\n  Passed Example 8 (expected: passed, Sa11y keys: [])\n  Passed Example 9 (expected: passed, Sa11y keys: [])\n  Passed Example 10 (expected: passed, Sa11y keys: [])\n  Passed Example 11 (expected: passed, Sa11y keys: [])\n  Failed Example 1 (expected: failed, Sa11y keys: [])\n  Failed Example 2 (expected: failed, Sa11y keys: [])\n  Failed Example 3 (expected: failed, Sa11y keys: [])\n  Failed Example 4 (expected: failed, Sa11y keys: [])\n  Failed Example 5 (expected: failed, Sa11y keys: [])\n  Failed Example 6 (expected: failed, Sa11y keys: [])\n  Failed Example 7 (expected: failed, Sa11y keys: [])\n  Failed Example 8 (expected: failed, Sa11y keys: [])\n  Failed Example 9 (expected: failed, Sa11y keys: [])\n  Failed Example 10 (expected: failed, Sa11y keys: [])\n  Inapplicable Example 1 (expected: inapplicable, Sa11y keys: [])\n  Inapplicable Example 2 (expected: inapplicable, Sa11y keys: [])\n  Inapplicable Example 3 (expected: inapplicable, Sa11y keys: [])\n  Inapplicable Example 4 (expected: inapplicable, Sa11y keys: [])\n  Inapplicable Example 5 (expected: inapplicable, Sa11y keys: [])\n  Inapplicable Example 6 (expected: inapplicable, Sa11y keys: [])\n  Inapplicable Example 7 (expected: inapplicable, Sa11y keys: [])\n  Inapplicable Example 8 (expected: inapplicable, Sa11y keys: [])\n  Inapplicable Example 9 (expected: inapplicable, Sa11y keys: [])\n  Inapplicable Example 10 (expected: inapplicable, Sa11y keys: [])\n  Inapplicable Example 11 (expected: inapplicable, Sa11y keys: [])\n  Passed Example 7 (expected: passed, Sa11y keys: [])\n  Failed Example 11 (expected: failed, Sa11y keys: [])\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m34\u001b[39m\nReceived: \u001b[31m0\u001b[39m\n\n\u001b[0m \u001b[90m 253 |\u001b[39m           \u001b[32m`${ruleConfig.ruleName}: ${consistent}/${total} consistent\\n`\u001b[39m \u001b[33m+\u001b[39m\n \u001b[90m 254 |\u001b[39m           \u001b[32m`Inconsistent cases:\\n${details}`\u001b[39m\u001b[33m,\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 255 |\u001b[39m         )\u001b[33m.\u001b[39mtoBe(total)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m           \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 256 |\u001b[39m       }\n \u001b[90m 257 |\u001b[39m     })\u001b[33m;\u001b[39m\n \u001b[90m 258 |\u001b[39m   })\u001b[33m;\u001b[39m\u001b[0m\n\u001b[2m    at /Users/adam.chaboryk/Documents/GitHub/sa11y/conformance/tests/act-conformance.spec.js:255:11\u001b[22m"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-04-25T03:12:43.691Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/Users/adam.chaboryk/Documents/GitHub/sa11y/test-results/act-conformance-ACT-Rule-a-4fe7b-mum-contrast-all-test-cases/error-context.md"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "6efeefd7d6aecc0e099d-0e4dc244cce9d4990a64",
+              "file": "act-conformance.spec.js",
+              "line": 146,
+              "column": 5
+            }
+          ]
+        },
+        {
+          "title": "ACT Rule 09o5cg: Text has enhanced contrast",
+          "file": "act-conformance.spec.js",
+          "line": 145,
+          "column": 8,
+          "specs": [
+            {
+              "title": "all test cases",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 500,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 17,
+                      "parallelIndex": 0,
+                      "status": "timedOut",
+                      "duration": 530,
+                      "error": {
+                        "message": "\u001b[31mTest timeout of 500ms exceeded.\u001b[39m",
+                        "stack": "\u001b[31mTest timeout of 500ms exceeded.\u001b[39m"
+                      },
+                      "errors": [
+                        {
+                          "message": "\u001b[31mTest timeout of 500ms exceeded.\u001b[39m"
+                        },
+                        {
+                          "location": {
+                            "file": "/Users/adam.chaboryk/Documents/GitHub/sa11y/conformance/tests/act-conformance.spec.js",
+                            "column": 11,
+                            "line": 255
+                          },
+                          "message": "Error: Text has enhanced contrast: 0/35 consistent\nInconsistent cases:\n  Passed Example 1 (expected: passed, Sa11y keys: [])\n  Passed Example 2 (expected: passed, Sa11y keys: [])\n  Passed Example 3 (expected: passed, Sa11y keys: [])\n  Passed Example 4 (expected: passed, Sa11y keys: [])\n  Passed Example 5 (expected: passed, Sa11y keys: [])\n  Passed Example 6 (expected: passed, Sa11y keys: [])\n  Passed Example 7 (expected: passed, Sa11y keys: [])\n  Passed Example 8 (expected: passed, Sa11y keys: [])\n  Passed Example 9 (expected: passed, Sa11y keys: [])\n  Passed Example 10 (expected: passed, Sa11y keys: [])\n  Failed Example 1 (expected: failed, Sa11y keys: [])\n  Failed Example 2 (expected: failed, Sa11y keys: [])\n  Failed Example 3 (expected: failed, Sa11y keys: [])\n  Failed Example 4 (expected: failed, Sa11y keys: [])\n  Failed Example 5 (expected: failed, Sa11y keys: [])\n  Failed Example 6 (expected: failed, Sa11y keys: [])\n  Failed Example 7 (expected: failed, Sa11y keys: [])\n  Failed Example 8 (expected: failed, Sa11y keys: [])\n  Failed Example 9 (expected: failed, Sa11y keys: [])\n  Failed Example 10 (expected: failed, Sa11y keys: [])\n  Failed Example 11 (expected: failed, Sa11y keys: [])\n  Failed Example 12 (expected: failed, Sa11y keys: [])\n  Failed Example 13 (expected: failed, Sa11y keys: [])\n  Inapplicable Example 1 (expected: inapplicable, Sa11y keys: [])\n  Inapplicable Example 2 (expected: inapplicable, Sa11y keys: [])\n  Inapplicable Example 3 (expected: inapplicable, Sa11y keys: [])\n  Inapplicable Example 4 (expected: inapplicable, Sa11y keys: [])\n  Inapplicable Example 5 (expected: inapplicable, Sa11y keys: [])\n  Inapplicable Example 6 (expected: inapplicable, Sa11y keys: [])\n  Inapplicable Example 7 (expected: inapplicable, Sa11y keys: [])\n  Inapplicable Example 8 (expected: inapplicable, Sa11y keys: [])\n  Inapplicable Example 9 (expected: inapplicable, Sa11y keys: [])\n  Inapplicable Example 10 (expected: inapplicable, Sa11y keys: [])\n  Inapplicable Example 11 (expected: inapplicable, Sa11y keys: [])\n  Passed Example 6 (expected: passed, Sa11y keys: [])\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m35\u001b[39m\nReceived: \u001b[31m0\u001b[39m\n\n\u001b[0m \u001b[90m 253 |\u001b[39m           \u001b[32m`${ruleConfig.ruleName}: ${consistent}/${total} consistent\\n`\u001b[39m \u001b[33m+\u001b[39m\n \u001b[90m 254 |\u001b[39m           \u001b[32m`Inconsistent cases:\\n${details}`\u001b[39m\u001b[33m,\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 255 |\u001b[39m         )\u001b[33m.\u001b[39mtoBe(total)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m           \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 256 |\u001b[39m       }\n \u001b[90m 257 |\u001b[39m     })\u001b[33m;\u001b[39m\n \u001b[90m 258 |\u001b[39m   })\u001b[33m;\u001b[39m\u001b[0m\n\u001b[2m    at /Users/adam.chaboryk/Documents/GitHub/sa11y/conformance/tests/act-conformance.spec.js:255:11\u001b[22m"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-04-25T03:12:44.707Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/Users/adam.chaboryk/Documents/GitHub/sa11y/test-results/act-conformance-ACT-Rule-0-0221a-ced-contrast-all-test-cases/error-context.md"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "6efeefd7d6aecc0e099d-667111904c29848ab08a",
+              "file": "act-conformance.spec.js",
+              "line": 146,
+              "column": 5
+            }
+          ]
+        },
+        {
+          "title": "ACT Rule 5effbb: Link in context is descriptive",
+          "file": "act-conformance.spec.js",
+          "line": 145,
+          "column": 8,
+          "specs": [
+            {
+              "title": "all test cases",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 500,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 18,
+                      "parallelIndex": 0,
+                      "status": "timedOut",
+                      "duration": 529,
+                      "error": {
+                        "message": "\u001b[31mTest timeout of 500ms exceeded.\u001b[39m",
+                        "stack": "\u001b[31mTest timeout of 500ms exceeded.\u001b[39m"
+                      },
+                      "errors": [
+                        {
+                          "message": "\u001b[31mTest timeout of 500ms exceeded.\u001b[39m"
+                        },
+                        {
+                          "location": {
+                            "file": "/Users/adam.chaboryk/Documents/GitHub/sa11y/conformance/tests/act-conformance.spec.js",
+                            "column": 11,
+                            "line": 255
+                          },
+                          "message": "Error: Link in context is descriptive: 0/18 consistent\nInconsistent cases:\n  Passed Example 1 (expected: passed, Sa11y keys: [])\n  Passed Example 2 (expected: passed, Sa11y keys: [])\n  Passed Example 3 (expected: passed, Sa11y keys: [])\n  Passed Example 4 (expected: passed, Sa11y keys: [])\n  Passed Example 5 (expected: passed, Sa11y keys: [])\n  Passed Example 6 (expected: passed, Sa11y keys: [])\n  Passed Example 7 (expected: passed, Sa11y keys: [])\n  Passed Example 8 (expected: passed, Sa11y keys: [])\n  Passed Example 9 (expected: passed, Sa11y keys: [])\n  Failed Example 1 (expected: failed, Sa11y keys: [])\n  Failed Example 2 (expected: failed, Sa11y keys: [])\n  Failed Example 3 (expected: failed, Sa11y keys: [])\n  Failed Example 4 (expected: failed, Sa11y keys: [])\n  Failed Example 5 (expected: failed, Sa11y keys: [])\n  Failed Example 6 (expected: failed, Sa11y keys: [])\n  Inapplicable Example 1 (expected: inapplicable, Sa11y keys: [])\n  Inapplicable Example 2 (expected: inapplicable, Sa11y keys: [])\n  Inapplicable Example 3 (expected: inapplicable, Sa11y keys: [])\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m18\u001b[39m\nReceived: \u001b[31m0\u001b[39m\n\n\u001b[0m \u001b[90m 253 |\u001b[39m           \u001b[32m`${ruleConfig.ruleName}: ${consistent}/${total} consistent\\n`\u001b[39m \u001b[33m+\u001b[39m\n \u001b[90m 254 |\u001b[39m           \u001b[32m`Inconsistent cases:\\n${details}`\u001b[39m\u001b[33m,\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 255 |\u001b[39m         )\u001b[33m.\u001b[39mtoBe(total)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m           \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 256 |\u001b[39m       }\n \u001b[90m 257 |\u001b[39m     })\u001b[33m;\u001b[39m\n \u001b[90m 258 |\u001b[39m   })\u001b[33m;\u001b[39m\u001b[0m\n\u001b[2m    at /Users/adam.chaboryk/Documents/GitHub/sa11y/conformance/tests/act-conformance.spec.js:255:11\u001b[22m"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-04-25T03:12:45.725Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/Users/adam.chaboryk/Documents/GitHub/sa11y/test-results/act-conformance-ACT-Rule-5-e54fd--descriptive-all-test-cases/error-context.md"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "6efeefd7d6aecc0e099d-12723987746eab062c26",
+              "file": "act-conformance.spec.js",
+              "line": 146,
+              "column": 5
+            }
+          ]
+        },
+        {
+          "title": "ACT Rule akn7bn: Iframe with interactive elements is not excluded from tab-order",
+          "file": "act-conformance.spec.js",
+          "line": 145,
+          "column": 8,
+          "specs": [
+            {
+              "title": "all test cases",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 500,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 19,
+                      "parallelIndex": 0,
+                      "status": "timedOut",
+                      "duration": 532,
+                      "error": {
+                        "message": "\u001b[31mTest timeout of 500ms exceeded.\u001b[39m",
+                        "stack": "\u001b[31mTest timeout of 500ms exceeded.\u001b[39m"
+                      },
+                      "errors": [
+                        {
+                          "message": "\u001b[31mTest timeout of 500ms exceeded.\u001b[39m"
+                        },
+                        {
+                          "location": {
+                            "file": "/Users/adam.chaboryk/Documents/GitHub/sa11y/conformance/tests/act-conformance.spec.js",
+                            "column": 11,
+                            "line": 255
+                          },
+                          "message": "Error: Iframe with interactive elements is not excluded from tab-order: 0/10 consistent\nInconsistent cases:\n  Passed Example 1 (expected: passed, Sa11y keys: [])\n  Passed Example 2 (expected: passed, Sa11y keys: [])\n  Failed Example 1 (expected: failed, Sa11y keys: [])\n  Inapplicable Example 1 (expected: inapplicable, Sa11y keys: [])\n  Inapplicable Example 2 (expected: inapplicable, Sa11y keys: [])\n  Inapplicable Example 3 (expected: inapplicable, Sa11y keys: [])\n  Inapplicable Example 4 (expected: inapplicable, Sa11y keys: [])\n  Inapplicable Example 5 (expected: inapplicable, Sa11y keys: [])\n  Inapplicable Example 6 (expected: inapplicable, Sa11y keys: [])\n  Inapplicable Example 6 (expected: inapplicable, Sa11y keys: [])\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m10\u001b[39m\nReceived: \u001b[31m0\u001b[39m\n\n\u001b[0m \u001b[90m 253 |\u001b[39m           \u001b[32m`${ruleConfig.ruleName}: ${consistent}/${total} consistent\\n`\u001b[39m \u001b[33m+\u001b[39m\n \u001b[90m 254 |\u001b[39m           \u001b[32m`Inconsistent cases:\\n${details}`\u001b[39m\u001b[33m,\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 255 |\u001b[39m         )\u001b[33m.\u001b[39mtoBe(total)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m           \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 256 |\u001b[39m       }\n \u001b[90m 257 |\u001b[39m     })\u001b[33m;\u001b[39m\n \u001b[90m 258 |\u001b[39m   })\u001b[33m;\u001b[39m\u001b[0m\n\u001b[2m    at /Users/adam.chaboryk/Documents/GitHub/sa11y/conformance/tests/act-conformance.spec.js:255:11\u001b[22m"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-04-25T03:12:46.737Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/Users/adam.chaboryk/Documents/GitHub/sa11y/test-results/act-conformance-ACT-Rule-a-2b653-om-tab-order-all-test-cases/error-context.md"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "6efeefd7d6aecc0e099d-e4b1936efc38486c16fd",
+              "file": "act-conformance.spec.js",
+              "line": 146,
+              "column": 5
+            }
+          ]
+        },
+        {
+          "title": "ACT Rule a25f45: Headers attribute specified on a cell refers to cells in the same table element",
+          "file": "act-conformance.spec.js",
+          "line": 145,
+          "column": 8,
+          "specs": [
+            {
+              "title": "all test cases",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 500,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 20,
+                      "parallelIndex": 0,
+                      "status": "timedOut",
+                      "duration": 524,
+                      "error": {
+                        "message": "\u001b[31mTest timeout of 500ms exceeded.\u001b[39m",
+                        "stack": "\u001b[31mTest timeout of 500ms exceeded.\u001b[39m"
+                      },
+                      "errors": [
+                        {
+                          "message": "\u001b[31mTest timeout of 500ms exceeded.\u001b[39m"
+                        },
+                        {
+                          "location": {
+                            "file": "/Users/adam.chaboryk/Documents/GitHub/sa11y/conformance/tests/act-conformance.spec.js",
+                            "column": 11,
+                            "line": 255
+                          },
+                          "message": "Error: Headers attribute specified on a cell refers to cells in the same table element: 0/19 consistent\nInconsistent cases:\n  Passed Example 1 (expected: passed, Sa11y keys: [])\n  Passed Example 2 (expected: passed, Sa11y keys: [])\n  Passed Example 3 (expected: passed, Sa11y keys: [])\n  Passed Example 4 (expected: passed, Sa11y keys: [])\n  Passed Example 5 (expected: passed, Sa11y keys: [])\n  Passed Example 6 (expected: passed, Sa11y keys: [])\n  Passed Example 7 (expected: passed, Sa11y keys: [])\n  Passed Example 8 (expected: passed, Sa11y keys: [])\n  Failed Example 1 (expected: failed, Sa11y keys: [])\n  Failed Example 2 (expected: failed, Sa11y keys: [])\n  Failed Example 3 (expected: failed, Sa11y keys: [])\n  Failed Example 4 (expected: failed, Sa11y keys: [])\n  Inapplicable Example 1 (expected: inapplicable, Sa11y keys: [])\n  Inapplicable Example 2 (expected: inapplicable, Sa11y keys: [])\n  Inapplicable Example 3 (expected: inapplicable, Sa11y keys: [])\n  Inapplicable Example 4 (expected: inapplicable, Sa11y keys: [])\n  Inapplicable Example 5 (expected: inapplicable, Sa11y keys: [])\n  Inapplicable Example 4 (expected: inapplicable, Sa11y keys: [])\n  Inapplicable Example 6 (expected: inapplicable, Sa11y keys: [])\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m19\u001b[39m\nReceived: \u001b[31m0\u001b[39m\n\n\u001b[0m \u001b[90m 253 |\u001b[39m           \u001b[32m`${ruleConfig.ruleName}: ${consistent}/${total} consistent\\n`\u001b[39m \u001b[33m+\u001b[39m\n \u001b[90m 254 |\u001b[39m           \u001b[32m`Inconsistent cases:\\n${details}`\u001b[39m\u001b[33m,\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 255 |\u001b[39m         )\u001b[33m.\u001b[39mtoBe(total)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m           \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 256 |\u001b[39m       }\n \u001b[90m 257 |\u001b[39m     })\u001b[33m;\u001b[39m\n \u001b[90m 258 |\u001b[39m   })\u001b[33m;\u001b[39m\u001b[0m\n\u001b[2m    at /Users/adam.chaboryk/Documents/GitHub/sa11y/conformance/tests/act-conformance.spec.js:255:11\u001b[22m"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-04-25T03:12:47.763Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/Users/adam.chaboryk/Documents/GitHub/sa11y/test-results/act-conformance-ACT-Rule-a-0c02e-able-element-all-test-cases/error-context.md"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "6efeefd7d6aecc0e099d-18cb498b068f1a91ae0f",
+              "file": "act-conformance.spec.js",
+              "line": 146,
+              "column": 5
+            }
+          ]
+        },
+        {
+          "title": "ACT Rule m6b1q3: Menuitem has non-empty accessible name",
+          "file": "act-conformance.spec.js",
+          "line": 145,
+          "column": 8,
+          "specs": [
+            {
+              "title": "all test cases",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 500,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 21,
+                      "parallelIndex": 0,
+                      "status": "timedOut",
+                      "duration": 521,
+                      "error": {
+                        "message": "\u001b[31mTest timeout of 500ms exceeded.\u001b[39m",
+                        "stack": "\u001b[31mTest timeout of 500ms exceeded.\u001b[39m"
+                      },
+                      "errors": [
+                        {
+                          "message": "\u001b[31mTest timeout of 500ms exceeded.\u001b[39m"
+                        },
+                        {
+                          "location": {
+                            "file": "/Users/adam.chaboryk/Documents/GitHub/sa11y/conformance/tests/act-conformance.spec.js",
+                            "column": 11,
+                            "line": 255
+                          },
+                          "message": "Error: Menuitem has non-empty accessible name: 0/8 consistent\nInconsistent cases:\n  Passed Example 1 (expected: passed, Sa11y keys: [])\n  Passed Example 2 (expected: passed, Sa11y keys: [])\n  Passed Example 3 (expected: passed, Sa11y keys: [])\n  Passed Example 4 (expected: passed, Sa11y keys: [])\n  Failed Example 1 (expected: failed, Sa11y keys: [])\n  Failed Example 2 (expected: failed, Sa11y keys: [])\n  Inapplicable Example 1 (expected: inapplicable, Sa11y keys: [])\n  Inapplicable Example 2 (expected: inapplicable, Sa11y keys: [])\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m8\u001b[39m\nReceived: \u001b[31m0\u001b[39m\n\n\u001b[0m \u001b[90m 253 |\u001b[39m           \u001b[32m`${ruleConfig.ruleName}: ${consistent}/${total} consistent\\n`\u001b[39m \u001b[33m+\u001b[39m\n \u001b[90m 254 |\u001b[39m           \u001b[32m`Inconsistent cases:\\n${details}`\u001b[39m\u001b[33m,\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 255 |\u001b[39m         )\u001b[33m.\u001b[39mtoBe(total)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m           \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 256 |\u001b[39m       }\n \u001b[90m 257 |\u001b[39m     })\u001b[33m;\u001b[39m\n \u001b[90m 258 |\u001b[39m   })\u001b[33m;\u001b[39m\u001b[0m\n\u001b[2m    at /Users/adam.chaboryk/Documents/GitHub/sa11y/conformance/tests/act-conformance.spec.js:255:11\u001b[22m"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-04-25T03:12:48.772Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/Users/adam.chaboryk/Documents/GitHub/sa11y/test-results/act-conformance-ACT-Rule-m-02803-essible-name-all-test-cases/error-context.md"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "6efeefd7d6aecc0e099d-27455a1bc02e111ba31d",
+              "file": "act-conformance.spec.js",
+              "line": 146,
+              "column": 5
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-04-25T03:12:26.342Z",
+    "duration": 23080.488,
+    "expected": 0,
+    "skipped": 1,
+    "unexpected": 22,
+    "flaky": 0
+  }
+}

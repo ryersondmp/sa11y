@@ -224,7 +224,7 @@
       IMAGE_DECORATIVE: "이미지는 '장식용'으로 표시되어 보조 기술에서 무시됩니다. 이미지가 스토리, 분위기 또는 중요한 정보를 전달하는 경우 대체 텍스트를 추가해야 합니다.",
       IMAGE_DECORATIVE_CAROUSEL: "이미지가 장식용으로 표시되었지만, 캐러셀이나 갤러리의 모든 이미지에는 모든 사람에게 동등한 경험을 제공하기 위해 설명적 대체 텍스트를 포함해야 합니다.",
       IMAGE_ALT_TOO_LONG: "대체 텍스트 설명이 <strong>너무 깁니다</strong>. 대체 텍스트는 간결하면서도 트윗처럼 의미 있는 내용이어야 합니다(100자 내외). 복잡한 이미지나 그래프인 경우 이미지에 대한 긴 설명을 아래 텍스트나 아코디언 구성 요소에 넣는 것이 좋습니다. <hr> {ALT} <strong {B}>%(altLength) 문자</strong> <strong {C}>%(ALT_TEXT)</strong>",
-      IMAGE_PASS: "<strong {B}>대체 텍스트</strong> %(ALT_TEXT)",
+      IMAGE_PASS: "<strong {B}>대체 텍스트</strong> <strong {C}>%(ALT_TEXT)</strong>",
       LINK_ALT_MAYBE_BAD: "이미지 링크의 대체 텍스트가 유용한 정보를 제공하지 않거나 설명적이지 않을 수 있습니다. 대체 텍스트가 링크의 목적지를 설명하는지 확인하세요. <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>",
       ALT_MAYBE_BAD: "대체 텍스트가 유용한 정보를 제공하지 않거나 설명적이지 않을 수 있습니다. 다음 대체 텍스트를 개선하세요. <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>",
       // Form labels

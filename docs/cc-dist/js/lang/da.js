@@ -220,7 +220,7 @@ const da = {
     IMAGE_DECORATIVE: "Billedet er markeret som <strong>dekorativt</strong> og vil blive ignoreret af hjælpemidler. Hvis billedet formidler en historie, stemning eller vigtig information - så sørg for at tilføje alt-tekst.",
     IMAGE_ALT_TOO_LONG: "Alt-tekstbeskrivelsen er <strong>for lang</strong>. Alt-teksten skal være kortfattet, men alligevel meningsfuld som et <em>tweet</em> (omkring 100 tegn). Hvis det er et komplekst billede eller en graf, kan du overveje at placere den lange beskrivelse af billedet i teksten nedenfor eller i en harmonika-komponent. <hr> {ALT} <strong {B}>%(altLength) Tegn</strong> <strong {C}>%(ALT_TEXT)</strong>",
     IMAGE_DECORATIVE_CAROUSEL: "Billedet er markeret som dekorativt, men alle billeder i en karrusel eller galleri bør inkludere beskrivende alt-tekst for at sikre en tilsvarende oplevelse for alle.",
-    IMAGE_PASS: "{ALT} %(ALT_TEXT)",
+    IMAGE_PASS: "{ALT} <strong {C}>%(ALT_TEXT)</strong>",
     LINK_ALT_MAYBE_BAD: "Billedlink har muligvis alt-tekst, der ikke giver nyttig information eller indeholder ikke-beskrivende tekst. Sørg for, at alt-teksten beskriver linkets destination. <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>",
     ALT_MAYBE_BAD: "Alt-tekst giver muligvis ikke nyttig information eller indeholder ikke-beskrivende tekst. Forbedr følgende alt-tekst: <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>",
     // Form labels

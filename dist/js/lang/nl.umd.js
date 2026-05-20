@@ -231,7 +231,7 @@
       IMAGE_DECORATIVE: "De afbeelding is gemarkeerd als <strong>decoratief</strong> en wordt genegeerd door ondersteunende technologie. Als de afbeelding een verhaal, stemming of belangrijke informatie overbrengt, voeg dan alt-tekst toe.",
       IMAGE_DECORATIVE_CAROUSEL: "Afbeelding is gemarkeerd als decoratief, maar alle afbeeldingen in een carrousel of galerij moeten een beschrijvende alt-tekst bevatten om een gelijkwaardige ervaring voor iedereen te garanderen.",
       IMAGE_ALT_TOO_LONG: "Alt-tekstbeschrijving is <strong>te lang</strong>. Alt-tekst moet beknopt zijn, maar toch betekenisvol, zoals een <em>tweet</em> (ongeveer 100 tekens). Als dit een complexe afbeelding of een grafiek is, overweeg dan om de lange beschrijving van de afbeelding in de tekst eronder te zetten of in een accordeoncomponent. <hr> {ALT} <strong {B}>%(altLength) Tekens</strong> <strong {C}>%(ALT_TEXT)</strong>",
-      IMAGE_PASS: "{ALT} %(ALT_TEXT)",
+      IMAGE_PASS: "{ALT} <strong {C}>%(ALT_TEXT)</strong>",
       LINK_ALT_MAYBE_BAD: "De afbeeldingslink heeft mogelijk een alt-tekst die geen nuttige informatie biedt of niet beschrijvend is. Zorg ervoor dat de alt-tekst de bestemming van de link beschrijft. <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>",
       ALT_MAYBE_BAD: "De alt-tekst biedt mogelijk geen nuttige informatie of is niet beschrijvend. Verbeter de volgende alt-tekst: <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>",
       // Form labels

@@ -223,7 +223,7 @@ const en = {
     IMAGE_DECORATIVE: "Image is marked as <strong>decorative</strong> and will be ignored by assistive technology. If the image conveys a story, mood, or important information, make sure to add alt text.",
     IMAGE_DECORATIVE_CAROUSEL: "Image is marked as <strong>decorative</strong>, but all images in a carousel or gallery should include descriptive alt text to ensure an equivalent experience for everyone.",
     IMAGE_ALT_TOO_LONG: "Alt text description is <strong>too long</strong>. Alt text should be concise, yet meaningful like a <em>tweet</em> (around 100 characters). If this is a complex image or a graph, consider putting the long description of the image in the text below or an accordion component. <hr> {ALT} <strong {B}>%(altLength) Characters</strong> <strong {C}>%(ALT_TEXT)</strong>",
-    IMAGE_PASS: "{ALT} %(ALT_TEXT)",
+    IMAGE_PASS: "{ALT} <strong {C}>%(ALT_TEXT)</strong>",
     LINK_ALT_MAYBE_BAD: "Image link has alt text that may not provide useful information or contains non-descript text. Ensure the alt text describes the destination of the link. <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>",
     ALT_MAYBE_BAD: "Alt text may not provide useful information or contains non-descript text. Improve the following alt text: <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>",
     // Labels
@@ -260,7 +260,7 @@ const en = {
     LINK_TEXT: "<strong {B}>Link text</strong> <strong {C}>%(TEXT)</strong>",
     ACC_NAME: "<strong {B}>Accessible Name</strong> <strong {C}>%(TEXT)</strong>",
     ACC_NAME_TIP: `<hr><strong>Tip!</strong> The "accessible name" is the final label that gets communicated to people who use assistive technology. This helps them understand the element's purpose.`,
-    HIDDEN_FOCUSABLE: 'This element can receive keyboard focus, but is hidden from screen readers by an <code>aria-hidden="true"</code> attribute (on itself or a parent container). To fix, either remove the aria-hidden attribute or remove the element from the tab order. <hr> <strong {B}>Element</strong> <pre><code>%(EL)</code></pre> <hr> Learn more about the <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">aria-hidden attribute.</a>',
+    HIDDEN_FOCUSABLE: 'This element can receive keyboard focus, but is hidden from screen readers by an <code>aria-hidden="true"</code> attribute (on itself or a parent container). To fix, either remove the aria-hidden attribute or remove the element from the tab order. <div id="element"><hr> <strong {B}>Element</strong> <pre><code>%(EL)</code></pre></div> <hr> Learn more about the <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">aria-hidden attribute.</a>',
     // Developer checks
     DUPLICATE_ID: "Found <strong>duplicate ID</strong>. Duplicate ID errors are known to cause problems for assistive technologies when they are trying to interact with content. Please remove or change the following ID. <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>",
     UNCONTAINED_LI: "All <code>&lt;li&gt;</code> list items must be placed inside <code>&lt;ul&gt;</code> unordered or <code>&lt;ol&gt;</code> ordered elements. This structure helps screen readers announce the list and its items accurately. <hr> <strong {B}>List item</strong> <strong {C}>%(TEXT)</strong>",

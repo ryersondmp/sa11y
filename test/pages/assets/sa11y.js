@@ -16,7 +16,7 @@ const warningsPageChecks = isWarningsPage
 // Instantiate
 Lang.addI18n(Sa11yLangEn.strings);
 const sa11y = new Sa11y({
-  unitTestMode: true,
+  unitTestMode: true, // THIS MUST BE ENABLED FOR NPM RUN TEST!
   headerIgnore: '#nothing-ignore-this-heading *, .ignore-this-heading',
   autoDetectShadowComponents: true,
   linkIgnoreSpan: '.sr-only-example',
@@ -25,7 +25,7 @@ const sa11y = new Sa11y({
   imageIgnore: '.logo',
   customChecks: 'listen',
   linkStopWords: 'взнати більше',
-  langOfPartsPlugin: 1,
+  langOfPartsPlugin: 0,
   langOfPartsCache: 0,
   exportResultsPlugin: 1,
 

@@ -1,3 +1,11 @@
+/conformance/.cache
+/testcases/
+/testcases/**
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+
 # IDE & System Related Files
 .buildpath
 .project
@@ -20,7 +28,3 @@ npm-debug.log
 # Windows
 Thumbs.db
 Desktop.ini
-/test-results/
-/playwright-report/
-/blob-report/
-/playwright/.cache/

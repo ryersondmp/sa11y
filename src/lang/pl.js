@@ -200,6 +200,7 @@ export default {
       'Brakuje nagłówka H1. Nagłówek H1 jest głównym nagłówkiem opisującym ogólny cel strony i powinien być początkiem obszaru treści głównej. Dowiedz się więcej o <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">Strukturze nagłówków.</a>',
     HEADING_EMPTY_WITH_IMAGE:
       'Nagłówek nie ma tekstu, ale zawiera obrazek. Jeśli to nie jest nagłówek, zmień jego format z <strong {C}>Nagłówek H%(level)</strong> na <strong>zwykły tekst</strong> lub <strong>akapit</strong>. W przeciwnym razie, dodaj do obrazu tekst alt, jeśli nie jest on ozdobny.',
+    HEADING_UNPRONOUNCEABLE: 'Tekst nagłówka zawiera wyłącznie symbole lub znaki niemożliwe do wymówienia. Jeśli uważasz, że jest to błąd wynikający z problemu przy kopiowaniu/wklejaniu, rozważ jego usunięcie. <hr> <strong {B}>Tekst nagłówka</strong> <strong {C}>%(TEXT)</strong>',
     PANEL_HEADING_MISSING_ONE: 'Brak Nagłówka 1!',
     PANEL_NO_HEADINGS: 'Nie znaleziono nagłówków.',
 
@@ -276,7 +277,7 @@ export default {
       'Obraz jest oznaczony jako dekoracyjny, ale wszystkie obrazy w karuzeli lub galerii powinny zawierać opisowy tekst alternatywny, aby zapewnić równoważne doświadczenie dla wszystkich.',
     IMAGE_ALT_TOO_LONG:
       'Tekst alternatywny obrazu jest <strong>zbyt długi</strong>. Tekst alternatywny powinien być zwięzły, ale znaczący jak <em>tweet</em> (około 100 znaków). Jeśli jest to złożony obraz lub wykres, należy rozważyć umieszczenie długiego opisu obrazu w tekście poniżej lub w akordeonie. <hr> {ALT} <strong {B}>%(altLength) Znaków</strong> <strong {C}>%(ALT_TEXT)</strong>',
-    IMAGE_PASS: '{ALT} %(ALT_TEXT)',
+    IMAGE_PASS: '{ALT} <strong {C}>%(ALT_TEXT)</strong>',
     LINK_ALT_MAYBE_BAD:
       'Link do obrazu może mieć tekst alternatywny, który nie dostarcza przydatnych informacji lub nie jest opisowy. Upewnij się, że tekst alt opisuje cel linku. <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
     ALT_MAYBE_BAD:
@@ -367,6 +368,7 @@ export default {
     META_LANG_VALID: 'Kod języka dla tego elementu jest nieprawidłowy. Aby to naprawić, zastąp atrybut lang prawidłowym kodem języka. <hr> <strong {B}>Element</strong> <code>&lt;%(ELEMENT) lang="%(CODE)"&gt;</code> <hr> Dowiedz się więcej o <a href="https://www.w3.org/International/questions/qa-html-language-declarations">deklarowaniu języka w HTML.</a>',
 
     // Buttons
+    BTN_UNPRONOUNCEABLE: 'Tekst przycisku zawiera wyłącznie symbole lub znaki niemożliwe do wymówienia. <hr> <strong {B}>Nazwa dostępna</strong> <strong {C}>%(TEXT)</strong> <hr>',
     BTN_EMPTY: 'Przycisk nie ma dostępnej nazwy opisującej jego cel.',
     BTN_EMPTY_LABELLEDBY:
       'Przycisk ma wartość <code>aria-labelledby</code>, która jest pusta lub nie pasuje do wartości <code>id</code> innego elementu na stronie.',

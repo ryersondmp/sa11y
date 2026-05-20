@@ -197,6 +197,7 @@ export default {
       '缺少标题1。标题1应该是主要内容区的开始, 是描述页面整体目的的主要标题。了解更多关于<a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">标题结构.</a>的信息。',
     HEADING_EMPTY_WITH_IMAGE:
       '标题没有文字, 但包含一个图像。如果这不是一个标题, 请将其格式从<strong {C}>标题%(level)</strong>改为<strong>正常</strong>或<strong>段落</strong>。否则, 如果图片不是装饰性的, 请为其添加alt文本。',
+    HEADING_UNPRONOUNCEABLE: '标题文本仅包含符号或无法发音的字符。如果您认为这是由于复制/粘贴错误导致的，请考虑将其删除。 <hr> <strong {B}>标题文本</strong> <strong {C}>%(TEXT)</strong>',
     PANEL_HEADING_MISSING_ONE: '缺少标题1!',
     PANEL_NO_HEADINGS: '未找到标题.',
 
@@ -268,7 +269,7 @@ export default {
       '图像被标记为装饰性，但轮播或画廊中的所有图像都应包括描述性替代文本，以确保每个人都能获得同等的体验。',
     IMAGE_ALT_TOO_LONG:
       'Alt文本描述<strong>太长</strong>。Alt文本应该是简洁的, 但又像<em>tweet</em>一样有意义 (大约100个字符) 。如果这是一张复杂的图片或图表, 可以考虑将图片的长篇描述放在下面的文字或手风琴组件中。<hr> {ALT} <strong {B}>%(altLength) 字符</strong> <strong {C}>%(ALT_TEXT)</strong>',
-    IMAGE_PASS: '{ALT} %(ALT_TEXT)',
+    IMAGE_PASS: '{ALT} <strong {C}>%(ALT_TEXT)</strong>',
     LINK_ALT_MAYBE_BAD:
       '图像链接的替代文本可能未提供有用信息或不具描述性。请确保替代文本描述链接的目标。<hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
     ALT_MAYBE_BAD:
@@ -358,6 +359,7 @@ export default {
     META_LANG_VALID: '此元素的语言代码无效。要修复此问题，请将 lang 属性替换为有效的语言代码。 <hr> <strong {B}>元素</strong> <code>&lt;%(ELEMENT) lang="%(CODE)"&gt;</code> <hr> 了解有关 <a href="https://www.w3.org/International/questions/qa-html-language-declarations.zh-hans.html">在 HTML 中声明语言</a> 的更多信息。',
 
     // Buttons
+    BTN_UNPRONOUNCEABLE: '按钮文本仅包含符号或无法发音的字符。 <hr> <strong {B}>可访问名称</strong> <strong {C}>%(TEXT)</strong> <hr>',
     BTN_EMPTY: '按钮缺少一个描述其用途的可访问名称。',
     BTN_EMPTY_LABELLEDBY:
       '按钮的<code>aria-labelledby</code>值为空或不匹配页面上其他元素的<code>id</code>值。',

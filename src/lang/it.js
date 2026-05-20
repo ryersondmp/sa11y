@@ -198,6 +198,7 @@ export default {
       "Manca l'intestazione 1. L'intestazione 1 dovrebbe essere l'inizio dell'area di contenuto principale ed è l'intestazione principale che descrive lo scopo generale della pagina. Per saperne di più <a href=\"https://www.w3.org/WAI/tutorials/page-structure/headings/\">Struttura delle intestazioni.</a>",
     HEADING_EMPTY_WITH_IMAGE:
       "L'intestazione non ha testo, ma contiene un'immagine. Se non si tratta di un titolo, cambiarne il formato da <strong {C}>Testamento %(level)</strong> a <strong>Normale</strong> o <strong>Paragrafo</strong>. Altrimenti, aggiungere un testo alt all'immagine, se non è decorativo.",
+    HEADING_UNPRONOUNCEABLE: 'Il testo dell\'intestazione contiene solo simboli o caratteri non pronunciabili. Se ritieni que si tratti di un errore dovuto a un problema di copia/incolla, valuta di eliminarlo. <hr> <strong {B}>Testo dell\'intestazione</strong> <strong {C}>%(TEXT)</strong>',
     PANEL_HEADING_MISSING_ONE: "Manca l'intestazione 1!",
     PANEL_NO_HEADINGS: 'Nessun titolo trovato.',
 
@@ -274,7 +275,7 @@ export default {
       "L'immagine è contrassegnata come decorativa, ma tutte le immagini in un carosello o galleria dovrebbero includere un testo alternativo descrittivo per garantire un'esperienza equivalente per tutti.",
     IMAGE_ALT_TOO_LONG:
       "La descrizione del testo Alt è <strong>troppo lunga</strong>. Il testo Alt dovrebbe essere conciso, ma significativo come un <em>tweet</em> (circa 100 caratteri). Se si tratta di un'immagine complessa o di un grafico, considerate la possibilità di inserire la lunga descrizione dell'immagine nel testo sottostante o in un componente a fisarmonica. <hr> {ALT} <strong {B}>%(altLength) Caratteri</strong> <strong {C}>%(ALT_TEXT)</strong>",
-    IMAGE_PASS: '{ALT} %(ALT_TEXT)',
+    IMAGE_PASS: '{ALT} <strong {C}>%(ALT_TEXT)</strong>',
     LINK_ALT_MAYBE_BAD:
       'Il collegamento dell’immagine potrebbe avere un testo alt che non fornisce informazioni utili o non è descrittivo. Assicurati che il testo alt descriva la destinazione del collegamento. <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
     ALT_MAYBE_BAD:
@@ -365,6 +366,7 @@ export default {
     META_LANG_VALID: 'Il codice della lingua per questo elemento non è valido. Per risolvere il problema, sostituisci l\'attributo lang con un codice lingua valido. <hr> <strong {B}>Elemento</strong> <code>&lt;%(ELEMENT) lang="%(CODE)"&gt;</code> <hr> Ulteriori informazioni sulla <a href="https://www.w3.org/International/questions/qa-html-language-declarations.it.html">dichiarazione della lingua in HTML.</a>',
 
     // Buttons
+    BTN_UNPRONOUNCEABLE: 'Il testo del pulsante contiene solo simboli o caratteri non pronunciabili. <hr> <strong {B}>Nome accessible</strong> <strong {C}>%(TEXT)</strong> <hr>',
     BTN_EMPTY: 'Il pulsante è privo di un nome accessibile che descriva il suo scopo.',
     BTN_EMPTY_LABELLEDBY:
       'Il pulsante ha un valore <code>aria-labelledby</code> che è vuoto o non corrisponde al valore <code>id</code> di un altro elemento sulla pagina.',

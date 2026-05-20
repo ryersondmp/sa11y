@@ -200,6 +200,7 @@ export default {
       'Hiányzó Cím 1. A Cím 1-nek a fő tartalom területének kezdetét kell jelentenie, és ez a fő cím, amely leírja az oldal általános célját. További információkért látogasson el ide: <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">Fejléck struktúra.</a>',
     HEADING_EMPTY_WITH_IMAGE:
       'A címsor nem tartalmaz szöveget, de képet tartalmaz. Ha ez nem címsor, akkor változtassa meg a formátumát <strong {C}>Címsor %(level)</strong> formátumra <strong>Normál</strong> vagy <strong>Bekezdés</strong>. Ellenkező esetben kérem, adja hozzá az alternatív szöveget a képhez, ha az nem díszítőelem.',
+    HEADING_UNPRONOUNCEABLE: 'A címsor szövege csak szimbólumokat vagy kiejthetetlen karaktereket tartalmaz. Ha úgy gondolja, hogy ez egy másolási/beillesztési hiba miatt van, fontolja meg a törlését. <hr> <strong {B}>Címsor szövege</strong> <strong {C}>%(TEXT)</strong>',
     PANEL_HEADING_MISSING_ONE: 'Hiányzik az 1. címsor!',
     PANEL_NO_HEADINGS: 'Nem találtunk címszavakat.',
 
@@ -276,7 +277,7 @@ export default {
       'A kép dekoratívnak van jelölve, de minden képnek a karusszelben vagy galériában tartalmaznia kell leíró alt szöveget, hogy biztosítsák az egyenértékű élményt mindenki számára.',
     IMAGE_ALT_TOO_LONG:
       'Az Alt szöveges leírás <strong>túl hosszú</strong>. Az Alt szövegnek tömörnek, mégis értelmesnek kell lennie, mint egy <em>tweet</em> (kb. 100 karakter). Ha összetett képről vagy grafikonról van szó, fontolja meg, hogy a kép hosszú leírását az alatta lévő szövegben vagy egy harmonika komponensben helyezze el. <hr> {ALT} <strong {B}>%(altLength) Karakterek</strong> <strong {C}>%(ALT_TEXT)</strong>',
-    IMAGE_PASS: '{ALT} %(ALT_TEXT)',
+    IMAGE_PASS: '{ALT} <strong {C}>%(ALT_TEXT)</strong>',
     LINK_ALT_MAYBE_BAD:
       'A képhivatkozás alt szövege nem biztos, hogy hasznos információt ad, vagy nem leíró. Győződj meg arról, hogy az alt szöveg leírja a hivatkozás célját. <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
     ALT_MAYBE_BAD:
@@ -367,6 +368,7 @@ export default {
     META_LANG_VALID: 'Az elem nyelvi kódja nem érvényes. A javításhoz cserélje ki a lang attribútumot egy érvényes nyelvi kódra. <hr> <strong {B}>Elem</strong> <code>&lt;%(ELEMENT) lang="%(CODE)"&gt;</code> <hr> Tudjon meg többet a <a href="https://www.w3.org/International/questions/qa-html-language-declarations">nyelv deklarálásáról HTML-ben.</a>',
 
     // Buttons
+    BTN_UNPRONOUNCEABLE: 'A gomb szövege csak szimbólumokat vagy kiejthetetlen karaktereket tartalmaz. <hr> <strong {B}>Akadálymentes név</strong> <strong {C}>%(TEXT)</strong> <hr>',
     BTN_EMPTY: 'A gomb hiányzik egy akadálymentes névvel, amely leírja annak célját.',
     BTN_EMPTY_LABELLEDBY:
       'A gombnak van egy <code>aria-labelledby</code> értéke, amely üres, vagy nem egyezik meg egy másik elem <code>id</code> értékével az oldalon.',

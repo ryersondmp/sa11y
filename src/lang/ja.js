@@ -237,6 +237,7 @@ export default {
       '見出し1がありません。見出し1はメインコンテンツ領域の開始であり、ページ全体の目的を説明する主要な見出しです。<a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">見出しの構造</a>について詳しくはこちら。',
     HEADING_EMPTY_WITH_IMAGE:
       '見出しにテキストがありませんが、画像が含まれています。これが見出しでない場合は、その形式を<strong {C}>見出し%(level)</strong>から<strong>通常</strong>または<strong>段落</strong>に変更してください。それ以外の場合は、画像に装飾的でない alt テキストを追加してください。',
+    HEADING_UNPRONOUNCEABLE: '見出しテキストに記号または発音できない文字のみが含まれています。コピー＆ペーストの不具合によるエラーと思われる場合は、削除を検討してください。 <hr> <strong {B}>見出しテキスト</strong> <strong {C}>%(TEXT)</strong>',
     PANEL_HEADING_MISSING_ONE: '見出し1がありません！',
     PANEL_NO_HEADINGS: '見出しが見つかりません。',
 
@@ -313,7 +314,7 @@ export default {
       '画像は装飾的としてマークされていますが、カルーセルやギャラリー内のすべての画像には、すべての人に等しい体験を提供するために説明的な代替テキストを含める必要があります。',
     IMAGE_ALT_TOO_LONG:
       'altテキストの説明が<strong>長すぎます</strong>。altテキストは簡潔でありながら意味のあるものである必要があります（ツイートのように、約100文字）。これが複雑な画像やグラフの場合は、画像の長い説明を以下のテキストまたは折りたたみコンポーネントに入れることを検討してください。<hr> {ALT} <strong {B}>%(altLength) 文字</strong> <strong {C}>%(ALT_TEXT)</strong>',
-    IMAGE_PASS: '{ALT} %(ALT_TEXT)',
+    IMAGE_PASS: '{ALT} <strong {C}>%(ALT_TEXT)</strong>',
     LINK_ALT_MAYBE_BAD:
       '画像リンクの代替テキストが有用な情報を提供していないか、説明的でない可能性があります。代替テキストがリンク先を説明していることを確認してください。<hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
     ALT_MAYBE_BAD:
@@ -404,6 +405,7 @@ export default {
     META_LANG_VALID: 'この要素の言語コードが有効ではありません。修正するには、lang 属性を有効な言語コードに置き換えてください。 <hr> <strong {B}>要素</strong> <code>&lt;%(ELEMENT) lang="%(CODE)"&gt;</code> <hr> <a href="https://www.w3.org/International/questions/qa-html-language-declarations">HTML での言語宣言</a>の詳細をご覧ください。',
 
     // Buttons
+    BTN_UNPRONOUNCEABLE: 'ボタンのテキストに記号または発音できない文字のみが含まれています。 <hr> <strong {B}>アクセシブルな名前</strong> <strong {C}>%(TEXT)</strong> <hr>',
     BTN_EMPTY: 'ボタンにはその目的を説明するアクセシブルな名前がありません。',
     BTN_EMPTY_LABELLEDBY:
       'ボタンに空の <code>aria-labelledby</code> 値があるか、ページ上の他の要素の <code>id</code> と一致していません。',

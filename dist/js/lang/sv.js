@@ -236,7 +236,7 @@ const sv = {
     IMAGE_DECORATIVE: "Bilden är markerad som <strong>dekorativ</strong> och kommer att ignoreras av hjälpmedel. Om bilden förmedlar en historia, stämning eller annan viktig information – se till att lägga till alt-text.",
     IMAGE_DECORATIVE_CAROUSEL: "Bilden är markerad som dekorativ, men alla bilder i en karusell eller ett galleri bör inkludera beskrivende alt-texter för att säkerställa en likvärdig upplevelse för alla.",
     IMAGE_ALT_TOO_LONG: "Alt-texten är <strong>för lång</strong>. Alt-text ska vara kortfattad men meningsfull som en <em>tweet</em> (cirka 100 tecken). Om detta är en komplex bild eller en graf, överväg att lägga in den längre beskrivningen av bilden i under bilden, eller i en dragspelskomponent. <hr> {ALT} <strong {B}>%(altLength) Tecken</strong> <strong {C}>%(ALT_TEXT)</strong>",
-    IMAGE_PASS: "{ALT} %(ALT_TEXT)",
+    IMAGE_PASS: "{ALT} <strong {C}>%(ALT_TEXT)</strong>",
     LINK_ALT_MAYBE_BAD: "Bildlänken kan ha alternativtext som inte ger användbar information eller är otydlig. Se till att alt-texten beskriver länkens mål. <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>",
     ALT_MAYBE_BAD: "Alt-texten ger kanske inte användbar information eller är otydlig. Förbättra följande alt-text: <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>",
     // Labels

@@ -220,7 +220,7 @@
       IMAGE_DECORATIVE: "L'immagine è contrassegnata come <strong>decorativa</strong> e sarà ignorata dalle tecnologie assistive. Se l'immagine trasmette una storia, uno stato d'animo o un'informazione importante, assicuratevi di aggiungere il testo alt.",
       IMAGE_DECORATIVE_CAROUSEL: "L'immagine è contrassegnata come decorativa, ma tutte le immagini in un carosello o galleria dovrebbero includere un testo alternativo descrittivo per garantire un'esperienza equivalente per tutti.",
       IMAGE_ALT_TOO_LONG: "La descrizione del testo Alt è <strong>troppo lunga</strong>. Il testo Alt dovrebbe essere conciso, ma significativo come un <em>tweet</em> (circa 100 caratteri). Se si tratta di un'immagine complessa o di un grafico, considerate la possibilità di inserire la lunga descrizione dell'immagine nel testo sottostante o in un componente a fisarmonica. <hr> {ALT} <strong {B}>%(altLength) Caratteri</strong> <strong {C}>%(ALT_TEXT)</strong>",
-      IMAGE_PASS: "{ALT} %(ALT_TEXT)",
+      IMAGE_PASS: "{ALT} <strong {C}>%(ALT_TEXT)</strong>",
       LINK_ALT_MAYBE_BAD: "Il collegamento dell’immagine potrebbe avere un testo alt che non fornisce informazioni utili o non è descrittivo. Assicurati che il testo alt descriva la destinazione del collegamento. <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>",
       ALT_MAYBE_BAD: "Il testo alt potrebbe non fornire informazioni utili o non essere descrittivo. Migliora il seguente testo alt: <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>",
       // Form labels

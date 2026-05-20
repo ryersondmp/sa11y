@@ -200,6 +200,7 @@ export default {
       'Chýba nadpis 1. Nadpis 1 by mal byť začiatkom hlavnej oblasti obsahu a je to hlavný nadpis, ktorý opisuje celkový účel stránky. Viac informácií o <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">štruktúre nadpisov.</a>',
     HEADING_EMPTY_WITH_IMAGE:
       'Nadpis neobsahuje žiadny text, ale obsahuje obrázok. Ak to nie je nadpis, zmeňte jeho formát z <strong {C}>Nadpis %(level)</strong> na <strong>Normálny</strong> alebo <strong>Odsek</strong>. V opačnom prípade pridajte k obrázku alt text, ak nie je dekoratívny.',
+    HEADING_UNPRONOUNCEABLE: 'Text nadpisu obsahuje iba symboly alebo nevysloviteľné znaky. Ak si myslíte, že ide o chybu spôsobenú chybou pri kopírovaní/vkladaní, zvážte jeho vymazanie. <hr> <strong {B}>Text nadpisu</strong> <strong {C}>%(TEXT)</strong>',
     PANEL_HEADING_MISSING_ONE: 'Chýba položka 1!',
     PANEL_NO_HEADINGS: 'Nenašli sa žiadne záhlavia.',
 
@@ -276,7 +277,7 @@ export default {
       'Obrázok je označený ako dekoratívny, ale všetky obrázky v kolotoči alebo galérii by mali obsahovať popisný alternatívny text, aby sa zabezpečil rovnocenný zážitok pre každého.',
     IMAGE_ALT_TOO_LONG:
       'Alt text popisu je <strong>príliš dlhý</strong>. Alt text by mal byť stručný, ale výstižný ako <em>tweet</em> (približne 100 znakov). Ak ide o zložitý obrázok alebo graf, zvážte umiestnenie dlhého popisu obrázka do textu pod ním alebo do akordeónového komponentu. <hr> {ALT} <strong {B}>%(altLength) Znakov</strong> <strong {C}>%(ALT_TEXT)</strong>',
-    IMAGE_PASS: '{ALT} %(ALT_TEXT)',
+    IMAGE_PASS: '{ALT} <strong {C}>%(ALT_TEXT)</strong>',
     LINK_ALT_MAYBE_BAD:
       'Odkaz na obrázok môže mať alternatívny text, ktorý neposkytuje užitočné informácie alebo nie je popisný. Uistite sa, že alt text popisuje cieľ odkazu. <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
     ALT_MAYBE_BAD:
@@ -367,6 +368,7 @@ export default {
     META_LANG_VALID: 'Kód jazyka pre tento prvok nie je platný. Ak to chcete napraviť, nahraďte atribút lang platným kódom jazyka. <hr> <strong {B}>Prvok</strong> <code>&lt;%(ELEMENT) lang="%(CODE)"&gt;</code> <hr> Ďalšie informácie o <a href="https://www.w3.org/International/questions/qa-html-language-declarations">deklarovaní jazyka v HTML.</a>',
 
     // Buttons
+    BTN_UNPRONOUNCEABLE: 'Text tlačidla obsahuje iba symboly alebo nevysloviteľné znaky. <hr> <strong {B}>Prístupný názov</strong> <strong {C}>%(TEXT)</strong> <hr>',
     BTN_EMPTY: 'Tlačidlu chýba prístupné meno, ktoré popisuje jeho účel.',
     BTN_EMPTY_LABELLEDBY:
       'Tlačidlo má hodnotu <code>aria-labelledby</code>, ktorá je prázdna alebo nezodpovedá hodnote <code>id</code> iného prvku na stránke.',

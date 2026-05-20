@@ -60,6 +60,11 @@ export default function checkHeaders() {
           margin: '0',
         });
       }
+    } else if (!Constants.Global.unpronounceablePattern.test(headingText)) {
+      result = logResult({
+        test: 'HEADING_UNPRONOUNCEABLE',
+        args: [headingText],
+      });
     } else if (level - prevLevel > 1 && (i !== 0 || headingStartsOverride)) {
       result = logResult({
         test: 'HEADING_SKIPPED_LEVEL',

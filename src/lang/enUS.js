@@ -203,6 +203,7 @@ export default {
       'Missing Heading 1. Heading 1 should be the start of the main content area, and is the main heading that describes the overall purpose of the page. Learn more about <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">heading structure.</a>',
     HEADING_EMPTY_WITH_IMAGE:
       'Heading has no text, but contains an image. If this is not a heading, change its format from <strong {C}>Heading %(level)</strong> to <strong>Normal</strong> or <strong>Paragraph</strong>. Otherwise, please add alt text to the image if it is not decorative.',
+    HEADING_UNPRONOUNCEABLE: 'Heading text only contains symbols or unpronounceable characters. If you think this is an error due to a copy/paste bug, consider deleting it. <hr> <strong {B}>Heading text</strong> <strong {C}>%(TEXT)</strong>',
     PANEL_HEADING_MISSING_ONE: 'Missing Heading 1!',
     PANEL_NO_HEADINGS: 'No headings found.',
 
@@ -280,7 +281,7 @@ export default {
       'Image is marked as <strong>decorative</strong>, but all images in a carousel or gallery should include descriptive alt text to ensure an equivalent experience for everyone.',
     IMAGE_ALT_TOO_LONG:
       'Alt text description is <strong>too long</strong>. Alt text should be concise, yet meaningful like a <em>tweet</em> (around 100 characters). If this is a complex image or a graph, consider putting the long description of the image in the text below or an accordion component. <hr> {ALT} <strong {B}>%(altLength) Characters</strong> <strong {C}>%(ALT_TEXT)</strong>',
-    IMAGE_PASS: '{ALT} %(ALT_TEXT)',
+    IMAGE_PASS: '{ALT} <strong {C}>%(ALT_TEXT)</strong>',
     LINK_ALT_MAYBE_BAD:
       'Image link has alt text that may not provide useful information or contains non-descript text. Ensure the alt text describes the destination of the link. <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
     ALT_MAYBE_BAD:
@@ -299,7 +300,7 @@ export default {
       'There is no label associated with this input. Please add an <code>id</code> to this input, and add a matching <code>for</code> attribute to the label.',
     LABELS_PLACEHOLDER:
       'Disappearing placeholder text makes it hard for people to remember what information belongs in a field and to identify and correct validation issues. Instead, consider using a permanently visible hint before the form field. <hr> Learn more: <a href="https://www.nngroup.com/articles/form-design-placeholders/">Placeholders in form fields are harmful.</a>',
-    ARIA_INPUT_FIELD_NAME: 'ARIA input or toggle field is missing an accessible name. To fix, provide a valid <code>aria-labelledby</code>, <code>aria-label</code>, or <code>title</code> attribute. If the input is toggleable (e.g., checkbox, switch, radio), adding visible inner text will also resolve this. <hr> <strong {B}>Element</strong> <pre><code>%(EL)</code></pre>',
+    ARIA_INPUT_FIELD_NAME: 'ARIA input or toggle field is missing an accessible name. To fix, provide a valid <code>aria-labelledby</code>, <code>aria-label</code>, or <code>title</code> attribute. If the input is toggleable (e.g., checkbox, switch, radio), adding visible inner text will also resolve this. <div class="cp-none"><hr> <strong {B}>Element</strong> <pre><code>%(EL)</code></pre></div>',
 
     // Embedded content
     EMBED_VIDEO:
@@ -350,7 +351,7 @@ export default {
     ACC_NAME: '<strong {B}>Accessible Name</strong> <strong {C}>%(TEXT)</strong>',
     ACC_NAME_TIP:
       '<hr><strong>Tip!</strong> The "accessible name" is the final label that gets communicated to people who use assistive technology. This helps them understand the element\'s purpose.',
-    HIDDEN_FOCUSABLE: 'This element can receive keyboard focus, but is hidden from screen readers by an <code>aria-hidden="true"</code> attribute (on itself or a parent container). To fix, either remove the aria-hidden attribute or remove the element from the tab order. <hr> <strong {B}>Element</strong> <pre><code>%(EL)</code></pre> <hr> Learn more about the <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">aria-hidden attribute.</a>',
+    HIDDEN_FOCUSABLE: 'This element can receive keyboard focus, but is hidden from screen readers by an <code>aria-hidden="true"</code> attribute (on itself or a parent container). To fix, either remove the aria-hidden attribute or remove the element from the tab order. <div class="cp-none"><hr> <strong {B}>Element</strong> <pre><code>%(EL)</code></pre></div> <hr> Learn more about the <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">aria-hidden attribute.</a>',
 
     // Developer checks
     DUPLICATE_ID:
@@ -370,9 +371,10 @@ export default {
       'Page language not declared! Please <a href="https://www.w3.org/International/questions/qa-html-language-declarations">declare language on the HTML tag.</a>',
     META_REFRESH: 'Page should not automatically refresh using a meta tag.',
     META_LANG_SUGGEST: 'The following language code <code>%(CODE)</code> is not valid. Did you mean <code>%(CODE)</code>?',
-    META_LANG_VALID: 'The language code for this element is not valid. To fix, replace the lang attribute with a valid language code. <hr> <strong {B}>Element</strong> <code>&lt;%(ELEMENT) lang="%(CODE)"&gt;</code> <hr> Learn more about <a href="https://www.w3.org/International/questions/qa-html-language-declarations">declaring language in HTML.</a>',
+    META_LANG_VALID: 'The language code for this element is not valid. To fix, replace the lang attribute with a valid language code. <div class="cp-none"><hr> <strong {B}>Element</strong> <code>&lt;%(ELEMENT) lang="%(CODE)"&gt;</code></div> <hr> Learn more about <a href="https://www.w3.org/International/questions/qa-html-language-declarations">declaring language in HTML.</a>',
 
     // Buttons
+    BTN_UNPRONOUNCEABLE: 'Button text only contains symbols or unpronounceable characters. <hr> <strong {B}>Accessible name</strong> <strong {C}>%(TEXT)</strong> <hr>',
     BTN_EMPTY: 'Button is missing an accessible name that describes its purpose.',
     BTN_EMPTY_LABELLEDBY:
       'Button has an <code>aria-labelledby</code> value that is empty or does not match the <code>id</code> value of another element on the page.',

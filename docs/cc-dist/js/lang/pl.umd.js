@@ -224,7 +224,7 @@
       IMAGE_DECORATIVE: "Obraz jest oznaczony <strong>dekoracyjny</strong> i zostanie zignorowany przez technologię wspomagającą. Jeśli obraz przekazuje jakąś historię, nastrój lub ważną informację - dodaj tekst alt.",
       IMAGE_DECORATIVE_CAROUSEL: "Obraz jest oznaczony jako dekoracyjny, ale wszystkie obrazy w karuzeli lub galerii powinny zawierać opisowy tekst alternatywny, aby zapewnić równoważne doświadczenie dla wszystkich.",
       IMAGE_ALT_TOO_LONG: "Tekst alternatywny obrazu jest <strong>zbyt długi</strong>. Tekst alternatywny powinien być zwięzły, ale znaczący jak <em>tweet</em> (około 100 znaków). Jeśli jest to złożony obraz lub wykres, należy rozważyć umieszczenie długiego opisu obrazu w tekście poniżej lub w akordeonie. <hr> {ALT} <strong {B}>%(altLength) Znaków</strong> <strong {C}>%(ALT_TEXT)</strong>",
-      IMAGE_PASS: "{ALT} %(ALT_TEXT)",
+      IMAGE_PASS: "{ALT} <strong {C}>%(ALT_TEXT)</strong>",
       LINK_ALT_MAYBE_BAD: "Link do obrazu może mieć tekst alternatywny, który nie dostarcza przydatnych informacji lub nie jest opisowy. Upewnij się, że tekst alt opisuje cel linku. <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>",
       ALT_MAYBE_BAD: "Tekst alternatywny może nie dostarczać przydatnych informacji lub nie być opisowy. Popraw poniższy tekst alt: <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>",
       // Form labels

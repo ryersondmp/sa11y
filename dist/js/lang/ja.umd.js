@@ -261,7 +261,7 @@
       IMAGE_DECORATIVE: "画像が<strong>装飾用</strong>としてマークされ、支援技術によって無視されます。画像が物語やムード、重要な情報を伝えている場合は、altテキストを追加してください。",
       IMAGE_DECORATIVE_CAROUSEL: "画像は装飾的としてマークされていますが、カルーセルやギャラリー内のすべての画像には、すべての人に等しい体験を提供するために説明的な代替テキストを含める必要があります。",
       IMAGE_ALT_TOO_LONG: "altテキストの説明が<strong>長すぎます</strong>。altテキストは簡潔でありながら意味のあるものである必要があります（ツイートのように、約100文字）。これが複雑な画像やグラフの場合は、画像の長い説明を以下のテキストまたは折りたたみコンポーネントに入れることを検討してください。<hr> {ALT} <strong {B}>%(altLength) 文字</strong> <strong {C}>%(ALT_TEXT)</strong>",
-      IMAGE_PASS: "{ALT} %(ALT_TEXT)",
+      IMAGE_PASS: "{ALT} <strong {C}>%(ALT_TEXT)</strong>",
       LINK_ALT_MAYBE_BAD: "画像リンクの代替テキストが有用な情報を提供していないか、説明的でない可能性があります。代替テキストがリンク先を説明していることを確認してください。<hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>",
       ALT_MAYBE_BAD: "代替テキストが有用な情報を提供していないか、説明的でない可能性があります。次の代替テキストを改善してください。<hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>",
       // Form labels

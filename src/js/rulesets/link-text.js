@@ -17,9 +17,6 @@ const citationPattern =
 const urlEndings =
   /\b(?:\.edu\/|\.gob\/|\.gov\/|\.app\/|\.com\/|\.net\/|\.org\/|\.us\/|\.ca\/|\.de\/|\.icu\/|\.uk\/|\.ru\/|\.info\/|\.top\/|\.xyz\/|\.tk\/|\.cn\/|\.ga\/|\.cf\/|\.nl\/|\.io\/|\.fr\/|\.pe\/|\.nz\/|\.pt\/|\.es\/|\.pl\/|\.ua\/)\b/i;
 
-// Regex pattern to match any special characters (that isn't alpha numeric)
-const specialCharPattern = /[^a-zA-Z0-9]/;
-
 // Regex pattern to match HTML symbols commonly used as CTAs in link text.
 const htmlSymbols = /([<>↣↳←→↓«»↴]+)/;
 
@@ -255,10 +252,7 @@ export default function checkLinkText() {
         lowercaseLinkText.startsWith('http') ||
         Boolean(lowercaseLinkText.match(urlEndings));
 
-      // 5. Match special characters exactly 1 character in length.
-      const isSingleSpecialChar = linkText.length === 1 && specialCharPattern.test(linkText);
-
-      // 6. Match HTML symbols.
+      // 5. Match HTML symbols.
       const matchedSymbol = lowercaseLinkText.match(htmlSymbols)?.[0];
 
       if (isStopWord) {
@@ -290,7 +284,7 @@ export default function checkLinkText() {
           args: [matchedSymbol, linkText],
           dismiss: strippedLinkText,
         });
-      } else if ((isSingleSpecialChar || matchedSymbol) && !titleAttr) {
+      } else if ((!Constants.Global.unpronounceablePattern.test(linkText)) && !titleAttr) {
         // Link is ONLY a period, comma, or special character.
         logResult({
           test: 'LINK_UNPRONOUNCEABLE',
@@ -372,7 +366,7 @@ export default function checkLinkText() {
     /*  Additional link checks previously from quality-assurance.js   */
     /* ************************************************************** */
     if (Constants.Global.pdfSources && $el.matches(Constants.Global.pdfSources)) {
-        logResult({
+      logResult({
         test: 'QA_PDF',
         args: [linkText],
         dismissSuffix: href,

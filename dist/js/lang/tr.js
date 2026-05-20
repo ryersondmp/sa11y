@@ -220,7 +220,7 @@ const tr = {
     IMAGE_DECORATIVE: "Görüntü <strong>dekoratif</strong> olarak işaretlenir ve yardımcı teknoloji tarafından göz ardı edilir. Görsel bir hikaye, ruh hali veya önemli bir bilgi aktarıyorsa alt metin eklediğinizden emin olun.",
     IMAGE_DECORATIVE_CAROUSEL: "Görüntü dekoratif olarak işaretlenmiş, ancak bir döngü veya galerideki tüm görüntüler herkes için eşdeğer bir deneyim sağlamak için açıklayıcı alt metin içermelidir.",
     IMAGE_ALT_TOO_LONG: "Alt metin açıklaması <strong>çok uzun</strong>. Alt metin kısa, ancak bir <em>tweet</em> gibi anlamlı olmalıdır (yaklaşık 100 karakter). Bu karmaşık bir görsel veya grafikse, görselin uzun açıklamasını aşağıdaki metne veya bir akordeon bileşenine koymayı düşünün. <hr> {ALT} <strong {B}>%(altLength) Karakter</strong> <strong {C}>%(ALT_TEXT)</strong>",
-    IMAGE_PASS: "{ALT} %(ALT_TEXT)",
+    IMAGE_PASS: "{ALT} <strong {C}>%(ALT_TEXT)</strong>",
     LINK_ALT_MAYBE_BAD: "Görsel bağlantısının alternatif metni yararlı bilgi sağlamayabilir veya açıklayıcı olmayabilir. Alternatif metnin bağlantının hedefini açıkladığından emin olun. <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>",
     ALT_MAYBE_BAD: "Alternatif metin yararlı bilgi sağlamayabilir veya açıklayıcı olmayabilir. Aşağıdaki alternatif metni iyileştirin: <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>",
     // Labels

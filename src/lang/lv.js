@@ -203,6 +203,7 @@ export default {
       'Trūkst 1. virsraksta. 1. virsrakstam jābūt galvenā satura laukuma sākumam, un tas ir galvenais virsraksts, kas apraksta lapas vispārējo mērķi. Uzziniet vairāk par <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">Galveno struktūru.</a>',
     HEADING_EMPTY_WITH_IMAGE:
       'Virsrakstā nav teksta, bet ir attēls. Ja tas nav virsraksts, mainiet tā formātu no <strong {C}>Virsraksts %(level)</strong> uz <strong>Normāls</strong> vai <strong>Apakšsadaļa</strong>. Pretējā gadījumā pievienojiet attēlam alt tekstu, ja tas nav dekoratīvs.',
+    HEADING_UNPRONOUNCEABLE: 'Virsraksta teksts satur tikai simbolus vai neizrunājamas rakstzīmes. Ja uzskatāt, at tā ir kļūda kopēšanas/ielīmēšanas kļūmes dēļ, apsveriet iespēju to dzēst. <hr> <strong {B}>Virsraksta teksts</strong> <strong {C}>%(TEXT)</strong>',
     PANEL_HEADING_MISSING_ONE: 'Trūkst 1. pozīcijas!',
     PANEL_NO_HEADINGS: 'Virsraksti nav atrasti.',
 
@@ -279,7 +280,7 @@ export default {
       'Attēls ir atzīmēts kā dekoratīvs, taču visiem attēliem karuselē vai galerijā jāiekļauj aprakstošs alternatīvs teksts, lai nodrošinātu vienādu pieredzi visiem.',
     IMAGE_ALT_TOO_LONG:
       'Alt teksta apraksts ir <strong>pārāk garš</strong>. Alt tekstam ir jābūt īsam, bet jēgpilnam kā <em>tweet</em> (apmēram 100 rakstzīmes). Ja tas ir sarežģīts attēls vai grafiks, apsveriet iespēju ievietot garu attēla aprakstu tekstā zemāk vai akordeona komponentē. <hr> {ALT} <strong {B}>%(altLength) Rakstzīmes</strong> <strong {C}>%(ALT_TEXT)</strong>',
-    IMAGE_PASS: '{ALT} %(ALT_TEXT)',
+    IMAGE_PASS: '{ALT} <strong {C}>%(ALT_TEXT)</strong>',
     LINK_ALT_MAYBE_BAD:
       'Attēla saitei var būt alt teksts, kas nesniedz noderīgu informāciju vai nav aprakstošs. Pārliecinieties, ka alt teksts apraksta saites galamērķi. <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
     ALT_MAYBE_BAD:
@@ -371,6 +372,7 @@ export default {
     META_LANG_VALID: 'Šī elementa valodas kods nav derīgs. Lai to labotu, aizstājiet lang atribūtu ar derīgu valodas kodu. <hr> <strong {B}>Elements</strong> <code>&lt;%(ELEMENT) lang="%(CODE)"&gt;</code> <hr> Uzziniet vairāk par <a href="https://www.w3.org/International/questions/qa-html-language-declarations">valodas deklarēšanu HTML.</a>',
 
     // Buttons
+    BTN_UNPRONOUNCEABLE: 'Pogas teksts satur tikai simbolus vai neizrunājamas rakstzīmes. <hr> <strong {B}>Pieejamais nosaukums</strong> <strong {C}>%(TEXT)</strong> <hr>',
     BTN_EMPTY: 'Poga ir bez pieejama nosaukuma, kas apraksta tās mērķi.',
     BTN_EMPTY_LABELLEDBY:
       'Pogai ir <code>aria-labelledby</code> vērtība, kas ir tukša vai neatbilst cita elementa <code>id</code> vērtībai lapā.',

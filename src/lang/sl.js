@@ -200,6 +200,7 @@ export default {
       'Manjka naslov 1. Naslov 1 mora biti začetek glavnega vsebinskega področja in je glavni naslov, ki opisuje splošni namen strani. Preberite več o <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">Strukturi naslovov.</a>',
     HEADING_EMPTY_WITH_IMAGE:
       'Naslov nima besedila, vsebuje pa sliko. Če to ni naslov, spremenite njegovo obliko iz <strong {C}>Nadpis %(level)</strong> v <strong>Normalno</strong> ali <strong>Odstavek</strong>. V nasprotnem primeru sliki dodajte besedilo alt, če ni okrasno.',
+    HEADING_UNPRONOUNCEABLE: 'Besedilo naslova vsebuje samo simbole ali neizgovorljive znake. Če mislite, da gre za napako zaradi hrošča pri kopiranju/lepljenju, razmislite o izbrisu. <hr> <strong {B}>Besedilo naslova</strong> <strong {C}>%(TEXT)</strong>',
     PANEL_HEADING_MISSING_ONE: 'Manjka naslov 1!',
     PANEL_NO_HEADINGS: 'Ni najdenih naslovov.',
 
@@ -276,7 +277,7 @@ export default {
       'Slika je označena kot dekorativna, vendar morajo vse slike v vrtiljaku ali galeriji vključevati opisno nadomestno besedilo, da se zagotovi enakovredna izkušnja za vse.',
     IMAGE_ALT_TOO_LONG:
       'Opis besedila Alt je <strong>predolg</strong>. Besedilo Alt mora biti jedrnato, vendar smiselno kot <em>tweet</em> (približno 100 znakov). Če gre za zapleteno sliko ali graf, razmislite o tem, da bi dolg opis slike umestili v spodnje besedilo ali komponento harmonike. <hr> {ALT} <strong {B}>%(altLength) Znakov</strong> <strong {C}>%(ALT_TEXT)</strong>',
-    IMAGE_PASS: '{ALT} %(ALT_TEXT)',
+    IMAGE_PASS: '{ALT} <strong {C}>%(ALT_TEXT)</strong>',
     LINK_ALT_MAYBE_BAD:
       'Povezava slike ima lahko nadomestno besedilo, ki ne zagotavlja koristnih informacij ali ni opisno. Preverite, ali nadomestno besedilo opisuje cilj povezave. <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
     ALT_MAYBE_BAD:
@@ -367,6 +368,7 @@ export default {
     META_LANG_VALID: 'Jezikovna koda za ta element ni veljavna. Če želite to popraviti, zamenjajte atribut lang z veljavno jezikovno kodo. <hr> <strong {B}>Element</strong> <code>&lt;%(ELEMENT) lang="%(CODE)"&gt;</code> <hr> Preberite več o <a href="https://www.w3.org/International/questions/qa-html-language-declarations">deklariranju jezika v HTML.</a>',
 
     // Buttons
+    BTN_UNPRONOUNCEABLE: 'Besedilo gumba vsebuje samo simbole ali neizgovorljive znake. <hr> <strong {B}>Dostopno ime</strong> <strong {C}>%(TEXT)</strong> <hr>',
     BTN_EMPTY: 'Gumb nima dostopnega imena, ki bi opisovalo njegov namen.',
     BTN_EMPTY_LABELLEDBY:
       'Gumb ima vrednost <code>aria-labelledby</code>, ki je prazna ali se ne ujema z vrednostjo <code>id</code> drugega elementa na strani.',

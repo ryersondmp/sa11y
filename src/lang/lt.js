@@ -200,6 +200,7 @@ export default {
       'Trūksta 1 antraštės. 1 antraštė turėtų būti pagrindinės turinio srities pradžia ir yra pagrindinė antraštė, apibūdinanti bendrą puslapio tikslą. Sužinokite daugiau apie <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">Pavadinimų struktūrą.</a>',
     HEADING_EMPTY_WITH_IMAGE:
       'Antraštėje nėra teksto, bet yra paveikslėlis. Jei tai nėra antraštė, pakeiskite jos formatą iš <strong {C}>Heading %(level)</strong> į <strong>Normal</strong> arba <strong>Paragraph</strong>. Kitu atveju pridėkite paveikslėlio alt tekstą, jei jis nėra dekoratyvinis.',
+    HEADING_UNPRONOUNCEABLE: 'Antraštės tekste yra tik simboliai arba neištariami znakai. Jei manote, kad tai yra klaida dėl kopijavimo / įklijavimo klaidos, apsvarstykite galimybę ją ištrinti. <hr> <strong {B}>Antraštės tekstas</strong> <strong {C}>%(TEXT)</strong>',
     PANEL_HEADING_MISSING_ONE: 'Trūksta 1 antraštės!',
     PANEL_NO_HEADINGS: 'Antraščių nerasta.',
 
@@ -276,7 +277,7 @@ export default {
       'Vaizdas pažymėtas kaip dekoratyvinis, tačiau visi karuselėje ar galerijoje esantys vaizdai turėtų turėti aprašomąjį alternatyvų tekstą, kad būtų užtikrinta vienoda patirtis visiems.',
     IMAGE_ALT_TOO_LONG:
       'Alt teksto aprašymas yra <strong>per ilgas</strong>. Alt tekstas turėtų būti glaustas, bet prasmingas, kaip <em>tweet</em> (apie 100 simbolių). Jei tai sudėtingas paveikslėlis arba grafikas, apsvarstykite galimybę ilgą paveikslėlio aprašymą pateikti žemiau esančiame tekste arba akordeono komponente. <hr> {ALT} <strong {B}>%(altLength) Ženklai</strong> <strong {C}>%(ALT_TEXT)</strong>',
-    IMAGE_PASS: '{ALT} %(ALT_TEXT)',
+    IMAGE_PASS: '{ALT} <strong {C}>%(ALT_TEXT)</strong>',
     LINK_ALT_MAYBE_BAD:
       'Paveikslo nuoroda gali turėti alternatyvų tekstą, kuris nesuteikia naudingos informacijos arba nėra aprašomasis. Įsitikinkite, kad alt tekstas apibūdina nuorodos paskirtį. <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
     ALT_MAYBE_BAD:
@@ -367,6 +368,7 @@ export default {
     META_LANG_VALID: 'Šio elemento kalbos kodas negalioja. Norėdami tai ištaisyti, pakeiskite lang atributą galiojančiu kalbos kodu. <hr> <strong {B}>Elementas</strong> <code>&lt;%(ELEMENT) lang="%(CODE)"&gt;</code> <hr> Sužinokite daugiau apie <a href="https://www.w3.org/International/questions/qa-html-language-declarations">kalbos deklaravimą HTML.</a>',
 
     // Buttons
+    BTN_UNPRONOUNCEABLE: 'Mygtuko tekste yra tik simboliai arba neištariami znakai. <hr> <strong {B}>Prieinamas pavadinimas</strong> <strong {C}>%(TEXT)</strong> <hr>',
     BTN_EMPTY: 'Mygtukas neturi prieinamo pavadinimo, kuris apibūdina jo paskirtį.',
     BTN_EMPTY_LABELLEDBY:
       'Mygtukas turi <code>aria-labelledby</code> vertę, kuri yra tuščia arba nesutampa su kito puslapio elemento <code>id</code> verte.',

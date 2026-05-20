@@ -218,7 +218,7 @@ const et = {
     IMAGE_DECORATIVE: "Pilt on märgitud kui <strong>dekoratiivne</strong> ja abitehnoloogiad ignoreerivad seda. Kui pilt edastab lugu, meeleolu või olulist teavet - lisage kindlasti alt-tekst.",
     IMAGE_DECORATIVE_CAROUSEL: "Pilt on märgitud dekoratiivseks, kuid kõik karusselli või galerii pildid peaksid sisaldama kirjeldavat alternatiivteksti, et tagada kõigile võrdväärne kogemus.",
     IMAGE_ALT_TOO_LONG: "Alt-teksti kirjeldus on <strong>liiga pikk</strong>. Alt-tekst peaks olema lühike, kuid sisukas nagu <em>tweet</em> (umbes 100 tähemärki). Kui tegemist on keerulise pildi või graafikuga, kaaluge pildi pika kirjelduse paigutamist allolevasse teksti või akordionikomponenti. <hr> {ALT} <strong {B}>%(altLength) Tähemärki</strong> <strong {C}>%(ALT_TEXT)</strong>",
-    IMAGE_PASS: "{ALT} %(ALT_TEXT)",
+    IMAGE_PASS: "{ALT} <strong {C}>%(ALT_TEXT)</strong>",
     LINK_ALT_MAYBE_BAD: "Pildilink võib sisaldada alt-teksti, mis ei anna kasulikku teavet või ei ole kirjeldav. Veendu, et alt-tekst kirjeldaks lingi sihtkohta. <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>",
     ALT_MAYBE_BAD: "Alt-tekst ei pruugi anda kasulikku teavet või ei ole kirjeldav. Paranda järgmine alt-tekst: <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>",
     // Form labels

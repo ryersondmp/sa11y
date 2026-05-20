@@ -201,6 +201,7 @@ export default {
       'Manglende overskrift 1. Overskrift 1 skal være starten på hovedindholdsområdet og er den hovedoverskrift, der beskriver sidens overordnede formål. Læs mere om <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">Overskriftsstruktur.</a>',
     HEADING_EMPTY_WITH_IMAGE:
       'Heading har ingen tekst, men indeholder et billede. Hvis det ikke er en overskrift, skal du ændre formatet fra <strong {C}>Overskrift %(level)</strong> til <strong>Normal</strong> eller <strong>Afsnit</strong>. Ellers bedes du tilføje alt-tekst til billedet, hvis det ikke er dekorativt.',
+    HEADING_UNPRONOUNCEABLE: 'Overskriftsteksten indeholder kun symboler eller tegn, der ikke kan udtales. Hvis du mener, at dette er en fejl på grund af en kopier/sæt ind-fejl, bør du overveje at slette den. <hr> <strong {B}>Overskriftstekst</strong> <strong {C}>%(TEXT)</strong>',
     PANEL_HEADING_MISSING_ONE: 'Manglende overskrift 1!',
     PANEL_NO_HEADINGS: 'Ingen overskrifter fundet.',
 
@@ -277,7 +278,7 @@ export default {
       'Alt-tekstbeskrivelsen er <strong>for lang</strong>. Alt-teksten skal være kortfattet, men alligevel meningsfuld som et <em>tweet</em> (omkring 100 tegn). Hvis det er et komplekst billede eller en graf, kan du overveje at placere den lange beskrivelse af billedet i teksten nedenfor eller i en harmonika-komponent. <hr> {ALT} <strong {B}>%(altLength) Tegn</strong> <strong {C}>%(ALT_TEXT)</strong>',
     IMAGE_DECORATIVE_CAROUSEL:
       'Billedet er markeret som dekorativt, men alle billeder i en karrusel eller galleri bør inkludere beskrivende alt-tekst for at sikre en tilsvarende oplevelse for alle.',
-    IMAGE_PASS: '{ALT} %(ALT_TEXT)',
+    IMAGE_PASS: '{ALT} <strong {C}>%(ALT_TEXT)</strong>',
     LINK_ALT_MAYBE_BAD:
       'Billedlink har muligvis alt-tekst, der ikke giver nyttig information eller indeholder ikke-beskrivende tekst. Sørg for, at alt-teksten beskriver linkets destination. <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
     ALT_MAYBE_BAD:
@@ -368,6 +369,7 @@ export default {
     META_LANG_VALID: 'Sprogkoden for dette element er ikke gyldig. For at løse det skal lang-attributten erstattes med en gyldig sprogkode. <hr> <strong {B}>Element</strong> <code>&lt;%(ELEMENT) lang="%(CODE)"&gt;</code> <hr> Lær mere om <a href="https://www.w3.org/International/questions/qa-html-language-declarations">erklæring af sprog i HTML.</a>',
 
     // Buttons
+    BTN_UNPRONOUNCEABLE: 'Knapteksten indeholder kun symboler eller tegn, der ikke kan udtales. <hr> <strong {B}>Tilgængeligt navn</strong> <strong {C}>%(TEXT)</strong> <hr>',
     BTN_EMPTY: 'Knappen mangler et tilgængeligt navn, der beskriver dens formål.',
     BTN_EMPTY_LABELLEDBY:
       'Knappen har en <code>aria-labelledby</code> værdi, der er tom eller ikke stemmer overens med <code>id</code> værdien af et andet element på siden.',

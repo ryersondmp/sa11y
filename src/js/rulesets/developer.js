@@ -220,6 +220,17 @@ export default function checkDeveloper() {
         developer: true,
       });
     }
+
+    if (!Constants.Global.unpronounceablePattern.test(buttonText)) {
+      pushResult({
+        test: 'BTN_UNPRONOUNCEABLE',
+        element: $el,
+        content: Lang._('BTN_UNPRONOUNCEABLE') + Lang._('BTN_TIP'),
+        args: [accName],
+        dismiss: dismissBase,
+        developer: true,
+      })
+    }
   });
 
   /* ********************************************************** */

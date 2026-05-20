@@ -181,7 +181,7 @@ export default function checkImages() {
     }
 
     // Unpronounceable alt text.
-    if (alt.replace(/"|'|\?|\.|-|\s+/g, '') === '' && linkTextLength === 0) {
+    if (!Constants.Global.unpronounceablePattern.test(alt) && linkTextLength === 0) {
       logResult({
         test: link ? 'LINK_ALT_UNPRONOUNCEABLE' : 'ALT_UNPRONOUNCEABLE',
         args: [altText],
@@ -305,6 +305,10 @@ export default function checkImages() {
       logResult({
         test: 'DUPLICATE_TITLE',
         type: 'warning',
+        content: State.option.checks.DUPLICATE_TITLE.content
+          ? Lang.sprintf(State.option.checks.DUPLICATE_TITLE.content, altText)
+          : Lang.sprintf(`${Lang._('DUPLICATE_TITLE')}<hr>${Lang._('IMAGE_PASS')}`, altText),
+        args: [altText],
         inline: true,
         dismiss: alt,
       });
