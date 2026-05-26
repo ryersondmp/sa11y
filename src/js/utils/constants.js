@@ -47,7 +47,7 @@ const Constants = (function myConstants() {
     if (State.option.checks.QA_PDF !== false) {
       Global.pdfSources = State.option.checks.QA_PDF.sources
         ? State.option.checks.QA_PDF.sources
-        : 'a[href$=".pdf"], a[href*=".pdf?"]';
+        : 'a[href$=".pdf"], a[href*=".pdf?"], a[href*="/pdf/"], a[href*="/PDF/"]';
     } else {
       Global.pdfSources = false;
     }

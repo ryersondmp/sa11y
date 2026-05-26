@@ -24,9 +24,24 @@
       <h4></h4>
     </div>
 
-    <h3>Empty heading (PUA characters)</h3>
-    <div id="error-empty-heading-2">
+    <h3>Unpronounceable heading (PUA characters)</h3>
+    <div id="error-heading-unpronounceable-1">
       <h4></h4>
+    </div>
+    <div id="error-heading-unpronounceable-2">
+      <h4><span></span></h4>
+    </div>
+    <div id="error-heading-unpronounceable-3">
+      <h4><span>?</span></h4>
+    </div>
+    <div id="error-heading-unpronounceable-4">
+      <h4>?<span></span></h4>
+    </div>
+    <div id="error-heading-unpronounceable-5">
+      <h4>?<span>?</span></h4>
+    </div>
+    <div id="error-heading-unpronounceable-6">
+      <h4><strong></strong></h4>
     </div>
 
     <h3>Skipped heading</h3>
@@ -583,6 +598,16 @@
     <div id="error-empty-2">Empty hyperlink with space: <a href="https://www.example.com?=27"> </a></div>
     <div id="error-empty-3">Non-breaking space: <a href="https://www.example.com?=29">&nbsp;</a></div>
     <div id="error-empty-4">Empty href: <a href></a></div>
+
+    <h4>Empty link with aria-label</h4>
+    <div id="pass-empty-link">
+      <a href='/' aria-label='homepage'></a>
+    </div>
+
+    <h4>Link with aria-label and nested image</h4>
+    <div id="pass-link-image-aria-label">
+      <a href='/' aria-label='homepage'><img src='icon.png' alt='' /></a>
+    </div>
 
     <h3>Unpronounceable links</h3>
     <div id="error-unpronounceable-1">Single character: <a href="https://www.example.com?=28">.</a></div>

@@ -117,6 +117,21 @@ test.describe('Sa11y Unit Tests', () => {
     expect(issue).toBe(true);
   });
 
+  test('Heading with unpronounceable characters', async () => {
+    const ids = [
+      'error-heading-unpronounceable-1',
+      'error-heading-unpronounceable-2',
+      'error-heading-unpronounceable-3',
+      'error-heading-unpronounceable-4',
+      'error-heading-unpronounceable-5',
+      'error-heading-unpronounceable-6',
+    ];
+    ids.forEach(async (id) => {
+      const issue = await checkTooltip(page, id, 'Heading text only contains symbols or unpronounceable characters.');
+      expect(issue).toBe(true);
+    });
+  });
+
   test('Skipped heading', async () => {
     const issue = await checkTooltip(
       page, 'error-skipped-heading', 'Headings should not skip',
@@ -706,6 +721,16 @@ test.describe('Sa11y Unit Tests', () => {
     expect(issue3).toBe(true);
     const issue4 = await checkTooltip(page, 'error-empty-4', 'Remove empty links');
     expect(issue4).toBe(true);
+  });
+
+  test('Empty hyperlink with valid aria-label', async () => {
+    const el = await checkTooltip(page, 'pass-empty-link', 'Good Accessible Name homepage');
+    expect(el).toBe(true);
+  });
+
+  test('Linked image with aria-label and null alt', async () => {
+    const el = await checkTooltip(page, 'pass-link-image-aria-label', 'Good Accessible Name homepage');
+    expect(el).toBe(true);
   });
 
   test('Unpronounceable links', async () => {

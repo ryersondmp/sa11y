@@ -84,7 +84,7 @@ export default {
     COLOUR_FILTER_HIGH_CONTRAST: 'Color filters do not work in high contrast mode.',
 
     // Alternative text stop words
-    SUS_ALT_STOPWORDS: ['image', 'graphic', 'picture', 'photo', 'thumbnail', 'icon'],
+    SUS_ALT_STOPWORDS: ['image', 'graphic', 'picture', 'photo', 'thumbnail', 'icon', 'portrait'],
     PLACEHOLDER_ALT_STOPWORDS: [
       'alt',
       'chart',
@@ -92,6 +92,7 @@ export default {
       'image',
       'graphic',
       'photo',
+      'portrait',
       'placeholder',
       'placeholder image',
       'spacer',

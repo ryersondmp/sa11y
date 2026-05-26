@@ -138,8 +138,8 @@ const Elements = (function myElements() {
     buildContrastAttrSelector();
 
     // Pre-split QA bad link sources.
-    const badLinkSourcesRaw = State.option.checks.QA_BAD_LINK.sources;
-    const badLinkSelectors = badLinkSourcesRaw.length
+    const badLinkSourcesRaw = State.option.checks.QA_BAD_LINK?.sources;
+    const badLinkSelectors = badLinkSourcesRaw?.length
       ? badLinkSourcesRaw.split(',').map((s) => s.trim())
       : [];
 

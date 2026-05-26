@@ -43,27 +43,29 @@ export default function checkHeaders() {
     let result = null;
 
     // Evaluate.
-    if (headingLength === 0) {
-      const image = $el.querySelector('img');
-      const alt = image?.getAttribute('alt');
+    const image = $el.querySelector('img');
+    const alt = image?.getAttribute('alt');
+    const hasEmptyImage = image && (!alt || alt.trim() === '' || accName === '');
+    const rawText = $el.textContent || '';
+    const isUnpronounceable = rawText?.trim() !== ''
+      && !Constants.Global.unpronounceablePattern.test(headingText);
 
-      if (image && (!alt || alt.trim() === '' || accName === '')) {
-        result = logResult({
-          test: 'HEADING_EMPTY_WITH_IMAGE',
-          args: [level],
-          margin: '-15px 30px',
-        });
-      } else {
-        result = logResult({
-          test: 'HEADING_EMPTY',
-          args: [level],
-          margin: '0',
-        });
-      }
-    } else if (!Constants.Global.unpronounceablePattern.test(headingText)) {
+    if (headingLength === 0 && hasEmptyImage) {
+      result = logResult({
+        test: 'HEADING_EMPTY_WITH_IMAGE',
+        args: [level],
+        margin: '-15px 30px',
+      });
+    } else if (isUnpronounceable) {
       result = logResult({
         test: 'HEADING_UNPRONOUNCEABLE',
         args: [headingText],
+      });
+    } else if (headingLength === 0) {
+      result = logResult({
+        test: 'HEADING_EMPTY',
+        args: [level],
+        margin: '0',
       });
     } else if (level - prevLevel > 1 && (i !== 0 || headingStartsOverride)) {
       result = logResult({

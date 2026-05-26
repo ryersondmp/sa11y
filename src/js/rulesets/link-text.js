@@ -38,6 +38,10 @@ const checkStopWords = (textContent, stopWordsSet, stripStrings) => {
 export default function checkLinkText() {
   const seen = {};
   Elements.Found.Links.forEach(($el) => {
+    // Track if this element threw an error/warning to prevent showing a 'good' label
+    let hasIssue = false;
+    let deferGoodLabel = null;
+
     // Attributes.
     const href = $el.href ? Utils.standardizeHref($el) : '';
     const titleAttr = $el.getAttribute('title');
@@ -81,17 +85,25 @@ export default function checkLinkText() {
     const fileTypeMatch = $el.matches(cssFileTypeSelectors);
 
     // Push to results array.
-    const logResult = (params) =>
-      pushResult({
+    const logResult = (params) => {
+      const type = params.type || 'warning';
+
+      // If the log is an error or a warning, flag the element as having an issue
+      if (type === 'error' || type === 'warning') {
+        hasIssue = true;
+      }
+
+      return pushResult({
         element: $el,
-        type: params.type || 'warning',
+        type: type,
         dismiss: params.dismiss || href,
         inline: true,
         ...params,
       });
+    };
 
     // Do not conflict with alt text module.
-    if (!$el.querySelector('img')) {
+    if (!$el.querySelector('img[alt=""]') || hasAria) {
       // Links with ARIA
       if (hasAria && linkText.length !== 0) {
         // General warning for visible non-descript link text, regardless of ARIA label.
@@ -133,10 +145,10 @@ export default function checkLinkText() {
             developer: true,
           });
         } else {
-          // If the link has any ARIA, append a "Good" link button.
+          // If the link has any ARIA, queue up a "Good" link button.
           // Developer check: so full accessible name is exposed (without ignores).
           const accessibleName = Utils.removeWhitespace(computeAccessibleName($el));
-          logResult({
+          deferGoodLabel = {
             test: 'LINK_LABEL',
             type: 'good',
             args: [accessibleName],
@@ -144,7 +156,7 @@ export default function checkLinkText() {
             dismiss: strippedLinkText,
             position: 'afterend',
             developer: true,
-          });
+          };
         }
       }
 
@@ -177,11 +189,10 @@ export default function checkLinkText() {
         containsNewWindowPhrases === strippedLinkText
       ) {
         triggerStopWord();
-        return;
       }
 
       /* ******************* */
-      /*  Empty hyperlinks   */
+      /* Empty hyperlinks   */
       /* ******************* */
 
       if (linkText.length === 0) {
@@ -228,7 +239,7 @@ export default function checkLinkText() {
       }
 
       /* ************************** */
-      /*  Link text quality checks. */
+      /* Link text quality checks. */
       /* ************************** */
 
       // 1. Check for exact stop words. Strip "new window" phrases by default.
@@ -293,7 +304,6 @@ export default function checkLinkText() {
           content: Lang._('LINK_UNPRONOUNCEABLE') + Lang._('LINK_TIP'),
           position: 'afterend',
         });
-        return;
       }
 
       // Uses "click here" in the link text or accessible name.
@@ -363,7 +373,7 @@ export default function checkLinkText() {
     }
 
     /* ************************************************************** */
-    /*  Additional link checks previously from quality-assurance.js   */
+    /* Additional link checks previously from quality-assurance.js   */
     /* ************************************************************** */
     if (Constants.Global.pdfSources && $el.matches(Constants.Global.pdfSources)) {
       logResult({
@@ -439,6 +449,11 @@ export default function checkLinkText() {
           }
         }
       }
+    }
+
+    // Final check for this element: log the "Good" label if no issues were found.
+    if (deferGoodLabel && !hasIssue) {
+      logResult(deferGoodLabel);
     }
   });
 }

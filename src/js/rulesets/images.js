@@ -158,6 +158,7 @@ export default function checkImages() {
             : 'IMAGE_DECORATIVE_CAROUSEL';
         type = 'warning';
       } else if (link) {
+        if (link.getAttribute('aria-label') || link.getAttribute('aria-labelledby')) return;
         test = linkTextLength === 0 ? 'LINK_IMAGE_NO_ALT_TEXT' : 'LINK_IMAGE_TEXT';
         type = linkTextLength === 0 ? 'error' : 'good';
         key = src + linkTextLength;
