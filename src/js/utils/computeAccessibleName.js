@@ -238,12 +238,12 @@ export const computeAccessibleName = (element, exclusions = [], recursing = 0) =
     and(addTitleIfNoName);
   }
 
-  // Replace Private Use Area (PUA) unicode characters.
+  // Private Use Area (PUA) unicode characters.
   // https://www.unicode.org/faq/private_use.html
-  computedText = computedText.replace(/[\uE000-\uF8FF]/gu, '');
+  const pua = /[\uE000-\uF8FF]/gu;
 
   // If computedText returns blank, fallback on a) pseudo b) title attribute.
-  if (!computedText.trim()) {
+  if (!computedText.trim() || (!computedText.trim() && pua.test(computedText))) {
     computedText = wrapPseudoContent(element, '');
     if (!computedText.trim() && element.hasAttribute('title')) {
       return element.getAttribute('title');

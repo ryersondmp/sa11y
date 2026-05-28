@@ -179,6 +179,7 @@ const sk = {
     HEADING_FIRST: 'Prvý nadpis na stránke by mal byť zvyčajne nadpis 1 alebo 2. Nadpis 1 by mal byť začiatkom hlavnej časti obsahu a je to hlavný nadpis, ktorý opisuje celkový účel stránky. Viac informácií o <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">štruktúre nadpisov.</a>',
     HEADING_MISSING_ONE: 'Chýba nadpis 1. Nadpis 1 by mal byť začiatkom hlavnej oblasti obsahu a je to hlavný nadpis, ktorý opisuje celkový účel stránky. Viac informácií o <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">štruktúre nadpisov.</a>',
     HEADING_EMPTY_WITH_IMAGE: "Nadpis neobsahuje žiadny text, ale obsahuje obrázok. Ak to nie je nadpis, zmeňte jeho formát z <strong {C}>Nadpis %(level)</strong> na <strong>Normálny</strong> alebo <strong>Odsek</strong>. V opačnom prípade pridajte k obrázku alt text, ak nie je dekoratívny.",
+    HEADING_UNPRONOUNCEABLE: "Text nadpisu obsahuje iba symboly alebo nevysloviteľné znaky. Ak si myslíte, že ide o chybu spôsobenú chybou pri kopírovaní/vkladaní, zvážte jeho vymazanie. <hr> <strong {B}>Text nadpisu</strong> <strong {C}>%(TEXT)</strong>",
     PANEL_HEADING_MISSING_ONE: "Chýba položka 1!",
     PANEL_NO_HEADINGS: "Nenašli sa žiadne záhlavia.",
     // Links
@@ -270,6 +271,7 @@ const sk = {
     META_LANG_SUGGEST: "Nasledujúci kód jazyka <code>%(CODE)</code> nie je platný. Mysleli ste <code>%(CODE)</code>?",
     META_LANG_VALID: 'Kód jazyka pre tento prvok nie je platný. Ak to chcete napraviť, nahraďte atribút lang platným kódom jazyka. <hr> <strong {B}>Prvok</strong> <code>&lt;%(ELEMENT) lang="%(CODE)"&gt;</code> <hr> Ďalšie informácie o <a href="https://www.w3.org/International/questions/qa-html-language-declarations">deklarovaní jazyka v HTML.</a>',
     // Buttons
+    BTN_UNPRONOUNCEABLE: "Text tlačidla obsahuje iba symboly alebo nevysloviteľné znaky. <hr> <strong {B}>Prístupný názov</strong> <strong {C}>%(TEXT)</strong> <hr>",
     BTN_EMPTY: "Tlačidlu chýba prístupné meno, ktoré popisuje jeho účel.",
     BTN_EMPTY_LABELLEDBY: "Tlačidlo má hodnotu <code>aria-labelledby</code>, ktorá je prázdna alebo nezodpovedá hodnote <code>id</code> iného prvku na stránke.",
     BTN: "tlačidlo",

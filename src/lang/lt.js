@@ -368,7 +368,6 @@ export default {
     META_LANG_VALID: 'Šio elemento kalbos kodas negalioja. Norėdami tai ištaisyti, pakeiskite lang atributą galiojančiu kalbos kodu. <hr> <strong {B}>Elementas</strong> <code>&lt;%(ELEMENT) lang="%(CODE)"&gt;</code> <hr> Sužinokite daugiau apie <a href="https://www.w3.org/International/questions/qa-html-language-declarations">kalbos deklaravimą HTML.</a>',
 
     // Buttons
-    BTN_UNPRONOUNCEABLE: 'Mygtuko tekste yra tik simboliai arba neištariami znakai. <hr> <strong {B}>Prieinamas pavadinimas</strong> <strong {C}>%(TEXT)</strong> <hr>',
     BTN_EMPTY: 'Mygtukas neturi prieinamo pavadinimo, kuris apibūdina jo paskirtį.',
     BTN_EMPTY_LABELLEDBY:
       'Mygtukas turi <code>aria-labelledby</code> vertę, kuri yra tuščia arba nesutampa su kito puslapio elemento <code>id</code> verte.',

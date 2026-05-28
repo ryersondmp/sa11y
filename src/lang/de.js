@@ -415,7 +415,6 @@ export default {
     META_LANG_VALID: 'Der Sprachcode für dieses Element ist ungültig. Um dies zu beheben, ersetzen Sie das lang-Attribut durch einen gültigen Sprachcode. <hr> <strong {B}>Element</strong> <code>&lt;%(ELEMENT) lang="%(CODE)"&gt;</code> <hr> Erfahren Sie mehr über die <a href="https://www.w3.org/International/questions/qa-html-language-declarations.de.html">Sprachdeklaration in HTML.</a>',
 
     // Buttons
-    BTN_UNPRONOUNCEABLE: 'Der Schaltflächentext enthält nur Symbole oder nicht aussprechbare Zeichen. <hr> <strong {B}>Barrierefreier Name</strong> <strong {C}>%(TEXT)</strong> <hr>',
     BTN_EMPTY: 'Der Schaltfläche fehlt ein zugänglicher Name, der ihren Zweck beschreibt.',
     BTN_EMPTY_LABELLEDBY:
       'Die Schaltfläche hat einen <code>aria-labelledby</code>-Wert, der leer ist oder nicht mit dem <code>id</code>-Wert eines anderen Elements auf der Seite übereinstimmt.',

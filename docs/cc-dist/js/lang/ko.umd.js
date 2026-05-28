@@ -184,6 +184,7 @@
       HEADING_FIRST: '페이지의 첫 번째 제목은 일반적으로 제목 1 또는 제목 2여야 합니다. 제목 1은 주요 콘텐츠 섹션의 시작 부분이어야 하며 페이지의 전반적인 목적을 설명하는 주요 제목입니다. <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">헤딩 구조에 대해 자세히 알아보기.</a>',
       HEADING_MISSING_ONE: '제목 1이 누락되었습니다. 제목 1은 주요 콘텐츠 영역의 시작 부분이어야 하며 페이지의 전반적인 목적을 설명하는 기본 제목입니다. <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">헤딩 구조에 대해 자세히 알아보기.</a>',
       HEADING_EMPTY_WITH_IMAGE: "제목에 텍스트가 없지만 이미지가 포함되어 있습니다. 제목이 아닌 경우 형식을 <strong {C}>제목 %(level)</strong>에서 <strong>일반</strong> 또는 <strong>단락</strong>으로 변경합니다. 그렇지 않으면 장식용 이미지가 아닌 경우 이미지에 대체 텍스트를 추가하세요.",
+      HEADING_UNPRONOUNCEABLE: "제목 텍스트에 기호 또는 발음할 수 없는 문자만 포함되어 있습니다. 복사/붙여넣기 오류로 인한 문제라고 생각되면 삭제를 고려하세요. <hr> <strong {B}>제목 텍스트</strong> <strong {C}>%(TEXT)</strong>",
       PANEL_HEADING_MISSING_ONE: "제목 1이 없습니다!",
       PANEL_NO_HEADINGS: "제목을 찾을 수 없습니다.",
       // Links
@@ -275,6 +276,7 @@
       META_LANG_SUGGEST: "다음 언어 코드 <code>%(CODE)</code>가 유효하지 않습니다. <code>%(CODE)</code>를 의미하셨나요?",
       META_LANG_VALID: '이 요소의 언어 코드가 유효하지 않습니다. 문제를 해결하려면 lang 속성을 유효한 언어 코드로 교체하세요. <hr> <strong {B}>요소</strong> <code>&lt;%(ELEMENT) lang="%(CODE)"&gt;</code> <hr> <a href="https://www.w3.org/International/questions/qa-html-language-declarations">HTML에서 언어 선언</a>에 대해 자세히 알아보세요.',
       // Buttons
+      BTN_UNPRONOUNCEABLE: "버튼 텍스트에 기호 또는 발음할 수 없는 문자만 포함되어 있습니다. <hr> <strong {B}>액세스 가능한 이름</strong> <strong {C}>%(TEXT)</strong> <hr>",
       BTN_EMPTY: "버튼에 그 목적을 설명하는 접근 가능한 이름이 없습니다.",
       BTN_EMPTY_LABELLEDBY: "버튼에 비어 있는 <code>aria-labelledby</code> 값이 있거나, 페이지의 다른 요소의 <code>id</code> 값과 일치하지 않습니다.",
       BTN: "버튼",

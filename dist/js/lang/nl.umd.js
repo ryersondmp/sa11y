@@ -191,6 +191,7 @@
       HEADING_FIRST: 'De eerste kop op een pagina moet meestal een Kop 1 of Kop 2 zijn. Kop 1 moet het begin zijn van het hoofdgedeelte van de inhoud en is de belangrijkste kop die het algemene doel van de pagina beschrijft. Meer informatie over <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">Koppenstructuur.</a>',
       HEADING_MISSING_ONE: 'Ontbrekende kop 1. Kop 1 moet het begin zijn van het hoofdgedeelte van de inhoud en is de belangrijkste kop die het algemene doel van de pagina beschrijft. Meer informatie over <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">Koppenstructuur.</a>',
       HEADING_EMPTY_WITH_IMAGE: "Een kop heeft geen tekst, maar bevat een afbeelding. Als dit geen koptekst is, verander de opmaak dan van <strong {C}>Koptekst %(level)</strong> in <strong>Normaal</strong> of <strong>Paragraaf</strong>. Voeg anders alt-tekst toe aan de afbeelding als deze niet decoratief is.",
+      HEADING_UNPRONOUNCEABLE: "De koptekst bevat alleen symbolen of onuitspreekbare tekens. Als u denkt dat dit een fout is door een kopieer-/plakfout, overweeg dan om deze te verwijderen. <hr> <strong {B}>Koptekst</strong> <strong {C}>%(TEXT)</strong>",
       PANEL_HEADING_MISSING_ONE: "Kop 1 ontbreekt!",
       PANEL_NO_HEADINGS: "Geen koppen gevonden.",
       // Links
@@ -282,6 +283,7 @@
       META_LANG_SUGGEST: "De volgende taalcode <code>%(CODE)</code> is niet geldig. Bedoelde u <code>%(CODE)</code>?",
       META_LANG_VALID: 'De taalcode voor dit element is niet geldig. Vervang het lang-attribuut door een geldige taalcode om dit op te lossen. <hr> <strong {B}>Element</strong> <code>&lt;%(ELEMENT) lang="%(CODE)"&gt;</code> <hr> Lees meer over het <a href="https://www.w3.org/International/questions/qa-html-language-declarations">declareren van taal in HTML.</a>',
       // Buttons
+      BTN_UNPRONOUNCEABLE: "De knoptekst bevat alleen symbolen of onuitspreekbare tekens. <hr> <strong {B}>Toegankelijke naam</strong> <strong {C}>%(TEXT)</strong> <hr>",
       BTN_EMPTY: "De knop mist een toegankelijke naam die het doel beschrijft.",
       BTN_EMPTY_LABELLEDBY: "De knop heeft een <code>aria-labelledby</code> waarde die leeg is of niet overeenkomt met de <code>id</code> waarde van een ander element op de pagina.",
       BTN: "knop",

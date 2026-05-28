@@ -368,7 +368,6 @@ export default {
     META_LANG_VALID: 'Kód jazyka pre tento prvok nie je platný. Ak to chcete napraviť, nahraďte atribút lang platným kódom jazyka. <hr> <strong {B}>Prvok</strong> <code>&lt;%(ELEMENT) lang="%(CODE)"&gt;</code> <hr> Ďalšie informácie o <a href="https://www.w3.org/International/questions/qa-html-language-declarations">deklarovaní jazyka v HTML.</a>',
 
     // Buttons
-    BTN_UNPRONOUNCEABLE: 'Text tlačidla obsahuje iba symboly alebo nevysloviteľné znaky. <hr> <strong {B}>Prístupný názov</strong> <strong {C}>%(TEXT)</strong> <hr>',
     BTN_EMPTY: 'Tlačidlu chýba prístupné meno, ktoré popisuje jeho účel.',
     BTN_EMPTY_LABELLEDBY:
       'Tlačidlo má hodnotu <code>aria-labelledby</code>, ktorá je prázdna alebo nezodpovedá hodnote <code>id</code> iného prvku na stránke.',

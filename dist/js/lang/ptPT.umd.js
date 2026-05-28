@@ -182,6 +182,7 @@
       HEADING_FIRST: 'O primeiro título de uma página deve ser normalmente o Título 1 ou o Título 2. O Título 1 deve ser o início da secção de conteúdo principal e é o título principal que descreve o objetivo geral da página. Saiba mais sobre <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">Estrutura de títulos.</a>',
       HEADING_MISSING_ONE: 'Falta o Título 1. O Título 1 deve ser o início da área de conteúdo principal e é o título principal que descreve o objetivo geral da página. Saiba mais sobre <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">Estrutura de cabeçalho.</a>',
       HEADING_EMPTY_WITH_IMAGE: "O cabeçalho não tem texto, mas contém uma imagem. Se não for um cabeçalho, altere o formato de <strong {C}>Título %(level)</strong> para <strong>Normal</strong> ou <strong>Parágrafo</strong>. Caso contrário, adicione texto alternativo à imagem se esta não for decorativa.",
+      HEADING_UNPRONOUNCEABLE: "O texto do cabeçalho contém apenas símbolos ou caracteres impronunciáveis. Se acha que isto é um erro devido a uma falha de copiar/colar, considere eliminá-lo. <hr> <strong {B}>Texto do cabeçalho</strong> <strong {C}>%(TEXT)</strong>",
       PANEL_HEADING_MISSING_ONE: "Falta o título 1!",
       PANEL_NO_HEADINGS: "Não foram encontrados cabeçalhos.",
       // Links
@@ -273,6 +274,7 @@
       META_LANG_SUGGEST: "O seguinte código de idioma <code>%(CODE)</code> não é válido. Queria dizer <code>%(CODE)</code>?",
       META_LANG_VALID: 'O código de idioma para este elemento não é válido. Para corrigir, substitua o atributo lang por um código de idioma válido. <hr> <strong {B}>Elemento</strong> <code>&lt;%(ELEMENT) lang="%(CODE)"&gt;</code> <hr> Saiba mais sobre a <a href="https://www.w3.org/International/questions/qa-html-language-declarations.pt-br.html">declaração de idioma em HTML.</a>',
       // Buttons
+      BTN_UNPRONOUNCEABLE: "O texto do botão contém apenas símbolos ou caracteres impronunciáveis. <hr> <strong {B}>Nome acessível</strong> <strong {C}>%(TEXT)</strong> <hr>",
       BTN_EMPTY: "O botão está sem um nome acessível que descreva o seu propósito.",
       BTN_EMPTY_LABELLEDBY: "O botão tem um valor <code>aria-labelledby</code> que está vazio ou não corresponde ao valor <code>id</code> de outro elemento na página.",
       BTN: "botão",

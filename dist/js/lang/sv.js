@@ -196,6 +196,7 @@ const sv = {
     HEADING_FIRST: 'Den första rubriken på en sida bör vanligtvis vara en Rubrik 1 eller Rubrik 2. Rubrik 1 bör vara början på huvudinnehållsavsnittet och är huvudrubriken som beskriver sidans övergripande syfte. Läs mer om <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">Rubrikstruktur.</a>',
     HEADING_MISSING_ONE: 'Saknar Rubrik 1. Rubrik 1 bör vara början på huvudinnehållsområdet, och är huvudrubriken som beskriver sidans övergripande syfte. Läs mer om <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">Rubrikstruktur.</a>',
     HEADING_EMPTY_WITH_IMAGE: "Rubriken har ingen text, men innehåller en bild. Om detta inte är en rubrik ändrar du dess format från <strong {C}>Rubrik %(level)</strong> till <strong>Normal</strong> eller <strong>Stycke</strong>. Annars, lägg till alt-text till bilden om den inte är dekorativ.",
+    HEADING_UNPRONOUNCEABLE: "Rubriktexten innehåller endast symboler eller outtala bara tecken. Om du tror att detta är ett fel som beror på en kopiera/klistra in-bugg, överväg att ta bort den. <hr> <strong {B}>Rubriktext</strong> <strong {C}>%(TEXT)</strong>",
     PANEL_HEADING_MISSING_ONE: "Saknar rubrik 1!",
     PANEL_NO_HEADINGS: "Inga rubriker hittades.",
     // Links
@@ -287,6 +288,7 @@ const sv = {
     META_LANG_SUGGEST: "Följande språkkod <code>%(CODE)</code> är inte giltig. Menade du <code>%(CODE)</code>?",
     META_LANG_VALID: 'Språkkoden för detta element är inte giltig. För att åtgärda detta, ersätt lang-attributet med en giltig språkkod. <hr> <strong {B}>Element</strong> <code>&lt;%(ELEMENT) lang="%(CODE)"&gt;</code> <hr> Läs mer om att <a href="https://www.w3.org/International/questions/qa-html-language-declarations">deklarera språk i HTML.</a>',
     // Buttons
+    BTN_UNPRONOUNCEABLE: "Knapptexten innehåller endast symboler eller outtalbara tecken. <hr> <strong {B}>Tillgängligt namn</strong> <strong {C}>%(TEXT)</strong> <hr>",
     BTN_EMPTY: "Knappen saknar ett tillgängligt namn som beskriver dess syfte.",
     BTN_EMPTY_LABELLEDBY: "Knappen har ett <code>aria-labelledby</code>-värde som är tomt eller inte matchar värdet <code>id</code> för ett annat element på sidan.",
     BTN: "knapp",

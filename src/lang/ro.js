@@ -370,7 +370,6 @@ export default {
     META_LANG_VALID: 'Codul de limbă pentru acest element nu este valid. Pentru a remedia problema, înlocuiți atributul lang cu un cod de limbă valid. <hr> <strong {B}>Element</strong> <code>&lt;%(ELEMENT) lang="%(CODE)"&gt;</code> <hr> Aflați mai multe despre <a href="https://www.w3.org/International/questions/qa-html-language-declarations">declararea limbii în HTML.</a>',
 
     // Button
-    BTN_UNPRONOUNCEABLE: 'Textul butonului conține doar simboluri sau caractere nepronunțabile. <hr> <strong {B}>Nume accesibil</strong> <strong {C}>%(TEXT)</strong> <hr>',
     BTN_EMPTY: 'Butonul nu are un nume accesibil care să descrie scopul său.',
     BTN_EMPTY_LABELLEDBY:
       'Butonul are o valoare <code>aria-labelledby</code> care este goală sau nu se potrivește cu valoarea <code>id</code> a altui element din pagină.',

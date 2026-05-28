@@ -184,6 +184,7 @@
       HEADING_FIRST: 'Primul titlu de pe o pagină trebuie să fie, de obicei, un titlu 1 sau 2. Titlul 1 ar trebui să fie începutul secțiunii principale de conținut și este titlul principal care descrie scopul general al paginii. Aflați mai multe despre <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">Structura titlurilor.</a>',
       HEADING_MISSING_ONE: 'Lipsește titlul 1. Titlul 1 ar trebui să fie începutul zonei principale de conținut și este titlul principal care descrie scopul general al paginii. Aflați mai multe despre <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">Structura titlurilor.</a>',
       HEADING_EMPTY_WITH_IMAGE: "Rubrica nu are text, dar conține o imagine. Dacă acesta nu este un titlu, schimbați-i formatul din <strong {C}>Antet %(level)</strong> în <strong>Normal</strong> sau <strong>Paragraf</strong>. În caz contrar, vă rugăm să adăugați text alt la imagine, dacă aceasta nu este decorativă.",
+      HEADING_UNPRONOUNCEABLE: "Textul titlului conține doar simboluri sau caractere nepronunțabile. Dacă credeți că aceasta este o eroare din cauza unei probleme de copiere/lipire, luați în considerare ștergerea acestuia. <hr> <strong {B}>Textul titlului</strong> <strong {C}>%(TEXT)</strong>",
       PANEL_HEADING_MISSING_ONE: "Lipsește rubrica 1!",
       PANEL_NO_HEADINGS: "Nu s-au găsit antete.",
       // Links
@@ -275,6 +276,7 @@
       META_LANG_SUGGEST: "Următorul cod de limbă <code>%(CODE)</code> nu este valid. Ați vrut să spuneți <code>%(CODE)</code>?",
       META_LANG_VALID: 'Codul de limbă pentru acest element nu este valid. Pentru a remedia problema, înlocuiți atributul lang cu un cod de limbă valid. <hr> <strong {B}>Element</strong> <code>&lt;%(ELEMENT) lang="%(CODE)"&gt;</code> <hr> Aflați mai multe despre <a href="https://www.w3.org/International/questions/qa-html-language-declarations">declararea limbii în HTML.</a>',
       // Button
+      BTN_UNPRONOUNCEABLE: "Textul butonului conține doar simboluri sau caractere nepronunțabile. <hr> <strong {B}>Nume accesibil</strong> <strong {C}>%(TEXT)</strong> <hr>",
       BTN_EMPTY: "Butonul nu are un nume accesibil care să descrie scopul său.",
       BTN_EMPTY_LABELLEDBY: "Butonul are o valoare <code>aria-labelledby</code> care este goală sau nu se potrivește cu valoarea <code>id</code> a altui element din pagină.",
       BTN: "buton",

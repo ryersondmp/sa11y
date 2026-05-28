@@ -184,6 +184,7 @@
       HEADING_FIRST: 'Bir sayfadaki ilk başlık genellikle Başlık 1 veya Başlık 2 olmalıdır. Başlık 1, ana içerik bölümünün başlangıcı olmalıdır ve sayfanın genel amacını açıklayan ana başlıktır. <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">Başlık Yapısı hakkında daha fazla bilgi edinin.</a>',
       HEADING_MISSING_ONE: 'Eksik Başlık 1. Başlık 1, ana içerik alanının başlangıcı olmalıdır ve sayfanın genel amacını açıklayan ana başlıktır. <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">Başlık Yapısı hakkında daha fazla bilgi edinin.</a>',
       HEADING_EMPTY_WITH_IMAGE: "Başlığın metni yoktur, ancak bir resim içerir. Bu bir başlık değilse, biçimini <strong {C}>Başlık %(level)</strong> yerine <strong>Normal</strong> veya <strong>Paragraf</strong> olarak değiştirin. Aksi takdirde, dekoratif değilse lütfen resme alt metin ekleyin.",
+      HEADING_UNPRONOUNCEABLE: "Başlık metni yalnızca simgeler veya telaffuz edilemeyen karakterler içeriyor. Bunun bir kopyala/yapıştır hatasından kaynaklandığını düşünüyorsanız, silmeyi düşünebilirsiniz. <hr> <strong {B}>Başlık metni</strong> <strong {C}>%(TEXT)</strong>",
       PANEL_HEADING_MISSING_ONE: "Başlık 1 eksik!",
       PANEL_NO_HEADINGS: "Başlık bulunamadı.",
       // Links
@@ -275,6 +276,7 @@
       META_LANG_SUGGEST: "Aşağıdaki dil kodu <code>%(CODE)</code> geçerli değil. Bunu mu demek istediniz: <code>%(CODE)</code>?",
       META_LANG_VALID: `Bu öğenin dil kodu geçerli değil. Düzeltmek için lang özniteliğini geçerli bir dil koduyla değiştirin. <hr> <strong {B}>Öğe</strong> <code>&lt;%(ELEMENT) lang="%(CODE)"&gt;</code> <hr> <a href="https://www.w3.org/International/questions/qa-html-language-declarations">HTML'de dil bildirme</a> hakkında daha fazla bilgi edinin.`,
       // Buttons
+      BTN_UNPRONOUNCEABLE: "Düğme metni yalnızca simgeler veya telaffuz edilemeyen karakterler içeriyor. <hr> <strong {B}>Erişilebilir ad</strong> <strong {C}>%(TEXT)</strong> <hr>",
       BTN_EMPTY: "Düğme, amacını açıklayan erişilebilir bir ada sahip değil.",
       BTN_EMPTY_LABELLEDBY: "Düğmenin boş bir <code>aria-labelledby</code> değeri var veya sayfadaki başka bir öğenin <code>id</code> değeri ile eşleşmiyor.",
       BTN: "düğme",

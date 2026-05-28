@@ -178,6 +178,7 @@ const et = {
     HEADING_FIRST: 'Lehekülje esimene pealkiri peaks tavaliselt olema pealkiri 1 või 2. Pealkiri 1 peaks olema peamise sisuosa algus ja on peamine pealkiri, mis kirjeldab lehe üldist eesmärki. Lisateave <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">pealkirjade struktuuri kohta.</a>',
     HEADING_MISSING_ONE: 'Puudub pealkiri 1. Pealkiri 1 peaks olema peamise sisuala algus ja on peamine pealkiri, mis kirjeldab lehe üldist eesmärki. Lisateave <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">pealkirja struktuur.</a>',
     HEADING_EMPTY_WITH_IMAGE: "Pealkiri ei sisalda teksti, kuid sisaldab pilti. Kui see ei ole pealkiri, muutke selle formaat <strong {C}>pealkiri %(level)</strong>-st <strong>normaalseks</strong> või <strong>paragrahviks</strong>. Vastasel juhul lisage pildile alt-tekst, kui see ei ole dekoratiivne.",
+    HEADING_UNPRONOUNCEABLE: "Pealkirja tekst sisaldab ainult sümboleid või hääldamatuid märke. Kui arvate, et see on kopeerimise/asendamise veast tingitud viga, kaaluge selle kustutamist. <hr> <strong {B}>Pealkirja tekst</strong> <strong {C}>%(TEXT)</strong>",
     PANEL_HEADING_MISSING_ONE: "Puudub rubriik 1!",
     PANEL_NO_HEADINGS: "Pealkirju ei leitud.",
     // Links
@@ -269,6 +270,7 @@ const et = {
     META_LANG_SUGGEST: "Järgmine keelekood <code>%(CODE)</code> ei ole kehtiv. Kas mõtlesite <code>%(CODE)</code>?",
     META_LANG_VALID: 'Selle elemendi keelekood ei ole kehtiv. Parandamiseks asendage lang-atribuut kehtiva keelekoodiga. <hr> <strong {B}>Element</strong> <code>&lt;%(ELEMENT) lang="%(CODE)"&gt;</code> <hr> Lisateave <a href="https://www.w3.org/International/questions/qa-html-language-declarations">keele deklareerimise kohta HTML-is.</a>',
     // Buttons
+    BTN_UNPRONOUNCEABLE: "Nupu tekst sisaldab ainult sümboleid või hääldamatuid märke. <hr> <strong {B}>Kättesaadav nimi</strong> <strong {C}>%(TEXT)</strong> <hr>",
     BTN_EMPTY: "Nupul puudub ligipääsetav nimi, mis kirjeldaks selle eesmärki.",
     BTN_EMPTY_LABELLEDBY: "Nupul on <code>aria-labelledby</code> väärtus, mis on tühi või ei vasta teise lehe elemendi <code>id</code> väärtusele.",
     BTN: "nupp",

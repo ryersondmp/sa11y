@@ -178,6 +178,7 @@ const bg = {
     HEADING_FIRST: 'Първото заглавие на страницата обикновено трябва да бъде заглавие 1 или заглавие 2. Заглавие 1 трябва да е началото на раздела с основно съдържание и е основното заглавие, което описва цялостната цел на страницата. Научете повече за <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">Структурата на заглавията.</a>',
     HEADING_MISSING_ONE: 'Липсва заглавие 1. Заглавие 1 трябва да е началото на основната област на съдържанието и е основното заглавие, което описва цялостната цел на страницата. Научете повече за <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">Структурата на заглавията.</a>',
     HEADING_EMPTY_WITH_IMAGE: "Заглавието няма текст, но съдържа изображение. Ако това не е заглавие, променете формата му от <strong {C}>Heading %(level)</strong> на <strong>Normal</strong> или <strong>Paragraph</strong>. В противен случай, моля, добавете alt текст към изображението, ако то не е декоративно.",
+    HEADING_UNPRONOUNCEABLE: "Текстът на заглавието съдържа само символи или непроизнасяеми знаци. Ако смятате, че това е грешка, произтичаща от бъг при копиране/поставяне, помислете за изтриването му. <hr> <strong {B}>Текст на заглавието</strong> <strong {C}>%(TEXT)</strong>",
     PANEL_HEADING_MISSING_ONE: "Липсва заглавие 1!",
     PANEL_NO_HEADINGS: "Няма намерени заглавия.",
     // Links
@@ -269,6 +270,7 @@ const bg = {
     META_LANG_SUGGEST: "Следният езиков код <code>%(CODE)</code> не е валиден. Имахте предвид <code>%(CODE)</code>?",
     META_LANG_VALID: 'Езиковият код за този елемент не е валиден. За да поправите това, заменете атрибута lang с валиден езиков код. <hr> <strong {B}>Елемент</strong> <code>&lt;%(ELEMENT) lang="%(CODE)"&gt;</code> <hr> Научете повече за <a href="https://www.w3.org/International/questions/qa-html-language-declarations">декларирането на език в HTML.</a>',
     // Buttons
+    BTN_UNPRONOUNCEABLE: "Текстът на бутона съдържа само символи или непроизнасяеми знаци. <hr> <strong {B}>Достъпно име</strong> <strong {C}>%(TEXT)</strong> <hr>",
     BTN_EMPTY: "Бутонът няма достъпно име, което да описва неговата цел.",
     BTN_EMPTY_LABELLEDBY: "Бутонът има стойност <code>aria-labelledby</code>, която е празна или не съответства на стойността на <code>id</code> на друг елемент на страницата.",
     BTN: "бутон",

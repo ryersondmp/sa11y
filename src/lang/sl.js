@@ -368,7 +368,6 @@ export default {
     META_LANG_VALID: 'Jezikovna koda za ta element ni veljavna. Če želite to popraviti, zamenjajte atribut lang z veljavno jezikovno kodo. <hr> <strong {B}>Element</strong> <code>&lt;%(ELEMENT) lang="%(CODE)"&gt;</code> <hr> Preberite več o <a href="https://www.w3.org/International/questions/qa-html-language-declarations">deklariranju jezika v HTML.</a>',
 
     // Buttons
-    BTN_UNPRONOUNCEABLE: 'Besedilo gumba vsebuje samo simbole ali neizgovorljive znake. <hr> <strong {B}>Dostopno ime</strong> <strong {C}>%(TEXT)</strong> <hr>',
     BTN_EMPTY: 'Gumb nima dostopnega imena, ki bi opisovalo njegov namen.',
     BTN_EMPTY_LABELLEDBY:
       'Gumb ima vrednost <code>aria-labelledby</code>, ki je prazna ali se ne ujema z vrednostjo <code>id</code> drugega elementa na strani.',

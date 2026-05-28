@@ -369,7 +369,6 @@ export default {
     META_LANG_VALID: 'Bu öğenin dil kodu geçerli değil. Düzeltmek için lang özniteliğini geçerli bir dil koduyla değiştirin. <hr> <strong {B}>Öğe</strong> <code>&lt;%(ELEMENT) lang="%(CODE)"&gt;</code> <hr> <a href="https://www.w3.org/International/questions/qa-html-language-declarations">HTML\'de dil bildirme</a> hakkında daha fazla bilgi edinin.',
 
     // Buttons
-    BTN_UNPRONOUNCEABLE: 'Düğme metni yalnızca simgeler veya telaffuz edilemeyen karakterler içeriyor. <hr> <strong {B}>Erişilebilir ad</strong> <strong {C}>%(TEXT)</strong> <hr>',
     BTN_EMPTY: 'Düğme, amacını açıklayan erişilebilir bir ada sahip değil.',
     BTN_EMPTY_LABELLEDBY:
       'Düğmenin boş bir <code>aria-labelledby</code> değeri var veya sayfadaki başka bir öğenin <code>id</code> değeri ile eşleşmiyor.',

@@ -186,6 +186,7 @@
       HEADING_FIRST: 'Pirmais virsraksts lapā parasti ir 1. vai 2. virsraksts. Ar 1. virsrakstu jāsāk galvenā satura sadaļa, un tas ir galvenais virsraksts, kas raksturo lapas vispārējo mērķi. Uzziniet vairāk par <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">Galveno virsrakstu struktūru.</a>',
       HEADING_MISSING_ONE: 'Trūkst 1. virsraksta. 1. virsrakstam jābūt galvenā satura laukuma sākumam, un tas ir galvenais virsraksts, kas apraksta lapas vispārējo mērķi. Uzziniet vairāk par <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">Galveno struktūru.</a>',
       HEADING_EMPTY_WITH_IMAGE: "Virsrakstā nav teksta, bet ir attēls. Ja tas nav virsraksts, mainiet tā formātu no <strong {C}>Virsraksts %(level)</strong> uz <strong>Normāls</strong> vai <strong>Apakšsadaļa</strong>. Pretējā gadījumā pievienojiet attēlam alt tekstu, ja tas nav dekoratīvs.",
+      HEADING_UNPRONOUNCEABLE: "Virsraksta teksts satur tikai simbolus vai neizrunājamas rakstzīmes. Ja uzskatāt, at tā ir kļūda kopēšanas/ielīmēšanas kļūmes dēļ, apsveriet iespēju to dzēst. <hr> <strong {B}>Virsraksta teksts</strong> <strong {C}>%(TEXT)</strong>",
       PANEL_HEADING_MISSING_ONE: "Trūkst 1. pozīcijas!",
       PANEL_NO_HEADINGS: "Virsraksti nav atrasti.",
       // Links
@@ -277,6 +278,7 @@
       META_LANG_SUGGEST: "Šis valodas kods <code>%(CODE)</code> nav derīgs. Vai jūs domājāt <code>%(CODE)</code>?",
       META_LANG_VALID: 'Šī elementa valodas kods nav derīgs. Lai to labotu, aizstājiet lang atribūtu ar derīgu valodas kodu. <hr> <strong {B}>Elements</strong> <code>&lt;%(ELEMENT) lang="%(CODE)"&gt;</code> <hr> Uzziniet vairāk par <a href="https://www.w3.org/International/questions/qa-html-language-declarations">valodas deklarēšanu HTML.</a>',
       // Buttons
+      BTN_UNPRONOUNCEABLE: "Pogas teksts satur tikai simbolus vai neizrunājamas rakstzīmes. <hr> <strong {B}>Pieejamais nosaukums</strong> <strong {C}>%(TEXT)</strong> <hr>",
       BTN_EMPTY: "Poga ir bez pieejama nosaukuma, kas apraksta tās mērķi.",
       BTN_EMPTY_LABELLEDBY: "Pogai ir <code>aria-labelledby</code> vērtība, kas ir tukša vai neatbilst cita elementa <code>id</code> vērtībai lapā.",
       BTN: "poga",

@@ -177,6 +177,7 @@ const nb = {
     HEADING_FIRST: 'Den første overskriften på en side bør vanligvis være en Overskrift 1 eller Overskrift 2. Overskrift 1 bør være starten på hoveddelen av innholdet, og er hovedoverskriften som beskriver det overordnede formålet med siden. Les mer om <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">Overskriftsstruktur.</a>',
     HEADING_MISSING_ONE: 'Manglende overskrift 1. Overskrift 1 skal være starten på hovedinnholdsområdet, og er hovedoverskriften som beskriver det overordnede formålet med siden. Les mer om <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">Overskriftsstruktur.</a>',
     HEADING_EMPTY_WITH_IMAGE: "Overskrift har ingen tekst, men inneholder et bilde. Hvis dette ikke er en overskrift, endrer du formatet fra <strong {C}>Overskrift %(level)</strong> til <strong>Normal</strong> eller <strong>Avsnitt</strong>. Ellers kan du legge til alt-tekst til bildet hvis det ikke er dekorativt.",
+    HEADING_UNPRONOUNCEABLE: "Overskriftsteksten inneholder bare symboler eller utalbare tegn. Hvis du tror dette er en feil som skyldes en kopier/lim inn-feil, bør du vurdere å slette den. <hr> <strong {B}>Overskriftstekst</strong> <strong {C}>%(TEXT)</strong>",
     PANEL_HEADING_MISSING_ONE: "Manglende overskrift 1!",
     PANEL_NO_HEADINGS: "Ingen overskrifter funnet.",
     // Links
@@ -268,6 +269,7 @@ const nb = {
     META_LANG_SUGGEST: "Følgende språkkode <code>%(CODE)</code> er ikke gyldig. Mente du <code>%(CODE)</code>?",
     META_LANG_VALID: 'Språkkoden for dette elementet er ikke gyldig. For å fikse dette, erstatt lang-attributtet med en gyldig språkkode. <hr> <strong {B}>Element</strong> <code>&lt;%(ELEMENT) lang="%(CODE)"&gt;</code> <hr> Lær mer om <a href="https://www.w3.org/International/questions/qa-html-language-declarations">deklarering av språk i HTML.</a>',
     // Buttons
+    BTN_UNPRONOUNCEABLE: "Knappeteksten inneholder bare symboler eller utalbare tegn. <hr> <strong {B}>Tilgjengelig navn</strong> <strong {C}>%(TEXT)</strong> <hr>",
     BTN_EMPTY: "Knappen mangler et tilgjengelig navn som beskriver dens formål.",
     BTN_EMPTY_LABELLEDBY: "Knappen har en <code>aria-labelledby</code> verdi som er tom eller ikke samsvarer med <code>id</code> verdien til et annet element på siden.",
     BTN: "knapp",

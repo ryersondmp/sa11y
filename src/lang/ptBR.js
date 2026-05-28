@@ -365,7 +365,6 @@ export default {
     META_LANG_VALID: 'O código de idioma para este elemento não é válido. Para corrigir, substitua o atributo lang por um código de idioma válido. <hr> <strong {B}>Elemento</strong> <code>&lt;%(ELEMENT) lang="%(CODE)"&gt;</code> <hr> Saiba mais sobre a <a href="https://www.w3.org/International/questions/qa-html-language-declarations.pt-br.html">declaração de idioma em HTML.</a>',
 
     // Buttons
-    BTN_UNPRONOUNCEABLE: 'O texto do botão contém apenas símbolos ou caracteres impronunciáveis. <hr> <strong {B}>Nome acessível</strong> <strong {C}>%(TEXT)</strong> <hr>',
     BTN_EMPTY: 'O botão está sem um nome acessível que descreva sua finalidade.',
     BTN_EMPTY_LABELLEDBY:
       'O botão tem um valor <code>aria-labelledby</code> que está vazio ou não corresponde ao valor <code>id</code> de outro elemento na página.',

@@ -220,11 +220,12 @@ export default function checkImages() {
     const badAltTest = link ? 'LINK_ALT_MAYBE_BAD' : 'ALT_MAYBE_BAD';
     const minLength = State.option.checks[badAltTest]?.minLength || 15;
     const isTooLongSingleWord = new RegExp(`^\\S{${minLength},}$`);
-    const containsNonAlphaChar = /[^\p{L}\-,.!? ]/u.test(altText);
+    const containsNonAlphaChar = /[^\p{L}\p{M}\-,.!? «»—]/u.test(altText);
     const isBadFilename = new RegExp(`^(?=[^_-]*([_-][^_-]*){3,})\\S{${minLength},}$`).test(
       altText,
     );
-    if (isBadFilename || (isTooLongSingleWord.test(alt) && containsNonAlphaChar)) {
+    const containsCJK = /[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Hangul}]/u.test(altText);
+    if (isBadFilename || (!containsCJK && isTooLongSingleWord.test(alt) && containsNonAlphaChar)) {
       logResult({
         test: badAltTest,
         args: [altText],

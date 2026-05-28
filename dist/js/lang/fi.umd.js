@@ -179,6 +179,7 @@
       HEADING_FIRST: 'Sivun ensimmäisen otsikon tulisi yleensä olla Otsikko 1 tai Otsikko 2. Otsikon 1 tulisi olla pääsisältöosion alku, ja se on pääotsikko, joka kuvaa sivun yleistä tarkoitusta. Lue lisää <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">Otsikon rakenteesta.</a>',
       HEADING_MISSING_ONE: 'Puuttuva otsikko 1. Otsikon 1 pitäisi olla pääsisältöalueen alku, ja se on pääotsikko, joka kuvaa sivun yleistä tarkoitusta. Lue lisää <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">Ohjeiden rakenne.</a>',
       HEADING_EMPTY_WITH_IMAGE: "Otsikossa ei ole tekstiä, mutta se sisältää kuvan. Jos tämä ei ole otsikko, muuta sen muotoa <strong {C}>Otsikko %(level)</strong> muotoon <strong>Normaali</strong> tai <strong>Kappale</strong>. Muussa tapauksessa, lisää alt-teksti kuvaan, jos se ei ole koristeellinen.",
+      HEADING_UNPRONOUNCEABLE: "Otsikkoteksti sisältää vain symboleja tai lausumattomia merkkejä. Jos uskot tämän johtuvan kopiointi-/liittämisvirheestä, harkitse sen poistamista. <hr> <strong {B}>Otsikkoteksti</strong> <strong {C}>%(TEXT)</strong>",
       PANEL_HEADING_MISSING_ONE: "Otsikko 1 puuttuu!",
       PANEL_NO_HEADINGS: "Otsikoita ei löytynyt.",
       // Links
@@ -270,6 +271,7 @@
       META_LANG_SUGGEST: "Seuraava kielikoodi <code>%(CODE)</code> ei ole kelvollinen. Tarkoititko <code>%(CODE)</code>?",
       META_LANG_VALID: 'Tämän elementin kielikoodi ei ole kelvollinen. Korjaa ongelma korvaamalla lang-attribuutti kelvollisella kielikoodilla. <hr> <strong {B}>Elementti</strong> <code>&lt;%(ELEMENT) lang="%(CODE)"&gt;</code> <hr> Lue lisää <a href="https://www.w3.org/International/questions/qa-html-language-declarations">kielen määrittämisestä HTML-koodissa.</a>',
       // Buttons
+      BTN_UNPRONOUNCEABLE: "Painikkeen teksti sisältää vain symboleja tai lausumattomia merkkejä. <hr> <strong {B}>Esteetön nimi</strong> <strong {C}>%(TEXT)</strong> <hr>",
       BTN_EMPTY: "Painikkeesta puuttuu saavutettava nimi, joka kuvaisi sen tarkoitusta.",
       BTN_EMPTY_LABELLEDBY: "Painikkeessa on <code>aria-labelledby</code>-arvo, joka on tyhjä tai ei vastaa toisen elementin <code>id</code>-arvoa sivulla.",
       BTN: "painike",

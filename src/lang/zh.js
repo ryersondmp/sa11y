@@ -359,7 +359,6 @@ export default {
     META_LANG_VALID: '此元素的语言代码无效。要修复此问题，请将 lang 属性替换为有效的语言代码。 <hr> <strong {B}>元素</strong> <code>&lt;%(ELEMENT) lang="%(CODE)"&gt;</code> <hr> 了解有关 <a href="https://www.w3.org/International/questions/qa-html-language-declarations.zh-hans.html">在 HTML 中声明语言</a> 的更多信息。',
 
     // Buttons
-    BTN_UNPRONOUNCEABLE: '按钮文本仅包含符号或无法发音的字符。 <hr> <strong {B}>可访问名称</strong> <strong {C}>%(TEXT)</strong> <hr>',
     BTN_EMPTY: '按钮缺少一个描述其用途的可访问名称。',
     BTN_EMPTY_LABELLEDBY:
       '按钮的<code>aria-labelledby</code>值为空或不匹配页面上其他元素的<code>id</code>值。',

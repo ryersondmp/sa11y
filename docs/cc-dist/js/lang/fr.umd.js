@@ -185,6 +185,7 @@
       HEADING_FIRST: `Le premier titre sur la page devrait généralement être un Titre 1 ou un Titre 2. Le Titre 1 doit débuter dans la section principale du contenu, car il s'agit du titre principal qui décrit l'objectif général de la page. En savoir plus sur <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">La Structure Des Titres.</a>`,
       HEADING_MISSING_ONE: 'Titre 1 manquant. Le Titre 1 doit débuter dans la zone principale de contenu, il est le titre principal qui décrit l’objectif global de la page. En savoir plus sur <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">La Structure Des Titres.</a>',
       HEADING_EMPTY_WITH_IMAGE: "Le titre ne contient pas de texte, mais seulement une image. Si ce n’est pas un titre, veuillez changer son format de <strong {C}>Titre %(level)</strong> à <strong>Normal</strong> ou <strong>Paragraphe</strong>. Sinon, veuillez ajouter du texte de remplacement à l’image si elle n’est pas décorative.",
+      HEADING_UNPRONOUNCEABLE: "Le texte du titre contient uniquement des symboles ou des caractères imprononçables. Si vous pensez qu'il s'agit d'une erreur due à un problème de copier-coller, pensez à le supprimer. <hr> <strong {B}>Texte du titre</strong> <strong {C}>%(TEXT)</strong>",
       PANEL_HEADING_MISSING_ONE: "Titre 1 manquant !",
       PANEL_NO_HEADINGS: "Aucun titre trouvé.",
       // Links
@@ -276,6 +277,7 @@
       META_LANG_SUGGEST: "Le code de langue suivant <code>%(CODE)</code> n'est pas valide. Vouliez-vous dire <code>%(CODE)</code>?",
       META_LANG_VALID: `Le code de langue pour cet élément n'est pas valide. Pour corriger cela, remplacez l'attribut lang par un code de langue valide. <hr> <strong {B}>Élément</strong> <code>&lt;%(ELEMENT) lang="%(CODE)"&gt;</code> <hr> En savoir plus sur la <a href="https://www.w3.org/International/questions/qa-html-language-declarations.fr.html">déclaration de la langue en HTML.</a>`,
       // Buttons
+      BTN_UNPRONOUNCEABLE: "Le texte du bouton contient uniquement des symboles ou des caractères imprononçables. <hr> <strong {B}>Nom accessible</strong> <strong {C}>%(TEXT)</strong> <hr>",
       BTN_EMPTY: "Le bouton manque d’un nom accessible qui décrit son objectif.",
       BTN_EMPTY_LABELLEDBY: "Le bouton a une valeur <code>aria-labelledby</code> qui est vide ou ne correspond pas à la valeur <code>id</code> d’un autre élément sur la page.",
       BTN: "bouton",

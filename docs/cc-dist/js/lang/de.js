@@ -226,6 +226,7 @@ const de = {
     HEADING_FIRST: 'Die erste Überschrift auf einer Seite sollte in der Regel Überschrift 1 oder Überschrift 2 sein. Überschrift 1 sollte der Beginn des Hauptinhaltsabschnitts sein und ist die Hauptüberschrift, die den allgemeinen Zweck der Seite beschreibt. Erfahre mehr über <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">Überschriften-Struktur.</a>',
     HEADING_MISSING_ONE: 'Fehlende Überschrift 1: Überschrift 1 sollte am Anfang des Hauptinhaltsbereichs stehen und ist die Hauptüberschrift, die den allgemeinen Zweck der Seite beschreibt. Erfahre mehr über <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">Überschriften-Struktur.</a>',
     HEADING_EMPTY_WITH_IMAGE: "Die Überschrift hat keinen Text, enthält aber ein Bild. Wenn es sich nicht um eine Überschrift handelt, ändere das Format von <strong {C}>Überschrift %(level)</strong> zu <strong>Normal</strong> oder <strong>Absatz (p)</strong>. Andernfalls füge bitte einen Alt-Text zum Bild hinzu, wenn es nicht dekorativ ist.",
+    HEADING_UNPRONOUNCEABLE: "Der Überschriftentext enthält nur Symbole oder nicht aussprechbare Zeichen. Wenn Sie vermuten, dass es sich hierbei um einen Fehler durch Kopieren und Einfügen handelt, sollten Sie ihn löschen. <hr> <strong {B}>Überschriftentext</strong> <strong {C}>%(TEXT)</strong>",
     PANEL_HEADING_MISSING_ONE: "Fehlende Überschrift 1!",
     PANEL_NO_HEADINGS: "Keine Überschriften gefunden.",
     // Links
@@ -317,6 +318,7 @@ const de = {
     META_LANG_SUGGEST: "Der folgende Sprachcode <code>%(CODE)</code> ist ungültig. Meinten Sie <code>%(CODE)</code>?",
     META_LANG_VALID: 'Der Sprachcode für dieses Element ist ungültig. Um dies zu beheben, ersetzen Sie das lang-Attribut durch einen gültigen Sprachcode. <hr> <strong {B}>Element</strong> <code>&lt;%(ELEMENT) lang="%(CODE)"&gt;</code> <hr> Erfahren Sie mehr über die <a href="https://www.w3.org/International/questions/qa-html-language-declarations.de.html">Sprachdeklaration in HTML.</a>',
     // Buttons
+    BTN_UNPRONOUNCEABLE: "Der Schaltflächentext enthält nur Symbole oder nicht aussprechbare Zeichen. <hr> <strong {B}>Barrierefreier Name</strong> <strong {C}>%(TEXT)</strong> <hr>",
     BTN_EMPTY: "Der Schaltfläche fehlt ein zugänglicher Name, der ihren Zweck beschreibt.",
     BTN_EMPTY_LABELLEDBY: "Die Schaltfläche hat einen <code>aria-labelledby</code>-Wert, der leer ist oder nicht mit dem <code>id</code>-Wert eines anderen Elements auf der Seite übereinstimmt.",
     BTN: "Schaltfläche",

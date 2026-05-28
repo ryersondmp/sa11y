@@ -180,6 +180,7 @@ const pl = {
     HEADING_FIRST: 'Pierwszym nagłówkiem na stronie powinien być zwykle Nagłówek H1 lub Nagłówek H2. Nagłówek H1 jest głównym nagłówkiem opisującym ogólny cel strony i powinien być początkiem obszaru treści głównej. Dowiedz się więcej o <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">Strukturze nagłówków.</a>',
     HEADING_MISSING_ONE: 'Brakuje nagłówka H1. Nagłówek H1 jest głównym nagłówkiem opisującym ogólny cel strony i powinien być początkiem obszaru treści głównej. Dowiedz się więcej o <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">Strukturze nagłówków.</a>',
     HEADING_EMPTY_WITH_IMAGE: "Nagłówek nie ma tekstu, ale zawiera obrazek. Jeśli to nie jest nagłówek, zmień jego format z <strong {C}>Nagłówek H%(level)</strong> na <strong>zwykły tekst</strong> lub <strong>akapit</strong>. W przeciwnym razie, dodaj do obrazu tekst alt, jeśli nie jest on ozdobny.",
+    HEADING_UNPRONOUNCEABLE: "Tekst nagłówka zawiera wyłącznie symbole lub znaki niemożliwe do wymówienia. Jeśli uważasz, że jest to błąd wynikający z problemu przy kopiowaniu/wklejaniu, rozważ jego usunięcie. <hr> <strong {B}>Tekst nagłówka</strong> <strong {C}>%(TEXT)</strong>",
     PANEL_HEADING_MISSING_ONE: "Brak Nagłówka 1!",
     PANEL_NO_HEADINGS: "Nie znaleziono nagłówków.",
     // Links
@@ -271,6 +272,7 @@ const pl = {
     META_LANG_SUGGEST: "Następujący kod języka <code>%(CODE)</code> jest nieprawidłowy. Czy chodziło o <code>%(CODE)</code>?",
     META_LANG_VALID: 'Kod języka dla tego elementu jest nieprawidłowy. Aby to naprawić, zastąp atrybut lang prawidłowym kodem języka. <hr> <strong {B}>Element</strong> <code>&lt;%(ELEMENT) lang="%(CODE)"&gt;</code> <hr> Dowiedz się więcej o <a href="https://www.w3.org/International/questions/qa-html-language-declarations">deklarowaniu języka w HTML.</a>',
     // Buttons
+    BTN_UNPRONOUNCEABLE: "Tekst przycisku zawiera wyłącznie symbole lub znaki niemożliwe do wymówienia. <hr> <strong {B}>Nazwa dostępna</strong> <strong {C}>%(TEXT)</strong> <hr>",
     BTN_EMPTY: "Przycisk nie ma dostępnej nazwy opisującej jego cel.",
     BTN_EMPTY_LABELLEDBY: "Przycisk ma wartość <code>aria-labelledby</code>, która jest pusta lub nie pasuje do wartości <code>id</code> innego elementu na stronie.",
     BTN: "przycisk",

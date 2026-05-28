@@ -367,7 +367,6 @@ export default {
     META_LANG_VALID: 'Kode bahasa untuk elemen ini tidak valid. Untuk memperbaikinya, ganti atribut lang dengan kode bahasa yang valid. <hr> <strong {B}>Elemen</strong> <code>&lt;%(ELEMENT) lang="%(CODE)"&gt;</code> <hr> Pelajari lebih lanjut tentang <a href="https://www.w3.org/International/questions/qa-html-language-declarations">mendeklarasikan bahasa dalam HTML.</a>',
 
     // Buttons
-    BTN_UNPRONOUNCEABLE: 'Teks tombol hanya berisi simbol atau karakter yang tidak dapat diucapkan. <hr> <strong {B}>Nama yang dapat diakses</strong> <strong {C}>%(TEXT)</strong> <hr>',
     BTN_EMPTY: 'Tombol tidak memiliki nama aksesibel yang menjelaskan tujuannya.',
     BTN_EMPTY_LABELLEDBY:
       'Tombol memiliki nilai <code>aria-labelledby</code> yang kosong atau tidak sesuai dengan nilai <code>id</code> dari elemen lain di halaman.',

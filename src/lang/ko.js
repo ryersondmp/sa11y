@@ -368,7 +368,6 @@ export default {
     META_LANG_VALID: '이 요소의 언어 코드가 유효하지 않습니다. 문제를 해결하려면 lang 속성을 유효한 언어 코드로 교체하세요. <hr> <strong {B}>요소</strong> <code>&lt;%(ELEMENT) lang="%(CODE)"&gt;</code> <hr> <a href="https://www.w3.org/International/questions/qa-html-language-declarations">HTML에서 언어 선언</a>에 대해 자세히 알아보세요.',
 
     // Buttons
-    BTN_UNPRONOUNCEABLE: '버튼 텍스트에 기호 또는 발음할 수 없는 문자만 포함되어 있습니다. <hr> <strong {B}>액세스 가능한 이름</strong> <strong {C}>%(TEXT)</strong> <hr>',
     BTN_EMPTY: '버튼에 그 목적을 설명하는 접근 가능한 이름이 없습니다.',
     BTN_EMPTY_LABELLEDBY:
       '버튼에 비어 있는 <code>aria-labelledby</code> 값이 있거나, 페이지의 다른 요소의 <code>id</code> 값과 일치하지 않습니다.',

@@ -192,9 +192,8 @@ export default function checkLinkText() {
       }
 
       /* ******************* */
-      /* Empty hyperlinks   */
+      /*  Empty hyperlinks   */
       /* ******************* */
-
       if (linkText.length === 0) {
         if (hasAriaLabelledby) {
           // Has ariaLabelledby attribute but empty accessible name.
@@ -297,11 +296,12 @@ export default function checkLinkText() {
         });
       } else if ((!Constants.Global.unpronounceablePattern.test(linkText)) && !titleAttr) {
         // Link is ONLY a period, comma, or special character.
+        const pua = /[\uE000-\uF8FF]/gu.test(linkText) ? 'LINK_EMPTY_NO_LABEL' : 'LINK_UNPRONOUNCEABLE';
         logResult({
-          test: 'LINK_UNPRONOUNCEABLE',
+          test: pua,
           type: 'error',
           args: [linkText],
-          content: Lang._('LINK_UNPRONOUNCEABLE') + Lang._('LINK_TIP'),
+          content: Lang._(pua) + Lang._('LINK_TIP'),
           position: 'afterend',
         });
       }

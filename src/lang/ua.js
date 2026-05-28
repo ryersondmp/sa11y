@@ -373,7 +373,6 @@ export default {
     META_LANG_VALID: 'Мовний код для цього елемента недійсний. Щоб виправити це, замініть атрибут lang дійсним мовним кодом. <hr> <strong {B}>Елемент</strong> <code>&lt;%(ELEMENT) lang="%(CODE)"&gt;</code> <hr> Дізнайтеся більше про <a href="https://www.w3.org/International/questions/qa-html-language-declarations">декларування мови в HTML.</a>',
 
     // Buttons
-    BTN_UNPRONOUNCEABLE: 'Текст кнопки містить лише символи або невимовні знаки. <hr> <strong {B}>Доступне ім’я</strong> <strong {C}>%(TEXT)</strong> <hr>',
     BTN_EMPTY: 'Кнопка не має доступного імені, яке описує її призначення.',
     BTN_EMPTY_LABELLEDBY:
       'Кнопка має значення <code>aria-labelledby</code>, яке є порожнім або не відповідає значенню <code>id</code> іншого елемента на сторінці.',

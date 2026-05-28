@@ -184,6 +184,7 @@
       HEADING_FIRST: 'Prvním nadpisem na stránce by obvykle měl být nadpis 1 nebo nadpis 2. Nadpis 1 by měl být začátkem hlavní části obsahu a je hlavním nadpisem, který popisuje celkový účel stránky. Více informací o <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">Struktuře nadpisů.</a>',
       HEADING_MISSING_ONE: 'Chybějící nadpis 1. Nadpis 1 by měl být začátkem hlavní oblasti obsahu a je to hlavní nadpis, který popisuje celkový účel stránky. Více informací o <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">Struktuře nadpisů.</a>',
       HEADING_EMPTY_WITH_IMAGE: "Nadpis neobsahuje žádný text, ale obrázek. Pokud se nejedná o nadpis, změňte jeho formát z <strong {C}>Nadpis %(level)</strong> na <strong>Normální</strong> nebo <strong>Odstavec</strong>. V opačném případě přidejte k obrázku alt text, pokud není ozdobný.",
+      HEADING_UNPRONOUNCEABLE: "Text nadpisu obsahuje pouze symboly nebo nevyslovitelné znaky. Pokud si myslíte, že se jedná o chybu způsobenou chybou při kopírování/vkládání, zvažte jeho smazání. <hr> <strong {B}>Text nadpisu</strong> <strong {C}>%(TEXT)</strong>",
       PANEL_HEADING_MISSING_ONE: "Chybí nadpis 1!",
       PANEL_NO_HEADINGS: "Nebyly nalezeny žádné záhlaví.",
       // Links
@@ -275,6 +276,7 @@
       META_LANG_SUGGEST: "Následující kód jazyka <code>%(CODE)</code> není platný. Mysleli jste <code>%(CODE)</code>?",
       META_LANG_VALID: 'Kód jazyka pro tento prvek není platný. Chcete-li to napravit, nahraďte atribut lang platným kódem jazyka. <hr> <strong {B}>Prvek</strong> <code>&lt;%(ELEMENT) lang="%(CODE)"&gt;</code> <hr> Další informace o <a href="https://www.w3.org/International/questions/qa-html-language-declarations">deklarování jazyka v HTML.</a>',
       // Buttons
+      BTN_UNPRONOUNCEABLE: "Text tlačítka obsahuje pouze symboly nebo nevyslovitelné znaky. <hr> <strong {B}>Přístupný název</strong> <strong {C}>%(TEXT)</strong> <hr>",
       BTN_EMPTY: "Tlačítku chybí přístupné jméno, které popisuje jeho účel.",
       BTN_EMPTY_LABELLEDBY: "Tlačítko má hodnotu <code>aria-labelledby</code>, která je prázdná nebo neodpovídá hodnotě <code>id</code> jiného prvku na stránce.",
       BTN: "tlačítko",

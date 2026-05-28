@@ -178,6 +178,7 @@ const id = {
     HEADING_FIRST: 'Judul pertama pada halaman biasanya adalah Heading 1 atau Heading 2. Heading 1 harus menjadi awal dari bagian konten utama, dan merupakan judul utama yang menjelaskan tujuan keseluruhan halaman. Pelajari lebih lanjut tentang <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">Struktur Heading.</a>',
     HEADING_MISSING_ONE: 'Heading 1. Heading 1 seharusnya menjadi awal dari area konten utama, dan merupakan heading utama yang menjelaskan tujuan keseluruhan halaman. Pelajari lebih lanjut tentang <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">Struktur Judul.</a>',
     HEADING_EMPTY_WITH_IMAGE: "Judul tidak memiliki teks, namun berisi gambar. Jika ini bukan judul, ubah formatnya dari <strong {C}>Judul %(level)</strong> ke <strong>Normal</strong> atau <strong>Paragraf</strong>. Jika tidak, tambahkan teks alt ke gambar jika tidak bersifat dekoratif.",
+    HEADING_UNPRONOUNCEABLE: "Teks tajuk hanya berisi simbol atau karakter yang tidak dapat diucapkan. Jika Anda rasa ini adalah kesalahan karena masalah salin/tempel, pertimbangkan untuk menghapusnya. <hr> <strong {B}>Teks tajuk</strong> <strong {C}>%(TEXT)</strong>",
     PANEL_HEADING_MISSING_ONE: "Hilang Heading 1!",
     PANEL_NO_HEADINGS: "Tidak ada judul ditemukan.",
     // Links
@@ -269,6 +270,7 @@ const id = {
     META_LANG_SUGGEST: "Kode bahasa berikut <code>%(CODE)</code> tidak valid. Apakah maksud Anda <code>%(CODE)</code>?",
     META_LANG_VALID: 'Kode bahasa untuk elemen ini tidak valid. Untuk memperbaikinya, ganti atribut lang dengan kode bahasa yang valid. <hr> <strong {B}>Elemen</strong> <code>&lt;%(ELEMENT) lang="%(CODE)"&gt;</code> <hr> Pelajari lebih lanjut tentang <a href="https://www.w3.org/International/questions/qa-html-language-declarations">mendeklarasikan bahasa dalam HTML.</a>',
     // Buttons
+    BTN_UNPRONOUNCEABLE: "Teks tombol hanya berisi simbol atau karakter yang tidak dapat diucapkan. <hr> <strong {B}>Nama yang dapat diakses</strong> <strong {C}>%(TEXT)</strong> <hr>",
     BTN_EMPTY: "Tombol tidak memiliki nama aksesibel yang menjelaskan tujuannya.",
     BTN_EMPTY_LABELLEDBY: "Tombol memiliki nilai <code>aria-labelledby</code> yang kosong atau tidak sesuai dengan nilai <code>id</code> dari elemen lain di halaman.",
     BTN: "tombol",

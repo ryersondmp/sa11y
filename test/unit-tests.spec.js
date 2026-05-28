@@ -618,6 +618,11 @@ test.describe('Sa11y Unit Tests', () => {
     expect(issue).toBe(true);
   });
 
+  test('Non-english (ZH) characters should pass alt', async () => {
+    const issue = await checkTooltip(page, 'pass-image-bad-alt', 'Good');
+    expect(issue).toBe(true);
+  });
+
   test('Linked image has bad alt text', async () => {
     const issue = await checkTooltip(page, 'error-bad-alt-linked', 'Image link has alt text that may not provide useful information or contains non-descript text. Ensure the alt text describes the destination of the link.');
     expect(issue).toBe(true);

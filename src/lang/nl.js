@@ -376,7 +376,6 @@ export default {
     META_LANG_VALID: 'De taalcode voor dit element is niet geldig. Vervang het lang-attribuut door een geldige taalcode om dit op te lossen. <hr> <strong {B}>Element</strong> <code>&lt;%(ELEMENT) lang="%(CODE)"&gt;</code> <hr> Lees meer over het <a href="https://www.w3.org/International/questions/qa-html-language-declarations">declareren van taal in HTML.</a>',
 
     // Buttons
-    BTN_UNPRONOUNCEABLE: 'De knoptekst bevat alleen symbolen of onuitspreekbare tekens. <hr> <strong {B}>Toegankelijke naam</strong> <strong {C}>%(TEXT)</strong> <hr>',
     BTN_EMPTY: 'De knop mist een toegankelijke naam die het doel beschrijft.',
     BTN_EMPTY_LABELLEDBY:
       'De knop heeft een <code>aria-labelledby</code> waarde die leeg is of niet overeenkomt met de <code>id</code> waarde van een ander element op de pagina.',

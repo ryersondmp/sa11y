@@ -47,8 +47,8 @@ export default function checkHeaders() {
     const alt = image?.getAttribute('alt');
     const hasEmptyImage = image && (!alt || alt.trim() === '' || accName === '');
     const rawText = $el.textContent || '';
-    const isUnpronounceable = rawText?.trim() !== ''
-      && !Constants.Global.unpronounceablePattern.test(headingText);
+    const isUnpronounceable =
+      rawText?.trim() !== '' && !Constants.Global.unpronounceablePattern.test(headingText);
 
     if (headingLength === 0 && hasEmptyImage) {
       result = logResult({

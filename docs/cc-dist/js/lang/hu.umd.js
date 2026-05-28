@@ -183,6 +183,7 @@
       HEADING_FIRST: 'Az oldal első címe általában Cím 1 vagy Cím 2 legyen.A Cím 1-nek a fő tartalom szakaszának kezdetét kell jelentenie, és ez a fő cím, amely leírja az oldal általános célját.Tudj meg többet a<a href = "https://www.w3.org/WAI/tutorials/page-structure/headings/">Fejléc szerkezetéről.</a>',
       HEADING_MISSING_ONE: 'Hiányzó Cím 1. A Cím 1-nek a fő tartalom területének kezdetét kell jelentenie, és ez a fő cím, amely leírja az oldal általános célját. További információkért látogasson el ide: <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">Fejléck struktúra.</a>',
       HEADING_EMPTY_WITH_IMAGE: "A címsor nem tartalmaz szöveget, de képet tartalmaz. Ha ez nem címsor, akkor változtassa meg a formátumát <strong {C}>Címsor %(level)</strong> formátumra <strong>Normál</strong> vagy <strong>Bekezdés</strong>. Ellenkező esetben kérem, adja hozzá az alternatív szöveget a képhez, ha az nem díszítőelem.",
+      HEADING_UNPRONOUNCEABLE: "A címsor szövege csak szimbólumokat vagy kiejthetetlen karaktereket tartalmaz. Ha úgy gondolja, hogy ez egy másolási/beillesztési hiba miatt van, fontolja meg a törlését. <hr> <strong {B}>Címsor szövege</strong> <strong {C}>%(TEXT)</strong>",
       PANEL_HEADING_MISSING_ONE: "Hiányzik az 1. címsor!",
       PANEL_NO_HEADINGS: "Nem találtunk címszavakat.",
       // Links
@@ -274,6 +275,7 @@
       META_LANG_SUGGEST: "A következő nyelvkód <code>%(CODE)</code> nem érvényes. Erre gondolt: <code>%(CODE)</code>?",
       META_LANG_VALID: 'Az elem nyelvi kódja nem érvényes. A javításhoz cserélje ki a lang attribútumot egy érvényes nyelvi kódra. <hr> <strong {B}>Elem</strong> <code>&lt;%(ELEMENT) lang="%(CODE)"&gt;</code> <hr> Tudjon meg többet a <a href="https://www.w3.org/International/questions/qa-html-language-declarations">nyelv deklarálásáról HTML-ben.</a>',
       // Buttons
+      BTN_UNPRONOUNCEABLE: "A gomb szövege csak szimbólumokat vagy kiejthetetlen karaktereket tartalmaz. <hr> <strong {B}>Akadálymentes név</strong> <strong {C}>%(TEXT)</strong> <hr>",
       BTN_EMPTY: "A gomb hiányzik egy akadálymentes névvel, amely leírja annak célját.",
       BTN_EMPTY_LABELLEDBY: "A gombnak van egy <code>aria-labelledby</code> értéke, amely üres, vagy nem egyezik meg egy másik elem <code>id</code> értékével az oldalon.",
       BTN: "gomb",
