@@ -274,7 +274,6 @@
       META_LANG_SUGGEST: "Järgmine keelekood <code>%(CODE)</code> ei ole kehtiv. Kas mõtlesite <code>%(CODE)</code>?",
       META_LANG_VALID: 'Selle elemendi keelekood ei ole kehtiv. Parandamiseks asendage lang-atribuut kehtiva keelekoodiga. <hr> <strong {B}>Element</strong> <code>&lt;%(ELEMENT) lang="%(CODE)"&gt;</code> <hr> Lisateave <a href="https://www.w3.org/International/questions/qa-html-language-declarations">keele deklareerimise kohta HTML-is.</a>',
       // Buttons
-      BTN_UNPRONOUNCEABLE: "Nupu tekst sisaldab ainult sümboleid või hääldamatuid märke. <hr> <strong {B}>Kättesaadav nimi</strong> <strong {C}>%(TEXT)</strong> <hr>",
       BTN_EMPTY: "Nupul puudub ligipääsetav nimi, mis kirjeldaks selle eesmärki.",
       BTN_EMPTY_LABELLEDBY: "Nupul on <code>aria-labelledby</code> väärtus, mis on tühi või ei vasta teise lehe elemendi <code>id</code> väärtusele.",
       BTN: "nupp",

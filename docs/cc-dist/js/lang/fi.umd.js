@@ -271,7 +271,6 @@
       META_LANG_SUGGEST: "Seuraava kielikoodi <code>%(CODE)</code> ei ole kelvollinen. Tarkoititko <code>%(CODE)</code>?",
       META_LANG_VALID: 'Tämän elementin kielikoodi ei ole kelvollinen. Korjaa ongelma korvaamalla lang-attribuutti kelvollisella kielikoodilla. <hr> <strong {B}>Elementti</strong> <code>&lt;%(ELEMENT) lang="%(CODE)"&gt;</code> <hr> Lue lisää <a href="https://www.w3.org/International/questions/qa-html-language-declarations">kielen määrittämisestä HTML-koodissa.</a>',
       // Buttons
-      BTN_UNPRONOUNCEABLE: "Painikkeen teksti sisältää vain symboleja tai lausumattomia merkkejä. <hr> <strong {B}>Esteetön nimi</strong> <strong {C}>%(TEXT)</strong> <hr>",
       BTN_EMPTY: "Painikkeesta puuttuu saavutettava nimi, joka kuvaisi sen tarkoitusta.",
       BTN_EMPTY_LABELLEDBY: "Painikkeessa on <code>aria-labelledby</code>-arvo, joka on tyhjä tai ei vastaa toisen elementin <code>id</code>-arvoa sivulla.",
       BTN: "painike",

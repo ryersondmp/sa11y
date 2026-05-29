@@ -273,7 +273,6 @@ const fr = {
     META_LANG_SUGGEST: "Le code de langue suivant <code>%(CODE)</code> n'est pas valide. Vouliez-vous dire <code>%(CODE)</code>?",
     META_LANG_VALID: `Le code de langue pour cet élément n'est pas valide. Pour corriger cela, remplacez l'attribut lang par un code de langue valide. <hr> <strong {B}>Élément</strong> <code>&lt;%(ELEMENT) lang="%(CODE)"&gt;</code> <hr> En savoir plus sur la <a href="https://www.w3.org/International/questions/qa-html-language-declarations.fr.html">déclaration de la langue en HTML.</a>`,
     // Buttons
-    BTN_UNPRONOUNCEABLE: "Le texte du bouton contient uniquement des symboles ou des caractères imprononçables. <hr> <strong {B}>Nom accessible</strong> <strong {C}>%(TEXT)</strong> <hr>",
     BTN_EMPTY: "Le bouton manque d’un nom accessible qui décrit son objectif.",
     BTN_EMPTY_LABELLEDBY: "Le bouton a une valeur <code>aria-labelledby</code> qui est vide ou ne correspond pas à la valeur <code>id</code> d’un autre élément sur la page.",
     BTN: "bouton",

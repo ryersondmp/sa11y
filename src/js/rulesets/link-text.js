@@ -103,7 +103,7 @@ export default function checkLinkText() {
     };
 
     // Do not conflict with alt text module.
-    if (!$el.querySelector('img[alt=""]') || hasAria) {
+    if (!$el.querySelector('img') || hasAria) {
       // Links with ARIA
       if (hasAria && linkText.length !== 0) {
         // General warning for visible non-descript link text, regardless of ARIA label.
@@ -294,9 +294,11 @@ export default function checkLinkText() {
           args: [matchedSymbol, linkText],
           dismiss: strippedLinkText,
         });
-      } else if ((!Constants.Global.unpronounceablePattern.test(linkText)) && !titleAttr) {
+      } else if (!Constants.Global.unpronounceablePattern.test(linkText) && !titleAttr) {
         // Link is ONLY a period, comma, or special character.
-        const pua = /[\uE000-\uF8FF]/gu.test(linkText) ? 'LINK_EMPTY_NO_LABEL' : 'LINK_UNPRONOUNCEABLE';
+        const pua = /[\uE000-\uF8FF]/gu.test(linkText)
+          ? 'LINK_EMPTY_NO_LABEL'
+          : 'LINK_UNPRONOUNCEABLE';
         logResult({
           test: pua,
           type: 'error',

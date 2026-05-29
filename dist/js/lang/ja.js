@@ -309,7 +309,6 @@ const ja = {
     META_LANG_SUGGEST: "次の言語コード <code>%(CODE)</code> は無効です。もしかして <code>%(CODE)</code> ですか？",
     META_LANG_VALID: 'この要素の言語コードが有効ではありません。修正するには、lang 属性を有効な言語コードに置き換えてください。 <hr> <strong {B}>要素</strong> <code>&lt;%(ELEMENT) lang="%(CODE)"&gt;</code> <hr> <a href="https://www.w3.org/International/questions/qa-html-language-declarations">HTML での言語宣言</a>の詳細をご覧ください。',
     // Buttons
-    BTN_UNPRONOUNCEABLE: "ボタンのテキストに記号または発音できない文字のみが含まれています。 <hr> <strong {B}>アクセシブルな名前</strong> <strong {C}>%(TEXT)</strong> <hr>",
     BTN_EMPTY: "ボタンにはその目的を説明するアクセシブルな名前がありません。",
     BTN_EMPTY_LABELLEDBY: "ボタンに空の <code>aria-labelledby</code> 値があるか、ページ上の他の要素の <code>id</code> と一致していません。",
     BTN: "ボタン",

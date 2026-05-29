@@ -298,6 +298,11 @@ test.describe('Sa11y Unit Tests', () => {
       page, 'error-unpronounceable-character', 'contains unpronounceable',
     );
     expect(issue).toBe(true);
+
+    const issue2 = await checkTooltip(
+      page, 'error-unpronounceable-character-2', 'contains unpronounceable',
+    );
+    expect(issue2).toBe(true);
   });
 
   test('Linked image using unpronounceable character for alt', async () => {

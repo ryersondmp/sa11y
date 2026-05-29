@@ -273,7 +273,6 @@
       META_LANG_SUGGEST: "Følgende språkkode <code>%(CODE)</code> er ikke gyldig. Mente du <code>%(CODE)</code>?",
       META_LANG_VALID: 'Språkkoden for dette elementet er ikke gyldig. For å fikse dette, erstatt lang-attributtet med en gyldig språkkode. <hr> <strong {B}>Element</strong> <code>&lt;%(ELEMENT) lang="%(CODE)"&gt;</code> <hr> Lær mer om <a href="https://www.w3.org/International/questions/qa-html-language-declarations">deklarering av språk i HTML.</a>',
       // Buttons
-      BTN_UNPRONOUNCEABLE: "Knappeteksten inneholder bare symboler eller utalbare tegn. <hr> <strong {B}>Tilgjengelig navn</strong> <strong {C}>%(TEXT)</strong> <hr>",
       BTN_EMPTY: "Knappen mangler et tilgjengelig navn som beskriver dens formål.",
       BTN_EMPTY_LABELLEDBY: "Knappen har en <code>aria-labelledby</code> verdi som er tom eller ikke samsvarer med <code>id</code> verdien til et annet element på siden.",
       BTN: "knapp",

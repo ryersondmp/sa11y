@@ -270,7 +270,6 @@ const el = {
     META_LANG_SUGGEST: "Ο ακόλουθος κωδικός γλώσσας <code>%(CODE)</code> δεν είναι έγκυρος. Μήπως εννοούσατε <code>%(CODE)</code>;",
     META_LANG_VALID: 'Ο κωδικός γλώσσας για αυτό το στοιχείο δεν είναι έγκυρος. Για να το διορθώσετε, αντικαταστήστε το χαρακτηριστικό lang με έναν έγκυρο κωδικό γλώσσας. <hr> <strong {B}>Στοιχείο</strong> <code>&lt;%(ELEMENT) lang="%(CODE)"&gt;</code> <hr> Μάθετε περισσότερα για τη <a href="https://www.w3.org/International/questions/qa-html-language-declarations">δήλωση γλώσσας στην HTML.</a>',
     // Buttons
-    BTN_UNPRONOUNCEABLE: "Το κείμενο του κουμπιού περιέχει μόνο σύμβολα ή χαρακτήρες που δεν προφέρονται. <hr> <strong {B}>Προσβάσιμο όνομα</strong> <strong {C}>%(TEXT)</strong> <hr>",
     BTN_EMPTY: "Το κουμπί δεν έχει ένα προσβάσιμο όνομα που να περιγράφει τον σκοπό του.",
     BTN_EMPTY_LABELLEDBY: "Το κουμπί έχει τιμή <code>aria-labelledby</code> που είναι κενή ή δεν αντιστοιχεί στην τιμή <code>id</code> ενός άλλου στοιχείου στη σελίδα.",
     BTN: "κουμπί",

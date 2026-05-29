@@ -276,7 +276,6 @@
       META_LANG_SUGGEST: "El siguiente código de idioma <code>%(CODE)</code> no es válido. ¿Quiso decir <code>%(CODE)</code>?",
       META_LANG_VALID: 'El código de idioma para este elemento no es válido. Para solucionarlo, reemplace el atributo lang con un código de idioma válido. <hr> <strong {B}>Elemento</strong> <code>&lt;%(ELEMENT) lang="%(CODE)"&gt;</code> <hr> Obtenga más información sobre cómo <a href="https://www.w3.org/International/questions/qa-html-language-declarations.es.html">declarar el idioma en HTML.</a>',
       // Buttons
-      BTN_UNPRONOUNCEABLE: "El texto del botón solo contiene símbolos o caracteres impronunciables. <hr> <strong {B}>Nombre accesible</strong> <strong {C}>%(TEXT)</strong> <hr>",
       BTN_EMPTY: "El botón carece de un nombre accesible que describa su propósito.",
       BTN_EMPTY_LABELLEDBY: "El botón tiene un valor de <code>aria-labelledby</code> que está vacío o no coincide con el valor de <code>id</code> de otro elemento en la página.",
       BTN: "botón",

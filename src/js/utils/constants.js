@@ -33,7 +33,6 @@ const Constants = (function myConstants() {
       Global.html.getAttribute('dir')?.trim()?.toLowerCase() === 'rtl' ? 'rtl' : 'ltr';
 
     // Check for document types.
-    // Check for document types.
     if (State.option.checks.QA_DOCUMENT !== false) {
       const defaultDocumentSources =
         'a[href$=".doc"], a[href$=".docx"], a[href*=".doc?"], a[href*=".docx?"], a[href$=".ppt"], a[href$=".pptx"], a[href*=".ppt?"], a[href*=".pptx?"], a[href^="https://drive.google.com/file"], a[href^="https://docs.google."], a[href^="https://sway."]';
@@ -417,9 +416,9 @@ const Constants = (function myConstants() {
       'base',
       'datalist',
       'datalist *',
-
       ...exclusions,
     ];
+
     if (State.option.contrastIgnore) {
       Exclusions.Contrast = State.option.contrastIgnore
         .split(',')

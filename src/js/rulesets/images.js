@@ -98,9 +98,9 @@ export default function checkImages() {
     // Process link text exclusions.
     const linkText = link
       ? Utils.fnIgnore(link, Constants.Exclusions.LinkSpan).textContent.replace(
-        Constants.Global.linkIgnoreStringPattern,
-        '',
-      )
+          Constants.Global.linkIgnoreStringPattern,
+          '',
+        )
       : '';
     const linkTextLength = Utils.removeWhitespace(linkText).length;
 
@@ -224,7 +224,8 @@ export default function checkImages() {
     const isBadFilename = new RegExp(`^(?=[^_-]*([_-][^_-]*){3,})\\S{${minLength},}$`).test(
       altText,
     );
-    const containsCJK = /[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Hangul}]/u.test(altText);
+    const containsCJK =
+      /[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Hangul}]/u.test(altText);
     if (isBadFilename || (!containsCJK && isTooLongSingleWord.test(alt) && containsNonAlphaChar)) {
       logResult({
         test: badAltTest,

@@ -272,7 +272,6 @@ const pl = {
     META_LANG_SUGGEST: "Następujący kod języka <code>%(CODE)</code> jest nieprawidłowy. Czy chodziło o <code>%(CODE)</code>?",
     META_LANG_VALID: 'Kod języka dla tego elementu jest nieprawidłowy. Aby to naprawić, zastąp atrybut lang prawidłowym kodem języka. <hr> <strong {B}>Element</strong> <code>&lt;%(ELEMENT) lang="%(CODE)"&gt;</code> <hr> Dowiedz się więcej o <a href="https://www.w3.org/International/questions/qa-html-language-declarations">deklarowaniu języka w HTML.</a>',
     // Buttons
-    BTN_UNPRONOUNCEABLE: "Tekst przycisku zawiera wyłącznie symbole lub znaki niemożliwe do wymówienia. <hr> <strong {B}>Nazwa dostępna</strong> <strong {C}>%(TEXT)</strong> <hr>",
     BTN_EMPTY: "Przycisk nie ma dostępnej nazwy opisującej jego cel.",
     BTN_EMPTY_LABELLEDBY: "Przycisk ma wartość <code>aria-labelledby</code>, która jest pusta lub nie pasuje do wartości <code>id</code> innego elementu na stronie.",
     BTN: "przycisk",

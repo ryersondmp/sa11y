@@ -274,7 +274,6 @@ const lv = {
     META_LANG_SUGGEST: "Šis valodas kods <code>%(CODE)</code> nav derīgs. Vai jūs domājāt <code>%(CODE)</code>?",
     META_LANG_VALID: 'Šī elementa valodas kods nav derīgs. Lai to labotu, aizstājiet lang atribūtu ar derīgu valodas kodu. <hr> <strong {B}>Elements</strong> <code>&lt;%(ELEMENT) lang="%(CODE)"&gt;</code> <hr> Uzziniet vairāk par <a href="https://www.w3.org/International/questions/qa-html-language-declarations">valodas deklarēšanu HTML.</a>',
     // Buttons
-    BTN_UNPRONOUNCEABLE: "Pogas teksts satur tikai simbolus vai neizrunājamas rakstzīmes. <hr> <strong {B}>Pieejamais nosaukums</strong> <strong {C}>%(TEXT)</strong> <hr>",
     BTN_EMPTY: "Poga ir bez pieejama nosaukuma, kas apraksta tās mērķi.",
     BTN_EMPTY_LABELLEDBY: "Pogai ir <code>aria-labelledby</code> vērtība, kas ir tukša vai neatbilst cita elementa <code>id</code> vērtībai lapā.",
     BTN: "poga",

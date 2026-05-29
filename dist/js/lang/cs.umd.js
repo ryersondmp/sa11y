@@ -276,7 +276,6 @@
       META_LANG_SUGGEST: "Následující kód jazyka <code>%(CODE)</code> není platný. Mysleli jste <code>%(CODE)</code>?",
       META_LANG_VALID: 'Kód jazyka pro tento prvek není platný. Chcete-li to napravit, nahraďte atribut lang platným kódem jazyka. <hr> <strong {B}>Prvek</strong> <code>&lt;%(ELEMENT) lang="%(CODE)"&gt;</code> <hr> Další informace o <a href="https://www.w3.org/International/questions/qa-html-language-declarations">deklarování jazyka v HTML.</a>',
       // Buttons
-      BTN_UNPRONOUNCEABLE: "Text tlačítka obsahuje pouze symboly nebo nevyslovitelné znaky. <hr> <strong {B}>Přístupný název</strong> <strong {C}>%(TEXT)</strong> <hr>",
       BTN_EMPTY: "Tlačítku chybí přístupné jméno, které popisuje jeho účel.",
       BTN_EMPTY_LABELLEDBY: "Tlačítko má hodnotu <code>aria-labelledby</code>, která je prázdná nebo neodpovídá hodnotě <code>id</code> jiného prvku na stránce.",
       BTN: "tlačítko",

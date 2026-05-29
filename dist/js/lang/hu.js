@@ -271,7 +271,6 @@ const hu = {
     META_LANG_SUGGEST: "A következő nyelvkód <code>%(CODE)</code> nem érvényes. Erre gondolt: <code>%(CODE)</code>?",
     META_LANG_VALID: 'Az elem nyelvi kódja nem érvényes. A javításhoz cserélje ki a lang attribútumot egy érvényes nyelvi kódra. <hr> <strong {B}>Elem</strong> <code>&lt;%(ELEMENT) lang="%(CODE)"&gt;</code> <hr> Tudjon meg többet a <a href="https://www.w3.org/International/questions/qa-html-language-declarations">nyelv deklarálásáról HTML-ben.</a>',
     // Buttons
-    BTN_UNPRONOUNCEABLE: "A gomb szövege csak szimbólumokat vagy kiejthetetlen karaktereket tartalmaz. <hr> <strong {B}>Akadálymentes név</strong> <strong {C}>%(TEXT)</strong> <hr>",
     BTN_EMPTY: "A gomb hiányzik egy akadálymentes névvel, amely leírja annak célját.",
     BTN_EMPTY_LABELLEDBY: "A gombnak van egy <code>aria-labelledby</code> értéke, amely üres, vagy nem egyezik meg egy másik elem <code>id</code> értékével az oldalon.",
     BTN: "gomb",

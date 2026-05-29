@@ -3631,7 +3631,8 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
     if (addTitleIfNoName && !aText) {
       and(addTitleIfNoName);
     }
-    if (!computedText.trim()) {
+    const pua = /[\uE000-\uF8FF]/gu;
+    if (!computedText.trim() || !computedText.trim() && pua.test(computedText)) {
       computedText = wrapPseudoContent(element, "");
       if (!computedText.trim() && element.hasAttribute("title")) {
         return element.getAttribute("title");
@@ -6449,11 +6450,12 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
       const badAltTest = link ? "LINK_ALT_MAYBE_BAD" : "ALT_MAYBE_BAD";
       const minLength = State.option.checks[badAltTest]?.minLength || 15;
       const isTooLongSingleWord = new RegExp(`^\\S{${minLength},}$`);
-      const containsNonAlphaChar = /[^\p{L}\-,.!? ]/u.test(altText);
+      const containsNonAlphaChar = /[^\p{L}\p{M}\-,.!? «»—]/u.test(altText);
       const isBadFilename = new RegExp(`^(?=[^_-]*([_-][^_-]*){3,})\\S{${minLength},}$`).test(
         altText
       );
-      if (isBadFilename || isTooLongSingleWord.test(alt) && containsNonAlphaChar) {
+      const containsCJK = /[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Hangul}]/u.test(altText);
+      if (isBadFilename || !containsCJK && isTooLongSingleWord.test(alt) && containsNonAlphaChar) {
         logResult({
           test: badAltTest,
           args: [altText],
@@ -6677,7 +6679,7 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
           ...params
         });
       };
-      if (!$el.querySelector('img[alt=""]') || hasAria) {
+      if (!$el.querySelector("img") || hasAria) {
         if (hasAria && linkText.length !== 0) {
           const excludeSpan = fnIgnore($el, Constants.Exclusions.LinkSpan);
           const visibleLinkText = getText(excludeSpan).replace(
@@ -6812,11 +6814,12 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
             dismiss: strippedLinkText
           });
         } else if (!Constants.Global.unpronounceablePattern.test(linkText) && !titleAttr) {
+          const pua = /[\uE000-\uF8FF]/gu.test(linkText) ? "LINK_EMPTY_NO_LABEL" : "LINK_UNPRONOUNCEABLE";
           logResult({
-            test: "LINK_UNPRONOUNCEABLE",
+            test: pua,
             type: "error",
             args: [linkText],
-            content: Lang._("LINK_UNPRONOUNCEABLE") + Lang._("LINK_TIP"),
+            content: Lang._(pua) + Lang._("LINK_TIP"),
             position: "afterend"
           });
         }
@@ -8056,7 +8059,7 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
       const dismissBase = $el.tagName + $el.id + $el.className;
       const hasAria = $el.querySelector(":scope [aria-labelledby], :scope [aria-label]") || $el.getAttribute("aria-labelledby") || $el.getAttribute("aria-label");
       const hasAriaLabelledby = $el.querySelector(":scope [aria-labelledby]") || $el.getAttribute("aria-labelledby");
-      if (buttonText.length === 0) {
+      if (buttonText.length === 0 || !Constants.Global.unpronounceablePattern.test(buttonText)) {
         if (hasAriaLabelledby) {
           pushResult({
             test: "BTN_EMPTY_LABELLEDBY",
@@ -8075,16 +8078,6 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
           });
         }
         return;
-      }
-      if (!Constants.Global.unpronounceablePattern.test(buttonText)) {
-        pushResult({
-          test: "BTN_UNPRONOUNCEABLE",
-          element: $el,
-          content: Lang._("BTN_UNPRONOUNCEABLE") + Lang._("BTN_TIP"),
-          args: [accName],
-          dismiss: dismissBase,
-          developer: true
-        });
       }
       const isVisibleTextInAccName$1 = isVisibleTextInAccName($el, accName);
       if (hasAria && isVisibleTextInAccName$1) {
