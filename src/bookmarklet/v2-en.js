@@ -2,8 +2,6 @@
 /* eslint-disable no-undef */
 /* eslint-disable no-new */
 
-/* ENGLISH - No automatic language detection. */
-
 // Version based on package.json
 const version = Sa11yVersion;
 const loadingSpinnerSVG = `
@@ -37,6 +35,31 @@ const loadingSpinnerSVG = `
   </path>
 </svg>`;
 
+// Helper function to safely normalize language codes based on Sa11y supported targets
+const getNormalizedLang = (langString) => {
+  const getLangResult = langString || 'en';
+  const splitLang = getLangResult.split('-');
+  let lang = splitLang[0];
+  const country = (splitLang[1]) ? splitLang[1].toLowerCase() : '';
+
+  const supportedLang = [
+    'bg', 'cs', 'da', 'de', 'el', 'en', 'es', 'et', 'fi', 'fr', 'hu', 'id', 'it', 'ja', 'ko',
+    'lt', 'lv', 'nb', 'nl', 'pl', 'pt', 'ro', 'sl', 'sk', 'sv', 'ta', 'tr', 'uk', 'ua', 'zh',
+  ];
+
+  if (!supportedLang.includes(lang)) {
+    lang = 'en';
+  } else if (lang === 'pt') {
+    lang = country === 'br' ? 'ptBR' : 'ptPT';
+  } else if (lang === 'uk') {
+    lang = 'ua';
+  } else if (lang === 'en') {
+    lang = country === 'us' ? 'enUS' : 'en';
+  }
+
+  return lang;
+};
+
 // Inject Sa11y's stylesheet in header.
 const loadStyleSheet = () => new Promise((resolve, reject) => {
   const link = document.createElement('link');
@@ -47,20 +70,45 @@ const loadStyleSheet = () => new Promise((resolve, reject) => {
   document.head.appendChild(link);
 });
 
-// Then inject Sa11y's javascript in the body of the page.
-const loadScript = () => new Promise((resolve, reject) => {
+// Dynamically combine and inject required language packs and core file
+const loadScript = (browserLang, pageLang) => new Promise((resolve, reject) => {
   const script = document.createElement('script');
-  script.src = `https://cdn.jsdelivr.net/combine/gh/ryersondmp/sa11y@${version}/dist/js/lang/en.umd.min.js,gh/ryersondmp/sa11y@${version}/dist/js/sa11y.umd.min.js`;
+
+  const filesToLoad = [
+    `gh/ryersondmp/sa11y@${version}/dist/js/lang/${browserLang}.umd.min.js`
+  ];
+
+  // Optimize network request: only fetch page language pack if it differs from browser language
+  if (browserLang !== pageLang) {
+    filesToLoad.push(`gh/ryersondmp/sa11y@${version}/dist/js/lang/${pageLang}.umd.min.js`);
+  }
+
+  // Always append core execution script last
+  filesToLoad.push(`gh/ryersondmp/sa11y@${version}/dist/js/sa11y.umd.min.js`);
+
+  script.src = `https://cdn.jsdelivr.net/combine/${filesToLoad.join(',')}`;
   script.onload = resolve;
   script.onerror = reject;
   document.body.appendChild(script);
 });
 
 // Once scripts are loaded, instantiate Sa11y.
-const onLoadScript = () => {
+const onLoadScript = (browserLang, pageLang) => {
   // Instantiate.
   const instantiate = () => {
-    Sa11y.Lang.addI18n(Sa11yLangEn.strings);
+    const browserKey = `Sa11yLang${browserLang.charAt(0).toUpperCase() + browserLang.slice(1)}`;
+    const pageKey = `Sa11yLang${pageLang.charAt(0).toUpperCase() + pageLang.slice(1)}`;
+
+    const browserLangObj = window[browserKey] || {};
+    const pageLangObj = window[pageKey] || {};
+
+    // Combine standard UX strings from Browser Preference and Rulesets from Page Document Lang
+    const mergedStrings = {
+      ...(browserLangObj.strings || browserLangObj),
+      ...(pageLangObj.ruleset || {})
+    };
+
+    Sa11y.Lang.addI18n(mergedStrings);
     new Sa11y.Sa11y({
       autoDetectShadowComponents: true,
       customChecks: false,
@@ -103,10 +151,14 @@ const initialize = () => {
   shadowRoot.appendChild(loadingSpinnerContent);
   document.body.appendChild(loadingSpinner);
 
+  // Compute normalized source targets
+  const pageLang = getNormalizedLang(document.documentElement.lang);
+  const browserLang = getNormalizedLang(navigator.language || navigator.languages?.[0]);
+
   // Load scripts & then instantiate Sa11y.
   loadStyleSheet()
-    .then(() => loadScript())
-    .then(() => onLoadScript())
+    .then(() => loadScript(browserLang, pageLang))
+    .then(() => onLoadScript(browserLang, pageLang))
     .catch((error) => new Error('Error loading Sa11y:', error));
 };
 
