@@ -317,4 +317,27 @@ test.describe('Sa11y miscellaneous tests', () => {
     );
     expect(issue).toBe(true);
   });
+
+  test('Check that i18n (Multi) page loaded English UI with Ukrainian ruleset strings', async () => {
+    await page.goto('http://localhost:8080/test/pages/i18n-multi.html');
+    const status = await page.evaluate(() => {
+      const control = document.querySelector('sa11y-control-panel').shadowRoot;
+      const panel = control.getElementById('outline-toggle').textContent;
+      const textHas = panel.match(/Outline/g);
+      return textHas;
+    });
+    expect(status).toBeTruthy();
+  });
+
+  test('i18n (Multi) alt placeholder stopword. Mixed English and Ukrainian.', async () => {
+    const issue = await checkTooltip(
+      page, 'error-image', 'Error Non-descript or placeholder alt text found. Replace the following alt text with something more meaningful.  ALT фото',
+    );
+    expect(issue).toBe(true);
+
+    const issue2 = await checkTooltip(
+      page, 'error-image-2', 'Error Non-descript or placeholder alt text found. Replace the following alt text with something more meaningful.  ALT photo',
+    );
+    expect(issue2).toBe(true);
+  });
 });
