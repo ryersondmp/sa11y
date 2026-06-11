@@ -98,9 +98,9 @@ export default function checkImages() {
     // Process link text exclusions.
     const linkText = link
       ? Utils.fnIgnore(link, Constants.Exclusions.LinkSpan).textContent.replace(
-          Constants.Global.linkIgnoreStringPattern,
-          '',
-        )
+        Constants.Global.linkIgnoreStringPattern,
+        '',
+      )
       : '';
     const linkTextLength = Utils.removeWhitespace(linkText).length;
 
@@ -134,7 +134,10 @@ export default function checkImages() {
         key = hasAria + src;
       }
     }
-    if (test && logResult({ test: test, dismiss: key })) return;
+    if (test) {
+      logResult({ test: test, dismiss: key });
+      return;
+    }
 
     // Continue if alt is presenting.
     const altText = Utils.removeWhitespace(alt);

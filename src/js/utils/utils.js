@@ -554,6 +554,7 @@ export function resetParentCache() {
  * @returns {string} String with line breaks and extra white space removed.
  */
 export function removeWhitespace(string) {
+  if (!string) return '';
   return string
     .replace(/[\r\n]+/g, ' ')
     .replace(/\s+/g, ' ')
@@ -1154,7 +1155,7 @@ export function validateLang(code, displayLangCode) {
   if (!langCache && typeof Intl !== 'undefined') {
     try {
       langCache = new Intl.DisplayNames([displayLangCode], { type: 'language', fallback: 'none' });
-    } catch {}
+    } catch { }
   }
 
   if (langCache) {
