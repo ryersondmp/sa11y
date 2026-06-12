@@ -356,7 +356,7 @@ const tooltip = {
   EMBED_DATA_VIZ:
     'Datenvisualisierungs-Widgets wie dieses sind oft problematisch für Menschen, die eine Tastatur oder einen Bildschirmleser zum Navigieren verwenden, und können für Menschen mit Sehbehinderung oder Farbenblindheit erhebliche Schwierigkeiten darstellen. Es wird empfohlen, dieselben Informationen in einem alternativen (Text- oder Tabellen-)Format unterhalb des Widgets bereitzustellen. <hr> Erfahre mehr über <a href="https://www.w3.org/WAI/tutorials/images/complex">komplexe Bilder.</a>',
   EMBED_MISSING_TITLE:
-    'Eingebetteter Inhalt erfordert einen zugänglichen Namen, der seinen Inhalt beschreibt. Bitte gib ein eindeutiges <code>title</code>- oder <code>aria-label</code>-Attribut für das <code>iframe</code>-Element an. Erfahre mehr über <a href="https://web.dev/learn/accessibility/more-html#iframes">iFrames.</a>',
+    'Eingebetteter Inhalt erfordert einen zugänglichen Namen, der seinen Inhalt beschreibt. Bitte gib ein eindeutiges <code>title</code>- oder <code>aria-label</code>-Attribut für das <code>&lt;%(ELEMENT)&gt;</code>-Element an. Erfahre mehr über <a href="https://web.dev/learn/accessibility/more-html#iframes">iFrames.</a>',
   EMBED_GENERAL:
     'Eingebetteter Inhalt kann nicht überprüft werden. Bitte stelle sicher, dass Bilder Alt-Text haben, Videos Untertitel haben, Text einen ausreichenden Kontrast hat und interaktive Komponenten <a href="https://webaim.org/techniques/keyboard/">mit der Tastatur zugänglich sind.</a>',
   EMBED_UNFOCUSABLE:

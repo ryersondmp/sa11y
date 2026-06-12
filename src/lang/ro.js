@@ -312,7 +312,7 @@ const tooltip = {
   EMBED_DATA_VIZ:
     'Widgeturile de vizualizare a datelor de acest tip sunt adesea problematice pentru persoanele care utilizează o tastatură sau un cititor de ecran pentru a naviga și pot prezenta dificultăți semnificative pentru persoanele cu vedere slabă sau daltonism. Se recomandă să furnizați aceleași informații într-un format alternativ (text sau tabel) sub widget. <hr> Aflați mai multe despre <a href="https://www.w3.org/WAI/tutorials/images/complex">imagini complexe.</a>',
   EMBED_MISSING_TITLE:
-    'Conținutul încorporat necesită un nume accesibil care să descrie conținutul său. Vă rugăm să furnizați un atribut unic <code>title</code> sau <code>aria-label</code> pe elementul <code>iframe</code>. Aflați mai multe despre <a href="https://web.dev/learn/accessibility/more-html#iframes">iFrames.</a>',
+    'Conținutul încorporat necesită un nume accesibil care să descrie conținutul său. Vă rugăm să furnizați un atribut unic <code>title</code> sau <code>aria-label</code> pe elementul <code>&lt;%(ELEMENT)&gt;</code>. Aflați mai multe despre <a href="https://web.dev/learn/accessibility/more-html#iframes">iFrames.</a>',
   EMBED_GENERAL:
     'Nu se poate verifica conținutul încorporat. Vă rugăm să vă asigurați că imaginile au text alt, videoclipurile au legende, textul are un contrast suficient, iar componentele interactive sunt <a href="https://webaim.org/techniques/keyboard/">accesibile la tastatură.</a>',
   EMBED_UNFOCUSABLE:

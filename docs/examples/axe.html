@@ -113,7 +113,7 @@
             const formatted = `${firstLine}<ul>${sa11y.truncateString(listItems, 250)}</ul>`;
 
             // HTML of element.
-            const html = sa11y.sanitizeHTML(node.html);
+            const html = sa11y.escapeHTML(node.html);
             const htmlCode = sa11y.truncateString(html, 120);
 
             // Push results.
@@ -121,7 +121,7 @@
               element: node.element.tagName === 'HTML'
                 ? undefined : node.element,
               type: 'error',
-              content: `${violation.description}. <pre><code>${htmlCode}</code></pre> ${formatted} <hr aria-hidden="true"> Learn more <a href="${violation.helpUrl}" target="_blank">about this axe-core issue.</a>`,
+              content: Sa11y.Lang.sprintf(`${violation.description}. <pre><code>${htmlCode}</code></pre> ${formatted} <hr aria-hidden="true"> Learn more <a href="${violation.helpUrl}" target="_blank">about this axe-core issue.</a>`),
               inline: true,
               position: 'beforebegin',
               external: true, // IMPORTANT: Pass in 'external: true'

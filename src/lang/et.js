@@ -309,7 +309,7 @@ const tooltip = {
   EMBED_DATA_VIZ:
     'Sellised andmete visualiseerimise vidinad on sageli problemaatilised inimestele, kes kasutavad navigeerimiseks klaviatuuri või ekraanilugejat, ning võivad tekitada märkimisväärseid raskusi inimestele, kellel on madal nägemine või värvipimedus. Soovitatav on esitada sama teave alternatiivses (teksti või tabeli) vormis vidina all. <hr> Lisateave <a href="https://www.w3.org/WAI/tutorials/images/complex">komplekspiltide kohta.</a>',
   EMBED_MISSING_TITLE:
-    'Varjatud sisu vajab juurdepääsetavat nime, mis kirjeldab selle sisu. Andke <code>iframe</code> elemendile <code>tiitle</code> või <code>aria-label</code> atribuut unikaalne <code>tiitle</code> või <code>aria-label</code>. Lisateave <a href="https://web.dev/learn/accessibility/more-html#iframes">iFrame\'i kohta.</a>',
+    'Varjatud sisu vajab juurdepääsetavat nime, mis kirjeldab selle sisu. Andke <code>&lt;%(ELEMENT)&gt;</code> elemendile <code>tiitle</code> või <code>aria-label</code> atribuut unikaalne <code>tiitle</code> või <code>aria-label</code>. Lisateave <a href="https://web.dev/learn/accessibility/more-html#iframes">iFrame\'i kohta.</a>',
   EMBED_GENERAL:
     'Ei saa kontrollida varjatud sisu. Palun veenduge, et piltidel on alt-tekst, videote pealkirjad, tekst on piisavalt kontrastne ja interaktiivsed komponendid on <a href="https://webaim.org/techniques/keyboard/">tahvlile juurdepääsetavad.</a>',
   EMBED_UNFOCUSABLE:

@@ -39,7 +39,7 @@ export default async function checkAll(
     // Find and cache elements.
     Elements.initializeElements();
 
-    // Ruleset checks
+    // Ruleset checks.
     checkHeaders();
     checkLinkText();
     checkImages();

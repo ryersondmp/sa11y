@@ -40,10 +40,24 @@ const containsAltTextStopWords = (alt) => {
     if (match) hit[0] = match[0];
   }
 
-  // 3) Suspicious alt words near the beginning of a string.
+  // 3) Suspicious alt words checking the first two and the last word.
+  let wordsToCheck = [];
+  // Check if the modern Segmenter API is supported in this environment.
+  if (typeof Intl !== 'undefined' && Intl.Segmenter) {
+    const segmenter = new Intl.Segmenter(undefined, { granularity: 'word' });
+    const allWords = [...segmenter.segment(altLowerCase)]
+      .filter((segment) => segment.isWordLike)
+      .map((segment) => segment.segment);
+    // We want to check the first two words, and the very last word in the string.
+    wordsToCheck = [...allWords.slice(0, 2), ...allWords.slice(-1)];
+  } else {
+    // Fallback for older browsers that do not support Segmenter API.
+    const altOnlyLetters = Utils.removeWhitespace(altLowerCase.replace(/[^\p{L}\s]/gu, ''));
+    const allWords = altOnlyLetters.split(/\s+/).filter(Boolean);
+    wordsToCheck = [...allWords.slice(0, 2), ...allWords.slice(-1)];
+  }
   for (const word of Constants.Global.susAltWords) {
-    const index = altLowerCase.indexOf(word);
-    if (index > -1 && index < 6) {
+    if (wordsToCheck.includes(word)) {
       hit[1] = word;
       break;
     }
@@ -98,9 +112,9 @@ export default function checkImages() {
     // Process link text exclusions.
     const linkText = link
       ? Utils.fnIgnore(link, Constants.Exclusions.LinkSpan).textContent.replace(
-        Constants.Global.linkIgnoreStringPattern,
-        '',
-      )
+          Constants.Global.linkIgnoreStringPattern,
+          '',
+        )
       : '';
     const linkTextLength = Utils.removeWhitespace(linkText).length;
 

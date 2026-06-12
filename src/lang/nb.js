@@ -308,7 +308,7 @@ const tooltip = {
   EMBED_DATA_VIZ:
     'Datavisualiseringswidgets som dette er ofte problematiske for personer som bruker tastatur eller skjermleser for å navigere, og kan by på betydelige problemer for personer med nedsatt syn eller fargeblindhet. Det anbefales å gi den samme informasjonen i et alternativt format (tekst eller tabell) under widgeten. <hr> Les mer om <a href="https://www.w3.org/WAI/tutorials/images/complex">komplekse bilder.</a>',
   EMBED_MISSING_TITLE:
-    'Innebygd innhold krever et tilgjengelig navn som beskriver innholdet. Oppgi et unikt <code>title</code> eller <code>aria-label</code>-attributt på <code>iframe</code>-elementet. Finn ut mer om <a href="https://web.dev/learn/accessibility/more-html#iframes">iFrames.</a>',
+    'Innebygd innhold krever et tilgjengelig navn som beskriver innholdet. Oppgi et unikt <code>title</code> eller <code>aria-label</code>-attributt på <code>&lt;%(ELEMENT)&gt;</code>-elementet. Finn ut mer om <a href="https://web.dev/learn/accessibility/more-html#iframes">iFrames.</a>',
   EMBED_GENERAL:
     'Kunne ikke sjekke innebygd innhold. Kontroller at bilder har alt-tekst, videoer har bildetekster, tekst har tilstrekkelig kontrast og interaktive komponenter er <a href="https://webaim.org/techniques/keyboard/">tilgjengelige via tastaturet.</a>',
   EMBED_UNFOCUSABLE:

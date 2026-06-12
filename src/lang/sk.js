@@ -310,7 +310,7 @@ const tooltip = {
   EMBED_DATA_VIZ:
     'Takéto widgety na vizualizáciu údajov sú často problematické pre ľudí, ktorí na navigáciu používajú klávesnicu alebo čítačku obrazovky, a môžu predstavovať značné ťažkosti pre ľudí so slabým zrakom alebo farbosleposťou. Odporúča sa poskytnúť rovnaké informácie v alternatívnom (textovom alebo tabuľkovom) formáte pod widgetom. <hr> Ďalšie informácie o <a href="https://www.w3.org/WAI/tutorials/images/complex">komplexných obrázkoch.</a>',
   EMBED_MISSING_TITLE:
-    'Vložený obsah vyžaduje prístupný názov, ktorý opisuje jeho obsah. Uveďte jedinečný atribút <code>title</code> alebo <code>aria-label</code> na prvku <code>iframe</code>. Ďalšie informácie o <a href="https://web.dev/learn/accessibility/more-html#iframes">iFrame.</a>',
+    'Vložený obsah vyžaduje prístupný názov, ktorý opisuje jeho obsah. Uveďte jedinečný atribút <code>title</code> alebo <code>aria-label</code> na prvku <code>&lt;%(ELEMENT)&gt;</code>. Ďalšie informácie o <a href="https://web.dev/learn/accessibility/more-html#iframes">iFrame.</a>',
   EMBED_GENERAL:
     'Nie je možné skontrolovať vložený obsah. Uistite sa, že obrázky majú alt text, videá majú titulky, text má dostatočný kontrast a interaktívne komponenty sú <a href="https://webaim.org/techniques/keyboard/">prístupné z klávesnice.</a>',
   EMBED_UNFOCUSABLE:

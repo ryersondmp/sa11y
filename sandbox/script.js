@@ -1,8 +1,11 @@
 import { Sa11y, Lang } from '../src/js/sa11y.js';
 import Sa11yLangEn from '../src/lang/en.js';
+import Sa11yLangZh from '../src/lang/zh.js';
+
+const mergedStrings = { ...(Sa11yLangEn.strings), ...(Sa11yLangZh.ruleset) };
 
 // Instantiate
-Lang.addI18n(Sa11yLangEn.strings);
+Lang.addI18n(mergedStrings);
 const sa11y = new Sa11y({
   checkRoot: 'body',
   readabilityRoot: 'main',

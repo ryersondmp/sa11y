@@ -310,7 +310,7 @@ const tooltip = {
   EMBED_DATA_VIZ:
     'Los widgets de visualización de datos como este a menudo son problemáticos para las personas que usan un teclado o un lector de pantalla para navegar, y pueden presentar dificultades significativas para las personas con problemas de visión o daltónicos. Se recomienda proporcionar la misma información en un formato alternativo (texto o tabla) debajo del widget. <hr> Más información sobre <a href="https://www.w3.org/WAI/tutorials/images/complex">imágenes complejas</a>',
   EMBED_MISSING_TITLE:
-    'El contenido incrustado requiere un nombre accesible que describa su contenido. Proporcione un atributo único <code>title</code> o <code>aria-label</code> en el elemento <code>iframe</code>. Más información sobre <a href="https://web.dev/learn/accessibility/more-html#iframes">iFrames.</a>',
+    'El contenido incrustado requiere un nombre accesible que describa su contenido. Proporcione un atributo único <code>title</code> o <code>aria-label</code> en el elemento <code>&lt;%(ELEMENT)&gt;</code>. Más información sobre <a href="https://web.dev/learn/accessibility/more-html#iframes">iFrames.</a>',
   EMBED_GENERAL:
     'No se puede comprobar el contenido incrustado. Asegúrese de que las imágenes tengan texto alternativo, los videos tengan subtítulos, el texto tenga suficiente contraste y los componentes interactivos sean <a href="https://webaim.org/techniques/keyboard/">accesibles mediante teclado.</a>',
   EMBED_FOCUSABLE:

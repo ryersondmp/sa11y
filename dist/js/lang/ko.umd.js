@@ -242,7 +242,7 @@
     EMBED_VIDEO: "모든 동영상에 자막이 있는지 확인하세요. 모든 오디오 및 동영상 콘텐츠에 자막을 제공하는 것은 필수 레벨 A 요건입니다. 자막은 청각 장애가 있거나 난청인 사용자를 지원합니다.",
     EMBED_AUDIO: "모든 팟캐스트에 <strong>대본을 제공해야 합니다.</strong> 오디오 콘텐츠에 대한 대본 제공은 필수 레벨 A 요건입니다. 대본은 청각 장애가 있거나 청각이 불편한 사람들을 지원하지만 모든 사람에게 도움이 될 수 있습니다. 대본을 아래 또는 아코디언 패널 안에 배치하는 것을 고려하세요.",
     EMBED_DATA_VIZ: '이와 같은 데이터 시각화 위젯은 키보드나 화면 리더를 사용하여 탐색하는 사람들에게 종종 문제가 되며, 저시력자나 색맹인 사람들에게는 상당한 어려움을 초래할 수 있습니다. 위젯 아래에 동일한 정보를 다른 형식(텍스트 또는 표)으로 제공하는 것이 좋습니다. <hr> 복잡한 이미지에 대해 자세히 알아보기 <a href="https://www.w3.org/WAI/tutorials/images/complex">컴플렉스 이미지.</a>',
-    EMBED_MISSING_TITLE: '임베드된 콘텐츠에는 콘텐츠를 설명하는 접근 가능한 이름이 필요합니다. <code>iframe</code> 요소에 고유한 <code>title</code> 또는 <code>aria-label</code> 속성을 제공하세요. <a href="https://web.dev/learn/accessibility/more-html#iframes">iFrames.</a>에 대해 자세히 알아보기',
+    EMBED_MISSING_TITLE: '임베드된 콘텐츠에는 콘텐츠를 설명하는 접근 가능한 이름이 필요합니다. <code>&lt;%(ELEMENT)&gt;</code> 요소에 고유한 <code>title</code> 또는 <code>aria-label</code> 속성을 제공하세요. <a href="https://web.dev/learn/accessibility/more-html#iframes">iFrames.</a>에 대해 자세히 알아보기',
     EMBED_GENERAL: '삽입된 콘텐츠를 확인할 수 없습니다. 이미지에 대체 텍스트가 있는지, 동영상에 캡션이 있는지, 텍스트의 대비가 충분한지, 인터랙티브 구성 요소가 <a href="https://webaim.org/techniques/keyboard/">키보드에 액세스할 수 있는지 확인하세요.',
     EMBED_UNFOCUSABLE: '포커스할 수 없는 요소를 포함한 <code>&lt;iframe&gt;</code>은 <code>tabindex="-1"</code>을 가져서는 안 됩니다. 포함된 콘텐츠는 키보드로 접근할 수 없습니다.',
     // QA

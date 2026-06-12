@@ -308,7 +308,7 @@ const tooltip = {
   EMBED_DATA_VIZ:
     'I widget di visualizzazione dei dati come questo sono spesso problematici per le persone che utilizzano una tastiera o uno screen reader per navigare e possono presentare notevoli difficoltà per le persone ipovedenti o daltoniche. Si consiglia di fornire le stesse informazioni in un formato alternativo (testo o tabella) sotto il widget. <hr> Per saperne di più su <a href="https://www.w3.org/WAI/tutorials/images/complex">immagini complesse.</a>',
   EMBED_MISSING_TITLE:
-    'Il contenuto incorporato richiede un nome accessibile che ne descriva il contenuto. Si prega di fornire un attributo unico <code>title</code> o <code>aria-label</code> sull\'elemento <code>iframe</code>. Per saperne di più su <a href="https://web.dev/learn/accessibility/more-html#iframes">iFrames.</a>',
+    'Il contenuto incorporato richiede un nome accessibile che ne descriva il contenuto. Si prega di fornire un attributo unico <code>title</code> o <code>aria-label</code> sull\'elemento <code>&lt;%(ELEMENT)&gt;</code>. Per saperne di più su <a href="https://web.dev/learn/accessibility/more-html#iframes">iFrames.</a>',
   EMBED_GENERAL:
     'Impossibile controllare il contenuto incorporato. Assicuratevi che le immagini abbiano un testo alt, che i video abbiano didascalie, che il testo abbia un contrasto sufficiente e che i componenti interattivi siano <a href="https://webaim.org/techniques/keyboard/">accessibili alla tastiera.</a>',
   EMBED_UNFOCUSABLE:

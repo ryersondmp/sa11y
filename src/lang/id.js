@@ -308,7 +308,7 @@ const tooltip = {
   EMBED_DATA_VIZ:
     'Widget visualisasi data seperti ini sering menjadi masalah bagi orang yang menggunakan keyboard atau pembaca layar untuk menavigasi, dan dapat menimbulkan kesulitan yang signifikan bagi orang yang memiliki penglihatan rendah atau buta warna. Disarankan untuk memberikan informasi yang sama dalam format alternatif (teks atau tabel) di bawah widget. <hr> Pelajari lebih lanjut tentang <a href="https://www.w3.org/WAI/tutorials/images/complex">gambar kompleks.</a>',
   EMBED_MISSING_TITLE:
-    'Konten yang disematkan memerlukan nama yang dapat diakses yang menjelaskan isinya. Berikan atribut <code>judul</code> atau <code>label-aria</code> yang unik pada elemen <code>iframe</code>. Pelajari lebih lanjut tentang <a href="https://web.dev/learn/accessibility/more-html#iframes">iFrames.</a>',
+    'Konten yang disematkan memerlukan nama yang dapat diakses yang menjelaskan isinya. Berikan atribut <code>judul</code> atau <code>label-aria</code> yang unik pada elemen <code>&lt;%(ELEMENT)&gt;</code>. Pelajari lebih lanjut tentang <a href="https://web.dev/learn/accessibility/more-html#iframes">iFrames.</a>',
   EMBED_GENERAL:
     'Tidak dapat memeriksa konten yang disematkan. Pastikan gambar memiliki teks alt, video memiliki keterangan, teks memiliki kontras yang cukup, dan komponen interaktif dapat diakses menggunakan keyboard. Pelajari lebih lanjut tentang <a href="https://webaim.org/techniques/keyboard/">aksesibilitas keyboard.</a>',
   EMBED_UNFOCUSABLE:

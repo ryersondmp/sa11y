@@ -311,7 +311,7 @@ const tooltip = {
   EMBED_DATA_VIZ:
     'Bunun gibi veri görselleştirme araçları, gezinmek için klavye veya ekran okuyucu kullanan kişiler için genellikle sorunludur ve az gören veya renk körlüğü olan kişiler için önemli zorluklar yaratabilir. Aynı bilgilerin widget\'ın altında alternatif (metin veya tablo) bir formatta sunulması önerilir. <hr> <a href="https://www.w3.org/WAI/tutorials/images/complex">karmaşık görüntüler hakkında daha fazla bilgi edinin.</a>',
   EMBED_MISSING_TITLE:
-    'Gömülü içerik, içeriğini açıklayan erişilebilir bir ad gerektirir. Lütfen <code>iframe</code> öğesinde benzersiz bir <code>title</code> veya <code>aria-label</code> özniteliği sağlayın. <a href="https://web.dev/learn/accessibility/more-html#iframes">iFrames.</a>',
+    'Gömülü içerik, içeriğini açıklayan erişilebilir bir ad gerektirir. Lütfen <code>&lt;%(ELEMENT)&gt;</code> öğesinde benzersiz bir <code>title</code> veya <code>aria-label</code> özniteliği sağlayın. <a href="https://web.dev/learn/accessibility/more-html#iframes">iFrames.</a>',
   EMBED_GENERAL:
     'Gömülü içerik kontrol edilemiyor. Lütfen resimlerin alt metni, videoların alt yazısı, metinlerin yeterli kontrastı ve etkileşimli bileşenlerin <a href="https://webaim.org/techniques/keyboard/">klavye ile erişilebilir olduğundan emin olun.</a>',
   EMBED_UNFOCUSABLE:

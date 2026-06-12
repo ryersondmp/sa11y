@@ -1,6 +1,6 @@
 /*!
       * Sa11y, the accessibility quality assurance assistant.
-      * @version 5.0.6
+      * @version 5.0.7
       * @author Adam Chaboryk
       * @license GPL-2.0-or-later
       * @copyright © 2020 - 2026 Toronto Metropolitan University.
@@ -840,7 +840,7 @@
     return roleAttr.toLowerCase().split(/\s+/).some((role) => role === "presentation" || role === "none");
   }
   function isNegativeTabindex($el) {
-    return $el && $el.tabIndex < 0;
+    return $el?.hasAttribute("tabindex") && $el.tabIndex < 0;
   }
   function isHiddenAndUnfocusable($el) {
     return (isPresentational($el) || isAriaHidden($el)) && isNegativeTabindex($el);
@@ -858,8 +858,8 @@
     return isElementHidden(element);
   }
   function stripAllSpecialCharacters(string) {
-    if (!string) return "";
-    return string.replace(/[^\p{L}\p{N}\s]/gu, "").replace(/\s+/g, " ").trim();
+    if (typeof string !== "string" && typeof string !== "number") return "";
+    return String(string).replace(/[^\p{L}\p{N}\s]/gu, "").replace(/\s+/g, " ").trim();
   }
   const invalidProtocolRegex = /^([^\w]*)(javascript|data|vbscript)/im;
   const htmlEntitiesRegex = /&#(\w+)(^\w|;)?/g;
@@ -899,6 +899,18 @@
       return uri;
     }
   };
+  function escapeHTML(input) {
+    if (typeof input !== "string" && typeof input !== "number") return "";
+    const htmlEntities = {
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#039;",
+      "`": "&#x60;"
+    };
+    return String(input).replace(/[&<>"'`]/g, (match) => htmlEntities[match]);
+  }
   function sanitizeURL(url2) {
     if (!url2 || typeof url2 !== "string") return BLANK_URL;
     const isBase64Data = /^data:([a-z]+\/[a-z0-9-+.]+)?;base64,/i.test(url2.trim());
@@ -1149,14 +1161,17 @@
     parentCache = /* @__PURE__ */ new WeakMap();
   }
   function removeWhitespace(string) {
-    return string.replace(/[\r\n]+/g, " ").replace(/\s+/g, " ").trim();
+    if (typeof string !== "string" && typeof string !== "number") return "";
+    return String(string).replace(/\s+/g, " ").trim();
   }
   function normalizeString(string) {
-    return removeWhitespace(string.replace(/[\u0000-\u001F\u007F-\u009F]/g, ""));
+    if (typeof string !== "string" && typeof string !== "number") return "";
+    return removeWhitespace(String(string).replace(/[\u0000-\u001F\u007F-\u009F]/g, ""));
   }
   function truncateString(string, maxLength) {
-    const truncatedString = string.substring(0, maxLength).trimEnd();
-    return string.length > maxLength ? `${truncatedString}...` : string;
+    if (typeof string !== "string" && typeof string !== "number") return "";
+    const truncatedString = String(string).substring(0, maxLength).trimEnd();
+    return string.length > maxLength ? `${truncatedString}...` : String(string);
   }
   function debounce(callback, wait) {
     let timeoutId = null;
@@ -1537,6 +1552,7 @@
     debounce,
     dismissDigest,
     documentLoadingCheck,
+    escapeHTML,
     findVisibleParent,
     fnIgnore,
     generateElementPreview,
@@ -1577,7 +1593,7 @@
     truncateString,
     validateLang
   }, Symbol.toStringTag, { value: "Module" }));
-  const styles$1 = "[data-sa11y-overflow]{overflow:auto!important}[data-sa11y-error]{outline-offset:2px;outline:5px solid var(--sa11y-error)!important}a[data-sa11y-error]:empty{margin:1px}[data-sa11y-warning]:not([data-sa11y-error]){outline-offset:2px;outline:5px solid var(--sa11y-warning)!important}[data-sa11y-pulse-border]{box-shadow:0;animation:1s 2 pulse;outline:5px solid var(--sa11y-focus-color)!important}[data-sa11y-pulse-border]:hover,[data-sa11y-pulse-border]:focus{animation:none}@keyframes pulse{0%{box-shadow:0 0 0 5px var(--sa11y-focus-color)}50%{box-shadow:0 0 0 12px var(--sa11y-pulse-color)}to{box-shadow:0 0 0 5px var(--sa11y-pulse-color)}}img[data-sa11y-pulse-border],h1[data-sa11y-pulse-border],h2[data-sa11y-pulse-border],h3[data-sa11y-pulse-border],h4[data-sa11y-pulse-border],h5[data-sa11y-pulse-border],h6[data-sa11y-pulse-border]{animation:1s 2 pulse-scale}@keyframes pulse-scale{0%{opacity:1;transform:scale(1)}50%{opacity:.7;transform:scale(1.02)}to{opacity:1;transform:scale(1)}}@media (prefers-reduced-motion:reduce){[data-sa11y-pulse-border]{animation:none!important}}@media (forced-colors:active){[data-sa11y-error],[data-sa11y-warning],[data-sa11y-good],[data-sa11y-error-inline],[data-sa11y-warning-inline],[data-sa11y-pulse-border]{forced-color-adjust:none}}";
+  const styles$1 = "[data-sa11y-overflow]{overflow:auto!important}[data-sa11y-error]{outline-offset:2px;outline:5px solid var(--sa11y-error)!important}a[data-sa11y-error]:empty{margin:1px}[data-sa11y-warning]:not([data-sa11y-error]):not([data-sa11y-pulse-border]){outline-offset:2px;outline:5px solid var(--sa11y-warning)!important}[data-sa11y-pulse-border]{box-shadow:0;animation:1s 2 pulse;outline:5px solid var(--sa11y-focus-color)!important}[data-sa11y-pulse-border]:hover,[data-sa11y-pulse-border]:focus{animation:none}@keyframes pulse{0%{box-shadow:0 0 0 5px var(--sa11y-focus-color)}50%{box-shadow:0 0 0 12px var(--sa11y-pulse-color)}to{box-shadow:0 0 0 5px var(--sa11y-pulse-color)}}img[data-sa11y-pulse-border],h1[data-sa11y-pulse-border],h2[data-sa11y-pulse-border],h3[data-sa11y-pulse-border],h4[data-sa11y-pulse-border],h5[data-sa11y-pulse-border],h6[data-sa11y-pulse-border]{animation:1s 2 pulse-scale}@keyframes pulse-scale{0%{opacity:1;transform:scale(1)}50%{opacity:.7;transform:scale(1.02)}to{opacity:1;transform:scale(1)}}@media (prefers-reduced-motion:reduce){[data-sa11y-pulse-border]{animation:none!important}}@media (forced-colors:active){[data-sa11y-error],[data-sa11y-warning],[data-sa11y-good],[data-sa11y-error-inline],[data-sa11y-warning-inline],[data-sa11y-pulse-border]{forced-color-adjust:none}}";
   const addStyleUtilities = (component) => {
     const CSSUtils = component.shadowRoot.querySelectorAll(".sa11y-css-utilities");
     if (CSSUtils.length === 0) {
@@ -1751,9 +1767,9 @@
       ]);
       for (let i = 0; i < Found.Everything.length; i++) {
         const $el = Found.Everything[i];
-        if (!($el instanceof Element)) continue;
-        const tag = $el.tagName;
-        const role = $el.getAttribute("role")?.trim().toLowerCase();
+        if ($el?.nodeType !== 1) continue;
+        const tag = $el?.tagName;
+        const role = $el?.getAttribute("role")?.trim().toLowerCase();
         let handledByRole = false;
         if (role) {
           if (imageRoles.has(role) && !Constants.Exclusions.Images.some((s) => $el.matches(s))) {
@@ -1823,6 +1839,7 @@
             case "IFRAME":
             case "AUDIO":
             case "VIDEO":
+            case "EMBED":
               Found.iframes.push($el);
               break;
             case "svg":
@@ -1993,7 +2010,7 @@ ${JSON.stringify(State.option)}
 
 ## Details
 - **URL:** ${url2}
-- **Version:** ${"5.0.6"}
+- **Version:** ${"5.0.7"}
 
 ## Comments
 `;
@@ -2010,7 +2027,7 @@ ${JSON.stringify(State.option)}
         this.error.stack,
         document.createElement("br"),
         document.createElement("br"),
-        `Version: ${"5.0.6"}`,
+        `Version: ${"5.0.7"}`,
         document.createElement("br"),
         `URL: ${url2}`,
         document.createElement("br"),
@@ -6318,9 +6335,18 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
       const match = altLowerCase.match(/\b\d{2,6}\s*x\s*\d{2,6}\b/);
       if (match) hit[0] = match[0];
     }
+    let wordsToCheck = [];
+    if (typeof Intl !== "undefined" && Intl.Segmenter) {
+      const segmenter = new Intl.Segmenter(void 0, { granularity: "word" });
+      const allWords = [...segmenter.segment(altLowerCase)].filter((segment) => segment.isWordLike).map((segment) => segment.segment);
+      wordsToCheck = [...allWords.slice(0, 2), ...allWords.slice(-1)];
+    } else {
+      const altOnlyLetters2 = removeWhitespace(altLowerCase.replace(/[^\p{L}\s]/gu, ""));
+      const allWords = altOnlyLetters2.split(/\s+/).filter(Boolean);
+      wordsToCheck = [...allWords.slice(0, 2), ...allWords.slice(-1)];
+    }
     for (const word of Constants.Global.susAltWords) {
-      const index2 = altLowerCase.indexOf(word);
-      if (index2 > -1 && index2 < 6) {
+      if (wordsToCheck.includes(word)) {
         hit[1] = word;
         break;
       }
@@ -6380,7 +6406,10 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
           key = hasAria + src;
         }
       }
-      if (test && logResult({ test, dismiss: key })) return;
+      if (test) {
+        logResult({ test, dismiss: key });
+        return;
+      }
       const altText = removeWhitespace(alt);
       const figure = getCachedClosest($el, "figure");
       const figcaption = figure?.querySelector("figcaption");
@@ -7589,11 +7618,14 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
       const aria = computeAriaLabel($el);
       const checkTitle = aria === "noAria" ? $el.getAttribute("title") || "" : aria;
       if (removeWhitespace(checkTitle).length === 0) {
+        const tagName = $el?.tagName.toLowerCase();
         pushResult({
           test: "EMBED_MISSING_TITLE",
           element: $el,
           dismiss: src($el),
-          developer: true
+          developer: true,
+          content: Lang.sprintf("EMBED_MISSING_TITLE", tagName),
+          args: [tagName]
         });
       }
     });
@@ -8434,7 +8466,7 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
       const container = document.createElement("div");
       container.setAttribute("id", "container");
       container.setAttribute("role", "region");
-      container.setAttribute("data-sa11y-version", "5.0.6");
+      container.setAttribute("data-sa11y-version", "5.0.7");
       container.setAttribute("lang", Lang._("LANG_CODE"));
       container.setAttribute("aria-label", Lang._("CONTAINER_LABEL"));
       container.setAttribute("dir", Constants.Global.langDirection);

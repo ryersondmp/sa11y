@@ -1,6 +1,7 @@
 import { computeAriaLabel } from '../utils/computeAccessibleName';
 import Elements from '../utils/elements';
 import * as Utils from '../utils/utils';
+import Lang from '../utils/lang';
 import { State } from '../core/state';
 import { pushResult } from '../utils/pushResult';
 
@@ -74,11 +75,14 @@ export default function checkEmbeddedContent() {
     const aria = computeAriaLabel($el);
     const checkTitle = aria === 'noAria' ? $el.getAttribute('title') || '' : aria;
     if (Utils.removeWhitespace(checkTitle).length === 0) {
+      const tagName = $el?.tagName.toLowerCase();
       pushResult({
         test: 'EMBED_MISSING_TITLE',
         element: $el,
         dismiss: src($el),
         developer: true,
+        content: Lang.sprintf('EMBED_MISSING_TITLE', tagName),
+        args: [tagName],
       });
     }
   });

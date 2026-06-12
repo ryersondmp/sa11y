@@ -310,7 +310,7 @@ const tooltip = {
   EMBED_DATA_VIZ:
     'Tokie duomenų vizualizavimo valdikliai dažnai kelia problemų žmonėms, kurie naudojasi klaviatūra arba ekrano skaitytuvu, ir gali kelti didelių sunkumų silpnaregiams arba spalvinio aklumo žmonėms. Rekomenduojama tą pačią informaciją pateikti alternatyviu (teksto arba lentelės) formatu po valdikliu. <hr> Sužinokite daugiau apie <a href="https://www.w3.org/WAI/tutorials/images/complex">sudėtingus vaizdus.</a>',
   EMBED_MISSING_TITLE:
-    'Įterptajam turiniui reikalingas prieinamas pavadinimas, apibūdinantis jo turinį. Elemente <code>iframe</code> nurodykite unikalų <code>title</code> arba <code>aria-label</code> atributą. Sužinokite daugiau apie <a href="https://web.dev/learn/accessibility/more-html#iframes">iRėmus.</a>',
+    'Įterptajam turiniui reikalingas prieinamas pavadinimas, apibūdinantis jo turinį. Elemente <code>&lt;%(ELEMENT)&gt;</code> nurodykite unikalų <code>title</code> arba <code>aria-label</code> atributą. Sužinokite daugiau apie <a href="https://web.dev/learn/accessibility/more-html#iframes">iRėmus.</a>',
   EMBED_GENERAL:
     'Nepavyksta patikrinti įterpto turinio. Įsitikinkite, kad paveikslėliuose yra "alt" tekstas, vaizdo įrašuose - antraštės, tekstas pakankamai kontrastingas, o interaktyvūs komponentai yra <a href="https://webaim.org/techniques/keyboard/">prieinami klaviatūra.</a>',
   EMBED_UNFOCUSABLE:

@@ -313,7 +313,7 @@ const tooltip = {
   EMBED_DATA_VIZ:
     'Šādi datu vizualizācijas logrīki bieži rada problēmas cilvēkiem, kuri navigācijai izmanto tastatūru vai ekrāna lasītāju, un var radīt ievērojamas grūtības cilvēkiem ar vāju redzi vai krāsu aklumu. Ieteicams to pašu informāciju sniegt alternatīvā (teksta vai tabulas) formātā zem logrīka. <hr> Uzziniet vairāk par <a href="https://www.w3.org/WAI/tutorials/images/complex">sarežģītiem attēliem.</a>',
   EMBED_MISSING_TITLE:
-    'Iegultajam saturam ir nepieciešams pieejams nosaukums, kas raksturo tā saturu. Lūdzu, norādiet unikālu <code>title</code> vai <code>aria-label</code> atribūtu elementā <code>iframe</code>. Uzziniet vairāk par <a href="https://web.dev/learn/accessibility/more-html#iframes">iFrame.</a>',
+    'Iegultajam saturam ir nepieciešams pieejams nosaukums, kas raksturo tā saturu. Lūdzu, norādiet unikālu <code>title</code> vai <code>aria-label</code> atribūtu elementā <code>&lt;%(ELEMENT)&gt;</code>. Uzziniet vairāk par <a href="https://web.dev/learn/accessibility/more-html#iframes">iFrame.</a>',
   EMBED_GENERAL:
     'Nevar pārbaudīt iegulto saturu. Lūdzu, pārliecinieties, ka attēliem ir alt teksts, videoklipiem ir uzraksti, tekstam ir pietiekams kontrasts un interaktīvie komponenti ir <a href="https://webaim.org/techniques/keyboard/">pieejami no tastatūras.</a>',
   EMBED_UNFOCUSABLE:

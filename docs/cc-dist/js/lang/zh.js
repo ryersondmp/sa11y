@@ -239,7 +239,7 @@ const tooltip = {
   EMBED_VIDEO: "请确保<strong>所有视频都有闭合字幕。</strong>为所有音频和视频内容提供字幕是一项强制性的A级要求。字幕支持聋哑人或听力困难的人。",
   EMBED_AUDIO: "请确保为所有播客提供<strong>文字记录。</strong>为音频内容提供文字记录是一项强制性的A级要求。转录支持聋哑人或听力困难的人, 但也能使所有人受益。考虑将文字记录放在下面或放在一个手风琴面板内。",
   EMBED_DATA_VIZ: '像这样的数据可视化部件对于使用键盘或屏幕阅读器导航的人来说往往是有问题的, 而且对于低视力或色盲的人来说也会带来很大的困难。建议在小组件下方以替代 (文本或表格) 的形式提供相同的信息。<hr> 了解更多关于<a href="https://www.w3.org/WAI/tutorials/images/complex">复杂图像的信息。</a>',
-  EMBED_MISSING_TITLE: '嵌入式内容需要一个描述其内容的可访问名称。请在 <code>iframe</code> 元素上提供一个唯一的 <code>title</code> 或 <code>aria-label</code> 属性。了解更多关于 <a href="https://web.dev/learn/accessibility/more-html#iframes">iFrames。</a>',
+  EMBED_MISSING_TITLE: '嵌入式内容需要一个描述其内容的可访问名称。请在 <code>&lt;%(ELEMENT)&gt;</code> 元素上提供一个唯一的 <code>title</code> 或 <code>aria-label</code> 属性。了解更多关于 <a href="https://web.dev/learn/accessibility/more-html#iframes">iFrames。</a>',
   EMBED_GENERAL: '无法检查嵌入式内容。请确保图像有alt文本, 视频有标题, 文本有足够的对比度, 互动组件是<a href="https://webaim.org/techniques/keyboard/">键盘可访问的。</a>',
   EMBED_UNFOCUSABLE: '带有无法聚焦元素的 <code>&lt;iframe&gt;</code> 不应具有 <code>tabindex="-1"</code>。嵌入内容将无法通过键盘访问。',
   // QA

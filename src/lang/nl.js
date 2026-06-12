@@ -318,7 +318,7 @@ const tooltip = {
   EMBED_DATA_VIZ:
     'Widgets voor gegevensvisualisatie zoals deze zijn vaak problematisch voor mensen die een toetsenbord of schermlezer gebruiken om te navigeren, en kunnen aanzienlijke problemen opleveren voor mensen met slechtziendheid of kleurenblindheid. Het is aan te raden om dezelfde informatie in een alternatieve (tekst of tabel) indeling onder de widget aan te bieden. <hr> Meer informatie over <a href="https://www.w3.org/WAI/tutorials/images/complex">complexe afbeeldingen.</a>',
   EMBED_MISSING_TITLE:
-    'Voor ingesloten inhoud is een toegankelijke naam nodig die de inhoud beschrijft. Geef een uniek <code>title</code> of <code>aria-label</code> attribuut bij het <code>iframe</code> element. Meer informatie over <a href="https://web.dev/learn/accessibility/more-html#iframes">iFrames.</a>',
+    'Voor ingesloten inhoud is een toegankelijke naam nodig die de inhoud beschrijft. Geef een uniek <code>title</code> of <code>aria-label</code> attribuut bij het <code>&lt;%(ELEMENT)&gt;</code> element. Meer informatie over <a href="https://web.dev/learn/accessibility/more-html#iframes">iFrames.</a>',
   EMBED_GENERAL:
     'Kan ingesloten inhoud niet controleren. Controleer of afbeeldingen alt-tekst hebben, video\'s bijschriften, tekst voldoende contrast en interactieve onderdelen <a href="https://webaim.org/techniques/keyboard/">toetsenbordtoegankelijk zijn.</a>',
   EMBED_UNFOCUSABLE:

@@ -310,7 +310,7 @@ const tooltip = {
   EMBED_DATA_VIZ:
     'Tovrstni pripomočki za vizualizacijo podatkov so pogosto problematični za osebe, ki za navigacijo uporabljajo tipkovnico ali bralnik zaslona, in lahko predstavljajo veliko težavo za slabovidne ali barvno slepe osebe. Priporočljivo je, da pod gradnikom zagotovite enake informacije v alternativni obliki (besedilo ali tabela). <hr> Preberite več o <a href="https://www.w3.org/WAI/tutorials/images/complex">kompleksnih slikah.</a>',
   EMBED_MISSING_TITLE:
-    'Vgrajena vsebina potrebuje dostopno ime, ki opisuje njeno vsebino. V elementu <code>iframe</code> navedite edinstven atribut <code>title</code> ali <code>aria-label</code>. Preberite več o <a href="https://web.dev/learn/accessibility/more-html#iframes">iFrames.</a>',
+    'Vgrajena vsebina potrebuje dostopno ime, ki opisuje njeno vsebino. V elementu <code>&lt;%(ELEMENT)&gt;</code> navedite edinstven atribut <code>title</code> ali <code>aria-label</code>. Preberite več o <a href="https://web.dev/learn/accessibility/more-html#iframes">iFrames.</a>',
   EMBED_GENERAL:
     'Ni mogoče preveriti vdelane vsebine. Prepričajte se, da imajo slike alternativno besedilo, videoposnetki podnapise, da je besedilo dovolj kontrastno in da so interaktivne komponente <a href="https://webaim.org/techniques/keyboard/">dostopne s tipkovnice.</a>',
   EMBED_UNFOCUSABLE:

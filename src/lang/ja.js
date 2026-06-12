@@ -347,7 +347,7 @@ const tooltip = {
   EMBED_DATA_VIZ:
     'このようなデータ可視化ウィジェットは、キーボードやスクリーンリーダーを使用してナビゲートする人々や、視力が低い人々や色覚異常の人々にとって問題が発生することがよくあります。ウィジェットの下に代替（テキストまたは表）形式で同じ情報を提供することが推奨されています。<hr> <a href="https://www.w3.org/WAI/tutorials/images/complex">複雑な画像</a>について詳しく学びます。',
   EMBED_MISSING_TITLE:
-    '埋め込みコンテンツには、その内容を説明するアクセス可能な名前が必要です。 <code>iframe</code>要素にユニークな<code>title</code>または<code>aria-label</code>属性を提供してください。<a href="https://web.dev/learn/accessibility/more-html#iframes">iFrames</a>について詳しく学びます。',
+    '埋め込みコンテンツには、その内容を説明するアクセス可能な名前が必要です。 <code>&lt;%(ELEMENT)&gt;</code>要素にユニークな<code>title</code>または<code>aria-label</code>属性を提供してください。<a href="https://web.dev/learn/accessibility/more-html#iframes">iFrames</a>について詳しく学びます。',
   EMBED_GENERAL:
     '埋め込みコンテンツを確認できません。画像にはaltテキスト、動画には字幕、テキストには十分なコントラスト、対話型コンポーネントには<a href="https://webaim.org/techniques/keyboard/">キーボードアクセス可能性</a>があることを確認してください。',
   EMBED_UNFOCUSABLE:

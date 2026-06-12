@@ -305,7 +305,7 @@ const tooltip = {
   EMBED_DATA_VIZ:
     'Tämänkaltaiset tiedon visualisoinnin widgetit ovat usein ongelmallisia henkilöille, jotka käyttävät näppäimistöä tai ruudunlukijaa navigointiin, ja ne voivat aiheuttaa huomattavia vaikeuksia henkilöille, joilla on heikkonäköisyys tai värisokeus. On suositeltavaa tarjota samat tiedot vaihtoehtoisessa (teksti- tai taulukkomuodossa) widgetin alapuolella. <hr> Lisätietoja <a href="https://www.w3.org/WAI/tutorials/images/complex">monimutkaiset kuvat.</a>',
   EMBED_MISSING_TITLE:
-    'Sulautettu sisältö edellyttää sen sisältöä kuvaavaa nimeä. Anna <code>iframe</code>-elementille yksilöllinen <code>title</code>- tai <code>aria-label</code>-attribuutti. Lisätietoja <a href="https://web.dev/learn/accessibility/more-html#iframes">iFrameista.</a>',
+    'Sulautettu sisältö edellyttää sen sisältöä kuvaavaa nimeä. Anna <code>&lt;%(ELEMENT)&gt;</code>-elementille yksilöllinen <code>title</code>- tai <code>aria-label</code>-attribuutti. Lisätietoja <a href="https://web.dev/learn/accessibility/more-html#iframes">iFrameista.</a>',
   EMBED_GENERAL:
     'Upotetun sisällön tarkistaminen ei onnistu. Varmista, että kuvissa on alt-teksti, videoissa on kuvateksti, tekstissä on riittävä kontrasti ja vuorovaikutteiset komponentit ovat <a href="https://webaim.org/techniques/keyboard/">näppäimistöllä käytettävissä.</a>',
   EMBED_UNFOCUSABLE:

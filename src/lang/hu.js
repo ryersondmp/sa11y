@@ -310,7 +310,7 @@ const tooltip = {
   EMBED_DATA_VIZ:
     'Az ilyen adatvizualizációs widgetek gyakran problémát jelentenek azok számára, akik billentyűzetet vagy képernyőolvasót használnak a navigáláshoz, és jelentős nehézségeket okozhatnak a gyengén látók vagy színvakok számára. Javasoljuk, hogy ugyanezt az információt alternatív (szöveges vagy táblázatos) formátumban adjuk meg a widget alatt. <hr> Tudjon meg többet a <a href="https://www.w3.org/WAI/tutorials/images/complex">komplex képekről.</a>',
   EMBED_MISSING_TITLE:
-    'A beágyazott tartalomhoz hozzáférhető névre van szükség, amely leírja annak tartalmát. Kérjük, adjon meg egyedi <code>title</code> vagy <code>aria-label</code> attribútumot az <code>iframe</code> elemen. További információkért látogasson el ide: <a href="https://web.dev/learn/accessibility/more-html#iframes">iFrame-ek.</a>',
+    'A beágyazott tartalomhoz hozzáférhető névre van szükség, amely leírja annak tartalmát. Kérjük, adjon meg egyedi <code>title</code> vagy <code>aria-label</code> attribútumot az <code>&lt;%(ELEMENT)&gt;</code> elemen. További információkért látogasson el ide: <a href="https://web.dev/learn/accessibility/more-html#iframes">iFrame-ek.</a>',
   EMBED_GENERAL:
     'Beágyazott tartalom ellenőrzése nem lehetséges. Kérjük, győződjön meg róla, hogy a képek alt szöveggel, a videók felirattal, a szöveg megfelelő kontraszttal és az interaktív komponensek <a href="https://webaim.org/techniques/keyboard/">billentyűzettel elérhetőek.</a>',
   EMBED_UNFOCUSABLE:
