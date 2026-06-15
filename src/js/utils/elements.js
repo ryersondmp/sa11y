@@ -82,7 +82,7 @@ const Elements = (function myElements() {
   function computePageText() {
     const elementSet = new Set(Found.Everything);
     return Found.Everything.filter(($el) => {
-      if ($el instanceof HTMLImageElement) return true;
+      if ($el.tagName === 'IMG') return true;
       // Prevent duplication: skip if any ancestor is also in the set.
       let parent = $el.parentElement;
       while (parent) {
@@ -93,7 +93,7 @@ const Elements = (function myElements() {
     })
       .map(($el) => {
         let text = '';
-        if ($el instanceof HTMLImageElement) {
+        if ($el.tagName === 'IMG') {
           text = $el.alt || '';
         } else if ($el.tagName === 'LI') {
           text = Array.from($el.childNodes)
@@ -188,9 +188,9 @@ const Elements = (function myElements() {
     // Iterate on Found.Everything based on tag name.
     for (let i = 0; i < Found.Everything.length; i++) {
       const $el = Found.Everything[i];
-      if ($el?.nodeType !== 1) continue;
-      const tag = $el?.tagName;
-      const role = $el?.getAttribute('role')?.trim().toLowerCase();
+      if (!$el || $el.nodeType !== 1) continue;
+      const tag = $el.tagName;
+      const role = $el.getAttribute('role')?.trim().toLowerCase();
       let handledByRole = false;
 
       // Role overrides.

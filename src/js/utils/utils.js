@@ -534,8 +534,8 @@ let parentCache = new WeakMap();
  * @returns {Element|null} The matching parent or null.
  */
 export function getCachedClosest(element, selector) {
-  // Validate element.
-  if (!(element instanceof Element)) return null;
+  // Note: `instanceof Element` is unavailable across frames.
+  if (!element || element.nodeType !== 1) return null;
 
   // Validate selector.
   if (typeof selector !== 'string' || selector.trim() === '') return null;
@@ -1172,7 +1172,7 @@ export function validateLang(code, displayLangCode) {
   if (!langCache && typeof Intl !== 'undefined') {
     try {
       langCache = new Intl.DisplayNames([displayLangCode], { type: 'language', fallback: 'none' });
-    } catch {}
+    } catch { }
   }
 
   if (langCache) {
