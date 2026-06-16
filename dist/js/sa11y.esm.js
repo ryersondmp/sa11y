@@ -1,6 +1,6 @@
 /*!
       * Sa11y, the accessibility quality assurance assistant.
-      * @version 5.0.7
+      * @version 5.0.8
       * @author Adam Chaboryk
       * @license GPL-2.0-or-later
       * @copyright © 2020 - 2026 Toronto Metropolitan University.
@@ -1136,7 +1136,7 @@ const resetStyleCache = () => {
 };
 let parentCache = /* @__PURE__ */ new WeakMap();
 function getCachedClosest(element, selector) {
-  if (!(element instanceof Element)) return null;
+  if (element?.nodeType !== 1) return null;
   if (typeof selector !== "string" || selector.trim() === "") return null;
   try {
     if (!parentCache.has(element)) {
@@ -1687,7 +1687,7 @@ const Elements = (function myElements() {
   function computePageText() {
     const elementSet = new Set(Found.Everything);
     return Found.Everything.filter(($el) => {
-      if ($el instanceof HTMLImageElement) return true;
+      if ($el.tagName === "IMG") return true;
       let parent = $el.parentElement;
       while (parent) {
         if (elementSet.has(parent)) return false;
@@ -1696,7 +1696,7 @@ const Elements = (function myElements() {
       return true;
     }).map(($el) => {
       let text = "";
-      if ($el instanceof HTMLImageElement) {
+      if ($el.tagName === "IMG") {
         text = $el.alt || "";
       } else if ($el.tagName === "LI") {
         text = Array.from($el.childNodes).filter((n) => n.nodeType === 3).map((n) => n.textContent).join(" ");
@@ -1764,8 +1764,8 @@ const Elements = (function myElements() {
     for (let i = 0; i < Found.Everything.length; i++) {
       const $el = Found.Everything[i];
       if ($el?.nodeType !== 1) continue;
-      const tag = $el?.tagName;
-      const role = $el?.getAttribute("role")?.trim().toLowerCase();
+      const tag = $el.tagName;
+      const role = $el.getAttribute("role")?.trim().toLowerCase();
       let handledByRole = false;
       if (role) {
         if (imageRoles.has(role) && !Constants.Exclusions.Images.some((s) => $el.matches(s))) {
@@ -2006,7 +2006,7 @@ ${JSON.stringify(State.option)}
 
 ## Details
 - **URL:** ${url2}
-- **Version:** ${"5.0.7"}
+- **Version:** ${"5.0.8"}
 
 ## Comments
 `;
@@ -2023,7 +2023,7 @@ ${JSON.stringify(State.option)}
       this.error.stack,
       document.createElement("br"),
       document.createElement("br"),
-      `Version: ${"5.0.7"}`,
+      `Version: ${"5.0.8"}`,
       document.createElement("br"),
       `URL: ${url2}`,
       document.createElement("br"),
@@ -2842,14 +2842,14 @@ function getBackground($el, shadowDetection) {
     if (!node) return null;
     if (shadowDetection) {
       if (node.assignedSlot) return node.assignedSlot;
-      if (node instanceof ShadowRoot) return node.host;
+      if (node.nodeType === 11 && node.host) return node.host;
     }
     return node.parentElement || node.parentNode;
   };
   let targetEl = $el;
   let finalBackground = [255, 255, 255];
   while (targetEl && (targetEl.nodeType === 1 || targetEl.nodeType === 11)) {
-    if (targetEl instanceof ShadowRoot) {
+    if (targetEl.nodeType === 11 && targetEl.host) {
       targetEl = targetEl.host;
       continue;
     }
@@ -2865,7 +2865,7 @@ function getBackground($el, shadowDetection) {
         let parentEl = getVisualParent(targetEl);
         let parentBgColor = "rgba(255, 255, 255, 1)";
         while (parentEl && (parentEl.nodeType === 1 || parentEl.nodeType === 11)) {
-          if (parentEl instanceof ShadowRoot) {
+          if (parentEl.nodeType === 11 && parentEl.host) {
             parentEl = parentEl.host;
             continue;
           }
@@ -6402,7 +6402,7 @@ function checkImages() {
         key = hasAria + src;
       }
     }
-    if (test) {
+    if (test && State.option.checks[test]) {
       logResult({ test, dismiss: key });
       return;
     }
@@ -6434,85 +6434,107 @@ function checkImages() {
         test = "IMAGE_DECORATIVE";
         type = "warning";
       }
-      if (test && logResult({
-        test,
-        type,
-        dismiss: key || src
-      }))
-        return;
+      if (test) {
+        if (State.option.checks[test]) {
+          logResult({ test, type, dismiss: key || src });
+          return;
+        } else {
+          if (!getCachedClosest($el, 'button, [role="button"]') && !Constants.Global.linkIgnoreStringPattern?.test(alt)) {
+            logResult({ test: "IMAGE_PASS", type: "good", args: [altText], dismiss: src + alt });
+          }
+          return;
+        }
+      }
     }
-    if (!Constants.Global.unpronounceablePattern.test(alt) && linkTextLength === 0) {
-      logResult({
-        test: link ? "LINK_ALT_UNPRONOUNCEABLE" : "ALT_UNPRONOUNCEABLE",
-        args: [altText]
-      });
-      return;
+    const unpTest = link ? "LINK_ALT_UNPRONOUNCEABLE" : "ALT_UNPRONOUNCEABLE";
+    if (State.option.checks[unpTest]) {
+      if (!Constants.Global.unpronounceablePattern.test(alt) && linkTextLength === 0) {
+        logResult({
+          test: unpTest,
+          args: [altText]
+        });
+        return;
+      }
     }
     const error = containsAltTextStopWords(altText);
-    if (error[0] !== null) {
-      logResult({
+    const qualityChecks = [
+      {
+        hit: error[0],
         test: link ? "LINK_ALT_FILE_EXT" : "ALT_FILE_EXT",
-        args: [error[0], altText],
-        dismiss: src + alt
-      });
-      return;
-    } else if (error[2] !== null) {
-      logResult({
+        type: "error",
+        args: [error[0], altText]
+      },
+      {
+        hit: error[2],
         test: link ? "LINK_PLACEHOLDER_ALT" : "ALT_PLACEHOLDER",
-        args: [altText],
-        dismiss: src + alt
-      });
-      return;
-    } else if (error[1] !== null) {
-      logResult({
+        type: "error",
+        args: [altText]
+      },
+      {
+        hit: error[1],
         test: link ? "LINK_SUS_ALT" : "SUS_ALT",
         type: "warning",
-        args: [error[1], altText],
-        dismiss: src + alt
-      });
-      return;
+        args: [error[1], altText]
+      }
+    ];
+    for (const check of qualityChecks) {
+      if (check.hit !== null && State.option.checks[check.test] !== false) {
+        logResult({
+          test: check.test,
+          type: check.type,
+          args: check.args,
+          dismiss: src + alt
+        });
+        return;
+      }
     }
     const badAltTest = link ? "LINK_ALT_MAYBE_BAD" : "ALT_MAYBE_BAD";
-    const minLength = State.option.checks[badAltTest]?.minLength || 15;
-    const isTooLongSingleWord = new RegExp(`^\\S{${minLength},}$`);
-    const containsNonAlphaChar = /[^\p{L}\p{M}\-,.!? «»—]/u.test(altText);
-    const isBadFilename = new RegExp(`^(?=[^_-]*([_-][^_-]*){3,})\\S{${minLength},}$`).test(
-      altText
-    );
-    const containsCJK = /[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Hangul}]/u.test(altText);
-    if (isBadFilename || !containsCJK && isTooLongSingleWord.test(alt) && containsNonAlphaChar) {
-      logResult({
-        test: badAltTest,
-        args: [altText],
-        dismiss: src + alt
-      });
-      return;
+    if (State.option.checks[badAltTest]) {
+      const minLength = State.option.checks[badAltTest]?.minLength || 15;
+      const isTooLongSingleWord = new RegExp(`^\\S{${minLength},}$`);
+      const containsNonAlphaChar = /[^\p{L}\p{M}\-,.!? «»—]/u.test(altText);
+      const isBadFilename = new RegExp(`^(?=[^_-]*([_-][^_-]*){3,})\\S{${minLength},}$`).test(
+        altText
+      );
+      const containsCJK = /[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Hangul}]/u.test(altText);
+      if (isBadFilename || !containsCJK && isTooLongSingleWord.test(alt) && containsNonAlphaChar) {
+        logResult({
+          test: badAltTest,
+          args: [altText],
+          dismiss: src + alt
+        });
+        return;
+      }
     }
     const warningTest = link ? "LINK_ALT_MAYBE_BAD_WARNING" : "ALT_MAYBE_BAD_WARNING";
-    const wordCount = altText.trim().split(/\s+/).length;
-    const delimiterCount = (altText.match(/[_-]/g) || []).length;
-    const hasTooMuchNoise = /^(?:\s*\d){5,}\s*$/.test(altText) || delimiterCount >= 3 && wordCount <= 2;
-    if (hasTooMuchNoise) {
-      logResult({
-        test: warningTest,
-        type: "warning",
-        content: badAltTest,
-        // We re-use this key for the tooltip.
-        args: [altText],
-        dismiss: `WARNING${src + alt}`
-      });
-      return;
+    if (State.option.checks[warningTest]) {
+      const wordCount = altText.trim().split(/\s+/).length;
+      const delimiterCount = (altText.match(/[_-]/g) || []).length;
+      const hasTooMuchNoise = /^(?:\s*\d){5,}\s*$/.test(altText) || delimiterCount >= 3 && wordCount <= 2;
+      if (hasTooMuchNoise) {
+        logResult({
+          test: warningTest,
+          type: "warning",
+          content: badAltTest,
+          // We re-use this key for the tooltip.
+          args: [altText],
+          dismiss: `WARNING${src + alt}`
+        });
+        return;
+      }
     }
     const tooLongTest = link ? "LINK_IMAGE_LONG_ALT" : "IMAGE_ALT_TOO_LONG";
-    const maxAltChars = State.option.checks[tooLongTest]?.maxLength || 250;
-    if (alt.length > maxAltChars) {
-      logResult({
-        test: tooLongTest,
-        type: "warning",
-        args: [alt.length, altText],
-        dismiss: src + alt
-      });
-      return;
+    if (State.option.checks[tooLongTest]) {
+      const maxAltChars = State.option.checks[tooLongTest]?.maxLength || 250;
+      if (alt.length > maxAltChars) {
+        logResult({
+          test: tooLongTest,
+          type: "warning",
+          args: [alt.length, altText],
+          dismiss: src + alt
+        });
+        return;
+      }
     }
     if (link && !Constants.Global.linkIgnoreStringPattern?.test(alt)) {
       const latTestName = linkTextLength === 0 ? "LINK_IMAGE_ALT" : "LINK_IMAGE_ALT_AND_TEXT";
@@ -6537,25 +6559,30 @@ function checkImages() {
         return;
       }
     }
-    if (figure && figcaption && figcaptionText.toLowerCase() === alt.toLowerCase()) {
-      logResult({
-        test: "IMAGE_FIGURE_DUPLICATE_ALT",
-        type: "warning",
-        args: [altText]
-      });
-      return;
+    if (State.option.checks.IMAGE_FIGURE_DUPLICATE_ALT) {
+      if (figure && figcaption && figcaptionText.toLowerCase() === alt.toLowerCase()) {
+        logResult({
+          test: "IMAGE_FIGURE_DUPLICATE_ALT",
+          type: "warning",
+          args: [altText]
+        });
+        return;
+      }
     }
-    const getVal = (attr) => $el.getAttribute(attr)?.trim().toLowerCase();
-    if ($el.hasAttribute("title") && getVal("title") === getVal("alt")) {
-      logResult({
-        test: "DUPLICATE_TITLE",
-        type: "warning",
-        content: State.option.checks.DUPLICATE_TITLE.content ? Lang.sprintf(State.option.checks.DUPLICATE_TITLE.content, altText) : Lang.sprintf(`${Lang._("DUPLICATE_TITLE")}<hr>${Lang._("IMAGE_PASS")}`, altText),
-        args: [altText],
-        inline: true,
-        dismiss: alt
-      });
-      return;
+    const duplicateTitleTest = State.option.checks.DUPLICATE_TITLE;
+    if (duplicateTitleTest) {
+      const getVal = (attr) => $el.getAttribute(attr)?.trim().toLowerCase();
+      if ($el.hasAttribute("title") && getVal("title") === getVal("alt")) {
+        logResult({
+          test: "DUPLICATE_TITLE",
+          type: "warning",
+          content: duplicateTitleTest.content ? Lang.sprintf(duplicateTitleTest.content, altText) : Lang.sprintf(`${Lang._("DUPLICATE_TITLE")}<hr>${Lang._("IMAGE_PASS")}`, altText),
+          args: [altText],
+          inline: true,
+          dismiss: alt
+        });
+        return;
+      }
     }
     if (!getCachedClosest($el, 'button, [role="button"]')) {
       if (Constants.Global.linkIgnoreStringPattern?.test(alt)) return;
@@ -6567,6 +6594,7 @@ function checkImages() {
       });
     }
   });
+  return;
 }
 function checkHeaders() {
   let prevLevel;
@@ -7333,12 +7361,16 @@ function checkLabels() {
       ...params
     });
     if (type === "image") {
-      if (inputName === "") logResult({ test: "LABELS_MISSING_IMAGE_INPUT" });
-      return;
+      if (inputName === "" && State.option.checks.LABELS_MISSING_IMAGE_INPUT) {
+        logResult({ test: "LABELS_MISSING_IMAGE_INPUT" });
+        return;
+      }
     }
     if (type === "reset") {
-      logResult({ test: "LABELS_INPUT_RESET", type: "warning", developer: false });
-      return;
+      if (State.option.checks.LABELS_INPUT_RESET) {
+        logResult({ test: "LABELS_INPUT_RESET", type: "warning", developer: false });
+        return;
+      }
     }
     const hasPlaceholder = $el.placeholder && $el.placeholder !== 0;
     if (hasPlaceholder) {
@@ -7603,13 +7635,15 @@ function checkEmbeddedContent() {
       return;
     }
     if (isNegativeTabindex($el)) {
-      pushResult({
-        test: "EMBED_UNFOCUSABLE",
-        element: $el,
-        dismiss: src($el),
-        developer: true
-      });
-      return;
+      if (State.option.checks.EMBED_UNFOCUSABLE) {
+        pushResult({
+          test: "EMBED_UNFOCUSABLE",
+          element: $el,
+          dismiss: src($el),
+          developer: true
+        });
+        return;
+      }
     }
     const aria = computeAriaLabel($el);
     const checkTitle = aria === "noAria" ? $el.getAttribute("title") || "" : aria;
@@ -7822,11 +7856,14 @@ function checkQA() {
           }
         }
         if (!hit) {
-          let textAfterBreak = p?.querySelector("br")?.nextSibling?.nodeValue;
-          if (textAfterBreak) {
-            textAfterBreak = textAfterBreak.replace(/<\/?[^>]+(>|$)/g, "").trim().substring(0, 2);
-            if (specialCharsMatch.test(textAfterBreak.charAt(0)) || firstPrefix === decrement(textAfterBreak) || isRoman && textAfterBreak.toLowerCase() === "ii" || !lastHitWasEmoji && textAfterBreak.match(emojiMatch)) {
-              hit = true;
+          const br = p?.querySelector("br");
+          if (br) {
+            let textAfterBreak = br.previousSibling?.textContent?.trim() ? br.nextSibling?.nodeValue : null;
+            if (textAfterBreak) {
+              textAfterBreak = textAfterBreak.replace(/<\/?[^>]+(>|$)/g, "").trim().substring(0, 2);
+              if (specialCharsMatch.test(textAfterBreak.charAt(0)) || firstPrefix === decrement(textAfterBreak) || isRoman && textAfterBreak.toLowerCase() === "ii" || !lastHitWasEmoji && textAfterBreak.match(emojiMatch)) {
+                hit = true;
+              }
             }
           }
         }
@@ -8462,7 +8499,7 @@ class ControlPanel extends HTMLElement {
     const container = document.createElement("div");
     container.setAttribute("id", "container");
     container.setAttribute("role", "region");
-    container.setAttribute("data-sa11y-version", "5.0.7");
+    container.setAttribute("data-sa11y-version", "5.0.8");
     container.setAttribute("lang", Lang._("LANG_CODE"));
     container.setAttribute("aria-label", Lang._("CONTAINER_LABEL"));
     container.setAttribute("dir", Constants.Global.langDirection);

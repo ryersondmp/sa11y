@@ -188,7 +188,7 @@ const Elements = (function myElements() {
     // Iterate on Found.Everything based on tag name.
     for (let i = 0; i < Found.Everything.length; i++) {
       const $el = Found.Everything[i];
-      if (!$el || $el.nodeType !== 1) continue;
+      if ($el?.nodeType !== 1) continue;
       const tag = $el.tagName;
       const role = $el.getAttribute('role')?.trim().toLowerCase();
       let handledByRole = false;

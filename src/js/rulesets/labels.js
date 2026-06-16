@@ -42,14 +42,18 @@ export default function checkLabels() {
 
     // Error: Input with type="image" without accessible name or alt.
     if (type === 'image') {
-      if (inputName === '') logResult({ test: 'LABELS_MISSING_IMAGE_INPUT' });
-      return;
+      if (inputName === '' && State.option.checks.LABELS_MISSING_IMAGE_INPUT) {
+        logResult({ test: 'LABELS_MISSING_IMAGE_INPUT' });
+        return;
+      }
     }
 
     // Warning: to remove reset buttons.
     if (type === 'reset') {
-      logResult({ test: 'LABELS_INPUT_RESET', type: 'warning', developer: false });
-      return;
+      if (State.option.checks.LABELS_INPUT_RESET) {
+        logResult({ test: 'LABELS_INPUT_RESET', type: 'warning', developer: false });
+        return;
+      }
     }
 
     // Warning: against placeholder attributes.
