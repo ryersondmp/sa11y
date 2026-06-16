@@ -251,19 +251,24 @@ export default function checkQA() {
         }
 
         if (!hit) {
-          let textAfterBreak = p?.querySelector('br')?.nextSibling?.nodeValue;
-          if (textAfterBreak) {
-            textAfterBreak = textAfterBreak
-              .replace(/<\/?[^>]+(>|$)/g, '')
-              .trim()
-              .substring(0, 2);
-            if (
-              specialCharsMatch.test(textAfterBreak.charAt(0)) ||
-              firstPrefix === decrement(textAfterBreak) ||
-              (isRoman && textAfterBreak.toLowerCase() === 'ii') ||
-              (!lastHitWasEmoji && textAfterBreak.match(emojiMatch))
-            ) {
-              hit = true;
+          const br = p?.querySelector('br');
+          if (br) {
+            let textAfterBreak = br.previousSibling?.textContent?.trim()
+              ? br.nextSibling?.nodeValue
+              : null;
+            if (textAfterBreak) {
+              textAfterBreak = textAfterBreak
+                .replace(/<\/?[^>]+(>|$)/g, '')
+                .trim()
+                .substring(0, 2);
+              if (
+                specialCharsMatch.test(textAfterBreak.charAt(0)) ||
+                firstPrefix === decrement(textAfterBreak) ||
+                (isRoman && textAfterBreak.toLowerCase() === 'ii') ||
+                (!lastHitWasEmoji && textAfterBreak.match(emojiMatch))
+              ) {
+                hit = true;
+              }
             }
           }
         }

@@ -72,7 +72,8 @@ export function getBackground($el, shadowDetection) {
     if (!node) return null;
     if (shadowDetection) {
       if (node.assignedSlot) return node.assignedSlot;
-      if (node instanceof ShadowRoot) return node.host;
+      // `instanceof ShadowRoot` is false across frames, so type + host.
+      if (node.nodeType === 11 && node.host) return node.host;
     }
     return node.parentElement || node.parentNode;
   };
@@ -83,7 +84,8 @@ export function getBackground($el, shadowDetection) {
   // Allow Node.ELEMENT_NODE (1) and Node.DOCUMENT_FRAGMENT_NODE / ShadowRoot (11).
   while (targetEl && (targetEl.nodeType === 1 || targetEl.nodeType === 11)) {
     // If we land exactly on a ShadowRoot, skip computing styles and jump to its host.
-    if (targetEl instanceof ShadowRoot) {
+    // `instanceof ShadowRoot` is false across frames, so type + host.
+    if (targetEl.nodeType === 11 && targetEl.host) {
       targetEl = targetEl.host;
       continue;
     }
@@ -108,7 +110,7 @@ export function getBackground($el, shadowDetection) {
         let parentBgColor = 'rgba(255, 255, 255, 1)'; // Default assumption
 
         while (parentEl && (parentEl.nodeType === 1 || parentEl.nodeType === 11)) {
-          if (parentEl instanceof ShadowRoot) {
+          if (parentEl.nodeType === 11 && parentEl.host) {
             parentEl = parentEl.host;
             continue;
           }
