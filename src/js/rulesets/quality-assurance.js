@@ -61,6 +61,7 @@ export default function checkQA() {
   /*  Errors: Check HTML tables for issues.                          */
   /* *************************************************************** */
   Elements.Found.Tables.forEach(($el) => {
+    if (!$el) return;
     if (Utils.isElementHidden($el)) return;
 
     const role = $el.getAttribute('role')?.trim().toLowerCase();
@@ -73,21 +74,20 @@ export default function checkQA() {
     // Check for valid 'headers' references.
     const invalidIds = [];
     $el.querySelectorAll('[headers]').forEach((cell) => {
-      const headerIds = cell.getAttribute('headers').trim().split(/\s+/);
-      headerIds.forEach((id) => {
-        const referencedElement = $el.querySelector(`#${id}`);
-        const doesNotExist = !referencedElement;
-        const isNotInTable = referencedElement && !$el.contains(referencedElement);
-        let isNotHeader = true;
-        if (referencedElement) {
-          const tagName = referencedElement.tagName.toLowerCase();
-          const refRole = referencedElement.getAttribute('role')?.trim().toLowerCase();
-          if (tagName === 'th' || refRole === 'rowheader' || refRole === 'columnheader') {
-            isNotHeader = false;
+      (cell.getAttribute('headers') || '')
+        .split(/\s+/)
+        .filter(Boolean)
+        .forEach((id) => {
+          try {
+            const ref = $el.querySelector(`#${CSS.escape(id)}`);
+            const role = ref?.getAttribute('role')?.trim().toLowerCase();
+            const isHeader =
+              ref && (ref.tagName === 'TH' || role === 'rowheader' || role === 'columnheader');
+            if (!isHeader) invalidIds.push(id);
+          } catch {
+            invalidIds.push(id);
           }
-        }
-        if (doesNotExist || isNotInTable || isNotHeader) invalidIds.push(id);
-      });
+        });
     });
 
     if (invalidIds.length > 0) {

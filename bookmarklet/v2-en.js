@@ -1,4 +1,4 @@
-(function(a){typeof define=="function"&&define.amd?define(a):a()})((function(){"use strict";const a="5.0.8",p=`
+(function(a){typeof define=="function"&&define.amd?define(a):a()})((function(){"use strict";const a="5.0.9",p=`
 <style>
 .loader {
   height: 55px;
