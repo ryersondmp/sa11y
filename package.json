@@ -1,6 +1,6 @@
 {
   "name": "sa11y",
-  "version": "5.0.8",
+  "version": "5.0.9",
   "description": "Sa11y is an accessibility quality assurance tool that visually highlights common accessibility and usability issues. Geared towards content authors, Sa11y straightforwardly identifies errors or warnings at the source with a simple tooltip on how to fix them.",
   "main": "src/js/sa11y.js",
   "type": "module",
@@ -52,8 +52,8 @@
     "@floating-ui/dom": "^1.7.6"
   },
   "allowScripts": {
-    "esbuild@0.27.7": true,
     "fsevents@2.3.2": true,
-    "fsevents@2.3.3": true
+    "fsevents@2.3.3": true,
+    "esbuild@0.28.1": true
   }
 }
