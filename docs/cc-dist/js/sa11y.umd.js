@@ -1,6 +1,6 @@
 /*!
       * Sa11y, the accessibility quality assurance assistant.
-      * @version 5.0.9
+      * @version 5.1.0
       * @author Adam Chaboryk
       * @license GPL-2.0-or-later
       * @copyright © 2020 - 2026 Toronto Metropolitan University.
@@ -2010,7 +2010,7 @@ ${JSON.stringify(State.option)}
 
 ## Details
 - **URL:** ${url2}
-- **Version:** ${"5.0.9"}
+- **Version:** ${"5.1.0"}
 
 ## Comments
 `;
@@ -2027,7 +2027,7 @@ ${JSON.stringify(State.option)}
         this.error.stack,
         document.createElement("br"),
         document.createElement("br"),
-        `Version: ${"5.0.9"}`,
+        `Version: ${"5.1.0"}`,
         document.createElement("br"),
         `URL: ${url2}`,
         document.createElement("br"),
@@ -8478,7 +8478,7 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
       const container = document.createElement("div");
       container.setAttribute("id", "container");
       container.setAttribute("role", "region");
-      container.setAttribute("data-sa11y-version", "5.0.9");
+      container.setAttribute("data-sa11y-version", "5.1.0");
       container.setAttribute("lang", Lang._("LANG_CODE"));
       container.setAttribute("aria-label", Lang._("CONTAINER_LABEL"));
       container.setAttribute("dir", Constants.Global.langDirection);

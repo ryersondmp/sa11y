@@ -30,7 +30,7 @@ import Sa11yLangSl from '../src/lang/sl.js';
 import Sa11yLangSv from '../src/lang/sv.js';
 import Sa11yLangTa from '../src/lang/ta.js';
 import Sa11yLangTr from '../src/lang/tr.js';
-import Sa11yLangUa from '../src/lang/ua.js';
+import Sa11yLangUk from '../src/lang/uk.js';
 import Sa11yLangZh from '../src/lang/zh.js';
 
 test.describe.configure({ mode: 'serial' });
@@ -68,7 +68,7 @@ test.describe('Sa11y i18n tests', () => {
       { lang: 'SV', obj: Sa11yLangSv },
       { lang: 'TA', obj: Sa11yLangTa },
       { lang: 'TR', obj: Sa11yLangTr },
-      { lang: 'UA', obj: Sa11yLangUa },
+      { lang: 'UK', obj: Sa11yLangUk },
       { lang: 'ZH', obj: Sa11yLangZh },
     ];
 
