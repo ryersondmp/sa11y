@@ -113,7 +113,7 @@ const ui = {
   ALERT_CLOSE: 'Fermer',
   OUTLINE: 'Structure',
   READABILITY_DESC:
-    "Affiche le score de lisibilité dans l'onglet <strong>Structure</strong> pour aider à évaluer la difficulté de lecture.",
+    "Affiche le score de lisibilité dans l’onglet <strong>Structure</strong> pour aider à évaluer la difficulté de lecture.",
   TITLE: 'Titre',
   ALT: 'Texte alternatif',
   IMAGES: 'Images',
@@ -138,12 +138,12 @@ const ui = {
   NOT_VISIBLE:
     'L’élément que vous tentez de consulter n’est pas visible; il peut être masqué, à l’intérieur de l’accordéon ou dans le volet de l’onglet.',
   MISSING_ROOT:
-    "L'accessibilité de la page entière a été vérifiée, car la zone cible <code>%(root)</code> n'existe pas.",
+    "L’accessibilité de la page entière a été vérifiée, car la zone cible <code>%(root)</code> n’existe pas.",
   MISSING_READABILITY_ROOT:
     'Le score de lisibilité est basé sur la zone de contenu <code>%(fallback)</code>, car la zone cible <code>%(root)</code> n’existe pas.',
   SKIP_TO_PAGE_ISSUES: 'Passer aux problèmes de page',
   CONSOLE_ERROR:
-    'Désolé, mais il y a un problème avec le vérificateur d\'accessibilité sur cette page. Pouvez-vous s\'il vous plaît <a href="https://forms.gle/sjzK9XykETaoqZv99">le signaler via ce formulaire</a> ou sur <a href="https://github.com/ryersondmp/sa11y/issues/new?title=Bug%20report">GitHub</a> ?',
+    'Désolé, mais il y a un problème avec le vérificateur d’accessibilité sur cette page. Pouvez-vous s’il vous plaît <a href="https://forms.gle/sjzK9XykETaoqZv99">le signaler via ce formulaire</a> ou sur <a href="https://github.com/ryersondmp/sa11y/issues/new?title=Bug%20report">GitHub</a> ?',
   APPEARANCE: 'Apparence',
   MOVE_PANEL: 'Déplacer le panneau',
   HIDDEN: 'Caché',
@@ -195,35 +195,35 @@ const ui = {
 const tooltip = {
   // Headings
   HEADING_SKIPPED_LEVEL:
-    "Les titres ne doivent pas sauter de niveaux ou passer de <strong>Titre %(PREV_LEVEL)</strong> à <strong {C}>Titre %(LEVEL)</strong>, car cela perturbe l'ordre et la hiérarchie du contenu, rendant sa compréhension plus difficile. <hr> Si <strong {C}>%(HEADING)</strong> fait partie de la section <strong>%(PREV_HEADING)</strong>, vous devriez le formater comme un <strong>Titre %(LEVEL)</strong> à la place.",
+    "Les titres ne doivent pas sauter de niveaux ou passer de <strong>Titre %(PREV_LEVEL)</strong> à <strong {C}>Titre %(LEVEL)</strong>, car cela perturbe l’ordre et la hiérarchie du contenu, rendant sa compréhension plus difficile. <hr> Si <strong {C}>%(HEADING)</strong> fait partie de la section <strong>%(PREV_HEADING)</strong>, vous devriez le formater comme un <strong>Titre %(LEVEL)</strong> à la place.",
   HEADING_EMPTY:
     'En-tête vide trouvé ! Pour corriger, supprimez cette ligne ou changez son format de <strong {C}>Titre %(level)</strong> à <strong>Normal</strong> ou <strong>Paragraphe</strong>.',
   HEADING_LONG:
     'Le titre est long ! Les titres doivent être utilisés pour organiser le contenu et acheminer la structure. Ils doivent être brefs, informatifs et uniques. Les titres doivent être inférieurs à %(MAX_LENGTH) caractères (pas plus d’une phrase). <hr> <strong {B}>%(HEADING_LENGTH) Caractères</strong>',
   HEADING_FIRST:
-    'Le premier titre sur la page devrait généralement être un Titre 1 ou un Titre 2. Le Titre 1 doit débuter dans la section principale du contenu, car il s\'agit du titre principal qui décrit l\'objectif général de la page. En savoir plus sur <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">La Structure Des Titres.</a>',
+    'Le premier titre sur la page devrait généralement être un Titre 1 ou un Titre 2. Le Titre 1 doit débuter dans la section principale du contenu, car il s’agit du titre principal qui décrit l’objectif général de la page. En savoir plus sur <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">La Structure Des Titres.</a>',
   HEADING_MISSING_ONE:
     'Titre 1 manquant. Le Titre 1 doit débuter dans la zone principale de contenu, il est le titre principal qui décrit l’objectif global de la page. En savoir plus sur <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">La Structure Des Titres.</a>',
   HEADING_EMPTY_WITH_IMAGE:
     'Le titre ne contient pas de texte, mais seulement une image. Si ce n’est pas un titre, veuillez changer son format de <strong {C}>Titre %(level)</strong> à <strong>Normal</strong> ou <strong>Paragraphe</strong>. Sinon, veuillez ajouter du texte de remplacement à l’image si elle n’est pas décorative.',
-  HEADING_UNPRONOUNCEABLE: 'Le texte du titre contient uniquement des symboles ou des caractères imprononçables. Si vous pensez qu\'il s\'agit d\'une erreur due à un problème de copier-coller, pensez à le supprimer. <hr> <strong {B}>Texte du titre</strong> <strong {C}>%(TEXT)</strong>',
+  HEADING_UNPRONOUNCEABLE: 'Le texte du titre contient uniquement des symboles ou des caractères imprononçables. Si vous pensez qu’il s’agit d’une erreur due à un problème de copier-coller, pensez à le supprimer. <hr> <strong {B}>Texte du titre</strong> <strong {C}>%(TEXT)</strong>',
   PANEL_HEADING_MISSING_ONE: 'Titre 1 manquant !',
   PANEL_NO_HEADINGS: 'Aucun titre trouvé.',
 
   // Links
   LINK_EMPTY: 'Retirer les liens vides sans texte.',
   LINK_EMPTY_LABELLEDBY:
-    "Le lien a une valeur pour <code>aria-labelledby</code> qui est vide ou ne correspond pas à la valeur de l'attribut<code>id</code> d'un autre élément de la page.",
+    "Le lien a une valeur pour <code>aria-labelledby</code> qui est vide ou ne correspond pas à la valeur de l’attribut<code>id</code> d’un autre élément de la page.",
   LINK_EMPTY_NO_LABEL:
-    'Le lien ne comporte pas de texte perceptible (discernible) par les lecteurs d\'écran ou autres technologies d\'assistance. À corriger: <ul><li>Ajoutez un texte bref qui décrit où le lien vous mène.</li><li>S’il s’agit d’un <a href="https://a11y-101.com/development/icons-and-links/">lien d’icône SVG (vectoriel),</a> il manque alors une description.</li><li>Si ce lien est une erreur due à un bogue de copier/coller, tentez de supprimer.</li></ul>',
+    'Le lien ne comporte pas de texte perceptible (discernible) par les lecteurs d’écran ou autres technologies d’assistance. À corriger: <ul><li>Ajoutez un texte bref qui décrit où le lien vous mène.</li><li>S’il s’agit d’un <a href="https://a11y-101.com/development/icons-and-links/">lien d’icône SVG (vectoriel),</a> il manque alors une description.</li><li>Si ce lien est une erreur due à un bogue de copier/coller, tentez de supprimer.</li></ul>',
   LINK_STOPWORD:
     'Le texte du lien peut ne pas être suffisamment descriptif hors contexte : <strong {C}>%(ERROR)</strong>',
   LINK_STOPWORD_ARIA:
     'Bien qu’un nom accessible ait été fourni, envisagez de réviser le texte visible du lien. Des expressions comme &quot;<strong {C}>%(ERROR)</strong>&quot; ne sont pas significatives.',
   LINK_TIP:
-    '<hr> <strong>Astuce !</strong> Utilisez un texte de lien clair et unique qui décrit la destination du lien, généralement le titre de la page ou du document.',
+    '<hr> <strong>Astuce !</strong> Utilisez un texte de lien clair et unique qui décrit la destination du lien, généralement le titre de la page ou du document.',
   LINK_CLICK_HERE:
-    'La phrase « cliquer » ou « cliquez ici » met l’accent sur le mécanisme de la souris, alors que beaucoup de personnes n’utilisent pas de souris ou consultent ce site web sur un appareil mobile. Envisagez d’utiliser un verbe différent lié à la tâche.',
+    'La phrase « cliquer » ou « cliquez ici » met l’accent sur le mécanisme de la souris, alors que beaucoup de personnes n’utilisent pas de souris ou consultent ce site web sur un appareil mobile. Envisagez d’utiliser un verbe différent lié à la tâche.',
   DUPLICATE_TITLE:
     'L’attribut <code>title</code> sur les liens et les images est conçu pour fournir des informations supplémentaires et doit être <strong>différent</strong> du texte ou du texte alternatif. Le texte du titre apparaît lors du survol d’un élément, mais il n’est pas accessible avec un clavier ou une saisie tactile. Envisagez <a href="https://www.a11yproject.com/posts/title-attributes/">d’éviter complètement l’attribut title.</a>',
   LINK_SYMBOLS:
@@ -231,9 +231,9 @@ const tooltip = {
   LINK_URL:
     'Des adresses URLs plus longues et moins compréhensibles utilisé en tant que lien de texte peuvent être difficiles à écouter avec une technologie d’assistance. Dans la plupart des cas, il est recommandé d’utiliser du texte lisible plutôt qu’une adresse URL. Les adresses URL courtes (tels que les pages d’accueil de site web) sont correctes.',
   LINK_DOI:
-    "Pour les pages web ou les ressources en ligne uniquement, le <a href=\"https://apastyle.apa.org/style-grammar-guidelines/paper-format/accessibility/urls#:~:text=descriptive%20links\">guide de style de l'APA</a> recommande d'utiliser des liens descriptifs en entourant l'URL ou le DOI de l'œuvre autour de son titre. Des adresses URLs plus longues et moins compréhensibles utilisé en tant que lien de texte peuvent être difficiles à écouter avec une technologie d’assistance.",
+    "Pour les pages web ou les ressources en ligne uniquement, le <a href=\"https://apastyle.apa.org/style-grammar-guidelines/paper-format/accessibility/urls#:~:text=descriptive%20links\">guide de style de l’APA</a> recommande d’utiliser des liens descriptifs en entourant l’URL ou le DOI de l’œuvre autour de son titre. Des adresses URLs plus longues et moins compréhensibles utilisé en tant que lien de texte peuvent être difficiles à écouter avec une technologie d’assistance.",
   LINK_NEW_TAB:
-    'Le lien s’ouvre dans une nouvelle fenêtre ou un nouvel onglet sans avertissement. Cela peut être particulièrement désorientant pour les personnes ayant des difficultés à percevoir le contenu visuel. De plus, il n’est pas recommandé de contrôler l\'expérience d\'une personne ou de prendre des décisions à sa place. Indiquez que le lien s’ouvrira dans une nouvelle fenêtre à l’intérieur du texte du lien. <hr> <strong>Conseil !</strong> Apprenez les meilleures pratiques: <a href="https://www.nngroup.com/articles/new-browser-windows-and-tabs/">l’ouverture de lien dans les nouvelles fenêtres ou onglets des navigateurs.</a>',
+    'Le lien s’ouvre dans une nouvelle fenêtre ou un nouvel onglet sans avertissement. Cela peut être particulièrement désorientant pour les personnes ayant des difficultés à percevoir le contenu visuel. De plus, il n’est pas recommandé de contrôler l’expérience d’une personne ou de prendre des décisions à sa place. Indiquez que le lien s’ouvrira dans une nouvelle fenêtre à l’intérieur du texte du lien. <hr> <strong>Conseil !</strong> Apprenez les meilleures pratiques: <a href="https://www.nngroup.com/articles/new-browser-windows-and-tabs/">l’ouverture de lien dans les nouvelles fenêtres ou onglets des navigateurs.</a>',
   LINK_FILE_EXT:
     'Le lien dirige vers un PDF ou un fichier téléchargeable (exemple: MP3, Zip, Word Doc) sans avertissement. Indiquez le type de fichier dans le lien du texte. S’il s’agit d’un fichier volumineux, envisagez d’inclure la taille du fichier. <hr> <strong>Exemple:</strong> Rapport de synthèse (PDF, 3 Mo)',
   LINK_IDENTICAL_NAME: 'Plusieurs liens sur cette page utilisent le même texte mais pointent vers des endroits différents. Cela peut prêter à confusion pour les utilisateurs de technologies d’assistance. Pour corriger cela, rendez le texte de ce lien plus descriptif.',
@@ -252,13 +252,13 @@ const tooltip = {
   MISSING_ALT:
     'Texte alternatif manquant ! Si l’image transmet un message, une émotion ou une information importante, assurez-vous d’ajouter une description claire de l’image.',
   LINK_ALT_FILE_EXT:
-    "Le texte alternatif ne doit pas inclure les extensions de fichier ou les dimensions de l'image. Assurez-vous que le texte de remplacement décrit la destination du lien, pas une description complète de l’image. Retirer: <strong {C}>%(ERROR)</strong> <hr> {L} {ALT} <strong {C}>%(ALT_TEXT)</strong>",
+    "Le texte alternatif ne doit pas inclure les extensions de fichier ou les dimensions de l’image. Assurez-vous que le texte de remplacement décrit la destination du lien, pas une description complète de l’image. Retirer: <strong {C}>%(ERROR)</strong> <hr> {L} {ALT} <strong {C}>%(ALT_TEXT)</strong>",
   LINK_PLACEHOLDER_ALT:
     'Texte alternatif non-descriptif ou séparateur trouvé dans une image. Assurez-vous que le texte de remplacement décrit la destination du lien, pas une description complète de l’image. Remplacer le texte de remplacement suivant. <hr> {L} {ALT} <strong {C}>%(ALT_TEXT)</strong>',
   LINK_SUS_ALT:
     'La technologie d’assistance indique déjà que c’est une image, donc &quot;<strong {C}>%(ERROR)</strong>&quot; pourrait être redondant. Assurez-vous que le texte de remplacement décrit la destination du lien, pas la description complète de l’image. <hr> {L} {ALT} <strong {C}>%(ALT_TEXT)</strong>',
   ALT_FILE_EXT:
-    "Le texte alternatif ne doit pas inclure les extensions de fichier ou les dimensions de l'image. Si l’image transmet un message, une émotion ou une information importante, assurez-vous d’ajouter une description de l’image. Retirer: <strong {C}>%(ERROR)</strong> <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>",
+    "Le texte alternatif ne doit pas inclure les extensions de fichier ou les dimensions de l’image. Si l’image transmet un message, une émotion ou une information importante, assurez-vous d’ajouter une description de l’image. Retirer: <strong {C}>%(ERROR)</strong> <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>",
   ALT_PLACEHOLDER:
     'Texte alternatif non-descriptif ou séparateur trouvé dans une image. Modifier le texte de remplacement suivant pour le rendre plus significatif. <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
   SUS_ALT:
@@ -270,7 +270,7 @@ const tooltip = {
   LINK_IMAGE_LONG_ALT:
     'La description du texte de remplacement sur l’image liée est <strong>trop long</strong>. Le texte de remplacement sur l’image liée devrait décrire où le lien vous mène, pas une description complète de l’image. <strong>Utilisez le titre de l’image en tant que lien du texte de remplacement.</strong> <hr> {L} {ALT} <strong {B}>%(altLength) Caractères</strong> <strong {C}>%(ALT_TEXT)</strong>',
   LINK_IMAGE_ALT:
-    "Le lien vers l'image contient un texte de remplacement. <strong>Le texte de remplacement décrit-il la destination du lien?</strong> Pensez à utiliser le titre de la page à laquelle le lien renvoie comme texte de remplacement. <hr> {L} {ALT} <strong {C}>%(ALT_TEXT)</strong>",
+    "Le lien vers l’image contient un texte de remplacement. <strong>Le texte de remplacement décrit-il la destination du lien?</strong> Pensez à utiliser le titre de la page à laquelle le lien renvoie comme texte de remplacement. <hr> {L} {ALT} <strong {C}>%(ALT_TEXT)</strong>",
   LINK_IMAGE_ALT_AND_TEXT:
     'Le lien de l’image contient <strong>du texte de remplacement et du texte à l’entour.</strong> Si cette image est décorative et est utilisé en tant que lien qui mène à une autre page, envisagez marquer l’image en tant que décorative, ou nulle - les liens texte autour devraient suffire. <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong> <hr> <strong {B}>Nom accessible</strong> {L} <strong {C}>%(TEXT)</strong>',
   IMAGE_FIGURE_DECORATIVE:
@@ -280,14 +280,14 @@ const tooltip = {
   IMAGE_DECORATIVE:
     'L’image est marquée comme <strong>décorative</strong> et sera ignorée par la technologie d’assistance. Si l’image transmet un message, une émotion ou une information importante, assurez-vous d’ajouter le texte de remplacement.',
   IMAGE_DECORATIVE_CAROUSEL:
-    "L'image est marquée comme décorative, mais toutes les images dans un carrousel ou une galerie devraient inclure un texte alternatif descriptif pour garantir une expérience équivalente pour tout le monde.",
+    "L’image est marquée comme décorative, mais toutes les images dans un carrousel ou une galerie devraient inclure un texte alternatif descriptif pour garantir une expérience équivalente pour tout le monde.",
   IMAGE_ALT_TOO_LONG:
     'La description du texte de remplacement est <strong>trop longue</strong>. Le texte de remplacement doit être précis, mais significatif tout comme un <em>gazouillis (micromessage) </em> (environ 100 caractères). S’il s’agit d’une image complexe ou d’une illustration, ajoutez une longue description de l’image dans le texte ci-dessous ou dans la composante accordéon. <hr> {ALT} <strong {B}>%(altLength) Caractères</strong> <strong {C}>%(ALT_TEXT)</strong>',
   IMAGE_PASS: '{ALT} <strong {C}>%(ALT_TEXT)</strong>',
   LINK_ALT_MAYBE_BAD:
-    "Le lien d'image a un texte alternatif qui peut ne pas fournir d'informations utiles ou est non descriptif. Assurez-vous que le texte alt décrit la destination du lien. <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>",
+    "Le lien d’image a un texte alternatif qui peut ne pas fournir d’informations utiles ou est non descriptif. Assurez-vous que le texte alt décrit la destination du lien. <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>",
   ALT_MAYBE_BAD:
-    "Le texte alternatif peut ne pas fournir d'informations utiles ou est non descriptif. Améliorez le texte alt suivant : <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>",
+    "Le texte alternatif peut ne pas fournir d’informations utiles ou est non descriptif. Améliorez le texte alt suivant : <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>",
 
   // Labels
   LABELS_MISSING_IMAGE_INPUT:
@@ -301,8 +301,8 @@ const tooltip = {
   LABELS_MISSING_LABEL:
     'Il n’y a pas d’étiquette associée à cette entrée. Veuillez ajouter un attribut <code>id</code> à cette entrée, et ajouter un attribut <code>for</code> correspondant à l’étiquette.',
   LABELS_PLACEHOLDER:
-    'Le texte de remplacement qui disparaît rend difficile pour les gens de se souvenir de quelle information appartient à un champ et d’identifier et de corriger les problèmes de validation. En revanche, envisagez d\'utiliser un indice visible en permanence avant le champ du formulaire. <hr> En savoir plus: <a href="https://www.nngroup.com/articles/form-design-placeholders/">Les espaces réservés dans les champs de formulaire sont nuisibles.</a>',
-  ARIA_INPUT_FIELD_NAME: 'Le champ de saisie ou d\'activation ARIA n\'a pas de nom accessible. Pour corriger cela, fournissez un attribut <code>aria-labelledby</code>, <code>aria-label</code> ou <code>title</code> valide. Si l\'entrée est commutable (ex: case à cocher, interrupteur, bouton radio), l\'ajout d\'un texte interne visible résoudra également ce problème. <hr> <strong {B}>Élément</strong> <pre><code>%(EL)</code></pre>',
+    'Le texte de remplacement qui disparaît rend difficile pour les gens de se souvenir de quelle information appartient à un champ et d’identifier et de corriger les problèmes de validation. En revanche, envisagez d’utiliser un indice visible en permanence avant le champ du formulaire. <hr> En savoir plus: <a href="https://www.nngroup.com/articles/form-design-placeholders/">Les espaces réservés dans les champs de formulaire sont nuisibles.</a>',
+  ARIA_INPUT_FIELD_NAME: 'Le champ de saisie ou d’activation ARIA n’a pas de nom accessible. Pour corriger cela, fournissez un attribut <code>aria-labelledby</code>, <code>aria-label</code> ou <code>title</code> valide. Si l’entrée est commutable (ex: case à cocher, interrupteur, bouton radio), l’ajout d’un texte interne visible résoudra également ce problème. <hr> <strong {B}>Élément</strong> <pre><code>%(EL)</code></pre>',
 
   // Embedded content
   EMBED_VIDEO:
@@ -321,13 +321,13 @@ const tooltip = {
   // Quality assurance
   QA_BAD_LINK:
     'Lien incorrect trouvé. Le lien semble diriger vers un environnement de développement. <hr> {L} <strong {C}>%(LINK)</strong>',
-  QA_IN_PAGE_LINK: 'Lien interne rompu. Ce lien tente de naviguer vers une section de la page introuvable. Pour corriger cela, assurez-vous que le lien correspond à l\'<code>id</code> de l\'élément vers lequel vous souhaitez sauter.',
+  QA_IN_PAGE_LINK: 'Lien interne rompu. Ce lien tente de naviguer vers une section de la page introuvable. Pour corriger cela, assurez-vous que le lien correspond à l\'<code>id</code> de l’élément vers lequel vous souhaitez sauter.',
   QA_STRONG_ITALICS:
     'Les balises Gras et Italique ont une signification sémantique et <strong>ne devraient pas</strong> être utilisées pour surligner des paragraphes en entier. Le texte en gras doit être utilisé pour mettre fortement <strong>l’accent</strong> sur un mot ou une phrase. Les textes en Italiques doivent être utilisés pour surligner les noms propres (ex. livres et titre d’articles), les mots étrangers et les citations. Les citations longues doivent être formatées comme une citation en bloc.',
   QA_PDF:
     'Impossible de vérifier l’accessibilité des fichiers PDF. Les PDF sont considérés comme contenu web et doivent être accessibles comme tel. Les PDF contiennent souvent des problèmes pour les personnes qui utilisent les lecteurs d’écrans (balises structurelles manquantes ou des champs de formulaire manquants) et les gens qui ont une malvoyance (le texte ne resurgit pas lorsqu’il est agrandi). <ul><li>S’il s’agit d’un formulaire, utilisez un formulaire HTML accessible comme alternative.</li><li>S’il s’agit d’un document, convertissez-le en page web.</li></ul> Sinon, veuillez vérifier <a href="https://helpx.adobe.com/acrobat/using/create-verify-pdf-accessibility.html">l’accessibilité du PDF dans Acrobat DC.</a>',
   QA_DOCUMENT:
-    'Impossible de vérifier l\'accessibilité du document. Les documents liés sont considérés comme du contenu web et doivent également être rendus accessibles. Veuillez vérifier manuellement ce document. <ul><li>Rendez votre <a href="https://support.google.com/docs/answer/6199477?hl=fr">document ou votre présentation Google Workspace plus accessible.</a></li><li>Rendez vos <a href="https://support.microsoft.com/fr-fr/office/create-accessible-office-documents-868ecfcd-4f00-4224-b881-a65537a7c155">documents Office plus accessibles.</a></li></ul>',
+    'Impossible de vérifier l’accessibilité du document. Les documents liés sont considérés comme du contenu web et doivent également être rendus accessibles. Veuillez vérifier manuellement ce document. <ul><li>Rendez votre <a href="https://support.google.com/docs/answer/6199477?hl=fr">document ou votre présentation Google Workspace plus accessible.</a></li><li>Rendez vos <a href="https://support.microsoft.com/fr-fr/office/create-accessible-office-documents-868ecfcd-4f00-4224-b881-a65537a7c155">documents Office plus accessibles.</a></li></ul>',
   QA_BLOCKQUOTE:
     'Est-ce un titre? <strong {C}>%(TEXT)</strong> <hr> Les citations en bloc doivent être utilisées pour les citations uniquement. S’il s’agit d’un titre, changez cette citation en bloc pour un titre sémantique (ex. Titre 2 ou Titre 3).',
   QA_FAKE_HEADING:
@@ -341,24 +341,24 @@ const tooltip = {
   QA_SUBSCRIPT:
     'Les options de mise en forme en indice et en exposant ne doivent être utilisées que pour modifier la position du texte afin de se conformer aux conventions ou normes typographiques. Il ne doit <strong>pas</strong> être utilisé uniquement à des fins de présentation ou d’apparence. La mise en forme de phrases entières pose des problèmes de lisibilité. Les cas d’utilisation appropriés incluent l’affichage d’exposants, de nombres ordinaux tels que 4<sup>th</sup> au lieu de quatrième et de formules chimiques (H<sub>2</sub>O).',
   QA_NESTED_COMPONENTS:
-    "Évitez d'imbriquer des composants de mise en page interactifs, comme de placer des accordéons dans des onglets ou des onglets dans des accordéons. Cela peut compliquer la navigation, augmenter la charge cognitive et conduire à ce que les gens négligent le contenu.",
+    "Évitez d’imbriquer des composants de mise en page interactifs, comme de placer des accordéons dans des onglets ou des onglets dans des accordéons. Cela peut compliquer la navigation, augmenter la charge cognitive et conduire à ce que les gens négligent le contenu.",
   QA_JUSTIFY:
-    "Évitez d'utiliser du texte justifié, qui s'aligne à la fois sur les marges gauche et droite. Cela peut être difficile à lire pour certaines personnes en raison des espaces inégaux entre les mots. Utilisez du texte aligné à gauche pour une meilleure lisibilité.",
+    "Évitez d’utiliser du texte justifié, qui s’aligne à la fois sur les marges gauche et droite. Cela peut être difficile à lire pour certaines personnes en raison des espaces inégaux entre les mots. Utilisez du texte aligné à gauche pour une meilleure lisibilité.",
   QA_SMALL_TEXT:
-    "Le texte petit est plus difficile à lire, en particulier pour les personnes malvoyantes. Pour garantir une meilleure lisibilité, évitez d'utiliser des tailles de police inférieures à la valeur par défaut.",
+    "Le texte petit est plus difficile à lire, en particulier pour les personnes malvoyantes. Pour garantir une meilleure lisibilité, évitez d’utiliser des tailles de police inférieures à la valeur par défaut.",
 
   // Shared
   LINK_TEXT: '<strong {B}>Texte du lien</strong> <strong {C}>%(TEXT)</strong>',
   ACC_NAME: '<strong {B}>Nom accessible</strong> <strong {C}>%(TEXT)</strong>',
-  ACC_NAME_TIP: '<hr><strong>Conseil !</strong> Le « nom accessible » est le libellé final communiqué aux personnes utilisant des technologies d\'assistance. Cela les aide à comprendre la fonction de l\'élément.',
-  HIDDEN_FOCUSABLE: 'Cet élément peut recevoir le focus du clavier, mais il est masqué pour les lecteurs d\'écran par un attribut <code>aria-hidden="true"</code> (sur lui-même ou sur un conteneur parent). Pour corriger cela, supprimez l\'attribut aria-hidden ou supprimez l\'élément de l\'ordre de tabulation. <hr> <strong {B}>Élément</strong> <pre><code>%(EL)</code></pre> <hr> En savoir plus sur l\'<a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">attribut aria-hidden.</a>',
+  ACC_NAME_TIP: '<hr><strong>Conseil !</strong> Le « nom accessible » est le libellé final communiqué aux personnes utilisant des technologies d’assistance. Cela les aide à comprendre la fonction de l’élément.',
+  HIDDEN_FOCUSABLE: 'Cet élément peut recevoir le focus du clavier, mais il est masqué pour les lecteurs d’écran par un attribut <code>aria-hidden="true"</code> (sur lui-même ou sur un conteneur parent). Pour corriger cela, supprimez l’attribut aria-hidden ou supprimez l’élément de l’ordre de tabulation. <hr> <strong {B}>Élément</strong> <pre><code>%(EL)</code></pre> <hr> En savoir plus sur l\'<a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">attribut aria-hidden.</a>',
 
   // Developer
   DUPLICATE_ID:
     'ID (Identifiant) dupliqué trouvé. Les erreurs d’ID (d’identifiants) dupliqués sont reconnues pour causer des problèmes au niveau de la technologie d’assistance lorsqu’ils tentent d’interagir avec le contenu. Veuillez retirer ou modifier l’ID (l’identifiant) suivant. <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>',
   UNCONTAINED_LI:
-    "Tous les éléments de liste <code>&lt;li&gt;</code> doivent être placés à l'intérieur des éléments <code>&lt;ul&gt;</code> non ordonnés ou <code>&lt;ol&gt;</code> ordonnés. Cette structure aide les lecteurs d'écran à annoncer la liste et ses éléments avec précision.",
-  TABINDEX_ATTR: "L'élément ne doit pas avoir un attribut <code>tabindex</code> supérieur à 0.",
+    "Tous les éléments de liste <code>&lt;li&gt;</code> doivent être placés à l’intérieur des éléments <code>&lt;ul&gt;</code> non ordonnés ou <code>&lt;ol&gt;</code> ordonnés. Cette structure aide les lecteurs d’écran à annoncer la liste et ses éléments avec précision.",
+  TABINDEX_ATTR: "L’élément ne doit pas avoir un attribut <code>tabindex</code> supérieur à 0.",
 
   // Meta checks
   META_LANG:
@@ -368,10 +368,10 @@ const tooltip = {
   META_SCALABLE:
     'Supprimez le paramètre <code>user-scalable="no"</code> dans la <a href="https://developer.mozilla.org/fr/docs/Web/HTML/Viewport_meta_tag">balise meta viewport</a> pour permettre le zoom.',
   META_MAX:
-    'Assurez-vous que le paramètre <code>maximum-scale</code> dans la <a href="https://developer.mozilla.org/fr/docs/Web/HTML/Viewport_meta_tag">balise meta viewport</a> n\'est pas inférieur à 2.',
+    'Assurez-vous que le paramètre <code>maximum-scale</code> dans la <a href="https://developer.mozilla.org/fr/docs/Web/HTML/Viewport_meta_tag">balise meta viewport</a> n’est pas inférieur à 2.',
   META_REFRESH: 'La page ne doit pas se rafraîchir automatiquement en utilisant une balise meta.',
-  META_LANG_SUGGEST: 'Le code de langue suivant <code>%(CODE)</code> n\'est pas valide. Vouliez-vous dire <code>%(CODE)</code>?',
-  META_LANG_VALID: 'Le code de langue pour cet élément n\'est pas valide. Pour corriger cela, remplacez l\'attribut lang par un code de langue valide. <hr> <strong {B}>Élément</strong> <code>&lt;%(ELEMENT) lang="%(CODE)"&gt;</code> <hr> En savoir plus sur la <a href="https://www.w3.org/International/questions/qa-html-language-declarations.fr.html">déclaration de la langue en HTML.</a>',
+  META_LANG_SUGGEST: 'Le code de langue suivant <code>%(CODE)</code> n’est pas valide. Vouliez-vous dire <code>%(CODE)</code>?',
+  META_LANG_VALID: 'Le code de langue pour cet élément n’est pas valide. Pour corriger cela, remplacez l’attribut lang par un code de langue valide. <hr> <strong {B}>Élément</strong> <code>&lt;%(ELEMENT) lang="%(CODE)"&gt;</code> <hr> En savoir plus sur la <a href="https://www.w3.org/International/questions/qa-html-language-declarations.fr.html">déclaration de la langue en HTML.</a>',
 
   // Buttons
   BTN_EMPTY: 'Le bouton manque d’un nom accessible qui décrit son objectif.',
@@ -381,10 +381,10 @@ const tooltip = {
   BTN_TIP:
     'Apprenez à créer un <a href="https://www.sarasoueidan.com/blog/accessible-icon-buttons/">bouton accessible.</a>',
   BTN_ROLE_IN_NAME:
-    'N’incluez pas le mot « bouton » dans le nom d’un bouton. Les lecteurs d’écran annoncent déjà le rôle d’un élément en plus de son nom.',
+    'N’incluez pas le mot « bouton » dans le nom d’un bouton. Les lecteurs d’écran annoncent déjà le rôle d’un élément en plus de son nom.',
   LABEL_IN_NAME:
     'Le texte visible pour cet élément semble différent du nom accessible, ce qui peut entraîner de la confusion pour les utilisateurs des technologies d’assistance. Veuillez vérifier : <hr> <strong {B}>Texte</strong> <strong {C}>%(TEXT)</strong> <hr> <strong {B}>Nom Accessible</strong> <strong {C}>%(TEXT)</strong>',
-  LINK_MAYBE_BUTTON: 'Ce lien a une cible non valide. Bien que le nom accessible ou ses attributs suggèrent qu\'il ne s\'agisse pas du tout d\'un lien, mais qu\'il contrôle plutôt un comportement scripté sur la page. Pour corriger cela, remplacez le lien par un <a href="https://www.w3.org/WAI/ARIA/apg/patterns/button/">bouton accessible</a> ou corrigez la destination du lien. <hr> <strong {B}>Nom accessible</strong> <strong {C}>%(TEXT)</strong> <hr> <strong>Conseil !</strong> Les technologies d\'assistance traitent les boutons et les liens différemment. L\'utilisation du bon élément HTML garantit que les utilisateurs savent quels raccourcis clavier utiliser et quelle action sera déclenchée.',
+  LINK_MAYBE_BUTTON: 'Ce lien a une cible non valide. Bien que le nom accessible ou ses attributs suggèrent qu’il ne s’agisse pas du tout d’un lien, mais qu’il contrôle plutôt un comportement scripté sur la page. Pour corriger cela, remplacez le lien par un <a href="https://www.w3.org/WAI/ARIA/apg/patterns/button/">bouton accessible</a> ou corrigez la destination du lien. <hr> <strong {B}>Nom accessible</strong> <strong {C}>%(TEXT)</strong> <hr> <strong>Conseil !</strong> Les technologies d’assistance traitent les boutons et les liens différemment. L’utilisation du bon élément HTML garantit que les utilisateurs savent quels raccourcis clavier utiliser et quelle action sera déclenchée.',
 
   // Tables
   TABLES_MISSING_HEADINGS:
@@ -393,7 +393,7 @@ const tooltip = {
     'Les titres sémantiques tels que Titre 2 ou Titre 3 doivent être utilisées uniquement pour les sections de contenu ; <strong>non</strong> pour les tableaux HTML. Indiquez les en-têtes de tableau en utilisant plutôt l’élément <code>&lt;th&gt;</code>. <hr> En savoir plus sur les <a href="https://www.w3.org/WAI/tutorials/tables/">tableaux accessibles.</a>',
   TABLES_EMPTY_HEADING:
     'En-tête de tableau vide trouvé ! Les en-têtes de tableau ne devraient <strong>jamais</strong> être vides. Il est important de désigner les en-têtes de ligne et/ou de colonne pour définir leur relation. Cette information fournit le contexte aux personnes qui utilisent la technologie d’assistance. Veuillez garder à l’esprit que les tableaux devraient être utilisés pour les données tabulaires uniquement. <hr> En savoir plus sur les <a href="https://www.w3.org/WAI/tutorials/tables/">tableaux accessibles.</a>',
-  TABLES_INVALID_HEADERS_REF: 'Ce tableau tente de lier une cellule de données spécifique à une cellule d\'en-tête spécifique, mais l\'ID de l\'en-tête est introuvable. Assurez-vous que chaque attribut <code>headers</code> correspond à l\'ID d\'une cellule d\'en-tête dans le même tableau. <hr> <strong {B}>En-têtes</strong> <code>%(VALUE)</code> <hr> <strong>Conseil !</strong> L\'<a href="https://www.w3.org/WAI/WCAG22/Techniques/html/H43">utilisation de références d\'ID manuelles</a> pour associer des cellules de données à des cellules d\'en-tête est complexe et fragile. Si possible, divisez les données complexes en tableaux plus petits avec des lignes et des colonnes d\'en-tête simples.',
+  TABLES_INVALID_HEADERS_REF: 'Ce tableau tente de lier une cellule de données spécifique à une cellule d’en-tête spécifique, mais l’ID de l’en-tête est introuvable. Assurez-vous que chaque attribut <code>headers</code> correspond à l’ID d’une cellule d’en-tête dans le même tableau. <hr> <strong {B}>En-têtes</strong> <code>%(VALUE)</code> <hr> <strong>Conseil !</strong> L\'<a href="https://www.w3.org/WAI/WCAG22/Techniques/html/H43">utilisation de références d’ID manuelles</a> pour associer des cellules de données à des cellules d’en-tête est complexe et fragile. Si possible, divisez les données complexes en tableaux plus petits avec des lignes et des colonnes d’en-tête simples.',
 
   // Contrast
   CONTRAST_NORMAL:
@@ -401,41 +401,41 @@ const tooltip = {
   CONTRAST_LARGE:
     'Le texte de grande taille doit avoir un rapport de contraste d’au moins %(RATIO).',
   CONTRAST_ERROR:
-    "Le texte n'a pas assez de contraste avec l'arrière-plan, ce qui le rend difficile à lire.",
+    "Le texte n’a pas assez de contraste avec l’arrière-plan, ce qui le rend difficile à lire.",
   CONTRAST_WARNING:
-    "Le contraste de ce texte est inconnu et doit être vérifié manuellement. Assurez-vous que le texte et l'arrière-plan ont un contraste suffisamment fort.",
+    "Le contraste de ce texte est inconnu et doit être vérifié manuellement. Assurez-vous que le texte et l’arrière-plan ont un contraste suffisamment fort.",
   CONTRAST_ERROR_GRAPHIC:
-    "Le graphique n'a pas assez de contraste avec l'arrière-plan, ce qui le rend difficile à percevoir.",
+    "Le graphique n’a pas assez de contraste avec l’arrière-plan, ce qui le rend difficile à percevoir.",
   CONTRAST_WARNING_GRAPHIC:
     'Le contraste de ce graphique est inconnu et doit être vérifié manuellement.',
   CONTRAST_TIP_GRAPHIC:
-    "Les graphiques et les éléments de l'interface utilisateur doivent avoir un ratio de contraste d'au moins 3:1.",
-  CONTRAST_OPACITY: "Augmentez l'opacité pour une meilleure visibilité.",
+    "Les graphiques et les éléments de l’interface utilisateur doivent avoir un ratio de contraste d’au moins 3:1.",
+  CONTRAST_OPACITY: "Augmentez l’opacité pour une meilleure visibilité.",
   CONTRAST_APCA:
-    "Ce n'est pas assez de contraste pour n'importe quelle taille de texte. Envisagez-vous d'utiliser cette combinaison de couleur et de taille de texte ?",
-  CONTRAST_COLOR: "Envisagez-vous d'utiliser cette couleur à la place ?",
+    "Ce n’est pas assez de contraste pour n’importe quelle taille de texte. Envisagez-vous d’utiliser cette combinaison de couleur et de taille de texte ?",
+  CONTRAST_COLOR: "Envisagez-vous d’utiliser cette couleur à la place ?",
   CONTRAST_SIZE:
-    "Envisagez-vous d'augmenter la taille du texte pour cette combinaison de couleurs ?",
+    "Envisagez-vous d’augmenter la taille du texte pour cette combinaison de couleurs ?",
   CONTRAST_PLACEHOLDER:
-    "Le texte de l'espace réservé dans ce champ de saisie n'a pas suffisamment de contraste avec l'arrière-plan, ce qui le rend difficile à lire.",
+    "Le texte de l’espace réservé dans ce champ de saisie n’a pas suffisamment de contraste avec l’arrière-plan, ce qui le rend difficile à lire.",
   CONTRAST_PLACEHOLDER_UNSUPPORTED:
     'Le contraste de ce texte de remplacement est inconnu et doit être vérifié manuellement. Assurez-vous que le texte et l’arrière-plan ont des couleurs fortement contrastées.',
   CONTRAST_INPUT:
-    "Le texte dans ce champ de saisie n'a pas suffisamment de contraste avec l'arrière-plan, ce qui le rend difficile à lire.",
+    "Le texte dans ce champ de saisie n’a pas suffisamment de contraste avec l’arrière-plan, ce qui le rend difficile à lire.",
   CONTRAST: 'Contraste',
   UNKNOWN: 'Inconnu',
   FG: 'Premier plan',
   BG: 'Arrière-plan',
   NO_SUGGESTION:
-    "Aucune combinaison accessible ne peut être trouvée en modifiant uniquement la couleur du texte. Essayez de modifier la couleur de l'arrière-plan.",
+    "Aucune combinaison accessible ne peut être trouvée en modifiant uniquement la couleur du texte. Essayez de modifier la couleur de l’arrière-plan.",
 
   // Page language
-  PAGE_LANG_CONFIDENCE: 'Plus de la moitié du texte de cette page semble être en %(LIKELY_LANG), mais la langue déclarée de la page est %(PAGE_LANG). Envisagez de mettre à jour la <a href="https://www.w3.org/International/questions/qa-html-language-declarations.fr.html">langue déclarée de la page</a> pour qu\'elle corresponde au contenu.',
+  PAGE_LANG_CONFIDENCE: 'Plus de la moitié du texte de cette page semble être en %(LIKELY_LANG), mais la langue déclarée de la page est %(PAGE_LANG). Envisagez de mettre à jour la <a href="https://www.w3.org/International/questions/qa-html-language-declarations.fr.html">langue déclarée de la page</a> pour qu’elle corresponde au contenu.',
   LANG_OF_PARTS: 'La langue de la page a été déclarée comme %(PAGE_LANG), mais ce contenu semble être en %(LIKELY_LANG). Assurez-vous que le contenu est balisé de manière appropriée.',
   LANG_MISMATCH: 'Ce contenu semble être en %(DETECTED_LANG), cependant, il a été balisé comme %(WRONG_LANG).',
   LANG_OF_PARTS_ALT: 'Ce texte alternatif semble être en %(LIKELY_LANG), mais la langue de la page a été déclarée comme %(PAGE_LANG). Assurez-vous que le texte alternatif est dans la même langue que le reste de la page. <hr> {ALT} <strong {C}>%(ALT)</strong>',
-  LANG_TIP: '<hr><strong>Astuce !</strong> Les lecteurs d\'écran prononcent les mots à l\'aide de balises de langue. La prononciation d\'une langue avec un pack de langue non correspondant produit un discours inintelligible.',
-  LANG_UNSUPPORTED: 'Les vérifications d\'accessibilité liées à la langue ont été ignorées car la détection automatique de la langue n\'est pas prise en charge par ce navigateur.',
+  LANG_TIP: '<hr><strong>Astuce !</strong> Les lecteurs d’écran prononcent les mots à l’aide de balises de langue. La prononciation d’une langue avec un pack de langue non correspondant produit un discours inintelligible.',
+  LANG_UNSUPPORTED: 'Les vérifications d’accessibilité liées à la langue ont été ignorées car la détection automatique de la langue n’est pas prise en charge par ce navigateur.',
 };
 
 export default {
