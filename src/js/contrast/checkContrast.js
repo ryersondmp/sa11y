@@ -90,9 +90,15 @@ export default function checkContrast() {
     if (background.type === 'image') {
       let extractColours = Contrast.extractColorFromString(background.value);
 
-      // Translucent background colour on top of the image/gradient: blend it onto each stop.
-      if (background.overlay && extractColours?.length) {
-        extractColours = extractColours.map((stop) => alphaBlend([...background.overlay], stop));
+      // Composite each gradient stop: translucent stops onto the colour behind the
+      // gradient (`base`), then any translucent background colour of a descendant
+      // (`overlay`) on top of the stop.
+      if ((background.base || background.overlay) && extractColours?.length) {
+        extractColours = extractColours.map((stop) => {
+          let composited = background.base ? alphaBlend([...stop], background.base) : stop;
+          if (background.overlay) composited = alphaBlend([...background.overlay], composited);
+          return composited;
+        });
       }
       const hasFailure =
         !extractColours ||

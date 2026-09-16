@@ -97,6 +97,74 @@ export function getBackground($el, shadowDetection) {
     return node.parentElement || node.parentNode;
   };
 
+  /**
+   * Describe an element's background image/gradient. `base` is the opaque colour
+   * behind the image (the element's own background-color, or the first opaque
+   * ancestor once translucent layers are composited) so translucent gradient
+   * stops can be blended onto it. Omitted when the colour behind is unknown.
+   */
+  const imageBackground = (el, styles, bgImage) => {
+    const own = convertToRGBA(styles.backgroundColor);
+    let base;
+    if (own !== 'unsupported') {
+      if (own[3] === 1) {
+        base = own;
+      } else {
+        const behind = resolveAbove(el, own[3] > 0 ? own : null);
+        if (Array.isArray(behind)) base = behind;
+      }
+    }
+    return { type: 'image', value: bgImage, ...(base && { base }) };
+  };
+
+  /**
+   * Walk up from `fromEl` (exclusive) until an opaque background colour or a
+   * background image is found. `stacked` holds already composited translucent
+   * layers below `fromEl` (or null).
+   * @returns {Array|Object|string} Opaque [r, g, b], image descriptor or 'unsupported'.
+   */
+  const resolveAbove = (fromEl, stacked) => {
+    let layers = stacked;
+    let parentEl = getVisualParent(fromEl);
+
+    while (parentEl && (parentEl.nodeType === 1 || parentEl.nodeType === 11)) {
+      if (parentEl.nodeType === 11 && parentEl.host) {
+        parentEl = parentEl.host;
+        continue;
+      }
+
+      const parentStyles = Utils.getCachedStyle(parentEl);
+
+      // Ancestor has a background image or gradient: blend translucent layers onto each stop later.
+      const parentBgImage = parentStyles.backgroundImage;
+      if (parentBgImage && parentBgImage !== 'none') {
+        const image = imageBackground(parentEl, parentStyles, parentBgImage);
+        return layers ? { ...image, overlay: layers } : image;
+      }
+
+      const parentBg = convertToRGBA(parentStyles.backgroundColor);
+      if (parentBg === 'unsupported') return 'unsupported';
+
+      // Stop, opaque colour found.
+      if (parentBg[3] === 1) {
+        return layers ? alphaBlend(layers, parentBg) : parentBg;
+      }
+
+      // Another translucent layer: composite and keep searching.
+      if (parentBg[3] > 0) {
+        layers = layers ? stackTranslucent(layers, parentBg) : parentBg;
+      }
+
+      if (parentEl.tagName === 'HTML') break;
+
+      // Move up the flattened DOM tree.
+      parentEl = getVisualParent(parentEl);
+    }
+
+    // Reached the HTML tag without an opaque background: default to white.
+    return layers ? alphaBlend(layers, [255, 255, 255]) : [255, 255, 255];
+  };
+
   let targetEl = $el;
   let finalBackground = [255, 255, 255]; // Default fallback to white
 
@@ -114,7 +182,7 @@ export function getBackground($el, shadowDetection) {
     // Element has background image.
     const bgImage = styles.backgroundImage;
     if (bgImage && bgImage !== 'none') {
-      finalBackground = { type: 'image', value: bgImage };
+      finalBackground = imageBackground(targetEl, styles, bgImage);
       break;
     }
 
@@ -122,56 +190,9 @@ export function getBackground($el, shadowDetection) {
     const bgColor = convertToRGBA(styles.backgroundColor);
 
     if (bgColor[3] !== 0 && bgColor !== 'transparent') {
-      // If the background colour has an alpha channel.
+      // Translucent background colour: composite onto what lies behind it.
       if (bgColor[3] < 1) {
-        // Composite the translucent layer(s) onto the first opaque ancestor background.
-        // Ancestors with a background image or gradient are treated like an image
-        // background: the translucent colour is blended onto each gradient stop later,
-        // which yields a "needs review" warning instead of a false error against white.
-        let stacked = bgColor;
-        let parentEl = getVisualParent(targetEl);
-        let resolved = null;
-
-        while (parentEl && (parentEl.nodeType === 1 || parentEl.nodeType === 11)) {
-          if (parentEl.nodeType === 11 && parentEl.host) {
-            parentEl = parentEl.host;
-            continue;
-          }
-
-          const parentStyles = Utils.getCachedStyle(parentEl);
-
-          // Ancestor has a background image or gradient.
-          const parentBgImage = parentStyles.backgroundImage;
-          if (parentBgImage && parentBgImage !== 'none') {
-            resolved = { type: 'image', value: parentBgImage, overlay: stacked };
-            break;
-          }
-
-          const parentBg = convertToRGBA(parentStyles.backgroundColor);
-          if (parentBg === 'unsupported') {
-            resolved = 'unsupported';
-            break;
-          }
-
-          // Stop, opaque colour found.
-          if (parentBg[3] === 1) {
-            resolved = alphaBlend(stacked, parentBg);
-            break;
-          }
-
-          // Another translucent layer: composite and keep searching.
-          if (parentBg[3] > 0) {
-            stacked = stackTranslucent(stacked, parentBg);
-          }
-
-          if (parentEl.tagName === 'HTML') break;
-
-          // Move up the flattened DOM tree.
-          parentEl = getVisualParent(parentEl);
-        }
-
-        // If we reach the HTML tag without finding an opaque background, default to white.
-        finalBackground = resolved || alphaBlend(stacked, [255, 255, 255]);
+        finalBackground = resolveAbove(targetEl, bgColor);
         break;
       }
 

@@ -1229,6 +1229,7 @@ test.describe('Sa11y Unit Tests', () => {
     const ids = [
       'warning-contrast',
       'warning-contrast-2',
+      'warning-contrast-3',
     ];
     ids.forEach(async (id) => {
       const issue = await checkTooltip(page, id, 'contrast of this text is unknown');
@@ -1243,6 +1244,7 @@ test.describe('Sa11y Unit Tests', () => {
       'nothing-contrast-5',
       'nothing-contrast-6',
       'nothing-contrast-7',
+      'nothing-contrast-8',
     ];
     ids.forEach(async (id) => {
       const issue = await noAnnotation(page, id);
