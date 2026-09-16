@@ -1556,6 +1556,31 @@
       <h4 class="background-image">Text on background image requires manual review!</h4>
     </div>
 
+    <h3>Contrast: translucent backgrounds</h3>
+    <div id="nothing-contrast-7">
+      <div style="background-image: linear-gradient(135deg, #0f3d4d, #123a5a); padding: 1em;">
+        <p style="display: inline-block; background: rgba(75, 187, 217, 0.14); color: #fff;">
+          Translucent background over a dark gradient passes (not blended against white).
+        </p>
+      </div>
+    </div>
+    <div id="warning-contrast-2">
+      <div style="background-image: linear-gradient(135deg, #e8f4f8, #fff); padding: 1em;">
+        <p style="display: inline-block; background: rgba(75, 187, 217, 0.14); color: #fff;">
+          Translucent background over a light gradient requires manual review.
+        </p>
+      </div>
+    </div>
+    <div id="error-contrast-7">
+      <div style="background: #000; padding: 1em;">
+        <div style="background: rgba(255, 255, 255, 0.3); padding: 0.5em;">
+          <p style="display: inline-block; background: rgba(255, 255, 255, 0.3); color: #fff;">
+            Two stacked translucent layers over black fail.
+          </p>
+        </div>
+      </div>
+    </div>
+
     <h3>Contrast ignore</h3>
     <h4>Ignore elements with exactly 1:1 contrast ratio</h4>
     <p>In most cases, any time there's been a 1:1 ratio it's because it's a background image... as no one should
