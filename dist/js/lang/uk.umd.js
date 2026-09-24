@@ -1,5 +1,5 @@
 (function(global, factory) {
-  typeof exports === "object" && typeof module !== "undefined" ? module.exports = factory() : typeof define === "function" && define.amd ? define(factory) : (global = typeof globalThis !== "undefined" ? globalThis : global || self, global.Sa11yLangUa = factory());
+  typeof exports === "object" && typeof module !== "undefined" ? module.exports = factory() : typeof define === "function" && define.amd ? define(factory) : (global = typeof globalThis !== "undefined" ? globalThis : global || self, global.Sa11yLangUk = factory());
 })(this, (function() {
   "use strict";
   const ruleset = {
@@ -103,7 +103,7 @@
     POTENTIAL_UI_ELEMENTS: ["меню", "закрити", "перемикач", "відкрити", "розгорнути", "згорнути", "наступний", "попередній", "відтворити", "пауза", "підменю", "показати", "приховати", "випадаюче меню", "назад", "вперед", "пропустити", "надіслати", "скасувати", "зберегти", "редагувати", "видалити", "вилучити", "пошук", "фільтр", "сортувати", "стоп", "вимкнути звук", "увімкнути звук", "повний екран", "мінімізувати", "максимізувати"]
   };
   const ui = {
-    LANG_CODE: "ua",
+    LANG_CODE: "uk",
     MAIN_TOGGLE_LABEL: "Перевірка доступності",
     CONTAINER_LABEL: "Засіб перевірки доступності",
     ERROR: "Помилка",
@@ -323,7 +323,7 @@
     LANG_TIP: "<hr><strong>Порада!</strong> Зчитувачі екрана вимовляють слова за допомогою мовних тегів. Вимова мови з невідповідним мовним пакетом створює незрозуміле мовлення.",
     LANG_UNSUPPORTED: "Перевірки доступності, пов’язані з мовою, було пропущено, оскільки цей браузер не підтримує автоматичне визначення мови."
   };
-  const ua = {
+  const uk = {
     strings: {
       ...ui,
       ...ruleset,
@@ -331,5 +331,5 @@
     },
     ruleset
   };
-  return ua;
+  return uk;
 }));

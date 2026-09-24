@@ -102,7 +102,7 @@ const ruleset = {
 };
 
 const ui = {
-  LANG_CODE: 'ua',
+  LANG_CODE: 'uk',
   MAIN_TOGGLE_LABEL: 'Перевірка доступності',
   CONTAINER_LABEL: 'Засіб перевірки доступності',
   ERROR: 'Помилка',

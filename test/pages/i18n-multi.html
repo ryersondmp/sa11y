@@ -38,11 +38,11 @@
   <link rel="stylesheet" href="../../src/css/sa11y.css" />
   <script type="module">
     import { Sa11y, Lang } from '../../src/js/sa11y.js';
-    import Sa11yLangUa from '../../src/lang/ua.js';
+    import Sa11yLangUk from '../../src/lang/uk.js';
     import Sa11yLangEn from '../../src/lang/en.js';
 
     // Instantiate
-    const mergedStrings = { ...(Sa11yLangEn.strings), ...(Sa11yLangUa.ruleset) };
+    const mergedStrings = { ...(Sa11yLangEn.strings), ...(Sa11yLangUk.ruleset) };
     Lang.addI18n(mergedStrings);
     const sa11y = new Sa11y({
       unitTestMode: true,
