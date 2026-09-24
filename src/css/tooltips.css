@@ -146,12 +146,6 @@ div {
   transition-property: transform, visibility, opacity;
   -webkit-font-smoothing: auto;
 
-  pre code {
-    display: block;
-    overflow: auto;
-    white-space: pre-wrap;
-  }
-
   code {
     font-family: monospace;
     font-size: calc(var(--sa11y-normal-text) - 1px);
@@ -168,6 +162,12 @@ div {
     background-color: var(--sa11y-panel-badge);
     border-radius: 3.2px;
     -webkit-font-smoothing: auto;
+  }
+
+  pre code {
+    display: block;
+    overflow: auto;
+    white-space: pre-wrap;
   }
 
   sub,
@@ -262,8 +262,7 @@ div {
       border: 2px solid var(--sa11y-button-outline);
       border-radius: 5px;
 
-      &:hover,
-      &:focus {
+      &:is(:hover, :focus) {
         background: var(--sa11y-shortcut-hover);
       }
     }

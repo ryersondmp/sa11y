@@ -38,11 +38,6 @@ code {
   font-weight: 600;
 }
 
-pre code {
-  overflow: auto;
-  white-space: pre-wrap;
-}
-
 pre,
 code,
 kbd,
@@ -51,6 +46,11 @@ kbd,
   color: var(--sa11y-panel-primary);
   background-color: var(--sa11y-panel-badge);
   border-radius: 3.2px;
+}
+
+pre code {
+  overflow: auto;
+  white-space: pre-wrap;
 }
 
 .bold {

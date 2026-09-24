@@ -1245,6 +1245,7 @@ test.describe('Sa11y Unit Tests', () => {
       'nothing-contrast-6',
       'nothing-contrast-7',
       'nothing-contrast-8',
+      'nothing-contrast-9'
     ];
     ids.forEach(async (id) => {
       const issue = await noAnnotation(page, id);

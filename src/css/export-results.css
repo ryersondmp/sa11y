@@ -223,6 +223,11 @@ dd {
   padding-bottom: 10px;
 }
 
+ol,
+ul {
+  padding-left: 2rem;
+}
+
 ul ul,
 ol ul,
 ul ol,
@@ -232,11 +237,6 @@ ol ol {
 
 ul li {
   margin-bottom: 0.5rem;
-}
-
-ol,
-ul {
-  padding-left: 2rem;
 }
 
 ol li:not(li li) {
