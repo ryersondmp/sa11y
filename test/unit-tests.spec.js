@@ -1217,6 +1217,7 @@ test.describe('Sa11y Unit Tests', () => {
       'error-contrast-4',
       'error-contrast-5',
       'error-contrast-6',
+      'error-contrast-7',
     ];
     ids.forEach(async (id) => {
       const issue = await checkTooltip(page, id, 'enough contrast');
@@ -1227,6 +1228,8 @@ test.describe('Sa11y Unit Tests', () => {
   test('Contrast warning', async () => {
     const ids = [
       'warning-contrast',
+      'warning-contrast-2',
+      'warning-contrast-3',
     ];
     ids.forEach(async (id) => {
       const issue = await checkTooltip(page, id, 'contrast of this text is unknown');
@@ -1240,6 +1243,8 @@ test.describe('Sa11y Unit Tests', () => {
       'nothing-contrast-2',
       'nothing-contrast-5',
       'nothing-contrast-6',
+      'nothing-contrast-7',
+      'nothing-contrast-8',
     ];
     ids.forEach(async (id) => {
       const issue = await noAnnotation(page, id);

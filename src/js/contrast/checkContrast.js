@@ -3,6 +3,7 @@ import Elements from '../utils/elements';
 import Lang from '../utils/lang';
 import * as Utils from '../utils/utils';
 import * as Contrast from './utils';
+import { alphaBlend } from './apca';
 import { convertToRGBA } from './convertColors';
 import { State } from '../core/state';
 import { pushResult } from '../utils/pushResult';
@@ -87,7 +88,18 @@ export default function checkContrast() {
 
     // Process background images and gradients.
     if (background.type === 'image') {
-      const extractColours = Contrast.extractColorFromString(background.value);
+      let extractColours = Contrast.extractColorFromString(background.value);
+
+      // Composite each gradient stop: translucent stops onto the colour behind the
+      // gradient (`base`), then any translucent background colour of a descendant
+      // (`overlay`) on top of the stop.
+      if ((background.base || background.overlay) && extractColours?.length) {
+        extractColours = extractColours.map((stop) => {
+          let composited = background.base ? alphaBlend([...stop], background.base) : stop;
+          if (background.overlay) composited = alphaBlend([...background.overlay], composited);
+          return composited;
+        });
+      }
       const hasFailure =
         !extractColours ||
         extractColours.some((gradientStop) =>

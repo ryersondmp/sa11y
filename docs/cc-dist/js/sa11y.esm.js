@@ -2834,6 +2834,17 @@ function normalizeFontWeight(weight) {
   return weightMap[weight] || 400;
 }
 let backgroundCache = /* @__PURE__ */ new WeakMap();
+function stackTranslucent(fg, bg) {
+  const fa = Math.max(Math.min(fg[3], 1), 0);
+  const ba = Math.max(Math.min(bg[3], 1), 0);
+  const outA = fa + ba * (1 - fa);
+  if (outA === 0) return [0, 0, 0, 0];
+  const out = [0, 0, 0, outA];
+  for (let i = 0; i < 3; i++) {
+    out[i] = (fg[i] * fa + bg[i] * ba * (1 - fa)) / outA;
+  }
+  return out;
+}
 function getBackground($el, shadowDetection) {
   if (backgroundCache.has($el)) {
     return backgroundCache.get($el);
@@ -2846,6 +2857,46 @@ function getBackground($el, shadowDetection) {
     }
     return node.parentElement || node.parentNode;
   };
+  const imageBackground = (el2, styles2, bgImage) => {
+    const own = convertToRGBA(styles2.backgroundColor);
+    let base;
+    if (own !== "unsupported") {
+      if (own[3] === 1) {
+        base = own;
+      } else {
+        const behind = resolveAbove(el2, own[3] > 0 ? own : null);
+        if (Array.isArray(behind)) base = behind;
+      }
+    }
+    return { type: "image", value: bgImage, ...base && { base } };
+  };
+  const resolveAbove = (fromEl, stacked) => {
+    let layers = stacked;
+    let parentEl = getVisualParent(fromEl);
+    while (parentEl && (parentEl.nodeType === 1 || parentEl.nodeType === 11)) {
+      if (parentEl.nodeType === 11 && parentEl.host) {
+        parentEl = parentEl.host;
+        continue;
+      }
+      const parentStyles = getCachedStyle(parentEl);
+      const parentBgImage = parentStyles.backgroundImage;
+      if (parentBgImage && parentBgImage !== "none") {
+        const image = imageBackground(parentEl, parentStyles, parentBgImage);
+        return layers ? { ...image, overlay: layers } : image;
+      }
+      const parentBg = convertToRGBA(parentStyles.backgroundColor);
+      if (parentBg === "unsupported") return "unsupported";
+      if (parentBg[3] === 1) {
+        return layers ? alphaBlend(layers, parentBg) : parentBg;
+      }
+      if (parentBg[3] > 0) {
+        layers = layers ? stackTranslucent(layers, parentBg) : parentBg;
+      }
+      if (parentEl.tagName === "HTML") break;
+      parentEl = getVisualParent(parentEl);
+    }
+    return layers ? alphaBlend(layers, [255, 255, 255]) : [255, 255, 255];
+  };
   let targetEl = $el;
   let finalBackground = [255, 255, 255];
   while (targetEl && (targetEl.nodeType === 1 || targetEl.nodeType === 11)) {
@@ -2856,32 +2907,13 @@ function getBackground($el, shadowDetection) {
     const styles2 = getCachedStyle(targetEl);
     const bgImage = styles2.backgroundImage;
     if (bgImage && bgImage !== "none") {
-      finalBackground = { type: "image", value: bgImage };
+      finalBackground = imageBackground(targetEl, styles2, bgImage);
       break;
     }
     const bgColor = convertToRGBA(styles2.backgroundColor);
     if (bgColor[3] !== 0 && bgColor !== "transparent") {
       if (bgColor[3] < 1) {
-        let parentEl = getVisualParent(targetEl);
-        let parentBgColor = "rgba(255, 255, 255, 1)";
-        while (parentEl && (parentEl.nodeType === 1 || parentEl.nodeType === 11)) {
-          if (parentEl.nodeType === 11 && parentEl.host) {
-            parentEl = parentEl.host;
-            continue;
-          }
-          const parentStyles = getCachedStyle(parentEl);
-          const currentParentBg = parentStyles.backgroundColor;
-          if (currentParentBg !== "rgba(0, 0, 0, 0)" && currentParentBg !== "transparent") {
-            parentBgColor = currentParentBg;
-            break;
-          }
-          parentEl = getVisualParent(parentEl);
-        }
-        if (parentBgColor === "rgba(0, 0, 0, 0)" || parentBgColor === "transparent") {
-          parentBgColor = "rgba(255, 255, 255, 1)";
-        }
-        const parentColor = convertToRGBA(parentBgColor);
-        finalBackground = alphaBlend(bgColor, parentColor);
+        finalBackground = resolveAbove(targetEl, bgColor);
         break;
       }
       finalBackground = bgColor;
@@ -7005,7 +7037,14 @@ function checkContrast() {
     }
     if (color && color[3] === 0) continue;
     if (background.type === "image") {
-      const extractColours = extractColorFromString(background.value);
+      let extractColours = extractColorFromString(background.value);
+      if ((background.base || background.overlay) && extractColours?.length) {
+        extractColours = extractColours.map((stop) => {
+          let composited = background.base ? alphaBlend([...stop], background.base) : stop;
+          if (background.overlay) composited = alphaBlend([...background.overlay], composited);
+          return composited;
+        });
+      }
       const hasFailure = !extractColours || extractColours.some(
         (gradientStop) => checkElementContrast(
           $el,
