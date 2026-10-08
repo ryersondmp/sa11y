@@ -121,8 +121,8 @@ const initialize = () => {
     lang = 'en';
   } else if (lang === 'pt') {
     lang = country === 'br' ? 'ptBR' : 'ptPT';
-  } else if (lang === 'uk') {
-    lang = 'ua';
+  } else if (lang === 'ua') {
+    lang = 'uk';
   } else if (lang === 'en') {
     lang = country === 'us' ? 'enUS' : 'en';
   }
