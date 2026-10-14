@@ -4,25 +4,33 @@
 const ruleset = {
   SUS_ALT_STOPWORDS: [
     'kép',
+    'képen',
     'grafika',
-    'kép',
     'fotó',
+    'fénykép',
+    'ikon',
     'image',
     'graphic',
     'picture',
     'photo',
     'thumbnail',
     'icon',
+    'portrait',
   ],
   PLACEHOLDER_ALT_STOPWORDS: [
     'alt',
     'kép',
+    'grafika',
     'fotó',
+    'ikon',
+    'bélyegkép',
+    'kiemelt kép',
     'dekoratív',
-    'helytartó',
+    'helyőrző',
     'helyőrző kép',
     'távtartó',
     'teszt',
+    'névtelen',
     'chart',
     'decorative',
     'image',
@@ -42,43 +50,59 @@ const ruleset = {
     'homepage feature image',
     'featured image',
     'untitled',
+    'portrait',
+    'slide image',
+    'untitled image',
+    'unnamed',
+    'copy',
+    'undefined',
   ],
   LINK_STOPWORDS: [
-    'kattints a  címre.',
+    'kattintson',
     'kattintson ide',
+    'kattints ide',
     'kattints ide további információkért',
-    'kattintson ide, ha többet szeretne megtudni',
+    'kattintson ide további információkért',
+    'kattintson ide ha többet szeretne megtudni',
     'ide kattintva',
     'nézd meg',
+    'nézze meg',
     'részletesen itt',
+    'részletek',
     'letöltés',
     'letöltés itt',
     'megtudni',
-    'Tudjon meg többet',
+    'tudjon meg többet',
+    'tudj meg többet',
     'űrlap',
     'itt',
+    'ide',
     'info',
     'információ',
+    'további információ',
+    'további információk',
     'link',
-    'tanulni',
     'többet megtudni',
-    'megtanulni',
     'további',
     'oldal',
     'papír',
     'tovább',
+    'bővebben',
+    'tovább olvasom',
     'olvasd el',
+    'olvassa el',
     'olvassa el ezt',
     'ez',
     'ez az oldal',
+    'ez a link',
     'ez a weboldal',
+    'ez az űrlap',
     'megtekintés',
-    'nézze meg a',
     'weboldal',
     'cikk',
   ],
-  CLICK: ['click', 'kattintás'],
-  NEW_WINDOW_PHRASES: ['külső', 'új lap', 'új ablak', 'pop-up', 'felbukkan'],
+  CLICK: ['click', 'kattint', 'klikk'],
+  NEW_WINDOW_PHRASES: ['külső', 'új lap', 'új fül', 'új ablak', 'pop-up', 'felugró', 'felbukkan'],
   FILE_TYPE_PHRASES: [
     'dokumentum',
     'táblázat',
@@ -98,18 +122,18 @@ const ruleset = {
 
 const ui = {
   LANG_CODE: 'hu',
-  MAIN_TOGGLE_LABEL: 'Ellenőrizze az elérhetőséget',
-  CONTAINER_LABEL: 'Akadálymentesítési ellenőrző',
+  MAIN_TOGGLE_LABEL: 'Akadálymentesség ellenőrzése',
+  CONTAINER_LABEL: 'Akadálymentesség-ellenőrző',
   ERROR: 'Hiba',
   ERRORS: 'Hibák',
   WARNING: 'Figyelmeztetés',
   WARNINGS: 'Figyelmeztetések',
   GOOD: 'Jó',
   REVIEW: 'Ellenőrzés',
-  ON: 'A oldalon.',
-  OFF: 'Off',
-  ALERT_TEXT: 'Riasztás',
-  ALERT_CLOSE: 'Zárja be a',
+  ON: 'Be',
+  OFF: 'Ki',
+  ALERT_TEXT: 'Értesítés',
+  ALERT_CLOSE: 'Bezárás',
   OUTLINE: 'Vázlat',
   READABILITY_DESC:
     'Megjeleníti az olvashatósági pontszámot a <strong>Vázlat</strong> lapon, hogy segítsen felmérni az olvasási nehézséget.',
@@ -126,87 +150,87 @@ const ui = {
   DEVELOPER_DESC:
     'Ellenőrzi azokat a problémákat, amelyek kijavításához kódolási ismeretekre lehet szükség, például HTML attribútumokat, űrlapokat és egyebeket.',
   DARK_MODE: 'Sötét üzemmód',
-  SHORTCUT_SR: 'Ugrás a kérdésre. Billentyűzet gyorsbillentyű: S',
-  SKIP_TO_ISSUE: 'Ugrás a kérdésre',
-  NEW_TAB: 'Új lap megnyitása',
-  LINKED: 'Kapcsolódó',
-  PANEL_HEADING: 'Hozzáférhetőségi ellenőrzés',
-  NO_ERRORS_FOUND: 'Nem találtunk hibát.',
-  WARNINGS_FOUND: 'figyelmeztetéseket találtak.',
-  TOTAL_FOUND: 'összes talált probléma.',
+  SHORTCUT_SR: 'Ugrás a problémához. Billentyűparancs: Alt S',
+  SKIP_TO_ISSUE: 'Ugrás a problémához',
+  NEW_TAB: 'Új lapon nyílik meg',
+  LINKED: 'Linkelt',
+  PANEL_HEADING: 'Akadálymentességi ellenőrzés',
+  NO_ERRORS_FOUND: 'Nem található hiba.',
+  WARNINGS_FOUND: 'figyelmeztetés található.',
+  TOTAL_FOUND: 'probléma található összesen.',
   NOT_VISIBLE:
     'A megjeleníteni kívánt elem nem látható; lehet, hogy el van rejtve, vagy egy harmonika- vagy lapkomponens belsejében van.',
   MISSING_ROOT:
-    'A teljes oldal elérhetőségi ellenőrzése azért történt, mert a célterület <code>%(root)</code> nem létezik.',
+    'A teljes oldal akadálymentességét ellenőriztük, mert a(z) <code>%(root)</code> célterület nem létezik.',
   MISSING_READABILITY_ROOT:
-    'Az olvashatósági pontszám a <code>%(fallback)</code> tartalomterületen alapul, mert a célterület <code>%(root)</code> nem létezik.',
-  SKIP_TO_PAGE_ISSUES: 'Ugrás az oldalra problémák',
+    'Az olvashatósági pontszám a(z) <code>%(fallback)</code> tartalomterületen alapul, mert a(z) <code>%(root)</code> célterület nem létezik.',
+  SKIP_TO_PAGE_ISSUES: 'Ugrás az oldalszintű problémákhoz',
   CONSOLE_ERROR:
-    'Sajnáljuk, de probléma van az oldal hozzáférhetőségi ellenőrzőjével. Megtenné, hogy <a href="https://forms.gle/sjzK9XykETaoqZv99">bejelenti ezen az űrlapon</a> vagy a <a href="https://github.com/ryersondmp/sa11y/issues/new?title=Bug%20report">GitHubon</a>?',
+    'Sajnáljuk, de probléma van az oldal akadálymentesség-ellenőrzőjével. Megtenné, hogy <a href="https://forms.gle/sjzK9XykETaoqZv99">bejelenti ezen az űrlapon</a> vagy a <a href="https://github.com/ryersondmp/sa11y/issues/new?title=Bug%20report">GitHubon</a>?',
   APPEARANCE: 'Megjelenés',
   MOVE_PANEL: 'Panel mozgatása',
   HIDDEN: 'Rejtett',
 
   // Dismiss
-  PANEL_DISMISS_BUTTON: 'Mutasd %(dismissCount) elutasított',
-  DISMISS: 'Elutasít',
-  DISMISS_ALL: 'Mindet elutasít',
-  DISMISSED: 'Elutasítva',
+  PANEL_DISMISS_BUTTON: '%(dismissCount) mellőzött elem megjelenítése',
+  DISMISS: 'Mellőzés',
+  DISMISS_ALL: 'Összes mellőzése',
+  DISMISSED: 'Mellőzve',
   DISMISS_REMINDER:
-    'Kérjük, vegye figyelembe, hogy a figyelmeztetések csak <strong>ideiglenesen</strong> elutasítva. A böngészési előzmények és a cookie-k törlése visszaállítja az összes korábban elutasított figyelmeztetést az összes oldalon.',
+    'Kérjük, vegye figyelembe, hogy a figyelmeztetések mellőzése csak <strong>ideiglenes</strong>. A böngészési előzmények és a cookie-k törlése visszaállítja az összes korábban mellőzött figyelmeztetést az összes oldalon.',
 
   // Export
   DATE: 'Dátum',
   PAGE_TITLE: 'Oldalcím',
   RESULTS: 'Eredmények',
   EXPORT_RESULTS: 'Eredmények exportálása',
-  GENERATED: 'Eredmények generálva <a href="https://sa11y.netlify.app">Sa11y</a>-vel.',
+  GENERATED: 'Az eredményeket a <a href="https://sa11y.netlify.app">Sa11y</a> készítette.',
   PREVIEW: 'Előnézet',
   ELEMENT: 'Elem',
   PATH: 'Útvonal',
 
   // Colour filters
-  COLOUR_FILTER: 'Színes szűrő',
-  PROTANOPIA: 'Protanopia',
-  DEUTERANOPIA: 'Deuteranopia',
-  TRITANOPIA: 'Tritanopia',
-  MONOCHROMACY: 'Monokrómia',
+  COLOUR_FILTER: 'Színszűrő',
+  PROTANOPIA: 'Protanópia',
+  DEUTERANOPIA: 'Deuteranópia',
+  TRITANOPIA: 'Tritanópia',
+  MONOCHROMACY: 'Monokromázia',
   COLOUR_FILTER_MESSAGE:
     'Ellenőrizze, hogy vannak-e olyan elemek, amelyeket nehéz érzékelni vagy megkülönböztetni más színektől.',
-  RED_EYE: 'Vörös vak.',
-  GREEN_EYE: 'Zöld vak.',
-  BLUE_EYE: 'Kék vak.',
-  MONO_EYE: 'Vörös, kék és zöld vakok.',
+  RED_EYE: 'Vörösvakság.',
+  GREEN_EYE: 'Zöldvakság.',
+  BLUE_EYE: 'Kékvakság.',
+  MONO_EYE: 'Teljes színvakság (vörös, zöld és kék).',
   COLOUR_FILTER_HIGH_CONTRAST: 'A színszűrők nem működnek nagy kontrasztú üzemmódban.',
 
   // Readability
   READABILITY: 'Olvashatóság',
-  AVG_SENTENCE: 'Átlagos szó/mondat:',
+  AVG_SENTENCE: 'Átlagos szószám mondatonként:',
   COMPLEX_WORDS: 'Összetett szavak:',
   TOTAL_WORDS: 'Szavak:',
   VERY_DIFFICULT: 'Nagyon nehéz',
   DIFFICULT: 'Nehéz',
   FAIRLY_DIFFICULT: 'Elég nehéz',
-  READABILITY_NOT_ENOUGH: 'Nem elég tartalom az olvashatósági pontszám kiszámításához.',
+  READABILITY_NOT_ENOUGH: 'Nincs elég tartalom az olvashatósági pontszám kiszámításához.',
 };
 
 const tooltip = {
   // Headings
   HEADING_SKIPPED_LEVEL:
-    'A címsoroknak nem szabad kihagyniuk szinteket, vagy átugraniuk a <strong>Címsor %(PREV_LEVEL)</strong> szintről a <strong {C}>Címsor %(LEVEL)</strong> szintre, mert ez megzavarja a tartalom sorrendjét és hierarchiáját, ami megnehezíti a követését. <hr> Ha a <strong {C}>%(HEADING)</strong> az <strong>%(PREV_HEADING)</strong> szekció alá tartozik, fontolja meg a formázást <strong>Címsorként %(LEVEL)</strong> helyette.',
+    'A címsoroknak nem szabad kihagyniuk szinteket, vagy átugraniuk a <strong>Címsor %(PREV_LEVEL)</strong> szintről a <strong {C}>Címsor %(LEVEL)</strong> szintre, mert ez megzavarja a tartalom sorrendjét és hierarchiáját, ami megnehezíti a követését. <hr> Ha a <strong {C}>%(HEADING)</strong> az <strong>%(PREV_HEADING)</strong> szekció alá tartozik, fontolja meg helyette a <strong>Címsor %(LEVEL)</strong> formátum használatát.',
   HEADING_EMPTY:
-    'Üres fejlécet találtunk! A javításhoz törölje ezt a sort, vagy változtassa meg a formátumát <strong {C}>Felirat %(level)</strong>-ról <strong>Normál</strong> vagy <strong>Paragraph</strong> formátumra.',
+    'Üres címsort találtunk! A javításhoz törölje ezt a sort, vagy módosítsa a formátumát <strong {C}>Címsor %(level)</strong> helyett <strong>Normál</strong> vagy <strong>Bekezdés</strong> formátumra.',
   HEADING_LONG:
-    'A fejléc hosszú! A címsorokat a tartalom rendszerezésére és a szerkezet közvetítésére kell használni. Rövidnek, informatívnak és egyedinek kell lenniük. Kérjük, hogy a címsorokat %(MAX_LENGTH) karakternél (egy mondatnál nem több) rövidebbre tartsa. <hr> <strong {B}>%(HEADING_LENGTH) Karakterek</strong>',
+    'A címsor hosszú! A címsorokat a tartalom rendszerezésére és a szerkezet közvetítésére kell használni. Rövidnek, informatívnak és egyedinek kell lenniük. Kérjük, hogy a címsorokat %(MAX_LENGTH) karakternél (egy mondatnál nem több) rövidebbre tartsa. <hr> <strong {B}>%(HEADING_LENGTH) karakter</strong>',
   HEADING_FIRST:
-    'Az oldal első címe általában Cím 1 vagy Cím 2 legyen.A Cím 1-nek a fő tartalom szakaszának kezdetét kell jelentenie, és ez a fő cím, amely leírja az oldal általános célját.Tudj meg többet a<a href = "https://www.w3.org/WAI/tutorials/page-structure/headings/">Fejléc szerkezetéről.</a>',
+    'Az oldal első címsora általában Címsor 1 vagy Címsor 2 legyen. A Címsor 1-nek a fő tartalmi szakasz kezdetét kell jelölnie, és ez a fő címsor, amely leírja az oldal általános célját. További információ a <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">címsorok szerkezetéről.</a>',
   HEADING_MISSING_ONE:
-    'Hiányzó Cím 1. A Cím 1-nek a fő tartalom területének kezdetét kell jelentenie, és ez a fő cím, amely leírja az oldal általános célját. További információkért látogasson el ide: <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">Fejléck struktúra.</a>',
+    'Hiányzik a Címsor 1. A Címsor 1-nek a fő tartalmi terület kezdetét kell jelölnie, és ez a fő címsor, amely leírja az oldal általános célját. További információ a <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">címsorok szerkezetéről.</a>',
   HEADING_EMPTY_WITH_IMAGE:
-    'A címsor nem tartalmaz szöveget, de képet tartalmaz. Ha ez nem címsor, akkor változtassa meg a formátumát <strong {C}>Címsor %(level)</strong> formátumra <strong>Normál</strong> vagy <strong>Bekezdés</strong>. Ellenkező esetben kérem, adja hozzá az alternatív szöveget a képhez, ha az nem díszítőelem.',
+    'A címsor nem tartalmaz szöveget, de képet tartalmaz. Ha ez nem címsor, akkor módosítsa a formátumát <strong {C}>Címsor %(level)</strong> helyett <strong>Normál</strong> vagy <strong>Bekezdés</strong> formátumra. Ellenkező esetben kérem, adja hozzá az alternatív szöveget a képhez, ha az nem díszítőelem.',
   HEADING_UNPRONOUNCEABLE: 'A címsor szövege csak szimbólumokat vagy kiejthetetlen karaktereket tartalmaz. Ha úgy gondolja, hogy ez egy másolási/beillesztési hiba miatt van, fontolja meg a törlését. <hr> <strong {B}>Címsor szövege</strong> <strong {C}>%(TEXT)</strong>',
-  PANEL_HEADING_MISSING_ONE: 'Hiányzik az 1. címsor!',
-  PANEL_NO_HEADINGS: 'Nem találtunk címszavakat.',
+  PANEL_HEADING_MISSING_ONE: 'Hiányzik a Címsor 1!',
+  PANEL_NO_HEADINGS: 'Nem található címsor.',
 
   // Links
   LINK_EMPTY: 'Szöveg nélküli üres linkek eltávolítása.',
@@ -266,7 +290,7 @@ const tooltip = {
   LINK_IMAGE_TEXT:
     'A kép dekoratívként van megjelölve, bár a link a környező szöveget használja leíró címkeként.',
   LINK_IMAGE_LONG_ALT:
-    'A linkelt kép Alt szöveges leírása <strong>túl hosszú</strong>. A linkelt képek alt szövegének azt kell leírnia, hogy hová vezet a link, nem pedig a kép szó szerinti leírását. <strong>Figyeljen arra, hogy alt szövegként a linkelt oldal címét használja.</strong> <hr> {L} {ALT} <strong {B}>%(altLength) Karakterek</strong> <strong {C}>%(ALT_TEXT)</strong>',
+    'A linkelt kép Alt szöveges leírása <strong>túl hosszú</strong>. A linkelt képek alt szövegének azt kell leírnia, hogy hová vezet a link, nem pedig a kép szó szerinti leírását. <strong>Figyeljen arra, hogy alt szövegként a linkelt oldal címét használja.</strong> <hr> {L} {ALT} <strong {B}>%(altLength) karakter</strong> <strong {C}>%(ALT_TEXT)</strong>',
   LINK_IMAGE_ALT:
     'A kép linkje alt szöveget tartalmaz. Az alt szöveg leírja, hogy hová vezet a link? <strong>Figyeljen arra, hogy alt szövegként annak az oldalnak a címét használja, amelyre a link mutat.</strong> <hr> {L} {ALT} <strong {C}>%(ALT_TEXT)</strong>',
   LINK_IMAGE_ALT_AND_TEXT:
@@ -280,16 +304,16 @@ const tooltip = {
   IMAGE_DECORATIVE_CAROUSEL:
     'A kép dekoratívnak van jelölve, de minden képnek a karusszelben vagy galériában tartalmaznia kell leíró alt szöveget, hogy biztosítsák az egyenértékű élményt mindenki számára.',
   IMAGE_ALT_TOO_LONG:
-    'Az Alt szöveges leírás <strong>túl hosszú</strong>. Az Alt szövegnek tömörnek, mégis értelmesnek kell lennie, mint egy <em>tweet</em> (kb. 100 karakter). Ha összetett képről vagy grafikonról van szó, fontolja meg, hogy a kép hosszú leírását az alatta lévő szövegben vagy egy harmonika komponensben helyezze el. <hr> {ALT} <strong {B}>%(altLength) Karakterek</strong> <strong {C}>%(ALT_TEXT)</strong>',
+    'Az Alt szöveges leírás <strong>túl hosszú</strong>. Az Alt szövegnek tömörnek, mégis értelmesnek kell lennie, mint egy <em>tweet</em> (kb. 100 karakter). Ha összetett képről vagy grafikonról van szó, fontolja meg, hogy a kép hosszú leírását az alatta lévő szövegben vagy egy harmonika komponensben helyezze el. <hr> {ALT} <strong {B}>%(altLength) karakter</strong> <strong {C}>%(ALT_TEXT)</strong>',
   IMAGE_PASS: '{ALT} <strong {C}>%(ALT_TEXT)</strong>',
   LINK_ALT_MAYBE_BAD:
-    'A képhivatkozás alt szövege nem biztos, hogy hasznos információt ad, vagy nem leíró. Győződj meg arról, hogy az alt szöveg leírja a hivatkozás célját. <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
+    'A képhivatkozás alt szövege nem biztos, hogy hasznos információt ad, vagy nem leíró. Győződjön meg arról, hogy az alt szöveg leírja a hivatkozás célját. <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
   ALT_MAYBE_BAD:
-    'Az alt szöveg nem biztos, hogy hasznos információt ad, vagy nem leíró. Javítsd a következő alt szöveget: <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
+    'Az alt szöveg nem biztos, hogy hasznos információt ad, vagy nem leíró. Javítsa ki a következő alt szöveget: <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
 
   // Form labels
   LABELS_MISSING_IMAGE_INPUT:
-    'A képgombból hiányzik az alt szöveg. Kérjük, adjon hozzá alt szöveget, hogy elérhető nevet adjon. Például: <em>Keresés</em> vagy <em>Submit</em>.',
+    'A képgombból hiányzik az alt szöveg. Kérjük, adjon hozzá alt szöveget, hogy elérhető nevet adjon. Például: <em>Keresés</em> vagy <em>Küldés</em>.',
   LABELS_INPUT_RESET:
     'A visszaállító gombokat <strong>nem</strong> szabad használni, hacsak nem kifejezetten szükséges, mert könnyen aktiválhatók tévedésből. <hr> <strong>Tipp!</strong> Tudja meg, hogy a <a href="https://www.nngroup.com/articles/reset-and-cancel-buttons/">A visszaállítás és a törlés gombok miért jelentenek használhatósági problémát.</a>',
   LABELS_ARIA_LABEL_INPUT:
@@ -321,23 +345,23 @@ const tooltip = {
     'Rossz linket találtunk. Úgy tűnik, hogy a link egy fejlesztői környezetre mutat. <hr> {L} <strong {C}>%(LINK)</strong>',
   QA_IN_PAGE_LINK: 'Hibás belső hivatkozás. Ez a hivatkozás az oldal egy olyan szakaszára próbál navigálni, amely nem található. A javításhoz győződjön meg arról, hogy a hivatkozás megegyezik annak az elemnek az <code>id</code> azonosítójával, amelyre ugrani szeretne.',
   QA_STRONG_ITALICS:
-    'A vastag és dőlt betűs címkéknek szemantikai jelentésük van, és <strong>nem</strong> szabad egész bekezdések kiemelésére használni őket. A félkövérrel kiemelt szöveget egy szó vagy kifejezés erős <strong>kiemelésére</strong> kell használni. A dőlt betűt a tulajdonnevek (pl. könyv- és cikkcímek), idegen szavak, idézőjelek kiemelésére kell használni. A hosszú idézeteket blokkidézetként kell formázni.',
+    'A vastag és dőlt betűs címkéknek szemantikai jelentésük van, és <strong>nem</strong> szabad egész bekezdések kiemelésére használni őket. A félkövérrel kiemelt szöveget egy szó vagy kifejezés erős <strong>kiemelésére</strong> kell használni. A dőlt betűt a tulajdonnevek (pl. könyv- és cikkcímek), idegen szavak, idézetek kiemelésére kell használni. A hosszú idézeteket blokkidézetként kell formázni.',
   QA_PDF:
-    'Nem lehet ellenőrizni a PDF-ek hozzáférhetőségét. A PDF-ek webes tartalomnak minősülnek, és azokat is hozzáférhetővé kell tenni. A PDF-ek gyakran tartalmaznak problémákat a képernyőolvasót használók (hiányzó szerkezeti címkék vagy hiányzó űrlapmező-címkék) és a gyengén látók (a szöveg nagyításkor nem folyik vissza) számára. <ul><li>Ha ez egy űrlap, fontolja meg egy hozzáférhető HTML űrlap használatát alternatívaként.</li><li>Ha ez egy dokumentum, fontolja meg a weboldallá alakítását.</li></ul>Máskülönben ellenőrizze a <a href="https://helpx.adobe.com/acrobat/using/create-verify-pdf-accessibility.html">PDF hozzáférhetőségét az Acrobat DC-ben.</a>Megközelíthetőségét az <a href="https://helpx.adobe.com/acrobat/using/create-verify-pdf-accessibility.html">PDF-ben.</a>',
+    'Nem lehet ellenőrizni a PDF-ek hozzáférhetőségét. A PDF-ek webes tartalomnak minősülnek, és azokat is hozzáférhetővé kell tenni. A PDF-ek gyakran tartalmaznak problémákat a képernyőolvasót használók (hiányzó szerkezeti címkék vagy hiányzó űrlapmező-címkék) és a gyengén látók (a szöveg nagyításkor nem folyik vissza) számára. <ul><li>Ha ez egy űrlap, fontolja meg egy hozzáférhető HTML űrlap használatát alternatívaként.</li><li>Ha ez egy dokumentum, fontolja meg a weboldallá alakítását.</li></ul>Máskülönben ellenőrizze a <a href="https://helpx.adobe.com/acrobat/using/create-verify-pdf-accessibility.html">PDF hozzáférhetőségét az Acrobat DC-ben.</a>',
   QA_DOCUMENT:
     'Nem lehet ellenőrizni a dokumentum hozzáférhetőségét. A hivatkozott dokumentumok webes tartalomnak minősülnek, és azokat is hozzáférhetővé kell tenni. Kérjük, kézzel ellenőrizze a dokumentumot. <ul><li>Tegye hozzáférhetőbbé <a href="https://support.google.com/docs/answer/6199477?hl=hu">Google Workspace dokumentumát vagy prezentációját.</a></li><li>Tegye hozzáférhetőbbé <a href="https://support.microsoft.com/hu/office/create-accessible-office-documents-868ecfcd-4f00-4224-b881-a65537a7c155">Office-dokumentumait.</a></li></ul>',
   QA_BLOCKQUOTE:
-    'Ez egy címszó? <strong {C}>%(TEXT)</strong> <hr> A blokkos idézőjeleket csak idézőjeleknél kell használni. Ha ez egy fejlécnek szánja, akkor ezt a blokkidézetet változtassa meg egy szemantikus fejlécre (pl. Fejléc 2 vagy Fejléc 3).',
+    'Ez egy címsor? <strong {C}>%(TEXT)</strong> <hr> Az idézetblokkokat csak idézetekhez szabad használni. Ha ezt címsornak szánta, alakítsa át ezt az idézetblokkot szemantikus címsorrá (pl. Címsor 2 vagy Címsor 3).',
   QA_FAKE_HEADING:
-    'Ez egy címszó? <strong {C}>%(TEXT)</strong> <hr> Egy félkövér vagy nagyméretű szövegsor címnek tűnhet, de a képernyőolvasót használó személy nem tudja megállapítani, hogy ez fontos, vagy nem tud a tartalmára ugrani. A félkövér vagy nagyméretű szöveg soha nem helyettesítheti a szemantikus címsorokat (Címsor 2-től a Címsor 6-ig).',
+    'Ez egy címsor? <strong {C}>%(TEXT)</strong> <hr> Egy félkövér vagy nagyméretű szövegsor címsornak tűnhet, de a képernyőolvasót használó személy nem tudja megállapítani, hogy ez fontos, vagy nem tud a tartalmára ugrani. A félkövér vagy nagyméretű szöveg soha nem helyettesítheti a szemantikus címsorokat (Címsor 2-től a Címsor 6-ig).',
   QA_FAKE_LIST:
-    'Megpróbál listát készíteni? Lehetséges listaelemet találtunk: <strong {C}>%(firstPrefix)</strong> <hr> Győződjön meg róla, hogy szemantikus listákat használ, és használja helyette a felsorolás- vagy számformázó gombokat. Szemantikus lista használata esetén a segédtechnológiák képesek olyan információkat közvetíteni, mint az elemek teljes száma és az egyes elemek relatív pozíciója a listában. További információ a <a href="https://www.w3.org/WAI/tutorials/page-structure/content/#lists">szemantikus listákról.</a>',
+    'Megpróbál listát készíteni? Lehetséges listaelemet találtunk: <strong {C}>%(PREFIX)</strong> <hr> Győződjön meg róla, hogy szemantikus listákat használ, és használja helyette a felsorolás- vagy számformázó gombokat. Szemantikus lista használata esetén a segédtechnológiák képesek olyan információkat közvetíteni, mint az elemek teljes száma és az egyes elemek relatív pozíciója a listában. További információ a <a href="https://www.w3.org/WAI/tutorials/page-structure/content/#lists">szemantikus listákról.</a>',
   QA_UPPERCASE:
-    'Találtam minden nagybetűt. Egyes képernyőolvasók a csupa nagybetűs szöveget betűszónak értelmezhetik, és minden egyes betűt külön-külön olvasnak. Ezenkívül egyesek nehezebben olvashatónak találják a csupa nagybetűs szöveget, és úgy tűnhet, mintha kiabálnának.',
+    'Csupa nagybetűs szöveget találtunk. Egyes képernyőolvasók a csupa nagybetűs szöveget betűszónak értelmezhetik, és minden egyes betűt külön-külön olvasnak. Ezenkívül egyesek nehezebben olvashatónak találják a csupa nagybetűs szöveget, és úgy tűnhet, mintha kiabálnának.',
   QA_UNDERLINE:
-    'Az aláhúzott szöveg összetéveszthető a linkekkel. Fontolja meg egy másik stílus használatát, például <code>&lt;strong&gt;</code><strong>strong fontosság</strong><code>&lt;/strong&gt;</code> vagy <code>&lt;em&gt;</code><em>emphasis</em><code>&lt;/em&gt;</code>.',
+    'Az aláhúzott szöveg összetéveszthető a linkekkel. Fontolja meg egy másik stílus használatát, például <code>&lt;strong&gt;</code><strong>kiemelt fontosság</strong><code>&lt;/strong&gt;</code> vagy <code>&lt;em&gt;</code><em>hangsúly</em><code>&lt;/em&gt;</code>.',
   QA_SUBSCRIPT:
-    'Az alul- és felülírás formázási beállításokat csak a szöveg pozíciójának tipográfiai konvenciók vagy szabványok szerinti megváltoztatására szabad használni. Nem szabad <strong>nem</strong> kizárólag megjelenítési vagy megjelenési célokra használni. Teljes mondatok formázása olvashatósági problémákat vet fel. Megfelelő felhasználási esetek közé tartozhat az exponensek, rendszámok, például 4<sup>th</sup> helyett 4<sup>th</sup>, és kémiai képletek (pl. H<sub>2</sub>O) megjelenítése.',
+    'Az alul- és felülírás formázási beállításokat csak a szöveg pozíciójának tipográfiai konvenciók vagy szabványok szerinti megváltoztatására szabad használni. <strong>Nem</strong> szabad kizárólag megjelenítési vagy megjelenési célokra használni. Teljes mondatok formázása olvashatósági problémákat vet fel. Megfelelő felhasználási esetek közé tartozhat az exponensek, mértékegységek, például m<sup>2</sup>, és kémiai képletek (pl. H<sub>2</sub>O) megjelenítése.',
   QA_NESTED_COMPONENTS:
     'Kerülje el az interaktív elrendezési komponensek egymásba ágyazását, például az akordeonok fülekbe helyezését vagy a fülek akordeonokba helyezését. Ez bonyolíthatja a navigációt, növelheti a kognitív terhelést, és arra vezethet, hogy az emberek figyelmen kívül hagyják a tartalmat.',
   QA_JUSTIFY:
@@ -360,7 +384,7 @@ const tooltip = {
 
   // Meta checks
   META_LANG:
-    'Az oldal nyelve nincs megadva! Kérjük, <a href="https://www.w3.org/International/questions/qa-html-language-declarations">declare language on HTML tag.</a>',
+    'Az oldal nyelve nincs megadva! Kérjük, <a href="https://www.w3.org/International/questions/qa-html-language-declarations">adja meg a nyelvet a HTML-címkén.</a>',
   META_TITLE:
     'Hiányzik az oldal címe! Kérjük, adjon meg egy <a href="https://developer.mozilla.org/hu/docs/Web/HTML/Element/title">oldal címet.</a>',
   META_SCALABLE:
@@ -381,21 +405,21 @@ const tooltip = {
   BTN_ROLE_IN_NAME:
     'Ne tartalmazza a "gomb" szót a gomb nevében. A képernyőolvasók már közlik az elem szerepét annak neve mellett.',
   LABEL_IN_NAME:
-    'Ennek az elemnek a látható szövege eltérhet az akadálymentes névtől, ami zavart okozhat az akadálymentes technológiákat használó felhasználók számára. Kérem, ellenőrizze: <hr> <strong {B}>Szöveg</strong> <strong {C}>%(TEXT)</strong> <hr> <strong {B}>Akadálymentes Név</strong> <strong {C}>%(TEXT)</strong>',
+    'Ennek az elemnek a látható szövege eltérhet az akadálymentes névtől, ami zavart okozhat az akadálymentes technológiákat használó felhasználók számára. Kérjük, ellenőrizze: <hr> <strong {B}>Szöveg</strong> <strong {C}>%(TEXT)</strong> <hr> <strong {B}>Akadálymentes név</strong> <strong {C}>%(TEXT)</strong>',
   LINK_MAYBE_BUTTON: 'Ez a hivatkozás érvénytelen céllal rendelkezik. Bár az akadálymentes név vagy az attribútumok arra utalnak, hogy ez egyáltalán nem hivatkozás, hanem ehelyett valamilyen szkriptelt viselkedést vezérel az oldalon. A javításhoz cserélje ki a hivatkozást egy <a href="https://www.w3.org/WAI/ARIA/apg/patterns/button/">akadálymentes gombra</a>, vagy javítsa ki a hivatkozás célját. <hr> <strong {B}>Akadálymentes név</strong> <strong {C}>%(TEXT)</strong> <hr> <strong>Tipp!</strong> A segítő technológiák eltérően kezelik a gombokat és a hivatkozásokat. A megfelelő HTML-elem használata biztosítja, hogy a felhasználók tudják, mely billentyűkombinációkat kell használniuk, és milyen művelet fog elindulni.',
 
   // Tables
   TABLES_MISSING_HEADINGS:
-    'Hiányzó táblázatfejlécek! A hozzáférhető táblázatokhoz olyan HTML-jelölésre van szükség, amely jelzi a fejléccellákat és az adatcellákat, amelyek meghatározzák a kapcsolatukat. Ez az információ kontextust biztosít a segítő technológiát használó emberek számára. A táblázatokat csak táblázatos adatokhoz szabad használni. <hr> Tudjon meg többet a <a href="https://www.w3.org/WAI/tutorials/tables/">hozzáférhető táblázatokról.</a>',
+    'Hiányzó táblázatfejlécek! A hozzáférhető táblázatokhoz olyan HTML-jelölésre van szükség, amely jelzi a fejléccellákat és az adatcellákat, amelyek meghatározzák a kapcsolatukat. Ez az információ kontextust biztosít a segítő technológiát használó emberek számára. A táblázatokat csak táblázatos adatokhoz szabad használni. <hr> Tudjon meg többet az <a href="https://www.w3.org/WAI/tutorials/tables/">akadálymentes táblázatokról.</a>',
   TABLES_SEMANTIC_HEADING:
-    'Az olyan szemantikus címsorokat, mint a Heading 2 vagy Heading 3, csak a tartalmi részeknél szabad használni; <strong>nem</strong> a HTML táblázatokban. A táblázatcímeket ehelyett a <code>&lt;th&gt;</code> elemmel jelezze. <hr> Tudjon meg többet a <a href="https://www.w3.org/WAI/tutorials/tables/">elérhető táblázatokról.</a>',
+    'Az olyan szemantikus címsorokat, mint a Címsor 2 vagy Címsor 3, csak a tartalmi részeknél szabad használni; <strong>nem</strong> a HTML-táblázatokban. A táblázatfejléceket ehelyett a <code>&lt;th&gt;</code> elemmel jelölje. <hr> Tudjon meg többet az <a href="https://www.w3.org/WAI/tutorials/tables/">akadálymentes táblázatokról.</a>',
   TABLES_EMPTY_HEADING:
-    'Üres asztali fejlécet találtunk! A táblázat fejlécének <strong>soha</strong> nem szabad üresnek lennie. Fontos a sor- és/vagy oszlopfejlécek kijelölése a kapcsolatuk érzékeltetése érdekében. Ez az információ kontextust biztosít a segítő technológiát használó emberek számára. Ne feledje, hogy a táblázatok csak táblázatos adatokhoz használhatók. <hr> Tudjon meg többet a <a href="https://www.w3.org/WAI/tutorials/tables/">elérhető táblázatokról.</a>',
+    'Üres táblázatfejlécet találtunk! A táblázat fejlécének <strong>soha</strong> nem szabad üresnek lennie. Fontos a sor- és/vagy oszlopfejlécek kijelölése a kapcsolatuk érzékeltetése érdekében. Ez az információ kontextust biztosít a segítő technológiát használó emberek számára. Ne feledje, hogy a táblázatok csak táblázatos adatokhoz használhatók. <hr> Tudjon meg többet az <a href="https://www.w3.org/WAI/tutorials/tables/">akadálymentes táblázatokról.</a>',
   TABLES_INVALID_HEADERS_REF: 'Ez a táblázat egy konkrét adatcellát próbál összekapcsolni egy konkrét fejléccellával, de a fejléc azonosítója (ID) nem található. Győződjön meg arról, hogy minden <code>headers</code> attribútum megegyezik egy ugyanazon táblázaton belüli fejléccella azonosítójával. <hr> <strong {B}>Fejlécek</strong> <code>%(VALUE)</code> <hr> <strong>Tipp!</strong> A <a href="https://www.w3.org/WAI/WCAG22/Techniques/html/H43">kézi ID-hivatkozások használata</a> az adatcellák és fejléccellák összekapcsolásához bonyolult és sérülékeny megoldás. Amikor csak lehetséges, bontsa a komplex adatokat kisebb táblázatokra, egyszerű fejléc-sorokkal és -oszlopokkal.',
 
   // Contrast
-  CONTRAST_NORMAL: 'Teks ukuran normal harus memiliki rasio kontras setidaknya %(RATIO).',
-  CONTRAST_LARGE: 'Teks ukuran besar harus memiliki rasio kontras setidaknya %(RATIO).',
+  CONTRAST_NORMAL: 'A normál méretű szöveg kontrasztarányának legalább %(RATIO) értékűnek kell lennie.',
+  CONTRAST_LARGE: 'A nagy méretű szöveg kontrasztarányának legalább %(RATIO) értékűnek kell lennie.',
   CONTRAST_ERROR: 'A szövegnek nincs elég kontrasztja a háttérrel, ezért nehezebb olvasni.',
   CONTRAST_WARNING:
     'Ennek a szövegnek a kontrasztja ismeretlen, és kézzel kell ellenőrizni. Győződjön meg róla, hogy a szöveg és a háttér között erős a kontraszt.',
@@ -424,9 +448,9 @@ const tooltip = {
 
   // Page language
   PAGE_LANG_CONFIDENCE: 'Az oldal szövegének több mint fele %(LIKELY_LANG) nyelvűnek tűnik, de a megadott oldalnyelv %(PAGE_LANG). Fontolja meg a <a href="https://www.w3.org/International/questions/qa-html-language-declarations">megadott oldalnyelv</a> frissítését a tartalomnak megfelelően.',
-  LANG_OF_PARTS: 'Az oldal nyelve %(PAGE_LANG) ként lett megadva, de ez a tartalom %(LIKELY_LANG) nyelvűnek tűnik. Győződjön meg arról, hogy a tartalom megfelelően van megjelölve.',
+  LANG_OF_PARTS: 'Az oldal megadott nyelve: %(PAGE_LANG), de ez a tartalom %(LIKELY_LANG) nyelvűnek tűnik. Győződjön meg arról, hogy a tartalom megfelelően van megjelölve.',
   LANG_MISMATCH: 'Ez a tartalom %(DETECTED_LANG) nyelvűnek tűnik, azonban %(WRONG_LANG) nyelvűként lett megjelölve.',
-  LANG_OF_PARTS_ALT: 'Ez az alternatív szöveg %(LIKELY_LANG) nyelvűnek tűnik, de az oldal nyelve %(PAGE_LANG) ként lett megadva. Győződjön meg arról, hogy az alternatív szöveg az oldal többi részével azonos nyelvű. <hr> {ALT} <strong {C}>%(ALT)</strong>',
+  LANG_OF_PARTS_ALT: 'Ez az alternatív szöveg %(LIKELY_LANG) nyelvűnek tűnik, de az oldal megadott nyelve: %(PAGE_LANG). Győződjön meg arról, hogy az alternatív szöveg az oldal többi részével azonos nyelvű. <hr> {ALT} <strong {C}>%(ALT)</strong>',
   LANG_TIP: '<hr><strong>Tipp!</strong> Képernyőolvasók nyelvi címkék alapján ejtik ki a szavakat. Egy nyelv nem megfelelő nyelvcsomaggal történő kiejtése érthetetlen beszédet eredményez.',
   LANG_UNSUPPORTED: 'A nyelvvel kapcsolatos akadálymentességi ellenőrzések kimaradtak, mert ez a böngésző nem támogatja az automatikus nyelvfelismerést.',
 };

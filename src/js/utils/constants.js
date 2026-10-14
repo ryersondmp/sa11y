@@ -1,7 +1,7 @@
 import { createAlert } from '../interface/alert';
 import Lang from './lang';
 import { State } from '../core/state';
-import { generateRegexString } from './utils';
+import { foldForMatching, generateRegexString, normalizeStopWord } from './utils';
 
 const Constants = (function myConstants() {
   /* **************** */
@@ -62,8 +62,8 @@ const Constants = (function myConstants() {
           .filter(Boolean)
       : Lang._('SUS_ALT_STOPWORDS');
 
-    // Generate placeholder stop words set.
-    Global.placeholderAltSet = new Set(Lang._('PLACEHOLDER_ALT_STOPWORDS'));
+    // Generate placeholder stop words set. Folded to match the folded alt text (see images.js).
+    Global.placeholderAltSet = new Set(Lang._('PLACEHOLDER_ALT_STOPWORDS').map(foldForMatching));
 
     // Generate placeholder stop words that are that the START of an alt string.
     Global.altPlaceholderPattern = generateRegexString(State.option.altPlaceholder, true);
@@ -75,7 +75,7 @@ const Constants = (function myConstants() {
     // Generate supplied placeholder stop words.
     Global.extraPlaceholderStopWords = State.option.extraPlaceholderStopWords
       .split(',')
-      .map((word) => word.trim().toLowerCase())
+      .map((word) => foldForMatching(word.trim()))
       .filter(Boolean);
 
     /* ********************** */
@@ -89,14 +89,19 @@ const Constants = (function myConstants() {
     const customStopWords = State.option.linkStopWords
       ? State.option.linkStopWords.split(',').map((word) => word.toLowerCase().trim())
       : [];
-    Global.linkStopWords = new Set([...Lang._('LINK_STOPWORDS'), ...customStopWords]);
+    // Normalized exactly like the link text they are compared with (see link-text.js), so that
+    // entries containing capitals or punctuation (e.g. "d’informations") can still match.
+    Global.linkStopWords = new Set(
+      [...Lang._('LINK_STOPWORDS'), ...customStopWords].map(normalizeStopWord).filter(Boolean),
+    );
     Global.linkIgnoreStrings = new Set(
       State.option.linkIgnoreStrings.map((word) => word.toLowerCase()),
     );
 
     // Generate regex patterns from arrays.
-    Global.clickRegex = generateRegexString(Lang._('CLICK'));
-    Global.newWindowRegex = generateRegexString(Lang._('NEW_WINDOW_PHRASES'));
+    // Folded to match the folded link text they are tested against.
+    Global.clickRegex = generateRegexString(Lang._('CLICK').map(foldForMatching));
+    Global.newWindowRegex = generateRegexString(Lang._('NEW_WINDOW_PHRASES').map(foldForMatching));
     const defaultFileTypes = [
       'pdf',
       'doc',

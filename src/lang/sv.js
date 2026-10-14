@@ -7,12 +7,15 @@ const ruleset = {
     'grafik',
     'fotografi',
     'foto',
+    'ikon',
+    'miniatyrbild',
     'image',
     'graphic',
     'picture',
     'photo',
     'thumbnail',
     'icon',
+    'portrait',
   ],
   PLACEHOLDER_ALT_STOPWORDS: [
     'alt',
@@ -22,7 +25,10 @@ const ruleset = {
     'fotografi',
     'platshållare',
     'platshållarbild',
-    'mellanlägg',
+    'diagram',
+    'ikon',
+    'miniatyrbild',
+    'utan rubrik',
     'chart',
     'decorative',
     'image',
@@ -42,19 +48,30 @@ const ruleset = {
     'homepage feature image',
     'featured image',
     'untitled',
+    'portrait',
+    'slide image',
+    'untitled image',
+    'unnamed',
+    'copy',
+    'undefined',
   ],
   LINK_STOPWORDS: [
     'klicka',
     'klicka här',
     'klicka här för mer',
     'klicka här för att läsa mer',
-    'kolla upp',
+    'kolla in',
     'detaljer här',
+    'upptäck',
     'ladda ner',
+    'ladda ned',
     'ladda ner här',
+    'utforska',
+    'ta reda på mer',
     'visa',
     'visa mer',
     'mer',
+    'mer information',
     'formulär',
     'här',
     'info',
@@ -63,23 +80,22 @@ const ruleset = {
     'lär dig',
     'lär dig mer',
     'lär dig att',
-    'mer',
     'sida',
-    'papper',
     'läs mer',
+    'läs mer här',
     'läs',
     'läs detta',
     'detta',
     'den här sidan',
     'denna sida',
+    'den här länken',
     'den här webbplatsen',
-    'visa',
     'visa vår',
     'webbplats',
     'artikel',
   ],
   CLICK: ['click', 'klicka'],
-  NEW_WINDOW_PHRASES: ['extern', 'ny flik', 'nytt fönster', 'pop-up', 'pop up'],
+  NEW_WINDOW_PHRASES: ['extern', 'ny flik', 'nytt fönster', 'pop-up', 'pop up', 'popup'],
 
   // Only some items in list would need to be translated.
   FILE_TYPE_PHRASES: [
@@ -111,13 +127,13 @@ const ruleset = {
     'avi',
     'zip',
   ],
-  POTENTIAL_UI_ELEMENTS: ['meny', 'stäng', 'växla', 'öppna', 'expandera', 'fäll ihop', 'nästa', 'föregående', 'spela upp', 'pausa', 'undermeny', 'visa', 'dölj', 'rullgardinsmeny', 'bakåt', 'framåt', 'hoppa över', 'skicka', 'avbryt', 'spara', 'redigera', 'radera', 'ta bort', 'sök', 'filter', 'sortera', 'stopp', 'ljud av', 'ljud på', 'helskärm', 'minimera', 'maximera'],
+  POTENTIAL_UI_ELEMENTS: ['meny', 'stäng', 'växla', 'öppna', 'expandera', 'fäll ut', 'fäll ihop', 'nästa', 'föregående', 'spela upp', 'paus', 'undermeny', 'visa', 'dölj', 'rullgardinsmeny', 'bakåt', 'framåt', 'hoppa över', 'skicka', 'avbryt', 'spara', 'redigera', 'radera', 'ta bort', 'sök', 'filter', 'filtrera', 'sortera', 'stopp', 'ljud av', 'ljud på', 'helskärm', 'minimera', 'maximera'],
 };
 
 const ui = {
   LANG_CODE: 'sv',
-  MAIN_TOGGLE_LABEL: 'Inspektera Tillgänglighet',
-  CONTAINER_LABEL: 'Tillgänglighetskoll',
+  MAIN_TOGGLE_LABEL: 'Kontrollera tillgänglighet',
+  CONTAINER_LABEL: 'Tillgänglighetskontroll',
   ERROR: 'Fel',
   ERRORS: 'Fel',
   WARNING: 'Varning',
@@ -126,11 +142,11 @@ const ui = {
   REVIEW: 'Granska',
   ON: 'På',
   OFF: 'Av',
-  ALERT_TEXT: 'Varning',
+  ALERT_TEXT: 'Meddelande',
   ALERT_CLOSE: 'Stäng',
   OUTLINE: 'Sidöversikt',
   READABILITY_DESC:
-    'Visar läsbarhetspoängen på fliken <strong>Sidöversikt</strong> för att hjälpa till att bedöma lässvårigheten.',
+    'Visar läsbarhetspoängen på fliken <strong>Sidöversikt</strong> för att hjälpa dig att bedöma hur svår texten är att läsa.',
   TITLE: 'Titel',
   ALT: 'ALT',
   IMAGES: 'Bilder',
@@ -142,25 +158,25 @@ const ui = {
   SETTINGS: 'Inställningar',
   DEVELOPER_CHECKS: 'Utvecklarkontroller',
   DEVELOPER_DESC:
-    'Kontrollerar problem som kan kräva kodningskunskaper för att åtgärdas, såsom HTML-attribut, formulär och mer.',
+    'Söker efter problem som kan kräva kodkunskaper att åtgärda, till exempel HTML-attribut, formulär med mera.',
   DARK_MODE: 'Mörkt läge',
   SHORTCUT_SR: 'Hoppa till problem. Kortkommando: Alt + punkt',
   SKIP_TO_ISSUE: 'Hoppa till problem',
-  NEW_TAB: 'Öppnas i ny flik',
+  NEW_TAB: 'Öppnas i en ny flik',
   LINKED: 'Länkad',
-  PANEL_HEADING: 'Tillgänglighetskoll',
+  PANEL_HEADING: 'Tillgänglighetskontroll',
   NO_ERRORS_FOUND: 'Inga fel hittades.',
-  WARNINGS_FOUND: 'varningar hittades.',
-  TOTAL_FOUND: 'totala problem hittades.',
+  WARNINGS_FOUND: 'varning(ar) hittades.',
+  TOTAL_FOUND: 'problem hittades totalt.',
   NOT_VISIBLE:
-    'Objektet du försöker visa är inte synligt: det kan vara gömt eller finnas inuti en dragspelskomponent eller en flikkomponent.',
+    'Objektet är inte synligt. Det kan vara dolt eller finnas i en dragspels- eller flikkomponent.',
   MISSING_ROOT:
-    'Hela sidan kontrolleras för tillgänglighet eftersom målområdet <code>%(root)</code> inte existerar.',
+    'Hela sidan kontrollerades för tillgänglighet eftersom målområdet <code>%(root)</code> inte finns.',
   MISSING_READABILITY_ROOT:
-    'Läsbarhetspoängen baseras på innehållsområdet <code>%(fallback)</code>, eftersom målområdet <code>%(root)</code> inte existerar.',
-  SKIP_TO_PAGE_ISSUES: 'Hoppa till sidans problem',
+    'Läsbarhetspoängen baseras på innehållsområdet <code>%(fallback)</code>, eftersom målområdet <code>%(root)</code> inte finns.',
+  SKIP_TO_PAGE_ISSUES: 'Hoppa till sidproblem',
   CONSOLE_ERROR:
-    'Tyvärr, men det finns ett problem med tillgänglighetskontrollen på den här sidan. Kan du <a href="https://forms.gle/sjzK9XykETaoqZv99">rapportera det via det här formuläret</a> eller på <a href="https://github.com/ryersondmp/sa11y/issues/new?title=Bug%20report">GitHub</a>?',
+    'Tyvärr har ett problem uppstått i tillgänglighetskontrollen på den här sidan. Kan du <a href="https://forms.gle/sjzK9XykETaoqZv99">rapportera det via det här formuläret</a> eller på <a href="https://github.com/ryersondmp/sa11y/issues/new?title=Bug%20report">GitHub</a>?',
   APPEARANCE: 'Utseende',
   MOVE_PANEL: 'Flytta panel',
   HIDDEN: 'Dold',
@@ -170,37 +186,37 @@ const ui = {
   PAGE_TITLE: 'Sidtitel',
   RESULTS: 'Resultat',
   EXPORT_RESULTS: 'Exportera resultat',
-  GENERATED: 'Resultat genererat med <a href="https://sa11y.netlify.app">Sa11y.</a>',
+  GENERATED: 'Resultaten genererades med <a href="https://sa11y.netlify.app">Sa11y.</a>',
   PREVIEW: 'Förhandsvisning',
   ELEMENT: 'Element',
   PATH: 'Sökväg',
 
   // Dismiss
-  PANEL_DISMISS_BUTTON: 'Visa %(dismissCount) avvisade',
-  DISMISS: 'Avvisa',
-  DISMISS_ALL: 'Avvisa allt',
-  DISMISSED: 'Avvisad',
+  PANEL_DISMISS_BUTTON: 'Visa ignorerade (%(dismissCount))',
+  DISMISS: 'Ignorera',
+  DISMISS_ALL: 'Ignorera alla',
+  DISMISSED: 'Ignorerad',
   DISMISS_REMINDER:
-    'Observera att varningar endast är <strong>tillfälligt</strong> avvisade. Att rensa din webbläsarhistorik och cookies kommer att återställa alla tidigare avvisade varningar på alla sidor.',
+    'Observera att varningar bara ignoreras <strong>tillfälligt</strong>. Om du rensar webbläsarhistoriken och cookies återställs alla tidigare ignorerade varningar på alla sidor.',
 
   // Color filters
   COLOUR_FILTER: 'Färgfilter',
-  PROTANOPIA: 'Protanopia',
-  DEUTERANOPIA: 'Deuteranopia',
-  TRITANOPIA: 'Tritanopia',
-  MONOCHROMACY: 'Monokromati',
+  PROTANOPIA: 'Protanopi',
+  DEUTERANOPIA: 'Deuteranopi',
+  TRITANOPIA: 'Tritanopi',
+  MONOCHROMACY: 'Monokromasi',
   COLOUR_FILTER_MESSAGE:
-    'Kolla efter element som är svåra att uppfatta eller särskilja från andra färger.',
-  RED_EYE: 'Röd färgblindhet.',
-  GREEN_EYE: 'Grön färgblindhet.',
-  BLUE_EYE: 'Blå färgblindhet.',
-  MONO_EYE: 'Röd, grön och blå blindhet.',
+    'Leta efter element som är svåra att uppfatta eller skilja från andra färger.',
+  RED_EYE: 'Rödblindhet.',
+  GREEN_EYE: 'Grönblindhet.',
+  BLUE_EYE: 'Blåblindhet.',
+  MONO_EYE: 'Röd-, grön- och blåblindhet.',
   COLOUR_FILTER_HIGH_CONTRAST: 'Färgfilter fungerar inte i högkontrastläge.',
 
   // Readability
   READABILITY: 'Läsbarhet',
   AVG_SENTENCE: 'Genomsnittligt antal ord per mening:',
-  COMPLEX_WORDS: 'Komplexa ord:',
+  COMPLEX_WORDS: 'Långa ord:',
   TOTAL_WORDS: 'Ord:',
   VERY_DIFFICULT: 'Mycket svårt',
   DIFFICULT: 'Svårt',
@@ -213,7 +229,7 @@ const tooltip = {
   HEADING_SKIPPED_LEVEL:
     'Rubriker bör inte hoppa över nivåer eller hoppa från <strong>Rubrik %(PREV_LEVEL)</strong> till <strong {C}>Rubrik %(LEVEL)</strong>, eftersom det stör innehållets ordning och hierarki och gör det svårare att följa. <hr> Om <strong {C}>%(HEADING)</strong> faller under sektionen <strong>%(PREV_HEADING)</strong>, överväg att formatera det som en <strong>Rubrik %(LEVEL)</strong> istället.',
   HEADING_EMPTY:
-    'Tom rubrik hittades! För att åtgärda, ta bort den här raden eller ändra dess format från <strong {C}>Rubrik %(level)</strong> till <strong>Normal</strong> eller <strong>Stycke</strong>.',
+    'Tom rubrik hittades! För att åtgärda, ta bort den här raden eller ändra dess format från <strong {C}>Rubrik %(level)</strong> till <strong>Normal</strong> eller <strong>Paragraf</strong>.',
   HEADING_LONG:
     'Rubriken är lång! Rubriker bör användas för att organisera innehåll och förmedla struktur. De ska vara korta, informativa och unika. Vänligen håll rubriker kortare än %(MAX_LENGTH) tecken (högst en mening). <hr> <strong {B}>%(HEADING_LENGTH) Tecken</strong>',
   HEADING_FIRST:
@@ -221,9 +237,9 @@ const tooltip = {
   HEADING_MISSING_ONE:
     'Saknar Rubrik 1. Rubrik 1 bör vara början på huvudinnehållsområdet, och är huvudrubriken som beskriver sidans övergripande syfte. Läs mer om <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">Rubrikstruktur.</a>',
   HEADING_EMPTY_WITH_IMAGE:
-    'Rubriken har ingen text, men innehåller en bild. Om detta inte är en rubrik ändrar du dess format från <strong {C}>Rubrik %(level)</strong> till <strong>Normal</strong> eller <strong>Stycke</strong>. Annars, lägg till alt-text till bilden om den inte är dekorativ.',
-  HEADING_UNPRONOUNCEABLE: 'Rubriktexten innehåller endast symboler eller outtala bara tecken. Om du tror att detta är ett fel som beror på en kopiera/klistra in-bugg, överväg att ta bort den. <hr> <strong {B}>Rubriktext</strong> <strong {C}>%(TEXT)</strong>',
-  PANEL_HEADING_MISSING_ONE: 'Saknar rubrik 1!',
+    'Rubriken har ingen text, men innehåller en bild. Om detta inte är en rubrik ändrar du dess format från <strong {C}>Rubrik %(level)</strong> till <strong>Normal</strong> eller <strong>Paragraf</strong>. Annars, lägg till alt-text till bilden om den inte är dekorativ.',
+  HEADING_UNPRONOUNCEABLE: 'Rubriktexten innehåller endast symboler eller outtalbara tecken. Om du tror att detta är ett fel som beror på en kopiera/klistra in-bugg, överväg att ta bort den. <hr> <strong {B}>Rubriktext</strong> <strong {C}>%(TEXT)</strong>',
+  PANEL_HEADING_MISSING_ONE: 'Rubrik 1 saknas!',
   PANEL_NO_HEADINGS: 'Inga rubriker hittades.',
 
   // Links
@@ -231,15 +247,15 @@ const tooltip = {
   LINK_EMPTY_LABELLEDBY:
     'Länken har ett värde för <code>aria-labelledby</code> som antingen är tomt eller inte matchar värdet för ett annat elements attribut <code>id</code> på sidan.',
   LINK_EMPTY_NO_LABEL:
-    'Länken har inte urskiljbar text som är synlig för skärmläsare och andra hjälpmedel. För att fixa: <ul><li>Lägg till lite kortfattad text som beskriver vart länken tar dig.</li><li>Om det är en <a href="https://a11y-101.com/development/icons -and-links">ikonlänk eller SVG,</a> saknar den troligen en beskrivande etikett.</li><li>Om du tror att den här länken är ett fel på grund av ett kopierings-/klistra-fel, överväg att ta bort den.</li></ul>',
+    'Länken har inte urskiljbar text som är synlig för skärmläsare och andra hjälpmedel. För att fixa: <ul><li>Lägg till lite kortfattad text som beskriver vart länken tar dig.</li><li>Om det är en <a href="https://a11y-101.com/development/icons-and-links">ikonlänk eller SVG,</a> saknar den troligen en beskrivande etikett.</li><li>Om du tror att den här länken är ett fel på grund av ett kopierings-/klistra-fel, överväg att ta bort den.</li></ul>',
   LINK_STOPWORD:
-    'Länkttexten kan vara otillräckligt beskrivande utanför sitt sammanhang: <strong {C}>%(ERROR)</strong>',
+    'Länktexten kan vara otillräckligt beskrivande utanför sitt sammanhang: <strong {C}>%(ERROR)</strong>',
   LINK_STOPWORD_ARIA:
-    'Trots att ett tillgängligt namn har angetts, överväg att revidera den synliga länkttexten. Fraser som &quot;<strong {C}>%(ERROR)</strong>&quot; är inte meningsfulla.',
+    'Trots att ett tillgängligt namn har angetts, överväg att revidera den synliga länktexten. Fraser som ”<strong {C}>%(ERROR)</strong>” är inte meningsfulla.',
   LINK_TIP:
-    '<hr> <strong>Tips!</strong> Använd tydlig och unik länkttext som beskriver destinationen för länken, vanligtvis sidans eller dokumentets titel.',
+    '<hr> <strong>Tips!</strong> Använd tydlig och unik länktext som beskriver destinationen för länken, vanligtvis sidans eller dokumentets titel.',
   LINK_CLICK_HERE:
-    'Frasen "klicka" eller "klicka här" sätter fokus på musmekanik, men många personer använder inte mus eller kan visa denna webbplats på en mobil enhet. Överväg att använda ett annat verb som är relaterat till uppgiften.',
+    'Frasen ”klicka” eller ”klicka här” sätter fokus på musmekanik, men många personer använder inte mus eller kan visa denna webbplats på en mobil enhet. Överväg att använda ett annat verb som är relaterat till uppgiften.',
   DUPLICATE_TITLE:
     'Attributet <code>title</code> på länkar och bilder är avsett att ge ytterligare information och bör vara <strong>annorlunda</strong> än texten eller alt-texten. Titeln visas när du håller muspekaren över ett element, men den är inte tillgänglig via tangentbord eller beröring. Överväg att <a href="https://www.a11yproject.com/posts/title-attributes/">helt undvika title-attributet.</a>',
   LINK_SYMBOLS:
@@ -249,7 +265,7 @@ const tooltip = {
   LINK_DOI:
     'För webbsidor eller resurser som endast finns online rekommenderar <a href="https://apastyle.apa.org/style-grammar-guidelines/paper-format/accessibility/urls#:~:text=descriptive%20links">APA Style Guide</a> att man använder beskrivande länkar genom att linda in URL:en eller DOI:en för arbetet runt dess titel. Längre, mindre begripliga webbadresser som används som länktext kan vara svåra att lyssna på med hjälpmedel.',
   LINK_NEW_TAB:
-    'Länken öppnas i en ny flik eller ett nytt fönster utan förvarning. Att göra det kan vara desorienterande, särskilt för personer som har svårt att uppfatta visuellt innehåll. För det andra är det inte alltid en bra praxis att styra någons erfarenhet eller fatta beslut åt dem. Ange att länken öppnas i ett nytt fönster i länktexten. <hr> <strong>Tips!</strong> Lär dig bästa praxis: <a href="https://www.nngroup.com/articles/new-browser-windows-and-tabs/">att öppna länkar i nya webbläsarfönster och flikar.</a>',
+    'Länken öppnas i en ny flik eller ett nytt fönster utan förvarning. Att göra det kan vara desorienterande, särskilt för personer som har svårt att uppfatta visuellt innehåll. För det andra är det inte alltid en bra praxis att styra någons upplevelse eller fatta beslut åt dem. Ange att länken öppnas i ett nytt fönster i länktexten. <hr> <strong>Tips!</strong> Lär dig bästa praxis: <a href="https://www.nngroup.com/articles/new-browser-windows-and-tabs/">att öppna länkar i nya webbläsarfönster och flikar.</a>',
   LINK_FILE_EXT:
     'Länken pekar till en PDF eller nedladdningsbar fil (t.ex. MP3, Zip, Word Doc) utan förvarning. Ange filtypen i länktexten. Om det är en stor fil, överväg att ta med filstorleken. <hr> <strong>Exempel:</strong> Verkställande rapport (PDF, 3MB)',
   LINK_IDENTICAL_NAME: 'Flera länkar på den här sidan använder samma länktext men pekar på olika ställen. Detta kan orsaka förvirring för användare av hjälpmedelsteknik. För att åtgärda detta, gör länktexten mer beskrivande.',
@@ -272,13 +288,13 @@ const tooltip = {
   LINK_PLACEHOLDER_ALT:
     'Hittade icke-beskrivande eller platshållande alt-text i en länkad bild. Se till att alt-texten beskriver länkens destination, och inte är en bokstavlig beskrivning av bilden. Ersätt följande alt-text. <hr> {L} {ALT} <strong {C}>%(ALT_TEXT)</strong>',
   LINK_SUS_ALT:
-    'Hjälpmedel visar redan att detta är en bild, så &quot;<strong {C}>%(ERROR)</strong>&quot; kan vara överflödig. Se till att alt-texten beskriver länkens destination, och inte är en bokstavlig beskrivning av bilden. <hr> {L} {ALT} <strong {C}>%(ALT_TEXT)</strong>',
+    'Hjälpmedel visar redan att detta är en bild, så ”<strong {C}>%(ERROR)</strong>” kan vara överflödig. Se till att alt-texten beskriver länkens destination, och inte är en bokstavlig beskrivning av bilden. <hr> {L} {ALT} <strong {C}>%(ALT_TEXT)</strong>',
   ALT_FILE_EXT:
     'Alternativtext ska inte inkludera filändelser eller bilddimensioner. Om bilden förmedlar en historia, stämning eller viktig information – se till att beskriva bilden. Ta bort: <strong {C}>%(ERROR)</strong> <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
   ALT_PLACEHOLDER:
     'Hittade icke-beskrivande eller platshållande alt-text. Ersätt följande alt-text med något mer meningsfullt. <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
   SUS_ALT:
-    'Hjälpmedel visar redan att detta är en bild, så &quot;<strong {C}>%(ERROR)</strong>&quot; kan vara överflödig. <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
+    'Hjälpmedel visar redan att detta är en bild, så ”<strong {C}>%(ERROR)</strong>” kan vara överflödig. <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
   LINK_IMAGE_NO_ALT_TEXT:
     'Bilden i länken är markerad som dekorativ och det finns ingen länktext. Vänligen lägg till alternativ text till bilden som beskriver länkens destination.',
   LINK_IMAGE_TEXT:
@@ -292,13 +308,13 @@ const tooltip = {
   IMAGE_FIGURE_DECORATIVE:
     'Bilden är markerad som <strong>dekorativ</strong> och kommer att ignoreras av hjälpmedel. <hr> Även om en <strong>textning</strong> tillhandahölls, bör bilden också ha alternativ text i de flesta fall. <ul><li>Alt-texten ska ge en kortfattad beskrivning av vad som finns i bilden.</li><li>Texten ska vanligtvis ge ett sammanhang för att relatera bilden till det omgivande innehållet, eller ge uppmärksamhet åt viss information.</li></ul> Läs mer: <a href="https://thoughtbot.com/blog/alt-vs-figcaption#the-figcaption-element">alt kontra figcaption.</a>',
   IMAGE_FIGURE_DUPLICATE_ALT:
-    'Använd inte exakt samma ord för både alt- och bildtext. Skärmläsare kommer då att förmedla samma information två gånger. <ul><li>Alt-texten ska ge en kortfattad beskrivning av vad som finns i bilden.</li><li>Tillskriften ska vanligtvis ge sammanhang för att relatera bilden tillbaka till omgivningen innehåll eller ge uppmärksamhet åt en viss information.</li></ul> Läs mer: <a href="https://thoughtbot.com/blog/alt-vs-figcaption#the-figcaption-element">alt kontra figcaption.</a> <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
+    'Använd inte exakt samma ord för både alt- och bildtext. Skärmläsare kommer då att förmedla samma information två gånger. <ul><li>Alt-texten ska ge en kortfattad beskrivning av vad som finns i bilden.</li><li>Tillskriften ska vanligtvis ge sammanhang för att relatera bilden tillbaka till det omgivande innehållet eller ge uppmärksamhet åt en viss information.</li></ul> Läs mer: <a href="https://thoughtbot.com/blog/alt-vs-figcaption#the-figcaption-element">alt kontra figcaption.</a> <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
   IMAGE_DECORATIVE:
     'Bilden är markerad som <strong>dekorativ</strong> och kommer att ignoreras av hjälpmedel. Om bilden förmedlar en historia, stämning eller annan viktig information – se till att lägga till alt-text.',
   IMAGE_DECORATIVE_CAROUSEL:
-    'Bilden är markerad som dekorativ, men alla bilder i en karusell eller ett galleri bör inkludera beskrivende alt-texter för att säkerställa en likvärdig upplevelse för alla.',
+    'Bilden är markerad som dekorativ, men alla bilder i en karusell eller ett galleri bör inkludera beskrivande alt-texter för att säkerställa en likvärdig upplevelse för alla.',
   IMAGE_ALT_TOO_LONG:
-    'Alt-texten är <strong>för lång</strong>. Alt-text ska vara kortfattad men meningsfull som en <em>tweet</em> (cirka 100 tecken). Om detta är en komplex bild eller en graf, överväg att lägga in den längre beskrivningen av bilden i under bilden, eller i en dragspelskomponent. <hr> {ALT} <strong {B}>%(altLength) Tecken</strong> <strong {C}>%(ALT_TEXT)</strong>',
+    'Alt-texten är <strong>för lång</strong>. Alt-text ska vara kortfattad men meningsfull som en <em>tweet</em> (cirka 100 tecken). Om detta är en komplex bild eller en graf, överväg att lägga den längre beskrivningen av bilden i texten under bilden, eller i en dragspelskomponent. <hr> {ALT} <strong {B}>%(altLength) Tecken</strong> <strong {C}>%(ALT_TEXT)</strong>',
   IMAGE_PASS: '{ALT} <strong {C}>%(ALT_TEXT)</strong>',
   LINK_ALT_MAYBE_BAD:
     'Bildlänken kan ha alternativtext som inte ger användbar information eller är otydlig. Se till att alt-texten beskriver länkens mål. <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
@@ -322,9 +338,9 @@ const tooltip = {
 
   // Embedded content
   EMBED_VIDEO:
-    'Se till att <strong>alla videor har undertexter.</strong> Att tillhandahålla textning för allt ljud- och videoinnehåll är ett obligatoriskt krav för nivå A. Bildtexter stöder personer som är D/döva eller hörselskada.',
+    'Se till att <strong>alla videor har undertexter.</strong> Att tillhandahålla textning för allt ljud- och videoinnehåll är ett obligatoriskt krav för nivå A. Undertexter stöder personer som är D/döva eller hörselskadade.',
   EMBED_AUDIO:
-    'Se till att tillhandahålla en <strong>transkription för alla poddsändningar.</strong> Att tillhandahålla transkriptioner för ljudinnehåll är ett obligatoriskt krav för nivå A. Avskrifter stöder personer som är D/döva eller hörselskada, men kan gynna alla. Överväg att placera utskriften under poddsändingen eller i en dragspelspanel.',
+    'Se till att tillhandahålla en <strong>transkription för alla poddsändningar.</strong> Att tillhandahålla transkriptioner för ljudinnehåll är ett obligatoriskt krav för nivå A. Avskrifter stöder personer som är D/döva eller hörselskadade, men kan gynna alla. Överväg att placera utskriften under poddsändningen eller i en dragspelspanel.',
   EMBED_DATA_VIZ:
     'Datavisualiseringswidgetar som denna är ofta problematiska för personer som använder tangentbord eller skärmläsare för att navigera, och kan innebära betydande svårigheter för personer som har nedsatt syn eller färgblindhet. Det rekommenderas att tillhandahålla samma information i ett alternativt format (text eller tabell) under widgeten. <hr> Läs mer om <a href="https://www.w3.org/WAI/tutorials/images/complex">komplexa bilder.</a>',
   EMBED_MISSING_TITLE:
@@ -332,32 +348,32 @@ const tooltip = {
   EMBED_GENERAL:
     'Det gick inte att kontrollera inbäddat innehåll. Se till att bilder har alt-text, videor har undertexter, text har tillräcklig kontrast och att interaktiva komponenter är <a href="https://webaim.org/techniques/keyboard/">tillgängliga för tangentbord.</a>',
   EMBED_UNFOCUSABLE:
-    '<code>&lt;iframe&gt;</code> med oväxlingsbara element bör inte ha <code>tabindex="-1"</code>. Det inbäddade innehållet kommer inte att vara tillgängligt med tangentbordet.',
+    '<code>&lt;iframe&gt;</code> med fokuserbara element bör inte ha <code>tabindex="-1"</code>. Det inbäddade innehållet kommer inte att vara tillgängligt med tangentbordet.',
 
   // Quality assurance
   QA_BAD_LINK:
     'Dålig länk hittades. Länk verkar peka till en utvecklingsmiljö. <hr> {L} <strong {C}>%(LINK)</strong>',
   QA_IN_PAGE_LINK: 'Trasig länk på samma sida. Den här länken försöker navigera till ett avsnitt på sidan som inte kan hittas. För att åtgärda detta, se till att länken matchar <code>id</code> för elementet du vill hoppa till.',
   QA_STRONG_ITALICS:
-    'Feta och kursiva HTML-taggar har semantisk betydelse och bör <strong>inte</strong> användas för att markera hela stycken. Fetstil text bör användas för att ge ett ord eller en fras stark <strong>betoning</strong>. Kursiv stil ska användas för att markera egennamn (d.v.s. bok- och artikeltitlar), främmande ord, citat. Långa citat bör formateras som ett blockcitat.',
+    'Feta och kursiva HTML-taggar har semantisk betydelse och bör <strong>inte</strong> användas för att markera hela stycken. Fet text bör användas för att ge ett ord eller en fras stark <strong>betoning</strong>. Kursiv stil ska användas för att markera egennamn (d.v.s. bok- och artikeltitlar), främmande ord, citat. Långa citat bör formateras som ett blockcitat.',
   QA_PDF:
     'Det går inte att kontrollera PDF-filer för tillgänglighet. PDF-filer betraktas som webbinnehåll och måste också göras tillgängliga. PDF-filer är ofta problematiska för personer som använder skärmläsare (till exempel: saknade strukturella taggar eller saknade formulärfältetiketter) och personer som har nedsatt syn (texten anpassar sig inte när den förstoras). <ul><li>Om detta är ett formulär, överväg att använda ett tillgängligt HTML-formulär som ett alternativ.</li><li>Om detta är ett dokument, överväg att konvertera det till en webbsida.</li></ul> Annars kontrollerar du <a href="https://helpx.adobe.com/acrobat/using/create-verify-pdf-accessibility.html">PDF för tillgänglighet i Acrobat DC.</a>',
   QA_DOCUMENT:
     'Det gick inte att kontrollera dokumentets tillgänglighet. Länkade dokument betraktas som webbinnehåll och måste också göras tillgängliga. Granska dokumentet manuellt. <ul><li>Gör ditt <a href="https://support.google.com/docs/answer/6199477?hl=sv">Google Workspace-dokument eller din presentation mer tillgänglig.</a></li><li>Gör dina <a href="https://support.microsoft.com/sv-se/office/create-accessible-office-documents-868ecfcd-4f00-4224-b881-a65537a7c155">Office-dokument mer tillgängliga.</a></li></ul>',
   QA_BLOCKQUOTE:
-    'Är detta en rubrik? <strong {C}>%(TEXT)</strong> <hr> Blockcitat bör endast användas för citattecken. Om detta är tänkt att vara en rubrik, ändra detta blockcitat till en semantisk rubrik (t.ex. Rubrik 2 eller Rubrik 3).',
+    'Är detta en rubrik? <strong {C}>%(TEXT)</strong> <hr> Blockcitat bör endast användas för citat. Om detta är tänkt att vara en rubrik, ändra detta blockcitat till en semantisk rubrik (t.ex. Rubrik 2 eller Rubrik 3).',
   QA_FAKE_HEADING:
     'Är detta en rubrik? <strong {C}>%(TEXT)</strong> <hr> En rad med fet eller stor text kan se ut som en rubrik, men någon som använder en skärmläsare kan inte se att den är viktig eller hoppa till innehållet. Fet eller stor text ska aldrig ersätta semantiska rubriker (Rubrik 2 till Rubrik 6).',
   QA_FAKE_LIST:
-    'Försöker du skapa en lista? Möjligt listobjekt hittat: <strong {C}>%(firstPrefix)</strong> <hr> Se till att använda semantiska listor genom att använda punkt- eller sifferformateringsknapparna istället. När du använder en semantisk lista kan hjälpmedel förmedla information som det totala antalet objekt och den relativa positionen för varje objekt i listan. Läs mer om <a href="https://www.w3.org/WAI/tutorials/page-structure/content/#lists">semantiska listor.</a>',
+    'Försöker du skapa en lista? Möjligt listobjekt hittat: <strong {C}>%(PREFIX)</strong> <hr> Se till att använda semantiska listor genom att använda punkt- eller sifferformateringsknapparna istället. När du använder en semantisk lista kan hjälpmedel förmedla information som det totala antalet objekt och den relativa positionen för varje objekt i listan. Läs mer om <a href="https://www.w3.org/WAI/tutorials/page-structure/content/#lists">semantiska listor.</a>',
   QA_UPPERCASE:
     'Hittade text med enbart versaler. Vissa skärmläsare kan tolka versalskrift som en akronym och läser varje bokstav individuellt. Dessutom upplever vissa personer att det är svårare att läsa versalskrift och det kan se ut som att avsändaren SKRIKER.',
   QA_UNDERLINE:
     'Understruken text kan förväxlas med länkar. Överväg att använda en annan stil som <code>&lt;strong&gt;</code><strong>fetstil</strong><code>&lt;/strong&gt;</code> eller <code>&lt;em&gt;</code ><em>kursiv</em><code>&lt;/em&gt;</code>.',
   QA_SUBSCRIPT:
-    'Formateringsalternativen nedsänkt och upphöjd text bör endast användas för att ändra textens position för typografiska konventioner eller standarder. Det bör <strong>inte</strong> endast användas för presentations- eller utseendeändamål. Att formatera hela meningar ställer till läsbarhetsproblem. Lämpliga användningsfall inkluderar visning av exponenter, ordningstal som 4<sup>th</sup> istället för fjärde och kemiska formler (t.ex. H<sub>2</sub>O).',
+    'Formateringsalternativen nedsänkt och upphöjd text bör endast användas för att ändra textens position för typografiska konventioner eller standarder. Det bör <strong>inte</strong> endast användas för presentations- eller utseendeändamål. Att formatera hela meningar ställer till läsbarhetsproblem. Lämpliga användningsfall inkluderar visning av exponenter, enheter som m<sup>2</sup> och kemiska formler (t.ex. H<sub>2</sub>O).',
   QA_NESTED_COMPONENTS:
-    'Undvik att nästla interaktiva layoutkomponenter, som att placera ackordeoner inom flikar eller flikar inom ackordeoner. Detta kan komplicera navigering, öka den kognitiva belastningen och leda till att människor överser innehåll.',
+    'Undvik att nästla interaktiva layoutkomponenter, som att placera dragspel i flikar eller flikar i dragspel. Detta kan komplicera navigering, öka den kognitiva belastningen och leda till att människor missar innehåll.',
   QA_JUSTIFY:
     'Undvik att använda text som är både vänster- och högerjusterad. Detta kan vara svårt att läsa för vissa människor på grund av ojämna mellanrum mellan orden. Använd vänsterjusterad text för bättre läsbarhet.',
   QA_SMALL_TEXT:
@@ -366,12 +382,12 @@ const tooltip = {
   // Shared
   LINK_TEXT: '<strong {B}>Länktext</strong> <strong {C}>%(TEXT)</strong>',
   ACC_NAME: '<strong {B}>Tillgängligt namn</strong> <strong {C}>%(TEXT)</strong>',
-  ACC_NAME_TIP: '<hr><strong>Tips!</strong> Det "tillgängliga namnet" är den slutliga etiketten som kommuniceras till personer som använder hjälpmedel. Detta hjälper dem att förstå elementets syfte.',
+  ACC_NAME_TIP: '<hr><strong>Tips!</strong> Det ”tillgängliga namnet” är den slutliga etiketten som kommuniceras till personer som använder hjälpmedel. Detta hjälper dem att förstå elementets syfte.',
   HIDDEN_FOCUSABLE: 'Det här elementet kan ta emot tangentbordsfokus, men är dolt för skärmläsare genom attributet <code>aria-hidden="true"</code> (på sig självt eller en överordnad behållare). För att åtgärda detta, ta antingen bort attributet aria-hidden eller ta bort elementet från tabbordningen. <hr> <strong {B}>Element</strong> <pre><code>%(EL)</code></pre> <hr> Läs mer om <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">attributet aria-hidden.</a>',
 
   // Developer
   DUPLICATE_ID:
-    'Hittade <strong>duplicerat ID</strong>. Dubbletterade ID:n är kända för att orsaka problem för hjälpmedelsverktyg när de försöker interagera med innehåll. Ta bort eller ändra följande ID. <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>',
+    'Hittade <strong>duplicerat ID</strong>. Duplicerade ID:n är kända för att orsaka problem för hjälpmedelsverktyg när de försöker interagera med innehåll. Ta bort eller ändra följande ID. <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>',
   UNCONTAINED_LI:
     'Alla <code>&lt;li&gt;</code> listobjekt måste placeras inuti <code>&lt;ul&gt;</code> oordnade eller <code>&lt;ol&gt;</code> ordnade element. Denna struktur hjälper skärmläsare att korrekt tillkännage listan och dess objekt.',
   TABINDEX_ATTR: 'Elementet bör inte ha ett <code>tabindex</code>-attribut större än 0.',
@@ -397,23 +413,23 @@ const tooltip = {
   BTN_TIP:
     'Lär dig hur du skapar en <a href="https://www.sarasoueidan.com/blog/accessible-icon-buttons/">tillgänglig knapp.</a>',
   BTN_ROLE_IN_NAME:
-    'Inkludera inte ordet "knapp" i namnet på en knapp. Skärmläsare anger redan elementets roll utöver dess namn.',
+    'Inkludera inte ordet ”knapp” i namnet på en knapp. Skärmläsare anger redan elementets roll utöver dess namn.',
   LABEL_IN_NAME:
     'Den synliga texten för detta element verkar skilja sig från det tillgängliga namnet, vilket kan orsaka förvirring för användare av hjälpmedelstekniker. Vänligen granska: <hr> <strong {B}>Text</strong> <strong {C}>%(TEXT)</strong> <hr> <strong {B}>Tillgängligt namn</strong> <strong {C}>%(TEXT)</strong>',
   LINK_MAYBE_BUTTON: 'Den här länken har ett ogiltigt mål. Även om det tillgängliga namnet eller dess attribut tyder på att detta kanske inte är en länk alls, utan istället styr något skriptat beteende på sidan. För att åtgärda detta, ersätt länken med en <a href="https://www.w3.org/WAI/ARIA/apg/patterns/button/">tillgänglig knapp</a>, eller korrigera länkens mål. <hr> <strong {B}>Tillgängligt namn</strong> <strong {C}>%(TEXT)</strong> <hr> <strong>Tips!</strong> Hjälpmedel behandlar knappar och länkar på olika sätt. Genom att använda rätt HTML-element säkerställer du att användarna vet vilka tangentbordsgenvägar de ska använda och vilken åtgärd som kommer att utlösas.',
 
   // Tables
   TABLES_MISSING_HEADINGS:
-    'Tabellrubriker saknas! Tillgänglighetsanpassade tabeller behöver HTML-markup som indikerar rubrikceller och dataceller, vilket definierar deras relation. Informationen ger sammanhang till personer som använder hjälpmedelsverktyg. Tabeller bör endast användas för tabelldata. <hr> Läs mer om <a href="https://www.w3.org/WAI/tutorials/tables/">tillgängliga tabeller.</a>',
+    'Tabellhuvuden saknas! Tillgänglighetsanpassade tabeller behöver HTML-markup som indikerar rubrikceller och dataceller, vilket definierar deras relation. Informationen ger sammanhang till personer som använder hjälpmedelsverktyg. Tabeller bör endast användas för tabelldata. <hr> Läs mer om <a href="https://www.w3.org/WAI/tutorials/tables/">tillgängliga tabeller.</a>',
   TABLES_SEMANTIC_HEADING:
-    'Semantiska rubriker som Rubrik 2 eller Rubrik 3 bör endast användas för sektioner av innehåll; <strong>inte</strong> i HTML-tabeller. Ange tabellrubriker med <code>&lt;th&gt;</code>-elementet istället. <hr> Läs mer om <a href="https://www.w3.org/WAI/tutorials/tables/">tillgängliga tabeller.</a>',
+    'Semantiska rubriker som Rubrik 2 eller Rubrik 3 bör endast användas för sektioner av innehåll; <strong>inte</strong> i HTML-tabeller. Ange rubrikceller med <code>&lt;th&gt;</code>-elementet istället. <hr> Läs mer om <a href="https://www.w3.org/WAI/tutorials/tables/">tillgängliga tabeller.</a>',
   TABLES_EMPTY_HEADING:
-    'Tom tabellrubrik hittades! Tabellrubriker får <strong>aldrig</strong> vara tomma. Det är viktigt att ange rad- och/eller kolumnrubriker för att förmedla deras relation. Informationen ger sammanhang till personer som använder hjälpmedelsverktyg. Tänk på att tabeller endast ska användas för tabelldata. <hr> Läs mer om <a href="https://www.w3.org/WAI/tutorials/tables/">tillgängliga tabeller.</a>',
-  TABLES_INVALID_HEADERS_REF: 'Den här tabellen försöker koppla en specifik datacell till en specifik rubrikcell, men rubrikens ID kan inte hittas. Kontrollera att varje <code>headers</code>-attribut matchar ID för en rubrikcell i samma tabell. <hr> <strong {B}>Rubriker</strong> <code>%(VALUE)</code> <hr> <strong>Tips!</strong> Att <a href="https://www.w3.org/WAI/WCAG22/Techniques/html/H43">använda manuella ID-referenser</a> för att associera dataceller med rubrikceller är komplicerat och sårbart. Dela om möjligt upp komplexa data i mindre tabeller med enkla rubrikrader och -kolonner.',
+    'Tom rubrikcell hittades! Rubrikceller får <strong>aldrig</strong> vara tomma. Det är viktigt att ange rubrikrader och/eller rubrikkolumner för att förmedla deras relation. Informationen ger sammanhang till personer som använder hjälpmedelsverktyg. Tänk på att tabeller endast ska användas för tabelldata. <hr> Läs mer om <a href="https://www.w3.org/WAI/tutorials/tables/">tillgängliga tabeller.</a>',
+  TABLES_INVALID_HEADERS_REF: 'Den här tabellen försöker koppla en specifik datacell till en specifik rubrikcell, men rubrikcellens ID kan inte hittas. Kontrollera att varje <code>headers</code>-attribut matchar ID:t för en rubrikcell i samma tabell. <hr> <strong {B}>Rubrikceller</strong> <code>%(VALUE)</code> <hr> <strong>Tips!</strong> Att <a href="https://www.w3.org/WAI/WCAG22/Techniques/html/H43">använda manuella ID-referenser</a> för att associera dataceller med rubrikceller är komplicerat och sårbart. Dela om möjligt upp komplexa data i mindre tabeller med enkla rubrikrader och -kolumner.',
 
   // Contrast
-  CONTRAST_NORMAL: 'Text i normal storlek bör ha en kontrastförhållande på minst %(RATIO).',
-  CONTRAST_LARGE: 'Text i stor storlek bör ha en kontrastförhållande på minst %(RATIO).',
+  CONTRAST_NORMAL: 'Text i normal storlek bör ha ett kontrastförhållande på minst %(RATIO).',
+  CONTRAST_LARGE: 'Text i stor storlek bör ha ett kontrastförhållande på minst %(RATIO).',
   CONTRAST_ERROR:
     'Texten har inte tillräcklig kontrast mot bakgrunden, vilket gör den svårare att läsa.',
   CONTRAST_WARNING:
@@ -422,7 +438,7 @@ const tooltip = {
     'Grafiken har inte tillräcklig kontrast mot bakgrunden, vilket gör den svårare att se.',
   CONTRAST_WARNING_GRAPHIC: 'Kontrasten för denna grafik är okänd och måste granskas manuellt.',
   CONTRAST_TIP_GRAPHIC:
-    'Grafik och användargränssnittselement bör ha en kontrastförhållande på minst 3:1.',
+    'Grafik och användargränssnittselement bör ha ett kontrastförhållande på minst 3:1.',
   CONTRAST_OPACITY: 'Öka opaciteten för bättre synlighet.',
   CONTRAST_APCA:
     'Detta har inte tillräcklig kontrast för någon textstorlek. Överväg att använda denna färg och textstorlekskombination?',
@@ -442,10 +458,10 @@ const tooltip = {
     'Ingen tillgänglig kombination kan hittas genom att endast ändra textfärgen. Försök att ändra bakgrundsfärgen.',
 
   // Page language
-  PAGE_LANG_CONFIDENCE: 'Mer än hälften av texten på den här sidan verkar vara på %(LIKELY_LANG), men det deklarerade sidoproget är %(PAGE_LANG). Överväg att uppdatera det <a href="https://www.w3.org/International/questions/qa-html-language-declarations">deklarerade sidoproget</a> så att det matchar innehållet.',
-  LANG_OF_PARTS: 'Sidsproget deklarerades som %(PAGE_LANG), men det här innehållet verkar vara på %(LIKELY_LANG). Se till att innehållet är korrekt taggat.',
+  PAGE_LANG_CONFIDENCE: 'Mer än hälften av texten på den här sidan verkar vara på %(LIKELY_LANG), men det deklarerade sidspråket är %(PAGE_LANG). Överväg att uppdatera det <a href="https://www.w3.org/International/questions/qa-html-language-declarations">deklarerade sidspråket</a> så att det matchar innehållet.',
+  LANG_OF_PARTS: 'Sidspråket deklarerades som %(PAGE_LANG), men det här innehållet verkar vara på %(LIKELY_LANG). Se till att innehållet är korrekt taggat.',
   LANG_MISMATCH: 'Det här innehållet verkar vara på %(DETECTED_LANG), men det taggades som %(WRONG_LANG).',
-  LANG_OF_PARTS_ALT: 'Den här alt-texten verkar vara på %(LIKELY_LANG), men sidsproget deklarerades som %(PAGE_LANG). Se till att alt-texten är på samma språk som resten av sidan. <hr> {ALT} <strong {C}>%(ALT)</strong>',
+  LANG_OF_PARTS_ALT: 'Den här alt-texten verkar vara på %(LIKELY_LANG), men sidspråket deklarerades som %(PAGE_LANG). Se till att alt-texten är på samma språk som resten av sidan. <hr> {ALT} <strong {C}>%(ALT)</strong>',
   LANG_TIP: '<hr><strong>Tips!</strong> Skärmläsare uttalar ord med hjälp av språktaggar. Att uttala ett språk med ett språkpaket som inte matchar ger obegripligt tal.',
   LANG_UNSUPPORTED: 'Språkrelaterade tillgänglighetskontroller hoppades över eftersom automatisk språkidentifiering inte stöds i den här webbläsaren.',
 };

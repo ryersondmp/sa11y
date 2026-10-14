@@ -5,20 +5,27 @@ const ruleset = {
   SUS_ALT_STOPWORDS: [
     'imagem',
     'gráfico',
-    'imagem',
     'foto',
+    'fotografia',
+    'ícone',
+    'miniatura',
     'image',
     'graphic',
     'picture',
     'photo',
     'thumbnail',
     'icon',
+    'portrait',
   ],
   PLACEHOLDER_ALT_STOPWORDS: [
     'alt',
     'imagem',
     'foto',
     'decorativo',
+    'decorativa',
+    'ícone',
+    'miniatura',
+    'sem título',
     'photo',
     'image',
     'graphic',
@@ -42,47 +49,64 @@ const ruleset = {
     'homepage feature image',
     'featured image',
     'untitled',
+    'portrait',
+    'slide image',
+    'untitled image',
+    'unnamed',
+    'copy',
+    'undefined',
   ],
   LINK_STOPWORDS: [
     'clique',
     'clique aqui',
+    'clique aqui para mais',
     'clique aqui para saber mais',
     'clicando aqui',
     'confira',
     'detalhado aqui',
     'download',
     'faça o download aqui',
+    'baixar',
+    'baixe aqui',
     'descobrir',
+    'descubra',
+    'descubra mais',
     'saiba mais',
     'formulário',
+    'este formulário',
     'aqui',
+    'acesse',
+    'acesse aqui',
     'informações',
+    'mais informações',
     'link',
+    'este link',
     'aprender',
     'aprender a',
     'mais',
     'página',
-    'papel',
     'leia mais',
     'ler',
+    'leia',
     'leia isto',
     'este',
     'esta página',
     'este site',
-    'visualização',
+    'ver',
+    'veja',
     'veja nossa',
+    'veja nosso',
     'site',
     'artigo',
   ],
-  CLICK: ['click', 'clique'],
-  NEW_WINDOW_PHRASES: ['externo', 'nova guia', 'nova janela', 'pop-up', 'aparecer'],
+  CLICK: ['click', 'clique', 'clica'],
+  NEW_WINDOW_PHRASES: ['externo', 'externa', 'nova guia', 'nova aba', 'nova janela', 'pop-up', 'pop up'],
   FILE_TYPE_PHRASES: [
     'documento',
     'planilha',
     'planilha de cálculo',
     'arquivo compactado',
     'arquivo arquivado',
-    'planilha',
     'powerpoint',
     'apresentação',
     'instalar',
@@ -90,7 +114,7 @@ const ruleset = {
     'áudio',
     'pdf',
   ],
-  POTENTIAL_UI_ELEMENTS: ['menu', 'fechar', 'alternar', 'abrir', 'expandir', 'recolher', 'próximo', 'anterior', 'reproduzir', 'pausar', 'submenu', 'mostrar', 'ocultar', 'suspenso', 'voltar', 'avançar', 'pular', 'enviar', 'cancelar', 'salvar', 'editar', 'excluir', 'remover', 'buscar', 'filtrar', 'ordenar', 'parar', 'mudo', 'ativar som', 'tela cheia', 'minimizar', 'maximizar'],
+  POTENTIAL_UI_ELEMENTS: ['menu', 'fechar', 'alternar', 'abrir', 'expandir', 'recolher', 'próximo', 'próxima', 'anterior', 'reproduzir', 'pausar', 'submenu', 'mostrar', 'ocultar', 'esconder', 'suspenso', 'voltar', 'avançar', 'pular', 'enviar', 'cancelar', 'salvar', 'editar', 'excluir', 'remover', 'buscar', 'pesquisar', 'filtrar', 'ordenar', 'parar', 'mudo', 'ativar som', 'tela cheia', 'minimizar', 'maximizar', 'slide', 'modal'],
 };
 
 const ui = {
@@ -99,17 +123,17 @@ const ui = {
   CONTAINER_LABEL: 'Verificador de acessibilidade',
   ERROR: 'Erro',
   ERRORS: 'Erros',
-  WARNING: 'Advertência',
+  WARNING: 'Aviso',
   WARNINGS: 'Avisos',
   GOOD: 'Bom',
-  REVIEW: 'Revisar',
-  ON: 'Ligado',
-  OFF: 'Desligado',
+  REVIEW: 'Revisão',
+  ON: 'Ativado',
+  OFF: 'Desativado',
   ALERT_TEXT: 'Alerta',
   ALERT_CLOSE: 'Fechar',
   OUTLINE: 'Estrutura',
   READABILITY_DESC:
-    'Mostra a pontuação de legibilidade na guia <strong>Estrutura</strong> para ajudar a avaliar a dificuldade de leitura.',
+    'Mostra a pontuação de legibilidade na aba <strong>Estrutura</strong> para ajudar a avaliar a dificuldade de leitura.',
   TITLE: 'Título',
   ALT: 'ALT',
   IMAGES: 'Imagens',
@@ -117,26 +141,26 @@ const ui = {
   NO_IMAGES: 'Nenhuma imagem encontrada.',
   DECORATIVE: 'Decorativo',
   MISSING: 'Ausente',
-  PAGE_ISSUES: 'Problemas de página',
+  PAGE_ISSUES: 'Problemas da página',
   SETTINGS: 'Configurações',
   DEVELOPER_CHECKS: 'Verificações do desenvolvedor',
   DEVELOPER_DESC:
-    'Verifica problemas que podem exigir conhecimento de codificação para correção, como atributos HTML, formulários e mais.',
+    'Verifica problemas que podem exigir conhecimentos de programação para serem corrigidos, como atributos HTML, formulários e muito mais.',
   DARK_MODE: 'Modo escuro',
-  SHORTCUT_SR: 'Pular para a edição. Atalho de teclado: Alt S',
-  SKIP_TO_ISSUE: 'Pular para a edição',
-  NEW_TAB: 'Abre uma nova guia',
+  SHORTCUT_SR: 'Pular para o problema. Atalho de teclado: Alt S',
+  SKIP_TO_ISSUE: 'Pular para o problema',
+  NEW_TAB: 'Abre em uma nova aba',
   LINKED: 'Vinculado',
   PANEL_HEADING: 'Verificação de acessibilidade',
   NO_ERRORS_FOUND: 'Não foram encontrados erros.',
   WARNINGS_FOUND: 'avisos encontrados.',
-  TOTAL_FOUND: 'total de problemas encontrados.',
+  TOTAL_FOUND: 'problemas encontrados no total.',
   NOT_VISIBLE:
-    'O item que você está tentando visualizar não está visível; ele pode estar oculto ou dentro de um componente de acordeão ou guia.',
+    'O item que você está tentando visualizar não está visível; ele pode estar oculto ou dentro de um componente de acordeão ou de abas.',
   MISSING_ROOT:
     'A página inteira foi verificada quanto à acessibilidade porque a área de destino <code>%(root)</code> não existe.',
   MISSING_READABILITY_ROOT:
-    'A pontuação de legibilidade é baseada na área de conteúdo <code>%(fallback)</code>, pois a área alvo <code>%(root)</code> não existe.',
+    'A pontuação de legibilidade é baseada na área de conteúdo <code>%(fallback)</code>, pois a área de destino <code>%(root)</code> não existe.',
   SKIP_TO_PAGE_ISSUES: 'Pular para os problemas da página',
   CONSOLE_ERROR:
     'Desculpe, mas há um problema com o verificador de acessibilidade nesta página. Você pode <a href="https://forms.gle/sjzK9XykETaoqZv99">relatar o problema por meio deste formulário</a> ou no <a href="https://github.com/ryersondmp/sa11y/issues/new?title=Bug%20report">GitHub</a>?',
@@ -145,7 +169,7 @@ const ui = {
   HIDDEN: 'Oculto',
 
   // Dismiss
-  PANEL_DISMISS_BUTTON: 'Mostrar %(dismissCount) ignorados',
+  PANEL_DISMISS_BUTTON: 'Mostrar ignorados (%(dismissCount))',
   DISMISS: 'Ignorar',
   DISMISS_ALL: 'Ignorar todos',
   DISMISSED: 'Ignorado',
@@ -167,13 +191,13 @@ const ui = {
   PROTANOPIA: 'Protanopia',
   DEUTERANOPIA: 'Deuteranopia',
   TRITANOPIA: 'Tritanopia',
-  MONOCHROMACY: 'Monocromático',
+  MONOCHROMACY: 'Monocromacia',
   COLOUR_FILTER_MESSAGE:
     'Verifique se há elementos que são difíceis de perceber ou distinguir em relação a outras cores.',
-  RED_EYE: 'Cego vermelho.',
-  GREEN_EYE: 'Cego verde.',
-  BLUE_EYE: 'Cego azul.',
-  MONO_EYE: 'Cego para vermelho, azul e verde.',
+  RED_EYE: 'Cegueira para o vermelho.',
+  GREEN_EYE: 'Cegueira para o verde.',
+  BLUE_EYE: 'Cegueira para o azul.',
+  MONO_EYE: 'Cegueira para o vermelho, o azul e o verde.',
   COLOUR_FILTER_HIGH_CONTRAST: 'Os filtros de cores não funcionam no modo de alto contraste.',
 
   // Readability
@@ -183,7 +207,7 @@ const ui = {
   TOTAL_WORDS: 'Palavras:',
   VERY_DIFFICULT: 'Muito difícil',
   DIFFICULT: 'Difícil',
-  FAIRLY_DIFFICULT: 'Bastante difícil',
+  FAIRLY_DIFFICULT: 'Moderadamente difícil',
   READABILITY_NOT_ENOUGH: 'Não há conteúdo suficiente para calcular a pontuação de legibilidade.',
 };
 
@@ -198,12 +222,12 @@ const tooltip = {
   HEADING_FIRST:
     'O primeiro título em uma página geralmente deve ser o Título 1 ou o Título 2. O Título 1 deve ser o início da seção de conteúdo principal e é o título principal que descreve o objetivo geral da página. Saiba mais sobre <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">Estrutura de títulos.</a>',
   HEADING_MISSING_ONE:
-    'Falta de título 1. O título 1 deve ser o início da área de conteúdo principal e é o título principal que descreve o objetivo geral da página. Saiba mais sobre <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">Estrutura de cabeçalho.</a>',
+    'Falta o Título 1. O Título 1 deve ser o início da área de conteúdo principal e é o título principal que descreve o objetivo geral da página. Saiba mais sobre <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">Estrutura de títulos.</a>',
   HEADING_EMPTY_WITH_IMAGE:
-    'O cabeçalho não tem texto, mas contém uma imagem. Se esse não for um cabeçalho, altere seu formato de <strong {C}>Título %(level)</strong> para <strong>Normal</strong> ou <strong>Parágrafo</strong>. Caso contrário, adicione texto alternativo à imagem se ela não for decorativa.',
-  HEADING_UNPRONOUNCEABLE: 'O texto do cabeçalho contém apenas símbolos ou caracteres impronunciáveis. Se você acha que isso é um erro devido a uma falha de copiar/colar, considere excluí-lo. <hr> <strong {B}>Texto do cabeçalho</strong> <strong {C}>%(TEXT)</strong>',
-  PANEL_HEADING_MISSING_ONE: 'Falta o cabeçalho 1!',
-  PANEL_NO_HEADINGS: 'Nenhuma cabeçalho encontrado.',
+    'O título não tem texto, mas contém uma imagem. Se esse não for um título, altere seu formato de <strong {C}>Título %(level)</strong> para <strong>Normal</strong> ou <strong>Parágrafo</strong>. Caso contrário, adicione texto alternativo à imagem se ela não for decorativa.',
+  HEADING_UNPRONOUNCEABLE: 'O texto do título contém apenas símbolos ou caracteres impronunciáveis. Se você acha que isso é um erro devido a uma falha de copiar/colar, considere excluí-lo. <hr> <strong {B}>Texto do título</strong> <strong {C}>%(TEXT)</strong>',
+  PANEL_HEADING_MISSING_ONE: 'Falta o Título 1!',
+  PANEL_NO_HEADINGS: 'Nenhum título encontrado.',
 
   // Links
   LINK_EMPTY: 'Remova links vazios sem nenhum texto.',
@@ -228,7 +252,7 @@ const tooltip = {
   LINK_DOI:
     'Para páginas da Web ou recursos somente on-line, o <a href="https://apastyle.apa.org/style-grammar-guidelines/paper-format/accessibility/urls#:~:text=descriptive%20links">Guia de Estilo APA</a> recomenda o uso de links descritivos, envolvendo o URL ou DOI do trabalho em seu título. URLs mais longos e menos inteligíveis usados como texto de link podem ser difíceis de compreender quando acessados com tecnologia assistiva.',
   LINK_NEW_TAB:
-    'O link abre em uma nova guia ou janela sem aviso. Fazer isso pode ser desorientador, especialmente para pessoas que têm dificuldade de perceber o conteúdo visual. Em segundo lugar, nem sempre é uma boa prática controlar a experiência de alguém ou tomar decisões por ele. Indique que o link abre em uma nova janela no texto do link. <hr> <strong>Dica!</strong> Conheça as práticas recomendadas: <a href="https://www.nngroup.com/articles/new-browser-windows-and-tabs/">abrir links em novas janelas e guias do navegador.</a>',
+    'O link abre em uma nova aba ou janela sem aviso. Fazer isso pode ser desorientador, especialmente para pessoas que têm dificuldade de perceber o conteúdo visual. Em segundo lugar, nem sempre é uma boa prática controlar a experiência de alguém ou tomar decisões por ele. Indique que o link abre em uma nova janela no texto do link. <hr> <strong>Dica!</strong> Conheça as práticas recomendadas: <a href="https://www.nngroup.com/articles/new-browser-windows-and-tabs/">abrir links em novas janelas e abas do navegador.</a>',
   LINK_FILE_EXT:
     'O link aponta para um PDF ou arquivo para download (por exemplo, MP3, Zip, Word Doc) sem aviso. Indique o tipo de arquivo no texto do link. Se for um arquivo grande, considere incluir o tamanho do arquivo. <hr> <strong>Exemplo:</strong> Relatório executivo (PDF, 3 MB)',
   LINK_IDENTICAL_NAME: 'Vários links nesta página usam o mesmo texto, mas apontam para lugares diferentes. Isso pode causar confusão para usuários de tecnologias assistivas. Para corrigir, torne o texto deste link mais descritivo.',
@@ -269,7 +293,7 @@ const tooltip = {
   LINK_IMAGE_ALT_AND_TEXT:
     'O link da imagem contém <strong>texto alt e texto do link ao redor.</strong> Se essa imagem for decorativa e estiver sendo usada como um link funcional para outra página, considere marcar a imagem como decorativa ou nula - o texto do link ao redor deve ser suficiente. <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong> <hr> <strong {B}>Nome acessível</strong> {L} <strong>%(TEXT)</strong>',
   IMAGE_FIGURE_DECORATIVE:
-    'A imagem está marcada como <strong>decorativa</strong> e será ignorada pela tecnologia assistiva. <hr> Embora uma <strong>caption</strong> tenha sido fornecida, a imagem também deve ter um texto alternativo na maioria dos casos. <ul><li>O texto alternativo deve fornecer uma descrição concisa do que está na imagem.</li><li>A legenda geralmente deve fornecer contexto para relacionar a imagem ao conteúdo ao redor ou dar atenção a uma informação específica.</li></ul> Saiba mais: <a href="https://thoughtbot.com/blog/alt-vs-figcaption#the-figcaption-element">alt versus figcaption.</a>',
+    'A imagem está marcada como <strong>decorativa</strong> e será ignorada pela tecnologia assistiva. <hr> Embora uma <strong>legenda</strong> tenha sido fornecida, a imagem também deve ter um texto alternativo na maioria dos casos. <ul><li>O texto alternativo deve fornecer uma descrição concisa do que está na imagem.</li><li>A legenda geralmente deve fornecer contexto para relacionar a imagem ao conteúdo ao redor ou dar atenção a uma informação específica.</li></ul> Saiba mais: <a href="https://thoughtbot.com/blog/alt-vs-figcaption#the-figcaption-element">alt versus figcaption.</a>',
   IMAGE_FIGURE_DUPLICATE_ALT:
     'Não use exatamente as mesmas palavras para o texto alternativo e para a legenda. Os leitores de tela anunciarão as informações duas vezes. <ul><li>O texto alt deve fornecer uma descrição concisa do que está na imagem.</li><li>A legenda geralmente deve fornecer contexto para relacionar a imagem ao conteúdo ao redor ou dar atenção a uma informação específica.</li></ul> Saiba mais: <a href="https://thoughtbot.com/blog/alt-vs-figcaption#the-figcaption-element">alt versus figcaption.</a> <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
   IMAGE_DECORATIVE:
@@ -286,13 +310,13 @@ const tooltip = {
 
   // Form labels
   LABELS_MISSING_IMAGE_INPUT:
-    'O botão de imagem está sem texto alternativo. Adicione o texto alternativo para fornecer um nome acessível. Por exemplo: <em>Search</em> ou <em>Submit</em>.',
+    'O botão de imagem está sem texto alternativo. Adicione o texto alternativo para fornecer um nome acessível. Por exemplo: <em>Pesquisar</em> ou <em>Enviar</em>.',
   LABELS_INPUT_RESET:
     'Os botões de reinicialização não devem ser usados, a menos que sejam especificamente necessários, pois são fáceis de serem ativados por engano. <hr> <strong>Dica!</strong> Saiba por que <a href="https://www.nngroup.com/articles/reset-and-cancel-buttons/">os botões Redefinir e Cancelar apresentam problemas de usabilidade.</a>',
   LABELS_ARIA_LABEL_INPUT:
     'A entrada tem um nome acessível, mas certifique-se de que também haja um rótulo visível. <hr> <strong {B}>Nome acessível</strong> <strong {C}>%(TEXT)</strong>',
   LABELS_NO_FOR_ATTRIBUTE:
-    'Não há rótulo associado a esse input. Adicione um atributo <code>for</code> ao rótulo que corresponda ao <code>id</code> desse input. <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>',
+    'Não há rótulo associado a essa entrada. Adicione um atributo <code>for</code> ao rótulo que corresponda ao <code>id</code> dessa entrada. <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>',
   LABELS_MISSING_LABEL:
     'Não há rótulo associado a essa entrada. Adicione um <code>id</code> a essa entrada e adicione um atributo <code>for</code> correspondente ao rótulo.',
   LABELS_PLACEHOLDER:
@@ -328,13 +352,13 @@ const tooltip = {
   QA_FAKE_HEADING:
     'Isso é um título? <strong {C}>%(TEXT)</strong> <hr> Uma linha de texto em negrito ou grande pode parecer um título, mas alguém que usa um leitor de tela não pode dizer que ela é importante ou pular para o seu conteúdo. O texto em negrito ou grande nunca deve substituir os títulos semânticos (Título 2 a Título 6).',
   QA_FAKE_LIST:
-    'Está tentando criar uma lista? Possível item de lista encontrado: <strong {C}>%(firstPrefix)</strong> <hr> Certifique-se de usar listas semânticas usando os botões de formatação de marcadores ou números. Ao usar uma lista semântica, as tecnologias assistivas podem transmitir informações como o número total de itens e a posição relativa de cada item na lista. Saiba mais sobre <a href="https://www.w3.org/WAI/tutorials/page-structure/content/#lists">listas semânticas.</a>',
+    'Está tentando criar uma lista? Possível item de lista encontrado: <strong {C}>%(PREFIX)</strong> <hr> Certifique-se de usar listas semânticas usando os botões de formatação de marcadores ou números. Ao usar uma lista semântica, as tecnologias assistivas podem transmitir informações como o número total de itens e a posição relativa de cada item na lista. Saiba mais sobre <a href="https://www.w3.org/WAI/tutorials/page-structure/content/#lists">listas semânticas.</a>',
   QA_UPPERCASE:
     'Encontrado em letras maiúsculas. Alguns leitores de tela podem interpretar o texto em letras maiúsculas como um acrônimo e lerão cada letra individualmente. Além disso, algumas pessoas acham que o texto em letras maiúsculas é mais difícil de ler e pode dar a impressão de estar GRITANDO.',
   QA_UNDERLINE:
-    'O texto sublinhado pode ser confundido com links. Considere a possibilidade de usar um estilo diferente, como <code>&lt;strong&gt;</code><strong>strong importance</strong><code>&lt;/strong&gt;</code> ou <code>&lt;em&gt;</code><em>emphasis</em><code>&lt;/em&gt;</code>.',
+    'O texto sublinhado pode ser confundido com links. Considere a possibilidade de usar um estilo diferente, como <code>&lt;strong&gt;</code><strong>forte importância</strong><code>&lt;/strong&gt;</code> ou <code>&lt;em&gt;</code><em>ênfase</em><code>&lt;/em&gt;</code>.',
   QA_SUBSCRIPT:
-    'As opções de formatação subscrito e sobrescrito só devem ser usadas para alterar a posição do texto para convenções ou padrões tipográficos. Elas <strong>não</strong> devem ser usadas somente para fins de apresentação ou aparência. A formatação de frases inteiras apresenta problemas de legibilidade. Os casos de uso apropriados incluem a exibição de expoentes, números ordinais, como 4<sup>th</sup> em vez de quarto, e fórmulas químicas (por exemplo, H<sub>2</sub>O).',
+    'As opções de formatação subscrito e sobrescrito só devem ser usadas para alterar a posição do texto para convenções ou padrões tipográficos. Elas <strong>não</strong> devem ser usadas somente para fins de apresentação ou aparência. A formatação de frases inteiras apresenta problemas de legibilidade. Os casos de uso apropriados incluem a exibição de expoentes, números ordinais, como 4<sup>º</sup> em vez de quarto, e fórmulas químicas (por exemplo, H<sub>2</sub>O).',
   QA_NESTED_COMPONENTS:
     'Evite aninhar componentes de layout interativos, como colocar acordeões dentro de abas ou abas dentro de acordeões. Isso pode complicar a navegação, aumentar a sobrecarga cognitiva e levar as pessoas a ignorar o conteúdo.',
   QA_JUSTIFY:
@@ -385,7 +409,7 @@ const tooltip = {
   TABLES_MISSING_HEADINGS:
     'Falta de cabeçalhos de tabela! As tabelas acessíveis precisam de marcação HTML que indique as células de cabeçalho e as células de dados que definem seu relacionamento. Essas informações fornecem contexto para as pessoas que usam tecnologia assistiva. As tabelas devem ser usadas somente para dados tabulares. <hr> Saiba mais sobre <a href="https://www.w3.org/WAI/tutorials/tables/">tabelas acessíveis.</a>',
   TABLES_SEMANTIC_HEADING:
-    'Os cabeçalhos semânticos, como Heading 2 ou Heading 3, devem ser usados somente para seções de conteúdo; <strong>não</strong> em tabelas HTML. Em vez disso, indique os cabeçalhos da tabela usando o elemento <code>&lt;th&gt;</code>. <hr> Saiba mais sobre <a href="https://www.w3.org/WAI/tutorials/tables/">tabelas acessíveis.</a>',
+    'Os títulos semânticos, como Título 2 ou Título 3, devem ser usados somente para seções de conteúdo; <strong>não</strong> em tabelas HTML. Em vez disso, indique os cabeçalhos da tabela usando o elemento <code>&lt;th&gt;</code>. <hr> Saiba mais sobre <a href="https://www.w3.org/WAI/tutorials/tables/">tabelas acessíveis.</a>',
   TABLES_EMPTY_HEADING:
     'Encontrado um cabeçalho de tabela vazio! Os cabeçalhos de tabela <strong>nunca</strong> devem estar vazios. É importante designar os cabeçalhos de linha e/ou coluna para transmitir sua relação. Essas informações fornecem contexto para as pessoas que usam tecnologia assistiva. Lembre-se de que as tabelas devem ser usadas somente para dados tabulares. <hr> Saiba mais sobre <a href="https://www.w3.org/WAI/tutorials/tables/">tabelas acessíveis.</a>',
   TABLES_INVALID_HEADERS_REF: 'Esta tabela está tentando rotular uma célula de dados específica com uma célula de cabeçalho específica, mas o ID do cabeçalho não foi encontrado. Certifique-se de que cada atributo <code>headers</code> corresponda ao ID de uma célula de cabeçalho na mesma tabela. <hr> <strong {B}>Cabeçalhos</strong> <code>%(VALUE)</code> <hr> <strong>Dica!</strong> <a href="https://www.w3.org/WAI/WCAG22/Techniques/html/H43">O uso de referências de ID manuais</a> para associar células de dados a células de cabeçalho é complicado e frágil. Quando possível, divida dados complexos em tabelas menores com linhas e colunas de cabeçalho simples.',
@@ -418,7 +442,7 @@ const tooltip = {
     'O texto neste campo de entrada não tem contraste suficiente com o fundo, dificultando a leitura.',
   CONTRAST: 'Contraste',
   UNKNOWN: 'Desconhecido',
-  FG: 'Plano de frente',
+  FG: 'Primeiro plano',
   BG: 'Fundo',
   NO_SUGGESTION:
     'Nenhuma combinação acessível pode ser encontrada apenas alterando a cor do texto. Tente alterar a cor do fundo.',

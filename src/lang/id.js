@@ -5,14 +5,15 @@ const ruleset = {
   SUS_ALT_STOPWORDS: [
     'gambar',
     'grafik',
-    'gambar',
     'foto',
+    'ikon',
     'image',
     'graphic',
     'picture',
     'photo',
     'thumbnail',
     'icon',
+    'portrait',
   ],
   PLACEHOLDER_ALT_STOPWORDS: [
     'alt',
@@ -31,53 +32,64 @@ const ruleset = {
     'decorative',
     'placeholder',
     'placeholder image',
-    'spacer',
     'tbd',
     'todo',
     'to do',
     'thumbnail',
     'icon',
+    'ikon',
     'hero image',
     'hero slide',
     'homepage feature image',
     'featured image',
     'untitled',
+    'tanpa judul',
+    'portrait',
+    'slide image',
+    'untitled image',
+    'unnamed',
+    'copy',
+    'undefined',
   ],
   LINK_STOPWORDS: [
     'klik',
     'klik di sini',
+    'klik disini',
     'klik di sini untuk informasi lebih lanjut',
     'klik di sini untuk mempelajari lebih lanjut',
     'lihat',
-    'dirinci di sini',
-    'induh',
+    'lihat selengkapnya',
+    'unduh',
     'unduh di sini',
     'cari tahu',
     'cari tahu lebih lanjut',
     'formulir',
     'di sini',
+    'disini',
     'info',
+    'info lebih lanjut',
     'informasi',
     'tautan',
     'belajar',
     'pelajari lebih lanjut',
-    'belajar untuk',
+    'pelajari selengkapnya',
     'lebih lanjut',
+    'selengkapnya',
     'halaman',
-    'kertas',
+    'makalah',
     'baca lebih lanjut',
+    'baca selengkapnya',
     'baca',
     'baca ini',
     'ini',
     'halaman ini',
+    'tautan ini',
     'situs web ini',
-    'melihat',
-    'lihat kami',
     'situs web',
     'artikel',
   ],
   CLICK: ['click', 'klik'],
-  NEW_WINDOW_PHRASES: ['eksternal', 'tab baru', 'jendela baru', 'pop-up', 'muncul'],
+  NEW_WINDOW_PHRASES: ['eksternal', 'tab baru', 'jendela baru', 'pop-up', 'pop up'],
   FILE_TYPE_PHRASES: [
     'dokumen',
     'spreadsheet',
@@ -92,7 +104,7 @@ const ruleset = {
     'audio',
     'pdf',
   ],
-  POTENTIAL_UI_ELEMENTS: ['menu', 'tutup', 'alihkan', 'buka', 'perluas', 'ciutkan', 'berikutnya', 'sebelumnya', 'putar', 'jeda', 'submenu', 'tampilkan', 'sembunyikan', 'dropdown', 'kembali', 'maju', 'lewati', 'kirim', 'batal', 'simpan', 'edit', 'hapus', 'hapus', 'cari', 'filter', 'urutkan', 'berhenti', 'bisukan', 'bunyikan', 'layar penuh', 'minimalkan', 'maksimalkan'],
+  POTENTIAL_UI_ELEMENTS: ['menu', 'tutup', 'alihkan', 'buka', 'perluas', 'ciutkan', 'berikutnya', 'sebelumnya', 'putar', 'jeda', 'submenu', 'tampilkan', 'sembunyikan', 'dropdown', 'kembali', 'maju', 'lewati', 'kirim', 'batal', 'simpan', 'edit', 'sunting', 'hapus', 'cari', 'filter', 'urutkan', 'berhenti', 'hentikan', 'bisukan', 'bunyikan', 'layar penuh', 'minimalkan', 'maksimalkan'],
 };
 
 const ui = {
@@ -104,42 +116,42 @@ const ui = {
   WARNING: 'Peringatan',
   WARNINGS: 'Peringatan',
   GOOD: 'Bagus',
-  REVIEW: 'Tinjau',
-  ON: 'Pada',
-  OFF: 'Mati',
-  ALERT_TEXT: 'Waspada',
+  REVIEW: 'Perlu ditinjau',
+  ON: 'Aktif',
+  OFF: 'Nonaktif',
+  ALERT_TEXT: 'Pemberitahuan',
   ALERT_CLOSE: 'Tutup',
   OUTLINE: 'Kerangka',
   READABILITY_DESC:
     'Menampilkan skor keterbacaan di tab <strong>Kerangka</strong> untuk membantu mengukur kesulitan membaca.',
-  TITLE: 'Judul',
+  TITLE: 'Judul halaman',
   ALT: 'ALT',
   IMAGES: 'Gambar',
   EDIT: 'Edit',
   NO_IMAGES: 'Tidak ada gambar ditemukan.',
   DECORATIVE: 'Dekoratif',
-  MISSING: 'Hilang',
+  MISSING: 'Tidak ada',
   PAGE_ISSUES: 'Masalah Halaman',
   SETTINGS: 'Pengaturan',
   DEVELOPER_CHECKS: 'Pemeriksaan pengembang',
   DEVELOPER_DESC:
     'Memeriksa masalah yang mungkin memerlukan pengetahuan pemrograman untuk diperbaiki, seperti atribut HTML, formulir, dan lainnya.',
   DARK_MODE: 'Mode gelap',
-  SHORTCUT_SR: 'Loncat ke masalah. Pintasan papan ketik: Alt S',
-  SKIP_TO_ISSUE: 'Loncat ke masalah',
+  SHORTCUT_SR: 'Lompat ke masalah. Pintasan papan ketik: Alt S',
+  SKIP_TO_ISSUE: 'Lompat ke masalah',
   NEW_TAB: 'Membuka tab baru',
   LINKED: 'Tertaut',
   PANEL_HEADING: 'Pemeriksaan aksesibilitas',
   NO_ERRORS_FOUND: 'Tidak ditemukan kesalahan.',
   WARNINGS_FOUND: 'peringatan ditemukan.',
-  TOTAL_FOUND: 'total masalah yang ditemukan.',
+  TOTAL_FOUND: 'masalah ditemukan secara keseluruhan.',
   NOT_VISIBLE:
     'Item yang ingin Anda lihat tidak terlihat; item tersebut mungkin tersembunyi atau berada di dalam komponen akordeon atau tab.',
   MISSING_ROOT:
-    'Halaman penuh diperiksa aksesibilitasnya karena area target <code>%(root)</code> tidak ada.',
+    'Seluruh halaman diperiksa aksesibilitasnya karena area target <code>%(root)</code> tidak ada.',
   MISSING_READABILITY_ROOT:
     'Skor keterbacaan didasarkan pada area konten <code>%(fallback)</code>, karena area target <code>%(root)</code> tidak ada.',
-  SKIP_TO_PAGE_ISSUES: 'Loncat ke Halaman Masalah',
+  SKIP_TO_PAGE_ISSUES: 'Lompat ke Masalah Halaman',
   CONSOLE_ERROR:
     'Maaf, ada masalah dengan pemeriksa aksesibilitas di halaman ini. Bisakah Anda <a href="https://forms.gle/sjzK9XykETaoqZv99">melaporkannya melalui formulir ini</a> atau di <a href="https://github.com/ryersondmp/sa11y/issues/new?title=Bug%20report">GitHub</a>?',
   APPEARANCE: 'Tampilan',
@@ -147,7 +159,7 @@ const ui = {
   HIDDEN: 'Tersembunyi',
 
   // Dismiss
-  PANEL_DISMISS_BUTTON: 'Tampilkan %(dismissCount) diabaikan',
+  PANEL_DISMISS_BUTTON: 'Tampilkan %(dismissCount) yang diabaikan',
   DISMISS: 'Abaikan',
   DISMISS_ALL: 'Abaikan semua',
   DISMISSED: 'Diabaikan',
@@ -159,7 +171,7 @@ const ui = {
   PAGE_TITLE: 'Judul Halaman',
   RESULTS: 'Hasil',
   EXPORT_RESULTS: 'Ekspor hasil',
-  GENERATED: 'Hasil dihasilkan dengan <a href="https://sa11y.netlify.app">Sa11y.</a>',
+  GENERATED: 'Hasil dibuat dengan <a href="https://sa11y.netlify.app">Sa11y.</a>',
   PREVIEW: 'Pratinjau',
   ELEMENT: 'Elemen',
   PATH: 'Jalur',
@@ -171,17 +183,17 @@ const ui = {
   TRITANOPIA: 'Tritanopia',
   MONOCHROMACY: 'Monokromasi',
   COLOUR_FILTER_MESSAGE: 'Periksa elemen yang sulit dilihat atau dibedakan dari warna lainnya.',
-  RED_EYE: 'Merah buta.',
-  GREEN_EYE: 'Hijau buta.',
-  BLUE_EYE: 'Biru buta.',
-  MONO_EYE: 'Buta merah, biru, dan hijau.',
+  RED_EYE: 'Buta warna merah.',
+  GREEN_EYE: 'Buta warna hijau.',
+  BLUE_EYE: 'Buta warna biru.',
+  MONO_EYE: 'Buta warna merah, biru, dan hijau.',
   COLOUR_FILTER_HIGH_CONTRAST: 'Filter warna tidak berfungsi dalam mode kontras tinggi.',
 
   // Readability
   READABILITY: 'Keterbacaan',
   AVG_SENTENCE: 'Rata-rata kata per kalimat:',
-  COMPLEX_WORDS: 'Kata-kata yang kompleks:',
-  TOTAL_WORDS: 'Kata-kata:',
+  COMPLEX_WORDS: 'Kata kompleks:',
+  TOTAL_WORDS: 'Jumlah kata:',
   VERY_DIFFICULT: 'Sangat sulit',
   DIFFICULT: 'Sulit',
   FAIRLY_DIFFICULT: 'Cukup sulit',
@@ -193,17 +205,17 @@ const tooltip = {
   HEADING_SKIPPED_LEVEL:
     'Judul tidak boleh melompati level atau melompat dari <strong>Judul %(PREV_LEVEL)</strong> ke <strong {C}>Judul %(LEVEL)</strong>, karena ini mengganggu urutan dan hierarki konten, sehingga lebih sulit diikuti. <hr> Jika <strong {C}>%(HEADING)</strong> termasuk dalam bagian <strong>%(PREV_HEADING)</strong>, pertimbangkan untuk memformatnya sebagai <strong>Judul %(LEVEL)</strong>.',
   HEADING_EMPTY:
-    'Judul kosong ditemukan! Untuk memperbaikinya, hapus baris ini atau ubah formatnya dari <strong {C}>Header %(level)</strong> ke <strong>Normal</strong> atau <strong>Paragraph</strong>.',
+    'Judul kosong ditemukan! Untuk memperbaikinya, hapus baris ini atau ubah formatnya dari <strong {C}>Judul %(level)</strong> ke <strong>Normal</strong> atau <strong>Paragraf</strong>.',
   HEADING_LONG:
     'Judulnya panjang! Judul harus digunakan untuk mengatur konten dan menyampaikan struktur. Judul harus singkat, informatif, dan unik. Harap jaga agar judul kurang dari %(MAX_LENGTH) karakter (tidak lebih dari satu kalimat). <hr> <strong {B}>%(HEADING_LENGTH) Karakter</strong>',
   HEADING_FIRST:
-    'Judul pertama pada halaman biasanya adalah Heading 1 atau Heading 2. Heading 1 harus menjadi awal dari bagian konten utama, dan merupakan judul utama yang menjelaskan tujuan keseluruhan halaman. Pelajari lebih lanjut tentang <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">Struktur Heading.</a>',
+    'Judul pertama pada halaman biasanya adalah Judul 1 atau Judul 2. Judul 1 harus menjadi awal dari bagian konten utama, dan merupakan judul utama yang menjelaskan tujuan keseluruhan halaman. Pelajari lebih lanjut tentang <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">struktur judul.</a>',
   HEADING_MISSING_ONE:
-    'Heading 1. Heading 1 seharusnya menjadi awal dari area konten utama, dan merupakan heading utama yang menjelaskan tujuan keseluruhan halaman. Pelajari lebih lanjut tentang <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">Struktur Judul.</a>',
+    'Judul 1 tidak ada. Judul 1 seharusnya menjadi awal dari area konten utama, dan merupakan judul utama yang menjelaskan tujuan keseluruhan halaman. Pelajari lebih lanjut tentang <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">struktur judul.</a>',
   HEADING_EMPTY_WITH_IMAGE:
     'Judul tidak memiliki teks, namun berisi gambar. Jika ini bukan judul, ubah formatnya dari <strong {C}>Judul %(level)</strong> ke <strong>Normal</strong> atau <strong>Paragraf</strong>. Jika tidak, tambahkan teks alt ke gambar jika tidak bersifat dekoratif.',
-  HEADING_UNPRONOUNCEABLE: 'Teks tajuk hanya berisi simbol atau karakter yang tidak dapat diucapkan. Jika Anda rasa ini adalah kesalahan karena masalah salin/tempel, pertimbangkan untuk menghapusnya. <hr> <strong {B}>Teks tajuk</strong> <strong {C}>%(TEXT)</strong>',
-  PANEL_HEADING_MISSING_ONE: 'Hilang Heading 1!',
+  HEADING_UNPRONOUNCEABLE: 'Teks judul hanya berisi simbol atau karakter yang tidak dapat diucapkan. Jika Anda rasa ini adalah kesalahan karena masalah salin/tempel, pertimbangkan untuk menghapusnya. <hr> <strong {B}>Teks judul</strong> <strong {C}>%(TEXT)</strong>',
+  PANEL_HEADING_MISSING_ONE: 'Judul 1 tidak ada!',
   PANEL_NO_HEADINGS: 'Tidak ada judul ditemukan.',
 
   // Links
@@ -217,7 +229,7 @@ const tooltip = {
   LINK_STOPWORD_ARIA:
     'Meskipun nama yang dapat diakses telah diberikan, pertimbangkan untuk merevisi teks tautan yang terlihat. Frase seperti &quot;<strong {C}>%(ERROR)</strong>&quot; tidak bermakna.',
   LINK_TIP:
-    '<hr> <strong>Tip!</strong> Gunakan teks tautan yang jelas dan unik yang menjelaskan tujuan tautan, biasanya judul halaman atau dokumen.',
+    '<hr> <strong>Tips!</strong> Gunakan teks tautan yang jelas dan unik yang menjelaskan tujuan tautan, biasanya judul halaman atau dokumen.',
   LINK_CLICK_HERE:
     'Frasa "klik" atau "klik di sini" memberi penekanan pada mekanisme mouse, padahal banyak orang tidak menggunakan mouse atau mungkin sedang melihat situs web ini di perangkat seluler. Pertimbangkan untuk menggunakan kata kerja lain yang terkait dengan tugas tersebut.',
   DUPLICATE_TITLE:
@@ -229,7 +241,7 @@ const tooltip = {
   LINK_DOI:
     'Untuk halaman web atau sumber daya yang hanya tersedia secara online, <a href="https://apastyle.apa.org/style-grammar-guidelines/paper-format/accessibility/urls#:~:text=descriptive%20links">Panduan Gaya APA</a> merekomendasikan penggunaan pranala deskriptif dengan membungkus URL atau DOI karya di sekeliling judulnya. URL yang lebih panjang dan kurang dapat dipahami yang digunakan sebagai teks tautan mungkin sulit dipahami saat diakses dengan teknologi bantu.',
   LINK_NEW_TAB:
-    'Tautan terbuka di tab atau jendela baru tanpa peringatan. Hal ini dapat membingungkan, terutama bagi orang yang mengalami kesulitan dalam memahami konten visual. Kedua, tidak selalu merupakan praktik yang baik untuk mengontrol pengalaman seseorang atau membuat keputusan untuk mereka. Tunjukkan bahwa tautan akan terbuka di jendela baru di dalam teks tautan. <hr> <strong>Tip!</strong> Pelajari praktik terbaik: <a href="https://www.nngroup.com/articles/new-browser-windows-and-tabs/">membuka tautan di jendela dan tab peramban baru.</a>',
+    'Tautan terbuka di tab atau jendela baru tanpa peringatan. Hal ini dapat membingungkan, terutama bagi orang yang mengalami kesulitan dalam memahami konten visual. Kedua, tidak selalu merupakan praktik yang baik untuk mengontrol pengalaman seseorang atau membuat keputusan untuk mereka. Tunjukkan bahwa tautan akan terbuka di jendela baru di dalam teks tautan. <hr> <strong>Tips!</strong> Pelajari praktik terbaik: <a href="https://www.nngroup.com/articles/new-browser-windows-and-tabs/">membuka tautan di jendela dan tab peramban baru.</a>',
   LINK_FILE_EXT:
     'Tautan mengarah ke PDF atau file yang dapat diunduh (mis. MP3, Zip, Word Doc) tanpa peringatan. Tunjukkan jenis file di dalam teks tautan. Jika file berukuran besar, pertimbangkan untuk menyertakan ukuran file tersebut. <hr> <strong>Contoh:</strong> Laporan Eksekutif (PDF, 3MB)',
   LINK_IDENTICAL_NAME: 'Beberapa tautan di halaman ini menggunakan teks yang sama tetapi mengarah ke tempat yang berbeda. Hal ini dapat membingungkan pengguna teknologi asistif. Untuk memperbaikinya, buatlah teks tautan ini lebih deskriptif.',
@@ -289,16 +301,16 @@ const tooltip = {
   LABELS_MISSING_IMAGE_INPUT:
     'Tombol gambar tidak memiliki teks alt. Tambahkan teks alt untuk memberikan nama yang dapat diakses. Sebagai contoh: <em>Cari</em> atau <em>Kirim</em>.',
   LABELS_INPUT_RESET:
-    'Tombol Reset sebaiknya <strong>tidak</strong> digunakan kecuali jika secara khusus diperlukan karena mudah diaktifkan secara tidak sengaja. <hr> <strong>Tip!</strong> Pelajari mengapa tombol <a href="https://www.nngroup.com/articles/reset-and-cancel-buttons/">Reset dan Batal menimbulkan masalah dalam hal kegunaan.</a>',
+    'Tombol Reset sebaiknya <strong>tidak</strong> digunakan kecuali jika secara khusus diperlukan karena mudah diaktifkan secara tidak sengaja. <hr> <strong>Tips!</strong> Pelajari mengapa tombol <a href="https://www.nngroup.com/articles/reset-and-cancel-buttons/">Reset dan Batal menimbulkan masalah dalam hal kegunaan.</a>',
   LABELS_ARIA_LABEL_INPUT:
     'Input memiliki nama yang dapat diakses, meskipun pastikan ada label yang terlihat juga. <hr> <strong {B}>Nama yang dapat diakses</strong> <strong {C}>%(TEXT)</strong>',
   LABELS_NO_FOR_ATTRIBUTE:
-    'Tidak ada label yang terkait dengan input ini. Tambahkan atribut <code>untuk</code> ke label yang sesuai dengan <code>id</code> input ini. <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>',
+    'Tidak ada label yang terkait dengan input ini. Tambahkan atribut <code>for</code> ke label yang sesuai dengan <code>id</code> input ini. <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>',
   LABELS_MISSING_LABEL:
-    'Tidak ada label yang terkait dengan input ini. Tambahkan <code>id</code> ke input ini, dan tambahkan atribut <code>untuk</code> yang sesuai ke label.',
+    'Tidak ada label yang terkait dengan input ini. Tambahkan <code>id</code> ke input ini, dan tambahkan atribut <code>for</code> yang sesuai ke label.',
   LABELS_PLACEHOLDER:
     'Teks placeholder yang menghilang menyulitkan orang untuk mengingat informasi apa yang harus ada di dalam kolom dan untuk mengidentifikasi serta memperbaiki masalah validasi. Sebagai gantinya, pertimbangkan untuk menggunakan petunjuk yang selalu terlihat sebelum kolom formulir. <hr> Pelajari lebih lanjut: <a href="https://www.nngroup.com/articles/form-design-placeholders/">Placeholder di kolom formulir itu berbahaya.</a>',
-  ARIA_INPUT_FIELD_NAME: 'Input ARIA atau bidang sakelar tidak memiliki nama yang dapat diakses. Untuk memperbaikinya, berikan atribut <code>aria-labelledby</code>, <code>aria-label</code>, или <code>title</code> yang valid. Jika input dapat dialihkan (misalnya, kotak centang, sakelar, radio), menambahkan teks bagian dalam yang terlihat juga akan mengatasi masalah ini. <hr> <strong {B}>Elemen</strong> <pre><code>%(EL)</code></pre>',
+  ARIA_INPUT_FIELD_NAME: 'Input ARIA atau bidang sakelar tidak memiliki nama yang dapat diakses. Untuk memperbaikinya, berikan atribut <code>aria-labelledby</code>, <code>aria-label</code>, atau <code>title</code> yang valid. Jika input dapat dialihkan (misalnya, kotak centang, sakelar, radio), menambahkan teks bagian dalam yang terlihat juga akan mengatasi masalah ini. <hr> <strong {B}>Elemen</strong> <pre><code>%(EL)</code></pre>',
 
   // Embedded content
   EMBED_VIDEO:
@@ -308,7 +320,7 @@ const tooltip = {
   EMBED_DATA_VIZ:
     'Widget visualisasi data seperti ini sering menjadi masalah bagi orang yang menggunakan keyboard atau pembaca layar untuk menavigasi, dan dapat menimbulkan kesulitan yang signifikan bagi orang yang memiliki penglihatan rendah atau buta warna. Disarankan untuk memberikan informasi yang sama dalam format alternatif (teks atau tabel) di bawah widget. <hr> Pelajari lebih lanjut tentang <a href="https://www.w3.org/WAI/tutorials/images/complex">gambar kompleks.</a>',
   EMBED_MISSING_TITLE:
-    'Konten yang disematkan memerlukan nama yang dapat diakses yang menjelaskan isinya. Berikan atribut <code>judul</code> atau <code>label-aria</code> yang unik pada elemen <code>&lt;%(ELEMENT)&gt;</code>. Pelajari lebih lanjut tentang <a href="https://web.dev/learn/accessibility/more-html#iframes">iFrames.</a>',
+    'Konten yang disematkan memerlukan nama yang dapat diakses yang menjelaskan isinya. Berikan atribut <code>title</code> atau <code>aria-label</code> yang unik pada elemen <code>&lt;%(ELEMENT)&gt;</code>. Pelajari lebih lanjut tentang <a href="https://web.dev/learn/accessibility/more-html#iframes">iFrames.</a>',
   EMBED_GENERAL:
     'Tidak dapat memeriksa konten yang disematkan. Pastikan gambar memiliki teks alt, video memiliki keterangan, teks memiliki kontras yang cukup, dan komponen interaktif dapat diakses menggunakan keyboard. Pelajari lebih lanjut tentang <a href="https://webaim.org/techniques/keyboard/">aksesibilitas keyboard.</a>',
   EMBED_UNFOCUSABLE:
@@ -325,17 +337,17 @@ const tooltip = {
   QA_DOCUMENT:
     'Tidak dapat memeriksa aksesibilitas dokumen. Dokumen yang ditautkan dianggap sebagai konten web dan harus dapat diakses juga. Silakan tinjau dokumen ini secara manual. <ul><li>Buat dokumen atau presentasi <a href="https://support.google.com/docs/answer/6199477?hl=id">Google Workspace Anda lebih mudah diakses.</a></li><li>Buat dokumen <a href="https://support.microsoft.com/id/office/create-accessible-office-documents-868ecfcd-4f00-4224-b881-a65537a7c155">Office Anda lebih mudah diakses.</a></li></ul>',
   QA_BLOCKQUOTE:
-    'Apakah ini sebuah judul? <strong {C}>%(TEXT)</strong> <hr> Kutipan blok harus digunakan hanya untuk kutipan. Jika ini dimaksudkan sebagai judul, ubahlah tanda kutip blok ini menjadi judul semantik (misalnya Judul 2 atau Judul 3).',
+    'Apakah ini sebuah judul? <strong {C}>%(TEXT)</strong> <hr> Kutipan blok harus digunakan hanya untuk kutipan. Jika ini dimaksudkan sebagai judul, ubahlah kutipan blok ini menjadi judul semantik (misalnya Judul 2 atau Judul 3).',
   QA_FAKE_HEADING:
     'Apakah ini sebuah judul? <strong {C}>%(TEXT)</strong> <hr> Sebaris teks yang dicetak tebal atau besar mungkin terlihat seperti judul, namun seseorang yang menggunakan pembaca layar tidak dapat mengetahui bahwa teks tersebut penting atau langsung menuju ke isinya. Teks yang dicetak tebal atau besar tidak boleh menggantikan judul semantik (Judul 2 hingga Judul 6).',
   QA_FAKE_LIST:
-    'Apakah Anda mencoba membuat daftar? Item daftar yang mungkin ditemukan: <strong {C}>%(firstPrefix)</strong> <hr> Pastikan untuk menggunakan daftar semantik dengan menggunakan tombol pemformatan poin atau angka. Saat menggunakan daftar semantik, teknologi bantuan dapat menyampaikan informasi seperti jumlah total item dan posisi relatif setiap item dalam daftar. Pelajari lebih lanjut tentang <a href="https://www.w3.org/WAI/tutorials/page-structure/content/#lists">daftar semantik.</a>',
+    'Apakah Anda mencoba membuat daftar? Item daftar yang mungkin ditemukan: <strong {C}>%(PREFIX)</strong> <hr> Pastikan untuk menggunakan daftar semantik dengan menggunakan tombol pemformatan poin atau angka. Saat menggunakan daftar semantik, teknologi bantuan dapat menyampaikan informasi seperti jumlah total item dan posisi relatif setiap item dalam daftar. Pelajari lebih lanjut tentang <a href="https://www.w3.org/WAI/tutorials/page-structure/content/#lists">daftar semantik.</a>',
   QA_UPPERCASE:
     'Ditemukan semua huruf besar. Beberapa pembaca layar mungkin menafsirkan teks huruf besar semua sebagai akronim dan akan membaca setiap huruf satu per satu. Selain itu, beberapa orang menganggap huruf besar lebih sulit dibaca dan mungkin memberikan kesan berteriak.',
   QA_UNDERLINE:
     'Teks yang digarisbawahi dapat membingungkan dengan tautan. Pertimbangkan untuk menggunakan gaya yang berbeda seperti <code>&lt;strong&gt;</code><strong>kepentingan yang kuat</strong><code>&lt;/strong&gt;</code> atau <code>&lt;em&gt;</code><em>penekanan</em><code>&lt;/em&gt;</code>.',
   QA_SUBSCRIPT:
-    'Opsi pemformatan subskrip dan superskrip hanya boleh digunakan untuk mengubah posisi teks untuk konvensi atau standar tipografi. Opsi ini tidak boleh <strong>tidak</strong> digunakan hanya untuk tujuan presentasi atau penampilan. Memformat seluruh kalimat dapat menimbulkan masalah keterbacaan. Kasus penggunaan yang tepat akan mencakup menampilkan eksponen, angka ordinal seperti 4<sup>th</sup>, bukan keempat, dan rumus kimia (misalnya H<sup>2</sup>O).',
+    'Opsi pemformatan subskrip dan superskrip hanya boleh digunakan untuk mengubah posisi teks untuk konvensi atau standar tipografi. Opsi ini <strong>tidak</strong> boleh digunakan hanya untuk tujuan presentasi atau penampilan. Memformat seluruh kalimat dapat menimbulkan masalah keterbacaan. Kasus penggunaan yang tepat akan mencakup menampilkan eksponen, satuan seperti m<sup>2</sup>, dan rumus kimia (misalnya H<sub>2</sub>O).',
   QA_NESTED_COMPONENTS:
     'Hindari menempatkan komponen tata letak interaktif yang bersarang, seperti menempatkan akordeon di dalam tab atau tab di dalam akordeon. Ini dapat mempersulit navigasi, meningkatkan beban kognitif, dan menyebabkan orang mengabaikan konten.',
   QA_JUSTIFY:
@@ -387,10 +399,10 @@ const tooltip = {
   TABLES_MISSING_HEADINGS:
     'Header tabel yang hilang! Tabel yang dapat diakses membutuhkan markup HTML yang menunjukkan sel header dan sel data yang mendefinisikan hubungannya. Informasi ini memberikan konteks kepada orang yang menggunakan teknologi bantu. Tabel harus digunakan hanya untuk data tabular. <hr> Pelajari lebih lanjut tentang <a href="https://www.w3.org/WAI/tutorials/tables/">tabel yang dapat diakses.</a>',
   TABLES_SEMANTIC_HEADING:
-    'Judul semantik seperti Heading 2 atau Heading 3 hanya boleh digunakan untuk bagian konten; <strong>tidak</strong> dalam tabel HTML. Tunjukkan judul tabel dengan menggunakan elemen <code>&lt;th&gt;</code>. <hr> Pelajari lebih lanjut tentang <a href="https://www.w3.org/WAI/tutorials/tables/">tabel yang dapat diakses.</a>',
+    'Judul semantik seperti Judul 2 atau Judul 3 hanya boleh digunakan untuk bagian konten; <strong>tidak</strong> dalam tabel HTML. Tunjukkan header tabel dengan menggunakan elemen <code>&lt;th&gt;</code>. <hr> Pelajari lebih lanjut tentang <a href="https://www.w3.org/WAI/tutorials/tables/">tabel yang dapat diakses.</a>',
   TABLES_EMPTY_HEADING:
     'Header tabel kosong ditemukan! Header tabel tidak boleh kosong. Penting untuk menentukan header baris dan/atau kolom untuk menyampaikan hubungan mereka. Informasi ini memberikan konteks kepada orang-orang yang menggunakan teknologi bantu. Harap diingat bahwa tabel harus digunakan hanya untuk data tabular. <hr> Pelajari lebih lanjut tentang <a href="https://www.w3.org/WAI/tutorials/tables/">tabel yang dapat diakses.</a>',
-  TABLES_INVALID_HEADERS_REF: 'Tabel ini mencoba melabeli sel data tertentu dengan sel tajuk tertentu, tetapi ID tajuk tidak dapat ditemukan. Pastikan setiap atribut <code>headers</code> cocok dengan ID sel tajuk dalam tabel yang sama. <hr> <strong {B}>Tajuk</strong> <code>%(VALUE)</code> <hr> <strong>Tips!</strong> <a href="https://www.w3.org/WAI/WCAG22/Techniques/html/H43">Menggunakan referensi ID manual</a> untuk mengaitkan sel data dengan sel tajuk itu rumit dan rentan kesalahan. Jika memungkinkan, pecah data yang kompleks menjadi tabel-tabel yang lebih kecil dengan baris dan kolom tajuk yang sederhana.',
+  TABLES_INVALID_HEADERS_REF: 'Tabel ini mencoba melabeli sel data tertentu dengan sel header tertentu, tetapi ID header tidak dapat ditemukan. Pastikan setiap atribut <code>headers</code> cocok dengan ID sel header dalam tabel yang sama. <hr> <strong {B}>Header</strong> <code>%(VALUE)</code> <hr> <strong>Tips!</strong> <a href="https://www.w3.org/WAI/WCAG22/Techniques/html/H43">Menggunakan referensi ID manual</a> untuk mengaitkan sel data dengan sel header itu rumit dan rentan kesalahan. Jika memungkinkan, pecah data yang kompleks menjadi tabel-tabel yang lebih kecil dengan baris dan kolom header yang sederhana.',
 
   // Contrast
   CONTRAST_NORMAL: 'Teks ukuran normal harus memiliki rasio kontras setidaknya %(RATIO).',

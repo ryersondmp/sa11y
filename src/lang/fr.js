@@ -10,13 +10,13 @@ const ruleset = {
     'photo',
     'thumbnail',
     'icon',
+    'portrait',
   ],
   PLACEHOLDER_ALT_STOPWORDS: [
     'alt',
     'image',
     'photographie',
     'décorative',
-    'photographie',
     'support d’affichage',
     'support d’affichage d’image',
     'séparateur',
@@ -38,17 +38,24 @@ const ruleset = {
     'homepage feature image',
     'featured image',
     'untitled',
+    'portrait',
+    'slide image',
+    'untitled image',
+    'unnamed',
+    'copy',
+    'undefined',
   ],
   LINK_STOPWORDS: [
     'clic',
     'cliquer ici',
+    'cliquez ici',
     'cliquer pour plus de détails',
     'cliquer ici pour plus d’informations',
     'cocher',
     'télécharger',
     'télécharger ici',
     'pour en savoir',
-    'pour en savoir d’avantage',
+    'pour en savoir davantage',
     'formulaire',
     'ici',
     'info',
@@ -71,7 +78,7 @@ const ruleset = {
     'site web',
     'article',
   ],
-  CLICK: ['click', 'cliquer'],
+  CLICK: ['click', 'cliquer', 'cliquez'],
   NEW_WINDOW_PHRASES: [
     'externe',
     'nouvel onglet',
@@ -86,7 +93,6 @@ const ruleset = {
     'feuille de travail',
     'fichier compressé',
     'fichier archivé',
-    'feuille de calcul',
     'powerpoint',
     'présentation',
     'installer',
@@ -108,7 +114,7 @@ const ui = {
   GOOD: 'Conforme',
   REVIEW: 'Examiner',
   ON: 'Activé',
-  OFF: 'Desactivé',
+  OFF: 'Désactivé',
   ALERT_TEXT: 'Alerte',
   ALERT_CLOSE: 'Fermer',
   OUTLINE: 'Structure',
@@ -121,7 +127,7 @@ const ui = {
   NO_IMAGES: 'Aucune image trouvée.',
   DECORATIVE: 'Décorative',
   MISSING: 'Manquant',
-  PAGE_ISSUES: 'Problèmes de pages',
+  PAGE_ISSUES: 'Problèmes de page',
   SETTINGS: 'Paramètres',
   DEVELOPER_CHECKS: 'Vérifications du développeur',
   DEVELOPER_DESC:
@@ -183,7 +189,7 @@ const ui = {
 
   // Readability
   READABILITY: 'Lisibilité',
-  AVG_SENTENCE: 'Nombre de mots moyens par phrase:',
+  AVG_SENTENCE: 'Nombre moyen de mots par phrase:',
   COMPLEX_WORDS: 'Mots complexes:',
   TOTAL_WORDS: 'Mots:',
   VERY_DIFFICULT: 'Très difficile',
@@ -197,13 +203,13 @@ const tooltip = {
   HEADING_SKIPPED_LEVEL:
     "Les titres ne doivent pas sauter de niveaux ou passer de <strong>Titre %(PREV_LEVEL)</strong> à <strong {C}>Titre %(LEVEL)</strong>, car cela perturbe l’ordre et la hiérarchie du contenu, rendant sa compréhension plus difficile. <hr> Si <strong {C}>%(HEADING)</strong> fait partie de la section <strong>%(PREV_HEADING)</strong>, vous devriez le formater comme un <strong>Titre %(LEVEL)</strong> à la place.",
   HEADING_EMPTY:
-    'En-tête vide trouvé ! Pour corriger, supprimez cette ligne ou changez son format de <strong {C}>Titre %(level)</strong> à <strong>Normal</strong> ou <strong>Paragraphe</strong>.',
+    'Titre vide trouvé ! Pour corriger, supprimez cette ligne ou changez son format de <strong {C}>Titre %(level)</strong> à <strong>Normal</strong> ou <strong>Paragraphe</strong>.',
   HEADING_LONG:
     'Le titre est long ! Les titres doivent être utilisés pour organiser le contenu et acheminer la structure. Ils doivent être brefs, informatifs et uniques. Les titres doivent être inférieurs à %(MAX_LENGTH) caractères (pas plus d’une phrase). <hr> <strong {B}>%(HEADING_LENGTH) Caractères</strong>',
   HEADING_FIRST:
-    'Le premier titre sur la page devrait généralement être un Titre 1 ou un Titre 2. Le Titre 1 doit débuter dans la section principale du contenu, car il s’agit du titre principal qui décrit l’objectif général de la page. En savoir plus sur <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">La Structure Des Titres.</a>',
+    'Le premier titre sur la page devrait généralement être un Titre 1 ou un Titre 2. Le Titre 1 doit débuter dans la section principale du contenu, car il s’agit du titre principal qui décrit l’objectif général de la page. En savoir plus sur <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">la structure des titres.</a>',
   HEADING_MISSING_ONE:
-    'Titre 1 manquant. Le Titre 1 doit débuter dans la zone principale de contenu, il est le titre principal qui décrit l’objectif global de la page. En savoir plus sur <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">La Structure Des Titres.</a>',
+    'Titre 1 manquant. Le Titre 1 doit débuter dans la zone principale de contenu, il est le titre principal qui décrit l’objectif global de la page. En savoir plus sur <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">la structure des titres.</a>',
   HEADING_EMPTY_WITH_IMAGE:
     'Le titre ne contient pas de texte, mais seulement une image. Si ce n’est pas un titre, veuillez changer son format de <strong {C}>Titre %(level)</strong> à <strong>Normal</strong> ou <strong>Paragraphe</strong>. Sinon, veuillez ajouter du texte de remplacement à l’image si elle n’est pas décorative.',
   HEADING_UNPRONOUNCEABLE: 'Le texte du titre contient uniquement des symboles ou des caractères imprononçables. Si vous pensez qu’il s’agit d’une erreur due à un problème de copier-coller, pensez à le supprimer. <hr> <strong {B}>Texte du titre</strong> <strong {C}>%(TEXT)</strong>',
@@ -229,9 +235,9 @@ const tooltip = {
   LINK_SYMBOLS:
     'Évitez d’utiliser des symboles comme appels à l’action dans le texte des liens, sauf s’ils sont masqués aux technologies d’assistance. Les lecteurs d’écran peuvent lire les symboles à haute voix, ce qui peut prêter à confusion. Envisagez de les supprimer : <strong {C}>%(ERROR)</strong>',
   LINK_URL:
-    'Des adresses URLs plus longues et moins compréhensibles utilisé en tant que lien de texte peuvent être difficiles à écouter avec une technologie d’assistance. Dans la plupart des cas, il est recommandé d’utiliser du texte lisible plutôt qu’une adresse URL. Les adresses URL courtes (tels que les pages d’accueil de site web) sont correctes.',
+    'Des adresses URLs plus longues et moins compréhensibles utilisées en tant que lien de texte peuvent être difficiles à écouter avec une technologie d’assistance. Dans la plupart des cas, il est recommandé d’utiliser du texte lisible plutôt qu’une adresse URL. Les adresses URL courtes (telles que les pages d’accueil de site web) sont correctes.',
   LINK_DOI:
-    "Pour les pages web ou les ressources en ligne uniquement, le <a href=\"https://apastyle.apa.org/style-grammar-guidelines/paper-format/accessibility/urls#:~:text=descriptive%20links\">guide de style de l’APA</a> recommande d’utiliser des liens descriptifs en entourant l’URL ou le DOI de l’œuvre autour de son titre. Des adresses URLs plus longues et moins compréhensibles utilisé en tant que lien de texte peuvent être difficiles à écouter avec une technologie d’assistance.",
+    "Pour les pages web ou les ressources en ligne uniquement, le <a href=\"https://apastyle.apa.org/style-grammar-guidelines/paper-format/accessibility/urls#:~:text=descriptive%20links\">guide de style de l’APA</a> recommande d’utiliser des liens descriptifs en entourant l’URL ou le DOI de l’œuvre autour de son titre. Des adresses URLs plus longues et moins compréhensibles utilisées en tant que lien de texte peuvent être difficiles à écouter avec une technologie d’assistance.",
   LINK_NEW_TAB:
     'Le lien s’ouvre dans une nouvelle fenêtre ou un nouvel onglet sans avertissement. Cela peut être particulièrement désorientant pour les personnes ayant des difficultés à percevoir le contenu visuel. De plus, il n’est pas recommandé de contrôler l’expérience d’une personne ou de prendre des décisions à sa place. Indiquez que le lien s’ouvrira dans une nouvelle fenêtre à l’intérieur du texte du lien. <hr> <strong>Conseil !</strong> Apprenez les meilleures pratiques: <a href="https://www.nngroup.com/articles/new-browser-windows-and-tabs/">l’ouverture de lien dans les nouvelles fenêtres ou onglets des navigateurs.</a>',
   LINK_FILE_EXT:
@@ -246,7 +252,7 @@ const tooltip = {
   LINK_ALT_UNPRONOUNCEABLE:
     'Le texte alternatif de cette image liée contient uniquement des symboles imprononçables et/ou des espaces. Les lecteurs d’écran annonceront l’image puis feront une pause. Assurez-vous que le texte alternatif décrit la destination du lien. <hr> {L} {ALT} <strong {C}>%(ALT_TEXT)</strong>',
   MISSING_ALT_LINK_HAS_TEXT:
-    'L’image est utilisé en tant que lien avec un texte autour, alors que l’attribut de remplacement doit être signalé comme décoratif ou nul.',
+    'L’image est utilisée en tant que lien avec un texte autour, alors que l’attribut de remplacement doit être signalé comme décoratif ou nul.',
   MISSING_ALT_LINK:
     'L’image est utilisée en tant que lien mais manque de texte de remplacement ! Veuillez vous assurer que le texte de remplacement décrit où le lien vous mène.',
   MISSING_ALT:
@@ -268,13 +274,13 @@ const tooltip = {
   LINK_IMAGE_TEXT:
     'L’image est marquée comme étant décorative, bien que le lien utilise le texte autour en tant que description.',
   LINK_IMAGE_LONG_ALT:
-    'La description du texte de remplacement sur l’image liée est <strong>trop long</strong>. Le texte de remplacement sur l’image liée devrait décrire où le lien vous mène, pas une description complète de l’image. <strong>Utilisez le titre de l’image en tant que lien du texte de remplacement.</strong> <hr> {L} {ALT} <strong {B}>%(altLength) Caractères</strong> <strong {C}>%(ALT_TEXT)</strong>',
+    'La description du texte de remplacement sur l’image liée est <strong>trop longue</strong>. Le texte de remplacement sur l’image liée devrait décrire où le lien vous mène, pas une description complète de l’image. <strong>Utilisez le titre de l’image en tant que lien du texte de remplacement.</strong> <hr> {L} {ALT} <strong {B}>%(altLength) Caractères</strong> <strong {C}>%(ALT_TEXT)</strong>',
   LINK_IMAGE_ALT:
     "Le lien vers l’image contient un texte de remplacement. <strong>Le texte de remplacement décrit-il la destination du lien?</strong> Pensez à utiliser le titre de la page à laquelle le lien renvoie comme texte de remplacement. <hr> {L} {ALT} <strong {C}>%(ALT_TEXT)</strong>",
   LINK_IMAGE_ALT_AND_TEXT:
-    'Le lien de l’image contient <strong>du texte de remplacement et du texte à l’entour.</strong> Si cette image est décorative et est utilisé en tant que lien qui mène à une autre page, envisagez marquer l’image en tant que décorative, ou nulle - les liens texte autour devraient suffire. <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong> <hr> <strong {B}>Nom accessible</strong> {L} <strong {C}>%(TEXT)</strong>',
+    'Le lien de l’image contient <strong>du texte de remplacement et du texte à l’entour.</strong> Si cette image est décorative et est utilisée en tant que lien qui mène à une autre page, envisagez marquer l’image en tant que décorative, ou nulle - les liens texte autour devraient suffire. <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong> <hr> <strong {B}>Nom accessible</strong> {L} <strong {C}>%(TEXT)</strong>',
   IMAGE_FIGURE_DECORATIVE:
-    'L’image est perçue de manière <strong>décorative</strong> et sera ignorée par la technologie d’assistance. <hr> Bien qu’une <strong>légende</strong> est fournie, l’image devrait aussi avoir du texte de remplacement dans la plupart des cas.<ul><li>Le texte de remplacement devrait fournir une description précise de l’image.</li><li>La légende devrait fournir habituellement le contexte lié à l’image derrière le contenu environnant ou prêter attention à un élément d’information.</li></ul>En savoir plus: <a href="https://thoughtbot.com/blog/alt-vs-figcaption#the-figcaption-element">alt versus figcaption (légende de la figure).</a>',
+    'L’image est perçue de manière <strong>décorative</strong> et sera ignorée par la technologie d’assistance. <hr> Bien qu’une <strong>légende</strong> soit fournie, l’image devrait aussi avoir du texte de remplacement dans la plupart des cas.<ul><li>Le texte de remplacement devrait fournir une description précise de l’image.</li><li>La légende devrait fournir habituellement le contexte lié à l’image derrière le contenu environnant ou prêter attention à un élément d’information.</li></ul>En savoir plus: <a href="https://thoughtbot.com/blog/alt-vs-figcaption#the-figcaption-element">alt versus figcaption (légende de la figure).</a>',
   IMAGE_FIGURE_DUPLICATE_ALT:
     'Ne pas utiliser le même mot pour la légende et le texte de remplacement. Les lecteurs d’écrans vont annoncer l’information en double. <ul><li>Le texte de remplacement devrait fournir une description précise de l’image.</li><li>La légende devrait fournir habituellement le contexte lié à l’image derrière le contenu environnant ou prêter attention à un élément d’information.</li></ul> En savoir plus: <a href="https://thoughtbot.com/blog/alt-vs-figcaption#the-figcaption-element">alt versus figcaption (légende de la figure).</a> <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
   IMAGE_DECORATIVE:
@@ -291,7 +297,7 @@ const tooltip = {
 
   // Labels
   LABELS_MISSING_IMAGE_INPUT:
-    'Le bouton de l’image manque un texte de remplacement. Veuillez ajouter un texte de remplacement pour fournir un nom accessible. Par exemple: <em>Rechercher</em> ou <em>Soumettre</em>.',
+    'Il manque un texte de remplacement au bouton image. Veuillez ajouter un texte de remplacement pour fournir un nom accessible. Par exemple: <em>Rechercher</em> ou <em>Soumettre</em>.',
   LABELS_INPUT_RESET:
     'Le bouton de réinitialisation <strong>ne devrait pas</strong> être utilisé sauf en cas de besoin spécifique, car il est facile de l’activer par erreur.<hr><strong>Conseil !</strong> En savoir plus sur <a href="https://www.nngroup.com/articles/reset-and-cancel-buttons/">les problèmes liés aux boutons Réinitialiser et Annuler.</a>',
   LABELS_ARIA_LABEL_INPUT:
@@ -308,13 +314,13 @@ const tooltip = {
   EMBED_VIDEO:
     'Assurez-vous <strong>que les vidéos ont des sous-titres codés.</strong> Fournir les sous-titres pour tout type de contenu audio ou vidéo est une exigence obligatoire de Niveau A. Les sous-titres aident les gens qui sont malentendants.',
   EMBED_AUDIO:
-    'Assurez-vous de fournir <strong>une transcription pour tous les balados.</strong> Fournir les transcriptions pour tout type de contenu audio est une exigence obligatoire de Niveau A. Les transcriptions aident les gens qui sont malentendant, mais peuvent profiter à tout le monde. Positionnez la transcription sous ou à l’intérieur du panneau accordéon.',
+    'Assurez-vous de fournir <strong>une transcription pour tous les balados.</strong> Fournir les transcriptions pour tout type de contenu audio est une exigence obligatoire de Niveau A. Les transcriptions aident les gens qui sont malentendants, mais peuvent profiter à tout le monde. Positionnez la transcription sous ou à l’intérieur du panneau accordéon.',
   EMBED_DATA_VIZ:
     'Les gadgets logiciels de visualisation de données comme ceci sont souvent problématiques pour les gens qui utilisent un clavier ou un lecteur d’écran lors de la navigation et peuvent présenter d’importantes difficultés pour les gens qui ont une malvoyance ou du daltonisme. Il est recommandé de fournir la même information de remplacement (texte ou tableau) dans le format ci-dessous du gadget logiciel. <hr> En savoir plus sur les <a href="https://www.w3.org/WAI/tutorials/images/complex/">images complexes.</a>',
   EMBED_MISSING_TITLE:
     'Le contenu intégré requiert un nom accessible qui décrit le contenu. Veuillez fournir un titre (<code>title</code>) unique ou <code>aria-label</code> un attribut à l’élément <code>&lt;%(ELEMENT)&gt;</code>. En savoir plus sur les <a href="https://developer.mozilla.org/fr/docs/Web/HTML/Element/iframe#une_iframe_simple">iFrames.</a>',
   EMBED_GENERAL:
-    'Impossible de vérifier le contenu intégré. Assurez-vous que les images ont du texte de remplacement, les vidéos ont des sous-titres, le texte est suffisamment contrasté et que les éléments interactifs sont <a href="https://webaim.org/techniques/keyboard/">accessible par le clavier.</a>',
+    'Impossible de vérifier le contenu intégré. Assurez-vous que les images ont du texte de remplacement, les vidéos ont des sous-titres, le texte est suffisamment contrasté et que les éléments interactifs sont <a href="https://webaim.org/techniques/keyboard/">accessibles par le clavier.</a>',
   EMBED_UNFOCUSABLE:
     'Les <code>&lt;iframe&gt;</code> avec des éléments non focusables ne doivent pas avoir de <code>tabindex="-1"</code>. Le contenu incorporé ne sera pas accessible au clavier.',
 
@@ -333,13 +339,13 @@ const tooltip = {
   QA_FAKE_HEADING:
     'Est-ce un titre? <strong {C}>%(TEXT)</strong> <hr> Une ligne de texte en gras ou de grande taille peut ressembler à un titre, mais pour une personne utilisant un lecteur d’écran, il est impossible de déterminer ce qui est important ou comment accéder au contenu. Un texte en gras ou de grande taille ne doit jamais remplacer un titre sémantique (Titre 2 à Titre 6).',
   QA_FAKE_LIST:
-    'Voulez-vous créer une liste? Une liste d’élément possible est trouvée: <strong {C}>%(firstPrefix)</strong> <hr> Assurez-vous de créer une liste en suivant le formatage de bouton, de puces ou de nombre. Lors d’une liste relative, la technologie d’assistance est en mesure de transmettre l’information telle que le nombre total d’élément et la position relative de chaque élément sur la site. En savoir plus sur les <a href="https://www.w3.org/WAI/tutorials/page-structure/content/#lists">listes relatives.</a>',
+    'Voulez-vous créer une liste? Élément de liste possible trouvé : <strong {C}>%(PREFIX)</strong> <hr> Assurez-vous plutôt d’utiliser des listes sémantiques à l’aide des boutons de mise en forme à puces ou numérotée. Avec une liste sémantique, la technologie d’assistance est en mesure de transmettre l’information telle que le nombre total d’éléments et la position relative de chaque élément dans la liste. En savoir plus sur les <a href="https://www.w3.org/WAI/tutorials/page-structure/content/#lists">listes sémantiques.</a>',
   QA_UPPERCASE:
     'Majuscules trouvées. Certains lecteurs d’écran pourraient interpréter les textes majuscules en tant qu’acronyme et pourraient être tentés de les lire individuellement. De plus, certaines personnes trouvent les majuscules difficiles à lire et peuvent donner l’impression de <strong>CRIER.</strong>',
   QA_UNDERLINE:
     'Le texte souligné peut être confondu avec les liens. Envisagez d’utiliser un style différent comme <strong>&lt;strong&gt;forte importance&lt;/strong&gt;</strong> ou <em>&lt;em&gt;emphase&lt;/em&gt;</em>.',
   QA_SUBSCRIPT:
-    'Les options de mise en forme en indice et en exposant ne doivent être utilisées que pour modifier la position du texte afin de se conformer aux conventions ou normes typographiques. Il ne doit <strong>pas</strong> être utilisé uniquement à des fins de présentation ou d’apparence. La mise en forme de phrases entières pose des problèmes de lisibilité. Les cas d’utilisation appropriés incluent l’affichage d’exposants, de nombres ordinaux tels que 4<sup>th</sup> au lieu de quatrième et de formules chimiques (H<sub>2</sub>O).',
+    'Les options de mise en forme en indice et en exposant ne doivent être utilisées que pour modifier la position du texte afin de se conformer aux conventions ou normes typographiques. Elles ne doivent <strong>pas</strong> être utilisées uniquement à des fins de présentation ou d’apparence. La mise en forme de phrases entières pose des problèmes de lisibilité. Les cas d’utilisation appropriés incluent l’affichage d’exposants, de nombres ordinaux tels que 4<sup>e</sup> au lieu de quatrième et de formules chimiques (H<sub>2</sub>O).',
   QA_NESTED_COMPONENTS:
     "Évitez d’imbriquer des composants de mise en page interactifs, comme de placer des accordéons dans des onglets ou des onglets dans des accordéons. Cela peut compliquer la navigation, augmenter la charge cognitive et conduire à ce que les gens négligent le contenu.",
   QA_JUSTIFY:
@@ -383,14 +389,14 @@ const tooltip = {
   BTN_ROLE_IN_NAME:
     'N’incluez pas le mot « bouton » dans le nom d’un bouton. Les lecteurs d’écran annoncent déjà le rôle d’un élément en plus de son nom.',
   LABEL_IN_NAME:
-    'Le texte visible pour cet élément semble différent du nom accessible, ce qui peut entraîner de la confusion pour les utilisateurs des technologies d’assistance. Veuillez vérifier : <hr> <strong {B}>Texte</strong> <strong {C}>%(TEXT)</strong> <hr> <strong {B}>Nom Accessible</strong> <strong {C}>%(TEXT)</strong>',
+    'Le texte visible pour cet élément semble différent du nom accessible, ce qui peut entraîner de la confusion pour les utilisateurs des technologies d’assistance. Veuillez vérifier : <hr> <strong {B}>Texte</strong> <strong {C}>%(TEXT)</strong> <hr> <strong {B}>Nom accessible</strong> <strong {C}>%(TEXT)</strong>',
   LINK_MAYBE_BUTTON: 'Ce lien a une cible non valide. Bien que le nom accessible ou ses attributs suggèrent qu’il ne s’agisse pas du tout d’un lien, mais qu’il contrôle plutôt un comportement scripté sur la page. Pour corriger cela, remplacez le lien par un <a href="https://www.w3.org/WAI/ARIA/apg/patterns/button/">bouton accessible</a> ou corrigez la destination du lien. <hr> <strong {B}>Nom accessible</strong> <strong {C}>%(TEXT)</strong> <hr> <strong>Conseil !</strong> Les technologies d’assistance traitent les boutons et les liens différemment. L’utilisation du bon élément HTML garantit que les utilisateurs savent quels raccourcis clavier utiliser et quelle action sera déclenchée.',
 
   // Tables
   TABLES_MISSING_HEADINGS:
     'En-têtes de tableau manquants ! Les tableaux accessibles nécessitent un balisage HTML qui indique les cellules d’en-tête et les cellules de données pour définir leur relation. Cette information fournit le contexte aux personnes qui utilisent la technologie d’assistance. Les tableaux doivent être utilisés pour les données tabulaires uniquement. <hr> En savoir plus sur les <a href="https://www.w3.org/WAI/tutorials/tables/">tableaux accessibles.</a>',
   TABLES_SEMANTIC_HEADING:
-    'Les titres sémantiques tels que Titre 2 ou Titre 3 doivent être utilisées uniquement pour les sections de contenu ; <strong>non</strong> pour les tableaux HTML. Indiquez les en-têtes de tableau en utilisant plutôt l’élément <code>&lt;th&gt;</code>. <hr> En savoir plus sur les <a href="https://www.w3.org/WAI/tutorials/tables/">tableaux accessibles.</a>',
+    'Les titres sémantiques tels que Titre 2 ou Titre 3 doivent être utilisés uniquement pour les sections de contenu ; <strong>non</strong> pour les tableaux HTML. Indiquez les en-têtes de tableau en utilisant plutôt l’élément <code>&lt;th&gt;</code>. <hr> En savoir plus sur les <a href="https://www.w3.org/WAI/tutorials/tables/">tableaux accessibles.</a>',
   TABLES_EMPTY_HEADING:
     'En-tête de tableau vide trouvé ! Les en-têtes de tableau ne devraient <strong>jamais</strong> être vides. Il est important de désigner les en-têtes de ligne et/ou de colonne pour définir leur relation. Cette information fournit le contexte aux personnes qui utilisent la technologie d’assistance. Veuillez garder à l’esprit que les tableaux devraient être utilisés pour les données tabulaires uniquement. <hr> En savoir plus sur les <a href="https://www.w3.org/WAI/tutorials/tables/">tableaux accessibles.</a>',
   TABLES_INVALID_HEADERS_REF: 'Ce tableau tente de lier une cellule de données spécifique à une cellule d’en-tête spécifique, mais l’ID de l’en-tête est introuvable. Assurez-vous que chaque attribut <code>headers</code> correspond à l’ID d’une cellule d’en-tête dans le même tableau. <hr> <strong {B}>En-têtes</strong> <code>%(VALUE)</code> <hr> <strong>Conseil !</strong> L\'<a href="https://www.w3.org/WAI/WCAG22/Techniques/html/H43">utilisation de références d’ID manuelles</a> pour associer des cellules de données à des cellules d’en-tête est complexe et fragile. Si possible, divisez les données complexes en tableaux plus petits avec des lignes et des colonnes d’en-tête simples.',

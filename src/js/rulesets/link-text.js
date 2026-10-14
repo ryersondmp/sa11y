@@ -29,7 +29,9 @@ const htmlSymbols = /([<>↣↳←→↓«»↴]+)/;
  * @returns {string | null} The matched stop word/phrase if an exact match is found, otherwise null.
  */
 const checkStopWords = (textContent, stopWordsSet, stripStrings) => {
-  const stripped = textContent.replace(stripStrings, '').trim();
+  const stripped = (stripStrings ? textContent.replace(stripStrings, '') : textContent)
+    .replace(/\s+/g, ' ')
+    .trim();
   if (stopWordsSet.has(stripped)) return stripped;
   return null;
 };
@@ -71,14 +73,20 @@ export default function checkLinkText() {
     // Original preserved text to lowercase.
     const rawTextContent = Utils.getText($el);
     const textContent = rawTextContent.toLowerCase();
+
+    // Normalized copies, used only to match the localized word lists (stop words, "click",
+    // "new window" phrases), which are normalized the same way in constants.js.
+    const foldedLinkText = Utils.foldForMatching(linkText);
+    const normalizedLinkText = Utils.normalizeStopWord(linkText);
+    const foldedTextContent = Utils.foldForMatching(rawTextContent);
     const textContentIgnoredStrings = Utils.getText(
       Utils.fnIgnore($el, Constants.Exclusions.LinkSpan),
     ).replace(Constants.Global.linkIgnorePattern, '');
 
     // Shared tests.
     const containsNewWindowPhrases =
-      lowercaseLinkText.match(Constants.Global.newWindowRegex)?.[0] ||
-      textContent.match(Constants.Global.newWindowRegex)?.[0];
+      foldedLinkText.match(Constants.Global.newWindowRegex)?.[0] ||
+      foldedTextContent.match(Constants.Global.newWindowRegex)?.[0];
     const containsFileTypePhrases =
       lowercaseLinkText.match(Constants.Global.fileTypeRegex)?.[0] ||
       textContent.match(Constants.Global.fileTypeRegex)?.[0];
@@ -113,7 +121,7 @@ export default function checkLinkText() {
           '',
         );
         const stopword = checkStopWords(
-          Utils.stripAllSpecialCharacters(visibleLinkText),
+          Utils.normalizeStopWord(visibleLinkText),
           Constants.Global.linkStopWords,
         );
 
@@ -185,8 +193,8 @@ export default function checkLinkText() {
       if (isLinkIgnoreStrings === textContent || isLinkIgnoreStrings === strippedLinkText) {
         triggerStopWord();
       } else if (
-        containsNewWindowPhrases === textContent ||
-        containsNewWindowPhrases === strippedLinkText
+        containsNewWindowPhrases === foldedTextContent ||
+        containsNewWindowPhrases === normalizedLinkText
       ) {
         triggerStopWord();
       }
@@ -243,15 +251,15 @@ export default function checkLinkText() {
 
       // 1. Check for exact stop words. Strip "new window" phrases by default.
       const isStopWord = checkStopWords(
-        strippedLinkText,
+        normalizedLinkText,
         Constants.Global.linkStopWords,
         Constants.Global.newWindowRegex,
       );
 
       // 2. Check for "click" words anywhere within string.
       const hasClickWord =
-        strippedLinkText.match(Constants.Global.clickRegex)?.[0] ||
-        textContent.match(Constants.Global.clickRegex)?.[0];
+        normalizedLinkText.match(Constants.Global.clickRegex)?.[0] ||
+        foldedTextContent.match(Constants.Global.clickRegex)?.[0];
 
       // 3. Check for citations/references.
       const isCitation = lowercaseLinkText.match(citationPattern)?.[0];
@@ -422,8 +430,9 @@ export default function checkLinkText() {
 
         if (!targetElement) {
           let isFauxButton = false;
+          const foldedAccName = Utils.foldForMatching(accName);
           const matchedKeyword = Lang._('POTENTIAL_UI_ELEMENTS').find((word) =>
-            accName.toLowerCase().includes(word),
+            foldedAccName.includes(Utils.foldForMatching(word)),
           );
           const isSlide = Object.keys($el.dataset).some((key) =>
             key.toLowerCase().includes('slide'),
