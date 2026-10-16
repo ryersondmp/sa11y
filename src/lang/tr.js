@@ -7,17 +7,25 @@ const ruleset = {
     'grafik',
     'resim',
     'fotoğraf',
+    'fotoğrafı',
+    'görsel',
+    'simge',
     'image',
     'graphic',
     'picture',
     'photo',
     'thumbnail',
     'icon',
+    'portrait',
   ],
   PLACEHOLDER_ALT_STOPWORDS: [
     'alt',
     'görüntü',
+    'resim',
+    'görsel',
+    'grafik',
     'fotoğraf',
+    'simge',
     'dekoratif',
     'yer tutucu',
     'yer tutucu resim',
@@ -41,44 +49,62 @@ const ruleset = {
     'homepage feature image',
     'featured image',
     'untitled',
+    'başlıksız',
+    'portrait',
+    'slide image',
+    'untitled image',
+    'unnamed',
+    'copy',
+    'undefined',
   ],
   LINK_STOPWORDS: [
     'tıklayın',
+    'tıklayınız',
+    'tıkla',
     'buraya tıklayın',
+    'buraya tıklayınız',
+    'buraya tıkla',
     'daha fazlası için buraya tıklayın',
-    'daha fazla bi̇lgi̇ i̇çi̇n tiklayin',
+    'daha fazla bilgi için tıklayın',
     'buraya tıklayarak',
-    'kontrol et',
-    'burada ayrıntılı',
-    'i̇ndir',
+    'göz atın',
+    'ayrıntılar',
+    'detaylar',
+    'keşfedin',
+    'indir',
+    'indirin',
     'buradan indirin',
     'buradan indirebilirsiniz',
     'öğrenmek',
-    'daha fazla bi̇lgi̇ edi̇ni̇n',
     'daha fazlasını öğrenin',
     'form',
     'burada',
+    'buraya',
     'bilgi',
+    'detaylı bilgi',
     'link',
-    'öğrenmek',
+    'bağlantı',
     'daha fazla öğren',
     'daha fazla bilgi edinin',
-    'öğrenmek',
     'daha fazla',
+    'daha fazlası',
+    'devamı',
     'sayfa',
-    'kağıt',
     'daha fazla oku',
+    'devamını oku',
     'okuyun',
     'bunu okuyun',
     'bu',
     'bu sayfa',
+    'bu bağlantı',
     'bu web sitesi',
-    'görünüm',
-    'bizi görüntüleyin',
+    'bu form',
+    'görüntüle',
     'web sitesi',
-    'madde',
+    'makale',
+    'git',
   ],
-  CLICK: ['click', 'tıklama'],
+  CLICK: ['click', 'tıkla'],
   NEW_WINDOW_PHRASES: ['dış', 'yeni sekme', 'yeni pencere', 'açılır pencere'],
   FILE_TYPE_PHRASES: [
     'belge',
@@ -89,52 +115,52 @@ const ruleset = {
     'çalışma sayfası',
     'powerpoint',
     'sunum',
-    'yükle',
+    'indir',
     'video',
     'ses',
     'pdf',
   ],
-  POTENTIAL_UI_ELEMENTS: ['menü', 'kapat', 'değiştir', 'aç', 'genişlet', 'daralt', 'sonraki', 'önceki', 'oynat', 'duraklat', 'alt menü', 'göster', 'gizle', 'açılır menü', 'geri', 'ileri', 'atla', 'gönder', 'iptal', 'kaydet', 'düzenle', 'sil', 'kaldır', 'ara', 'filtre', 'sırala', 'dur', 'sessiz', 'sesi aç', 'tam ekran', 'küçült', 'büyüt'],
+  POTENTIAL_UI_ELEMENTS: ['menü', 'kapat', 'değiştir', 'aç', 'genişlet', 'daralt', 'sonraki', 'önceki', 'oynat', 'duraklat', 'alt menü', 'göster', 'gizle', 'açılır menü', 'geri', 'ileri', 'atla', 'gönder', 'iptal', 'kaydet', 'düzenle', 'sil', 'kaldır', 'ara', 'filtre', 'sırala', 'dur', 'sessiz', 'sesi aç', 'tam ekran', 'küçült', 'büyüt', 'slayt'],
 };
 
 const ui = {
   LANG_CODE: 'tr',
-  MAIN_TOGGLE_LABEL: 'Erişilebilirliği Kontrol Edin',
+  MAIN_TOGGLE_LABEL: 'Erişilebilirliği Denetle',
   CONTAINER_LABEL: 'Erişilebilirlik Denetleyicisi',
   ERROR: 'Hata',
   ERRORS: 'Hatalar',
   WARNING: 'Uyarı',
   WARNINGS: 'Uyarılar',
   GOOD: 'İyi',
-  REVIEW: 'İncele',
+  REVIEW: 'İnceleme',
   ON: 'Açık',
   OFF: 'Kapalı',
-  ALERT_TEXT: 'Uyarı',
+  ALERT_TEXT: 'Bildirim',
   ALERT_CLOSE: 'Kapat',
   OUTLINE: 'Anahat',
   READABILITY_DESC:
     'Okuma zorluğunu ölçmeye yardımcı olmak için <strong>Anahat</strong> sekmesinde okunabilirlik puanını gösterir.',
-  TITLE: 'Başlık',
+  TITLE: 'Sayfa başlığı',
   ALT: 'ALT',
   IMAGES: 'Görseller',
   EDIT: 'Düzenle',
-  NO_IMAGES: 'Resim bulunamadı.',
+  NO_IMAGES: 'Görsel bulunamadı.',
   DECORATIVE: 'Dekoratif',
   MISSING: 'Eksik',
   PAGE_ISSUES: 'Sayfa Sorunları',
   SETTINGS: 'Ayarlar',
   DEVELOPER_CHECKS: 'Geliştirici kontrolleri',
   DEVELOPER_DESC:
-    'HTML öznitelikleri, formlar gibi düzeltilmesi için kodlama bilgisi gerektirebilecek sorunları kontrol eder.',
+    'Düzeltilmesi kodlama bilgisi gerektirebilecek sorunları denetler. HTML öznitelikleri, formlar ve daha fazlasını kapsar.',
   DARK_MODE: 'Karanlık mod',
-  SHORTCUT_SR: 'Konuya geç. Klavye kısayolu: Alt S',
-  SKIP_TO_ISSUE: 'Konuya geç',
+  SHORTCUT_SR: 'Soruna geç. Klavye kısayolu: Alt S',
+  SKIP_TO_ISSUE: 'Soruna geç',
   NEW_TAB: 'Yeni sekme açar',
-  LINKED: 'Bağlı',
+  LINKED: 'Bağlantılı',
   PANEL_HEADING: 'Erişilebilirlik kontrolü',
   NO_ERRORS_FOUND: 'Hata bulunamadı.',
-  WARNINGS_FOUND: 'uyarılar bulundu.',
-  TOTAL_FOUND: 'toplam sorun bulundu.',
+  WARNINGS_FOUND: 'uyarı bulundu.',
+  TOTAL_FOUND: 'sorun bulundu.',
   NOT_VISIBLE:
     'Görüntülemeye çalıştığınız öğe görünmüyor; gizli veya bir akordeon ya da sekme bileşeninin içinde olabilir.',
   MISSING_ROOT:
@@ -149,9 +175,9 @@ const ui = {
   HIDDEN: 'Gizli',
 
   // Dismiss
-  PANEL_DISMISS_BUTTON: 'Göster %(dismissCount) reddedilmiş',
+  PANEL_DISMISS_BUTTON: 'Göz ardı edilenleri göster (%(dismissCount))',
   DISMISS: 'Göz ardı et',
-  DISMISS_ALL: 'Hepsini göz ardı et',
+  DISMISS_ALL: 'Tümünü göz ardı et',
   DISMISSED: 'Göz ardı edildi',
   DISMISS_REMINDER:
     'Uyarıların yalnızca <strong>geçici olarak</strong> göz ardı edildiğini lütfen unutmayın. Tarayıcı geçmişinizi ve çerezlerinizi temizlemek, tüm sayfalardaki daha önce göz ardı edilen uyarıları geri getirecektir.',
@@ -168,23 +194,23 @@ const ui = {
 
   // Colour filters
   COLOUR_FILTER: 'Renk filtresi',
-  PROTANOPIA: 'Protanopia',
-  DEUTERANOPIA: 'Deuteranopia',
-  TRITANOPIA: 'Tritanopia',
+  PROTANOPIA: 'Protanopi',
+  DEUTERANOPIA: 'Döteranopi',
+  TRITANOPIA: 'Tritanopi',
   MONOCHROMACY: 'Monokromasi',
   COLOUR_FILTER_MESSAGE:
-    'Algılanması veya diğer renklerden ayırt edilmesi zor olan unsurları kontrol edin.',
-  RED_EYE: 'Kırmızı kör.',
-  GREEN_EYE: 'Yeşil kör.',
-  BLUE_EYE: 'Mavi kör.',
-  MONO_EYE: 'Kırmızı, mavi ve yeşil kör.',
+    'Algılanması veya diğer renklerden ayırt edilmesi zor olan öğeleri kontrol edin.',
+  RED_EYE: 'Kırmızı renk körlüğü.',
+  GREEN_EYE: 'Yeşil renk körlüğü.',
+  BLUE_EYE: 'Mavi renk körlüğü.',
+  MONO_EYE: 'Kırmızı, mavi ve yeşil renk körlüğü.',
   COLOUR_FILTER_HIGH_CONTRAST: 'Renk filtreleri yüksek kontrast modunda çalışmaz.',
 
   // Readability
   READABILITY: 'Okunabilirlik',
   AVG_SENTENCE: 'Cümle başına ortalama kelime:',
   COMPLEX_WORDS: 'Karmaşık kelimeler:',
-  TOTAL_WORDS: 'Kelimeler:',
+  TOTAL_WORDS: 'Kelime sayısı:',
   VERY_DIFFICULT: 'Çok zor',
   DIFFICULT: 'Zor',
   FAIRLY_DIFFICULT: 'Oldukça zor',
@@ -196,7 +222,7 @@ const tooltip = {
   HEADING_SKIPPED_LEVEL:
     'Başlıklar seviyeleri atlamamalı veya <strong>Başlık %(PREV_LEVEL)</strong> seviyesinden <strong {C}>Başlık %(LEVEL)</strong> seviyesine geçmemelidir, çünkü bu içerik düzenini ve hiyerarşisini bozar ve takip etmeyi zorlaştırır. <hr> Eğer <strong {C}>%(HEADING)</strong>, <strong>%(PREV_HEADING)</strong> bölümünün altına giriyorsa, bunun yerine bir <strong>Başlık %(LEVEL)</strong> olarak formatlamayı düşünün.',
   HEADING_EMPTY:
-    'Boş başlık bulundu! Düzeltmek için bu satırı silin veya biçimini <strong {C}>Heading %(level)</strong> yerine <strong>Normal</strong> veya <strong>Paragraph</strong> olarak değiştirin.',
+    'Boş başlık bulundu! Düzeltmek için bu satırı silin veya biçimini <strong {C}>Başlık %(level)</strong> yerine <strong>Normal</strong> veya <strong>Paragraf</strong> olarak değiştirin.',
   HEADING_LONG:
     'Başlık uzun! Başlıklar içeriği düzenlemek ve yapıyı aktarmak için kullanılmalıdır. Kısa, bilgilendirici ve benzersiz olmalıdırlar. Lütfen başlıkları %(MAX_LENGTH) karakterden az tutun (bir cümleden fazla olmamalıdır). <hr> <strong {B}>%(HEADING_LENGTH) Karakter</strong>',
   HEADING_FIRST:
@@ -224,7 +250,7 @@ const tooltip = {
   LINK_CLICK_HERE:
     '"tıklayın" veya "buraya tıklayın" ifadesi, fare mekaniğine odaklanır, ancak birçok kişi fare kullanmaz veya bu web sitesini mobil cihazda görüntülüyor olabilir. Görevle ilgili bir fiil kullanmayı düşünün.',
   DUPLICATE_TITLE:
-    'Bağlantılar ve resimler üzerindeki <code>title</code> özelliği, ek bilgi sağlamak amacıyla kullanılır ve metin veya alternatif metinden <strong>farklı</strong> olmalıdır. Başlık metni, bir öğenin üzerine gelindiğinde görüntülenir, ancak klavye veya dokunmatik girişle erişilemez. <a href="https://www.a11yproject.com/posts/title-attributes/">Title özelliğinden tamamen kaçınmayı düşünün.</a>',
+    'Bağlantılar ve resimler üzerindeki <code>title</code> özelliği, ek bilgi sağlamak amacıyla kullanılır ve metin veya alternatif metinden <strong>farklı</strong> olmalıdır. Title metni, bir öğenin üzerine gelindiğinde görüntülenir, ancak klavye veya dokunmatik girişle erişilemez. <a href="https://www.a11yproject.com/posts/title-attributes/">Title özelliğinden tamamen kaçınmayı düşünün.</a>',
   LINK_SYMBOLS:
     'Bağlantı metninde, eyleme çağrı olarak sembollerin kullanılmasından, bunlar yardımcı teknolojilerden gizlenmedikçe kaçının. Ekran okuyucular sembolleri yüksek sesle okuyabilir, bu da kafa karıştırıcı olabilir. Bunları kaldırmayı düşünün: <strong {C}>%(ERROR)</strong>',
   LINK_URL:
@@ -273,9 +299,9 @@ const tooltip = {
   LINK_IMAGE_ALT_AND_TEXT:
     'Resim bağlantısı <strong>hem alt metin hem de çevresindeki bağlantı metnini içerir.</strong> Bu resim dekoratifse ve başka bir sayfaya işlevsel bir bağlantı olarak kullanılıyorsa, resmi dekoratif veya boş olarak işaretlemeyi düşünün - çevresindeki bağlantı metni yeterli olmalıdır. <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong> <hr> <strong {B}>Erişilebilir ad</strong> {L} <strong {C}>%(TEXT)</strong>',
   IMAGE_FIGURE_DECORATIVE:
-    'Resim <strong>dekoratif</strong> olarak işaretlenmiştir ve yardımcı teknoloji tarafından göz ardı edilecektir. <hr> Bir <strong>başlık</strong> verilmiş olsa da, çoğu durumda görselin alt metni de olmalıdır. <ul><li>Alt metin, görselde ne olduğuna dair kısa bir açıklama sağlamalıdır.</li><li>Alt yazı genellikle görseli çevreleyen içerikle ilişkilendirmek için bağlam sağlamalı veya belirli bir bilgi parçasına dikkat çekmelidir.</li></ul> Daha fazla bilgi edinin: <a href="https://thoughtbot.com/blog/alt-vs-figcaption#the-figcaption-element">alt versus figcaption.</a>',
+    'Resim <strong>dekoratif</strong> olarak işaretlenmiştir ve yardımcı teknoloji tarafından göz ardı edilecektir. <hr> Bir <strong>altyazı</strong> verilmiş olsa da, çoğu durumda görselin alt metni de olmalıdır. <ul><li>Alt metin, görselde ne olduğuna dair kısa bir açıklama sağlamalıdır.</li><li>Altyazı genellikle görseli çevreleyen içerikle ilişkilendirmek için bağlam sağlamalı veya belirli bir bilgi parçasına dikkat çekmelidir.</li></ul> Daha fazla bilgi edinin: <a href="https://thoughtbot.com/blog/alt-vs-figcaption#the-figcaption-element">alt versus figcaption.</a>',
   IMAGE_FIGURE_DUPLICATE_ALT:
-    'Hem alt hem de başlık metni için aynı kelimeleri kullanmayın. Ekran okuyucular bilgileri iki kez duyuracaktır. <ul><li>Alt metin görselde ne olduğuna dair kısa bir açıklama sağlamalıdır.</li><li>Alt yazı genellikle görseli çevreleyen içerikle ilişkilendirmek için bağlam sağlamalı veya belirli bir bilgi parçasına dikkat çekmelidir.</li></ul> Daha fazla bilgi edinin: <a href="https://thoughtbot.com/blog/alt-vs-figcaption#the-figcaption-element">alt versus figcaption.</a> <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
+    'Hem alt metin hem de altyazı için aynı kelimeleri kullanmayın. Ekran okuyucular bilgileri iki kez duyuracaktır. <ul><li>Alt metin görselde ne olduğuna dair kısa bir açıklama sağlamalıdır.</li><li>Altyazı genellikle görseli çevreleyen içerikle ilişkilendirmek için bağlam sağlamalı veya belirli bir bilgi parçasına dikkat çekmelidir.</li></ul> Daha fazla bilgi edinin: <a href="https://thoughtbot.com/blog/alt-vs-figcaption#the-figcaption-element">alt versus figcaption.</a> <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
   IMAGE_DECORATIVE:
     'Görüntü <strong>dekoratif</strong> olarak işaretlenir ve yardımcı teknoloji tarafından göz ardı edilir. Görsel bir hikaye, ruh hali veya önemli bir bilgi aktarıyorsa alt metin eklediğinizden emin olun.',
   IMAGE_DECORATIVE_CAROUSEL:
@@ -292,7 +318,7 @@ const tooltip = {
   LABELS_MISSING_IMAGE_INPUT:
     'Resim düğmesinin alt metni eksik. Lütfen erişilebilir bir ad sağlamak için alt metin ekleyin. Örneğin: <em>Arama</em> veya <em>Gönder</em>.',
   LABELS_INPUT_RESET:
-    'Sıfırla düğmeleri özellikle gerekmedikçe <strong>kullanılmamalıdır</strong> çünkü yanlışlıkla etkinleştirilmeleri kolaydır. <hr> <strong>İpucu!</strong> <a href="https://www.nngroup.com/articles/reset-and-cancel-buttons/">Reset ve İptal düğmelerinin neden kullanılabilirlik sorunları oluşturduğunu öğrenin.</a>',
+    'Sıfırla düğmeleri özellikle gerekmedikçe <strong>kullanılmamalıdır</strong> çünkü yanlışlıkla etkinleştirilmeleri kolaydır. <hr> <strong>İpucu!</strong> <a href="https://www.nngroup.com/articles/reset-and-cancel-buttons/">Sıfırla ve İptal düğmelerinin neden kullanılabilirlik sorunları oluşturduğunu öğrenin.</a>',
   LABELS_ARIA_LABEL_INPUT:
     'Girdinin erişilebilir bir adı vardır, ancak lütfen görünür bir etiket olduğundan da emin olun. <hr> <strong {B}>Erişilebilir ad</strong> <strong {C}>%(TEXT)</strong>',
   LABELS_NO_FOR_ATTRIBUTE:
@@ -313,14 +339,14 @@ const tooltip = {
   EMBED_MISSING_TITLE:
     'Gömülü içerik, içeriğini açıklayan erişilebilir bir ad gerektirir. Lütfen <code>&lt;%(ELEMENT)&gt;</code> öğesinde benzersiz bir <code>title</code> veya <code>aria-label</code> özniteliği sağlayın. <a href="https://web.dev/learn/accessibility/more-html#iframes">iFrames.</a>',
   EMBED_GENERAL:
-    'Gömülü içerik kontrol edilemiyor. Lütfen resimlerin alt metni, videoların alt yazısı, metinlerin yeterli kontrastı ve etkileşimli bileşenlerin <a href="https://webaim.org/techniques/keyboard/">klavye ile erişilebilir olduğundan emin olun.</a>',
+    'Gömülü içerik kontrol edilemiyor. Lütfen resimlerin alt metni, videoların altyazısı, metinlerin yeterli kontrastı ve etkileşimli bileşenlerin <a href="https://webaim.org/techniques/keyboard/">klavye ile erişilebilir olduğundan emin olun.</a>',
   EMBED_UNFOCUSABLE:
     'Odaklanılamayan öğeler içeren <code>&lt;iframe&gt;</code>, <code>tabindex="-1"</code> olmamalıdır. Gömülü içerik klavye ile erişilebilir olmayacak.',
 
   // QA
   QA_BAD_LINK:
     'Kötü bağlantı bulundu. Bağlantı bir geliştirme ortamına işaret ediyor gibi görünüyor. <hr> {L} <strong {C}>%(LINK)</strong>',
-  QA_IN_PAGE_LINK: 'Bozuk sayfa içi bağlantı. Bu bağlantı, sayfanın bulunamayan ஒரு bölümüne gitmeye çalışıyor. Bunu düzeltmek için bağlantının, atlamak istediğiniz öğenin <code>id</code>\'siyle eşleştiğinden emin olun.',
+  QA_IN_PAGE_LINK: 'Bozuk sayfa içi bağlantı. Bu bağlantı, sayfanın bulunamayan bir bölümüne gitmeye çalışıyor. Bunu düzeltmek için bağlantının, atlamak istediğiniz öğenin <code>id</code>\'siyle eşleştiğinden emin olun.',
   QA_STRONG_ITALICS:
     'Kalın ve italik etiketlerinin anlamsal bir anlamı vardır ve paragrafların tamamını vurgulamak için <strong>kullanılmamalıdır</strong>. Kalınlaştırılmış metin, bir kelime veya cümleye güçlü bir <strong>vurgu</strong> yapmak için kullanılmalıdır. İtalik yazılar özel isimleri (kitap ve makale başlıkları gibi), yabancı kelimeleri ve alıntıları vurgulamak için kullanılmalıdır. Uzun alıntılar blok alıntı olarak biçimlendirilmelidir.',
   QA_PDF:
@@ -328,17 +354,17 @@ const tooltip = {
   QA_DOCUMENT:
     'Belge erişilebilirlik açısından kontrol edilemiyor. Bağlantılı belgeler web içeriği olarak kabul edilir ve erişilebilir hale getirilmelidir. Lütfen bu belgeyi manuel olarak inceleyin. <ul><li><a href="https://support.google.com/docs/answer/6199477?hl=tr">Google Workspace belgenizi veya sunumunuzu daha erişilebilir hale getirin.</a></li><li><a href="https://support.microsoft.com/tr/office/create-accessible-office-documents-868ecfcd-4f00-4224-b881-a65537a7c155">Ofis belgelerinizi daha erişilebilir hale getirin.</a></li></ul>',
   QA_BLOCKQUOTE:
-    'Bu bir başlık mı? <strong {C}>%(TEXT)</strong> <hr> Blok tırnaklar yalnızca alıntılar için kullanılmalıdır. Bunun bir başlık olması amaçlanıyorsa, bu blok alıntıyı anlamsal bir başlığa (örneğin Başlık 2 veya Başlık 3) değiştirin.',
+    'Bu bir başlık mı? <strong {C}>%(TEXT)</strong> <hr> Blok alıntılar yalnızca alıntılar için kullanılmalıdır. Bunun bir başlık olması amaçlanıyorsa, bu blok alıntıyı anlamsal bir başlığa (örneğin Başlık 2 veya Başlık 3) değiştirin.',
   QA_FAKE_HEADING:
     "Bu bir başlık mı? <strong {C}>%(TEXT)</strong> <hr>Bir satır kalın veya büyük metin bir başlık gibi görünebilir, ancak ekran okuyucu kullanan biri bunun önemli olduğunu anlayamaz veya içeriğine atlayamaz. Kalın veya büyük metin asla anlamsal başlıkların (Başlık 2'den Başlık 6'ya) yerini almamalıdır.",
   QA_FAKE_LIST:
-    'Bir liste oluşturmaya mı çalışıyorsunuz? Olası liste öğesi bulundu: <strong {C}>%(firstPrefix)</strong> <hr> Bunun yerine madde işareti veya sayı biçimlendirme düğmelerini kullanarak anlamsal listeler kullandığınızdan emin olun. Anlamsal bir liste kullanıldığında, yardımcı teknolojiler toplam öğe sayısı ve listedeki her bir öğenin göreli konumu gibi bilgileri iletebilir. <a href="https://www.w3.org/WAI/tutorials/page-structure/content/#lists">anlamsal listeler hakkında daha fazla bilgi edinin.</a>',
+    'Bir liste oluşturmaya mı çalışıyorsunuz? Olası liste öğesi bulundu: <strong {C}>%(PREFIX)</strong> <hr> Bunun yerine madde işareti veya sayı biçimlendirme düğmelerini kullanarak anlamsal listeler kullandığınızdan emin olun. Anlamsal bir liste kullanıldığında, yardımcı teknolojiler toplam öğe sayısı ve listedeki her bir öğenin göreli konumu gibi bilgileri iletebilir. <a href="https://www.w3.org/WAI/tutorials/page-structure/content/#lists">anlamsal listeler hakkında daha fazla bilgi edinin.</a>',
   QA_UPPERCASE:
     'Büyük harfler bulundu. Bazı ekran okuyucular büyük harfle yazılan metni kısaltma olarak yorumlayabilir ve her harfi ayrı ayrı okuyabilir. Ayrıca, bazı kişiler büyük harfleri okumayı daha zor bulabilir ve bu durum BAĞIRMA görüntüsü verebilir.',
   QA_UNDERLINE:
-    'Altı çizili metin bağlantılarla karıştırılabilir. <code>&lt;strong&gt;</code><strong>strong importance</strong><code>&lt;/strong&gt;</code> veya <code>&lt;em&gt;</code><em>emphasis</em><code>&lt;/em&gt;</code> gibi farklı bir stil kullanmayı düşünün.',
+    'Altı çizili metin bağlantılarla karıştırılabilir. <code>&lt;strong&gt;</code><strong>güçlü önem</strong><code>&lt;/strong&gt;</code> veya <code>&lt;em&gt;</code><em>vurgu</em><code>&lt;/em&gt;</code> gibi farklı bir stil kullanmayı düşünün.',
   QA_SUBSCRIPT:
-    'Alt simge ve üst simge biçimlendirme seçenekleri yalnızca tipografik kurallar veya standartlar için metnin konumunu değiştirmek amacıyla kullanılmalıdır. Yalnızca sunum veya görünüm amacıyla <strong>kullanılmamalıdır</strong>. Tüm cümlelerin biçimlendirilmesi okunabilirlik sorunları yaratır. Uygun kullanım durumları arasında üslerin, dördüncü yerine 4<sup>üncü</sup> gibi sıra sayılarının ve kimyasal formüllerin (örneğin H<sub>2</sub>O) gösterilmesi yer alır.',
+    'Alt simge ve üst simge biçimlendirme seçenekleri yalnızca tipografik kurallar veya standartlar için metnin konumunu değiştirmek amacıyla kullanılmalıdır. Yalnızca sunum veya görünüm amacıyla <strong>kullanılmamalıdır</strong>. Tüm cümlelerin biçimlendirilmesi okunabilirlik sorunları yaratır. Uygun kullanım durumları arasında üslerin, m<sup>2</sup> gibi ölçü birimlerinin ve kimyasal formüllerin (örneğin H<sub>2</sub>O) gösterilmesi yer alır.',
   QA_NESTED_COMPONENTS:
     'Etkileşimli düzen bileşenlerini iç içe kullanmaktan kaçının, örneğin akordeonları sekmelerin içine veya sekmeleri akordeonların içine yerleştirmek gibi. Bu, gezinmeyi karmaşıklaştırabilir, bilişsel yükü artırabilir ve kişilerin içeriği gözden kaçırmasına neden olabilir.',
   QA_JUSTIFY:
@@ -349,7 +375,7 @@ const tooltip = {
   // Shared
   LINK_TEXT: '<strong {B}>Bağlantı metni</strong> <strong {C}>%(TEXT)</strong>',
   ACC_NAME: '<strong {B}>Erişilebilir ad</strong> <strong {C}>%(TEXT)</strong>',
-  ACC_NAME_TIP: '<hr><strong>İpucu!</strong> "Erişilebilir ad", yardımcı teknoloji kullanan kişilere iletilen nihai etikettür. Bu, öğenin amacını anlamalarına yardımcı olur.',
+  ACC_NAME_TIP: '<hr><strong>İpucu!</strong> "Erişilebilir ad", yardımcı teknoloji kullanan kişilere iletilen nihai etikettir. Bu, öğenin amacını anlamalarına yardımcı olur.',
   HIDDEN_FOCUSABLE: 'Bu öğe klavye odağı alabilir, ancak <code>aria-hidden="true"</code> özniteliği (kendi üzerinde veya üst kapsayıcıda) nedeniyle ekran okuyuculardan gizlenmiştir. Düzeltmek için aria-hidden özniteliğini kaldırın veya öğeyi sekme sırasından çıkarın. <hr> <strong {B}>Öğe</strong> <pre><code>%(EL)</code></pre> <hr> <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">aria-hidden özniteliği</a> hakkında daha fazla bilgi edinin.',
 
   // Developer
@@ -361,7 +387,7 @@ const tooltip = {
 
   // Meta checks
   META_LANG:
-    'Sayfa dili bildirilmedi! Lütfen <a href="https://www.w3.org/International/questions/qa-html-language-declarations">declare language on HTML tag.</a>',
+    'Sayfa dili bildirilmedi! Lütfen <a href="https://www.w3.org/International/questions/qa-html-language-declarations">HTML etiketinde dili bildirin.</a>',
   META_TITLE:
     'Sayfa başlığı eksik! Lütfen bir <a href="https://developer.mozilla.org/tr/docs/Web/HTML/Element/title">sayfa başlığı sağlayın.</a>',
   META_SCALABLE:
@@ -387,12 +413,12 @@ const tooltip = {
 
   // Tables
   TABLES_MISSING_HEADINGS:
-    'Eksik tablo başlıkları! Erişilebilir tablolar, başlık hücrelerini ve aralarındaki ilişkiyi tanımlayan veri hücrelerini gösteren HTML işaretlemesine ihtiyaç duyar. Bu bilgi, yardımcı teknoloji kullanan kişilere bağlam sağlar. Tablolar yalnızca tablo verileri için kullanılmalıdır. <hr> <a href="https://www.w3.org/WAI/tutorials/tables/">erişilebilir tablolar hakkında daha fazla bilgi edinin.</a>',
+    'Eksik tablo üst bilgileri! Erişilebilir tablolar, üst bilgi hücrelerini ve aralarındaki ilişkiyi tanımlayan veri hücrelerini gösteren HTML işaretlemesine ihtiyaç duyar. Bu bilgi, yardımcı teknoloji kullanan kişilere bağlam sağlar. Tablolar yalnızca tablo verileri için kullanılmalıdır. <hr> <a href="https://www.w3.org/WAI/tutorials/tables/">erişilebilir tablolar hakkında daha fazla bilgi edinin.</a>',
   TABLES_SEMANTIC_HEADING:
-    'Heading 2 veya Heading 3 gibi anlamsal başlıklar yalnızca içerik bölümleri için kullanılmalıdır; HTML tablolarında <strong>değil</strong>. Bunun yerine tablo başlıklarını <code>&lt;th&gt;</code> öğesini kullanarak belirtin. <hr> <a href="https://www.w3.org/WAI/tutorials/tables/">erişilebilir tablolar hakkında daha fazla bilgi edinin.</a>',
+    'Başlık 2 veya Başlık 3 gibi anlamsal başlıklar yalnızca içerik bölümleri için kullanılmalıdır; HTML tablolarında <strong>değil</strong>. Bunun yerine tablo üst bilgilerini <code>&lt;th&gt;</code> öğesini kullanarak belirtin. <hr> <a href="https://www.w3.org/WAI/tutorials/tables/">erişilebilir tablolar hakkında daha fazla bilgi edinin.</a>',
   TABLES_EMPTY_HEADING:
-    'Boş tablo başlığı bulundu! Tablo başlıkları <strong>asla</strong> boş olmamalıdır. İlişkilerini aktarmak için satır ve/veya sütun başlıklarını belirlemek önemlidir. Bu bilgi, yardımcı teknoloji kullanan kişilere bağlam sağlar. Lütfen tabloların yalnızca tablo halindeki veriler için kullanılması gerektiğini unutmayın. <hr> <a href="https://www.w3.org/WAI/tutorials/tables/">erişilebilir tablolar hakkında daha fazla bilgi edinin.</a>',
-  TABLES_INVALID_HEADERS_REF: 'Bu tablo, belirli bir veri hücresini belirli bir başlık hücresiyle ilişkilendirmeye çalışıyor ancak başlık kimliği (ID) bulunamıyor. Her <code>headers</code> özniteliğinin aynı tablodaki bir başlık hücresinin kimliğiyle eşleştiğinden emin olun. <hr> <strong {B}>Başlıklar</strong> <code>%(VALUE)</code> <hr> <strong>İpucu!</strong> Veri hücrelerini başlık hücreleriyle ilişkilendirmek için <a href="https://www.w3.org/WAI/WCAG22/Techniques/html/H43">manuel kimlik (ID) referansları kullanmak</a> karmaşık ve kırılgandır. Mümkün olduğunda, karmaşık verileri basit başlık satırları ve sütunları olan daha küçük tablolara bölün.',
+    'Boş tablo üst bilgisi bulundu! Tablo üst bilgileri <strong>asla</strong> boş olmamalıdır. İlişkilerini aktarmak için satır ve/veya sütun üst bilgilerini belirlemek önemlidir. Bu bilgi, yardımcı teknoloji kullanan kişilere bağlam sağlar. Lütfen tabloların yalnızca tablo halindeki veriler için kullanılması gerektiğini unutmayın. <hr> <a href="https://www.w3.org/WAI/tutorials/tables/">erişilebilir tablolar hakkında daha fazla bilgi edinin.</a>',
+  TABLES_INVALID_HEADERS_REF: 'Bu tablo, belirli bir veri hücresini belirli bir üst bilgi hücresiyle ilişkilendirmeye çalışıyor ancak üst bilgi kimliği (ID) bulunamıyor. Her <code>headers</code> özniteliğinin aynı tablodaki bir üst bilgi hücresinin kimliğiyle eşleştiğinden emin olun. <hr> <strong {B}>Üst bilgiler</strong> <code>%(VALUE)</code> <hr> <strong>İpucu!</strong> Veri hücrelerini üst bilgi hücreleriyle ilişkilendirmek için <a href="https://www.w3.org/WAI/WCAG22/Techniques/html/H43">manuel kimlik (ID) referansları kullanmak</a> karmaşık ve kırılgandır. Mümkün olduğunda, karmaşık verileri basit üst bilgi satırları ve sütunları olan daha küçük tablolara bölün.',
 
   // Contrast
   CONTRAST_NORMAL: 'Normal boyuttaki metin en az %(RATIO) kontrast oranına sahip olmalıdır.',
@@ -408,9 +434,9 @@ const tooltip = {
     'Grafikler ve kullanıcı arayüzü öğeleri en az 3:1 kontrast oranına sahip olmalıdır.',
   CONTRAST_OPACITY: 'Daha iyi görünürlük için opaklığı artırın.',
   CONTRAST_APCA:
-    'Bu kontrast herhangi bir metin boyutu için yeterli değildir. Bu renk ve metin boyutu kombinasyonunu kullanmayı düşünün mü?',
-  CONTRAST_COLOR: 'Bunun yerine bu rengi kullanmayı düşünün?',
-  CONTRAST_SIZE: 'Bu renk kombinasyonu için metin boyutunu büyütmeyi düşünün?',
+    'Bu kontrast herhangi bir metin boyutu için yeterli değildir. Bu renk ve metin boyutu kombinasyonunu kullanmayı düşünür müsünüz?',
+  CONTRAST_COLOR: 'Bunun yerine bu rengi kullanmayı düşünür müsünüz?',
+  CONTRAST_SIZE: 'Bu renk kombinasyonu için metin boyutunu büyütmeyi düşünür müsünüz?',
   CONTRAST_PLACEHOLDER:
     'Bu giriş alanındaki yer tutucu metin, arka planla yeterli kontrasta sahip değil, bu da okunmasını zorlaştırıyor.',
   CONTRAST_PLACEHOLDER_UNSUPPORTED:

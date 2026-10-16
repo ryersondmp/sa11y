@@ -4,15 +4,17 @@
 const ruleset = {
   SUS_ALT_STOPWORDS: [
     'billede',
+    'billedet',
     'grafik',
-    'billede',
     'foto',
+    'ikon',
     'image',
     'graphic',
     'picture',
     'photo',
     'thumbnail',
     'icon',
+    'portrait',
   ],
   PLACEHOLDER_ALT_STOPWORDS: [
     'alt',
@@ -20,8 +22,11 @@ const ruleset = {
     'foto',
     'dekorativ',
     'pladsholder',
-    'pladsholder-billede',
-    'afstandsstykke',
+    'pladsholderbillede',
+    'grafik',
+    'ikon',
+    'ingen titel',
+    'uden titel',
     'chart',
     'decorative',
     'image',
@@ -41,6 +46,12 @@ const ruleset = {
     'homepage feature image',
     'featured image',
     'untitled',
+    'portrait',
+    'slide image',
+    'untitled image',
+    'unnamed',
+    'copy',
+    'undefined',
   ],
   LINK_STOPWORDS: [
     'klik',
@@ -50,35 +61,42 @@ const ruleset = {
     'ved at klikke her',
     'tjek ud',
     'beskrevet her',
+    'opdag',
     'download',
     'download her',
-    'find ud af det',
+    'hent',
+    'udforsk',
     'find ud af mere',
     'formular',
     'her',
     'info',
     'information',
     'link',
-    'lære',
-    'lære mere',
+    'lær',
+    'lær mere',
     'få mere at vide',
-    'lære at',
+    'lær at',
     'mere',
+    'se mere',
     'side',
     'papir',
     'læs mere',
-    'læse',
+    'læs',
+    'læs her',
     'læs dette',
     'dette',
     'denne side',
+    'dette link',
     'denne hjemmeside',
-    'udsigt',
+    'denne formular',
+    'se',
+    'se her',
     'se vores',
     'hjemmeside',
     'artikel',
   ],
   CLICK: ['click', 'klik'],
-  NEW_WINDOW_PHRASES: ['ekstern', 'ny fane', 'nyt vindue', 'pop-up', 'dukker op'],
+  NEW_WINDOW_PHRASES: ['ekstern', 'ny fane', 'nyt faneblad', 'nyt vindue', 'pop-up', 'popup', 'dukker op'],
   FILE_TYPE_PHRASES: [
     'document',
     'dokument',
@@ -86,7 +104,6 @@ const ruleset = {
     'beregningsark',
     'komprimeret fil',
     'arkiveret fil',
-    'regneark',
     'powerpoint',
     'præsentation',
     'installere',
@@ -94,7 +111,7 @@ const ruleset = {
     'lyd',
     'pdf',
   ],
-  POTENTIAL_UI_ELEMENTS: ['menu', 'luk', 'skift', 'åbn', 'udvid', 'skjul', 'næste', 'forrige', 'afspil', 'pause', 'undermenu', 'vis', 'skjul', 'rullemenu', 'tilbage', 'frem', 'spring over', 'indsend', 'annuller', 'gem', 'rediger', 'slet', 'fjern', 'søg', 'filter', 'sorter', 'stop', 'lydløs', 'slå lyd til', 'fuldskærm', 'minimer', 'maksimer'],
+  POTENTIAL_UI_ELEMENTS: ['menu', 'luk', 'skift', 'åbn', 'udvid', 'fold ud', 'fold sammen', 'næste', 'forrige', 'afspil', 'pause', 'undermenu', 'vis', 'skjul', 'rullemenu', 'tilbage', 'fremad','spring over', 'indsend', 'annuller', 'gem', 'rediger', 'slet', 'fjern', 'søg', 'filter', 'sorter', 'stop', 'lydløs', 'slå lyd til', 'fuldskærm', 'minimer', 'maksimer'],
 };
 
 const ui = {
@@ -105,11 +122,11 @@ const ui = {
   ERRORS: 'Fejl',
   WARNING: 'Advarsel',
   WARNINGS: 'Advarsler',
-  GOOD: 'God',
+  GOOD: 'Godt',
   REVIEW: 'Gennemse',
-  ON: 'På',
-  OFF: 'Af',
-  ALERT_TEXT: 'Alarm',
+  ON: 'Til',
+  OFF: 'Fra',
+  ALERT_TEXT: 'Meddelelse',
   ALERT_CLOSE: 'Luk',
   OUTLINE: 'Disposition',
   READABILITY_DESC:
@@ -121,27 +138,27 @@ const ui = {
   NO_IMAGES: 'Ingen billeder fundet.',
   DECORATIVE: 'Dekorativ',
   MISSING: 'Manglende',
-  PAGE_ISSUES: 'Side Problemer',
+  PAGE_ISSUES: 'Sideproblemer',
   SETTINGS: 'Indstillinger',
   DEVELOPER_CHECKS: 'Udviklerkontroller',
   DEVELOPER_DESC:
     'Tjekker for problemer, der kan kræve kendskab til kodning for at blive løst, såsom HTML-attributter, formularer og mere.',
   DARK_MODE: 'Mørk tilstand',
-  SHORTCUT_SR: 'Gå videre til udgaven. Tastaturgenvej: Alt S',
-  SKIP_TO_ISSUE: 'Spring til nummer',
+  SHORTCUT_SR: 'Spring til problem. Tastaturgenvej: Alt S',
+  SKIP_TO_ISSUE: 'Spring til problem',
   NEW_TAB: 'Åbner ny fane',
-  LINKED: 'Forbundet',
+  LINKED: 'Linket',
   PANEL_HEADING: 'Tilgængelighedstjek',
   NO_ERRORS_FOUND: 'Ingen fejl fundet.',
   WARNINGS_FOUND: 'advarsler fundet.',
-  TOTAL_FOUND: 'samlede problemer fundet.',
+  TOTAL_FOUND: 'problemer fundet i alt.',
   NOT_VISIBLE:
     'Det element, du prøver at se, er ikke synligt; det kan være skjult eller inde i en harmonika- eller fanekomponent.',
   MISSING_ROOT:
     'Hele siden blev kontrolleret for tilgængelighed, fordi målområdet <code>%(root)</code> ikke findes.',
   MISSING_READABILITY_ROOT:
     'Læsbarhedsscoren er baseret på indholdsområdet <code>%(fallback)</code>, da målområdet <code>%(root)</code> ikke findes.',
-  SKIP_TO_PAGE_ISSUES: 'Spring til sideudgaver',
+  SKIP_TO_PAGE_ISSUES: 'Spring til sideproblemer',
   CONSOLE_ERROR:
     'Beklager, men der er et problem med tilgængelighedstjekkeren på denne side. Kan du venligst <a href="https://forms.gle/sjzK9XykETaoqZv99">rapportere det via denne formular</a> eller på <a href="https://github.com/ryersondmp/sa11y/issues/new?title=Bug%20report">GitHub</a>?',
   APPEARANCE: 'Udseende',
@@ -149,12 +166,12 @@ const ui = {
   HIDDEN: 'Skjult',
 
   // Dismiss
-  PANEL_DISMISS_BUTTON: 'Vis %(dismissCount) afvist',
+  PANEL_DISMISS_BUTTON: 'Vis afviste (%(dismissCount))',
   DISMISS: 'Afvis',
   DISMISS_ALL: 'Afvis alle',
   DISMISSED: 'Afvist',
   DISMISS_REMINDER:
-    'Bemærk, at advarsler kun er <strong>midlertidigt</strong> afvist. Rydning af din browserhistorik og cookies vil gendanne alle tidligere afviste advarsler på tværs af alle sider.',
+    'Bemærk, at advarsler kun er <strong>midlertidigt</strong> afvist. Når du rydder din browserhistorik og dine cookies, gendannes alle tidligere afviste advarsler på alle sider.',
 
   // Export
   DATE: 'Dato',
@@ -168,16 +185,16 @@ const ui = {
 
   // Colour filters
   COLOUR_FILTER: 'Farvefilter',
-  PROTANOPIA: 'Protanopia',
-  DEUTERANOPIA: 'Deuteranopia',
-  TRITANOPIA: 'Tritanopia',
-  MONOCHROMACY: 'Monokromitet',
+  PROTANOPIA: 'Protanopi',
+  DEUTERANOPIA: 'Deuteranopi',
+  TRITANOPIA: 'Tritanopi',
+  MONOCHROMACY: 'Monokromasi',
   COLOUR_FILTER_MESSAGE:
-    'Tjek for elementer, der er svære at opfatte eller skelne fra andre farver.',
-  RED_EYE: 'Rød blind.',
-  GREEN_EYE: 'Grøn blind.',
-  BLUE_EYE: 'Blå blind.',
-  MONO_EYE: 'Rød, blå og grøn blind.',
+    'Se efter elementer, der er svære at opfatte eller skelne fra andre farver.',
+  RED_EYE: 'Rødblind.',
+  GREEN_EYE: 'Grønblind.',
+  BLUE_EYE: 'Blåblind.',
+  MONO_EYE: 'Totalt farveblind.',
   COLOUR_FILTER_HIGH_CONTRAST: 'Farvefiltre fungerer ikke i højkontrasttilstand.',
 
   // Readability
@@ -185,8 +202,8 @@ const ui = {
   AVG_SENTENCE: 'Gennemsnitligt antal ord pr. sætning:',
   COMPLEX_WORDS: 'Komplekse ord:',
   TOTAL_WORDS: 'Ord:',
-  VERY_DIFFICULT: 'Meget vanskeligt',
-  DIFFICULT: 'Vanskeligt',
+  VERY_DIFFICULT: 'Meget vanskelig',
+  DIFFICULT: 'Vanskelig',
   FAIRLY_DIFFICULT: 'Temmelig vanskelig',
   READABILITY_NOT_ENOUGH: 'Ikke nok indhold til at beregne læsbarhedsscore.',
 };
@@ -204,7 +221,7 @@ const tooltip = {
   HEADING_MISSING_ONE:
     'Manglende overskrift 1. Overskrift 1 skal være starten på hovedindholdsområdet og er den hovedoverskrift, der beskriver sidens overordnede formål. Læs mere om <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">Overskriftsstruktur.</a>',
   HEADING_EMPTY_WITH_IMAGE:
-    'Heading har ingen tekst, men indeholder et billede. Hvis det ikke er en overskrift, skal du ændre formatet fra <strong {C}>Overskrift %(level)</strong> til <strong>Normal</strong> eller <strong>Afsnit</strong>. Ellers bedes du tilføje alt-tekst til billedet, hvis det ikke er dekorativt.',
+    'Overskriften har ingen tekst, men indeholder et billede. Hvis det ikke er en overskrift, skal du ændre formatet fra <strong {C}>Overskrift %(level)</strong> til <strong>Normal</strong> eller <strong>Afsnit</strong>. Ellers bedes du tilføje alt-tekst til billedet, hvis det ikke er dekorativt.',
   HEADING_UNPRONOUNCEABLE: 'Overskriftsteksten indeholder kun symboler eller tegn, der ikke kan udtales. Hvis du mener, at dette er en fejl på grund af en kopier/sæt ind-fejl, bør du overveje at slette den. <hr> <strong {B}>Overskriftstekst</strong> <strong {C}>%(TEXT)</strong>',
   PANEL_HEADING_MISSING_ONE: 'Manglende overskrift 1!',
   PANEL_NO_HEADINGS: 'Ingen overskrifter fundet.',
@@ -332,13 +349,13 @@ const tooltip = {
   QA_FAKE_HEADING:
     'Er dette en overskrift? <strong {C}>%(TEXT)</strong> <hr> En linje med fed eller stor tekst kan ligne en overskrift, men en person, der bruger en skærmlæser, kan ikke se, at den er vigtig eller springe til indholdet. Fed eller stor tekst bør aldrig erstatte semantiske overskrifter (Overskrift 2 til Overskrift 6).',
   QA_FAKE_LIST:
-    'Prøver du at oprette en liste? Muligt listeelement fundet: <strong {C}>%(firstPrefix)</strong> <hr> Sørg for at bruge semantiske lister ved at bruge punkt- eller talformateringsknapperne i stedet. Når du bruger en semantisk liste, kan hjælpeteknologier formidle oplysninger som det samlede antal elementer og den relative placering af hvert element i listen. Få mere at vide om <a href="https://www.w3.org/WAI/tutorials/page-structure/content/#lists">semantiske lister.</a>',
+    'Prøver du at oprette en liste? Muligt listeelement fundet: <strong {C}>%(PREFIX)</strong> <hr> Sørg for at bruge semantiske lister ved at bruge punkt- eller talformateringsknapperne i stedet. Når du bruger en semantisk liste, kan hjælpeteknologier formidle oplysninger som det samlede antal elementer og den relative placering af hvert element i listen. Få mere at vide om <a href="https://www.w3.org/WAI/tutorials/page-structure/content/#lists">semantiske lister.</a>',
   QA_UPPERCASE:
-    'Fundet med store bogstaver. Nogle skærmlæsere kan fortolke tekst med store bogstaver som et akronym og vil læse hvert bogstav individuelt. Derudover synes nogle mennesker, at store bogstaver er sværere at læse, og det kan se ud, som om man råber.',
+    'Der er fundet tekst med store bogstaver. Nogle skærmlæsere kan fortolke tekst med store bogstaver som et akronym og vil læse hvert bogstav individuelt. Derudover synes nogle mennesker, at store bogstaver er sværere at læse, og det kan se ud, som om man råber.',
   QA_UNDERLINE:
-    'Understreget tekst kan forveksles med links. Overvej at bruge en anden stil som <code>&lt;strong&gt;</code><strong>strong importance</strong><code>&lt;/strong&gt;</code> eller <code>&lt;em&gt;</code><em>emphasis</em><code>&lt;/em&gt;</code>.',
+    'Understreget tekst kan forveksles med links. Overvej at bruge en anden stil som <code>&lt;strong&gt;</code><strong>vigtig tekst</strong><code>&lt;/strong&gt;</code> eller <code>&lt;em&gt;</code><em>fremhævet tekst</em><code>&lt;/em&gt;</code>.',
   QA_SUBSCRIPT:
-    'Formateringsindstillingerne subscript og superscript bør kun bruges til at ændre placeringen af tekst af hensyn til typografiske konventioner eller standarder. De bør <strong>ikke</strong> udelukkende bruges til præsentation eller udseende. Formatering af hele sætninger giver problemer med læsbarheden. Passende anvendelsestilfælde ville omfatte visning af eksponenter, ordenstal som 4<sup>th</sup> i stedet for fjerde og kemiske formler (f.eks. H<sub>2</sub>O).',
+    'Formateringsindstillingerne sænket og hævet skrift bør kun bruges til at ændre placeringen af tekst af hensyn til typografiske konventioner eller standarder. De bør <strong>ikke</strong> udelukkende bruges til præsentation eller udseende. Formatering af hele sætninger giver problemer med læsbarheden. Passende anvendelsestilfælde ville omfatte visning af eksponenter, enheder som m<sup>2</sup> og kemiske formler (f.eks. H<sub>2</sub>O).',
   QA_NESTED_COMPONENTS:
     'Undgå at indlejre interaktive layoutkomponenter, såsom at placere akordeoner i faner eller faner i akordeoner. Dette kan komplicere navigationen, øge den kognitive belastning og føre til, at folk overser indhold.',
   QA_JUSTIFY:
@@ -369,7 +386,7 @@ const tooltip = {
   META_MAX:
     'Sørg for, at parameteren <code>maximum-scale</code> i <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">viewport meta-taggen</a> ikke er mindre end 2.',
   META_REFRESH: 'Siden bør ikke automatisk opdatere ved hjælp af et meta-tag.',
-  META_LANG_SUGGEST: 'Følgende sprogkode <code>%(CODE)</code> er ikke gyldig. Ment du <code>%(CODE)</code>?',
+  META_LANG_SUGGEST: 'Følgende sprogkode <code>%(CODE)</code> er ikke gyldig. Mente du <code>%(CODE)</code>?',
   META_LANG_VALID: 'Sprogkoden for dette element er ikke gyldig. For at løse det skal lang-attributten erstattes med en gyldig sprogkode. <hr> <strong {B}>Element</strong> <code>&lt;%(ELEMENT) lang="%(CODE)"&gt;</code> <hr> Lær mere om <a href="https://www.w3.org/International/questions/qa-html-language-declarations">erklæring af sprog i HTML.</a>',
 
   // Buttons
@@ -387,16 +404,16 @@ const tooltip = {
 
   // Tables
   TABLES_MISSING_HEADINGS:
-    'Manglende tabeloverskrifter! Tilgængelige tabeller har brug for HTML-markup, der angiver overskriftsceller og dataceller, som definerer deres forhold. Disse oplysninger giver kontekst til folk, der bruger hjælpemidler. Tabeller bør kun bruges til tabeldata. <hr> Få mere at vide om <a href="https://www.w3.org/WAI/tutorials/tables/">tilgængelige tabeller.</a>',
+    'Manglende tabelheadere! Tilgængelige tabeller har brug for HTML-markup, der angiver headerceller og dataceller, som definerer deres forhold. Disse oplysninger giver kontekst til folk, der bruger hjælpemidler. Tabeller bør kun bruges til tabeldata. <hr> Få mere at vide om <a href="https://www.w3.org/WAI/tutorials/tables/">tilgængelige tabeller.</a>',
   TABLES_SEMANTIC_HEADING:
-    'Semantiske overskrifter som Heading 2 eller Heading 3 bør kun bruges til sektioner af indhold; <strong>ikke</strong> i HTML-tabeller. Angiv tabeloverskrifter ved hjælp af <code>&lt;th&gt;</code>-elementet i stedet. <hr> Få mere at vide om <a href="https://www.w3.org/WAI/tutorials/tables/">tilgængelige tabeller.</a>',
+    'Semantiske overskrifter som Overskrift 2 eller Overskrift 3 bør kun bruges til sektioner af indhold; <strong>ikke</strong> i HTML-tabeller. Angiv tabelheadere ved hjælp af <code>&lt;th&gt;</code>-elementet i stedet. <hr> Få mere at vide om <a href="https://www.w3.org/WAI/tutorials/tables/">tilgængelige tabeller.</a>',
   TABLES_EMPTY_HEADING:
-    'Tom tabeloverskrift fundet! Tabeloverskrifter bør <strong>aldrig</strong> være tomme. Det er vigtigt at udpege række- og/eller kolonneoverskrifter for at formidle deres relation. Disse oplysninger giver kontekst til personer, der bruger hjælpemidler. Husk, at tabeller kun bør bruges til tabeldata. <hr> Få mere at vide om <a href="https://www.w3.org/WAI/tutorials/tables/">tilgængelige tabeller.</a>',
-  TABLES_INVALID_HEADERS_REF: 'Denne tabel forsøger at knytte en specifik datacelle til en specifik overskriftscelle, men overskrifts-ID\'et kan ikke findes. Sørg for, at hver <code>headers</code>-attribut matcher ID\'et på en overskriftscelle i den samme tabel. <hr> <strong {B}>Overskrifter</strong> <code>%(VALUE)</code> <hr> <strong>Tip!</strong> <a href="https://www.w3.org/WAI/WCAG22/Techniques/html/H43">Brug af manuelle ID-referencer</a> til at knytte dataceller til overskriftsceller er kompliceret og skrøbeligt. Når det er muligt, bør du opdele komplekse data i mindre tabeller med enkle overskriftsrækker og -kolonner.',
+    'Tom tabelheader fundet! Tabelheadere bør <strong>aldrig</strong> være tomme. Det er vigtigt at udpege række- og/eller kolonneheadere for at formidle deres relation. Disse oplysninger giver kontekst til personer, der bruger hjælpemidler. Husk, at tabeller kun bør bruges til tabeldata. <hr> Få mere at vide om <a href="https://www.w3.org/WAI/tutorials/tables/">tilgængelige tabeller.</a>',
+  TABLES_INVALID_HEADERS_REF: 'Denne tabel forsøger at knytte en specifik datacelle til en specifik headercelle, men headerens ID kan ikke findes. Sørg for, at hver <code>headers</code>-attribut matcher ID\'et på en headercelle i den samme tabel. <hr> <strong {B}>Headere</strong> <code>%(VALUE)</code> <hr> <strong>Tip!</strong> <a href="https://www.w3.org/WAI/WCAG22/Techniques/html/H43">Brug af manuelle ID-referencer</a> til at knytte dataceller til headerceller er kompliceret og skrøbeligt. Når det er muligt, bør du opdele komplekse data i mindre tabeller med enkle headerrækker og -kolonner.',
 
   // Contrast
-  CONTRAST_NORMAL: 'Tekst i normal størrelse bør have en kontrastforhold på mindst %(RATIO).',
-  CONTRAST_LARGE: 'Tekst i stor størrelse bør have en kontrastforhold på mindst %(RATIO).',
+  CONTRAST_NORMAL: 'Tekst i normal størrelse bør have et kontrastforhold på mindst %(RATIO).',
+  CONTRAST_LARGE: 'Tekst i stor størrelse bør have et kontrastforhold på mindst %(RATIO).',
   CONTRAST_ERROR:
     'Teksten har ikke tilstrækkelig kontrast med baggrunden, hvilket gør den sværere at læse.',
   CONTRAST_WARNING:

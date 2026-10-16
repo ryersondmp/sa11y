@@ -14,6 +14,7 @@ const ruleset = {
     'photo',
     'thumbnail',
     'icon',
+    'portrait',
   ],
   PLACEHOLDER_ALT_STOPWORDS: [
     'alt',
@@ -30,10 +31,6 @@ const ruleset = {
     'placeholder image',
     'spacer',
     'chart',
-    'decorative',
-    'placeholder',
-    'placeholder image',
-    'spacer',
     'tbd',
     'todo',
     'to do',
@@ -44,13 +41,21 @@ const ruleset = {
     'homepage feature image',
     'featured image',
     'untitled',
+    'graphic',
+    'portrait',
+    'test',
+    'slide image',
+    'untitled image',
+    'unnamed',
+    'copy',
+    'undefined',
   ],
   LINK_STOPWORDS: [
     'kliknij',
     'kliknij tutaj',
     'kliknij tu',
-    'kliknij tutaj, aby dowiedzieć się więcej',
-    'kliknij tu, aby dowiedzieć się więcej',
+    'kliknij tutaj aby dowiedzieć się więcej',
+    'kliknij tu aby dowiedzieć się więcej',
     'check out',
     'pobierz',
     'pobierz tutaj',
@@ -64,7 +69,7 @@ const ruleset = {
     'czytaj',
     'czytaj więcej',
     'czytaj to',
-    'wiecej',
+    'więcej',
     'czytaj tu',
     'to',
     'tę stronę',
@@ -77,8 +82,8 @@ const ruleset = {
     'witrynę',
     'artykuł',
   ],
-  CLICK: ['click', 'kliknięcie'],
-  NEW_WINDOW_PHRASES: ['zewnętrzny', 'nowa karta', 'nowe okno', 'pop-up', 'pop up'],
+  CLICK: ['click', 'kliknięcie', 'klikn'],
+  NEW_WINDOW_PHRASES: ['zewnętrzny', 'nowa karta', 'nowej karcie', 'nowe okno', 'nowym oknie', 'pop-up', 'pop up'],
   FILE_TYPE_PHRASES: [
     'dokument',
     'arkusz kalkulacyjny',
@@ -93,7 +98,7 @@ const ruleset = {
     'audio',
     'pdf',
   ],
-  POTENTIAL_UI_ELEMENTS: ['menu', 'zamknij', 'przełącz', 'otwórz', 'rozwiń', 'zwiń', 'następny', 'poprzedni', 'odtwórz', 'pauza', 'podmenu', 'pokaż', 'ukryj', 'rozwijane', 'wstecz', 'dalej', 'pomiń', 'wyślij', 'anuluj', 'zapisz', 'edytuj', 'usuń', 'usuń', 'szukaj', 'filtr', 'sortuj', 'stop', 'wycisz', 'wyłącz wyciszenie', 'pełny ekran', 'minimalizuj', 'maksymalizuj'],
+  POTENTIAL_UI_ELEMENTS: ['menu', 'zamknij', 'przełącz', 'otwórz', 'rozwiń', 'zwiń', 'następny', 'poprzedni', 'odtwórz', 'pauza', 'podmenu', 'pokaż', 'ukryj', 'rozwijane', 'wstecz', 'dalej', 'pomiń', 'wyślij', 'anuluj', 'zapisz', 'edytuj', 'usuń', 'szukaj', 'filtr', 'sortuj', 'stop', 'wycisz', 'wyłącz wyciszenie', 'pełny ekran', 'minimalizuj', 'maksymalizuj'],
 }
 
 const ui = {
@@ -126,14 +131,14 @@ const ui = {
   DEVELOPER_DESC:
     'Sprawdza problemy, których naprawa może wymagać znajomości kodowania, takie jak atrybuty HTML, formularze i inne.',
   DARK_MODE: 'Tryb ciemny',
-  SHORTCUT_SR: 'Przejdź do problemu. Klawisze skrótu: lewy Option',
+  SHORTCUT_SR: 'Przejdź do problemu. Skrót klawiaturowy: Alt S',
   SKIP_TO_ISSUE: 'Przejdź do problemu',
   NEW_TAB: 'Otwórz na nowej karcie',
   LINKED: 'Połączony',
   PANEL_HEADING: 'Testuj dostępność',
   NO_ERRORS_FOUND: 'Nie znaleziono błędów.',
-  WARNINGS_FOUND: 'ostrzeżeń do przeglądu.',
-  TOTAL_FOUND: 'ogółem wykrytych problemów.',
+  WARNINGS_FOUND: '– liczba ostrzeżeń do przeglądu.',
+  TOTAL_FOUND: '– łączna liczba wykrytych problemów.',
   NOT_VISIBLE:
     'Element, który próbujesz wyświetlić, nie jest widoczny; może być ukryty lub znajdować się wewnątrz akordeonu lub karty.',
   MISSING_ROOT:
@@ -148,7 +153,7 @@ const ui = {
   HIDDEN: 'Ukryty',
 
   // Dismiss
-  PANEL_DISMISS_BUTTON: 'Pokaż %(dismissCount) odrzucone',
+  PANEL_DISMISS_BUTTON: 'Pokaż odrzucone (%(dismissCount))',
   DISMISS: 'Odrzuć',
   DISMISS_ALL: 'Odrzuć wszystko',
   DISMISSED: 'Odrzucone',
@@ -331,13 +336,13 @@ const tooltip = {
   QA_FAKE_HEADING:
     'Czy to jest nagłówek? <strong {C}>%(TEXT)</strong> <hr> Wiersz pogrubionego lub dużego tekstu może wyglądać jak nagłówek, ale osoba korzystająca z czytnika ekranu nie może stwierdzić, że jest on istotny lub przejść do jego treści. Pogrubiony lub duży tekst nigdy nie powinien zastępować nagłówków semantycznych (od Nagłówka H2 do Nagłówka H6).',
   QA_FAKE_LIST:
-    'Czy próbujesz utworzyć listę? Wykryto możliwe elementy listy: <strong {C}>%(firstPrefix)</strong> <hr> Upewnij się, że używasz list semantycznych, zamiast stosowania znaków punktowania (np. myślników) lub liczb. Podczas korzystania z list semantycznych technologie wspomagające są w stanie przekazać takie informacje, jak ogólna liczba elementów i względna pozycja każdego elementu na liście. Dowiedz się więcej o <a href="https://www.w3.org/WAI/tutorials/page-structure/content/#lists">semantycznych listach.</a>',
+    'Czy próbujesz utworzyć listę? Wykryto możliwe elementy listy: <strong {C}>%(PREFIX)</strong> <hr> Upewnij się, że używasz list semantycznych, zamiast stosowania znaków punktowania (np. myślników) lub liczb. Podczas korzystania z list semantycznych technologie wspomagające są w stanie przekazać takie informacje, jak ogólna liczba elementów i względna pozycja każdego elementu na liście. Dowiedz się więcej o <a href="https://www.w3.org/WAI/tutorials/page-structure/content/#lists">semantycznych listach.</a>',
   QA_UPPERCASE:
     'Wykryto WSZYSTKIE WIELKIE LITERY. Niektóre czytniki ekranu interpretują cały tekst wielkimi literami jako akronim i będą czytać każdą literę odrębnie. Ponadto, wszystkie wielkie litery są trudniejsze do odczytania i sprawiają wrażenie KRZYKU.',
   QA_UNDERLINE:
     'Podkreślony tekst można pomylić z linkami. Rozważ użycie innego stylu, takiego jak &lt;strong&gt;<strong>silne znaczenie</strong>&lt;/strong&gt; lub &lt;em&gt;<em>nacisk</em>&lt;/em&gt;.',
   QA_SUBSCRIPT:
-    'Opcji formatowania indeksu dolnego i indeksu górnego należy używać wyłącznie do zmiany pozycji tekstu w celu dostosowania do konwencji lub standardów typograficznych. Powinna <strong>nie</strong> być używana wyłącznie do celów prezentacji lub wyglądu. Formatowanie całych zdań stwarza problemy z czytelnością. Odpowiednie przypadki użycia obejmują wyświetlanie wykładników, liczb porządkowych, takich jak 4<sup>th</sup> zamiast czwartej, oraz wzorów chemicznych (H<sub>2</sub>O).',
+    'Opcji formatowania indeksu dolnego i indeksu górnego należy używać wyłącznie do zmiany pozycji tekstu w celu dostosowania do konwencji lub standardów typograficznych. <strong>Nie</strong> należy ich używać wyłącznie do celów prezentacji lub wyglądu. Formatowanie całych zdań stwarza problemy z czytelnością. Odpowiednie przypadki użycia obejmują wyświetlanie wykładników, jednostek, takich jak m<sup>2</sup>, oraz wzorów chemicznych (H<sub>2</sub>O).',
   QA_NESTED_COMPONENTS:
     'Unikaj zagnieżdżania interaktywnych komponentów układu, takich jak umieszczanie akordeonów w zakładkach lub zakładek w akordeonach. Może to skomplikować nawigację, zwiększyć obciążenie poznawcze i prowadzić do pomijania treści.',
   QA_JUSTIFY:
@@ -391,7 +396,7 @@ const tooltip = {
     'Nagłówki semantyczne, takie jak nagłówek H2 lub nagłówek H3, powinny być używane tylko w odniesieniu do sekcji treści; <strong>nie</strong> w tabelach HTML. Zamiast tego należy wskazać nagłówki tabeli przy użyciu elementu <strong>th</strong>. <hr> Dowiedz się więcej o <a href="https://www.w3.org/WAI/tutorials/tables/">dostępnych tabelach.</a>',
   TABLES_EMPTY_HEADING:
     'Wykryto pusty nagłówek tabeli! Nagłówki tabel <em>nigdy</em> nie powinny być puste. Ważne jest, aby wyznaczyć nagłówki wierszy i/lub kolumn, aby przekazać ich relację. Informacje te zapewniają kontekst osobom korzystającym z technologii wspomagających. Należy pamiętać, że tabele powinny być używane tylko dla danych tabelarycznych. <hr> Dowiedz się więcej o <a href="https://www.w3.org/WAI/tutorials/tables/">dostępnych tabelach.</a>',
-  TABLES_INVALID_HEADERS_REF: 'Ta tabela próbuje powiązać konkretną komórkę danych z konkretną komórką nagłówka, ale nie można odnaleźć identyfikatora ID nagłówka. Upewnij się, że każdy atrybut <code>headers</code> odpowiada identyfikatorowi ID komórki nagłówka w tej samej tabeli. <hr> <strong {B}>Nagłówki</strong> <code>%(VALUE)</code> <hr> <strong>Wskazówka!</strong> <a href="https://www.w3.org/WAI/WCAG22/Techniques/html/H43">Ręczne używanie odwołań ID</a> do kojarzenia komórek danych z komórkami nagłówka jest skomplikowane i zawodne. Jeśli to możliwe, dziel złożone dane na mniejsze tabele z prostymi wierszami i kolumnami nagłówkowymi.',
+  TABLES_INVALID_HEADERS_REF: 'Ta tabela próbuje powiązać konkretną komórkę danych z konkretną komórką nagłówka, ale nie można odnaleźć identyfikatora ID komórki nagłówka. Upewnij się, że każdy atrybut <code>headers</code> odpowiada identyfikatorowi ID komórki nagłówka w tej samej tabeli. <hr> <strong {B}>Komórki nagłówka</strong> <code>%(VALUE)</code> <hr> <strong>Wskazówka!</strong> <a href="https://www.w3.org/WAI/WCAG22/Techniques/html/H43">Ręczne używanie odwołań ID</a> do kojarzenia komórek danych z komórkami nagłówka jest skomplikowane i zawodne. Jeśli to możliwe, dziel złożone dane na mniejsze tabele z prostymi wierszami i kolumnami nagłówkowymi.',
 
   // Contrast
   CONTRAST_NORMAL:

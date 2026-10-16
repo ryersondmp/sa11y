@@ -4,23 +4,34 @@
 const ruleset = {
   SUS_ALT_STOPWORDS: [
     'kuva',
+    'kuvassa',
+    'kuvake',
+    'valokuva',
+    'pikkukuva',
+    'pienoiskuva',
     'graafinen',
+    'grafiikka',
     'image',
     'graphic',
     'picture',
     'photo',
     'thumbnail',
     'icon',
+    'portrait',
   ],
   PLACEHOLDER_ALT_STOPWORDS: [
     'alt',
     'kuva',
+    'valokuva',
+    'kuvake',
+    'pienoiskuva',
+    'kuvituskuva',
     'koristeellinen',
     'paikanhaltija',
-    'mielikuvamerkki',
+    'paikanvaraaja',
     'välikappale',
-    'test',
     'testi',
+    'nimetön',
     'chart',
     'decorative',
     'image',
@@ -40,25 +51,34 @@ const ruleset = {
     'homepage feature image',
     'featured image',
     'untitled',
+    'portrait',
+    'slide image',
+    'untitled image',
+    'unnamed',
+    'copy',
+    'undefined',
   ],
   LINK_STOPWORDS: [
     'klikkaa',
+    'napsauta',
     'klikkaa tästä',
+    'napsauta tästä',
     'klikkaa tästä lisää',
     'klikkaa tästä saadaksesi lisätietoja',
     'klikkaamalla tästä',
     'tsekkaa',
-    'yksityiskohtaisesti täällä',
     'lataa',
     'lataa tästä',
-    'selvittää',
+    'tutustu',
     'lisätietoja',
+    'lisätiedot',
     'lomake',
     'täällä',
+    'tästä',
     'info',
     'tiedot',
     'linkki',
-    'oppia',
+    'opi lisää',
     'lisää',
     'sivu',
     'paperi',
@@ -67,21 +87,32 @@ const ruleset = {
     'lue tämä',
     'tämä',
     'tämä sivu',
+    'tämä linkki',
     'tämä sivusto',
     'katso',
-    'katso meidän',
+    'katso lisää',
     'verkkosivusto',
-    'artikla',
+    'artikkeli',
+    'siirry',
   ],
-  CLICK: ['click', 'napsauta'],
-  NEW_WINDOW_PHRASES: ['ulkoinen', 'uusi välilehti', 'uusi ikkuna', 'pop-up', 'ponnahtaa esiin'],
+  CLICK: ['click', 'napsaut', 'klikk'],
+  NEW_WINDOW_PHRASES: [
+    'ulkoinen',
+    'uusi välilehti',
+    'uusi ikkuna',
+    'uuteen välilehteen',
+    'uuteen ikkunaan',
+    'uuden välilehden',
+    'uuden ikkunan',
+    'pop-up',
+    'ponnahdusikkuna',
+  ],
   FILE_TYPE_PHRASES: [
     'asiakirja',
     'taulukkolaskenta',
     'laskentataulukko',
     'pakattu tiedosto',
     'arkistoitu tiedosto',
-    'laskentataulukko',
     'powerpoint',
     'esitys',
     'asennus',
@@ -89,67 +120,67 @@ const ruleset = {
     'audio',
     'pdf',
   ],
-  POTENTIAL_UI_ELEMENTS: ['valikko', 'sulje', 'vaihda', 'avaa', 'laajenna', 'supista', 'seuraava', 'edellinen', 'toista', 'tauko', 'alavalikko', 'näytä', 'piilota', 'pudotusvalikko', 'takaisin', 'eteenpäin', 'ohita', 'lähetä', 'peruuta', 'tallenna', 'muokkaa', 'poista', 'poista', 'etsi', 'suodata', 'lajittele', 'pysäytä', 'vaimenna', 'poista vaimennus', 'koko näyttö', 'minimoi', 'maksimoi'],
+  POTENTIAL_UI_ELEMENTS: ['valikko', 'sulje', 'vaihda', 'avaa', 'laajenna', 'supista', 'seuraava', 'edellinen', 'toista', 'tauko', 'alavalikko', 'näytä', 'piilota', 'pudotusvalikko', 'takaisin', 'eteenpäin', 'ohita', 'lähetä', 'peruuta', 'tallenna', 'muokkaa', 'poista', 'etsi', 'hae', 'haku', 'suodata', 'lajittele', 'pysäytä', 'vaimenna', 'hiljennä', 'poista vaimennus', 'koko näyttö', 'kokonäyttö', 'minimoi', 'pienennä', 'maksimoi', 'suurenna'],
 };
 
 const ui = {
   LANG_CODE: 'fi',
   MAIN_TOGGLE_LABEL: 'Tarkista saavutettavuus',
-  CONTAINER_LABEL: 'Esteettömyyden tarkistusohjelma',
+  CONTAINER_LABEL: 'Saavutettavuuden tarkistin',
   ERROR: 'Virhe',
   ERRORS: 'Virheet',
   WARNING: 'Varoitus',
   WARNINGS: 'Varoitukset',
   GOOD: 'Hyvä',
-  REVIEW: 'Arvioi',
-  ON: 'Päällä',
-  OFF: 'Pois päältä',
-  ALERT_TEXT: 'Hälytys',
+  REVIEW: 'Tarkistettava',
+  ON: 'Käytössä',
+  OFF: 'Ei käytössä',
+  ALERT_TEXT: 'Ilmoitus',
   ALERT_CLOSE: 'Sulje',
   OUTLINE: 'Jäsennys',
   READABILITY_DESC:
-    'Näyttää luettavuuspisteet <strong>Jäsennys</strong>-välilehdellä auttaakseen lukemisen vaikeuden arvioinnissa.',
-  TITLE: 'Otsikko',
+    'Näyttää luettavuuspisteet <strong>Jäsennys</strong>-välilehdellä, mikä auttaa arvioimaan tekstin vaikeustasoa.',
+  TITLE: 'Sivun otsikko',
   ALT: 'ALT',
   IMAGES: 'Kuvat',
   EDIT: 'Muokkaa',
-  NO_IMAGES: 'Ei kuvia löytynyt.',
+  NO_IMAGES: 'Kuvia ei löytynyt.',
   DECORATIVE: 'Koristeellinen',
-  MISSING: 'Puuttuva',
-  PAGE_ISSUES: 'Sivukysymykset',
+  MISSING: 'Puuttuu',
+  PAGE_ISSUES: 'Sivun ongelmat',
   SETTINGS: 'Asetukset',
-  DEVELOPER_CHECKS: 'Kehittäjä tarkistukset',
+  DEVELOPER_CHECKS: 'Kehittäjätarkistukset',
   DEVELOPER_DESC:
-    'Tarkistaa ongelmat, joiden korjaaminen saattaa vaatia koodausosaamista, kuten HTML-attribuutit, lomakkeet ja muut.',
+    'Tarkistaa ongelmia, joiden korjaaminen voi vaatia koodausosaamista, esimerkiksi HTML-attribuuteissa ja lomakkeissa.',
   DARK_MODE: 'Tumma tila',
-  SHORTCUT_SR: 'Siirry aiheeseen. Pikanäppäin: S',
-  SKIP_TO_ISSUE: 'Siirry asiaan',
-  NEW_TAB: 'Avaa uuden välilehden',
-  LINKED: 'Liitetty',
-  PANEL_HEADING: 'Esteettömyyden tarkistus',
+  SHORTCUT_SR: 'Siirry ongelmaan. Pikanäppäin: Alt S',
+  SKIP_TO_ISSUE: 'Siirry ongelmaan',
+  NEW_TAB: 'Avautuu uuteen välilehteen',
+  LINKED: 'Linkitetty',
+  PANEL_HEADING: 'Saavutettavuustarkistus',
   NO_ERRORS_FOUND: 'Virheitä ei löytynyt.',
-  WARNINGS_FOUND: 'varoituksia löytyi.',
-  TOTAL_FOUND: 'löydettyjen ongelmien kokonaismäärä.',
+  WARNINGS_FOUND: 'varoitusta löytyi.',
+  TOTAL_FOUND: 'ongelmaa löytyi yhteensä.',
   NOT_VISIBLE:
-    'Kohde, jota yrität tarkastella, ei ole näkyvissä; se voi olla piilossa tai harmonikka- tai välilehtikomponentin sisällä.',
+    'Kohde ei ole näkyvissä; se voi olla piilotettu tai harmonikka- tai välilehtikomponentin sisällä.',
   MISSING_ROOT:
     'Koko sivun saavutettavuus tarkistettiin, koska kohdealuetta <code>%(root)</code> ei ole olemassa.',
   MISSING_READABILITY_ROOT:
     'Luettavuuspisteytys perustuu sisältöalueeseen <code>%(fallback)</code>, koska kohdealue <code>%(root)</code> ei ole olemassa.',
-  SKIP_TO_PAGE_ISSUES: 'Siirry sivulle Issues',
+  SKIP_TO_PAGE_ISSUES: 'Siirry sivun ongelmiin',
   CONSOLE_ERROR:
-    'Anteeksi, mutta tämän sivun saavutettavuuden tarkistuksessa on ongelma. Voisitko <a href="https://forms.gle/sjzK9XykETaoqZv99">ilmoittaa siitä tällä lomakkeella</a> tai <a href="https://github.com/ryersondmp/sa11y/issues/new?title=Bug%20report">GitHubissa</a>?',
-  APPEARANCE: 'Ulkonäkö',
+    'Valitettavasti saavutettavuuden tarkistimessa on ongelma tällä sivulla. Voisitko <a href="https://forms.gle/sjzK9XykETaoqZv99">ilmoittaa siitä tällä lomakkeella</a> tai <a href="https://github.com/ryersondmp/sa11y/issues/new?title=Bug%20report">GitHubissa</a>?',
+  APPEARANCE: 'Ulkoasu',
   MOVE_PANEL: 'Siirrä paneeli',
   HIDDEN: 'Piilotettu',
 
   // Dismiss
-  PANEL_DISMISS_BUTTON: 'Näytä %(dismissCount) ohitetut',
+  PANEL_DISMISS_BUTTON: 'Näytä ohitetut (%(dismissCount))',
   DISMISS: 'Ohita',
   DISMISS_ALL: 'Ohita kaikki',
   DISMISSED: 'Ohitettu',
   DISMISS_REMINDER:
-    'Huomaa, että varoitukset on vain <strong>väliaikaisesti</strong> ohitettu. Selaushistorian ja evästeiden poistaminen palauttaa kaikki aikaisemmin ohitetut varoitukset kaikilla sivuilla.',
+    'Huomaa, että varoitukset on ohitettu vain <strong>väliaikaisesti</strong>. Selaushistorian ja evästeiden tyhjentäminen palauttaa kaikki aikaisemmin ohitetut varoitukset kaikilla sivuilla.',
 
   // Export
   DATE: 'Päivämäärä',
@@ -167,36 +198,36 @@ const ui = {
   DEUTERANOPIA: 'Deuteranopia',
   TRITANOPIA: 'Tritanopia',
   MONOCHROMACY: 'Monokromaattisuus',
-  COLOUR_FILTER_MESSAGE: 'Tarkista, onko elementtejä vaikea havaita tai erottaa muista väreistä.',
-  RED_EYE: 'Punainen sokea.',
-  GREEN_EYE: 'Vihreä sokea.',
-  BLUE_EYE: 'Sininen sokea.',
-  MONO_EYE: 'Punainen, sininen ja vihreä sokea.',
-  COLOUR_FILTER_HIGH_CONTRAST: 'Värisuodattimet eivät toimi korkean kontrastin tilassa.',
+  COLOUR_FILTER_MESSAGE: 'Etsi elementtejä, joita on vaikea havaita tai erottaa muista väreistä.',
+  RED_EYE: 'Punasokeus.',
+  GREEN_EYE: 'Vihersokeus.',
+  BLUE_EYE: 'Sinisokeus.',
+  MONO_EYE: 'Puna-, viher- ja sinisokeus.',
+  COLOUR_FILTER_HIGH_CONTRAST: 'Värisuodattimet eivät toimi suuren kontrastin tilassa.',
 
   // Readability
   READABILITY: 'Luettavuus',
-  AVG_SENTENCE: 'Keskimääräiset sanat per lause:',
-  COMPLEX_WORDS: 'Monimutkaiset sanat:',
-  TOTAL_WORDS: 'Sanat:',
-  VERY_DIFFICULT: 'Erittäin vaikeaa',
+  AVG_SENTENCE: 'Sanoja lauseessa keskimäärin:',
+  COMPLEX_WORDS: 'Vaikeita sanoja:',
+  TOTAL_WORDS: 'Sanoja:',
+  VERY_DIFFICULT: 'Erittäin vaikea',
   DIFFICULT: 'Vaikea',
-  FAIRLY_DIFFICULT: 'Melko vaikeaa',
+  FAIRLY_DIFFICULT: 'Melko vaikea',
   READABILITY_NOT_ENOUGH: 'Ei tarpeeksi sisältöä luettavuuspisteiden laskemiseksi.',
 };
 
 const tooltip = {
   // Headings
   HEADING_SKIPPED_LEVEL:
-    'Otsikoiden ei tulisi ohittaa tasoja tai hypätä <strong>Otsikosta %(PREV_LEVEL)</strong> <strong {C}>Otsikkoon %(LEVEL)</strong>, koska se häiritsee sisällön järjestystä ja hierarkiaa, mikä tekee siitä vaikeammin seurattavaa. <hr> Jos <strong {C}>%(HEADING)</strong> kuuluu <strong>%(PREV_HEADING)</strong> -osioon, harkitse sen muotoilemista <strong>Otsikko %(LEVEL)</strong> sijaan.',
+    'Otsikoiden ei tulisi ohittaa tasoja tai hypätä <strong>Otsikosta %(PREV_LEVEL)</strong> <strong {C}>Otsikkoon %(LEVEL)</strong>, koska se häiritsee sisällön järjestystä ja hierarkiaa, mikä tekee siitä vaikeammin seurattavaa. <hr> Jos <strong {C}>%(HEADING)</strong> kuuluu <strong>%(PREV_HEADING)</strong> -osioon, harkitse sen muotoilemista sen sijaan tyylillä <strong>Otsikko %(level)</strong>.',
   HEADING_EMPTY:
-    'Tyhjä otsikko löytyi! Korjaa ongelma poistamalla tämä rivi tai muuttamalla sen muoto <strong {C}>otsikko %(level)</strong> muotoon <strong>Normaali</strong> tai <strong>Paragraph</strong>.',
+    'Tyhjä otsikko löytyi! Korjaa ongelma poistamalla tämä rivi tai muuttamalla sen muotoilu tyylistä <strong {C}>Otsikko %(level)</strong> tyyliin <strong>Normaali</strong> tai <strong>Kappale</strong>.',
   HEADING_LONG:
     'Otsikko on pitkä! Otsikoita tulisi käyttää sisällön järjestämiseen ja rakenteen välittämiseen. Niiden tulisi olla lyhyitä, informatiivisia ja ainutlaatuisia. Pidä otsikot alle %(MAX_LENGTH) merkin pituisina (enintään lause). <hr> <strong {B}>%(HEADING_LENGTH) Merkkiä</strong>',
   HEADING_FIRST:
     'Sivun ensimmäisen otsikon tulisi yleensä olla Otsikko 1 tai Otsikko 2. Otsikon 1 tulisi olla pääsisältöosion alku, ja se on pääotsikko, joka kuvaa sivun yleistä tarkoitusta. Lue lisää <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">Otsikon rakenteesta.</a>',
   HEADING_MISSING_ONE:
-    'Puuttuva otsikko 1. Otsikon 1 pitäisi olla pääsisältöalueen alku, ja se on pääotsikko, joka kuvaa sivun yleistä tarkoitusta. Lue lisää <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">Ohjeiden rakenne.</a>',
+    'Puuttuva otsikko 1. Otsikon 1 pitäisi olla pääsisältöalueen alku, ja se on pääotsikko, joka kuvaa sivun yleistä tarkoitusta. Lue lisää <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">otsikkorakenteesta.</a>',
   HEADING_EMPTY_WITH_IMAGE:
     'Otsikossa ei ole tekstiä, mutta se sisältää kuvan. Jos tämä ei ole otsikko, muuta sen muotoa <strong {C}>Otsikko %(level)</strong> muotoon <strong>Normaali</strong> tai <strong>Kappale</strong>. Muussa tapauksessa, lisää alt-teksti kuvaan, jos se ei ole koristeellinen.',
   HEADING_UNPRONOUNCEABLE: 'Otsikkoteksti sisältää vain symboleja tai lausumattomia merkkejä. Jos uskot tämän johtuvan kopiointi-/liittämisvirheestä, harkitse sen poistamista. <hr> <strong {B}>Otsikkoteksti</strong> <strong {C}>%(TEXT)</strong>',
@@ -288,11 +319,11 @@ const tooltip = {
   LABELS_INPUT_RESET:
     'Nollauspainikkeita <strong>ei</strong> tulisi käyttää, ellei niitä erityisesti tarvita, koska ne on helppo aktivoida vahingossa. <hr> <strong>Vinkki!</strong> Lue, miksi <a href="https://www.nngroup.com/articles/reset-and-cancel-buttons/">Reset- ja Cancel-painikkeet aiheuttavat käytettävyysongelmia.</a>',
   LABELS_ARIA_LABEL_INPUT:
-    'Syötteellä on helppokäyttöinen nimi, mutta varmista, että myös merkintä on näkyvissä. <hr> <strong {B}>Saavutettava nimi</strong> <strong {C}>%(TEXT)</strong>',
+    'Syötekentällä on saavutettava nimi, mutta varmista, että sillä on myös näkyvä nimilappu. <hr> <strong {B}>Saavutettava nimi</strong> <strong {C}>%(TEXT)</strong>',
   LABELS_NO_FOR_ATTRIBUTE:
-    'Tähän syötteeseen ei liity nimikettä. Lisää <code>for</code>-attribuutti labeliin, joka vastaa tämän syötteen <code>id</code>:tä. <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>',
+    'Tähän syötteeseen ei liity nimilappua. Lisää nimilappuun <code>for</code>-attribuutti, joka vastaa tämän syötteen <code>id</code>:tä. <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>',
   LABELS_MISSING_LABEL:
-    'Tähän syötteeseen ei liity nimikettä. Lisää tälle syötteelle <code>id</code> ja lisää labeliin vastaava <code>for</code>-attribuutti.',
+    'Tähän syötteeseen ei liity nimilappua. Lisää tälle syötteelle <code>id</code> ja lisää nimilappuun vastaava <code>for</code>-attribuutti.',
   LABELS_PLACEHOLDER:
     'Katoava paikkateksti ansiosta ihmisten on vaikeaa muistaa, mitä tietoa kenttään kuuluu, sekä tunnistaa ja korjata validointiongelmia. Sen sijaan harkitse pysyvän näkyvän vihjeen käyttöä ennen lomakekenttää. <hr> Lue lisää: <a href="https://www.nngroup.com/articles/form-design-placeholders/">Paikkamerkit lomakekentissä ovat haitallisia.</a>',
   ARIA_INPUT_FIELD_NAME: 'ARIA-syöttö- tai kytkinkentältä puuttuu esteetön nimi. Korjaa ongelma antamalla kelvollinen <code>aria-labelledby</code>-, <code>aria-label</code>- tai <code>title</code>-attribuutti. Jos syöte on kytkettävä (esim. valintaruutu, kytkin, valintapainike), myös näkyvän sisäisen tekstin lisääminen ratkaisee tämän. <hr> <strong {B}>Elementti</strong> <pre><code>%(EL)</code></pre>',
@@ -316,23 +347,23 @@ const tooltip = {
     'Huono linkki löytyi. Linkki näyttää osoittavan kehitysympäristöön. <hr> {L} <strong {C}>%(LINK)</strong>',
   QA_IN_PAGE_LINK: 'Rikkoutunut saman sivun linkki. Tämä linkki yrittää navigoida sivun osioon, jota ei löydy. Korjaa ongelma varmistamalla, että linkki vastaa sen elementin <code>id</code>-tunnusta, johon haluat hypätä.',
   QA_STRONG_ITALICS:
-    'Lihavointi- ja kursivointitunnisteilla on semanttinen merkitys, eikä niitä tulisi <strong>ei</strong> käyttää kokonaisten kappaleiden korostamiseen. Lihavoitua tekstiä tulisi käyttää sanan tai lauseen voimakkaaseen <strong>korostamiseen</strong>. Kursivointia tulisi käyttää oikeiden nimien (esim. kirjan ja artikkelin otsikot), vierasperäisten sanojen ja lainausmerkkien korostamiseen. Pitkät lainaukset olisi muotoiltava blokkilainauksiksi.',
+    'Lihavointi- ja kursivointitunnisteilla on semanttinen merkitys, ja niitä <strong>ei</strong> tulisi käyttää kokonaisten kappaleiden korostamiseen. Lihavoitua tekstiä tulisi käyttää sanan tai lauseen voimakkaaseen <strong>korostamiseen</strong>. Kursivointia tulisi käyttää oikeiden nimien (esim. kirjan ja artikkelin otsikot), vierasperäisten sanojen ja lainausmerkkien korostamiseen. Pitkät lainaukset olisi muotoiltava blokkilainauksiksi.',
   QA_PDF:
     'PDF-tiedostojen saavutettavuuden tarkistaminen ei onnistu. PDF-tiedostoja pidetään verkkosisältönä, ja ne on myös saatettava saavutettaviksi. PDF-tiedostoissa on usein ongelmia ruudunlukuohjelmia käyttäville henkilöille (puuttuvat rakennetunnisteet tai lomakekenttien merkinnät) ja heikkonäköisille (teksti ei virtaa uudelleen, kun sitä suurennetaan). <ul><li>Jos kyseessä on lomake, harkitse esteettömän HTML-lomakkeen käyttämistä vaihtoehtona.</li><li>Jos kyseessä on asiakirja, harkitse sen muuntamista verkkosivuksi.</li></ul>Muussa tapauksessa tarkista <a href="https://helpx.adobe.com/acrobat/using/create-verify-pdf-accessibility.html">PDF:n esteettömyys Acrobat DC:ssä.</a>',
   QA_DOCUMENT:
     'Asiakirjan saavutettavuuden tarkistaminen ei onnistu. Linkitettyjä asiakirjoja pidetään verkkosisältönä, ja ne on myös saatettava saavutettaviksi. Tarkista asiakirja manuaalisesti. <ul><li>Muuta <a href="https://support.google.com/docs/answer/6199477?hl=fi">Google Workspace -asiakirjasi tai -esityksesi saavutettavammaksi.</a></li><li>Muuta <a href="https://support.microsoft.com/fi/office/create-accessible-office-documents-868ecfcd-4f00-4224-b881-a65537a7c155">Office-asiakirjasi saavutettavammaksi.</a></li></ul>',
   QA_BLOCKQUOTE:
-    'Onko tämä otsikko? <strong {C}>%(TEXT)</strong> <hr> Lainausmerkkejä tulisi käyttää vain lainausmerkeissä. Jos tämän on tarkoitus olla otsikko, vaihda tämä blockquote semanttiseen otsikkoon (esim. otsikko 2 tai otsikko 3).',
+    'Onko tämä otsikko? <strong {C}>%(TEXT)</strong> <hr> Lainauslohkoja tulisi käyttää vain lainauksiin. Jos tämän on tarkoitus olla otsikko, muuta tämä lainauslohko semanttiseksi otsikoksi (esim. Otsikko 2 tai Otsikko 3).',
   QA_FAKE_HEADING:
     'Onko tämä otsikko? <strong {C}>%(TEXT)</strong> <hr> Lihavoitu tai suuri tekstirivi saattaa näyttää otsikolta, mutta ruudunlukuohjelmaa käyttävä ei voi todeta sitä tärkeäksi tai siirtyä sen sisältöön. Lihavoidun tai ison tekstin ei pitäisi koskaan korvata semanttisia otsikoita (otsikot 2-6).',
   QA_FAKE_LIST:
-    'Yritätkö luoda luettelon? Mahdollinen luettelokohde löytyi: <strong {C}>%(firstPrefix)</strong> <hr> Varmista, että käytät semanttisia luetteloita käyttämällä sen sijaan luettelopainikkeita tai numeromuotoilupainikkeita. Kun käytät semanttista luetteloa, avustavat teknologiat pystyvät välittämään tietoja, kuten kohteiden kokonaismäärän ja kunkin kohteen suhteellisen sijainnin luettelossa. Lisätietoja <a href="https://www.w3.org/WAI/tutorials/page-structure/content/#lists">semanttisista luetteloista.</a>',
+    'Yritätkö luoda luettelon? Mahdollinen luettelokohde löytyi: <strong {C}>%(PREFIX)</strong> <hr> Varmista, että käytät semanttisia luetteloita käyttämällä sen sijaan luettelopainikkeita tai numeromuotoilupainikkeita. Kun käytät semanttista luetteloa, avustavat teknologiat pystyvät välittämään tietoja, kuten kohteiden kokonaismäärän ja kunkin kohteen suhteellisen sijainnin luettelossa. Lisätietoja <a href="https://www.w3.org/WAI/tutorials/page-structure/content/#lists">semanttisista luetteloista.</a>',
   QA_UPPERCASE:
     'Löytyi kaikki suuraakkoset. Jotkin ruudunlukuohjelmat saattavat tulkita isokirjaimellisen tekstin lyhenteeksi ja lukea jokaisen kirjaimen erikseen. Lisäksi joidenkin ihmisten mielestä isokirjaimet ovat vaikeampia lukea, ja ne voivat antaa vaikutelman huutamisesta.',
   QA_UNDERLINE:
-    'Alleviivattu teksti voidaan sekoittaa linkkeihin. Harkitse eri tyylin, kuten <code>&lt;strong&gt;</code><strong>strong importance</strong><code>&lt;/strong&gt;</code> tai <code>&lt;em&gt;</code><em>emphasis</em><code>&lt;/em&gt;</code> käyttöä.',
+    'Alleviivattu teksti voidaan sekoittaa linkkeihin. Harkitse eri tyylin, kuten <code>&lt;strong&gt;</code><strong>vahva korostus</strong><code>&lt;/strong&gt;</code> tai <code>&lt;em&gt;</code><em>korostus</em><code>&lt;/em&gt;</code> käyttöä.',
   QA_SUBSCRIPT:
-    'Ala- ja yläindeksin muotoiluvaihtoehtoja tulisi käyttää vain tekstin sijainnin muuttamiseen typografisten konventioiden tai standardien vuoksi. Niitä <strong>ei</strong> pitäisi käyttää pelkästään esitystarkoituksiin tai ulkoasuun. Kokonaisten lauseiden muotoilu aiheuttaa luettavuusongelmia. Sopivia käyttötapauksia olisivat esimerkiksi eksponenttien, järjestyslukujen, kuten 4<sup>th</sup> neljännen sijasta, ja kemiallisten kaavojen (esim. H<sub>2</sub>O) näyttäminen.',
+    'Ala- ja yläindeksin muotoiluvaihtoehtoja tulisi käyttää vain tekstin sijainnin muuttamiseen typografisten konventioiden tai standardien vuoksi. Niitä <strong>ei</strong> pitäisi käyttää pelkästään esitystarkoituksiin tai ulkoasuun. Kokonaisten lauseiden muotoilu aiheuttaa luettavuusongelmia. Sopivia käyttötapauksia olisivat esimerkiksi eksponenttien, yksiköiden, kuten m<sup>2</sup>, ja kemiallisten kaavojen (esim. H<sub>2</sub>O) näyttäminen.',
   QA_NESTED_COMPONENTS:
     'Vältä interaktiivisten asettelukomponenttien upottamista, kuten akordeonien sijoittamista välilehtiin tai välilehtien sijoittamista akordeoneihin. Tämä voi monimutkaistaa navigointia, lisätä kognitiivista kuormitusta ja johtaa siihen, että ihmiset ohittavat sisällön.',
   QA_JUSTIFY:
@@ -382,12 +413,12 @@ const tooltip = {
 
   // Tables
   TABLES_MISSING_HEADINGS:
-    'Puuttuvat taulukkootsikot! Esteettömät taulukot tarvitsevat HTML-merkintää, joka osoittaa otsikkosolut ja datasolut, jotka määrittelevät niiden välisen suhteen. Tämä tieto antaa kontekstin ihmisille, jotka käyttävät apuvälineteknologiaa. Taulukoita tulisi käyttää vain taulukkomuotoiseen tietoon. <hr> Lisätietoja <a href="https://www.w3.org/WAI/tutorials/tables/">saavutettavista taulukoista.</a>',
+    'Taulukosta puuttuvat otsikkosolut! Esteettömät taulukot tarvitsevat HTML-merkintää, joka osoittaa otsikkosolut ja datasolut, jotka määrittelevät niiden välisen suhteen. Tämä tieto antaa kontekstin ihmisille, jotka käyttävät apuvälineteknologiaa. Taulukoita tulisi käyttää vain taulukkomuotoiseen tietoon. <hr> Lisätietoja <a href="https://www.w3.org/WAI/tutorials/tables/">saavutettavista taulukoista.</a>',
   TABLES_SEMANTIC_HEADING:
-    'Semanttisia otsikoita, kuten Heading 2 tai Heading 3, tulisi käyttää vain sisällön osioissa; <strong>ei</strong> HTML-taulukoissa. Ilmoita taulukkootsikot sen sijaan <code>&lt;th&gt;</code>-elementillä. <hr> Lisätietoja <a href="https://www.w3.org/WAI/tutorials/tables/">saavutettavista taulukoista.</a>',
+    'Semanttisia otsikoita, kuten Otsikko 2 tai Otsikko 3, tulisi käyttää vain sisällön osioiden otsikoina, <strong>ei</strong> HTML-taulukoissa. Merkitse taulukon otsikkosolut sen sijaan <code>&lt;th&gt;</code>-elementillä. <hr> Lisätietoja <a href="https://www.w3.org/WAI/tutorials/tables/">saavutettavista taulukoista.</a>',
   TABLES_EMPTY_HEADING:
-    'Tyhjä taulukkootsikko löytyi! Taulukkootsikoiden ei pitäisi <strong>ei koskaan</strong> olla tyhjiä. On tärkeää nimetä rivi- ja/tai sarakeotsikot, jotta niiden välinen suhde välittyy. Nämä tiedot tarjoavat kontekstin ihmisille, jotka käyttävät apuvälineteknologiaa. Muista, että taulukoita tulisi käyttää vain taulukkomuotoisiin tietoihin. <hr> Lisätietoja <a href="https://www.w3.org/WAI/tutorials/tables/">saavutettavista taulukoista.</a>',
-  TABLES_INVALID_HEADERS_REF: 'Tämä taulukko yrittää yhdistää tietyn tietosolun tiettyyn otsikkosoluun, mutta otsikon tunnusta (ID) ei löydy. Varmista, että jokainen <code>headers</code>-attribuutti vastaa saman taulukon otsikkosolun tunnusta. <hr> <strong {B}>Otsikot</strong> <code>%(VALUE)</code> <hr> <strong>Vinkki!</strong> <a href="https://www.w3.org/WAI/WCAG22/Techniques/html/H43">Manuaalisten ID-viittausten käyttö</a> tietosolujen yhdistämiseksi otsikkosoluihin on monimutkaista ja virhealtista. Jos mahdollista, jaa monimutkaiset tiedot pienempiin taulukoihin, joissa on yksinkertaiset otsikkorivit ja -sarakkeet.',
+    'Tyhjä otsikkosolu löytyi! Otsikkosolujen ei pitäisi <strong>koskaan</strong> olla tyhjiä. On tärkeää nimetä otsikkorivit ja/tai otsikkosarakkeet, jotta niiden välinen suhde välittyy. Nämä tiedot tarjoavat kontekstin ihmisille, jotka käyttävät apuvälineteknologiaa. Muista, että taulukoita tulisi käyttää vain taulukkomuotoisiin tietoihin. <hr> Lisätietoja <a href="https://www.w3.org/WAI/tutorials/tables/">saavutettavista taulukoista.</a>',
+  TABLES_INVALID_HEADERS_REF: 'Tämä taulukko yrittää yhdistää tietyn tietosolun tiettyyn otsikkosoluun, mutta otsikkosolun tunnusta (ID) ei löydy. Varmista, että jokainen <code>headers</code>-attribuutti vastaa saman taulukon otsikkosolun tunnusta. <hr> <strong {B}>Otsikot</strong> <code>%(VALUE)</code> <hr> <strong>Vinkki!</strong> <a href="https://www.w3.org/WAI/WCAG22/Techniques/html/H43">Manuaalisten ID-viittausten käyttö</a> tietosolujen yhdistämiseksi otsikkosoluihin on monimutkaista ja virhealtista. Jos mahdollista, jaa monimutkaiset tiedot pienempiin taulukoihin, joissa on yksinkertaiset otsikkorivit ja -sarakkeet.',
 
   // Contrast
   CONTRAST_NORMAL: 'Normaalikokoisen tekstin tulee olla vähintään %(RATIO) kontrastisuhde.',

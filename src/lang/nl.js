@@ -4,17 +4,20 @@
 const ruleset = {
   SUS_ALT_STOPWORDS: [
     'afbeelding',
-    'grafisch',
-    'afbeelding',
+    'illustratie',
+    'plaatje',
     'foto',
+    'portret',
     'miniatuur',
     'icoon',
+    'pictogram',
     'image',
     'graphic',
     'picture',
     'photo',
     'thumbnail',
     'icon',
+    'portrait',
   ],
   PLACEHOLDER_ALT_STOPWORDS: [
     'alt',
@@ -23,8 +26,11 @@ const ruleset = {
     'afbeelding',
     'image',
     'grafisch',
-    'plaatsvervanger',
-    'plaatsvervangende afbeelding',
+    'plaatshouder',
+    'plaatshouderafbeelding',
+    'foto',
+    'pictogram',
+    'zonder titel',
     'afstandhouder',
     'photo',
     'graphic',
@@ -44,20 +50,28 @@ const ruleset = {
     'homepage feature image',
     'featured image',
     'untitled',
+    'portrait',
+    'slide image',
+    'untitled image',
+    'unnamed',
+    'copy',
+    'undefined',
   ],
   LINK_STOPWORDS: [
-    'klik op',
+    'klik',
     'klik hier',
     'klik hier voor meer',
     'klik hier voor meer informatie',
     'hier klikken',
     'door hier te klikken',
-    'uitchecken',
-    'hier gedetailleerd',
+    'meer details',
+    'download',
     'downloaden',
     'hier downloaden',
-    'te weten komen',
+    'ontdek',
+    'ontdek meer',
     'meer informatie',
+    'meer info',
     'kom meer te weten',
     'meer weten',
     'formulier',
@@ -65,20 +79,16 @@ const ruleset = {
     'info',
     'informatie',
     'link',
-    'leren',
-    'meer leren',
-    'meer informatie',
-    'meer weten',
-    'leren',
     'meer',
     'pagina',
-    'papier',
     'meer lezen',
     'lees meer',
+    'lees verder',
     'lees',
     'lees dit',
     'deze',
     'deze pagina',
+    'deze link',
     'deze website',
     'bekijk',
     'bekijk onze',
@@ -86,7 +96,7 @@ const ruleset = {
     'artikel',
   ],
   CLICK: ['click', 'klik'],
-  NEW_WINDOW_PHRASES: ['extern', 'nieuw tabblad', 'nieuw venster', 'pop-up', 'verschijnen'],
+  NEW_WINDOW_PHRASES: ['extern', 'nieuw tabblad', 'nieuwe tab', 'nieuw venster', 'pop-up', 'popup'],
   FILE_TYPE_PHRASES: [
     'document',
     'rekenblad',
@@ -101,7 +111,7 @@ const ruleset = {
     'audio',
     'pdf',
   ],
-  POTENTIAL_UI_ELEMENTS: ['menu', 'sluiten', 'schakelen', 'openen', 'uitvouwen', 'samenvouwen', 'volgende', 'vorige', 'afspelen', 'pauzeren', 'submenu', 'tonen', 'verbergen', 'dropdown', 'terug', 'vooruit', 'overslaan', 'verzenden', 'annuleren', 'opslaan', 'bewerken', 'verwijderen', 'verwijderen', 'zoeken', 'filteren', 'sorteren', 'stoppen', 'dempen', 'dempen opheffen', 'volledig scherm', 'minimaliseren', 'maximaliseren'],
+  POTENTIAL_UI_ELEMENTS: ['menu', 'sluiten', 'schakelen', 'openen', 'uitvouwen', 'samenvouwen', 'volgende', 'vorige', 'afspelen', 'pauzeren', 'submenu', 'tonen', 'verbergen', 'dropdown', 'terug', 'vooruit', 'overslaan', 'verzenden', 'annuleren', 'opslaan', 'bewerken', 'verwijderen', 'zoeken', 'filteren', 'sorteren', 'stoppen', 'dempen', 'dempen opheffen', 'volledig scherm', 'minimaliseren', 'maximaliseren'],
 };
 
 const ui = {
@@ -116,8 +126,8 @@ const ui = {
   REVIEW: 'Beoordelen',
   ON: 'Aan',
   OFF: 'Uit',
-  ALERT_TEXT: 'Waarschuwing',
-  ALERT_CLOSE: 'Sluit',
+  ALERT_TEXT: 'Melding',
+  ALERT_CLOSE: 'Sluiten',
   OUTLINE: 'Overzicht',
   READABILITY_DESC:
     'Toont de leesbaarheidsscore op het tabblad <strong>Overzicht</strong> om de leesmoeilijkheid te helpen inschatten.',
@@ -128,40 +138,40 @@ const ui = {
   NO_IMAGES: 'Geen afbeeldingen gevonden.',
   DECORATIVE: 'Decoratief',
   MISSING: 'Ontbrekend',
-  PAGE_ISSUES: 'Pagina problemen',
+  PAGE_ISSUES: 'Paginaproblemen',
   SETTINGS: 'Instellingen',
   DEVELOPER_CHECKS: 'Ontwikkelaarscontroles',
   DEVELOPER_DESC:
     'Controleert op problemen die mogelijk programmeerkennis vereisen om op te lossen, zoals HTML-attributen, formulieren en meer.',
   DARK_MODE: 'Donkere modus',
-  SHORTCUT_SR: 'Naar problemen gaan. Sneltoets: Alt S',
-  SKIP_TO_ISSUE: 'Doorgaan naar probleem',
+  SHORTCUT_SR: 'Naar probleem gaan. Sneltoets: Alt S',
+  SKIP_TO_ISSUE: 'Naar probleem gaan',
   NEW_TAB: 'Opent nieuw tabblad',
   LINKED: 'Gekoppeld',
-  PANEL_HEADING: 'Toegankelijkheid controleren',
+  PANEL_HEADING: 'Toegankelijkheidscontrole',
   NO_ERRORS_FOUND: 'Geen fouten gevonden.',
   WARNINGS_FOUND: 'waarschuwingen gevonden.',
-  TOTAL_FOUND: 'totaal aantal gevonden problemen.',
+  TOTAL_FOUND: 'problemen gevonden in totaal.',
   NOT_VISIBLE:
-    'Het item dat je probeert te bekijken is niet zichtbaar; het kan verborgen zijn of in een accordeon of tabbladcomponent zitten.',
+    'Het item is niet zichtbaar; het is mogelijk verborgen of staat in een accordeon- of tabbladcomponent.',
   MISSING_ROOT:
     'De volledige pagina is gecontroleerd op toegankelijkheid omdat het doelgebied <code>%(root)</code> niet bestaat.',
   MISSING_READABILITY_ROOT:
     'De leesbaarheidsscore is gebaseerd op het inhoudsgebied <code>%(fallback)</code>, omdat het doelgebied <code>%(root)</code> niet bestaat.',
-  SKIP_TO_PAGE_ISSUES: 'Doorgaan naar paginaproblemen',
+  SKIP_TO_PAGE_ISSUES: 'Naar paginaproblemen gaan',
   CONSOLE_ERROR:
     'Sorry, maar er is een probleem met de toegankelijkheidscontrole op deze pagina. Kunt u dit alstublieft <a href="https://forms.gle/sjzK9XykETaoqZv99">melden via dit formulier</a> of op <a href="https://github.com/ryersondmp/sa11y/issues/new?title=Bug%20report">GitHub</a>?',
-  APPEARANCE: 'Uiterlijk',
-  MOVE_PANEL: 'Verplaats paneel',
+  APPEARANCE: 'Weergave',
+  MOVE_PANEL: 'Paneel verplaatsen',
   HIDDEN: 'Verborgen',
 
   // Dismiss
-  PANEL_DISMISS_BUTTON: 'Toon %(dismissCount) afgewezen',
-  DISMISS: 'Afwijzen',
-  DISMISS_ALL: 'Alles afwijzen',
-  DISMISSED: 'Afgewezen',
+  PANEL_DISMISS_BUTTON: 'Genegeerde items tonen (%(dismissCount))',
+  DISMISS: 'Negeren',
+  DISMISS_ALL: 'Alles negeren',
+  DISMISSED: 'Genegeerd',
   DISMISS_REMINDER:
-    "Let op dat waarschuwingen alleen <strong>tijdelijk</strong> worden afgewezen. Het wissen van uw browsergeschiedenis en cookies zal alle eerder afgewezen waarschuwingen op alle pagina's herstellen.",
+    "Let op: waarschuwingen worden slechts <strong>tijdelijk</strong> genegeerd. Als u uw browsergeschiedenis en cookies wist, worden alle eerder genegeerde waarschuwingen op alle pagina's hersteld.",
 
   // Export
   DATE: 'Datum',
@@ -175,12 +185,12 @@ const ui = {
 
   // Colour filters
   COLOUR_FILTER: 'Kleurenfilter',
-  PROTANOPIA: 'Protanopia',
-  DEUTERANOPIA: 'Deuteranopia',
-  TRITANOPIA: 'Tritanopia',
-  MONOCHROMACY: 'Monochromie',
+  PROTANOPIA: 'Protanopie',
+  DEUTERANOPIA: 'Deuteranopie',
+  TRITANOPIA: 'Tritanopie',
+  MONOCHROMACY: 'Monochromasie',
   COLOUR_FILTER_MESSAGE:
-    'Controleer op elementen die moeilijk zijn waar te nemen of te onderscheiden van andere kleuren.',
+    'Controleer op elementen die moeilijk waar te nemen of van andere kleuren te onderscheiden zijn.',
   RED_EYE: 'Roodblindheid.',
   GREEN_EYE: 'Groenblindheid.',
   BLUE_EYE: 'Blauwblindheid.',
@@ -203,16 +213,16 @@ const tooltip = {
   HEADING_SKIPPED_LEVEL:
     'Koppen mogen geen niveaus overslaan of van <strong>Kop %(PREV_LEVEL)</strong> naar <strong {C}>Kop %(LEVEL)</strong> springen, omdat dit de volgorde en hiërarchie van de inhoud verstoort, waardoor het moeilijker te volgen is. <hr> Als <strong {C}>%(HEADING)</strong> onder de sectie <strong>%(PREV_HEADING)</strong> valt, overweeg dan om het in plaats daarvan als een <strong>Kop %(LEVEL)</strong> op te maken.',
   HEADING_EMPTY:
-    'Lege koptekst gevonden! Om dit op te lossen, verwijdert u deze regel of wijzigt u de opmaak van <strong {C}>Heading %(level)</strong> in <strong>normaal</strong> of <strong>paragraaf</strong>.',
+    'Lege kop gevonden! Om dit op te lossen, verwijdert u deze regel of wijzigt u de opmaak van <strong {C}>Kop %(level)</strong> in <strong>Normaal</strong> of <strong>Paragraaf</strong>.',
   HEADING_LONG:
     'Koppen zijn lang! Koppen moeten worden gebruikt om inhoud te organiseren en structuur over te brengen. Ze moeten kort, informatief en uniek zijn. Houd koppen onder de %(MAX_LENGTH) tekens (niet meer dan een zin). <hr> <strong {B}>%(HEADING_LENGTH) Tekens</strong>',
   HEADING_FIRST:
-    'De eerste kop op een pagina moet meestal een Kop 1 of Kop 2 zijn. Kop 1 moet het begin zijn van het hoofdgedeelte van de inhoud en is de belangrijkste kop die het algemene doel van de pagina beschrijft. Meer informatie over <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">Koppenstructuur.</a>',
+    'De eerste kop op een pagina moet meestal een Kop 1 of Kop 2 zijn. Kop 1 moet het begin zijn van het hoofdgedeelte van de inhoud en is de belangrijkste kop die het algemene doel van de pagina beschrijft. Meer informatie over <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">koppenstructuur.</a>',
   HEADING_MISSING_ONE:
-    'Ontbrekende kop 1. Kop 1 moet het begin zijn van het hoofdgedeelte van de inhoud en is de belangrijkste kop die het algemene doel van de pagina beschrijft. Meer informatie over <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">Koppenstructuur.</a>',
+    'Ontbrekende kop 1. Kop 1 moet het begin zijn van het hoofdgedeelte van de inhoud en is de belangrijkste kop die het algemene doel van de pagina beschrijft. Meer informatie over <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">koppenstructuur.</a>',
   HEADING_EMPTY_WITH_IMAGE:
-    'Een kop heeft geen tekst, maar bevat een afbeelding. Als dit geen koptekst is, verander de opmaak dan van <strong {C}>Koptekst %(level)</strong> in <strong>Normaal</strong> of <strong>Paragraaf</strong>. Voeg anders alt-tekst toe aan de afbeelding als deze niet decoratief is.',
-  HEADING_UNPRONOUNCEABLE: 'De koptekst bevat alleen symbolen of onuitspreekbare tekens. Als u denkt dat dit een fout is door een kopieer-/plakfout, overweeg dan om deze te verwijderen. <hr> <strong {B}>Koptekst</strong> <strong {C}>%(TEXT)</strong>',
+    'Een kop heeft geen tekst, maar bevat een afbeelding. Als dit geen kop is, verander de opmaak dan van <strong {C}>Kop %(level)</strong> in <strong>Normaal</strong> of <strong>Paragraaf</strong>. Voeg anders alt-tekst toe aan de afbeelding als deze niet decoratief is.',
+  HEADING_UNPRONOUNCEABLE: 'De kop bevat alleen symbolen of onuitspreekbare tekens. Als u denkt dat dit een fout is door een kopieer-/plakfout, overweeg dan om deze te verwijderen. <hr> <strong {B}>Tekst van kop</strong> <strong {C}>%(TEXT)</strong>',
   PANEL_HEADING_MISSING_ONE: 'Kop 1 ontbreekt!',
   PANEL_NO_HEADINGS: 'Geen koppen gevonden.',
 
@@ -221,17 +231,17 @@ const tooltip = {
   LINK_EMPTY_LABELLEDBY:
     'De link heeft een waarde voor <code>aria-labelledby</code> die leeg is of niet overeenkomt met de waarde van het attribuut <code>id</code> van een ander element op de pagina.',
   LINK_EMPTY_NO_LABEL:
-    'Link heeft geen leesbare tekst die zichtbaar is voor schermlezers en andere ondersteunende technologie. Op te lossen: <ul><li>Voeg beknopte tekst toe die beschrijft waar de koppeling naartoe leidt.</li><li>Als het een <a href="https://a11y-101.com/development/icons-and-links">icon link of SVG,</a> is, ontbreekt waarschijnlijk een beschrijvend label.</li><li>Als u denkt dat deze koppeling een fout is als gevolg van een copy/paste-bug, kunt u overwegen deze te verwijderen.</li></ul>',
+    'Link heeft geen leesbare tekst die zichtbaar is voor schermlezers en andere ondersteunende technologie. Op te lossen: <ul><li>Voeg beknopte tekst toe die beschrijft waar de koppeling naartoe leidt.</li><li>Als het een <a href="https://a11y-101.com/development/icons-and-links">pictogramlink of SVG</a> is, ontbreekt waarschijnlijk een beschrijvend label.</li><li>Als u denkt dat deze koppeling een fout is als gevolg van een kopieer-/plakfout, kunt u overwegen deze te verwijderen.</li></ul>',
   LINK_STOPWORD:
     'De linktekst is mogelijk niet beschrijvend genoeg buiten de context: <strong {C}>%(ERROR)</strong>',
   LINK_STOPWORD_ARIA:
-    'Overweeg, hoewel een toegankelijke naam is gebruikt, de zichtbare linktekst te verandren. Zinnen zoals &quot;<strong {C}>%(ERROR)</strong>&quot; zijn niet betekenisvol.',
+    'Overweeg, hoewel een toegankelijke naam is gebruikt, de zichtbare linktekst te veranderen. Zinnen zoals &quot;<strong {C}>%(ERROR)</strong>&quot; zijn niet betekenisvol.',
   LINK_TIP:
     '<hr> <strong>Tip!</strong> Gebruik duidelijke en unieke linkteksten die de bestemming van de link beschrijven, meestal de titel van de pagina of het document.',
   LINK_CLICK_HERE:
     'De uitdrukking "klik" of "klik hier" legt de nadruk op muisgebruik, terwijl veel mensen geen muis gebruiken of deze website op een mobiel apparaat bekijken. Overweeg een ander werkwoord te gebruiken dat gerelateerd is aan de taak.',
   DUPLICATE_TITLE:
-    'Het <code>title</code>-attribuut op links en afbeeldingen is bedoeld om extra informatie te geven en moet <strong>verschillend</strong> zijn van de tekst of alt-tekst. De titeltekst verschijnt wanneer je over een element zweeft, maar is niet toegankelijk met een toetsenbord of touch-input. Overweeg <a href="https://www.a11yproject.com/posts/title-attributes/">het title-attribuut volledig te vermijden.</a>',
+    'Het <code>title</code>-attribuut op links en afbeeldingen is bedoeld om extra informatie te geven en moet <strong>verschillend</strong> zijn van de tekst of alt-tekst. De titeltekst verschijnt wanneer u over een element zweeft, maar is niet toegankelijk met een toetsenbord of touch-input. Overweeg <a href="https://www.a11yproject.com/posts/title-attributes/">het title-attribuut volledig te vermijden.</a>',
   LINK_SYMBOLS:
     'Vermijd het gebruik van symbolen als oproepen tot actie in linktekst, tenzij ze verborgen zijn voor ondersteunende technologieën. Schermlezers kunnen de symbolen hardop voorlezen, wat verwarrend kan zijn. Overweeg ze te verwijderen: <strong {C}>%(ERROR)</strong>',
   LINK_URL:
@@ -241,10 +251,10 @@ const tooltip = {
   LINK_NEW_TAB:
     'Link opent in een nieuw tabblad of venster zonder waarschuwing. Dit kan desoriënterend zijn, vooral voor mensen die moeite hebben met het waarnemen van visuele inhoud. Ten tweede is het niet altijd een goede gewoonte om iemands ervaring te controleren of beslissingen voor hem te nemen. Geef in de tekst van de koppeling aan dat deze in een nieuw venster wordt geopend. <hr> <strong>Tip!</strong> Leer de beste werkwijzen: <a href="https://www.nngroup.com/articles/new-browser-windows-and-tabs/">links openen in nieuwe browservensters en tabbladen.</a>',
   LINK_FILE_EXT:
-    'Link verwijst naar een PDF of downloadbaar bestand (bijv. MP3, Zip, Word Doc) zonder waarschuwing. Vermeld het bestandstype in de linktekst. Als het een groot bestand is, kun je overwegen de bestandsgrootte te vermelden. <hr> <strong>Voorbeeld:</strong> Uitvoerend rapport (PDF, 3 MB)',
+    'Link verwijst naar een PDF of downloadbaar bestand (bijv. MP3, Zip, Word Doc) zonder waarschuwing. Vermeld het bestandstype in de linktekst. Als het een groot bestand is, kunt u overwegen de bestandsgrootte te vermelden. <hr> <strong>Voorbeeld:</strong> Uitvoerend rapport (PDF, 3 MB)',
   LINK_IDENTICAL_NAME: 'Meerdere links op deze pagina gebruiken dezelfde tekst, maar verwijzen naar verschillende locaties. Dit kan verwarrend zijn voor gebruikers van ondersteunende technologieën. Maak deze linktekst beschrijvender om dit op te lossen.',
   LINK_UNPRONOUNCEABLE:
-    'Linktekst bevat alleen symbolen. Als je denkt dat deze link een fout is door een kopieer-/plakfout, overweeg dan om deze te verwijderen.',
+    'Linktekst bevat alleen symbolen. Als u denkt dat deze link een fout is door een kopieer-/plakfout, overweeg dan om deze te verwijderen.',
 
   // Images
   ALT_UNPRONOUNCEABLE:
@@ -256,7 +266,7 @@ const tooltip = {
   MISSING_ALT_LINK:
     'Afbeelding wordt gebruikt als link maar alt-tekst ontbreekt! Zorg ervoor dat de alt-tekst beschrijft waar de link naartoe leidt.',
   MISSING_ALT:
-    'Ontbrekende alt-tekst! Als de afbeelding een verhaal, sfeer of belangrijke informatie overbrengt, zorg er dan voor dat je de afbeelding beschrijft.',
+    'Ontbrekende alt-tekst! Als de afbeelding een verhaal, sfeer of belangrijke informatie overbrengt, zorg er dan voor dat u de afbeelding beschrijft.',
   LINK_ALT_FILE_EXT:
     'Alternatieve tekst mag geen bestandsextensies of afbeeldingsdimensies bevatten. Zorg ervoor dat de alt-tekst de bestemming van de link beschrijft en niet een letterlijke beschrijving van de afbeelding. Verwijderen: <strong {C}>%(ERROR)</strong>. <hr> {L} {ALT} <strong {C}>%(ALT_TEXT)</strong>',
   LINK_PLACEHOLDER_ALT:
@@ -264,7 +274,7 @@ const tooltip = {
   LINK_SUS_ALT:
     'Hulptechnologieën geven al aan dat het om een afbeelding gaat, dus &quot;<strong {C}>%(ERROR)</strong>&quot; kan overbodig zijn. Zorg ervoor dat de alt-tekst de bestemming van de link beschrijft en niet een letterlijke beschrijving van de afbeelding. <hr> {L} {ALT} <strong {C}>%(ALT_TEXT)</strong>',
   ALT_FILE_EXT:
-    'Alternatieve tekst mag geen bestandsextensies of afbeeldingsdimensies bevatten. Als de afbeelding een verhaal, stemming of belangrijke informatie overbrengt, zorg er dan voor dat je de afbeelding beschrijft. Verwijderen: <strong {C}>%(ERROR)</strong> <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
+    'Alternatieve tekst mag geen bestandsextensies of afbeeldingsdimensies bevatten. Als de afbeelding een verhaal, stemming of belangrijke informatie overbrengt, zorg er dan voor dat u de afbeelding beschrijft. Verwijderen: <strong {C}>%(ERROR)</strong> <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
   ALT_PLACEHOLDER:
     'Niet-beschrijvende of plaatshouder alt-tekst gevonden. Vervang de volgende alt-tekst door iets dat meer betekenis heeft. <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
   SUS_ALT:
@@ -274,11 +284,11 @@ const tooltip = {
   LINK_IMAGE_TEXT:
     'Afbeelding is gemarkeerd als decoratief, hoewel de link de omringende tekst gebruikt als beschrijvend label.',
   LINK_IMAGE_LONG_ALT:
-    'Alt-tekstbeschrijving op een gekoppelde afbeelding is <strong>te lang</strong>. De alt-tekst op gelinkte afbeeldingen moet beschrijven waar de link je naartoe brengt, niet een letterlijke beschrijving van de afbeelding. <strong>Overweeg om de titel van de pagina waarnaar wordt gelinkt als alt-tekst te gebruiken.</strong> <hr> {L} {ALT} <strong {B}>%(altLength) Tekens</strong> <strong {C}>%(ALT_TEXT)</strong>',
+    'Alt-tekstbeschrijving op een gekoppelde afbeelding is <strong>te lang</strong>. De alt-tekst op gelinkte afbeeldingen moet beschrijven waar de link naartoe leidt, niet een letterlijke beschrijving van de afbeelding. <strong>Overweeg om de titel van de pagina waarnaar wordt gelinkt als alt-tekst te gebruiken.</strong> <hr> {L} {ALT} <strong {B}>%(altLength) Tekens</strong> <strong {C}>%(ALT_TEXT)</strong>',
   LINK_IMAGE_ALT:
-    'De link naar de afbeelding bevat alt-tekst. <strong>Beschrijft de alt-tekst waar de link je naartoe brengt?</strong> Overweeg om de titel van de pagina waarnaar wordt gelinkt als alt-tekst te gebruiken. <hr> {L} {ALT} <strong {C}>%(ALT_TEXT)</strong>',
+    'De link naar de afbeelding bevat alt-tekst. <strong>Beschrijft de alt-tekst waar de link naartoe leidt?</strong> Overweeg om de titel van de pagina waarnaar wordt gelinkt als alt-tekst te gebruiken. <hr> {L} {ALT} <strong {C}>%(ALT_TEXT)</strong>',
   LINK_IMAGE_ALT_AND_TEXT:
-    'Afbeeldingslink bevat <strong>zowel alt-tekst als omringende tekst.</strong>Als deze afbeelding decoratief is en wordt gebruikt als een functionele link naar een andere pagina, overweeg dan om de afbeelding als decoratief of null te markeren - de omringende linktekst zou moeten volstaan. <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong> <hr> <strong {B}>Toegankelijk naam</strong> {L} <strong {C}>%(TEXT)</strong>',
+    'Afbeeldingslink bevat <strong>zowel alt-tekst als omringende tekst.</strong> Als deze afbeelding decoratief is en wordt gebruikt als een functionele link naar een andere pagina, overweeg dan om de afbeelding als decoratief of null te markeren - de omringende linktekst zou moeten volstaan. <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong> <hr> <strong {B}>Toegankelijke naam</strong> {L} <strong {C}>%(TEXT)</strong>',
   IMAGE_FIGURE_DECORATIVE:
     'Afbeelding is gemarkeerd als <strong>decoratief</strong> en wordt genegeerd door ondersteunende technologie. <hr> Hoewel er een <strong>bijschrift</strong> is opgegeven, moet de afbeelding in de meeste gevallen ook een alt-tekst hebben. <ul><li>De alt-tekst moet een beknopte beschrijving geven van wat er in de afbeelding staat.</li><li>Het bijschrift moet meestal context bieden om de afbeelding te relateren aan de omringende inhoud, of de aandacht vestigen op een bepaald stukje informatie.</li></ul> Lees meer: <a href="https://thoughtbot.com/blog/alt-vs-figcaption#the-figcaption-element">alt versus figcaption.</a>',
   IMAGE_FIGURE_DUPLICATE_ALT:
@@ -299,15 +309,15 @@ const tooltip = {
   LABELS_MISSING_IMAGE_INPUT:
     'Bij de afbeeldingsknop ontbreekt alt-tekst. Voeg alt-tekst toe om een toegankelijke naam te geven. Bijvoorbeeld: <em>Zoeken</em> of <em>Verzenden</em>.',
   LABELS_INPUT_RESET:
-    'Resetknoppen moeten <strong>niet</strong> worden gebruikt tenzij ze specifiek nodig zijn, omdat ze gemakkelijk per ongeluk kunnen worden geactiveerd. <hr> <strong>Tip!</strong>Lees waarom <a href="https://www.nngroup.com/articles/reset-and-cancel-buttons/">Reset- en annuleerknoppen bruikbaarheidsproblemen opleveren.</a>',
+    'Resetknoppen moeten <strong>niet</strong> worden gebruikt tenzij ze specifiek nodig zijn, omdat ze gemakkelijk per ongeluk kunnen worden geactiveerd. <hr> <strong>Tip!</strong> Lees waarom <a href="https://www.nngroup.com/articles/reset-and-cancel-buttons/">Reset- en annuleerknoppen bruikbaarheidsproblemen opleveren.</a>',
   LABELS_ARIA_LABEL_INPUT:
     'De invoer heeft een toegankelijke naam, maar zorg ervoor dat er ook een zichtbaar label is. <hr> <strong {B}>Toegankelijke naam</strong> <strong {C}>%(TEXT)</strong>',
   LABELS_NO_FOR_ATTRIBUTE:
-    'Er is geen label gekoppeld aan deze ingang. Voeg een <code>for</code>-attribuut toe aan het label dat overeenkomt met de <code>id</code> van deze ingang. <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>',
+    'Er is geen label gekoppeld aan dit invoerveld. Voeg een <code>for</code>-attribuut toe aan het label dat overeenkomt met de <code>id</code> van dit invoerveld. <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>',
   LABELS_MISSING_LABEL:
-    'Er is geen label gekoppeld aan deze ingang. Voeg een <code>id</code> toe aan deze invoer en voeg een overeenkomend <code>for</code> attribuut toe aan het label.',
+    'Er is geen label gekoppeld aan dit invoerveld. Voeg een <code>id</code> toe aan dit invoerveld en voeg een overeenkomend <code>for</code>-attribuut toe aan het label.',
   LABELS_PLACEHOLDER:
-    'Verdwijnen van placeholdertekst maakt het moeilijk voor mensen om te onthouden welke informatie in een veld thuishoort en maakt het uitdagend om fouten te identificeren en te corrigeren. Overweeg in plaats daarvan om een permanent zichtbare hint voor het formulier veld te gebruiken. <hr> Leer meer: <a href="https://www.nngroup.com/articles/form-design-placeholders/">Plaatsvervangers in formulier velden zijn schadelijk.</a>',
+    'Verdwijnen van placeholdertekst maakt het moeilijk voor mensen om te onthouden welke informatie in een veld thuishoort en maakt het uitdagend om fouten te identificeren en te corrigeren. Overweeg in plaats daarvan om een permanent zichtbare hint voor het formulierveld te gebruiken. <hr> Meer informatie: <a href="https://www.nngroup.com/articles/form-design-placeholders/">plaatshouders in formuliervelden zijn schadelijk.</a>',
   ARIA_INPUT_FIELD_NAME: 'ARIA-invoerveld of schakelveld mist een toegankelijke naam. Om dit op te lossen, moet u een geldig <code>aria-labelledby</code>, <code>aria-label</code> of <code>title</code> attribuut opgeven. Als de invoer schakelbaar is (bijv. selectievakje, schakelaar, keuzerondje), lost het toevoegen van zichtbare innerlijke tekst dit ook op. <hr> <strong {B}>Element</strong> <pre><code>%(EL)</code></pre>',
 
   // Embedded content
@@ -335,17 +345,17 @@ const tooltip = {
   QA_DOCUMENT:
     'Kan document niet controleren op toegankelijkheid. Gekoppelde documenten worden beschouwd als webinhoud en moeten ook toegankelijk worden gemaakt. Controleer dit document handmatig. <ul><li>Maak uw <a href="https://support.google.com/docs/answer/6199477?hl=nl">Google Workspace-document of presentatie toegankelijker.</a></li><li>Maak uw <a href="https://support.microsoft.com/nl/office/create-accessible-office-documents-868ecfcd-4f00-4224-b881-a65537a7c155">Office-documenten toegankelijker.</a></li></ul>',
   QA_BLOCKQUOTE:
-    'Is dit een koptekst? <strong {C}>%(TEXT)</strong> <hr> Blokcitaten moeten alleen worden gebruikt voor citaten. Als dit bedoeld is als een koptekst, verander dit blokcitaat dan in een semantische koptekst (bijvoorbeeld koptekst 2 of koptekst 3).',
+    'Is dit een kop? <strong {C}>%(TEXT)</strong> <hr> Blokcitaten moeten alleen worden gebruikt voor citaten. Als dit bedoeld is als een kop, verander dit blokcitaat dan in een semantische kop (bijvoorbeeld Kop 2 of Kop 3).',
   QA_FAKE_HEADING:
-    'Is dit een koptekst? <strong {C}>%(TEXT)</strong> <hr> Een regel vette of grote tekst ziet er misschien uit als een kop, maar iemand die een schermlezer gebruikt, kan niet zien dat het belangrijk is of naar de inhoud springen. Vette of grote tekst mag nooit semantische koppen vervangen (Kop 2 tot en met Kop 6).',
+    'Is dit een kop? <strong {C}>%(TEXT)</strong> <hr> Een regel vette of grote tekst ziet er misschien uit als een kop, maar iemand die een schermlezer gebruikt, kan niet zien dat het belangrijk is of naar de inhoud springen. Vette of grote tekst mag nooit semantische koppen vervangen (Kop 2 tot en met Kop 6).',
   QA_FAKE_LIST:
-    'Probeer je een lijst te maken? Mogelijk lijstitem gevonden: <strong {C}>%(firstPrefix)</strong> <hr> Zorg ervoor dat je semantische lijsten gebruikt door in plaats daarvan de opsommingsteken- of nummeropmaakknoppen te gebruiken. Als je een semantische lijst gebruikt, kunnen hulptechnologieën informatie overbrengen zoals het totale aantal items en de relatieve positie van elk item in de lijst. Meer informatie over <a href="https://www.w3.org/WAI/tutorials/page-structure/content/#lists">semantische lijsten.</a>',
+    'Probeert u een lijst te maken? Mogelijk lijstitem gevonden: <strong {C}>%(PREFIX)</strong> <hr> Zorg ervoor dat u semantische lijsten gebruikt door in plaats daarvan de opsommingsteken- of nummeropmaakknoppen te gebruiken. Als u een semantische lijst gebruikt, kunnen hulptechnologieën informatie overbrengen zoals het totale aantal items en de relatieve positie van elk item in de lijst. Meer informatie over <a href="https://www.w3.org/WAI/tutorials/page-structure/content/#lists">semantische lijsten.</a>',
   QA_UPPERCASE:
     'Allemaal hoofdletters gevonden. Sommige schermlezers interpreteren tekst met allemaal hoofdletters als een acroniem en lezen elke letter apart. Bovendien vinden sommige mensen allemaal hoofdletters moeilijker te lezen en kan het lijken alsof ze SCHREEUWEN.',
   QA_UNDERLINE:
-    'Onderstreepte tekst kan worden verward met links. Overweeg een andere stijl te gebruiken, zoals <code>&lt;strong&gt;</code><strong>strong importance</strong><code>&lt;/strong&gt;</code> of <code>&lt;em&gt;</code><em>emphasis</em><code>&lt;/em&gt;</code>.',
+    'Onderstreepte tekst kan worden verward met links. Overweeg een andere stijl te gebruiken, zoals <code>&lt;strong&gt;</code><strong>sterke nadruk</strong><code>&lt;/strong&gt;</code> of <code>&lt;em&gt;</code><em>nadruk</em><code>&lt;/em&gt;</code>.',
   QA_SUBSCRIPT:
-    'De opmaakopties subscript en superscript mogen alleen worden gebruikt om de positie van tekst te wijzigen voor typografische afspraken of standaarden. Het moet <strong>niet</strong> alleen worden gebruikt voor presentatie of uiterlijk. Het formatteren van hele zinnen geeft problemen met de leesbaarheid. Voorbeelden van geschikte toepassingen zijn het weergeven van exponenten, rangtelwoorden zoals 4<sup>th</sup> in plaats van vier, en chemische formules (bijv. H<sub>2</sub>O).',
+    'De opmaakopties subscript en superscript mogen alleen worden gebruikt om de positie van tekst te wijzigen voor typografische afspraken of standaarden. Het moet <strong>niet</strong> alleen worden gebruikt voor presentatie of uiterlijk. Het formatteren van hele zinnen geeft problemen met de leesbaarheid. Voorbeelden van geschikte toepassingen zijn het weergeven van exponenten, rangtelwoorden zoals 4<sup>e</sup> in plaats van vierde, en chemische formules (bijv. H<sub>2</sub>O).',
   QA_NESTED_COMPONENTS:
     'Vermijd het inbedden van interactieve lay-out componenten, zoals het plaatsen van accordeons binnen accordeons of tabbladen binnen accordeons en omgekeerd. Dit kan de navigatie compliceren, de cognitieve belasting verhogen en ertoe leiden dat mensen inhoud over het hoofd zien.',
   QA_JUSTIFY:
@@ -355,20 +365,20 @@ const tooltip = {
 
   // Shared
   LINK_TEXT: '<strong {B}>Linktekst</strong> <strong {C}>%(TEXT)</strong>',
-  ACC_NAME: '<strong {B}>Toegankelijk naam</strong> <strong {C}>%(TEXT)</strong>',
+  ACC_NAME: '<strong {B}>Toegankelijke naam</strong> <strong {C}>%(TEXT)</strong>',
   ACC_NAME_TIP: '<hr><strong>Tip!</strong> De "toegankelijke naam" is het definitieve label dat wordt gecommuniceerd naar mensen die ondersteunende technologie gebruiken. Dit helpt hen het doel van het element te begrijpen.',
   HIDDEN_FOCUSABLE: 'Dit element kan toetsenbordfocus ontvangen, maar is verborgen voor schermlezers door een <code>aria-hidden="true"</code> attribuut (op zichzelf of een bovenliggende container). Om dit op te lossen, verwijdert u het aria-hidden attribuut of verwijdert u het element uit de tabvolgorde. <hr> <strong {B}>Element</strong> <pre><code>%(EL)</code></pre> <hr> Lees meer over het <a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes/aria-hidden">aria-hidden attribuut.</a>',
 
   // Developer
   DUPLICATE_ID:
-    '<strong>Duplicate ID</strong> gevonden. Het is bekend dat dubbele ID-fouten problemen veroorzaken voor hulptechnologieën wanneer deze proberen te communiceren met inhoud. Verwijder of wijzig de volgende ID. <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>',
+    '<strong>Dubbele ID</strong> gevonden. Het is bekend dat dubbele ID-fouten problemen veroorzaken voor hulptechnologieën wanneer deze proberen te communiceren met inhoud. Verwijder of wijzig de volgende ID. <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>',
   UNCONTAINED_LI:
     'Alle <code>&lt;li&gt;</code> lijstitems moeten worden geplaatst binnen <code>&lt;ul&gt;</code> ongeordende of <code>&lt;ol&gt;</code> geordende elementen. Deze structuur helpt schermlezers om de lijst en de items ervan nauwkeurig aan te kondigen.',
   TABINDEX_ATTR: 'Het element mag geen <code>tabindex</code>-attribuut groter dan 0 hebben.',
 
   // Meta checks
   META_LANG:
-    'Pagina taal niet aangegeven! Gelieve <a href="https://www.w3.org/International/questions/qa-html-language-declarations">declareer taal in HTML-tag.</a>',
+    'Paginataal niet opgegeven! <a href="https://www.w3.org/International/questions/qa-html-language-declarations">Geef de taal op in de HTML-tag.</a>',
   META_TITLE:
     'Er ontbreekt een paginatitel! Geef een <a href="https://developer.mozilla.org/nl/docs/Web/HTML/Element/title">paginatitel.</a>',
   META_SCALABLE:
@@ -389,8 +399,8 @@ const tooltip = {
   BTN_ROLE_IN_NAME:
     'Gebruik het woord "knop" niet in de naam van een knop. Schermlezers vermelden al de rol van een element naast de naam.',
   LABEL_IN_NAME:
-    'De zichtbare tekst voor dit element lijkt te verschillen van de toegankelijke naam, wat verwarring kan veroorzaken voor gebruikers van ondersteunende technologieën. Controleer alstublieft: <hr> <strong {B}>Tekst</strong> <strong {C}>%(TEXT)</strong> <hr> <strong {B}>Toegankelijke Naam</strong> <strong {C}>%(TEXT)</strong>',
-  LINK_MAYBE_BUTTON: 'Deze link heeft een ongeldig doel. Hoewel de toegankelijke naam of de attributen ervan suggereren dat dit misschien helemaal geen link is, maar in plaats daarvan gescript gedrag op de pagina aanstuurt. Vervang de link door een <a href="https://www.w3.org/WAI/ARIA/apg/patterns/button/">toegankelijke knop</a> om dit op te lossen, of corrigeer de bestemming van de link. <hr> <strong {B}>Toegankelijke naam</strong> <strong {C}>%(TEXT)</strong> <hr> <strong>Tip!</strong> Ondersteunende technologieën behandelen knoppen und links anders. Het gebruik van het juiste HTML-element zorgt ervoor dat gebruikers weten welke sneltoetsen ze moeten gebruiken en welke actie wordt geactiveerd.',
+    'De zichtbare tekst voor dit element lijkt te verschillen van de toegankelijke naam, wat verwarring kan veroorzaken voor gebruikers van ondersteunende technologieën. Controleer alstublieft: <hr> <strong {B}>Tekst</strong> <strong {C}>%(TEXT)</strong> <hr> <strong {B}>Toegankelijke naam</strong> <strong {C}>%(TEXT)</strong>',
+  LINK_MAYBE_BUTTON: 'Deze link heeft een ongeldig doel. Hoewel de toegankelijke naam of de attributen ervan suggereren dat dit misschien helemaal geen link is, maar in plaats daarvan gescript gedrag op de pagina aanstuurt. Vervang de link door een <a href="https://www.w3.org/WAI/ARIA/apg/patterns/button/">toegankelijke knop</a> om dit op te lossen, of corrigeer de bestemming van de link. <hr> <strong {B}>Toegankelijke naam</strong> <strong {C}>%(TEXT)</strong> <hr> <strong>Tip!</strong> Ondersteunende technologieën behandelen knoppen en links anders. Het gebruik van het juiste HTML-element zorgt ervoor dat gebruikers weten welke sneltoetsen ze moeten gebruiken en welke actie wordt geactiveerd.',
 
   // Tables
   TABLES_MISSING_HEADINGS:
@@ -398,8 +408,8 @@ const tooltip = {
   TABLES_SEMANTIC_HEADING:
     'Semantische koppen zoals Kop 2 of Kop 3 mogen alleen worden gebruikt voor gedeelten van de inhoud; <strong>niet</strong> in HTML-tabellen. Geef tabelkoppen aan met het <code>&lt;th&gt;</code>-element. <hr> Meer informatie over <a href="https://www.w3.org/WAI/tutorials/tables/">toegankelijke tabellen.</a>',
   TABLES_EMPTY_HEADING:
-    'Lege tabelheader gevonden! Tabelkoppen mogen <strong>nooit</strong> leeg zijn. Het is belangrijk om rij- en/of kolomkoppen aan te geven om hun relatie duidelijk te maken. Deze informatie geeft context aan mensen die ondersteunende technologie gebruiken. Houd in gedachten dat tabellen alleen mogen worden gebruikt voor gegevens in tabelvorm. <hr> Meer informatie over <a href="https://www.w3.org/WAI/tutorials/tables/">toegankelijke tabellen.</a>',
-  TABLES_INVALID_HEADERS_REF: 'Deze tabel probeert een specifieke datacel te labelen met een specifieke kopcel, maar de kop-ID kan niet worden gevonden. Zorg ervoor dat elk <code>headers</code>-attribuut overeenkomt met de ID van een kopcel in dezelfde tabel. <hr> <strong {B}>Koppen</strong> <code>%(VALUE)</code> <hr> <strong>Tip!</strong> Het <a href="https://www.w3.org/WAI/WCAG22/Techniques/html/H43">gebruik van handmatige ID-verwijzingen</a> om datacellen te koppelen aan kopcellen is ingewikkeld en foutgevoelig. Splits complexe gegevens indien mogelijk op in kleinere tabellen met eenvoudige koprijen en -kolommen.',
+    'Lege tabelkop gevonden! Tabelkoppen mogen <strong>nooit</strong> leeg zijn. Het is belangrijk om rij- en/of kolomkoppen aan te geven om hun relatie duidelijk te maken. Deze informatie geeft context aan mensen die ondersteunende technologie gebruiken. Houd in gedachten dat tabellen alleen mogen worden gebruikt voor gegevens in tabelvorm. <hr> Meer informatie over <a href="https://www.w3.org/WAI/tutorials/tables/">toegankelijke tabellen.</a>',
+  TABLES_INVALID_HEADERS_REF: 'Deze tabel probeert een specifieke datacel te labelen met een specifieke kopcel, maar de ID van de kopcel kan niet worden gevonden. Zorg ervoor dat elk <code>headers</code>-attribuut overeenkomt met de ID van een kopcel in dezelfde tabel. <hr> <strong {B}>Kopcellen</strong> <code>%(VALUE)</code> <hr> <strong>Tip!</strong> Het <a href="https://www.w3.org/WAI/WCAG22/Techniques/html/H43">gebruik van handmatige ID-verwijzingen</a> om datacellen te koppelen aan kopcellen is ingewikkeld en foutgevoelig. Splits complexe gegevens indien mogelijk op in kleinere tabellen met eenvoudige koprijen en -kolommen.',
 
   // Contrast
   CONTRAST_NORMAL:

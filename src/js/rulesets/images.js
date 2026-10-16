@@ -20,10 +20,15 @@ const url = [
   'http',
 ];
 
+// Scripts written without spaces between words.
+const noSpaceScript = /[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}]/u;
+
 // Utility function to process alt text for stop words.
 const containsAltTextStopWords = (alt) => {
-  const altLowerCase = Utils.removeWhitespace(alt).toLowerCase();
-  const altOnlyLetters = Utils.removeWhitespace(altLowerCase.replace(/[^\p{L}\s]/gu, ''));
+  // Folded like the localized stop word lists (see Utils.foldForMatching).
+  const altLowerCase = Utils.foldForMatching(Utils.removeWhitespace(alt));
+  // Keep combining marks (\p{M}): in scripts such as Tamil they are part of the letters.
+  const altOnlyLetters = Utils.removeWhitespace(altLowerCase.replace(/[^\p{L}\p{M}\s]/gu, ''));
   const hit = [null, null, null];
 
   // 1) URL hit.
@@ -52,12 +57,20 @@ const containsAltTextStopWords = (alt) => {
     wordsToCheck = [...allWords.slice(0, 2), ...allWords.slice(-1)];
   } else {
     // Fallback for older browsers that do not support Segmenter API.
-    const altOnlyLetters = Utils.removeWhitespace(altLowerCase.replace(/[^\p{L}\s]/gu, ''));
+    const altOnlyLetters = Utils.removeWhitespace(altLowerCase.replace(/[^\p{L}\p{M}\s]/gu, ''));
     const allWords = altOnlyLetters.split(/\s+/).filter(Boolean);
     wordsToCheck = [...allWords.slice(0, 2), ...allWords.slice(-1)];
   }
+  // Chinese and Japanese have no spaces, and Intl.Segmenter may split a stop word such as
+  // 缩略图 or アイコン into smaller words. For those, also check the start and end of the alt.
+  const altNoSpaces = altOnlyLetters.replace(/\s/g, '');
   for (const word of Constants.Global.susAltWords) {
-    if (wordsToCheck.includes(word)) {
+    const foldedWord = Utils.foldForMatching(word);
+    if (
+      wordsToCheck.includes(foldedWord) ||
+      (noSpaceScript.test(foldedWord) &&
+        (altNoSpaces.startsWith(foldedWord) || altNoSpaces.endsWith(foldedWord)))
+    ) {
       hit[1] = word;
       break;
     }

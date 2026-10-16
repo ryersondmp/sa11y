@@ -4,14 +4,17 @@
 const ruleset = {
   SUS_ALT_STOPWORDS: [
     'bilde',
-    'grafisk',
+    'bildet',
+    'grafikk',
     'foto',
+    'ikon',
     'image',
     'graphic',
     'picture',
     'photo',
     'thumbnail',
     'icon',
+    'portrait',
   ],
   PLACEHOLDER_ALT_STOPWORDS: [
     'alt',
@@ -23,7 +26,10 @@ const ruleset = {
     'graphic',
     'plassholder',
     'plassholderbilde',
-    'avstandsstykke',
+    'grafikk',
+    'ikon',
+    'uten tittel',
+    'ingen tittel',
     'chart',
     'decorative',
     'placeholder',
@@ -40,50 +46,67 @@ const ruleset = {
     'homepage feature image',
     'featured image',
     'untitled',
+    'portrait',
+    'slide image',
+    'untitled image',
+    'unnamed',
+    'copy',
+    'undefined',
   ],
   LINK_STOPWORDS: [
-    'klikk på',
+    'klikk',
     'klikk her',
     'klikk her for mer informasjon',
+    'klikk her for å lese mer',
     'ved å klikke her',
     'sjekk ut',
     'beskrevet her',
+    'oppdag',
     'nedlasting',
+    'last ned',
     'last ned her',
-    'finne ut',
+    'utforsk',
+    'finn ut',
     'finn ut mer',
     'skjema',
     'her',
     'info',
     'informasjon',
     'lenke',
-    'lære',
-    'lære mer',
+    'lær',
+    'lær mer',
     'få vite mer',
     'les mer',
-    'lære å',
+    'lær å',
     'mer',
+    'se mer',
     'side',
     'papir',
-    'lese',
+    'les',
+    'les her',
     'les dette',
     'dette',
     'denne siden',
+    'denne lenken',
     'dette nettstedet',
-    'visning',
+    'denne nettsiden',
+    'dette skjemaet',
+    'se',
+    'se her',
     'se vår',
+    'se våre',
     'nettsted',
+    'nettside',
     'artikkel',
   ],
   CLICK: ['click', 'klikk'],
-  NEW_WINDOW_PHRASES: ['ekstern', 'ny fane', 'nytt vindu', 'pop-up', 'dukker opp'],
+  NEW_WINDOW_PHRASES: ['ekstern', 'ny fane', 'nytt vindu', 'pop-up', 'popup', 'dukker opp'],
   FILE_TYPE_PHRASES: [
     'dokument',
     'regneark',
     'kalkulasjonsark',
     'komprimert fil',
     'arkivert fil',
-    'regneark',
     'powerpoint',
     'presentasjon',
     'installasjon',
@@ -91,7 +114,7 @@ const ruleset = {
     'lyd',
     'pdf',
   ],
-  POTENTIAL_UI_ELEMENTS: ['meny', 'lukk', 'veksle', 'åpne', 'utvid', 'skjul', 'neste', 'forrige', 'spill av', 'pause', 'undermeny', 'vis', 'skjul', 'rullegardin', 'tilbake', 'fremover', 'hopp over', 'send inn', 'avbryt', 'lagre', 'rediger', 'slett', 'fjern', 'søk', 'filter', 'sorter', 'stopp', 'demp', 'opphev demping', 'fullskjerm', 'minimer', 'maksimer'],
+  POTENTIAL_UI_ELEMENTS: ['meny', 'lukk', 'veksle', 'åpne', 'utvid', 'neste', 'forrige', 'spill av', 'pause', 'undermeny', 'vis', 'skjul', 'rullegardin', 'tilbake', 'fremover', 'hopp over', 'send inn', 'avbryt', 'lagre', 'rediger', 'slett', 'fjern', 'søk', 'filter', 'sorter', 'stopp', 'demp', 'opphev demping', 'fullskjerm', 'minimer', 'maksimer'],
 };
 
 const ui = {
@@ -103,10 +126,10 @@ const ui = {
   WARNING: 'Advarsel',
   WARNINGS: 'Advarsler',
   GOOD: 'Bra',
-  REVIEW: 'Vurdering',
+  REVIEW: 'Se gjennom',
   ON: 'På',
   OFF: 'Av',
-  ALERT_TEXT: 'Varsling',
+  ALERT_TEXT: 'Varsel',
   ALERT_CLOSE: 'Lukk',
   OUTLINE: 'Struktur',
   READABILITY_DESC:
@@ -118,20 +141,20 @@ const ui = {
   NO_IMAGES: 'Ingen bilder funnet.',
   DECORATIVE: 'Dekorativ',
   MISSING: 'Mangler',
-  PAGE_ISSUES: 'Side Problemer',
+  PAGE_ISSUES: 'Sideproblemer',
   SETTINGS: 'Innstillinger',
   DEVELOPER_CHECKS: 'Utviklerkontroller',
   DEVELOPER_DESC:
-    'Sjekker etter problemer som kan kreve kodingkunnskaper for å fikse, for eksempel HTML-attributter, skjemaer og mer.',
+    'Sjekker etter problemer som kan kreve kodekunnskaper for å fikse, for eksempel HTML-attributter, skjemaer og mer.',
   DARK_MODE: 'Mørk modus',
-  SHORTCUT_SR: 'Gå til utgaven. Snarvei til tastaturet: Alt S',
-  SKIP_TO_ISSUE: 'Gå til utgaven',
+  SHORTCUT_SR: 'Gå til problem. Tastatursnarvei: Alt S',
+  SKIP_TO_ISSUE: 'Gå til problem',
   NEW_TAB: 'Åpner ny fane',
-  LINKED: 'Koblet',
+  LINKED: 'Lenket',
   PANEL_HEADING: 'Tilgjengelighetskontroll',
   NO_ERRORS_FOUND: 'Ingen feil funnet.',
   WARNINGS_FOUND: 'advarsler funnet.',
-  TOTAL_FOUND: 'totalt antall problemer funnet.',
+  TOTAL_FOUND: 'problemer funnet totalt.',
   NOT_VISIBLE:
     'Elementet du prøver å se, er ikke synlig; det kan være skjult eller inne i en trekkspill- eller fanekomponent.',
   MISSING_ROOT:
@@ -146,12 +169,12 @@ const ui = {
   HIDDEN: 'Skjult',
 
   // Dismiss
-  PANEL_DISMISS_BUTTON: 'Vis %(dismissCount) avviste',
+  PANEL_DISMISS_BUTTON: 'Vis avviste (%(dismissCount))',
   DISMISS: 'Avvis',
-  DISMISS_ALL: 'Avvis alt',
+  DISMISS_ALL: 'Avvis alle',
   DISMISSED: 'Avvist',
   DISMISS_REMINDER:
-    'Vennligst merk at advarsler kun er <strong>midlertidig</strong> avvist. Å tømme nettleserens historie og informasjonskapsler vil gjenopprette alle tidligere avviste advarsler på alle sider.',
+    'Merk at advarsler bare er <strong>midlertidig</strong> avvist. Hvis du tømmer nettleserloggen og informasjonskapslene, gjenopprettes alle tidligere avviste advarsler på alle sider.',
 
   // Export
   DATE: 'Dato',
@@ -167,15 +190,15 @@ const ui = {
   COLOUR_FILTER: 'Fargefilter',
   PROTANOPIA: 'Protanopi',
   DEUTERANOPIA: 'Deuteranopi',
-  TRITANOPIA: 'Tritanopia',
-  MONOCHROMACY: 'Monokromi',
+  TRITANOPIA: 'Tritanopi',
+  MONOCHROMACY: 'Monokromasi',
   COLOUR_FILTER_MESSAGE:
     'Se etter elementer som er vanskelige å oppfatte eller skille fra andre farger.',
-  RED_EYE: 'Rød blind.',
-  GREEN_EYE: 'Grønn persienne.',
-  BLUE_EYE: 'Blå persienne.',
-  MONO_EYE: 'Rød, blå og grønn blind.',
-  COLOUR_FILTER_HIGH_CONTRAST: 'Fargefiltre fungerer ikke i modus for høy kontrast.',
+  RED_EYE: 'Rødblind.',
+  GREEN_EYE: 'Grønnblind.',
+  BLUE_EYE: 'Blåblind.',
+  MONO_EYE: 'Totalt fargeblind.',
+  COLOUR_FILTER_HIGH_CONTRAST: 'Fargefiltre fungerer ikke i høykontrastmodus.',
 
   // Readability
   READABILITY: 'Lesbarhet',
@@ -201,7 +224,7 @@ const tooltip = {
   HEADING_MISSING_ONE:
     'Manglende overskrift 1. Overskrift 1 skal være starten på hovedinnholdsområdet, og er hovedoverskriften som beskriver det overordnede formålet med siden. Les mer om <a href="https://www.w3.org/WAI/tutorials/page-structure/headings/">Overskriftsstruktur.</a>',
   HEADING_EMPTY_WITH_IMAGE:
-    'Overskrift har ingen tekst, men inneholder et bilde. Hvis dette ikke er en overskrift, endrer du formatet fra <strong {C}>Overskrift %(level)</strong> til <strong>Normal</strong> eller <strong>Avsnitt</strong>. Ellers kan du legge til alt-tekst til bildet hvis det ikke er dekorativt.',
+    'Overskriften har ingen tekst, men inneholder et bilde. Hvis dette ikke er en overskrift, endrer du formatet fra <strong {C}>Overskrift %(level)</strong> til <strong>Normal</strong> eller <strong>Avsnitt</strong>. Ellers kan du legge til alt-tekst til bildet hvis det ikke er dekorativt.',
   HEADING_UNPRONOUNCEABLE: 'Overskriftsteksten inneholder bare symboler eller utalbare tegn. Hvis du tror dette er en feil som skyldes en kopier/lim inn-feil, bør du vurdere å slette den. <hr> <strong {B}>Overskriftstekst</strong> <strong {C}>%(TEXT)</strong>',
   PANEL_HEADING_MISSING_ONE: 'Manglende overskrift 1!',
   PANEL_NO_HEADINGS: 'Ingen overskrifter funnet.',
@@ -250,7 +273,7 @@ const tooltip = {
   LINK_ALT_FILE_EXT:
     'Alternativ tekst bør ikke inkludere filendelser eller bildestørrelser. Sørg for at alt-teksten beskriver målet for lenken, ikke en bokstavelig beskrivelse av bildet. Fjern dette: <strong {C}>%(ERROR)</strong>. <hr> {L} {ALT} <strong {C}>%(ALT_TEXT)</strong>',
   LINK_PLACEHOLDER_ALT:
-    'Alt-tekst uten beskrivelse eller plassholder i et lenket bilde funnet. Sørg for at alt-teksten beskriver målet for lenken, ikke en bokstavelig beskrivelse av bildet. Erstatt følgende alt-tekst:. <hr> {L} {ALT} <strong {C}>%(ALT_TEXT)</strong>',
+    'Alt-tekst uten beskrivelse eller plassholder i et lenket bilde funnet. Sørg for at alt-teksten beskriver målet for lenken, ikke en bokstavelig beskrivelse av bildet. Erstatt følgende alt-tekst. <hr> {L} {ALT} <strong {C}>%(ALT_TEXT)</strong>',
   LINK_SUS_ALT:
     'Hjelpemidler indikerer allerede at dette er et bilde, så &quot;<strong {C}>%(ERROR)</strong>&quot; kan være overflødig. Sørg for at alt-teksten beskriver målet for lenken, ikke en bokstavelig beskrivelse av bildet. <hr> {L} {ALT} <strong {C}>%(ALT_TEXT)</strong>',
   ALT_FILE_EXT:
@@ -289,7 +312,7 @@ const tooltip = {
   LABELS_MISSING_IMAGE_INPUT:
     'Bildeknappen mangler alt-tekst. Legg til alt-tekst for å gi et tilgjengelig navn. For eksempel: <em>Søk</em> eller <em>Send</em>.',
   LABELS_INPUT_RESET:
-    'Tilbakestillingsknapper bør <strong>ikke</strong> brukes med mindre det er spesifikt behov for dem, fordi de lett kan aktiveres ved en feiltakelse. <hr> <strong>Tips!</strong> Les mer om hvorfor <a href="https://www.nngroup.com/articles/reset-and-cancel-buttons/">Reset- og Cancel-knapper er problematiske for brukervennligheten.',
+    'Tilbakestillingsknapper bør <strong>ikke</strong> brukes med mindre det er spesifikt behov for dem, fordi de lett kan aktiveres ved en feiltakelse. <hr> <strong>Tips!</strong> Les mer om hvorfor <a href="https://www.nngroup.com/articles/reset-and-cancel-buttons/">Reset- og Cancel-knapper er problematiske for brukervennligheten.</a>',
   LABELS_ARIA_LABEL_INPUT:
     'Inndataene har et tilgjengelig navn, men sørg for at de også har en synlig etikett. <hr> <strong {B}>Tilgjengelig navn</strong> <strong {C}>%(TEXT)</strong>',
   LABELS_NO_FOR_ATTRIBUTE:
@@ -297,7 +320,7 @@ const tooltip = {
   LABELS_MISSING_LABEL:
     'Det er ingen etikett knyttet til denne inndataen. Legg til et <code>id</code> til denne inndataen, og legg til et matchende <code>for</code>-attributt til etiketten.',
   LABELS_PLACEHOLDER:
-    'Forsvinner plassholdertekst gjør det vanskelig for folk å huske hvilken informasjon som hører til et felt, og gjør det utfordrende å identifisere og korrigere feil. Vurder i stedet å bruke et permanent synlig hint før skjema feltet. <hr> Lær mer: <a href="https://www.nngroup.com/articles/form-design-placeholders/">Plassholdere i skjema felt er skadelige.</a>',
+    'Forsvinnende plassholdertekst gjør det vanskelig for folk å huske hvilken informasjon som hører til et felt, og gjør det utfordrende å identifisere og korrigere feil. Vurder i stedet å bruke et permanent synlig hint før skjemafeltet. <hr> Lær mer: <a href="https://www.nngroup.com/articles/form-design-placeholders/">Plassholdere i skjemafelt er skadelige.</a>',
   ARIA_INPUT_FIELD_NAME: 'ARIA-innfeltet eller bryterfeltet mangler et tilgjengelig navn. For å fikse dette, må du oppgi et gyldig <code>aria-labelledby</code>-, <code>aria-label</code>- eller <code>title</code>-attributt. Hvis inndataene kan veksles (f.eks. avmerkingsboks, bryter, radioknapp), vil det å legge til synlig indre tekst også løse dette. <hr> <strong {B}>Element</strong> <pre><code>%(EL)</code></pre>',
 
   // Embedded content
@@ -312,7 +335,7 @@ const tooltip = {
   EMBED_GENERAL:
     'Kunne ikke sjekke innebygd innhold. Kontroller at bilder har alt-tekst, videoer har bildetekster, tekst har tilstrekkelig kontrast og interaktive komponenter er <a href="https://webaim.org/techniques/keyboard/">tilgjengelige via tastaturet.</a>',
   EMBED_UNFOCUSABLE:
-    '<code>&lt;iframe&gt;</code> med ikke-fokuserbare elementer bør ikke ha <code>tabindex="-1"</code>. Den innebygde innholdet vil ikke være tilgjengelig med tastaturet.',
+    '<code>&lt;iframe&gt;</code> med ikke-fokuserbare elementer bør ikke ha <code>tabindex="-1"</code>. Det innebygde innholdet vil ikke være tilgjengelig med tastaturet.',
 
   // QA
   QA_BAD_LINK:
@@ -327,19 +350,19 @@ const tooltip = {
   QA_BLOCKQUOTE:
     'Er dette en overskrift? <strong {C}>%(TEXT)</strong> <hr> Blokksitater skal kun brukes til sitater. Hvis dette er ment å være en overskrift, endrer du blokksitatet til en semantisk overskrift (f.eks. Overskrift 2 eller Overskrift 3).',
   QA_FAKE_HEADING:
-    'Er dette en overskrift? <strong {C}>%(TEXT)</strong> <hr> En linje med fet eller stor tekst kan se ut som en overskrift, men en person som bruker skjermleser, kan ikke se at den er viktig eller hoppe til innholdet. Fet eller stor tekst bør aldri erstatte semantiske overskrifter (overskrift 2 til overskrift 6).',
+    'Er dette en overskrift? <strong {C}>%(TEXT)</strong> <hr> En linje med fet eller stor tekst kan se ut som en overskrift, men en person som bruker skjermleser, kan ikke se at den er viktig eller hoppe til innholdet. Fet eller stor tekst bør aldri erstatte semantiske overskrifter (Overskrift 2 til Overskrift 6).',
   QA_FAKE_LIST:
-    'Prøver du å opprette en liste? Mulig listeelement funnet: <strong {C}>%(firstPrefix)</strong> <hr> Sørg for å bruke semantiske lister ved å bruke knappene for punkt- eller tallformatering i stedet. Når du bruker en semantisk liste, kan hjelpemidler formidle informasjon som det totale antallet elementer og den relative posisjonen til hvert element i listen. Finn ut mer om <a href="https://www.w3.org/WAI/tutorials/page-structure/content/#lists">semantiske lister.</a>',
+    'Prøver du å opprette en liste? Mulig listeelement funnet: <strong {C}>%(PREFIX)</strong> <hr> Sørg for å bruke semantiske lister ved å bruke knappene for punkt- eller tallformatering i stedet. Når du bruker en semantisk liste, kan hjelpemidler formidle informasjon som det totale antallet elementer og den relative posisjonen til hvert element i listen. Finn ut mer om <a href="https://www.w3.org/WAI/tutorials/page-structure/content/#lists">semantiske lister.</a>',
   QA_UPPERCASE:
     'Fant store bokstaver. Noen skjermlesere kan tolke tekst med store bokstaver som et akronym og vil lese hver bokstav for seg. I tillegg synes noen at store bokstaver er vanskeligere å lese, og det kan gi inntrykk av at man roper.',
   QA_UNDERLINE:
-    'Understreket tekst kan forveksles med lenker. Vurder å bruke en annen stil, for eksempel <code>&lt;strong&gt;</code><strong>strong importance</strong><code>&lt;/strong&gt;</code> eller <code>&lt;em&gt;</code><em>emphasis</em><code>&lt;/em&gt;</code>.',
+    'Understreket tekst kan forveksles med lenker. Vurder å bruke en annen stil, for eksempel <code>&lt;strong&gt;</code><strong>viktig tekst</strong><code>&lt;/strong&gt;</code> eller <code>&lt;em&gt;</code><em>uthevet tekst</em><code>&lt;/em&gt;</code>.',
   QA_SUBSCRIPT:
-    'Formateringsalternativene subscript og superscript skal bare brukes til å endre plasseringen av tekst i henhold til typografiske konvensjoner eller standarder. De bør <strong>ikke</strong> brukes utelukkende til presentasjons- eller utseendeformål. Formatering av hele setninger gir problemer med lesbarheten. Det kan for eksempel være aktuelt å vise eksponenter, ordenstall som 4<sup>th</sup> i stedet for fjerde, og kjemiske formler (f.eks. H<sub>2</sub>O).',
+    'Formateringsalternativene senket og hevet skrift skal bare brukes til å endre plasseringen av tekst i henhold til typografiske konvensjoner eller standarder. De bør <strong>ikke</strong> brukes utelukkende til presentasjons- eller utseendeformål. Formatering av hele setninger gir problemer med lesbarheten. Det kan for eksempel være aktuelt å vise eksponenter, enheter som m<sup>2</sup> og kjemiske formler (f.eks. H<sub>2</sub>O).',
   QA_NESTED_COMPONENTS:
     'Unngå å legge interaktive layoutkomponenter inne i hverandre, for eksempel å plassere akordeoner i faner eller faner i akordeoner. Dette kan komplisere navigasjonen, øke den kognitive belastningen og føre til at folk overser innhold.',
   QA_JUSTIFY:
-    'Unngå å bruke rettet tekst, som justeres både til venstre og høyre marg. Dette kan være vanskelig for noen å lese på grunn av ujevne mellomrom mellom ordene. Bruk venstrejustert tekst for bedre lesbarhet.',
+    'Unngå å bruke blokkjustert tekst, som justeres både til venstre og høyre marg. Dette kan være vanskelig for noen å lese på grunn av ujevne mellomrom mellom ordene. Bruk venstrejustert tekst for bedre lesbarhet.',
   QA_SMALL_TEXT:
     'Liten tekst er vanskeligere å lese, spesielt for de med dårlig syn. For å sikre bedre lesbarhet, unngå å bruke skrifttyper mindre enn standard.',
 
@@ -379,21 +402,21 @@ const tooltip = {
   BTN_ROLE_IN_NAME:
     'Ikke inkluder ordet "knapp" i navnet på en knapp. Skjermlesere kunngjør allerede elementets rolle i tillegg til navnet.',
   LABEL_IN_NAME:
-    'Den synlige teksten for dette elementet ser ut til å være forskjellig fra det tilgjengelige navnet, noe som kan føre til forvirring for brukere av hjelpemiddelsteknologi. Vennligst sjekk: <hr> <strong {B}>Tekst</strong> <strong {C}>%(TEXT)</strong> <hr> <strong {B}>Tilgjengelig Navn</strong> <strong {C}>%(TEXT)</strong>',
-  LINK_MAYBE_BUTTON: 'Denne lenken har et ugyldig mål. Selv om det tilgjengelige navnet eller dets attributter antyder at dette kanskje ikke er en lenke i det hele tatt, men i stedet kontrollerer skriptet oppførsel på siden. For å fikse dette, erstatt lenken med en <a href="https://www.w3.org/WAI/ARIA/apg/patterns/button/">tilgjengelig knapp</a>, eller korriger lenkens destinasjon. <hr> <strong {B}>Tilgjengelig navn</strong> <strong {C}>%(TEXT)</strong> <hr> <strong>Tips!</strong> Hjelpemidler behandler knapper og lenker forskjellig. Bruk af riktig HTML-element sikrer at brukere vet hvilke tastatursnarveier de skal bruke og hvilken handling som vil bli utløst.',
+    'Den synlige teksten for dette elementet ser ut til å være forskjellig fra det tilgjengelige navnet, noe som kan føre til forvirring for brukere av hjelpemiddelteknologi. Vennligst sjekk: <hr> <strong {B}>Tekst</strong> <strong {C}>%(TEXT)</strong> <hr> <strong {B}>Tilgjengelig navn</strong> <strong {C}>%(TEXT)</strong>',
+  LINK_MAYBE_BUTTON: 'Denne lenken har et ugyldig mål. Selv om det tilgjengelige navnet eller dets attributter antyder at dette kanskje ikke er en lenke i det hele tatt, men i stedet kontrollerer skriptet oppførsel på siden. For å fikse dette, erstatt lenken med en <a href="https://www.w3.org/WAI/ARIA/apg/patterns/button/">tilgjengelig knapp</a>, eller korriger lenkens destinasjon. <hr> <strong {B}>Tilgjengelig navn</strong> <strong {C}>%(TEXT)</strong> <hr> <strong>Tips!</strong> Hjelpemidler behandler knapper og lenker forskjellig. Bruk av riktig HTML-element sikrer at brukere vet hvilke tastatursnarveier de skal bruke og hvilken handling som vil bli utløst.',
 
   // Tables
   TABLES_MISSING_HEADINGS:
     'Manglende tabelloverskrifter! Universelt utformede tabeller trenger HTML-merking som angir overskriftsceller og dataceller, og som definerer forholdet mellom dem. Denne informasjonen gir kontekst til personer som bruker hjelpemidler. Tabeller bør kun brukes til tabelldata. <hr> Les mer om <a href="https://www.w3.org/WAI/tutorials/tables/">tilgjengelige tabeller.</a>',
   TABLES_SEMANTIC_HEADING:
-    'Semantiske overskrifter som overskrift 2 eller overskrift 3 skal bare brukes til innholdsseksjoner, <strong>ikke</strong> i HTML-tabeller. Angi tabelloverskrifter ved hjelp av <code>&lt;th&gt;</code>-elementet i stedet. <hr> Les mer om <a href="https://www.w3.org/WAI/tutorials/tables/">tilgjengelige tabeller.</a>',
+    'Semantiske overskrifter som Overskrift 2 eller Overskrift 3 skal bare brukes til innholdsseksjoner, <strong>ikke</strong> i HTML-tabeller. Angi tabelloverskrifter ved hjelp av <code>&lt;th&gt;</code>-elementet i stedet. <hr> Les mer om <a href="https://www.w3.org/WAI/tutorials/tables/">tilgjengelige tabeller.</a>',
   TABLES_EMPTY_HEADING:
     'Tom tabelloverskrift funnet! Tabelloverskrifter skal <strong>aldri</strong> være tomme. Det er viktig å utpeke rad- og/eller kolonneoverskrifter for å vise sammenhengen mellom dem. Denne informasjonen gir kontekst til personer som bruker hjelpemidler. Husk at tabeller kun skal brukes til tabelldata. <hr> Finn ut mer om <a href="https://www.w3.org/WAI/tutorials/tables/">tilgjengelige tabeller.</a>',
-  TABLES_INVALID_HEADERS_REF: 'Denne tabellen forsøker å koble en spesifikk datacelle til en spesifikk overskriftscelle, men overskrifts-ID-en ble ikke funnet. Kontroller at hvert <code>headers</code>-attributt samsvarer med ID-en til en overskriftscelle i samme tabell. <hr> <strong {B}>Overskrifter</strong> <code>%(VALUE)</code> <hr> <strong>Tips!</strong> <a href="https://www.w3.org/WAI/WCAG22/Techniques/html/H43">Bruk av manuelle ID-referanser</a> for å koble dataceller til overskriftsceller er komplisert og sårbart. Når det er mulig, bør du dele opp komplekse data i mindre tabeller med enkle overskriftsrader og -kolonner.',
+  TABLES_INVALID_HEADERS_REF: 'Denne tabellen forsøker å koble en spesifikk datacelle til en spesifikk overskriftscelle, men overskrifts-ID-en ble ikke funnet. Kontroller at hvert <code>headers</code>-attributt samsvarer med ID-en til en overskriftscelle i samme tabell. <hr> <strong {B}>Overskriftsceller</strong> <code>%(VALUE)</code> <hr> <strong>Tips!</strong> <a href="https://www.w3.org/WAI/WCAG22/Techniques/html/H43">Bruk av manuelle ID-referanser</a> for å koble dataceller til overskriftsceller er komplisert og sårbart. Når det er mulig, bør du dele opp komplekse data i mindre tabeller med enkle overskriftsrader og -kolonner.',
 
   // Contrast
-  CONTRAST_NORMAL: 'Tekst i normal størrelse bør ha en kontrastforhold på minst %(RATIO).',
-  CONTRAST_LARGE: 'Tekst i stor størrelse bør ha en kontrastforhold på minst %(RATIO).',
+  CONTRAST_NORMAL: 'Tekst i normal størrelse bør ha et kontrastforhold på minst %(RATIO).',
+  CONTRAST_LARGE: 'Tekst i stor størrelse bør ha et kontrastforhold på minst %(RATIO).',
   CONTRAST_ERROR:
     'Teksten har ikke tilstrekkelig kontrast mot bakgrunnen, noe som gjør den vanskelig å lese.',
   CONTRAST_WARNING:
@@ -415,7 +438,7 @@ const tooltip = {
   CONTRAST_INPUT:
     'Tekst i dette inputfeltet har ikke tilstrekkelig kontrast mot bakgrunnen, noe som gjør den vanskelig å lese.',
   CONTRAST: 'Kontrast',
-  UNKNOWN: 'Ukendt',
+  UNKNOWN: 'Ukjent',
   FG: 'Forgrunn',
   BG: 'Bakgrunn',
   NO_SUGGESTION:
