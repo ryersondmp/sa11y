@@ -20,15 +20,10 @@ const url = [
   'http',
 ];
 
-// Scripts written without spaces between words.
-const noSpaceScript = /[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}]/u;
-
 // Utility function to process alt text for stop words.
 const containsAltTextStopWords = (alt) => {
-  // Folded like the localized stop word lists (see Utils.foldForMatching).
-  const altLowerCase = Utils.foldForMatching(Utils.removeWhitespace(alt));
-  // Keep combining marks (\p{M}): in scripts such as Tamil they are part of the letters.
-  const altOnlyLetters = Utils.removeWhitespace(altLowerCase.replace(/[^\p{L}\p{M}\s]/gu, ''));
+  const altLowerCase = Utils.removeWhitespace(alt).toLowerCase();
+  const altOnlyLetters = Utils.removeWhitespace(altLowerCase.replace(/[^\p{L}\s]/gu, ''));
   const hit = [null, null, null];
 
   // 1) URL hit.
@@ -57,20 +52,12 @@ const containsAltTextStopWords = (alt) => {
     wordsToCheck = [...allWords.slice(0, 2), ...allWords.slice(-1)];
   } else {
     // Fallback for older browsers that do not support Segmenter API.
-    const altOnlyLetters = Utils.removeWhitespace(altLowerCase.replace(/[^\p{L}\p{M}\s]/gu, ''));
+    const altOnlyLetters = Utils.removeWhitespace(altLowerCase.replace(/[^\p{L}\s]/gu, ''));
     const allWords = altOnlyLetters.split(/\s+/).filter(Boolean);
     wordsToCheck = [...allWords.slice(0, 2), ...allWords.slice(-1)];
   }
-  // Chinese and Japanese have no spaces, and Intl.Segmenter may split a stop word such as
-  // 缩略图 or アイコン into smaller words. For those, also check the start and end of the alt.
-  const altNoSpaces = altOnlyLetters.replace(/\s/g, '');
   for (const word of Constants.Global.susAltWords) {
-    const foldedWord = Utils.foldForMatching(word);
-    if (
-      wordsToCheck.includes(foldedWord) ||
-      (noSpaceScript.test(foldedWord) &&
-        (altNoSpaces.startsWith(foldedWord) || altNoSpaces.endsWith(foldedWord)))
-    ) {
+    if (wordsToCheck.includes(word)) {
       hit[1] = word;
       break;
     }
@@ -125,9 +112,9 @@ export default function checkImages() {
     // Process link text exclusions.
     const linkText = link
       ? Utils.fnIgnore(link, Constants.Exclusions.LinkSpan).textContent.replace(
-          Constants.Global.linkIgnoreStringPattern,
-          '',
-        )
+        Constants.Global.linkIgnoreStringPattern,
+        '',
+      )
       : '';
     const linkTextLength = Utils.removeWhitespace(linkText).length;
 
@@ -174,8 +161,8 @@ export default function checkImages() {
 
     // Decorative images.
     let decorative = alt === '';
-    if (!decorative && State.option.altPlaceholder.length) {
-      decorative = !!alt.match(Constants.Global.altPlaceholderPattern);
+    if (!decorative && Constants.Global.altPlaceholderPattern) {
+      decorative = !!Utils.stripBidiControls(alt).match(Constants.Global.altPlaceholderPattern);
     }
     if (decorative) {
       if (Utils.getCachedClosest($el, `button, [role='button']`)) return;

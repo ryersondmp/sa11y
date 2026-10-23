@@ -1,7 +1,7 @@
 import { createAlert } from '../interface/alert';
 import Lang from './lang';
 import { State } from '../core/state';
-import { foldForMatching, generateRegexString, normalizeStopWord } from './utils';
+import { generateRegexString, stripBidiControls } from './utils';
 
 const Constants = (function myConstants() {
   /* **************** */
@@ -57,16 +57,21 @@ const Constants = (function myConstants() {
     // Generate suspicious alt stop words list.
     Global.susAltWords = State.option.susAltStopWords
       ? State.option.susAltStopWords
-          .split(',')
-          .map((word) => word.trim().toLowerCase())
-          .filter(Boolean)
+        .split(',')
+        .map((word) => word.trim().toLowerCase())
+        .filter(Boolean)
       : Lang._('SUS_ALT_STOPWORDS');
 
-    // Generate placeholder stop words set. Folded to match the folded alt text (see images.js).
-    Global.placeholderAltSet = new Set(Lang._('PLACEHOLDER_ALT_STOPWORDS').map(foldForMatching));
+    // Generate placeholder stop words set.
+    Global.placeholderAltSet = new Set(Lang._('PLACEHOLDER_ALT_STOPWORDS'));
 
     // Generate placeholder stop words that are that the START of an alt string.
-    Global.altPlaceholderPattern = generateRegexString(State.option.altPlaceholder, true);
+    // String entries lose bidi controls to match the alt cleaned the same way
+    // in the images ruleset; RegExp entries are the integrator's to author.
+    const altPlaceholder = Array.isArray(State.option.altPlaceholder)
+      ? State.option.altPlaceholder.map(stripBidiControls)
+      : stripBidiControls(State.option.altPlaceholder);
+    Global.altPlaceholderPattern = generateRegexString(altPlaceholder, true);
     Global.linkIgnoreStringPattern = generateRegexString(State.option.linkIgnoreStrings);
 
     // Unpronounceable characters.
@@ -75,7 +80,7 @@ const Constants = (function myConstants() {
     // Generate supplied placeholder stop words.
     Global.extraPlaceholderStopWords = State.option.extraPlaceholderStopWords
       .split(',')
-      .map((word) => foldForMatching(word.trim()))
+      .map((word) => word.trim().toLowerCase())
       .filter(Boolean);
 
     /* ********************** */
@@ -89,19 +94,14 @@ const Constants = (function myConstants() {
     const customStopWords = State.option.linkStopWords
       ? State.option.linkStopWords.split(',').map((word) => word.toLowerCase().trim())
       : [];
-    // Normalized exactly like the link text they are compared with (see link-text.js), so that
-    // entries containing capitals or punctuation (e.g. "d’informations") can still match.
-    Global.linkStopWords = new Set(
-      [...Lang._('LINK_STOPWORDS'), ...customStopWords].map(normalizeStopWord).filter(Boolean),
-    );
+    Global.linkStopWords = new Set([...Lang._('LINK_STOPWORDS'), ...customStopWords]);
     Global.linkIgnoreStrings = new Set(
       State.option.linkIgnoreStrings.map((word) => word.toLowerCase()),
     );
 
     // Generate regex patterns from arrays.
-    // Folded to match the folded link text they are tested against.
-    Global.clickRegex = generateRegexString(Lang._('CLICK').map(foldForMatching));
-    Global.newWindowRegex = generateRegexString(Lang._('NEW_WINDOW_PHRASES').map(foldForMatching));
+    Global.clickRegex = generateRegexString(Lang._('CLICK'));
+    Global.newWindowRegex = generateRegexString(Lang._('NEW_WINDOW_PHRASES'));
     const defaultFileTypes = [
       'pdf',
       'doc',
