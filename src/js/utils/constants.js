@@ -57,16 +57,21 @@ const Constants = (function myConstants() {
     // Generate suspicious alt stop words list.
     Global.susAltWords = State.option.susAltStopWords
       ? State.option.susAltStopWords
-          .split(',')
-          .map((word) => word.trim().toLowerCase())
-          .filter(Boolean)
+        .split(',')
+        .map((word) => word.trim().toLowerCase())
+        .filter(Boolean)
       : Lang._('SUS_ALT_STOPWORDS');
 
     // Generate placeholder stop words set. Folded to match the folded alt text (see images.js).
     Global.placeholderAltSet = new Set(Lang._('PLACEHOLDER_ALT_STOPWORDS').map(foldForMatching));
 
     // Generate placeholder stop words that are that the START of an alt string.
-    Global.altPlaceholderPattern = generateRegexString(State.option.altPlaceholder, true);
+    // String entries lose bidi controls to match the alt cleaned the same way
+    // in the images ruleset; RegExp entries are the integrator's to author.
+    const altPlaceholder = Array.isArray(State.option.altPlaceholder)
+      ? State.option.altPlaceholder.map(stripBidiControls)
+      : stripBidiControls(State.option.altPlaceholder);
+    Global.altPlaceholderPattern = generateRegexString(altPlaceholder, true);
     Global.linkIgnoreStringPattern = generateRegexString(State.option.linkIgnoreStrings);
 
     // Unpronounceable characters.

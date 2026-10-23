@@ -174,8 +174,8 @@ export default function checkImages() {
 
     // Decorative images.
     let decorative = alt === '';
-    if (!decorative && State.option.altPlaceholder.length) {
-      decorative = !!alt.match(Constants.Global.altPlaceholderPattern);
+    if (!decorative && Constants.Global.altPlaceholderPattern) {
+      decorative = !!Utils.stripBidiControls(alt).match(Constants.Global.altPlaceholderPattern);
     }
     if (decorative) {
       if (Utils.getCachedClosest($el, `button, [role='button']`)) return;
