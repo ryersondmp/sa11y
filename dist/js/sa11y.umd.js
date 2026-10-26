@@ -91,6 +91,7 @@
     // e.g. '.inner-node-hidden-in-CSS'
     // Shared properties for some checks
     altPlaceholder: [],
+    // Strings (prefix match) and/or RegExp objects (as authored).
     susAltStopWords: "",
     linkStopWords: "",
     extraPlaceholderStopWords: "",
@@ -465,19 +466,22 @@
         Global.pdfSources = false;
       }
       Global.susAltWords = State.option.susAltStopWords ? State.option.susAltStopWords.split(",").map((word) => word.trim().toLowerCase()).filter(Boolean) : Lang._("SUS_ALT_STOPWORDS");
-      Global.placeholderAltSet = new Set(Lang._("PLACEHOLDER_ALT_STOPWORDS"));
-      Global.altPlaceholderPattern = generateRegexString(State.option.altPlaceholder, true);
+      Global.placeholderAltSet = new Set(Lang._("PLACEHOLDER_ALT_STOPWORDS").map(foldForMatching));
+      const altPlaceholder = Array.isArray(State.option.altPlaceholder) ? State.option.altPlaceholder.map(stripBidiControls) : stripBidiControls(State.option.altPlaceholder);
+      Global.altPlaceholderPattern = generateRegexString(altPlaceholder, true);
       Global.linkIgnoreStringPattern = generateRegexString(State.option.linkIgnoreStrings);
       Global.unpronounceablePattern = /[\p{L}\p{N}\p{Extended_Pictographic}]/u;
-      Global.extraPlaceholderStopWords = State.option.extraPlaceholderStopWords.split(",").map((word) => word.trim().toLowerCase()).filter(Boolean);
+      Global.extraPlaceholderStopWords = State.option.extraPlaceholderStopWords.split(",").map((word) => foldForMatching(word.trim())).filter(Boolean);
       Global.headerStringExclusionPattern = generateRegexString(State.option.headerIgnoreStrings);
       const customStopWords = State.option.linkStopWords ? State.option.linkStopWords.split(",").map((word) => word.toLowerCase().trim()) : [];
-      Global.linkStopWords = /* @__PURE__ */ new Set([...Lang._("LINK_STOPWORDS"), ...customStopWords]);
+      Global.linkStopWords = new Set(
+        [...Lang._("LINK_STOPWORDS"), ...customStopWords].map(normalizeStopWord).filter(Boolean)
+      );
       Global.linkIgnoreStrings = new Set(
         State.option.linkIgnoreStrings.map((word) => word.toLowerCase())
       );
-      Global.clickRegex = generateRegexString(Lang._("CLICK"));
-      Global.newWindowRegex = generateRegexString(Lang._("NEW_WINDOW_PHRASES"));
+      Global.clickRegex = generateRegexString(Lang._("CLICK").map(foldForMatching));
+      Global.newWindowRegex = generateRegexString(Lang._("NEW_WINDOW_PHRASES").map(foldForMatching));
       const defaultFileTypes = [
         "pdf",
         "doc",
@@ -764,7 +768,7 @@
     } else if (desiredRoot === "root") {
       root.push(Constants.Root.areaToCheck);
     } else {
-      root.push(document.querySelectorAll(desiredRoot));
+      root.push(...document.querySelectorAll(desiredRoot));
     }
     const exclusions = Constants.Exclusions.Container.join(", ");
     const additionalExclusions = exclude?.join(", ") || "";
@@ -860,6 +864,13 @@
   function stripAllSpecialCharacters(string) {
     if (typeof string !== "string" && typeof string !== "number") return "";
     return String(string).replace(/[^\p{L}\p{N}\s]/gu, "").replace(/\s+/g, " ").trim();
+  }
+  function foldForMatching(string) {
+    if (typeof string !== "string" && typeof string !== "number") return "";
+    return String(string).toLowerCase().normalize("NFD").replace(new RegExp("(\\p{Script=Greek})\\p{M}+", "gu"), "$1").replace(/i̇/g, "i").replace(/ı/g, "i").normalize("NFC");
+  }
+  function normalizeStopWord(string) {
+    return foldForMatching(string).replace(/[^\p{L}\p{M}\p{N}\s]/gu, "").replace(/\s+/g, " ").trim();
   }
   const invalidProtocolRegex = /^([^\w]*)(javascript|data|vbscript)/im;
   const htmlEntitiesRegex = /&#(\w+)(^\w|;)?/g;
@@ -1494,23 +1505,46 @@
   }
   function generateRegexString(input, matchStart = false) {
     if (!input) return null;
-    if (input instanceof RegExp) return input;
     let patterns = [];
-    if (Array.isArray(input)) {
+    if (input instanceof RegExp) {
+      patterns = [input];
+    } else if (Array.isArray(input)) {
       patterns = input;
     } else if (typeof input === "string") {
       patterns = input.split(",").map((s) => s.trim());
     } else {
       return null;
     }
-    patterns = patterns.filter((p) => p && p.length > 0);
-    if (patterns.length === 0) return null;
+    const literals = patterns.filter((p) => typeof p === "string" && p.length > 0);
+    const regexes = patterns.filter((p) => p instanceof RegExp && p.source !== "(?:)");
+    if (literals.length === 0 && regexes.length === 0) return null;
     const escapeRegExp = (string) => {
       return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
     };
-    const joinedPatterns = patterns.map(escapeRegExp).join("|");
-    const finalPattern = matchStart ? `^(?:${joinedPatterns})` : joinedPatterns;
-    return new RegExp(finalPattern, "i");
+    const parts = [];
+    if (literals.length) {
+      const joinedPatterns = literals.map(escapeRegExp).join("|");
+      parts.push(matchStart ? `^(?:${joinedPatterns})` : `(?:${joinedPatterns})`);
+    }
+    regexes.forEach((regex) => {
+      if (regex.multiline || regex.dotAll) {
+        console.warn(
+          `Sa11y: the "m" and "s" flags are not supported when combining patterns; ignoring them on /${regex.source}/${regex.flags}.`
+        );
+      }
+      parts.push(`(?:${regex.source})`);
+    });
+    const finalPattern = parts.join("|");
+    const flags = regexes.some((regex) => regex.unicode) ? "iu" : "i";
+    try {
+      return new RegExp(finalPattern, flags);
+    } catch (error) {
+      console.warn("Sa11y: could not combine patterns into one RegExp.", input, error);
+      return null;
+    }
+  }
+  function stripBidiControls(text) {
+    return typeof text === "string" ? text.replace(/[\u061C\u200E\u200F\u202A-\u202E\u2066-\u2069]/g, "") : text;
   }
   async function dismissDigest(pepper, message) {
     const msgUint8 = new TextEncoder().encode(pepper + message);
@@ -1555,6 +1589,7 @@
     escapeHTML,
     findVisibleParent,
     fnIgnore,
+    foldForMatching,
     generateElementPreview,
     generateRegexString,
     generateSelectorPath,
@@ -1574,6 +1609,7 @@
     isScreenReaderOnly,
     isScrollable,
     isVisibleTextInAccName,
+    normalizeStopWord,
     normalizeString,
     offsetTop,
     prepareDismissal,
@@ -1588,6 +1624,7 @@
     standardizeHref,
     store,
     stripAllSpecialCharacters,
+    stripBidiControls,
     supportsAnchorPositioning,
     trapFocus,
     truncateString,
@@ -6332,9 +6369,10 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
     ".heic",
     "http"
   ];
+  const noSpaceScript = /[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}]/u;
   const containsAltTextStopWords = (alt) => {
-    const altLowerCase = removeWhitespace(alt).toLowerCase();
-    const altOnlyLetters = removeWhitespace(altLowerCase.replace(/[^\p{L}\s]/gu, ""));
+    const altLowerCase = foldForMatching(removeWhitespace(alt));
+    const altOnlyLetters = removeWhitespace(altLowerCase.replace(/[^\p{L}\p{M}\s]/gu, ""));
     const hit = [null, null, null];
     for (const urlHit of url) {
       if (altLowerCase.includes(urlHit)) {
@@ -6352,12 +6390,14 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
       const allWords = [...segmenter.segment(altLowerCase)].filter((segment) => segment.isWordLike).map((segment) => segment.segment);
       wordsToCheck = [...allWords.slice(0, 2), ...allWords.slice(-1)];
     } else {
-      const altOnlyLetters2 = removeWhitespace(altLowerCase.replace(/[^\p{L}\s]/gu, ""));
+      const altOnlyLetters2 = removeWhitespace(altLowerCase.replace(/[^\p{L}\p{M}\s]/gu, ""));
       const allWords = altOnlyLetters2.split(/\s+/).filter(Boolean);
       wordsToCheck = [...allWords.slice(0, 2), ...allWords.slice(-1)];
     }
+    const altNoSpaces = altOnlyLetters.replace(/\s/g, "");
     for (const word of Constants.Global.susAltWords) {
-      if (wordsToCheck.includes(word)) {
+      const foldedWord = foldForMatching(word);
+      if (wordsToCheck.includes(foldedWord) || noSpaceScript.test(foldedWord) && (altNoSpaces.startsWith(foldedWord) || altNoSpaces.endsWith(foldedWord))) {
         hit[1] = word;
         break;
       }
@@ -6426,8 +6466,8 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
       const figcaption = figure?.querySelector("figcaption");
       const figcaptionText = figcaption ? getText(figcaption) : "";
       let decorative = alt === "";
-      if (!decorative && State.option.altPlaceholder.length) {
-        decorative = !!alt.match(Constants.Global.altPlaceholderPattern);
+      if (!decorative && Constants.Global.altPlaceholderPattern) {
+        decorative = !!stripBidiControls(alt).match(Constants.Global.altPlaceholderPattern);
       }
       if (decorative) {
         if (getCachedClosest($el, `button, [role='button']`)) return;
@@ -6703,7 +6743,7 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
   const urlEndings = /\b(?:\.edu\/|\.gob\/|\.gov\/|\.app\/|\.com\/|\.net\/|\.org\/|\.us\/|\.ca\/|\.de\/|\.icu\/|\.uk\/|\.ru\/|\.info\/|\.top\/|\.xyz\/|\.tk\/|\.cn\/|\.ga\/|\.cf\/|\.nl\/|\.io\/|\.fr\/|\.pe\/|\.nz\/|\.pt\/|\.es\/|\.pl\/|\.ua\/)\b/i;
   const htmlSymbols = /([<>↣↳←→↓«»↴]+)/;
   const checkStopWords = (textContent, stopWordsSet, stripStrings) => {
-    const stripped = textContent.replace(stripStrings, "").trim();
+    const stripped = (stripStrings ? textContent.replace(stripStrings, "") : textContent).replace(/\s+/g, " ").trim();
     if (stopWordsSet.has(stripped)) return stripped;
     return null;
   };
@@ -6728,10 +6768,13 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
       const strippedLinkText = stripAllSpecialCharacters(lowercaseLinkText);
       const rawTextContent = getText($el);
       const textContent = rawTextContent.toLowerCase();
+      const foldedLinkText = foldForMatching(linkText);
+      const normalizedLinkText = normalizeStopWord(linkText);
+      const foldedTextContent = foldForMatching(rawTextContent);
       const textContentIgnoredStrings = getText(
         fnIgnore($el, Constants.Exclusions.LinkSpan)
       ).replace(Constants.Global.linkIgnorePattern, "");
-      const containsNewWindowPhrases = lowercaseLinkText.match(Constants.Global.newWindowRegex)?.[0] || textContent.match(Constants.Global.newWindowRegex)?.[0];
+      const containsNewWindowPhrases = foldedLinkText.match(Constants.Global.newWindowRegex)?.[0] || foldedTextContent.match(Constants.Global.newWindowRegex)?.[0];
       const containsFileTypePhrases = lowercaseLinkText.match(Constants.Global.fileTypeRegex)?.[0] || textContent.match(Constants.Global.fileTypeRegex)?.[0];
       const fileTypeMatch = $el.matches(cssFileTypeSelectors);
       const logResult = (params) => {
@@ -6755,7 +6798,7 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
             ""
           );
           const stopword = checkStopWords(
-            stripAllSpecialCharacters(visibleLinkText),
+            normalizeStopWord(visibleLinkText),
             Constants.Global.linkStopWords
           );
           const visibleTextInName = isVisibleTextInAccName(
@@ -6812,7 +6855,7 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
         const isLinkIgnoreStrings = checkStopWords(textContent, Constants.Global.linkIgnoreStrings);
         if (isLinkIgnoreStrings === textContent || isLinkIgnoreStrings === strippedLinkText) {
           triggerStopWord();
-        } else if (containsNewWindowPhrases === textContent || containsNewWindowPhrases === strippedLinkText) {
+        } else if (containsNewWindowPhrases === foldedTextContent || containsNewWindowPhrases === normalizedLinkText) {
           triggerStopWord();
         }
         if (linkText.length === 0) {
@@ -6852,11 +6895,11 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
           return;
         }
         const isStopWord = checkStopWords(
-          strippedLinkText,
+          normalizedLinkText,
           Constants.Global.linkStopWords,
           Constants.Global.newWindowRegex
         );
-        const hasClickWord = strippedLinkText.match(Constants.Global.clickRegex)?.[0] || textContent.match(Constants.Global.clickRegex)?.[0];
+        const hasClickWord = normalizedLinkText.match(Constants.Global.clickRegex)?.[0] || foldedTextContent.match(Constants.Global.clickRegex)?.[0];
         const isCitation = lowercaseLinkText.match(citationPattern)?.[0];
         const isUrlFragment = lowercaseLinkText.startsWith("www.") || lowercaseLinkText.startsWith("http") || Boolean(lowercaseLinkText.match(urlEndings));
         const matchedSymbol = lowercaseLinkText.match(htmlSymbols)?.[0];
@@ -6962,8 +7005,9 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
           const targetElement = targetId && (document.getElementById(targetId) || ariaControls && document.getElementById(ariaControls) || decodeURIComponent(targetId) !== targetId && document.getElementById(decodeURIComponent(targetId)) || encodeURIComponent(targetId) !== targetId && document.getElementById(encodeURIComponent(targetId)) || document.querySelector(`a[name="${CSS.escape(targetId)}"]`));
           if (!targetElement) {
             let isFauxButton = false;
+            const foldedAccName = foldForMatching(accName);
             const matchedKeyword = Lang._("POTENTIAL_UI_ELEMENTS").find(
-              (word) => accName.toLowerCase().includes(word)
+              (word) => foldedAccName.includes(foldForMatching(word))
             );
             const isSlide = Object.keys($el.dataset).some(
               (key) => key.toLowerCase().includes("slide")

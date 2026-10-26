@@ -1,7 +1,12 @@
 import { createAlert } from '../interface/alert';
 import Lang from './lang';
 import { State } from '../core/state';
-import { foldForMatching, generateRegexString, normalizeStopWord } from './utils';
+import {
+  foldForMatching,
+  generateRegexString,
+  normalizeStopWord,
+  stripBidiControls,
+} from './utils';
 
 const Constants = (function myConstants() {
   /* **************** */
@@ -57,9 +62,9 @@ const Constants = (function myConstants() {
     // Generate suspicious alt stop words list.
     Global.susAltWords = State.option.susAltStopWords
       ? State.option.susAltStopWords
-        .split(',')
-        .map((word) => word.trim().toLowerCase())
-        .filter(Boolean)
+          .split(',')
+          .map((word) => word.trim().toLowerCase())
+          .filter(Boolean)
       : Lang._('SUS_ALT_STOPWORDS');
 
     // Generate placeholder stop words set. Folded to match the folded alt text (see images.js).

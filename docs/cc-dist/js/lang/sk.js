@@ -95,7 +95,7 @@ const ruleset = {
     "ísť",
     "workshop"
   ],
-  CLICK: ["kliknúť", "kliknutie", "click"],
+  CLICK: ["kliknúť", "kliknite", "kliknutie", "click"],
   NEW_WINDOW_PHRASES: [
     "externé",
     "nová karta",
@@ -193,8 +193,8 @@ const ui = {
   LINKED: "Prepojené",
   PANEL_HEADING: "Kontrola prístupnosti",
   NO_ERRORS_FOUND: "Nenašli sa žiadne chyby.",
-  WARNINGS_FOUND: "nájdených upozornení.",
-  TOTAL_FOUND: "nájdených problémov spolu.",
+  WARNINGS_FOUND: "— počet nájdených upozornení.",
+  TOTAL_FOUND: "— celkový počet nájdených problémov.",
   NOT_VISIBLE: "Položka, ktorú sa snažíte zobraziť, nie je viditeľná; môže byť skrytá alebo sa nachádza v komponente akordeónu alebo karty.",
   MISSING_ROOT: "Celá stránka bola skontrolovaná z hľadiska prístupnosti, pretože cieľová oblasť <code>%(root)</code> neexistuje.",
   MISSING_READABILITY_ROOT: "Skóre čitateľnosti je založené na obsahovej oblasti <code>%(fallback)</code>, pretože cieľová oblasť <code>%(root)</code> neexistuje.",
@@ -213,7 +213,7 @@ const ui = {
   ELEMENT: "Prvok",
   PATH: "Cesta",
   // Dismiss
-  PANEL_DISMISS_BUTTON: "Zobraziť %(dismissCount) zamietnutých",
+  PANEL_DISMISS_BUTTON: "Zobraziť zamietnuté (%(dismissCount))",
   DISMISS: "Zamietnuť",
   DISMISS_ALL: "Zamietnuť všetko",
   DISMISSED: "Zamietnuté",
@@ -318,7 +318,7 @@ const tooltip = {
   QA_FAKE_LIST: 'Snažíte sa vytvoriť zoznam? Bola nájdená možná položka zoznamu: <strong {C}>%(PREFIX)</strong> <hr> <strong {B}>Text</strong> <strong {C}>%(TEXT)</strong> <hr> Uistite sa, že namiesto toho používate sémantické zoznamy pomocou tlačidiel na formátovanie odrážok alebo čísel. Pri použití sémantického zoznamu dokážu asistenčné technológie sprostredkovať informácie, ako je celkový počet položiek a relatívna pozícia každej položky v zozname. Viac informácií o <a href="https://www.w3.org/WAI/tutorials/page-structure/content/#lists">sémantických zoznamoch.</a>',
   QA_UPPERCASE: "Bol nájdený text písaný veľkými písmenami. Niektoré čítačky obrazovky môžu text písaný veľkými písmenami interpretovať ako skratku a prečítajú každé písmeno samostatne. Niektorým ľuďom sa navyše veľké písmená čítajú ťažšie a môže to pôsobiť dojmom KRIKU. <hr> <strong {B}>Text</strong> <strong {C}>%(TEXT)</strong>",
   QA_UNDERLINE: "Podčiarknutý text sa dá zameniť s odkazmi. Zvážte použitie iného štýlu, napríklad <code>&lt;strong&gt;</code><strong>silný dôraz</strong><code>&lt;/strong&gt;</code> alebo <code>&lt;em&gt;</code><em>zdôraznenie</em><code>&lt;/em&gt;</code>. <hr> <strong {B}>Text</strong> <strong {C}>%(TEXT)</strong>",
-  QA_SUBSCRIPT: "Formátovanie dolného a horného indexu by sa malo používať iba na zmenu polohy textu na základe typografických konvencií alebo noriem. <strong>Nemalo</strong> by sa používať výlučne na prezentačné alebo vzhľadové účely. Formátovanie celých viet spôsobuje problémy s čitateľnosťou. Medzi vhodné prípady použitia patrí zobrazovanie exponentov, poradových čísel (napr. 4<sup>.</sup> namiesto štvrtý) a chemických vzorcov (napr. H<sub>2</sub>O). <hr> <strong {B}>Text</strong> <strong {C}>%(TEXT)</strong>",
+  QA_SUBSCRIPT: "Formátovanie dolného a horného indexu by sa malo používať iba na zmenu polohy textu na základe typografických konvencií alebo noriem. <strong>Nemalo</strong> by sa používať výlučne na prezentačné alebo vzhľadové účely. Formátovanie celých viet spôsobuje problémy s čitateľnosťou. Medzi vhodné prípady použitia patrí zobrazovanie exponentov, jednotiek (napr. m<sup>2</sup>) a chemických vzorcov (napr. H<sub>2</sub>O). <hr> <strong {B}>Text</strong> <strong {C}>%(TEXT)</strong>",
   QA_IN_PAGE_LINK: "Nefunkčný odkaz v rámci stránky. Tento odkaz sa pokúša prejsť do časti stránky, ktorú sa nepodarilo nájsť. Ak to chcete opraviť, uistite sa, že odkaz zodpovedá <code>id</code> prvku, na ktorý chcete prejsť. <hr> <strong {B}>ID</strong> <strong {C}>#%(ID)</strong> <hr> <strong {B}>Text odkazu</strong> <strong {C}>%(TEXT)</strong>",
   QA_NESTED_COMPONENTS: "Vyhnite sa vnáraniu interaktívnych rozvrhových komponentov, ako je umiestňovanie akordeónov do iných akordeónov alebo záložiek do akordeónov a naopak. Môže to skomplikovať navigáciu, zvýšiť kognitívnu záťaž a viesť k tomu, že ľudia obsah prehliadnu.",
   QA_JUSTIFY: "Vyhnite sa používaniu textu zarovnaného do bloku, ktorý je zarovnaný súčasne k ľavému aj pravému okraju. Pre niektorých ľudí môže byť ťažké ho čítať kvôli nerovnomerným medzerám medzi slovami. Pre lepšiu čitateľnosť použite text zarovnaný vľavo. <hr> <strong {B}>Text</strong> <strong {C}>%(TEXT)</strong>",
@@ -350,7 +350,7 @@ const tooltip = {
   LINK_MAYBE_BUTTON: 'Tento odkaz má neplatný cieľ. Prístupný názov alebo jeho atribúty naznačujú, že vôbec nemusí ísť o odkaz, ale namiesto toho ovláda nejaké skriptované správanie na stránke. Ak to chcete opraviť, nahraďte odkaz <a href="https://www.w3.org/WAI/ARIA/apg/patterns/button/">prístupným tlačidlom</a> alebo opravte cieľ odkazu. <hr> <strong {B}>Prístupný názov</strong> <strong {C}>%(TEXT)</strong> <hr> <strong>Tip!</strong> Asistenčné technológie pristupujú k tlačidlám a odkazom odlišne. Použitie správneho prvku HTML zabezpečuje, že používatelia vedia, ktoré klávesové skratky majú použiť a akú akciu spustia.',
   // Tables
   TABLES_MISSING_HEADINGS: 'Chýbajú záhlavia tabuľky! Prístupné tabuľky potrebujú značky HTML, ktoré označujú bunky záhlavia a dátové bunky a definujú ich vzájomný vzťah. Tieto informácie poskytujú kontext ľuďom, ktorí používajú asistenčné technológie. Tabuľky by sa mali používať iba na tabuľkové údaje. <hr> Viac informácií o <a href="https://www.w3.org/WAI/tutorials/tables/">prístupných tabuľkách.</a>',
-  TABLES_SEMANTIC_HEADING: 'Sémantické nadpisy, ako Nadpis 2 alebo Nadpis 3, by sa mali používať iba pre časti obsahu; <strong>nie</strong> v tabuľkách HTML. Nadpisy tabuľky namiesto toho označte pomocou prvku <code>&lt;th&gt;</code>. <hr> Viac informácií o <a href="https://www.w3.org/WAI/tutorials/tables/">prístupných tabuľkách.</a>',
+  TABLES_SEMANTIC_HEADING: 'Sémantické nadpisy, ako Nadpis 2 alebo Nadpis 3, by sa mali používať iba pre časti obsahu; <strong>nie</strong> v tabuľkách HTML. Záhlavia tabuľky namiesto toho označte pomocou prvku <code>&lt;th&gt;</code>. <hr> Viac informácií o <a href="https://www.w3.org/WAI/tutorials/tables/">prístupných tabuľkách.</a>',
   TABLES_EMPTY_HEADING: 'Bolo nájdené prázdne záhlavie tabuľky! Záhlavia tabuľky by <strong>nikdy</strong> nemali byť prázdne. Je dôležité označiť záhlavia riadkov a/alebo stĺpcov, aby bol vyjadrený ich vzájomný vzťah. Tieto informácie poskytujú kontext ľuďom, ktorí používajú asistenčné technológie. Majte na pamäti, že tabuľky by sa mali používať iba na tabuľkové údaje. <hr> Viac informácií o <a href="https://www.w3.org/WAI/tutorials/tables/">prístupných tabuľkách.</a>',
   TABLES_INVALID_HEADERS_REF: 'Táto tabuľka sa pokúša označiť konkrétnu dátovú bunku konkrétnou bunkou záhlavia, ale ID záhlavia sa nepodarilo nájsť. Uistite sa, že každý atribút <code>headers</code> zodpovedá ID bunky záhlavia v tej istej tabuľke. <hr> <strong {B}>Headers</strong> <code>%(VALUE)</code> <hr> <strong>Tip!</strong> <a href="https://www.w3.org/WAI/WCAG22/Techniques/html/H43">Používanie ručných odkazov na ID</a> na priradenie dátových buniek k bunkám záhlavia je komplikované a nespoľahlivé. Ak je to možné, rozdeľte zložité údaje do menších tabuliek s jednoduchými riadkami a stĺpcami záhlavia.',
   // Contrast

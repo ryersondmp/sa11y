@@ -7,7 +7,8 @@ const ruleset = {
     "foto",
     "bild",
     "thumbnail",
-    "icon"
+    "icon",
+    "portrait"
   ],
   PLACEHOLDER_ALT_STOPWORDS: [
     "alt",
@@ -26,24 +27,23 @@ const ruleset = {
     "abstand",
     "test",
     "chart",
-    "decorative",
-    "image",
     "graphic",
-    "photo",
-    "placeholder",
-    "placeholder image",
-    "spacer",
     "tbd",
     "todo",
     "to do",
     "thumbnail",
     "icon",
-    "test",
     "hero image",
     "hero slide",
     "homepage feature image",
     "featured image",
-    "untitled"
+    "untitled",
+    "portrait",
+    "slide image",
+    "untitled image",
+    "unnamed",
+    "copy",
+    "undefined"
   ],
   LINK_STOPWORDS: [
     "click",
@@ -99,7 +99,14 @@ const ruleset = {
     "view our",
     "website",
     "article",
-    "artikel"
+    "artikel",
+    "discover",
+    "explore",
+    "read",
+    "this link",
+    "this form",
+    "go",
+    "workshop"
   ],
   CLICK: ["click", "klicken"],
   NEW_WINDOW_PHRASES: [
@@ -127,8 +134,7 @@ const ruleset = {
     "berechnungstabelle",
     "komprimierte datei",
     "dateiarchiv",
-    "archivierte Datei",
-    "arbeitsblatt",
+    "archivierte datei",
     "powerpoint",
     "präsentation",
     "installieren",
@@ -137,7 +143,7 @@ const ruleset = {
     "pdf",
     "zip"
   ],
-  POTENTIAL_UI_ELEMENTS: ["menü", "schließen", "umschalten", "öffnen", "erweitern", "reduzieren", "weiter", "zurück", "abspielen", "pause", "untermenü", "anzeigen", "ausblenden", "dropdown", "zurück", "vorwärts", "überspringen", "absenden", "abbrechen", "speichern", "bearbeiten", "löschen", "entfernen", "suche", "filter", "sortieren", "stopp", "stummschalten", "ton an", "vollbild", "minimieren", "maximieren"]
+  POTENTIAL_UI_ELEMENTS: ["menü", "schließen", "umschalten", "öffnen", "erweitern", "reduzieren", "weiter", "zurück", "abspielen", "pause", "untermenü", "anzeigen", "ausblenden", "dropdown", "vorwärts", "überspringen", "absenden", "abbrechen", "speichern", "bearbeiten", "löschen", "entfernen", "suche", "filter", "sortieren", "stopp", "stummschalten", "ton an", "vollbild", "minimieren", "maximieren"]
 };
 const ui = {
   LANG_CODE: "de",
@@ -151,7 +157,7 @@ const ui = {
   REVIEW: "Überprüfung",
   ON: "An",
   OFF: "Aus",
-  ALERT_TEXT: "Alarm",
+  ALERT_TEXT: "Hinweis",
   ALERT_CLOSE: "Schließen",
   OUTLINE: "Gliederung",
   READABILITY_DESC: "Zeigt den Lesbarkeitswert im Tab <strong>Gliederung</strong> an, um die Leseschwierigkeit einzuschätzen.",
@@ -166,8 +172,8 @@ const ui = {
   SETTINGS: "Einstellungen",
   DEVELOPER_CHECKS: "Entwicklerprüfungen",
   DEVELOPER_DESC: "Überprüft Probleme, deren Behebung Programmierkenntnisse erfordern kann, wie HTML-Attribute, Formulare und mehr.",
-  DARK_MODE: "Dark mode",
-  SHORTCUT_SR: "Zum Eintrag springen. Keyboard shortcut: Alt Punkt",
+  DARK_MODE: "Dunkler Modus",
+  SHORTCUT_SR: "Zum Eintrag springen. Tastenkombination: Alt Punkt",
   SKIP_TO_ISSUE: "Zum Eintrag springen",
   NEW_TAB: "Öffnet neuen Tab",
   LINKED: "Verknüpft",
@@ -251,7 +257,7 @@ const tooltip = {
   ALT_UNPRONOUNCEABLE: "Der Alternativtext enthält nur unaussprechbare Symbole und/oder Leerzeichen. Screenreader geben das Bild aus und machen dann eine Pause. Wenn das Bild dekorativ ist, stellen Sie sicher, dass der Alternativtext keine Leerzeichen enthält. <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>",
   LINK_ALT_UNPRONOUNCEABLE: "Der Alternativtext in diesem verlinkten Bild enthält nur unaussprechbare Symbole und/oder Leerzeichen. Screenreader geben das Bild aus und machen dann eine Pause. Stellen Sie sicher, dass der Alternativtext das Ziel des Links beschreibt. <hr> {L} {ALT} <strong {C}>%(ALT_TEXT)</strong>",
   MISSING_ALT_LINK_HAS_TEXT: "Das Bild wird als Link mit umliegendem Text verwendet, obwohl das alt-Attribut als dekorativ oder null markiert sein sollte.",
-  MISSING_ALT_LINK: "Das Bild wird als Link verwendet, aber es fehlt der Alt-Text! Bitte stellen Sie sicher, dass der Alt-Text beschreibt, wohin der Link Dich führt.",
+  MISSING_ALT_LINK: "Das Bild wird als Link verwendet, aber es fehlt der Alt-Text! Bitte stelle sicher, dass der Alt-Text beschreibt, wohin der Link dich führt.",
   MISSING_ALT: "Fehlender Alt text! Wenn das Bild eine Geschichte, eine Stimmung oder eine wichtige Information vermittelt - beschreibe das Bild unbedingt.",
   LINK_ALT_FILE_EXT: "Alternativtext sollte keine Dateierweiterungen oder Bildmaße enthalten. Achte darauf, dass der Alt-Text das Ziel des Links beschreibt und nicht eine wörtliche Beschreibung des Bildes ist. Entferne: <strong {C}>%(ERROR)</strong> <hr> {L} {ALT} <strong {C}>%(ALT_TEXT)</strong>",
   LINK_PLACEHOLDER_ALT: "Nicht beschreibender oder Platzhalter-Alt-Text innerhalb eines verlinkten Bildes gefunden. Achte darauf, dass der Alt-Text das Ziel des Links beschreibt und nicht eine wörtliche Beschreibung des Bildes ist. Ersetzen Sie den folgenden Alt-Text. <hr> {L} {ALT} <strong {C}>%(ALT_TEXT)</strong>",
@@ -279,7 +285,7 @@ const tooltip = {
   LABELS_NO_FOR_ATTRIBUTE: "Dieser Eingabe ist kein Label zugeordnet. Füge dem Label ein <code>for</code>-Attribut hinzu, das der <code>id</code> dieser Eingabe entspricht. <hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>",
   LABELS_MISSING_LABEL: "Dieser Eingabe ist kein Label zugeordnet. Bitte füge dieser Eingabe eine <code>id</code> hinzu und füge dem Label ein passendes <code>for</code>-Attribut hinzu.",
   LABELS_PLACEHOLDER: 'Verschwindender Platzhaltertext erschwert es den Menschen, sich daran zu erinnern, welche Informationen in ein Feld gehören, und Probleme mit der Validierung zu identifizieren und zu beheben. Erwägen Sie stattdessen, einen dauerhaft sichtbaren Hinweis vor dem Formularfeld zu verwenden. <hr> Erfahren Sie mehr: <a href="https://www.nngroup.com/articles/form-design-placeholders/">Platzhalter in Formularfeldern sind schädlich.</a>',
-  ARIA_INPUT_FIELD_NAME: "Dem ARIA-Eingabe- oder Umschaltfeld fehlt ein barrierefreier Name. Um dies zu beheben, geben Sie ein gültiges Attribut <code>aria-labelledby</code>, <code>aria-label</code> oder <code>title</code> an. Wenn die Eingabe umschaltbar е (z. B. Checkbox, Switch, Radiobutton), löst das Hinzufügen von sichtbarem innerem Text dieses Problem ebenfalls. <hr> <strong {B}>Element</strong> <pre><code>%(EL)</code></pre>",
+  ARIA_INPUT_FIELD_NAME: "Dem ARIA-Eingabe- oder Umschaltfeld fehlt ein barrierefreier Name. Um dies zu beheben, geben Sie ein gültiges Attribut <code>aria-labelledby</code>, <code>aria-label</code> oder <code>title</code> an. Wenn die Eingabe umschaltbar ist (z. B. Checkbox, Switch, Radiobutton), löst das Hinzufügen von sichtbarem innerem Text dieses Problem ebenfalls. <hr> <strong {B}>Element</strong> <pre><code>%(EL)</code></pre>",
   // Embedded content
   EMBED_VIDEO: "Bitte stelle sicher, dass <strong>alle Videos Untertitel haben.</strong> Das Bereitstellen von Untertiteln für alle Audio- und Videoinhalte ist eine obligatorische Anforderung der Stufe-A. Bildunterschriften unterstützen Menschen, die Taub oder schwerhörig sind.",
   EMBED_AUDIO: "Bitte stelle sicher, dass Du ein <strong>Transkript für alle Podcasts bereitstellst.</strong> Das Bereitstellen von Transkripten für Audioinhalte ist eine obligatorische Anforderung der Stufe-A. Transkripte unterstützen Menschen, die gehörlos oder schwerhörig sind, können aber allen zugute kommen. Erwäge, das Transkript unter- oder innerhalb eines Akkordeonfelds zu platzieren.",
@@ -295,10 +301,10 @@ const tooltip = {
   QA_DOCUMENT: 'Das Dokument kann nicht auf Zugänglichkeit geprüft werden. Verknüpfte Dokumente gelten als Webinhalte und müssen ebenfalls zugänglich gemacht werden. Bitte überprüfen Sie dieses Dokument manuell. <ul><li>Machen Sie Ihr <a href="https://support.google.com/docs/answer/6199477?hl=de">Google Workspace-Dokument oder Ihre Präsentation besser zugänglich.</a></li><li>Machen Sie Ihre <a href="https://support.microsoft.com/de-de/office/create-accessible-office-documents-868ecfcd-4f00-4224-b881-a65537a7c155">Office-Dokumente besser zugänglich.</a></li></ul>',
   QA_BLOCKQUOTE: "Ist das eine Überschrift? <strong {C}>%(TEXT)</strong> <hr> Blockquotes sollten nur für Zitate verwendet werden. Wenn dies eine Überschrift sein soll, ändere dieses Blockquote in eine semantische Überschrift (z. B. Überschrift 2 oder Überschrift 3).",
   QA_FAKE_HEADING: "Ist das eine Überschrift? <strong {C}>%(TEXT)</strong> <hr> Eine Zeile mit fettem Text mag wie eine Überschrift aussehen, aber jemand, der einen Bildschirmleser verwendet, kann nicht erkennen, dass sie wichtig ist, oder zu ihrem Inhalt springen. Fettgedruckter Text sollte niemals semantische Überschriften ersetzen (Überschrift 2 bis Überschrift 6).",
-  QA_FAKE_LIST: 'Versuchst Du, eine Liste zu erstellen? Mögliches gefundenes Listenelement: <strong {C}>%(firstPrefix)</strong> <hr> Stelle sicher, dass Du semantische Listen verwendest, indem Du stattdessen eine Aufzählungsliste formatierst (Zahlen oder Bullet-Points). Bei der Verwendung einer semantischen Liste sind Hilfstechnologien in der Lage, Informationen wie die Gesamtzahl der Elemente und die relative Position jedes Elements in der Liste zu übermitteln. Erfahre mehr über <a href="https://www.w3.org/WAI/tutorials/page-structure/content/#lists">semantische Listen.</a>',
-  QA_UPPERCASE: "Text in Großbuchstaben gefunden. Einige Screenreader interpretieren Text in Großbuchstaben möglicherweise als Akronym und lesen jeden Buchstaben einzeln. Außerdem finden manche Leute, dass Großbuchstaben schwieriger zu lesen sind, und es kann den Anschein erwecken, als würden man SCHREIEN.",
+  QA_FAKE_LIST: 'Versuchst Du, eine Liste zu erstellen? Mögliches gefundenes Listenelement: <strong {C}>%(PREFIX)</strong> <hr> Stelle sicher, dass Du semantische Listen verwendest, indem Du stattdessen eine Aufzählungsliste formatierst (Zahlen oder Bullet-Points). Bei der Verwendung einer semantischen Liste sind Hilfstechnologien in der Lage, Informationen wie die Gesamtzahl der Elemente und die relative Position jedes Elements in der Liste zu übermitteln. Erfahre mehr über <a href="https://www.w3.org/WAI/tutorials/page-structure/content/#lists">semantische Listen.</a>',
+  QA_UPPERCASE: "Text in Großbuchstaben gefunden. Einige Screenreader interpretieren Text in Großbuchstaben möglicherweise als Akronym und lesen jeden Buchstaben einzeln. Außerdem finden manche Leute, dass Großbuchstaben schwieriger zu lesen sind, und es kann den Anschein erwecken, als würde man SCHREIEN.",
   QA_UNDERLINE: "Unterstrichener Text kann mit Links verwechselt werden. Erwäge die Verwendung eines anderen Stils wie <code>&lt;strong&gt;</code><strong>starke Wichtigkeit</strong><code>&lt;/strong&gt;</code> oder <code>&lt;em&gt;</code><em>Hervorhebung</em><code>&lt;/em&gt;</code>.",
-  QA_SUBSCRIPT: "Die Formatierungsoptionen für tiefgestellten und hochgestellten Text sollten nur verwendet werden, um die Textposition für typografische Konventionen oder Standards zu ändern. Es sollte <strong>nicht</strong> ausschließlich zu Präsentations- oder Erscheinungszwecken verwendet werden. Das Formatieren ganzer Sätze wirft Lesbarkeitsprobleme auf. Geeignete Anwendungsfälle wären die Anzeige von Exponenten, Ordnungszahlen wie 4<sup>th</sup> anstelle von 4 und chemischen Formeln (z. B. H<sub>2</sub>O).",
+  QA_SUBSCRIPT: "Die Formatierungsoptionen für tiefgestellten und hochgestellten Text sollten nur verwendet werden, um die Textposition für typografische Konventionen oder Standards zu ändern. Es sollte <strong>nicht</strong> ausschließlich zu Präsentations- oder Erscheinungszwecken verwendet werden. Das Formatieren ganzer Sätze wirft Lesbarkeitsprobleme auf. Geeignete Anwendungsfälle wären die Anzeige von Exponenten, Einheiten wie m<sup>2</sup> und chemischen Formeln (z. B. H<sub>2</sub>O).",
   QA_NESTED_COMPONENTS: "Vermeiden Sie das Verschachteln interaktiver Layoutkomponenten, wie das Platzieren von Akkordeons in Tabs oder Tabs in Akkordeons. Dies kann die Navigation komplizieren, die kognitive Belastung erhöhen und dazu führen, dass Inhalte übersehen werden.",
   QA_JUSTIFY: "Vermeiden Sie die Verwendung von Blocksatz, der sowohl am linken als auch am rechten Rand ausgerichtet ist. Dies kann für einige Menschen aufgrund der ungleichmäßigen Abstände zwischen den Wörtern schwer lesbar sein. Verwenden Sie linksbündigen Text für eine bessere Lesbarkeit.",
   QA_SMALL_TEXT: "Kleiner Text ist schwieriger zu lesen, insbesondere für Menschen mit Sehbehinderungen. Um eine bessere Lesbarkeit zu gewährleisten, vermeiden Sie die Verwendung von Schriftgrößen, die kleiner als die Standardeinstellung sind.",
@@ -328,9 +334,9 @@ const tooltip = {
   LABEL_IN_NAME: "Der sichtbare Text dieses Elements scheint sich vom zugänglichen Namen zu unterscheiden, was für Benutzer von Hilfstechnologien verwirrend sein kann. Bitte überprüfen: <hr> <strong {B}>Text</strong> <strong {C}>%(TEXT)</strong> <hr> <strong {B}>Zugänglicher Name</strong> <strong {C}>%(TEXT)</strong>",
   LINK_MAYBE_BUTTON: 'Dieser Link hat ein ungültiges Ziel. Der barrierefreie Name oder die Attribute deuten darauf hin, dass es sich möglicherweise gar nicht um einen Link handelt, sondern stattdessen ein skriptgesteuertes Verhalten auf der Seite steuert. Um dies zu beheben, ersetzen Sie den Link durch eine <a href="https://www.w3.org/WAI/ARIA/apg/patterns/button/">barrierefreie Schaltfläche</a> oder korrigieren Sie das Ziel des Links. <hr> <strong {B}>Barrierefreier Name</strong> <strong {C}>%(TEXT)</strong> <hr> <strong>Tipp!</strong> Unterstützende Technologien behandeln Schaltflächen und Links unterschiedlich. Die Verwendung des richtigen HTML-Elements stellt sicher, dass die Benutzer wissen, welche Tastaturkürzel sie verwenden müssen und welche Aktion ausgelöst wird.',
   // Tables
-  TABLES_MISSING_HEADINGS: 'Fehlende Tabellenüberschriften! Barrierefreie Tabellen benötigen eine HTML-Auszeichnung, die Kopfzellen und Datenzellen kennzeichnet und ihre Beziehung zueinander definiert. Diese Informationen liefern den Kontext für Menschen, die Hilfsmittel verwenden. Tabellen sollten nur für tabellarische Daten verwendet werden. <hr> Erfahre mehr über <a href="https://www.w3.org/WAI/tutorials/tables/">barrierefreie Tabellen.</a>',
-  TABLES_SEMANTIC_HEADING: 'Semantische Überschriften wie Überschrift 2 oder Überschrift 3 sollten nur für Abschnitte des Inhalts verwendet werden; <strong>not</strong> in HTML-Tabellen. Gebe Tabellenüberschriften stattdessen mit dem <code>&lt;th&gt;</code> Element an. <hr> Erfahre mehr über <a href="https://www.w3.org/WAI/tutorials/tables/">barrierefreie Tabellen.</a>',
-  TABLES_EMPTY_HEADING: 'Leerer Tabellenkopf gefunden! Tabellenüberschriften sollten <strong>niemals</strong> leer sein. Es ist wichtig, Zeilen- und/oder Spaltenüberschriften zu benennen, um ihre Beziehung zu verdeutlichen. Diese Informationen bieten Menschen, die Hilfsmittel verwenden, einen Kontext. Bitte beachte, dass Tabellen nur für tabellarische Daten verwendet werden sollten. <hr> Erfahre mehr über <a href="https://www.w3.org/WAI/tutorials/tables/">barrierefreie Tabellen.</a>',
+  TABLES_MISSING_HEADINGS: 'Fehlende Tabellenköpfe! Barrierefreie Tabellen benötigen eine HTML-Auszeichnung, die Kopfzellen und Datenzellen kennzeichnet und ihre Beziehung zueinander definiert. Diese Informationen liefern den Kontext für Menschen, die Hilfsmittel verwenden. Tabellen sollten nur für tabellarische Daten verwendet werden. <hr> Erfahre mehr über <a href="https://www.w3.org/WAI/tutorials/tables/">barrierefreie Tabellen.</a>',
+  TABLES_SEMANTIC_HEADING: 'Semantische Überschriften wie Überschrift 2 oder Überschrift 3 sollten nur für Abschnitte des Inhalts verwendet werden; <strong>nicht</strong> in HTML-Tabellen. Gib Kopfzellen stattdessen mit dem <code>&lt;th&gt;</code>-Element an. <hr> Erfahre mehr über <a href="https://www.w3.org/WAI/tutorials/tables/">barrierefreie Tabellen.</a>',
+  TABLES_EMPTY_HEADING: 'Leerer Tabellenkopf gefunden! Kopfzellen sollten <strong>niemals</strong> leer sein. Es ist wichtig, Zeilen- und/oder Spaltenköpfe zu benennen, um ihre Beziehung zu verdeutlichen. Diese Informationen bieten Menschen, die Hilfsmittel verwenden, einen Kontext. Bitte beachte, dass Tabellen nur für tabellarische Daten verwendet werden sollten. <hr> Erfahre mehr über <a href="https://www.w3.org/WAI/tutorials/tables/">barrierefreie Tabellen.</a>',
   TABLES_INVALID_HEADERS_REF: 'Diese Tabelle versucht, eine bestimmte Datenzelle mit einer bestimmten Kopfzeilenzelle zu verknüpfen, aber die Kopfzeilen-ID kann nicht gefunden werden. Stellen Sie sicher, dass jedes <code>headers</code>-Attribut mit der ID einer Kopfzeilenzelle in derselben Tabelle übereinstimmt. <hr> <strong {B}>Kopfzeilen</strong> <code>%(VALUE)</code> <hr> <strong>Tipp!</strong> Die <a href="https://www.w3.org/WAI/WCAG22/Techniques/html/H43">Verwendung manueller ID-Referenzen</a> zur Verknüpfung von Datenzellen mit Kopfzeilenzellen ist kompliziert und fehleranfällig. Wenn möglich, unterteilen Sie komplexe Daten in kleinere Tabellen mit einfachen Kopfzeilen und -spalten.',
   // Contrast
   CONTRAST_NORMAL: "Normal großer Text sollte ein Kontrastverhältnis von mindestens %(RATIO) haben.",
