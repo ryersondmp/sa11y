@@ -391,6 +391,8 @@ const tooltip = {
   UNCONTAINED_LI:
     'Alla <code>&lt;li&gt;</code> listobjekt måste placeras inuti <code>&lt;ul&gt;</code> oordnade eller <code>&lt;ol&gt;</code> ordnade element. Denna struktur hjälper skärmläsare att korrekt tillkännage listan och dess objekt.',
   TABINDEX_ATTR: 'Elementet bör inte ha ett <code>tabindex</code>-attribut större än 0.',
+  SVG_NO_ACCESSIBLE_NAME:
+    'Vissa skärmläsare kommer att meddela denna SVG som en omärkt bild eftersom den saknar ett tillgängligt namn och inte är dold. Lägg till en tillgänglig etikett (eller <code>&lt;title&gt;</code>) om den förmedlar en mening, eller dölj den för skärmläsare om den rent är dekorativ (<code>aria-hidden="true"</code>). <hr> Läs mer om <a href="https://a11y-101.com/development/svg">tillgängliga SVG: er.</a>',
 
   // Meta checks
   META_LANG:
@@ -419,6 +421,10 @@ const tooltip = {
   LINK_MAYBE_BUTTON: 'Den här länken har ett ogiltigt mål. Även om det tillgängliga namnet eller dess attribut tyder på att detta kanske inte är en länk alls, utan istället styr något skriptat beteende på sidan. För att åtgärda detta, ersätt länken med en <a href="https://www.w3.org/WAI/ARIA/apg/patterns/button/">tillgänglig knapp</a>, eller korrigera länkens mål. <hr> <strong {B}>Tillgängligt namn</strong> <strong {C}>%(TEXT)</strong> <hr> <strong>Tips!</strong> Hjälpmedel behandlar knappar och länkar på olika sätt. Genom att använda rätt HTML-element säkerställer du att användarna vet vilka tangentbordsgenvägar de ska använda och vilken åtgärd som kommer att utlösas.',
 
   // Tables
+  TABLES_SINGLE_COLUMN:
+    'Är detta en tabell? Enkelkolumnstabeller används ofta för layout eller listor snarare än tabelldata. Detta kan vara förvirrande för personer som använder skärmläsare, som måste stanna och lyssna på strukturella beskrivningar avsedda för datagitter, till exempel <em>"tabell, 5 rader, 1 kolumn"</em>. Ta bort tabellen och använd en lista i stället.',
+  TABLES_SINGLE_CELL:
+    'Är detta en tabell? Encelliga tabeller används ofta för visuella ramar eller container-rutor i stället för tabelldata. Detta kan vara förvirrande för personer som använder skärmläsare, som måste stanna upp och lyssna på strukturella beskrivningar avsedda för dataraster: <em>"Tabell, 1 rad, 1 kolumn, Rad 1 Kolumn 1."</em> Ta bort tabellen och använd andra stilalternativ för att uppmärksamma detta innehåll.',
   TABLES_MISSING_HEADINGS:
     'Tabellhuvuden saknas! Tillgänglighetsanpassade tabeller behöver HTML-markup som indikerar rubrikceller och dataceller, vilket definierar deras relation. Informationen ger sammanhang till personer som använder hjälpmedelsverktyg. Tabeller bör endast användas för tabelldata. <hr> Läs mer om <a href="https://www.w3.org/WAI/tutorials/tables/">tillgängliga tabeller.</a>',
   TABLES_SEMANTIC_HEADING:

@@ -394,6 +394,8 @@ const tooltip = {
   UNCONTAINED_LI:
     'Všetky položky zoznamu <code>&lt;li&gt;</code> musia byť umiestnené vo vnútri neusporiadaného prvku <code>&lt;ul&gt;</code> alebo usporiadaného prvku <code>&lt;ol&gt;</code>. Táto štruktúra pomáha čítačkám obrazovky presne oznamovať zoznam a jeho položky. <hr> <strong {B}>Položka zoznamu</strong> <strong {C}>%(TEXT)</strong>',
   TABINDEX_ATTR: 'Prvok by nemal mať atribút <code>tabindex</code> väčší ako 0.',
+  SVG_NO_ACCESSIBLE_NAME:
+    'Niektoré čítačky obrazovky oznámia toto SVG ako neoznačený obrázok, pretože nemá prístupný názov a nie je skryté. Pridajte prístupný štítok (alebo <code>&lt;title&gt;</code>), ak má význam, alebo ho skryte pred čítačkami obrazovky, ak je len dekoratívny (<code>aria-hidden="true"</code>). <hr> Ďalšie informácie o <a href="https://a11y-101.com/development/svg">prístupných SVG.</a>',
 
   // Meta checks
   META_TITLE:
@@ -422,6 +424,10 @@ const tooltip = {
   LINK_MAYBE_BUTTON: 'Tento odkaz má neplatný cieľ. Prístupný názov alebo jeho atribúty naznačujú, že vôbec nemusí ísť o odkaz, ale namiesto toho ovláda nejaké skriptované správanie na stránke. Ak to chcete opraviť, nahraďte odkaz <a href="https://www.w3.org/WAI/ARIA/apg/patterns/button/">prístupným tlačidlom</a> alebo opravte cieľ odkazu. <hr> <strong {B}>Prístupný názov</strong> <strong {C}>%(TEXT)</strong> <hr> <strong>Tip!</strong> Asistenčné technológie pristupujú k tlačidlám a odkazom odlišne. Použitie správneho prvku HTML zabezpečuje, že používatelia vedia, ktoré klávesové skratky majú použiť a akú akciu spustia.',
 
   // Tables
+  TABLES_SINGLE_COLUMN:
+    'Je toto tabuľka? Jednostĺpcové tabuľky sa často používajú na rozloženie alebo zoznamy namiesto tabuľkových dát. To môže byť mätúce pre ľudí používajúcich čítačky obrazovky, ktorí musia zastaviť a počúvať štrukturálne popisy určené pre dátové mriežky, napríklad <em>"tabuľka, 5 riadkov, 1 stĺpec"</em>. Odstráňte tabuľku a použite radšej zoznam.',
+  TABLES_SINGLE_CELL:
+    'Je toto tabuľka? Jednobunkové tabuľky sa často používajú na vizuálne orámovanie alebo zvýrazňovacie kontajnery namiesto tabuľkových dát. To môže byť mätúce pre ľudí používajúcich čítačky obrazovky, ktorí musia zastaviť a počúvať štrukturálne popisy určené pre dátové mriežky: <em>"Tabuľka, 1 riadok, 1 stĺpec, Riadok 1 Stĺpec 1."</em> Odstráňte tabuľku a použite iné možnosti štýlovania na upútanie pozornosti na tento obsah.',
   TABLES_MISSING_HEADINGS:
     'Chýbajú záhlavia tabuľky! Prístupné tabuľky potrebujú značky HTML, ktoré označujú bunky záhlavia a dátové bunky a definujú ich vzájomný vzťah. Tieto informácie poskytujú kontext ľuďom, ktorí používajú asistenčné technológie. Tabuľky by sa mali používať iba na tabuľkové údaje. <hr> Viac informácií o <a href="https://www.w3.org/WAI/tutorials/tables/">prístupných tabuľkách.</a>',
   TABLES_SEMANTIC_HEADING:

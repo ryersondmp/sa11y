@@ -111,7 +111,7 @@ const ruleset = {
     'lyd',
     'pdf',
   ],
-  POTENTIAL_UI_ELEMENTS: ['menu', 'luk', 'skift', 'åbn', 'udvid', 'fold ud', 'fold sammen', 'næste', 'forrige', 'afspil', 'pause', 'undermenu', 'vis', 'skjul', 'rullemenu', 'tilbage', 'fremad','spring over', 'indsend', 'annuller', 'gem', 'rediger', 'slet', 'fjern', 'søg', 'filter', 'sorter', 'stop', 'lydløs', 'slå lyd til', 'fuldskærm', 'minimer', 'maksimer'],
+  POTENTIAL_UI_ELEMENTS: ['menu', 'luk', 'skift', 'åbn', 'udvid', 'fold ud', 'fold sammen', 'næste', 'forrige', 'afspil', 'pause', 'undermenu', 'vis', 'skjul', 'rullemenu', 'tilbage', 'fremad', 'spring over', 'indsend', 'annuller', 'gem', 'rediger', 'slet', 'fjern', 'søg', 'filter', 'sorter', 'stop', 'lydløs', 'slå lyd til', 'fuldskærm', 'minimer', 'maksimer'],
 };
 
 const ui = {
@@ -375,6 +375,8 @@ const tooltip = {
   UNCONTAINED_LI:
     'Alle <code>&lt;li&gt;</code> listeelementer skal placeres inde i <code>&lt;ul&gt;</code> uordnede eller <code>&lt;ol&gt;</code> ordnede elementer. Denne struktur hjælper skærmlæsere med at annoncere listen og dens elementer nøjagtigt.',
   TABINDEX_ATTR: 'Elementet bør ikke have et <code>tabindex</code>-attribut større end 0.',
+  SVG_NO_ACCESSIBLE_NAME:
+    'Nogle skærmlæsere vil oplæse dette SVG som et ubemærket billede, fordi det mangler et tilgængeligt navn og ikke er skjult. Tilføj en tilgængelig etiket (eller <code>&lt;title&gt;</code>), hvis det har en betydning, eller skjul det for skærmlæsere, hvis det rent er dekorativt (<code>aria-hidden="true"</code>). <hr> Lær mere om <a href="https://a11y-101.com/development/svg">tilgængelige SVG\'er.</a>',
 
   // Meta checks
   META_LANG:
@@ -403,6 +405,10 @@ const tooltip = {
   LINK_MAYBE_BUTTON: 'Dette link har en ugyldig destination. Selvom det tilgængelige navn eller dets attributter tyder på, at dette måske slet ikke er et link, men i stedet styrer en form for scriptet adfærd på siden. For at løse det skal du erstatte linket med en <a href="https://www.w3.org/WAI/ARIA/apg/patterns/button/">tilgængelig knap</a> eller rette linkets destination. <hr> <strong {B}>Tilgængeligt navn</strong> <strong {C}>%(TEXT)</strong> <hr> <strong>Tip!</strong> Hjælpemidler behandler knapper og links forskelligt. Brug af det korrekte HTML-element sikrer, at brugerne ved, hvilke tastaturgenveje de skal bruge, og hvilken handling der udløses.',
 
   // Tables
+  TABLES_SINGLE_COLUMN:
+    'Er dette en tabel? Enkelte tabeller med én kolonne bruges ofte til layout eller lister snarere end til tabeldata. Dette kan være forvirrende for folk, der bruger skærmlæsere, som skal stoppe og lytte til strukturelle beskrivelser beregnet til datagitter, for eksempel <em>"tabel, 5 rækker, 1 kolonne"</em>. Fjern tabellen, og brug en liste i stedet.',
+  TABLES_SINGLE_CELL:
+    'Er dette en tabel? Enkeltcellede tabeller bruges ofte til visuelle kanter eller fremhævede beholdere i stedet for tabeldata. Dette kan være forvirrende for personer, der bruger skærmlæsere, som skal stoppe og lytte til strukturelle beskrivelser beregnet til datagitre: <em>"Tabel, 1 række, 1 kolonne, Række 1 Kolonne 1."</em> Fjern tabellen, og brug andre stylingsmuligheder til at skabe opmærksomhed om dette indhold.',
   TABLES_MISSING_HEADINGS:
     'Manglende tabelheadere! Tilgængelige tabeller har brug for HTML-markup, der angiver headerceller og dataceller, som definerer deres forhold. Disse oplysninger giver kontekst til folk, der bruger hjælpemidler. Tabeller bør kun bruges til tabeldata. <hr> Få mere at vide om <a href="https://www.w3.org/WAI/tutorials/tables/">tilgængelige tabeller.</a>',
   TABLES_SEMANTIC_HEADING:

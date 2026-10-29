@@ -362,6 +362,8 @@ const tooltip = {
   UNCONTAINED_LI:
     'Wszystkie elementy listy <code>&lt;li&gt;</code> muszą być umieszczone wewnątrz elementów <code>&lt;ul&gt;</code> nieuporządkowanych lub <code>&lt;ol&gt;</code> uporządkowanych. Ta struktura pomaga czytnikom ekranu dokładnie ogłaszać listę i jej elementy.',
   TABINDEX_ATTR: 'Element nie powinien mieć atrybutu <code>tabindex</code> większego niż 0.',
+  SVG_NO_ACCESSIBLE_NAME:
+    'Niektóre czytniki ekranu ogłoszą ten элемент SVG jako obraz bez etykiety, ponieważ brakuje mu dostępnej nazwy i nie jest ukryty. Dodaj dostępną etykietę (lub <code>&lt;title&gt;</code>), jeśli przekazuje ona znaczenie, lub ukryj go przed czytnikami ekranu, jeśli pełni funkcję wyłącznie dekoracyjną (<code>aria-hidden="true"</code>). <hr> Dowiedz się więcej o <a href="https://a11y-101.com/development/svg">dostępnych plikach SVG.</a>',
 
   // Meta checks
   META_LANG:
@@ -390,6 +392,10 @@ const tooltip = {
   LINK_MAYBE_BUTTON: 'Ten link ma nieprawidłowy cel. Chociaż nazwa dostępna lub jej atrybuty sugerują, że może to w ogóle nie być link, a zamiast tego kontroluje on pewne zachowanie skryptowe na stronie. Aby to naprawić, zastąp link <a href="https://www.w3.org/WAI/ARIA/apg/patterns/button/">dostępnym przyciskiem</a> lub popraw cel linku. <hr> <strong {B}>Nazwa dostępna</strong> <strong {C}>%(TEXT)</strong> <hr> <strong>Wskazówka!</strong> Technologie wspomagające traktują przyciski i linki w różny sposób. Użycie właściwego elementu HTML gwarantuje, że użytkownicy będą wiedzieć, jakich skrótów klawiaturowych użyć i jakie działanie zostanie wywołane.',
 
   // Tables
+  TABLES_SINGLE_COLUMN:
+    'Czy to jest tabela? Tabele jednokolumnowe są często używane do układu strony lub list, a nie do danych tabelarycznych. Może to być mylące dla osób korzystających z czytników ekranu, które muszą zatrzymać się i wysłuchać opisów strukturalnych przeznaczonych dla siatek danych, na przykład <em>"tabela, 5 wierszy, 1 kolumna"</em>. Usuń tabelę i zamiast niej użyj listy.',
+  TABLES_SINGLE_CELL:
+    'Czy to jest tabela? Tabele jednokomórkowe są często używane do tworzenia wizualnych obramowań lub kontenerów wyróżniających, a nie do prezentacji danych tabelarycznych. Może to być mylące dla osób korzystających z czytników ekranu, które muszą zatrzymać się i wysłuchać opisu struktury przeznaczonego dla siatek danych: <em>"Tabela, 1 wiersz, 1 kolumna, Wiersz 1 Kolumna 1."</em> Usuń tabelę i użyj innych opcji stylizacji, aby zwrócić uwagę na tę treść.',
   TABLES_MISSING_HEADINGS:
     'Brak nagłówków tabeli! Dostępne tabele wymagają znaczników HTML, które wskazują komórki nagłówków i komórki danych, które definiują ich relację. Informacje te zapewniają kontekst osobom korzystającym z technologii wspomagających. Tabele powinny być używane tylko dla danych tabelarycznych.<hr>Dowiedz się więcej o <a href="https://www.w3.org/WAI/tutorials/tables/">dostępnych tabelach.</a>',
   TABLES_SEMANTIC_HEADING:

@@ -79,6 +79,20 @@ export function isAriaHidden($el) {
 }
 
 /**
+ * Checks whether an element or any of its ancestors has `aria-hidden="true"`.
+ * @param {Element|null} element The element to check.
+ * @returns {boolean} True if the element or an ancestor is hidden from assistive technology.
+ */
+export function hasAriaHiddenAncestor(element) {
+  let current = element;
+  while (current) {
+    if (isAriaHidden(current)) return true;
+    current = current.parentElement;
+  }
+  return false;
+}
+
+/**
  * Checks if an element's semantics have been neutralized.
  * Handles space-separated role lists (e.g., role="none presentation").
  * @param {HTMLElement|Element} $el - The DOM element to evaluate.
@@ -1252,7 +1266,7 @@ export function validateLang(code, displayLangCode) {
   if (!langCache && typeof Intl !== 'undefined') {
     try {
       langCache = new Intl.DisplayNames([displayLangCode], { type: 'language', fallback: 'none' });
-    } catch {}
+    } catch { }
   }
 
   if (langCache) {

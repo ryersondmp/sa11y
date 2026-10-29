@@ -377,6 +377,8 @@ const tooltip = {
   UNCONTAINED_LI:
     "Tutti gli elementi di elenco <code>&lt;li&gt;</code> devono essere inseriti all’interno di elementi <code>&lt;ul&gt;</code> non ordinati o <code>&lt;ol&gt;</code> ordinati. Questa struttura aiuta i lettori di schermo ad annunciare l’elenco e i suoi elementi con precisione.",
   TABINDEX_ATTR: "L’elemento non deve avere un attributo <code>tabindex</code> maggiore di 0.",
+  SVG_NO_ACCESSIBLE_NAME:
+    'Alcuni screen reader annunceranno questo SVG come un\'immagine senza etichetta perché manca di un nome accessibile e non è nascosto. Aggiungi un\'etichetta accessibile (o <code>&lt;title&gt;</code>) se trasmette un significato, oppure nascondilo agli screen reader se è puramente decorativo (<code>aria-hidden="true"</code>). <hr> Scopri di più sugli <a href="https://a11y-101.com/development/svg">SVG accessibili.</a>',
 
   // Meta checks
   META_LANG:
@@ -405,6 +407,10 @@ const tooltip = {
   LINK_MAYBE_BUTTON: 'Questo link ha una destinazione non valida. Sebbene il nome accessibile o i suoi attributi suggeriscano che questo potrebbe non essere affatto un link, ma controlli invece un comportamento programmato sulla pagina. Per risolvere il problema, sostituisci il link con un <a href="https://www.w3.org/WAI/ARIA/apg/patterns/button/">pulsante accessibile</a> o correggi la destinazione del link. <hr> <strong {B}>Nome accessibile</strong> <strong {C}>%(TEXT)</strong> <hr> <strong>Suggerimento!</strong> Le tecnologie assistive trattano i pulsanti e i link in modo diverso. L’uso dell’elemento HTML corretto assicura che gli utenti sappiano quali scorciatoie da tastiera usare e quale azione verrà attivata.',
 
   // Tables
+  TABLES_SINGLE_COLUMN:
+    'È una tabella? Le tabelle a singola colonna sono spesso utilizzate per il layout o per gli elenchi anziché per i dati tabellari. Questo può essere fuorviante per le persone che utilizzano gli screen reader, che devono fermarsi ad ascoltare descrizioni strutturali destinate alle griglie di dati, ad esempio <em>"tabella, 5 righe, 1 colonna"</em>. Rimuovi la tabella e usa invece un elenco.',
+  TABLES_SINGLE_CELL:
+    'È una tabella? Le tabelle con una sola cella vengono spesso utilizzate per bordi visivi o contenitori in evidenza anziché per dati tabellari. Questo può essere fuorviante per chi usa uno screen reader, poiché deve fermarsi ad ascoltare descrizioni strutturali destinate alle griglie di dati: <em>"Tabella, 1 riga, 1 colonna, Riga 1 Colonna 1."</em> Rimuovi la tabella e usa altre opzioni di stile per mettere in risalto questo contenuto.',
   TABLES_MISSING_HEADINGS:
     'Intestazioni di tabella mancanti! Le tabelle accessibili necessitano di un markup HTML che indichi le celle di intestazione e le celle di dati e che definisca la loro relazione. Queste informazioni forniscono un contesto alle persone che utilizzano tecnologie assistive. Le tabelle devono essere utilizzate solo per i dati tabellari. <hr> Per saperne di più su <a href="https://www.w3.org/WAI/tutorials/tables/">tabelle accessibili.</a>',
   TABLES_SEMANTIC_HEADING:

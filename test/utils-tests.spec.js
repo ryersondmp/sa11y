@@ -19,6 +19,29 @@ test.describe('Sa11y utils', () => {
     return new Function('utils', `return (${source})(utils);`)(utils);
   }, fn.toString());
 
+  test('hasAriaHiddenAncestor checks the element itself and its ancestors', async () => {
+    const result = await withUtils((u) => {
+      const parent = document.createElement('div');
+      const child = document.createElement('span');
+      parent.append(child);
+      const visible = u.hasAriaHiddenAncestor(child);
+      parent.setAttribute('aria-hidden', ' TRUE ');
+      const hiddenParent = u.hasAriaHiddenAncestor(child);
+      child.setAttribute('aria-hidden', 'false');
+      const cannotOverrideParent = u.hasAriaHiddenAncestor(child);
+      parent.removeAttribute('aria-hidden');
+      child.setAttribute('aria-hidden', 'true');
+      const hiddenSelf = u.hasAriaHiddenAncestor(child);
+      return { visible, hiddenParent, cannotOverrideParent, hiddenSelf };
+    });
+    expect(result).toEqual({
+      visible: false,
+      hiddenParent: true,
+      cannotOverrideParent: true,
+      hiddenSelf: true,
+    });
+  });
+
   test.describe('generateRegexString', () => {
     test('a standalone RegExp matches the same way as that RegExp inside an array', async () => {
       const result = await withUtils((u) => {

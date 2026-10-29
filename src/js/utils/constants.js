@@ -62,9 +62,9 @@ const Constants = (function myConstants() {
     // Generate suspicious alt stop words list.
     Global.susAltWords = State.option.susAltStopWords
       ? State.option.susAltStopWords
-          .split(',')
-          .map((word) => word.trim().toLowerCase())
-          .filter(Boolean)
+        .split(',')
+        .map((word) => word.trim().toLowerCase())
+        .filter(Boolean)
       : Lang._('SUS_ALT_STOPWORDS');
 
     // Generate placeholder stop words set. Folded to match the folded alt text (see images.js).
@@ -479,7 +479,7 @@ const Constants = (function myConstants() {
     }
 
     // Ignore specific links
-    Exclusions.Links = ['.anchorjs-link', '[aria-hidden="true"][tabindex^="-"]'];
+    Exclusions.Links = ['.anchorjs-link', '[aria-hidden="true"][tabindex^="-"], [inert]'];
     if (State.option.linkIgnore) {
       Exclusions.Links = State.option.linkIgnore
         .split(',')

@@ -216,6 +216,8 @@ const defaultOptions = {
       dismissAll: true,
     },
     QA_BLOCKQUOTE: true,
+    TABLES_SINGLE_COLUMN: true,
+    TABLES_SINGLE_CELL: true,
     TABLES_MISSING_HEADINGS: true,
     TABLES_SEMANTIC_HEADING: true,
     TABLES_EMPTY_HEADING: true,
@@ -261,6 +263,7 @@ const defaultOptions = {
     BTN_ROLE_IN_NAME: true,
     LINK_MAYBE_BUTTON: true,
     BTN_UNPRONOUNCEABLE: true,
+    SVG_NO_ACCESSIBLE_NAME: true,
 
     // Contrast checks
     CONTRAST_WARNING: {

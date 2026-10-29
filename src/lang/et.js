@@ -373,6 +373,8 @@ const tooltip = {
   UNCONTAINED_LI:
     'Kõik <code>&lt;li&gt;</code> nimekirjaelemendid peavad olema paigutatud <code>&lt;ul&gt;</code> järjestamata või <code>&lt;ol&gt;</code> järjestatud elementide sisse. See struktuur aitab ekraani lugemistarkvaral nimekirja ja selle elemente täpselt kuulutada.',
   TABINDEX_ATTR: 'Elemendil ei tohiks olla <code>tabindex</code> atribuut, mis on suurem kui 0.',
+  SVG_NO_ACCESSIBLE_NAME:
+    'Mõned ekraanilugejad teavitavad sellest SVG-st kui sildistamata pildist, kuna sellel puudub juurdepääsetav nimi ja see pole varjatud. Lisage juurdepääsetav silt (või <code>&lt;title&gt;</code>), kui see edastab tähendust, või peitke see ekraanilugejate eest, kui see on puhtalt dekoratiivne (<code>aria-hidden="true"</code>). <hr> Lisateave <a href="https://a11y-101.com/development/svg">juurdepääsetavate SVG-de kohta.</a>',
 
   // Meta checks
   META_LANG:
@@ -401,6 +403,10 @@ const tooltip = {
   LINK_MAYBE_BUTTON: 'Sellel lingil on vigane sihtkoht. Kuigi kättesaadav nimi või selle atribuudid viitavad, et see ei pruugi üldse link olla, vaid juhib hoopis mingit skriptitud käitumist lehel. Parandamiseks asendage link <a href="https://www.w3.org/WAI/ARIA/apg/patterns/button/">juurdepääsetava nupuga</a> või parandage lingi sihtkoht. <hr> <strong {B}>Kättesaadav nimi</strong> <strong {C}>%(TEXT)</strong> <hr> <strong>Vihje!</strong> Abitehnoloogiad käsitlevad nuppe ja linke erinevalt. Õige HTML-elemendi kasutamine tagab, et kasutajad teavad, milliseid klahvikombinatsioone kasutada ja milline tegevus käivitub.',
 
   // Tables
+  TABLES_SINGLE_COLUMN:
+    'Kas see on tabel? Ühe veeruga tabeleid kasutatakse sageli paigutuse või loendite jaoks, mitte tabelandmete jaoks. See võib olla segadusttekitav ekraanilugejaid kasutavatele inimestele, kes peavad peatuma ja kuulama andmevõrkudele mõeldud struktuurikirjeldusi, näiteks <em>"tabel, 5 rida, 1 veerg"</em>. Eemaldage tabel ja kasutage selle asemel loendit.',
+  TABLES_SINGLE_CELL:
+    'Kas see on tabel? Ühe lahtriga tabeleid kasutatakse sageli visuaalsete ääriste või esiletõstetud konteinerite jaoks, mitte tabelandmete jaoks. See võib olla segadusttekitav ekraanilugejaid kasutavatele inimestele, kes peavad peatuma ja kuulama andmevõrkudele mõeldud struktuurikirjeldusi: <em>"Tabel, 1 rida, 1 veerg, Rida 1 Veerg 1."</em> Eemaldage tabel ja kasutage muud stiili, et sellele sisule tähelepanu tõmmata.',
   TABLES_MISSING_HEADINGS:
     'Puuduvad tabeli päised! Kättesaadavad tabelid vajavad HTML-märgistust, mis tähistab päise- ja andmerakke, mis määratleb nende omavahelise seose. See teave annab konteksti inimestele, kes kasutavad abivahendeid. Tabeleid tuleks kasutada ainult tabeliandmete jaoks. <hr> Lisateave <a href="https://www.w3.org/WAI/tutorials/tables/">juurdepääsetavate tabelite kohta.</a>',
   TABLES_SEMANTIC_HEADING:

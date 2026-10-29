@@ -369,6 +369,8 @@ const tooltip = {
   UNCONTAINED_LI:
     '모든 <code>&lt;li&gt;</code> 목록 항목은 <code>&lt;ul&gt;</code> 비정렬 목록 또는 <code>&lt;ol&gt;</code> 정렬 목록 요소 안에 배치해야 합니다. 이 구조는 스크린 리더가 목록과 항목을 정확하게 읽어주는 데 도움이 됩니다.',
   TABINDEX_ATTR: '요소는 <code>tabindex</code> 속성이 0보다 커서는 안 됩니다.',
+  SVG_NO_ACCESSIBLE_NAME:
+    '접근 가능한 이름이 없고 숨겨져 있지 않기 때문에 일부 스크린 리더는 이 SVG를 레이블이 없는 이미지로 읽습니다. 의미를 전달하는 경우 접근 가능한 레이블(또는 <code>&lt;title&gt;</code>)을 추가하고, 순수하게 장식용인 경우 스크린 리더에서 숨기세요(<code>aria-hidden="true"</code>). <hr> <a href="https://a11y-101.com/development/svg">접근 가능한 SVG</a>에 대해 자세히 알아보세요.',
 
   // Meta checks
   META_LANG:
@@ -397,6 +399,10 @@ const tooltip = {
   LINK_MAYBE_BUTTON: '이 링크의 대상이 유효하지 않습니다. 액세스 가능한 이름이나 속성으로 볼 때, 이것은 링크가 아니라 페이지의 스크립트 동작을 제어하는 요소일 가능성이 높습니다. 문제를 해결하려면 링크를 <a href="https://www.w3.org/WAI/ARIA/apg/patterns/button/">액세스 가능한 버튼</a>으로 교체하거나 링크의 목적지를 수정하세요. <hr> <strong {B}>액세스 가능한 이름</strong> <strong {C}>%(TEXT)</strong> <hr> <strong>팁!</strong> 보조 기술은 버튼과 링크를 다르게 처리합니다. 올바른 HTML 요소를 사용하면 사용자가 어떤 키보드 단축키를 사용해야 하는지, 어떤 동작이 실행될지 이해할 수 있습니다.',
 
   // Tables
+  TABLES_SINGLE_COLUMN:
+    '이것이 테이블인가요? 단일 열 테이블은 표 형식 데이터보다는 레이아웃이나 목록에 자주 사용됩니다. 이는 스크린 리더 사용자가 데이터 그리드용 구조적 설명(예: <em>"테이블, 5행, 1열"</em>)을 멈추고 들어야 하므로 혼란을 줄 수 있습니다. 테이블을 제거하고 대신 목록을 사용하세요.',
+  TABLES_SINGLE_CELL:
+    '이것은 표인가요? 단일 셀 표는 표 형식 데이터보다는 시각적 테두리나 강조용 컨테이너로 자주 사용됩니다. 이는 스크린 리더 사용자가 데이터 그리드용 구조 설명을 듣기 위해 멈춰야 하므로 혼란을 줄 수 있습니다: <em>"표, 1행, 1열, 1행 1열."</em> 표를 제거하고 다른 스타일 옵션을 사용하여 이 콘텐츠에 주목하도록 하세요.',
   TABLES_MISSING_HEADINGS:
     '표 헤더가 누락되었습니다! 접근 가능한 표에는 헤더 셀과 데이터 셀의 관계를 정의하는 HTML 마크업이 필요합니다. 이 정보는 보조 기술을 사용하는 사람들에게 컨텍스트를 제공합니다. 표는 표 형식의 데이터에만 사용해야 합니다. <hr> <a href="https://www.w3.org/WAI/tutorials/tables/">액세스 가능한 표에 대해 자세히 알아보기.</a>',
   TABLES_SEMANTIC_HEADING:

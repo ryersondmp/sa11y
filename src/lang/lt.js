@@ -365,6 +365,8 @@ const tooltip = {
   UNCONTAINED_LI:
     'Visi <code>&lt;li&gt;</code> sąrašo elementai turi būti įdėti į <code>&lt;ul&gt;</code> nesurūšiuotus arba <code>&lt;ol&gt;</code> surūšiuotus elementus. Ši struktūra padeda ekranų skaitytuvams tiksliai paskelbti sąrašą ir jo elementus.',
   TABINDEX_ATTR: 'Elementas neturėtų turėti <code>tabindex</code> atributo, didesnio nei 0.',
+  SVG_NO_ACCESSIBLE_NAME:
+    'Kai kurios ekrano skaityklės paskelbs šį SVG kaip nepažymėtą vaizdą, nes jis neturi pasiekiamo pavadinimo ir nėra paslėptas. Pridėkite pasiekiamą etiketę (arba <code>&lt;title&gt;</code>), jei ji perteikia prasmę, arba paslėpkite jį nuo ekrano skaityklių, jei jis yra grynai dekoratyvus (<code>aria-hidden="true"</code>). <hr> Sužinokite daugiau apie <a href="https://a11y-101.com/development/svg">pasiekiamus SVG.</a>',
 
   // Meta checks
   META_LANG:
@@ -393,6 +395,10 @@ const tooltip = {
   LINK_MAYBE_BUTTON: 'Ši nuoroda turi negaliojantį tikslą. Nors prieinamas pavadinimas arba jo atributai rodo, kad tai gali būti visai ne nuoroda, o tam tikras puslapio scenarijaus elgsenos valdymas. Norėdami tai ištaisyti, pakeiskite nuorodą <a href="https://www.w3.org/WAI/ARIA/apg/patterns/button/">prieinamu mygtuku</a> arba pataisykite nuorodos tikslą. <hr> <strong {B}>Prieinamas pavadinimas</strong> <strong {C}>%(TEXT)</strong> <hr> <strong>Patarimas!</strong> Pagalbinės technologijos mygtukus ir nuorodas apdoroja skirtingai. Tinkamo HTML elemento naudojimas užtikrina, kad vartotojai žinotų, kokius klaviatūros sparčiuosius klavišus naudoti ir koks veiksmas bus atliktas.',
 
   // Tables
+  TABLES_SINGLE_COLUMN:
+    'Ar tai lentelė? Vieno stulpelio lentelės dažnai naudojamos maketavimui arba sąrašams, o ne lenteliniams duomenims. Tai gali klaidinti ekrano skaitytuvelius naudojančius žmones, kurie turi sustoti ir klausytis struktūrinių aprašymų, skirtų duomenų tinkleliams, pavyzdžiui, <em>"lentelė, 5 eilutės, 1 stulpelis"</em>. Pašalinkite lentelę ir vietoj jos naudokite sąrašą.',
+  TABLES_SINGLE_CELL:
+    'Ar tai lentelė? Vienos langelio lentelės dažnai naudojamos vaizdiniams rėmeliams ar paryškinimo konteineriams, o ne lentelei būdingiems duomenims. Tai gali trikdyti ekrano skaitytuvelių naudotojus, kuriems tenka sustoti ir klausytis duomenų tinkleliams skirtų struktūrinių aprašymų: <em>"Lentelė, 1 eilutė, 1 stulpelis, 1 eilutė 1 stulpelis."</em> Pašalinkite lentelę ir naudokite kitas stiliaus parinktis, kad atkreiptumėte dėmesį į šį turinį.',
   TABLES_MISSING_HEADINGS:
     'Trūksta lentelių antraščių! Prieinamoms lentelėms reikia HTML žymėjimo, kuris nurodo antraštės langelius ir duomenų langelius, apibrėžiančius jų ryšį. Ši informacija suteikia kontekstą žmonėms, kurie naudojasi pagalbinėmis technologijomis. Lentelės turėtų būti naudojamos tik lentelėms su duomenimis. <hr> Sužinokite daugiau apie <a href="https://www.w3.org/WAI/tutorials/tables/">prieinamas lenteles.</a>',
   TABLES_SEMANTIC_HEADING:

@@ -375,6 +375,8 @@ const tooltip = {
   UNCONTAINED_LI:
     'Alle <code>&lt;li&gt;</code> lijstitems moeten worden geplaatst binnen <code>&lt;ul&gt;</code> ongeordende of <code>&lt;ol&gt;</code> geordende elementen. Deze structuur helpt schermlezers om de lijst en de items ervan nauwkeurig aan te kondigen.',
   TABINDEX_ATTR: 'Het element mag geen <code>tabindex</code>-attribuut groter dan 0 hebben.',
+  SVG_NO_ACCESSIBLE_NAME:
+    'Sommige schermlezers zullen deze SVG aankondigen als een afbeelding zonder label omdat deze geen toegankelijke naam heeft en niet verborgen is. Voeg een toegankelijk label (of <code>&lt;title&gt;</code>) toe als het betekenis overbrengt, of verberg het voor schermlezers als het louter decoratief is (<code>aria-hidden="true"</code>). <hr> Lees meer over <a href="https://a11y-101.com/development/svg">toegankelijke SVG\'s.</a>',
 
   // Meta checks
   META_LANG:
@@ -403,6 +405,10 @@ const tooltip = {
   LINK_MAYBE_BUTTON: 'Deze link heeft een ongeldig doel. Hoewel de toegankelijke naam of de attributen ervan suggereren dat dit misschien helemaal geen link is, maar in plaats daarvan gescript gedrag op de pagina aanstuurt. Vervang de link door een <a href="https://www.w3.org/WAI/ARIA/apg/patterns/button/">toegankelijke knop</a> om dit op te lossen, of corrigeer de bestemming van de link. <hr> <strong {B}>Toegankelijke naam</strong> <strong {C}>%(TEXT)</strong> <hr> <strong>Tip!</strong> Ondersteunende technologieën behandelen knoppen en links anders. Het gebruik van het juiste HTML-element zorgt ervoor dat gebruikers weten welke sneltoetsen ze moeten gebruiken en welke actie wordt geactiveerd.',
 
   // Tables
+  TABLES_SINGLE_COLUMN:
+    'Is dit een tabel? Tabellen met één kolom worden vaak gebruikt voor lay-out of lijsten in plaats van tabelgegevens. Dit kan verwarrend zijn voor mensen die schermlezers gebruiken, die moeten stoppen en luisteren naar structurele beschrijvingen die bedoeld zijn voor gegevensrasters, bijvoorbeeld <em>"tabel, 5 rijen, 1 kolom"</em>. Verwijder de tabel en gebruik in plaats daarvan een lijst.',
+  TABLES_SINGLE_CELL:
+    'Is dit een tabel? Tabellen met één cel worden vaak gebruikt voor visuele randen of uitlichtingscontainers in plaats van tabelgegevens. Dit kan verwarrend zijn voor mensen die schermlezers gebruiken, die moeten stoppen om te luisteren naar structurele beschrijvingen die bedoeld zijn voor gegevensrasters: <em>"Tabel, 1 rij, 1 kolom, Rij 1 Kolom 1."</em> Verwijder de tabel en gebruik andere stylingsopties om de aandacht op deze inhoud te vestigen.',
   TABLES_MISSING_HEADINGS:
     'Tabelkoppen ontbreken! Voor toegankelijke tabellen is HTML-markup nodig die kopcellen en gegevenscellen aangeeft en hun relatie definieert. Deze informatie geeft context aan mensen die ondersteunende technologie gebruiken. Tabellen moeten alleen worden gebruikt voor gegevens in tabelvorm. <hr> Lees meer over <a href="https://www.w3.org/WAI/tutorials/tables/">toegankelijke tabellen.</a>',
   TABLES_SEMANTIC_HEADING:

@@ -368,6 +368,8 @@ const tooltip = {
     'Semua item daftar <code>&lt;li&gt;</code> harus diletakkan di dalam elemen <code>&lt;ul&gt;</code> yang tidak terurut atau <code>&lt;ol&gt;</code> yang terurut. Struktur ini membantu pembaca layar mengumumkan daftar dan item-itemnya dengan akurat.',
   TABINDEX_ATTR:
     'Elemen tidak boleh memiliki atribut <code>tabindex</code> yang lebih besar dari 0.',
+  SVG_NO_ACCESSIBLE_NAME:
+    'Beberapa pembaca layar akan mengumumkan SVG ini sebagai gambar tanpa label karena tidak memiliki nama yang dapat diakses dan tidak tersembunyi. Tambahkan label yang dapat diakses (atau <code>&lt;title&gt;</code>) jika menyampaikan makna, atau sembunyikan dari pembaca layar jika murni bersifat dekoratif (<code>aria-hidden="true"</code>). <hr> Pelajari lebih lanjut tentang <a href="https://a11y-101.com/development/svg">SVG yang dapat diakses.</a>',
 
   // Meta checks
   META_LANG:
@@ -396,6 +398,10 @@ const tooltip = {
   LINK_MAYBE_BUTTON: 'Tautan ini memiliki target yang tidak valid. Meskipun nama yang dapat diakses atau atributnya menunjukkan bahwa ini mungkin bukan tautan sama sekali, melainkan mengontrol beberapa perilaku skrip pada halaman. Untuk memperbaikinya, ganti tautan dengan <a href="https://www.w3.org/WAI/ARIA/apg/patterns/button/">tombol yang dapat diakses</a>, atau perbaiki tujuan tautan. <hr> <strong {B}>Nama yang Dapat Diakses</strong> <strong {C}>%(TEXT)</strong> <hr> <strong>Tips!</strong> Teknologi bantu memperlakukan tombol dan tautan secara berbeda. Menggunakan elemen HTML yang benar memastikan pengguna mengetahui pintasan keyboard mana yang harus digunakan dan tindakan apa yang akan dipicu.',
 
   // Tables
+  TABLES_SINGLE_COLUMN:
+    'Apakah ini tabel? Tabel satu kolom sering digunakan untuk tata letak atau daftar daripada data tabular. Hal ini dapat membingungkan bagi orang yang menggunakan pembaca layar, yang harus berhenti dan mendengarkan deskripsi struktural yang ditujukan untuk kisi data, misalnya <em>"tabel, 5 baris, 1 kolom"</em>. Hapus tabel dan gunakan daftar sebagai gantinya.',
+  TABLES_SINGLE_CELL:
+    'Apakah ini tabel? Tabel satu sel sering digunakan untuk bingkai visual atau wadah sorotan daripada data tabular. Hal ini dapat membingungkan bagi pengguna pembaca layar, yang harus berhenti dan mendengarkan deskripsi struktural yang ditujukan untuk kisi data: <em>"Tabel, 1 baris, 1 kolom, Baris 1 Kolom 1."</em> Hapus tabel dan gunakan opsi gaya lain untuk menarik perhatian ke konten ini.',
   TABLES_MISSING_HEADINGS:
     'Header tabel yang hilang! Tabel yang dapat diakses membutuhkan markup HTML yang menunjukkan sel header dan sel data yang mendefinisikan hubungannya. Informasi ini memberikan konteks kepada orang yang menggunakan teknologi bantu. Tabel harus digunakan hanya untuk data tabular. <hr> Pelajari lebih lanjut tentang <a href="https://www.w3.org/WAI/tutorials/tables/">tabel yang dapat diakses.</a>',
   TABLES_SEMANTIC_HEADING:

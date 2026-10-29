@@ -374,6 +374,8 @@ const tooltip = {
   UNCONTAINED_LI:
     'Vse <code>&lt;li&gt;</code> postavke seznama morajo biti nameščene znotraj <code>&lt;ul&gt;</code> neurejenih ali <code>&lt;ol&gt;</code> urejenih elementov. Ta struktura pomaga bralnikom zaslona natančno napovedati seznam in njegove postavke.',
   TABINDEX_ATTR: 'Element ne sme imeti atributa <code>tabindex</code>, ki je večji od 0.',
+  SVG_NO_ACCESSIBLE_NAME:
+    'Nekateri bralniki zaslona bodo ta SVG napovedali kot neoznačeno sliko, ker nima dostopnega imena in ni skrit. Dodajte dostopno oznako (ali <code>&lt;title&gt;</code>), če sporoča pomen, ali pa ga skrijte pred bralniki zaslona, če je zgolj dekorativen (<code>aria-hidden="true"</code>). <hr> Več o <a href="https://a11y-101.com/development/svg">dostopnih SVG-jih.</a>',
 
   // Meta checks
   META_LANG:
@@ -402,6 +404,10 @@ const tooltip = {
   LINK_MAYBE_BUTTON: 'Ta povezava ima neveljaven cilj. Čeprav dostopno ime ali njegovi atributi kažejo, da to sploh ni povezava, temveč nadzoruje neko skriptno vedenje na strani. Če želite to popraviti, zamenjajte povezavo z <a href="https://www.w3.org/WAI/ARIA/apg/patterns/button/">dostopnim gumbom</a> ali popravite cilj povezave. <hr> <strong {B}>Dostopno ime</strong> <strong {C}>%(TEXT)</strong> <hr> <strong>Nasvet!</strong> Podporne tehnologije gumbe in povezave obravnavajo drugače. Uporaba pravilnega elementa HTML zagotavlja, da uporabniki vedo, katere bližnjice na tipkovnici uporabiti in katero dejanje se bo sprožilo.',
 
   // Tables
+  TABLES_SINGLE_COLUMN:
+    'Je to tabela? Tabele z enim stolpcem se pogosto uporabljajo za postavitev ali sezname namesto za tabelarične podatke. To je lahko zmedeno za ljudi, ki uporabljajo bralnike zaslona, ki se morajo ustaviti in prisluhniti strukturnim opisom, namenjenim podatkovnim mrežam, na primer <em>"tabela, 5 vrstic, 1 stolpec"</em>. Odstranite tabelo in namesto nje uporabite seznam.',
+  TABLES_SINGLE_CELL:
+    'Je to tabela? Tabele z eno celico se pogosto uporabljajo za vizualne obrobe ali vsebnike za poudarjanje namesto za tabelarične podatke. To je lahko zbodljivo za ljudi, ki uporabljajo bralnike zaslona, saj se morajo ustaviti in poslušati strukturne opise, namenjene podatkovnim mrežam: <em>"Tabela, 1 vrstica, 1 stolpec, Vrstica 1 Stolpec 1."</em> Odstranite tabelo in uporabite druge možnosti oblikovanja, da pritegnete pozornost na to vsebino.',
   TABLES_MISSING_HEADINGS:
     'Manjkajo glave tabel! Dostopne tabele potrebujejo oznako HTML, ki označuje celice glave in podatkovne celice ter določa njihovo razmerje. Te informacije zagotavljajo kontekst ljudem, ki uporabljajo podporno tehnologijo. Tabele je treba uporabljati samo za tabelarne podatke. <hr> Preberite več o <a href="https://www.w3.org/WAI/tutorials/tables/">dostopnih tabelah.</a>',
   TABLES_SEMANTIC_HEADING:

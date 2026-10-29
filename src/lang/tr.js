@@ -384,6 +384,8 @@ const tooltip = {
   UNCONTAINED_LI:
     'Tüm <code>&lt;li&gt;</code> liste öğeleri, <code>&lt;ul&gt;</code> sırasız veya <code>&lt;ol&gt;</code> sıralı öğeler içinde yer almalıdır. Bu yapı, ekran okuyucularının listeyi ve öğelerini doğru bir şekilde duyurmasına yardımcı olur.',
   TABINDEX_ATTR: 'Öğenin <code>tabindex</code> değeri 0’dan büyük olmamalıdır.',
+  SVG_NO_ACCESSIBLE_NAME:
+    'Erişilebilir bir adı olmadığı ve gizlenmediği için bazı ekran okuyucular bu SVG\'yi etiketlenmemiş bir görsel olarak duyuracaktır. Anlam taşıyorsa erişilebilir bir etiket (veya <code>&lt;title&gt;</code>) ekleyin ya da tamamen dekoratifse ekran okuyuculardan gizleyin (<code>aria-hidden="true"</code>). <hr> <a href="https://a11y-101.com/development/svg">Erişilebilir SVG\'ler</a> hakkında daha fazla bilgi edinin.',
 
   // Meta checks
   META_LANG:
@@ -412,6 +414,10 @@ const tooltip = {
   LINK_MAYBE_BUTTON: 'Bu bağlantının geçersiz bir hedefi var. Erişilebilir ad veya öznitelikleri bunun hiç bir bağlantı olmadığını, bunun yerine sayfadaki bazı komut dosyası davranışlarını kontrol ettiğini gösteriyor. Düzeltmek için bağlantıyı <a href="https://www.w3.org/WAI/ARIA/apg/patterns/button/">erişilebilir bir düğme</a> ile değiştirin veya bağlantının hedefini düzeltin. <hr> <strong {B}>Erişilebilir Ad</strong> <strong {C}>%(TEXT)</strong> <hr> <strong>İpucu!</strong> Yardımcı teknolojiler düğmelere ve bağlantılara farklı şekilde davranır. Doğru HTML öğesini kullanmak, kullanıcıların hangi klavye kısayollarını kullanacaklarını ve hangi eylemin tetikleneceğini bilmelerini sağlar.',
 
   // Tables
+  TABLES_SINGLE_COLUMN:
+    'Bu bir tablo mu? Tek sütunlu tablolar, tablosal verilerden ziyade genellikle düzen veya listeler için kullanılır. Bu durum, veri ızgaraları için tasarlanmış yapısal açıklamaları (örneğin <em>"tablo, 5 satır, 1 sütun"</em>) durup dinlemek zorunda kalan ekran okuyucu kullanan kişiler için kafa karıştırıcı olabilir. Tabloyu kaldırın ve bunun yerine bir liste kullanın.',
+  TABLES_SINGLE_CELL:
+    'Bu bir tablo mu? Tek hücreli tablolar genellikle tablo verileri yerine görsel kenarlıklar veya vurgu kutuları için kullanılır. Bu durum, veri ızgaraları için tasarlanmış yapısal açıklamaları dinlemek zorunda kalan ekran okuyucu kullanıcıları için kafa karıştırıcı olabilir: <em>"Tablo, 1 satır, 1 sütun, Satır 1 Sütun 1."</em> Tabloyu kaldırın ve bu içeriğe dikkat çekmek için diğer stil seçeneklerini kullanın.',
   TABLES_MISSING_HEADINGS:
     'Eksik tablo üst bilgileri! Erişilebilir tablolar, üst bilgi hücrelerini ve aralarındaki ilişkiyi tanımlayan veri hücrelerini gösteren HTML işaretlemesine ihtiyaç duyar. Bu bilgi, yardımcı teknoloji kullanan kişilere bağlam sağlar. Tablolar yalnızca tablo verileri için kullanılmalıdır. <hr> <a href="https://www.w3.org/WAI/tutorials/tables/">erişilebilir tablolar hakkında daha fazla bilgi edinin.</a>',
   TABLES_SEMANTIC_HEADING:

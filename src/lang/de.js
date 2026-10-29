@@ -409,6 +409,8 @@ const tooltip = {
   UNCONTAINED_LI:
     'Alle <code>&lt;li&gt;</code> Listenelemente müssen innerhalb von <code>&lt;ul&gt;</code> ungeordneten oder <code>&lt;ol&gt;</code> geordneten Elementen platziert werden. Diese Struktur hilft Bildschirmlesern, die Liste und ihre Elemente genau anzukündigen.',
   TABINDEX_ATTR: 'Das Element sollte kein <code>tabindex</code>-Attribut größer als 0 haben.',
+  SVG_NO_ACCESSIBLE_NAME:
+    'Einige Screenreader sagen dieses SVG als unbeschriftetes Bild an, da ihm ein zugänglicher Name fehlt und es nicht verborgen ist. Fügen Sie ein zugängliches Label (oder <code>&lt;title&gt;</code>) hinzu, wenn es eine Bedeutung vermittelt, oder verbergen Sie es vor Screenreadern, wenn es rein dekorativ ist (<code>aria-hidden="true"</code>). <hr> Erfahren Sie mehr über <a href="https://a11y-101.com/development/svg">barrierefreie SVGs.</a>',
 
   // Meta checks
   META_LANG:
@@ -438,6 +440,10 @@ const tooltip = {
   LINK_MAYBE_BUTTON: 'Dieser Link hat ein ungültiges Ziel. Der barrierefreie Name oder die Attribute deuten darauf hin, dass es sich möglicherweise gar nicht um einen Link handelt, sondern stattdessen ein skriptgesteuertes Verhalten auf der Seite steuert. Um dies zu beheben, ersetzen Sie den Link durch eine <a href="https://www.w3.org/WAI/ARIA/apg/patterns/button/">barrierefreie Schaltfläche</a> oder korrigieren Sie das Ziel des Links. <hr> <strong {B}>Barrierefreier Name</strong> <strong {C}>%(TEXT)</strong> <hr> <strong>Tipp!</strong> Unterstützende Technologien behandeln Schaltflächen und Links unterschiedlich. Die Verwendung des richtigen HTML-Elements stellt sicher, dass die Benutzer wissen, welche Tastaturkürzel sie verwenden müssen und welche Aktion ausgelöst wird.',
 
   // Tables
+  TABLES_SINGLE_COLUMN:
+    'Ist das eine Tabelle? Einspaltige Tabellen werden häufig für Layouts oder Listen statt für Tabellendaten verwendet. Dies kann für Personen verwirrend sein, die Screenreader nutzen und anhalten müssen, um sich strukturelle Beschreibungen anzuhören, die für Datengitter gedacht sind, wie zum Beispiel <em>"Tabelle, 5 Zeilen, 1 Spalte"</em>. Entfernen Sie die Tabelle und verwenden Sie stattdessen eine Liste.',
+  TABLES_SINGLE_CELL:
+    'Ist das eine Tabelle? Einzelne Zelltabellen werden häufig für visuelle Rahmen oder Hervorhebungs-Container anstelle von Tabellendaten verwendet. Dies kann für Personen, die Screenreader nutzen, verwirrend sein, da sie anhalten und strukturelle Beschreibungen für Datengitter anhören müssen: <em>"Tabelle, 1 Zeile, 1 Spalte, Zeile 1 Spalte 1."</em> Entfernen Sie die Tabelle und nutzen Sie andere Formatierungsoptionen, um die Aufmerksamkeit auf diesen Inhalt zu lenken.',
   TABLES_MISSING_HEADINGS:
     'Fehlende Tabellenköpfe! Barrierefreie Tabellen benötigen eine HTML-Auszeichnung, die Kopfzellen und Datenzellen kennzeichnet und ihre Beziehung zueinander definiert. Diese Informationen liefern den Kontext für Menschen, die Hilfsmittel verwenden. Tabellen sollten nur für tabellarische Daten verwendet werden. <hr> Erfahre mehr über <a href="https://www.w3.org/WAI/tutorials/tables/">barrierefreie Tabellen.</a>',
   TABLES_SEMANTIC_HEADING:

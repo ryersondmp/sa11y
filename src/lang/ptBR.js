@@ -378,6 +378,8 @@ const tooltip = {
   UNCONTAINED_LI:
     'Todos os itens de lista <code>&lt;li&gt;</code> devem ser colocados dentro dos elementos <code>&lt;ul&gt;</code> não ordenados ou <code>&lt;ol&gt;</code> ordenados. Essa estrutura ajuda leitores de tela a anunciar a lista e seus itens com precisão.',
   TABINDEX_ATTR: 'O elemento não deve ter um atributo <code>tabindex</code> maior que 0.',
+  SVG_NO_ACCESSIBLE_NAME:
+    'Alguns leitores de tela anunciarão este SVG como uma imagem sem rótulo porque ele não possui um nome acessível e não está oculto. Adicione um rótulo acessível (ou <code>&lt;title&gt;</code>) se ele transmitir significado, ou oculte-o dos leitores de tela se for puramente decorativo (<code>aria-hidden="true"</code>). <hr> Saiba mais sobre <a href="https://a11y-101.com/development/svg">SVGs acessíveis.</a>',
 
   // Meta checks
   META_LANG:
@@ -406,6 +408,10 @@ const tooltip = {
   LINK_MAYBE_BUTTON: 'Este link tem um destino inválido. Embora o nome acessível ou seus atributos sugiram que isso pode não ser um link, mas sim um controle de algum comportamento de script na página. Para corrigir, substitua o link por um <a href="https://www.w3.org/WAI/ARIA/apg/patterns/button/">botão acessível</a> ou corrija o destino do link. <hr> <strong {B}>Nome Acessível</strong> <strong {C}>%(TEXT)</strong> <hr> <strong>Dica!</strong> As tecnologias assistivas tratam botões e links de maneira diferente. O uso do elemento HTML correto garante que os usuários saibam quais atalhos de teclado usar e qual ação será acionada.',
 
   // Tables
+  TABLES_SINGLE_COLUMN:
+    'Isso é uma tabela? Tabelas de coluna única são frequentemente usadas para layout ou listas em vez de dados tabulares. Isso pode ser confuso para pessoas que usam leitores de tela, que precisam parar e ouvir descrições estruturais destinadas a grades de dados, por exemplo <em>"tabela, 5 linhas, 1 coluna"</em>. Remova a tabela e use uma lista em vez disso.',
+  TABLES_SINGLE_CELL:
+    'Isso é uma tabela? Tabelas de célula única são frequentemente usadas para bordas visuais ou contêineres de destaques, em vez de dados tabulares. Isso pode ser confuso para pessoas que usam leitores de tela, que precisam parar e ouvir descrições estruturais destinadas a grades de dados: <em>"Tabela, 1 linha, 1 coluna, Linha 1 Coluna 1."</em> Remova a tabela e use outras opções de estilo para chamar a atenção para este conteúdo.',
   TABLES_MISSING_HEADINGS:
     'Falta de cabeçalhos de tabela! As tabelas acessíveis precisam de marcação HTML que indique as células de cabeçalho e as células de dados que definem seu relacionamento. Essas informações fornecem contexto para as pessoas que usam tecnologia assistiva. As tabelas devem ser usadas somente para dados tabulares. <hr> Saiba mais sobre <a href="https://www.w3.org/WAI/tutorials/tables/">tabelas acessíveis.</a>',
   TABLES_SEMANTIC_HEADING:

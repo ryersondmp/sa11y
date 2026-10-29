@@ -27,6 +27,17 @@
 - Fully encapsulated user interface with dark mode.
 - Offered in various [languages.](https://github.com/ryersondmp/sa11y/tree/master/src/js/lang)
 
+### Table layout warnings
+Single-column tables with multiple rows (`TABLES_SINGLE_COLUMN`) and single-cell tables
+(`TABLES_SINGLE_CELL`) produce an "Is this a table?" warning instead of a missing-header
+error. These checks include both data and header cells, account for cell spans, and
+exclude nested tables when counting rows and columns. Hidden and presentational tables
+remain excluded. Other table diagnostics still apply.
+
+Both checks are enabled by default and can be disabled individually through `checks`.
+Disabling a layout warning restores the usual missing-header check for that table.
+The new warning messages currently use English in all language packs, pending translation.
+
 ## Install
 For setup instructions, including local development, installation, or CDN links, please visit the [developer documentation.](https://sa11y.netlify.app/developers/)
 

@@ -377,6 +377,8 @@ const tooltip = {
     'Visiem <code>&lt;li&gt;</code> saraksta elementiem jābūt ievietotiem <code>&lt;ul&gt;</code> nesakārtotā vai <code>&lt;ol&gt;</code> sakārtotā sarakstā. Šī struktūra palīdz ekrāna lasītājiem precīzi paziņot sarakstu un tā elementus.',
   TABINDEX_ATTR:
     'Elementam nevajadzētu būt ar <code>tabindex</code> atribūtu, kas ir lielāks par 0.',
+  SVG_NO_ACCESSIBLE_NAME:
+    'Daži ekrāna lasītāji paziņos šo SVG kā nenorādītu attēlu, jo tam trūkst piekļūstama nosaukuma un tas nav paslēpts. Pievienojiet piekļūstamu etiķeti (vai <code>&lt;title&gt;</code>), ja tā sniedz nozīmi, vai paslēpiet to no ekrāna lasītājiem, ja tas ir tīri dekoratīvs (<code>aria-hidden="true"</code>). <hr> Uzziniet vairāk par <a href="https://a11y-101.com/development/svg">piekļūstamiem SVG.</a>',
 
   // Meta
   META_LANG:
@@ -405,6 +407,10 @@ const tooltip = {
   LINK_MAYBE_BUTTON: 'Šai saitei ir nederīgs mērķis. Lai gan pieejamais nosaukums vai tā atribūti liecina, ka šī varētu nebūt saite vispār, bet tā vietā tā kontrolē kādu skriptētu uzvedību lapā. Lai to labotu, aizstājiet saiti ar <a href="https://www.w3.org/WAI/ARIA/apg/patterns/button/">pieejamu pogu</a> vai izlabojiet saites galamērķi. <hr> <strong {B}>Pieejamais nosaukums</strong> <strong {C}>%(TEXT)</strong> <hr> <strong>Padoms!</strong> Palīgtehnoloģijas pogas un saites apstrādā atšķirīgi. Pareiza HTML elementa izmantošana nodrošina, ka lietotāji zina, kādus tastatūras īsinājumtaustiņus izmantot un kāda darbība tiks aktivizēta.',
 
   // Tables
+  TABLES_SINGLE_COLUMN:
+    'Vai ši ir tabula? Vienas slejas tabulas bieži tiek izmantotas izkārtojumam vai sarakstiem, nevis tabulas datiem. Tas var radīt neskaidrības cilvēkiem, kuri izmanto ekrāna lasītājus, kuriem jāapstājas un jānoklausās strukturālie apraksti, kas paredzēti datu tīkliem, piemēram, <em>"tabula, 5 rindas, 1 sleja"</em>. Noņemiet tabulu un tā vietā izmantojiet sarakstu.',
+  TABLES_SINGLE_CELL:
+    'Vai šī ir tabula? Vienas šūnas tabulas bieži tiek izmantotas vizuālām apmalēm vai izcēlumu ietvariem, nevis tabulas datiem. Tas var radīt neskaidrības ekrāna lasītāju lietotājiem, kuriem ir jāapstājas un jānoklausās datu tīkliem paredzētie strukturālie apraksti: <em>"Tabula, 1 rinda, 1 kolonna, 1. rinda 1. kolonna."</em> Noņemiet tabulu un izmantojiet citas stila opcijas, lai pievērstu uzmanību šim saturam.',
   TABLES_MISSING_HEADINGS:
     'Trūkst tabulas galveņu! Pieejamām tabulām ir nepieciešama HTML iezīmēšana, kas norāda galvenes šūnas un datu šūnas, kas nosaka to savstarpējo saistību. Šī informācija nodrošina kontekstu cilvēkiem, kuri izmanto palīgtehnoloģijas. Tabulas jāizmanto tikai tabulas datiem. <hr> Uzziniet vairāk par <a href="https://www.w3.org/WAI/tutorials/tables/">pieejamām tabulām.</a>',
   TABLES_SEMANTIC_HEADING:

@@ -385,6 +385,8 @@ const tooltip = {
   UNCONTAINED_LI:
     'Toate elementele de listă <code>&lt;li&gt;</code> trebuie să fie plasate în interiorul elementelor <code>&lt;ul&gt;</code> neordonate sau <code>&lt;ol&gt;</code> ordonate. Această structură ajută cititoarele de ecran să anunțe lista și elementele sale cu precizie.',
   TABINDEX_ATTR: 'Elementul nu ar trebui să aibă un atribut <code>tabindex</code> mai mare de 0.',
+  SVG_NO_ACCESSIBLE_NAME:
+    'Unele cititoare de ecran vor anunța acest SVG ca fiind o imagine fără etichetă, deoarece îi lipsește un nume accesibil și nu este ascuns. Adăugați o etichetă accesibilă (sau <code>&lt;title&gt;</code>) dacă transmite un sens, sau ascundeți-l de cititoarele de ecran dacă este pur decorativ (<code>aria-hidden="true"</code>). <hr> Aflați mai multe despre <a href="https://a11y-101.com/development/svg">SVG-uri accesibile.</a>',
 
   // Meta
   META_LANG:
@@ -413,6 +415,10 @@ const tooltip = {
   LINK_MAYBE_BUTTON: 'Acest link are o țintă nevalidă. Deși numele accesibil sau atributele sale sugerează că acesta ar putea să nu fie deloc un link, ci controlează în schimb un anumit comportament scriptat pe pagină. Pentru a remedia problema, înlocuiți linkul cu un <a href="https://www.w3.org/WAI/ARIA/apg/patterns/button/">buton accesibil</a> sau corectați destinația linkului. <hr> <strong {B}>Nume accesibil</strong> <strong {C}>%(TEXT)</strong> <hr> <strong>Sfat!</strong> Tehnologiile de asistență tratează butoanele și linkurile diferit. Utilizarea elementului HTML corect asigură faptul că utilizatorii știu ce comenzi rapide de la tastatură să folosească și ce acțiune va fi declanșată.',
 
   // Tables
+  TABLES_SINGLE_COLUMN:
+    'Acesta este un tabel? Tabelele cu o singură coloană sunt adesea folosite pentru aranjament în pagină sau liste, în loc de date tabelare. Acest lucru poate fi derutant pentru persoanele care folosesc cititoare de ecran, care trebuie să se oprească și să asculte descrieri structurale destinate grilajelor de date, de exemplu <em>"tabel, 5 rânduri, 1 coloană"</em>. Eliminați tabelul și folosiți o listă în schimb.',
+  TABLES_SINGLE_CELL:
+    'Acesta este un tabel? Tabelele cu o singură celulă sunt adesea folosite pentru borduri vizuale sau containere de evidențiere în loc de date tabelare. Acest lucru poate fi derutant pentru persoanele care folosesc cititoare de ecran, care trebuie să se oprească și să asculte descrieri structurale destinate grilelor de date: <em>"Tabel, 1 rând, 1 coloană, Rândul 1 Coloana 1."</em> Eliminați tabelul și utilizați alte opțiuni de stilizare pentru a atrage atenția asupra acestui conținut.',
   TABLES_MISSING_HEADINGS:
     'Lipsesc anteturile de tabel! Tabelele accesibile au nevoie de marcaje HTML care să indice celulele de antet și celulele de date care definesc relația dintre ele. Aceste informații oferă un context pentru persoanele care utilizează tehnologia de asistență. Tabelele ar trebui să fie utilizate numai pentru date tabelare. <hr> Aflați mai multe despre <a href="https://www.w3.org/WAI/tutorials/tables/">tabele accesibile.</a>',
   TABLES_SEMANTIC_HEADING:

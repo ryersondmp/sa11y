@@ -384,6 +384,8 @@ const tooltip = {
     'Kaikki <code>&lt;li&gt;</code> luetteloelementit on sijoitettava <code>&lt;ul&gt;</code> järjestämättömien tai <code>&lt;ol&gt;</code> järjestettyjen elementtien sisään. Tämä rakenne auttaa ruudunlukuohjelmia ilmoittamaan luettelon ja sen kohteet tarkasti.',
   TABINDEX_ATTR:
     'Elementillä ei tulisi olla <code>tabindex</code>-attribuuttia, joka on suurempi kuin 0.',
+  SVG_NO_ACCESSIBLE_NAME:
+    'Jotkut ruudunlukijat ilmoittavat tämän SVG:n nimettömänä kuvana, koska siltä puuttuu saavutettava nimi eikä sitä ole piilotettu. Lisää saavutettava tunniste (tai <code>&lt;title&gt;</code>), jos se välittää merkitystä, tai piilota se ruudunlukijoilta, jos se on pelkästään koristeellinen (<code>aria-hidden="true"</code>). <hr> Lue lisää <a href="https://a11y-101.com/development/svg">saavutettavista SVG-tiedostoista.</a>',
 
   // Meta checks
   META_LANG:
@@ -412,6 +414,10 @@ const tooltip = {
   LINK_MAYBE_BUTTON: 'Tällä linkillä on virheellinen kohde. Esteetön nimi tai attribuutit viittaavat siihen, ettei tämä ehkä ole linkki lainkaan, vaan se ohjaa jotakin sivun skriptattua toimintoa. Korjaa ongelma korvaamalla linkki <a href="https://www.w3.org/WAI/ARIA/apg/patterns/button/">esteettömällä painikkeella</a> tai korjaamalla linkin kohde. <hr> <strong {B}>Esteetön nimi</strong> <strong {C}>%(TEXT)</strong> <hr> <strong>Vinkki!</strong> Avustavat teknologiat käsittelevät painikkeita ja linkkejä eri tavalla. Oikean HTML-elementin käyttö varmistaa, että käyttäjät tietävät, mitä pikanäppäimiä käyttää ja mikä toiminto käynnistyy.',
 
   // Tables
+  TABLES_SINGLE_COLUMN:
+    'Onko tämä taulukko? Yksisarakkeisia taulukoita käytetään usein asetteluun tai luetteloihin taulukkomuotoisen datan sijaan. Tämä voi olla hämmentävää ruudunlukijoita käyttäville henkilöille, joiden täytyy pysähtyä kuuntelemaan dataruudukoille tarkoitettuja rakenteellisia kuvauksia, kuten <em>"taulukko, 5 riviä, 1 sarake"</em>. Poista taulukko ja käytä sen sijaan luetteloa.',
+  TABLES_SINGLE_CELL:
+    'Onko tämä taulukko? Yhden solun taulukoita käytetään usein visuaalisiin kehyksiin tai korostussäiliöihin taulukkomuotoisen datan sijaan. Tämä voi olla hämmentävää ruudunlukijoita käyttäville henkilöille, joiden on pysähdyttävä kuuntelemaan dataruudukoille tarkoitettuja rakennekuvauksia: <em>"Taulukko, 1 rivi, 1 sarake, Rivi 1 Sarake 1."</em> Poista taulukko ja käytä muita muotoiluvaihtoehtoja kiinnittääksesi huomion tähän sisältöön.',
   TABLES_MISSING_HEADINGS:
     'Taulukosta puuttuvat otsikkosolut! Esteettömät taulukot tarvitsevat HTML-merkintää, joka osoittaa otsikkosolut ja datasolut, jotka määrittelevät niiden välisen suhteen. Tämä tieto antaa kontekstin ihmisille, jotka käyttävät apuvälineteknologiaa. Taulukoita tulisi käyttää vain taulukkomuotoiseen tietoon. <hr> Lisätietoja <a href="https://www.w3.org/WAI/tutorials/tables/">saavutettavista taulukoista.</a>',
   TABLES_SEMANTIC_HEADING:

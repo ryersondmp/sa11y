@@ -1306,6 +1306,18 @@ test.describe('Sa11y Unit Tests', () => {
     });
   });
 
+  test('SVGs without accessible names are warned unless decorative', async () => {
+    const warning = 'Some screen readers will announce this SVG as an unlabeled image because it lacks an accessible name';
+    expect(await checkTooltip(page, 'svg-name-warning', warning)).toBe(true);
+    expect(await checkTooltip(page, 'svg-name-image-role', warning)).toBe(false);
+    expect(await checkTooltip(page, 'svg-name-image-role', 'Missing alt text!')).toBe(true);
+    expect(await checkTooltip(page, 'svg-name-aria-label', warning)).toBe(false);
+    expect(await checkTooltip(page, 'svg-name-title', warning)).toBe(false);
+    expect(await checkTooltip(page, 'svg-name-aria-hidden', warning)).toBe(false);
+    expect(await checkTooltip(page, 'svg-name-presentational', warning)).toBe(false);
+    expect(await checkTooltip(page, 'svg-name-hidden-parent', warning)).toBe(false);
+  });
+
   /* **************** */
   /*  Inputs          */
   /* **************** */

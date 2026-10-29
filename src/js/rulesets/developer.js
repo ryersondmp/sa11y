@@ -283,4 +283,31 @@ export default function checkDeveloper() {
       }
     }
   });
+
+  /* *********************************************************** */
+  /*  Warning: SVGs without an accessible name.                  */
+  /* *********************************************************** */
+  if (State.option.checks.SVG_NO_ACCESSIBLE_NAME) {
+    Elements.Found.Svg.forEach((element) => {
+      if (
+        Utils.isPresentational(element) ||
+        Utils.hasAriaHiddenAncestor(element) ||
+        Utils.isElementHidden(element) ||
+        computeAccessibleName(element).trim() ||
+        Utils.getCachedClosest(element,
+          'a[href], button, [role="link"], [role="button"]')
+      ) {
+        return;
+      }
+
+      pushResult({
+        test: 'SVG_NO_ACCESSIBLE_NAME',
+        element,
+        type: 'warning',
+        args: [element],
+        developer: true,
+        dismiss: element.outerHTML,
+      });
+    });
+  }
 }

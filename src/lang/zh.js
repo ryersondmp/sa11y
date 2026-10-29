@@ -366,6 +366,8 @@ const tooltip = {
   UNCONTAINED_LI:
     '所有 <code>&lt;li&gt;</code> 列表项必须放置在 <code>&lt;ul&gt;</code> 无序列表或 <code>&lt;ol&gt;</code> 有序列表元素内部。这个结构帮助屏幕阅读器准确地读取列表及其项。',
   TABINDEX_ATTR: '元素不应具有大于 0 的 <code>tabindex</code> 属性。',
+  SVG_NO_ACCESSIBLE_NAME:
+    '由于缺少可访问名称且未被隐藏，某些屏幕阅读器会将此 SVG 朗读为未标记的图像。如果它具有实际意义，请添加可访问标签（或 <code>&lt;title&gt;</code>）；如果纯粹用于装饰，请对屏幕阅读器隐藏（<code>aria-hidden="true"</code>）。<hr> 了解更多关于<a href="https://a11y-101.com/development/svg">无障碍 SVG</a>的信息。',
 
   // Meta checks
   META_LANG:
@@ -393,6 +395,10 @@ const tooltip = {
   LINK_MAYBE_BUTTON: '此链接的目标无效。虽然可访问名称或其属性表明这可能根本不是链接，而是控制页面上的某些脚本行为。要修复此问题，请将链接替换为 <a href="https://www.w3.org/WAI/ARIA/apg/patterns/button/">可访问按钮</a>，或纠正链接的目的地。 <hr> <strong {B}>可访问名称</strong> <strong {C}>%(TEXT)</strong> <hr> <strong>提示！</strong> 辅助技术处理按钮和链接的方式不同。使用正确的 HTML 元素可确保用户知道应使用哪些键盘快捷键以及将触发什么操作。',
 
   // Tables
+  TABLES_SINGLE_COLUMN:
+    '这是一个表格吗？单列表格通常用于布局或列表，而非表格式数据。这可能会给使用屏幕阅读器的用户带来困惑，因为他们必须停下来听取针对数据网格的结构性描述，例如<em>“表格，5行，1列”</em>。请移除该表格并改用列表。',
+  TABLES_SINGLE_CELL:
+    '这是表格吗？单单元格表格通常用于视觉边框或高亮突出容器，而非表示表格数据。这可能会对使用屏幕阅读器的用户造成困扰，因为他们不得不停下来听取针对数据网格的结构性描述：<em>“表格，1 行，1 列，第 1 行第 1 列。”</em>请移除该表格，并使用其他样式选项来突出显示此内容。',
   TABLES_MISSING_HEADINGS:
     '缺少表头!可访问的表格需要HTML标记, 表明表头单元格和数据单元格, 定义它们的关系。这种信息为使用辅助技术的人提供了背景。表格应该只用于表格式的数据。<hr> 了解更多关于<a href="https://www.w3.org/WAI/tutorials/tables/">无障碍表格的信息。</a>',
   TABLES_SEMANTIC_HEADING:

@@ -375,6 +375,8 @@ const tooltip = {
   UNCONTAINED_LI:
     'Všechny <code>&lt;li&gt;</code> položky seznamu musí být umístěny uvnitř <code>&lt;ul&gt;</code> neuspořádaných nebo <code>&lt;ol&gt;</code> uspořádaných prvků. Tato struktura pomáhá čtečkám obrazovky správně hlásit seznam a jeho položky.',
   TABINDEX_ATTR: 'Prvek by neměl mít atribut <code>tabindex</code> větší než 0.',
+  SVG_NO_ACCESSIBLE_NAME:
+    'Některé čtečky obrazovky oznámí toto SVG jako neoznačený obrázek, protože nemá přístupný název a není skryté. Přidejte přístupný štítek (nebo <code>&lt;title&gt;</code>), pokud má význam, nebo jej skryjte před čtečkami obrazovky, pokud je pouze dekorativní (<code>aria-hidden="true"</code>). <hr> Další informace o <a href="https://a11y-101.com/development/svg">přístupných SVG.</a>',
 
   // Meta checks
   META_LANG:
@@ -403,6 +405,10 @@ const tooltip = {
   LINK_MAYBE_BUTTON: 'Tento odkaz má neplatný cíl. Přístupný název nebo jeho atributy naznačují, že by se vůbec nemuselo jednat o odkaz, ale místo toho ovládá nějaké skriptované chování na stránce. Chcete-li to napravit, nahraďte odkaz <a href="https://www.w3.org/WAI/ARIA/apg/patterns/button/">přístupným tlačítkem</a> nebo opravte cíl odkazu. <hr> <strong {B}>Přístupný název</strong> <strong {C}>%(TEXT)</strong> <hr> <strong>Tip!</strong> Asistivní technologie přistupují k tlačítkům a odkazům odlišně. Použití správného prvku HTML zajišťuje, že uživatelé vědí, které klávesové zkratky mají použít a jaká akce se spustí.',
 
   // Tables
+  TABLES_SINGLE_COLUMN:
+    'Je toto tabulka? Jednosloupcové tabulky se často používají pro rozvržení nebo seznamy spíše než pro tabulková data. To může být matoucí pro lidi používající čtečky obrazovky, kteří musí zastavit a poslouchat strukturální popisy určené pro datové mřížky, například <em>"tabulka, 5 řádků, 1 sloupec"</em>. Odstraňte tabulku a použijte raději seznam.',
+  TABLES_SINGLE_CELL:
+    'Je toto tabulka? Jednobuněčné tabulky se často používají pro vizuální ohraničení nebo kontejnerové zvýraznění spíše než pro tabulková data. To může být matoucí pro lidi používající odezírače obrazovky, kteří musejí zastavit a poslouchat strukturální popisy určené pro datové mřížky: <em>"Tabulka, 1 řádek, 1 sloupec, Řádek 1 Sloupec 1."</em> Odstraňte tabulku a použijte jiné možnosti stylitace k přilákání pozornosti k tomuto obsahu.',
   TABLES_MISSING_HEADINGS:
     'Chybějící záhlaví tabulky! Přístupné tabulky potřebují značku HTML, která označuje buňky záhlaví a datové buňky a definuje jejich vzájemný vztah. Tyto informace poskytují kontext lidem, kteří používají asistenční technologie. Tabulky by se měly používat pouze pro tabulková data. <hr> Další informace o <a href="https://www.w3.org/WAI/tutorials/tables/">přístupných tabulkách.</a>',
   TABLES_SEMANTIC_HEADING:

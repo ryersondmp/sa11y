@@ -366,6 +366,8 @@ const tooltip = {
   UNCONTAINED_LI:
     'Todos los elementos de lista <code>&lt;li&gt;</code> deben colocarse dentro de elementos <code>&lt;ul&gt;</code> no ordenados o <code>&lt;ol&gt;</code> ordenados. Esta estructura ayuda a los lectores de pantalla a anunciar la lista y sus elementos con precisión.',
   TABINDEX_ATTR: 'El elemento no debe tener un atributo <code>tabindex</code> mayor que 0.',
+  SVG_NO_ACCESSIBLE_NAME:
+    'Algunos lectores de pantalla anunciarán este SVG como una imagen sin etiqueta porque carece de un nombre accesible y no está oculto. Añada una etiqueta accesible (o <code>&lt;title&gt;</code>) si transmite un significado, o ocúltelo a los lectores de pantalla si es puramente decorativo (<code>aria-hidden="true"</code>). <hr> Obtenga más información sobre <a href="https://a11y-101.com/development/svg">SVG accesibles.</a>',
 
   // Meta checks
   META_LANG:
@@ -394,6 +396,10 @@ const tooltip = {
   LINK_MAYBE_BUTTON: 'Este enlace tiene un destino no válido. Aunque el nombre accesible o sus atributos sugieren que esto podría no ser un enlace en absoluto y, en su lugar, controla algún comportamiento programado en la página. Para solucionarlo, reemplace el enlace con un <a href="https://www.w3.org/WAI/ARIA/apg/patterns/button/">botón accesible</a> o corrija el destino del enlace. <hr> <strong {B}>Nombre accesible</strong> <strong {C}>%(TEXT)</strong> <hr> <strong>¡Consejo!</strong> Las tecnologías de asistencia tratan los botones y los enlaces de forma diferente. El uso del elemento HTML correcto garantiza que los usuarios sepan qué atajos de teclado usar y qué acción se activará.',
 
   // Tables
+  TABLES_SINGLE_COLUMN:
+    '¿Es esto una tabla? Las tablas de una sola columna a menudo se usan para diseño o listas en lugar de datos tabulares. Esto puede resultar confuso para las personas que usan lectores de pantalla, quienes tienen que detenerse a escuchar descripciones estructurales diseñadas para cuadrículas de datos, por ejemplo <em>"tabla, 5 filas, 1 columna"</em>. Elimine la tabla y use una lista en su lugar.',
+  TABLES_SINGLE_CELL:
+    '¿Es esto una tabla? Las tablas de una sola celda a menudo se usan para bordes visuales o contenedores de llamadas en lugar de datos tabulares. Esto puede resultar confuso para las personas que usan lectores de pantalla, que tienen que detenerse a escuchar descripciones estructurales diseñadas para cuadrículas de datos: <em>"Tabla, 1 fila, 1 columna, Fila 1 Columna 1."</em> Elimine la tabla y use otras opciones de estilo para destacar este contenido.',
   TABLES_MISSING_HEADINGS:
     '¡Faltan cabeceras de tabla! Las tablas accesibles necesitan marcado HTML que indique las celdas de cabecera y las celdas de datos que definen su relación. Esta información brinda contexto a las personas que usan tecnología de asistencia. Las tablas deben usarse solo para datos tabulares. <hr> Más información sobre las <a href="https://www.w3.org/WAI/tutorials/tables/">tablas accesibles.</a>',
   TABLES_SEMANTIC_HEADING:
