@@ -977,6 +977,27 @@ test.describe('Sa11y Unit Tests', () => {
     expect(issue).toBe(true);
   });
 
+  test('Table with single cell', async () => {
+    const issue = await checkTooltip(
+      page, 'warning-table-single-cell', 'Is this a table? Single-cell tables are often used for visual borders',
+    );
+    expect(issue).toBe(true);
+  });
+
+  test('Single column table without headers', async () => {
+    const issue = await checkTooltip(
+      page, 'error-table-single-column', 'Missing table headers!',
+    );
+    expect(issue).toBe(true);
+  });
+
+  test('Single column table with headers', async () => {
+    const issue = await checkTooltip(
+      page, 'warning-table-single-column', 'Is this a table? Single-column',
+    );
+    expect(issue).toBe(true);
+  });
+
   test('PDF link', async () => {
     const issue = await checkTooltip(
       page, 'warning-pdf', 'Unable to check PDFs',
@@ -1306,18 +1327,6 @@ test.describe('Sa11y Unit Tests', () => {
     });
   });
 
-  test('SVGs without accessible names are warned unless decorative', async () => {
-    const warning = 'Some screen readers will announce this SVG as an unlabeled image because it lacks an accessible name';
-    expect(await checkTooltip(page, 'svg-name-warning', warning)).toBe(true);
-    expect(await checkTooltip(page, 'svg-name-image-role', warning)).toBe(false);
-    expect(await checkTooltip(page, 'svg-name-image-role', 'Missing alt text!')).toBe(true);
-    expect(await checkTooltip(page, 'svg-name-aria-label', warning)).toBe(false);
-    expect(await checkTooltip(page, 'svg-name-title', warning)).toBe(false);
-    expect(await checkTooltip(page, 'svg-name-aria-hidden', warning)).toBe(false);
-    expect(await checkTooltip(page, 'svg-name-presentational', warning)).toBe(false);
-    expect(await checkTooltip(page, 'svg-name-hidden-parent', warning)).toBe(false);
-  });
-
   /* **************** */
   /*  Inputs          */
   /* **************** */
@@ -1546,6 +1555,27 @@ test.describe('Sa11y Unit Tests', () => {
     ];
     ids.forEach(async (id) => {
       const issue = await checkTooltip(page, id, 'The visible text for this element appears to be different than the accessible name');
+      expect(issue).toBe(true);
+    });
+  });
+
+  // New SVG warning
+  test('SVGs without accessible names are warned unless decorative', async () => {
+    expect(await checkTooltip(page,
+      'error-svg-name-image-role', 'Missing alt text!')).toBe(true);
+
+    expect(await checkTooltip(page,
+      'warning-svg-name-warning', 'Some screen readers will announce this SVG as an unlabeled image because it lacks an accessible name')).toBe(true);
+
+    const ids = [
+      'nothing-svg-name-aria-label',
+      'nothing-svg-name-title',
+      'nothing-svg-name-aria-hidden',
+      'nothing-svg-name-presentational',
+      'nothing-svg-name-hidden-parent',
+    ];
+    ids.forEach(async (id) => {
+      const issue = await noAnnotation(page, id);
       expect(issue).toBe(true);
     });
   });

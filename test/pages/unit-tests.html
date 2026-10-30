@@ -1001,6 +1001,45 @@
       </table>
     </div>
 
+    <h3>Single cell table</h3>
+    <div id="warning-table-single-cell">
+      <table>
+        <tr>
+          <td>Single cell</td>
+        </tr>
+      </table>
+    </div>
+
+    <h3>Single column table without headers</h3>
+    <div id="error-table-single-column">
+      <table>
+        <tr>
+          <td>Name</td>
+        </tr>
+        <tr>
+          <td>Adam</td>
+        </tr>
+        <tr>
+          <td>John</td>
+        </tr>
+      </table>
+    </div>
+
+    <h3>Single column table with headers</h3>
+    <div id="warning-table-single-column">
+      <table>
+        <tr>
+          <th>Name</th>
+        </tr>
+        <tr>
+          <td>Adam</td>
+        </tr>
+        <tr>
+          <td>John</td>
+        </tr>
+      </table>
+    </div>
+
     <hr>
 
     <h2>PDFs</h2>
@@ -2323,33 +2362,63 @@
       </button>
     </div>
 
-    <h2>SVG: Accessible names</h2>
-    <div id="svg-name-warning">
-      <svg id="svg-name-warning-icon">
-        <path d="M0 0h10v10H0z" />
+    <h2>SVG - Accessible names</h2>
+
+    <h3><kbd>role="img"</kbd> with no label</h3>
+    <div id="error-svg-name-image-role">
+      <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 16 16" role="img">
+        <path
+          d="M.5 1a.5.5 0 0 0 0 1h1.11l.401 1.607 1.498 7.985A.5.5 0 0 0 4 12h1a2 2 0 1 0 0 4 2 2 0 0 0 0-4h7a2 2 0 1 0 0 4 2 2 0 0 0 0-4h1a.5.5 0 0 0 .491-.408l1.5-8A.5.5 0 0 0 14.5 3H2.89l-.405-1.621A.5.5 0 0 0 2 1zM6 14a1 1 0 1 1-2 0 1 1 0 0 1 2 0m7 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0M6.5 7h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1 0-1" />
       </svg>
     </div>
-    <div id="svg-name-image-role">
-      <svg id="svg-name-image-role-icon" role="img">
-        <path d="M0 0h10v10H0z" />
+
+    <h3>No acc name</h3>
+    <div id="warning-svg-name-warning">
+      <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 16 16">
+        <path
+          d="M.5 1a.5.5 0 0 0 0 1h1.11l.401 1.607 1.498 7.985A.5.5 0 0 0 4 12h1a2 2 0 1 0 0 4 2 2 0 0 0 0-4h7a2 2 0 1 0 0 4 2 2 0 0 0 0-4h1a.5.5 0 0 0 .491-.408l1.5-8A.5.5 0 0 0 14.5 3H2.89l-.405-1.621A.5.5 0 0 0 2 1zM6 14a1 1 0 1 1-2 0 1 1 0 0 1 2 0m7 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0M6.5 7h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1 0-1" />
       </svg>
     </div>
-    <div id="svg-name-aria-label">
-      <svg id="svg-name-aria-label-icon" aria-label="Accessible label"></svg>
-    </div>
-    <div id="svg-name-title">
-      <svg id="svg-name-title-icon">
-        <title>Accessible title</title>
+
+    <h3>Has accessible name but no role="image" attribute</h3>
+    <div id="nothing-svg-name-aria-label">
+      <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 16 16" aria-label="Accessible label">
+        <path
+          d="M.5 1a.5.5 0 0 0 0 1h1.11l.401 1.607 1.498 7.985A.5.5 0 0 0 4 12h1a2 2 0 1 0 0 4 2 2 0 0 0 0-4h7a2 2 0 1 0 0 4 2 2 0 0 0 0-4h1a.5.5 0 0 0 .491-.408l1.5-8A.5.5 0 0 0 14.5 3H2.89l-.405-1.621A.5.5 0 0 0 2 1zM6 14a1 1 0 1 1-2 0 1 1 0 0 1 2 0m7 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0M6.5 7h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1 0-1" />
       </svg>
     </div>
-    <div id="svg-name-aria-hidden">
-      <svg id="svg-name-aria-hidden-icon" aria-hidden="true"></svg>
+
+    <h3>Has title attribute</h3>
+    <div id="nothing-svg-name-title">
+      <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 16 16">
+        <title>SVG with a title</title>
+        <path
+          d="M.5 1a.5.5 0 0 0 0 1h1.11l.401 1.607 1.498 7.985A.5.5 0 0 0 4 12h1a2 2 0 1 0 0 4 2 2 0 0 0 0-4h7a2 2 0 1 0 0 4 2 2 0 0 0 0-4h1a.5.5 0 0 0 .491-.408l1.5-8A.5.5 0 0 0 14.5 3H2.89l-.405-1.621A.5.5 0 0 0 2 1zM6 14a1 1 0 1 1-2 0 1 1 0 0 1 2 0m7 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0M6.5 7h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1 0-1" />
+      </svg>
     </div>
-    <div id="svg-name-presentational">
-      <svg id="svg-name-presentational-icon" role="presentation"></svg>
+
+    <h3>aria-hidden</h3>
+    <div id="nothing-svg-name-aria-hidden">
+      <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 16 16" aria-hidden="true">
+        <path
+          d="M.5 1a.5.5 0 0 0 0 1h1.11l.401 1.607 1.498 7.985A.5.5 0 0 0 4 12h1a2 2 0 1 0 0 4 2 2 0 0 0 0-4h7a2 2 0 1 0 0 4 2 2 0 0 0 0-4h1a.5.5 0 0 0 .491-.408l1.5-8A.5.5 0 0 0 14.5 3H2.89l-.405-1.621A.5.5 0 0 0 2 1zM6 14a1 1 0 1 1-2 0 1 1 0 0 1 2 0m7 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0M6.5 7h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1 0-1" />
+      </svg>
     </div>
-    <div id="svg-name-hidden-parent" aria-hidden="true">
-      <svg id="svg-name-hidden-parent-icon"></svg>
+
+    <h3>role="presentation"</h3>
+    <div id="nothing-svg-name-presentational">
+      <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 16 16" role="presentation">
+        <path
+          d="M.5 1a.5.5 0 0 0 0 1h1.11l.401 1.607 1.498 7.985A.5.5 0 0 0 4 12h1a2 2 0 1 0 0 4 2 2 0 0 0 0-4h7a2 2 0 1 0 0 4 2 2 0 0 0 0-4h1a.5.5 0 0 0 .491-.408l1.5-8A.5.5 0 0 0 14.5 3H2.89l-.405-1.621A.5.5 0 0 0 2 1zM6 14a1 1 0 1 1-2 0 1 1 0 0 1 2 0m7 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0M6.5 7h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1 0-1" />
+      </svg>
+    </div>
+
+    <h3>aria-hidden="true" on parent</h3>
+    <div id="nothing-svg-name-hidden-parent" aria-hidden="true">
+      <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 16 16">
+        <path
+          d="M.5 1a.5.5 0 0 0 0 1h1.11l.401 1.607 1.498 7.985A.5.5 0 0 0 4 12h1a2 2 0 1 0 0 4 2 2 0 0 0 0-4h7a2 2 0 1 0 0 4 2 2 0 0 0 0-4h1a.5.5 0 0 0 .491-.408l1.5-8A.5.5 0 0 0 14.5 3H2.89l-.405-1.621A.5.5 0 0 0 2 1zM6 14a1 1 0 1 1-2 0 1 1 0 0 1 2 0m7 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0M6.5 7h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1 0-1" />
+      </svg>
     </div>
 
   </main>
