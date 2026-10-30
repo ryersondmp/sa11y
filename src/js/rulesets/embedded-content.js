@@ -56,6 +56,7 @@ export default function checkEmbeddedContent() {
       Utils.isElementHidden($el) ||
       Utils.isHiddenAndUnfocusable($el) ||
       Utils.isPresentational($el) ||
+      $el.hasAttribute('inert') ||
       ['VIDEO', 'AUDIO'].includes($el.tagName)
     ) {
       return;
@@ -94,6 +95,7 @@ export default function checkEmbeddedContent() {
     if (
       Utils.isElementHidden($el) ||
       Utils.isHiddenAndUnfocusable($el) ||
+      $el.hasAttribute('inert') ||
       ['VIDEO', 'AUDIO'].includes($el.tagName)
     ) {
       return;

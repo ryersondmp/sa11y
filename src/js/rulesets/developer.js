@@ -157,7 +157,13 @@ export default function checkDeveloper() {
   Elements.Found.Buttons.forEach(($el) => {
     // Ignore explicitly hidden.
     const presentation = Utils.isPresentational($el) && Utils.isDisabled($el);
-    if (presentation || Utils.isHiddenAndUnfocusable($el) || Utils.isElementHidden($el)) return;
+    if (
+      presentation ||
+      $el.hasAttribute('inert') ||
+      Utils.isHiddenAndUnfocusable($el) ||
+      Utils.isElementHidden($el)
+    )
+      return;
 
     // Has ARIA.
     const accName = computeAccessibleName($el);
@@ -294,8 +300,7 @@ export default function checkDeveloper() {
         Utils.hasAriaHiddenAncestor(element) ||
         Utils.isElementHidden(element) ||
         computeAccessibleName(element).trim() ||
-        Utils.getCachedClosest(element,
-          'a[href], button, [role="link"], [role="button"]')
+        Utils.getCachedClosest(element, 'a[href], button, [role="link"], [role="button"]')
       ) {
         return;
       }

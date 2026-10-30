@@ -5,7 +5,6 @@ import { State } from '../core/state';
 import { pushResult } from '../utils/pushResult';
 
 export default function checkQA() {
-
   /* *********************************************************** */
   /*  Error: Find all links pointing to development environment. */
   /* *********************************************************** */
@@ -117,8 +116,7 @@ export default function checkQA() {
         }
         if (row.cells.length !== 1 || row.cells[0].colSpan !== 1) return false;
         // A zero rowspan extends to the end of the current row group.
-        remainingRowSpan = row.cells[0].rowSpan === 0
-          ? Infinity : row.cells[0].rowSpan - 1;
+        remainingRowSpan = row.cells[0].rowSpan === 0 ? Infinity : row.cells[0].rowSpan - 1;
         return true;
       });
 

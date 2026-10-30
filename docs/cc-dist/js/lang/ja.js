@@ -297,6 +297,7 @@ const tooltip = {
   DUPLICATE_ID: "重複した<strong>IDが見つかりました</strong>。重複したIDは、支援技術がコンテンツとの相互作用を試みる際に問題を引き起こすことが知られています。次のIDを削除または変更してください。<hr> <strong {B}>ID</strong> <strong {C}>#%(id)</strong>",
   UNCONTAINED_LI: "すべての <code>&lt;li&gt;</code> リスト項目は、<code>&lt;ul&gt;</code> 順不同リストまたは <code>&lt;ol&gt;</code> 順序付きリストの要素内に配置する必要があります。この構造は、スクリーンリーダーがリストとその項目を正確に読み上げるのに役立ちます。",
   TABINDEX_ATTR: "要素は <code>tabindex</code> 属性が 0 より大きくてはいけません。",
+  SVG_NO_ACCESSIBLE_NAME: 'アクセシブルな名前がなく非表示にもなっていないため、一部のスクリーンリーダーはこのSVGをラベルなしの画像として読み上げます。意味を持つ場合はアクセシブルなラベル（または <code>&lt;title&gt;</code>）を追加し、単なる装飾である場合はスクリーンリーダーから非表示（<code>aria-hidden="true"</code>）にしてください。<hr> <a href="https://a11y-101.com/development/svg">アクセシブルなSVG</a>の詳細をご覧ください。',
   // Meta checks
   META_LANG: 'ページ言語が宣言されていません！<a href="https://www.w3.org/International/questions/qa-html-language-declarations">HTMLタグで言語を宣言してください。</a>',
   META_TITLE: 'ページタイトルがありません！<a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/title">ページタイトルを入力してください。</a>',
@@ -314,6 +315,8 @@ const tooltip = {
   LABEL_IN_NAME: "この要素の表示されるテキストがアクセシブルな名前と異なっているようで、支援技術を使用するユーザーに混乱を招く可能性があります。確認してください：<hr> <strong {B}>テキスト</strong> <strong {C}>%(TEXT)</strong> <hr> <strong {B}>アクセシブルな名前</strong> <strong {C}>%(TEXT)</strong>",
   LINK_MAYBE_BUTTON: 'このリンクには無効なターゲットが設定されています。アクセシブルな名前や属性から判断すると、これはリンクではなく、ページ上のスクリプト動作を制御するものである可能性があります。修正するには、リンクを<a href="https://www.w3.org/WAI/ARIA/apg/patterns/button/">アクセシブルなボタン</a>に置き換えるか、リンク先を修正してください。 <hr> <strong {B}>アクセシブルな名前</strong> <strong {C}>%(TEXT)</strong> <hr> <strong>ヒント！</strong> 支援技術はボタンとリンクを異なるものとして扱います。正しい HTML 要素を使用することで、ユーザーはどのキーボードショートカットを使用すべきか、どのようなアクションが実行されるかを正確に把握できます。',
   // Tables
+  TABLES_SINGLE_COLUMN: "これは表ですか？ 1列だけの表は、表形式のデータではなく、レイアウトやリストのために使用されることがよくあります。これはスクリーンリーダーを使用する人にとって紛らわしく、データグリッド用の構造的説明（例：<em>「表、5行、1列」</em>）を立ち止まって聞く必要があります。表を削除し、代わりにリストを使用してください。",
+  TABLES_SINGLE_CELL: "これは表ですか？ 1セルで構成された表は、表形式データではなく、視覚的な枠線や強調用のコンテナとしてよく使用されます。これはスクリーンリーダーの使用者にとって混乱の原因となります。データグリッド用の構造説明を停止して聞き取る必要があるためです：<em>「表、1行、1列、行1 列1。」</em> 表を削除し、このコンテンツを強調するには他のスタイルオプションを使用してください。",
   TABLES_MISSING_HEADINGS: 'テーブルヘッダーがありません！アクセシブルなテーブルには、ヘッダーセルとデータセルを示すHTMLマークアップが必要です。これにより、支援技術を使用する人々にコンテキストが提供されます。テーブルは表形式のデータのみに使用する必要があります。<hr> <a href="https://www.w3.org/WAI/tutorials/tables/">アクセシブルなテーブル</a>について詳しくはこちら。',
   TABLES_SEMANTIC_HEADING: '見出し2や見出し3などのセマンティックな見出しは、コンテンツのセクションにのみ使用すべきです。HTMLテーブルでは<strong>使用しないでください</strong>。代わりに<code>&lt;th&gt;</code>要素を使用してテーブルヘッダーを示します。<hr> <a href="https://www.w3.org/WAI/tutorials/tables/">アクセシブルなテーブル</a>について詳しくはこちら。',
   TABLES_EMPTY_HEADING: '空のテーブルヘッダーが見つかりました！テーブルヘッダーは<strong>空にしてはいけません</strong>。行や列のヘッダーを指定して関係性を伝えることが重要です。これにより、支援技術を使用する人々にコンテキストが提供されます。テーブルは表形式のデータのみに使用する必要があります。<hr> <a href="https://www.w3.org/WAI/tutorials/tables/">アクセシブルなテーブル</a>について詳しくはこちら。',

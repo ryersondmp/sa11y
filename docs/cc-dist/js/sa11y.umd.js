@@ -217,6 +217,8 @@
         dismissAll: true
       },
       QA_BLOCKQUOTE: true,
+      TABLES_SINGLE_COLUMN: true,
+      TABLES_SINGLE_CELL: true,
       TABLES_MISSING_HEADINGS: true,
       TABLES_SEMANTIC_HEADING: true,
       TABLES_EMPTY_HEADING: true,
@@ -260,6 +262,7 @@
       BTN_ROLE_IN_NAME: true,
       LINK_MAYBE_BUTTON: true,
       BTN_UNPRONOUNCEABLE: true,
+      SVG_NO_ACCESSIBLE_NAME: true,
       // Contrast checks
       CONTRAST_WARNING: {
         dismissAll: true
@@ -738,7 +741,7 @@
       if (State.option.imageIgnore) {
         Exclusions.Images = State.option.imageIgnore.split(",").map(($el) => $el.trim()).concat(Exclusions.Images);
       }
-      Exclusions.Links = [".anchorjs-link", '[aria-hidden="true"][tabindex^="-"]'];
+      Exclusions.Links = [".anchorjs-link", '[aria-hidden="true"][tabindex^="-"], [inert]'];
       if (State.option.linkIgnore) {
         Exclusions.Links = State.option.linkIgnore.split(",").map(($el) => $el.trim()).concat(Exclusions.Links);
       }
@@ -836,6 +839,14 @@
   function isAriaHidden($el) {
     if (!$el || typeof $el.getAttribute !== "function") return false;
     return $el.getAttribute("aria-hidden")?.trim().toLowerCase() === "true";
+  }
+  function hasAriaHiddenAncestor(element) {
+    let current = element;
+    while (current) {
+      if (isAriaHidden(current)) return true;
+      current = current.parentElement;
+    }
+    return false;
   }
   function isPresentational($el) {
     if (!$el || typeof $el.getAttribute !== "function") return false;
@@ -1598,6 +1609,7 @@
     getCachedStyle,
     getNextSibling,
     getText,
+    hasAriaHiddenAncestor,
     initRovingTabindex,
     isAriaHidden,
     isDisabled,
@@ -7410,7 +7422,8 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
     if (!State.option.formLabelsPlugin) return;
     Elements.Found.Inputs.forEach(($el) => {
       const presentation = isPresentational($el) && isDisabled($el);
-      if (isElementHidden($el) || isHiddenAndUnfocusable($el) || presentation) return;
+      if (isElementHidden($el) || isHiddenAndUnfocusable($el) || presentation || $el.hasAttribute("inert"))
+        return;
       const computeName = computeAccessibleName($el);
       const inputName = removeWhitespace(computeName);
       const type = $el.getAttribute("type");
@@ -7697,7 +7710,7 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
       });
     });
     Elements.Found.iframes.forEach(($el) => {
-      if (isElementHidden($el) || isHiddenAndUnfocusable($el) || isPresentational($el) || ["VIDEO", "AUDIO"].includes($el.tagName)) {
+      if (isElementHidden($el) || isHiddenAndUnfocusable($el) || isPresentational($el) || $el.hasAttribute("inert") || ["VIDEO", "AUDIO"].includes($el.tagName)) {
         return;
       }
       if (isNegativeTabindex($el)) {
@@ -7726,7 +7739,7 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
       }
     });
     Elements.Found.EmbeddedContent.forEach(($el) => {
-      if (isElementHidden($el) || isHiddenAndUnfocusable($el) || ["VIDEO", "AUDIO"].includes($el.tagName)) {
+      if (isElementHidden($el) || isHiddenAndUnfocusable($el) || $el.hasAttribute("inert") || ["VIDEO", "AUDIO"].includes($el.tagName)) {
         return;
       }
       pushResult({
@@ -7808,7 +7821,33 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
           developer: true
         });
       }
-      if (tableHeaders.length === 0) {
+      const rows = Array.from($el.rows);
+      let rowGroup = null;
+      let remainingRowSpan = 0;
+      const singleColumn = rows.length > 0 && rows.every((row) => {
+        if (row.parentElement !== rowGroup) {
+          rowGroup = row.parentElement;
+          remainingRowSpan = 0;
+        }
+        if (remainingRowSpan > 0) {
+          remainingRowSpan -= 1;
+          return row.cells.length === 0;
+        }
+        if (row.cells.length !== 1 || row.cells[0].colSpan !== 1) return false;
+        remainingRowSpan = row.cells[0].rowSpan === 0 ? Infinity : row.cells[0].rowSpan - 1;
+        return true;
+      });
+      const layoutRule = singleColumn ? rows.length === 1 ? "TABLES_SINGLE_CELL" : "TABLES_SINGLE_COLUMN" : null;
+      const layoutWarningEnabled = layoutRule && State.option.checks[layoutRule];
+      if (layoutWarningEnabled) {
+        pushResult({
+          test: layoutRule,
+          element: $el,
+          type: "warning",
+          dismiss: firstRow
+        });
+      }
+      if (tableHeaders.length === 0 && !(layoutWarningEnabled && layoutRule === "TABLES_SINGLE_CELL")) {
         pushResult({
           test: "TABLES_MISSING_HEADINGS",
           element: $el,
@@ -8179,7 +8218,8 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
     }
     Elements.Found.Buttons.forEach(($el) => {
       const presentation = isPresentational($el) && isDisabled($el);
-      if (presentation || isHiddenAndUnfocusable($el) || isElementHidden($el)) return;
+      if (presentation || $el.hasAttribute("inert") || isHiddenAndUnfocusable($el) || isElementHidden($el))
+        return;
       const accName = computeAccessibleName($el);
       const buttonText = accName.replace(/['"-\.\s]+/g, "").toLowerCase();
       const textContent = getText($el);
@@ -8274,6 +8314,21 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
         }
       }
     });
+    if (State.option.checks.SVG_NO_ACCESSIBLE_NAME) {
+      Elements.Found.Svg.forEach((element) => {
+        if (isPresentational(element) || hasAriaHiddenAncestor(element) || isElementHidden(element) || computeAccessibleName(element).trim() || getCachedClosest(element, 'a[href], button, [role="link"], [role="button"]')) {
+          return;
+        }
+        pushResult({
+          test: "SVG_NO_ACCESSIBLE_NAME",
+          element,
+          type: "warning",
+          args: [element],
+          developer: true,
+          dismiss: element.outerHTML
+        });
+      });
+    }
   }
   function checkCustom(results) {
     return results;

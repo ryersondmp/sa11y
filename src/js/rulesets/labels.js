@@ -12,7 +12,13 @@ export default function checkLabels() {
   Elements.Found.Inputs.forEach(($el) => {
     // Ignore completely hidden elements.
     const presentation = Utils.isPresentational($el) && Utils.isDisabled($el);
-    if (Utils.isElementHidden($el) || Utils.isHiddenAndUnfocusable($el) || presentation) return;
+    if (
+      Utils.isElementHidden($el) ||
+      Utils.isHiddenAndUnfocusable($el) ||
+      presentation ||
+      $el.hasAttribute('inert')
+    )
+      return;
 
     // Compute accessible name on input.
     const computeName = computeAccessibleName($el);
