@@ -259,6 +259,8 @@ const defaultOptions = {
     LINK_MAYBE_BUTTON: true,
     BTN_UNPRONOUNCEABLE: true,
     SVG_NO_ACCESSIBLE_NAME: true,
+    EMBED_VIDEO_AUTOPLAY: true,
+    SUMMARY_EMPTY: true,
     // Contrast checks
     CONTRAST_WARNING: {
       dismissAll: true
@@ -1779,6 +1781,7 @@ const Elements = (function myElements() {
     Found.Everything = find("*", "root", Constants.Exclusions.Sa11yElements);
     Found.Images = [];
     Found.Links = [];
+    Found.Summary = [];
     Found.Paragraphs = [];
     Found.Lists = [];
     Found.Blockquotes = [];
@@ -1889,6 +1892,9 @@ const Elements = (function myElements() {
             break;
           case "svg":
             Found.Svg.push($el);
+            break;
+          case "SUMMARY":
+            Found.Summary.push($el);
             break;
         }
       }
@@ -6571,9 +6577,13 @@ function checkImages() {
     }
     const warningTest = link ? "LINK_ALT_MAYBE_BAD_WARNING" : "ALT_MAYBE_BAD_WARNING";
     if (State.option.checks[warningTest]) {
-      const wordCount = altText.trim().split(/\s+/).length;
-      const delimiterCount = (altText.match(/[_-]/g) || []).length;
-      const hasTooMuchNoise = /^(?:\s*\d){5,}\s*$/.test(altText) || delimiterCount >= 3 && wordCount <= 2;
+      const words = altText.trim().split(/\s+/);
+      const wordCount = words.length;
+      const totalDelimiterCount = (altText.match(/[_-]/g) || []).length;
+      const isNumberString = /^(?:\s*\d){5,}\s*$/.test(altText);
+      const isPureFilename = totalDelimiterCount >= 4 && wordCount <= 2;
+      const containsSlug = words.some((word) => (word.match(/[_-]/g) || []).length >= 4);
+      const hasTooMuchNoise = isNumberString || isPureFilename || containsSlug;
       if (hasTooMuchNoise) {
         logResult({
           test: warningTest,
@@ -8277,6 +8287,19 @@ function checkDeveloper() {
         developer: true
       });
     }
+  });
+  Elements.Found.Summary.forEach(($el) => {
+    const details = $el.parentElement;
+    const isControl = details?.tagName === "DETAILS" && details.querySelector(":scope > summary") === $el;
+    if (!isControl || computeAccessibleName($el).trim()) return;
+    pushResult({
+      test: "SUMMARY_EMPTY",
+      element: details,
+      args: [details],
+      content: Lang._("SUMMARY_EMPTY") + Lang._("ACC_NAME_TIP"),
+      dismiss: $el.outerHTML,
+      developer: true
+    });
   });
   Elements.Found.TabIndex.forEach(($el) => {
     if ($el.tabIndex > 0) {

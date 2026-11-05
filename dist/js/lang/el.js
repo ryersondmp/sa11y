@@ -278,6 +278,7 @@ const tooltip = {
   UNCONTAINED_LI: "Όλα τα στοιχεία λίστας <code>&lt;li&gt;</code> πρέπει να τοποθετούνται μέσα σε στοιχεία <code>&lt;ul&gt;</code> μη διατεταγμένων ή <code>&lt;ol&gt;</code> διατεταγμένων. Αυτή η δομή βοηθά τους αναγνώστες οθόνης να αναγγείλουν τη λίστα και τα στοιχεία της με ακρίβεια.",
   TABINDEX_ATTR: "Το στοιχείο δεν πρέπει να έχει μια ιδιότητα <code>tabindex</code> μεγαλύτερη από το 0.",
   SVG_NO_ACCESSIBLE_NAME: 'Ορισμένοι αναγνώστες οθόνης θα ανακοινώσουν αυτό το SVG ως εικόνα χωρίς ετικέτα, επειδή δεν διαθέτει προσβάσιμο όνομα και δεν είναι κρυμμένο. Προσθέστε μια προσβάσιμη ετικέτα (ή <code>&lt;title&gt;</code>) εάν μεταφέρει κάποιο смысл, ή αποκρύψτε το από τους αναγνώστες οθόνης εάν είναι αμιγώς διακοσμητικό (<code>aria-hidden="true"</code>). <hr> Μάθετε περισσότερα για τα <a href="https://a11y-101.com/development/svg">προσβάσιμα SVG.</a>',
+  SUMMARY_EMPTY: "Το στοιχείο <code>&lt;summary&gt;</code> μέσα στο <code>&lt;details&gt;</code> δεν έχει προσβάσιμο όνομα. Προσθέστε περιγραφικό κείμενο μέσα στο στοιχείο <code>&lt;summary&gt;</code>.",
   // Meta checks
   META_LANG: 'Η γλώσσα της σελίδας δεν έχει δηλωθεί! Παρακαλούμε <a href="https://www.w3.org/International/questions/qa-html-language-declarations">δηλώστε τη γλώσσα στην ετικέτα HTML.</a>',
   META_TITLE: 'Λείπει ο τίτλος της σελίδας! Παρακαλούμε δώστε έναν <a href="https://developer.mozilla.org/el/docs/Web/HTML/Element/title">τίτλο σελίδας.</a>',

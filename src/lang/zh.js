@@ -368,6 +368,7 @@ const tooltip = {
   TABINDEX_ATTR: '元素不应具有大于 0 的 <code>tabindex</code> 属性。',
   SVG_NO_ACCESSIBLE_NAME:
     '由于缺少可访问名称且未被隐藏，某些屏幕阅读器会将此 SVG 朗读为未标记的图像。如果它具有实际意义，请添加可访问标签（或 <code>&lt;title&gt;</code>）；如果纯粹用于装饰，请对屏幕阅读器隐藏（<code>aria-hidden="true"</code>）。<hr> 了解更多关于<a href="https://a11y-101.com/development/svg">无障碍 SVG</a>的信息。',
+  SUMMARY_EMPTY: '<code>&lt;details&gt;</code> 内的 <code>&lt;summary&gt;</code> 元素没有可访问名称。请在 <code>&lt;summary&gt;</code> 元素内添加描述性文本。',
 
   // Meta checks
   META_LANG:

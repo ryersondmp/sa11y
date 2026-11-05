@@ -381,6 +381,7 @@ const tooltip = {
   TABINDEX_ATTR: 'Елементът не трябва да има атрибут <code>tabindex</code> по-голям от 0.',
   SVG_NO_ACCESSIBLE_NAME:
     'Някои екранни четци ще съобщят това SVG като изображение без етикет, тъй като то няма достъпно име и не е скрито. Добавете достъпен етикет (или <code>&lt;title&gt;</code>), ако носи смисъл, или го скрийте от екранните четци, ако е чисто декоративно (<code>aria-hidden="true"</code>). <hr> Научете повече за <a href="https://a11y-101.com/development/svg">достъпните SVG файлове.</a>',
+  SUMMARY_EMPTY: 'Елементът <code>&lt;summary&gt;</code> в <code>&lt;details&gt;</code> няма достъпно име. Добавете описателен текст в елемента <code>&lt;summary&gt;</code>.',
 
   // Meta checks
   META_LANG:

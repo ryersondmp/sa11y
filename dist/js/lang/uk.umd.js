@@ -289,6 +289,7 @@
     UNCONTAINED_LI: "Всі елементи списку <code>&lt;li&gt;</code> повинні бути розміщені всередині елементів <code>&lt;ul&gt;</code> неупорядкованих або <code>&lt;ol&gt;</code> упорядкованих. Ця структура допомагає читачам екрана точно оголошувати список та його елементи.",
     TABINDEX_ATTR: "Елемент не повинен мати атрибут <code>tabindex</code>, більший за 0.",
     SVG_NO_ACCESSIBLE_NAME: 'Деякі зчитувачі екрана оголошуватимуть цей SVG як зображення без позначки, оскільки він не має доступної назви та не є прихованим. Додайте доступну позначку (або <code>&lt;title&gt;</code>), якщо він має змістове навантаження, або приховайте його від зчитувачів екрана, якщо він є суто декоративним (<code>aria-hidden="true"</code>). <hr> Дізнайтеся більше про <a href="https://a11y-101.com/development/svg">доступні SVG.</a>',
+    SUMMARY_EMPTY: "Елемент <code>&lt;summary&gt;</code> усередині <code>&lt;details&gt;</code> не має доступного імені. Додайте описовий текст усередині елемента <code>&lt;summary&gt;</code>.",
     // Meta checks
     META_LANG: 'Мова сторінки не вказана! Будь ласка, <a href="https://www.w3.org/International/questions/qa-html-language-declarations">вкажіть мову в тезі HTML.</a>',
     META_TITLE: 'Відсутня назва сторінки! <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/title">Укажіть назву сторінки.</a>',

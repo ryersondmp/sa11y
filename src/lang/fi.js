@@ -386,6 +386,7 @@ const tooltip = {
     'Elementillä ei tulisi olla <code>tabindex</code>-attribuuttia, joka on suurempi kuin 0.',
   SVG_NO_ACCESSIBLE_NAME:
     'Jotkut ruudunlukijat ilmoittavat tämän SVG:n nimettömänä kuvana, koska siltä puuttuu saavutettava nimi eikä sitä ole piilotettu. Lisää saavutettava tunniste (tai <code>&lt;title&gt;</code>), jos se välittää merkitystä, tai piilota se ruudunlukijoilta, jos se on pelkästään koristeellinen (<code>aria-hidden="true"</code>). <hr> Lue lisää <a href="https://a11y-101.com/development/svg">saavutettavista SVG-tiedostoista.</a>',
+  SUMMARY_EMPTY: 'Elementin <code>&lt;details&gt;</code> sisällä olevalla summary-elementillä ei ole saavutettavaa nimeä. Lisää kuvaava teksti <code>&lt;summary&gt;</code>-elementin sisään.',
 
   // Meta checks
   META_LANG:

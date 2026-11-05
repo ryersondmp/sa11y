@@ -386,6 +386,7 @@ const tooltip = {
   TABINDEX_ATTR: 'Öğenin <code>tabindex</code> değeri 0’dan büyük olmamalıdır.',
   SVG_NO_ACCESSIBLE_NAME:
     'Erişilebilir bir adı olmadığı ve gizlenmediği için bazı ekran okuyucular bu SVG\'yi etiketlenmemiş bir görsel olarak duyuracaktır. Anlam taşıyorsa erişilebilir bir etiket (veya <code>&lt;title&gt;</code>) ekleyin ya da tamamen dekoratifse ekran okuyuculardan gizleyin (<code>aria-hidden="true"</code>). <hr> <a href="https://a11y-101.com/development/svg">Erişilebilir SVG\'ler</a> hakkında daha fazla bilgi edinin.',
+  SUMMARY_EMPTY: '<code>&lt;details&gt;</code> içindeki <code>&lt;summary&gt;</code> öğesinin erişilebilir bir adı yok. <code>&lt;summary&gt;</code> öğesinin içine açıklayıcı metin ekleyin.',
 
   // Meta checks
   META_LANG:

@@ -244,6 +244,24 @@ export default function checkDeveloper() {
   });
 
   /* ****************************************** */
+  /*  Summary missing accessible name.          */
+  /* ****************************************** */
+  Elements.Found.Summary.forEach(($el) => {
+    const details = $el.parentElement;
+    const isControl =
+      details?.tagName === 'DETAILS' && details.querySelector(':scope > summary') === $el;
+    if (!isControl || computeAccessibleName($el).trim()) return;
+    pushResult({
+      test: 'SUMMARY_EMPTY',
+      element: details,
+      args: [details],
+      content: Lang._('SUMMARY_EMPTY') + Lang._('ACC_NAME_TIP'),
+      dismiss: $el.outerHTML,
+      developer: true,
+    });
+  });
+
+  /* ****************************************** */
   /*  No tabindex values greater than 0.        */
   /* ****************************************** */
   Elements.Found.TabIndex.forEach(($el) => {

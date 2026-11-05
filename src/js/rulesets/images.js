@@ -292,10 +292,22 @@ export default function checkImages() {
     // Warning check for potentially bad alt text (lower confidence).
     const warningTest = link ? 'LINK_ALT_MAYBE_BAD_WARNING' : 'ALT_MAYBE_BAD_WARNING';
     if (State.option.checks[warningTest]) {
-      const wordCount = altText.trim().split(/\s+/).length;
-      const delimiterCount = (altText.match(/[_-]/g) || []).length;
-      const hasTooMuchNoise =
-        /^(?:\s*\d){5,}\s*$/.test(altText) || (delimiterCount >= 3 && wordCount <= 2);
+      const words = altText.trim().split(/\s+/);
+      const wordCount = words.length;
+      const totalDelimiterCount = (altText.match(/[_-]/g) || []).length;
+
+      // 1. Numeric ID check (Catches: "1 2 3 4 5")
+      const isNumberString = /^(?:\s*\d){5,}\s*$/.test(altText);
+
+      // 2. Pure filename check (Catches: "hero-image-final")
+      const isPureFilename = totalDelimiterCount >= 4 && wordCount <= 2;
+
+      // 3. The "Slug" Check (Catches: e.g. "Oct 30 web story tmu-celebrates-2026-...")
+      // Flags if any single unbroken word contains 4 or more delimiters,
+      // safely ignoring standard hyphenated words like "state-of-the-art".
+      const containsSlug = words.some((word) => (word.match(/[_-]/g) || []).length >= 4);
+
+      const hasTooMuchNoise = isNumberString || isPureFilename || containsSlug;
       if (hasTooMuchNoise) {
         logResult({
           test: warningTest,

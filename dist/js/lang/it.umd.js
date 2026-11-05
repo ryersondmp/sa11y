@@ -288,6 +288,7 @@
     UNCONTAINED_LI: "Tutti gli elementi di elenco <code>&lt;li&gt;</code> devono essere inseriti all’interno di elementi <code>&lt;ul&gt;</code> non ordinati o <code>&lt;ol&gt;</code> ordinati. Questa struttura aiuta i lettori di schermo ad annunciare l’elenco e i suoi elementi con precisione.",
     TABINDEX_ATTR: "L’elemento non deve avere un attributo <code>tabindex</code> maggiore di 0.",
     SVG_NO_ACCESSIBLE_NAME: `Alcuni screen reader annunceranno questo SVG come un'immagine senza etichetta perché manca di un nome accessibile e non è nascosto. Aggiungi un'etichetta accessibile (o <code>&lt;title&gt;</code>) se trasmette un significato, oppure nascondilo agli screen reader se è puramente decorativo (<code>aria-hidden="true"</code>). <hr> Scopri di più sugli <a href="https://a11y-101.com/development/svg">SVG accessibili.</a>`,
+    SUMMARY_EMPTY: "L’elemento <code>&lt;summary&gt;</code> all’interno di <code>&lt;details&gt;</code> non ha un nome accessibile. Aggiungi un testo descrittivo all’interno dell’elemento <code>&lt;summary&gt;</code>.",
     // Meta checks
     META_LANG: 'Lingua della pagina non dichiarata! Si prega di <a href="https://www.w3.org/International/questions/qa-html-language-declarations.it.html">dichiarare la lingua nel tag HTML.</a>',
     META_TITLE: 'Titolo della pagina mancante! Si prega di fornire un <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/title">titolo della pagina.</a>',

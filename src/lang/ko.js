@@ -371,6 +371,7 @@ const tooltip = {
   TABINDEX_ATTR: '요소는 <code>tabindex</code> 속성이 0보다 커서는 안 됩니다.',
   SVG_NO_ACCESSIBLE_NAME:
     '접근 가능한 이름이 없고 숨겨져 있지 않기 때문에 일부 스크린 리더는 이 SVG를 레이블이 없는 이미지로 읽습니다. 의미를 전달하는 경우 접근 가능한 레이블(또는 <code>&lt;title&gt;</code>)을 추가하고, 순수하게 장식용인 경우 스크린 리더에서 숨기세요(<code>aria-hidden="true"</code>). <hr> <a href="https://a11y-101.com/development/svg">접근 가능한 SVG</a>에 대해 자세히 알아보세요.',
+  SUMMARY_EMPTY: '<code>&lt;details&gt;</code> 안의 <code>&lt;summary&gt;</code> 요소에 접근 가능한 이름이 없습니다. <code>&lt;summary&gt;</code> 요소 안에 설명 텍스트를 추가하세요.',
 
   // Meta checks
   META_LANG:

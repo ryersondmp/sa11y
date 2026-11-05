@@ -370,6 +370,7 @@ const tooltip = {
     'Elemen tidak boleh memiliki atribut <code>tabindex</code> yang lebih besar dari 0.',
   SVG_NO_ACCESSIBLE_NAME:
     'Beberapa pembaca layar akan mengumumkan SVG ini sebagai gambar tanpa label karena tidak memiliki nama yang dapat diakses dan tidak tersembunyi. Tambahkan label yang dapat diakses (atau <code>&lt;title&gt;</code>) jika menyampaikan makna, atau sembunyikan dari pembaca layar jika murni bersifat dekoratif (<code>aria-hidden="true"</code>). <hr> Pelajari lebih lanjut tentang <a href="https://a11y-101.com/development/svg">SVG yang dapat diakses.</a>',
+  SUMMARY_EMPTY: 'Elemen <code>&lt;summary&gt;</code> di dalam <code>&lt;details&gt;</code> tidak memiliki nama yang dapat diakses. Tambahkan teks deskriptif di dalam elemen <code>&lt;summary&gt;</code>.',
 
   // Meta checks
   META_LANG:

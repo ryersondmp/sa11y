@@ -377,6 +377,7 @@ const tooltip = {
   TABINDEX_ATTR: 'Prvek by neměl mít atribut <code>tabindex</code> větší než 0.',
   SVG_NO_ACCESSIBLE_NAME:
     'Některé čtečky obrazovky oznámí toto SVG jako neoznačený obrázek, protože nemá přístupný název a není skryté. Přidejte přístupný štítek (nebo <code>&lt;title&gt;</code>), pokud má význam, nebo jej skryjte před čtečkami obrazovky, pokud je pouze dekorativní (<code>aria-hidden="true"</code>). <hr> Další informace o <a href="https://a11y-101.com/development/svg">přístupných SVG.</a>',
+  SUMMARY_EMPTY: 'Prvek <code>&lt;summary&gt;</code> uvnitř <code>&lt;details&gt;</code> nemá přístupné jméno. Přidejte popisný text do prvku <code>&lt;summary&gt;</code>.',
 
   // Meta checks
   META_LANG:

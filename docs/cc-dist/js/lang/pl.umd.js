@@ -275,6 +275,7 @@
     UNCONTAINED_LI: "Wszystkie elementy listy <code>&lt;li&gt;</code> muszą być umieszczone wewnątrz elementów <code>&lt;ul&gt;</code> nieuporządkowanych lub <code>&lt;ol&gt;</code> uporządkowanych. Ta struktura pomaga czytnikom ekranu dokładnie ogłaszać listę i jej elementy.",
     TABINDEX_ATTR: "Element nie powinien mieć atrybutu <code>tabindex</code> większego niż 0.",
     SVG_NO_ACCESSIBLE_NAME: 'Niektóre czytniki ekranu ogłoszą ten элемент SVG jako obraz bez etykiety, ponieważ brakuje mu dostępnej nazwy i nie jest ukryty. Dodaj dostępną etykietę (lub <code>&lt;title&gt;</code>), jeśli przekazuje ona znaczenie, lub ukryj go przed czytnikami ekranu, jeśli pełni funkcję wyłącznie dekoracyjną (<code>aria-hidden="true"</code>). <hr> Dowiedz się więcej o <a href="https://a11y-101.com/development/svg">dostępnych plikach SVG.</a>',
+    SUMMARY_EMPTY: "Element <code>&lt;summary&gt;</code> wewnątrz <code>&lt;details&gt;</code> nie ma dostępnej nazwy. Dodaj opisowy tekst wewnątrz elementu <code>&lt;summary&gt;</code>.",
     // Meta checks
     META_LANG: 'Język strony nie zadeklarowany! <a href="https://www.w3.org/International/questions/qa-html-language-declarations">Zadeklaruj język w znaczniku HTML.</a>',
     META_TITLE: 'Brak tytułu strony! Podaj <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/title">tytuł strony.</a>',

@@ -273,6 +273,7 @@ const tooltip = {
   UNCONTAINED_LI: "Todos los elementos de lista <code>&lt;li&gt;</code> deben colocarse dentro de elementos <code>&lt;ul&gt;</code> no ordenados o <code>&lt;ol&gt;</code> ordenados. Esta estructura ayuda a los lectores de pantalla a anunciar la lista y sus elementos con precisión.",
   TABINDEX_ATTR: "El elemento no debe tener un atributo <code>tabindex</code> mayor que 0.",
   SVG_NO_ACCESSIBLE_NAME: 'Algunos lectores de pantalla anunciarán este SVG como una imagen sin etiqueta porque carece de un nombre accesible y no está oculto. Añada una etiqueta accesible (o <code>&lt;title&gt;</code>) si transmite un significado, o ocúltelo a los lectores de pantalla si es puramente decorativo (<code>aria-hidden="true"</code>). <hr> Obtenga más información sobre <a href="https://a11y-101.com/development/svg">SVG accesibles.</a>',
+  SUMMARY_EMPTY: "El elemento <code>&lt;summary&gt;</code> dentro de <code>&lt;details&gt;</code> no tiene un nombre accesible. Añada texto descriptivo dentro del elemento <code>&lt;summary&gt;</code>.",
   // Meta checks
   META_LANG: '¡Idioma de la página no declarado! <a href="https://www.w3.org/International/questions/qa-html-language-declarations.es.html">Declare el idioma en la etiqueta HTML.</a>',
   META_TITLE: '¡Falta el título de la página! Proporcione un <a href="https://developer.mozilla.org/es/docs/Web/HTML/Element/title">título de página.</a>',

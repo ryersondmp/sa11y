@@ -375,6 +375,7 @@ const tooltip = {
   TABINDEX_ATTR: 'Elemendil ei tohiks olla <code>tabindex</code> atribuut, mis on suurem kui 0.',
   SVG_NO_ACCESSIBLE_NAME:
     'Mõned ekraanilugejad teavitavad sellest SVG-st kui sildistamata pildist, kuna sellel puudub juurdepääsetav nimi ja see pole varjatud. Lisage juurdepääsetav silt (või <code>&lt;title&gt;</code>), kui see edastab tähendust, või peitke see ekraanilugejate eest, kui see on puhtalt dekoratiivne (<code>aria-hidden="true"</code>). <hr> Lisateave <a href="https://a11y-101.com/development/svg">juurdepääsetavate SVG-de kohta.</a>',
+  SUMMARY_EMPTY: 'Elemendi <code>&lt;details&gt;</code> sees oleval summary-elemendil puudub ligipääsetav nimi. Lisage elemendi <code>&lt;summary&gt;</code> sisse kirjeldav tekst.',
 
   // Meta checks
   META_LANG:

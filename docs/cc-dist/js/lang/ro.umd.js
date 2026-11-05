@@ -296,6 +296,7 @@
     UNCONTAINED_LI: "Toate elementele de listă <code>&lt;li&gt;</code> trebuie să fie plasate în interiorul elementelor <code>&lt;ul&gt;</code> neordonate sau <code>&lt;ol&gt;</code> ordonate. Această structură ajută cititoarele de ecran să anunțe lista și elementele sale cu precizie.",
     TABINDEX_ATTR: "Elementul nu ar trebui să aibă un atribut <code>tabindex</code> mai mare de 0.",
     SVG_NO_ACCESSIBLE_NAME: 'Unele cititoare de ecran vor anunța acest SVG ca fiind o imagine fără etichetă, deoarece îi lipsește un nume accesibil și nu este ascuns. Adăugați o etichetă accesibilă (sau <code>&lt;title&gt;</code>) dacă transmite un sens, sau ascundeți-l de cititoarele de ecran dacă este pur decorativ (<code>aria-hidden="true"</code>). <hr> Aflați mai multe despre <a href="https://a11y-101.com/development/svg">SVG-uri accesibile.</a>',
+    SUMMARY_EMPTY: "Elementul <code>&lt;summary&gt;</code> din interiorul <code>&lt;details&gt;</code> nu are un nume accesibil. Adăugați text descriptiv în interiorul elementului <code>&lt;summary&gt;</code>.",
     // Meta
     META_LANG: 'Limba paginii nu este declarată! Vă rugăm <a href="https://www.w3.org/International/questions/qa-html-language-declarations">declarați limba în tag-ul HTML.</a>',
     META_TITLE: 'Lipsește titlul paginii! Vă rugăm să furnizați un <a href="https://developer.mozilla.org/ro/docs/Web/HTML/Element/title">titlu pagină.</a>',

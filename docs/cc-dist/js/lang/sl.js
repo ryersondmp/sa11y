@@ -283,6 +283,7 @@ const tooltip = {
   UNCONTAINED_LI: "Vse <code>&lt;li&gt;</code> postavke seznama morajo biti nameščene znotraj <code>&lt;ul&gt;</code> neurejenih ali <code>&lt;ol&gt;</code> urejenih elementov. Ta struktura pomaga bralnikom zaslona natančno napovedati seznam in njegove postavke.",
   TABINDEX_ATTR: "Element ne sme imeti atributa <code>tabindex</code>, ki je večji od 0.",
   SVG_NO_ACCESSIBLE_NAME: 'Nekateri bralniki zaslona bodo ta SVG napovedali kot neoznačeno sliko, ker nima dostopnega imena in ni skrit. Dodajte dostopno oznako (ali <code>&lt;title&gt;</code>), če sporoča pomen, ali pa ga skrijte pred bralniki zaslona, če je zgolj dekorativen (<code>aria-hidden="true"</code>). <hr> Več o <a href="https://a11y-101.com/development/svg">dostopnih SVG-jih.</a>',
+  SUMMARY_EMPTY: "Element <code>&lt;summary&gt;</code> znotraj <code>&lt;details&gt;</code> nima dostopnega imena. Dodajte opisno besedilo v element <code>&lt;summary&gt;</code>.",
   // Meta checks
   META_LANG: 'Jezik strani ni prijavljen! Prosimo, da <a href="https://www.w3.org/International/questions/qa-html-language-declarations">deklarirate jezik na oznaki HTML.</a>',
   META_TITLE: 'Manjka naslov strani! Navedite <a href="https://developer.mozilla.org/sl/docs/Web/HTML/Element/title">naslov strani.</a>',

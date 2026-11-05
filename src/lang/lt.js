@@ -367,6 +367,7 @@ const tooltip = {
   TABINDEX_ATTR: 'Elementas neturėtų turėti <code>tabindex</code> atributo, didesnio nei 0.',
   SVG_NO_ACCESSIBLE_NAME:
     'Kai kurios ekrano skaityklės paskelbs šį SVG kaip nepažymėtą vaizdą, nes jis neturi pasiekiamo pavadinimo ir nėra paslėptas. Pridėkite pasiekiamą etiketę (arba <code>&lt;title&gt;</code>), jei ji perteikia prasmę, arba paslėpkite jį nuo ekrano skaityklių, jei jis yra grynai dekoratyvus (<code>aria-hidden="true"</code>). <hr> Sužinokite daugiau apie <a href="https://a11y-101.com/development/svg">pasiekiamus SVG.</a>',
+  SUMMARY_EMPTY: 'Elemente <code>&lt;details&gt;</code> esantis <code>&lt;summary&gt;</code> elementas neturi prieinamo pavadinimo. Į elemento <code>&lt;summary&gt;</code> vidų įtraukite aprašomąjį tekstą.',
 
   // Meta checks
   META_LANG:

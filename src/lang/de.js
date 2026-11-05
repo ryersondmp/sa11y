@@ -411,6 +411,7 @@ const tooltip = {
   TABINDEX_ATTR: 'Das Element sollte kein <code>tabindex</code>-Attribut größer als 0 haben.',
   SVG_NO_ACCESSIBLE_NAME:
     'Einige Screenreader sagen dieses SVG als unbeschriftetes Bild an, da ihm ein zugänglicher Name fehlt und es nicht verborgen ist. Fügen Sie ein zugängliches Label (oder <code>&lt;title&gt;</code>) hinzu, wenn es eine Bedeutung vermittelt, oder verbergen Sie es vor Screenreadern, wenn es rein dekorativ ist (<code>aria-hidden="true"</code>). <hr> Erfahren Sie mehr über <a href="https://a11y-101.com/development/svg">barrierefreie SVGs.</a>',
+  SUMMARY_EMPTY: 'Das summary-Element innerhalb von <code>&lt;details&gt;</code> hat keinen zugänglichen Namen. Fügen Sie beschreibenden Text in das <code>&lt;summary&gt;</code>-Element ein.',
 
   // Meta checks
   META_LANG:

@@ -298,6 +298,7 @@ const tooltip = {
   UNCONTAINED_LI: "すべての <code>&lt;li&gt;</code> リスト項目は、<code>&lt;ul&gt;</code> 順不同リストまたは <code>&lt;ol&gt;</code> 順序付きリストの要素内に配置する必要があります。この構造は、スクリーンリーダーがリストとその項目を正確に読み上げるのに役立ちます。",
   TABINDEX_ATTR: "要素は <code>tabindex</code> 属性が 0 より大きくてはいけません。",
   SVG_NO_ACCESSIBLE_NAME: 'アクセシブルな名前がなく非表示にもなっていないため、一部のスクリーンリーダーはこのSVGをラベルなしの画像として読み上げます。意味を持つ場合はアクセシブルなラベル（または <code>&lt;title&gt;</code>）を追加し、単なる装飾である場合はスクリーンリーダーから非表示（<code>aria-hidden="true"</code>）にしてください。<hr> <a href="https://a11y-101.com/development/svg">アクセシブルなSVG</a>の詳細をご覧ください。',
+  SUMMARY_EMPTY: "<code>&lt;details&gt;</code> 内の <code>&lt;summary&gt;</code> 要素にアクセシブル名がありません。<code>&lt;summary&gt;</code> 要素内に説明的なテキストを追加してください。",
   // Meta checks
   META_LANG: 'ページ言語が宣言されていません！<a href="https://www.w3.org/International/questions/qa-html-language-declarations">HTMLタグで言語を宣言してください。</a>',
   META_TITLE: 'ページタイトルがありません！<a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/title">ページタイトルを入力してください。</a>',

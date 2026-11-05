@@ -302,6 +302,7 @@
     UNCONTAINED_LI: "Alla <code>&lt;li&gt;</code> listobjekt måste placeras inuti <code>&lt;ul&gt;</code> oordnade eller <code>&lt;ol&gt;</code> ordnade element. Denna struktur hjälper skärmläsare att korrekt tillkännage listan och dess objekt.",
     TABINDEX_ATTR: "Elementet bör inte ha ett <code>tabindex</code>-attribut större än 0.",
     SVG_NO_ACCESSIBLE_NAME: 'Vissa skärmläsare kommer att meddela denna SVG som en omärkt bild eftersom den saknar ett tillgängligt namn och inte är dold. Lägg till en tillgänglig etikett (eller <code>&lt;title&gt;</code>) om den förmedlar en mening, eller dölj den för skärmläsare om den rent är dekorativ (<code>aria-hidden="true"</code>). <hr> Läs mer om <a href="https://a11y-101.com/development/svg">tillgängliga SVG: er.</a>',
+    SUMMARY_EMPTY: "Summary-elementet i <code>&lt;details&gt;</code> saknar ett tillgängligt namn. Lägg till beskrivande text i <code>&lt;summary&gt;</code>-elementet.",
     // Meta checks
     META_LANG: 'Sidspråk är inte inställt! Vänligen <a href="https://www.w3.org/International/questions/qa-html-language-declarations">ställ in språk på HTML-taggen.</a>',
     META_TITLE: 'Sidtitel saknas! Ange en <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/title">sidtitel.</a>',

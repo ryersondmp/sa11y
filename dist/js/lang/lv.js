@@ -284,6 +284,7 @@ const tooltip = {
   UNCONTAINED_LI: "Visiem <code>&lt;li&gt;</code> saraksta elementiem jābūt ievietotiem <code>&lt;ul&gt;</code> nesakārtotā vai <code>&lt;ol&gt;</code> sakārtotā sarakstā. Šī struktūra palīdz ekrāna lasītājiem precīzi paziņot sarakstu un tā elementus.",
   TABINDEX_ATTR: "Elementam nevajadzētu būt ar <code>tabindex</code> atribūtu, kas ir lielāks par 0.",
   SVG_NO_ACCESSIBLE_NAME: 'Daži ekrāna lasītāji paziņos šo SVG kā nenorādītu attēlu, jo tam trūkst piekļūstama nosaukuma un tas nav paslēpts. Pievienojiet piekļūstamu etiķeti (vai <code>&lt;title&gt;</code>), ja tā sniedz nozīmi, vai paslēpiet to no ekrāna lasītājiem, ja tas ir tīri dekoratīvs (<code>aria-hidden="true"</code>). <hr> Uzziniet vairāk par <a href="https://a11y-101.com/development/svg">piekļūstamiem SVG.</a>',
+  SUMMARY_EMPTY: "<code>&lt;summary&gt;</code> elementam, kas atrodas <code>&lt;details&gt;</code> elementā, nav pieejamā nosaukuma. Pievienojiet aprakstošu tekstu <code>&lt;summary&gt;</code> elementā.",
   // Meta
   META_LANG: 'Lapas valoda nav deklarēta! Lūdzu, <a href="https://www.w3.org/International/questions/qa-html-language-declarations">deklarējiet valodu HTML tagā.</a>',
   META_TITLE: 'Trūkst lapas nosaukuma! Lūdzu, norādiet <a href="https://developer.mozilla.org/lv/docs/Web/HTML/Element/title">lapas nosaukumu.</a>',

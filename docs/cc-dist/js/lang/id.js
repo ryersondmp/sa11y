@@ -276,6 +276,7 @@ const tooltip = {
   UNCONTAINED_LI: "Semua item daftar <code>&lt;li&gt;</code> harus diletakkan di dalam elemen <code>&lt;ul&gt;</code> yang tidak terurut atau <code>&lt;ol&gt;</code> yang terurut. Struktur ini membantu pembaca layar mengumumkan daftar dan item-itemnya dengan akurat.",
   TABINDEX_ATTR: "Elemen tidak boleh memiliki atribut <code>tabindex</code> yang lebih besar dari 0.",
   SVG_NO_ACCESSIBLE_NAME: 'Beberapa pembaca layar akan mengumumkan SVG ini sebagai gambar tanpa label karena tidak memiliki nama yang dapat diakses dan tidak tersembunyi. Tambahkan label yang dapat diakses (atau <code>&lt;title&gt;</code>) jika menyampaikan makna, atau sembunyikan dari pembaca layar jika murni bersifat dekoratif (<code>aria-hidden="true"</code>). <hr> Pelajari lebih lanjut tentang <a href="https://a11y-101.com/development/svg">SVG yang dapat diakses.</a>',
+  SUMMARY_EMPTY: "Elemen <code>&lt;summary&gt;</code> di dalam <code>&lt;details&gt;</code> tidak memiliki nama yang dapat diakses. Tambahkan teks deskriptif di dalam elemen <code>&lt;summary&gt;</code>.",
   // Meta checks
   META_LANG: 'Bahasa halaman tidak dideklarasikan! Silakan <a href="https://www.w3.org/International/questions/qa-html-language-declarations">deklarasikan bahasa pada tag HTML.</a>',
   META_TITLE: 'Judul halaman tidak ada! Harap berikan <a href="https://developer.mozilla.org/id/docs/Web/HTML/Element/title">judul halaman.</a>',

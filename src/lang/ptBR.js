@@ -380,6 +380,7 @@ const tooltip = {
   TABINDEX_ATTR: 'O elemento não deve ter um atributo <code>tabindex</code> maior que 0.',
   SVG_NO_ACCESSIBLE_NAME:
     'Alguns leitores de tela anunciarão este SVG como uma imagem sem rótulo porque ele não possui um nome acessível e não está oculto. Adicione um rótulo acessível (ou <code>&lt;title&gt;</code>) se ele transmitir significado, ou oculte-o dos leitores de tela se for puramente decorativo (<code>aria-hidden="true"</code>). <hr> Saiba mais sobre <a href="https://a11y-101.com/development/svg">SVGs acessíveis.</a>',
+  SUMMARY_EMPTY: 'O elemento <code>&lt;summary&gt;</code> dentro de <code>&lt;details&gt;</code> não tem um nome acessível. Adicione um texto descritivo dentro do elemento <code>&lt;summary&gt;</code>.',
 
   // Meta checks
   META_LANG:

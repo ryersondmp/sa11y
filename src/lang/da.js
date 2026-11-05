@@ -377,6 +377,7 @@ const tooltip = {
   TABINDEX_ATTR: 'Elementet bør ikke have et <code>tabindex</code>-attribut større end 0.',
   SVG_NO_ACCESSIBLE_NAME:
     'Nogle skærmlæsere vil oplæse dette SVG som et ubemærket billede, fordi det mangler et tilgængeligt navn og ikke er skjult. Tilføj en tilgængelig etiket (eller <code>&lt;title&gt;</code>), hvis det har en betydning, eller skjul det for skærmlæsere, hvis det rent er dekorativt (<code>aria-hidden="true"</code>). <hr> Lær mere om <a href="https://a11y-101.com/development/svg">tilgængelige SVG\'er.</a>',
+  SUMMARY_EMPTY: 'Summary-elementet i <code>&lt;details&gt;</code> har ikke noget tilgængeligt navn. Tilføj beskrivende tekst i <code>&lt;summary&gt;</code>-elementet.',
 
   // Meta checks
   META_LANG:

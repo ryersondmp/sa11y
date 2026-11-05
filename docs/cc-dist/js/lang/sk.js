@@ -333,6 +333,7 @@ const tooltip = {
   UNCONTAINED_LI: "Všetky položky zoznamu <code>&lt;li&gt;</code> musia byť umiestnené vo vnútri neusporiadaného prvku <code>&lt;ul&gt;</code> alebo usporiadaného prvku <code>&lt;ol&gt;</code>. Táto štruktúra pomáha čítačkám obrazovky presne oznamovať zoznam a jeho položky. <hr> <strong {B}>Položka zoznamu</strong> <strong {C}>%(TEXT)</strong>",
   TABINDEX_ATTR: "Prvok by nemal mať atribút <code>tabindex</code> väčší ako 0.",
   SVG_NO_ACCESSIBLE_NAME: 'Niektoré čítačky obrazovky oznámia toto SVG ako neoznačený obrázok, pretože nemá prístupný názov a nie je skryté. Pridajte prístupný štítok (alebo <code>&lt;title&gt;</code>), ak má význam, alebo ho skryte pred čítačkami obrazovky, ak je len dekoratívny (<code>aria-hidden="true"</code>). <hr> Ďalšie informácie o <a href="https://a11y-101.com/development/svg">prístupných SVG.</a>',
+  SUMMARY_EMPTY: "Prvok <code>&lt;summary&gt;</code> vnútri <code>&lt;details&gt;</code> nemá prístupný názov. Pridajte opisný text do prvku <code>&lt;summary&gt;</code>.",
   // Meta checks
   META_TITLE: 'Chýba názov stránky! Uveďte prosím <a href="https://developer.mozilla.org/sk/docs/Web/HTML/Element/title">názov stránky.</a>',
   META_SCALABLE: 'Odstráňte parameter <code>user-scalable="no"</code> v <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">meta značke viewport</a>, aby ste umožnili priblíženie.',

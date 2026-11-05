@@ -287,6 +287,7 @@
     UNCONTAINED_LI: "Alle <code>&lt;li&gt;</code> lijstitems moeten worden geplaatst binnen <code>&lt;ul&gt;</code> ongeordende of <code>&lt;ol&gt;</code> geordende elementen. Deze structuur helpt schermlezers om de lijst en de items ervan nauwkeurig aan te kondigen.",
     TABINDEX_ATTR: "Het element mag geen <code>tabindex</code>-attribuut groter dan 0 hebben.",
     SVG_NO_ACCESSIBLE_NAME: `Sommige schermlezers zullen deze SVG aankondigen als een afbeelding zonder label omdat deze geen toegankelijke naam heeft en niet verborgen is. Voeg een toegankelijk label (of <code>&lt;title&gt;</code>) toe als het betekenis overbrengt, of verberg het voor schermlezers als het louter decoratief is (<code>aria-hidden="true"</code>). <hr> Lees meer over <a href="https://a11y-101.com/development/svg">toegankelijke SVG's.</a>`,
+    SUMMARY_EMPTY: "Het summary-element binnen <code>&lt;details&gt;</code> heeft geen toegankelijke naam. Voeg beschrijvende tekst toe binnen het <code>&lt;summary&gt;</code>-element.",
     // Meta checks
     META_LANG: 'Paginataal niet opgegeven! <a href="https://www.w3.org/International/questions/qa-html-language-declarations">Geef de taal op in de HTML-tag.</a>',
     META_TITLE: 'Er ontbreekt een paginatitel! Geef een <a href="https://developer.mozilla.org/nl/docs/Web/HTML/Element/title">paginatitel.</a>',

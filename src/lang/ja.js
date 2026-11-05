@@ -391,6 +391,7 @@ const tooltip = {
   TABINDEX_ATTR: '要素は <code>tabindex</code> 属性が 0 より大きくてはいけません。',
   SVG_NO_ACCESSIBLE_NAME:
     'アクセシブルな名前がなく非表示にもなっていないため、一部のスクリーンリーダーはこのSVGをラベルなしの画像として読み上げます。意味を持つ場合はアクセシブルなラベル（または <code>&lt;title&gt;</code>）を追加し、単なる装飾である場合はスクリーンリーダーから非表示（<code>aria-hidden="true"</code>）にしてください。<hr> <a href="https://a11y-101.com/development/svg">アクセシブルなSVG</a>の詳細をご覧ください。',
+  SUMMARY_EMPTY: '<code>&lt;details&gt;</code> 内の <code>&lt;summary&gt;</code> 要素にアクセシブル名がありません。<code>&lt;summary&gt;</code> 要素内に説明的なテキストを追加してください。',
 
   // Meta checks
   META_LANG:

@@ -277,6 +277,7 @@
     UNCONTAINED_LI: "Visi <code>&lt;li&gt;</code> sąrašo elementai turi būti įdėti į <code>&lt;ul&gt;</code> nesurūšiuotus arba <code>&lt;ol&gt;</code> surūšiuotus elementus. Ši struktūra padeda ekranų skaitytuvams tiksliai paskelbti sąrašą ir jo elementus.",
     TABINDEX_ATTR: "Elementas neturėtų turėti <code>tabindex</code> atributo, didesnio nei 0.",
     SVG_NO_ACCESSIBLE_NAME: 'Kai kurios ekrano skaityklės paskelbs šį SVG kaip nepažymėtą vaizdą, nes jis neturi pasiekiamo pavadinimo ir nėra paslėptas. Pridėkite pasiekiamą etiketę (arba <code>&lt;title&gt;</code>), jei ji perteikia prasmę, arba paslėpkite jį nuo ekrano skaityklių, jei jis yra grynai dekoratyvus (<code>aria-hidden="true"</code>). <hr> Sužinokite daugiau apie <a href="https://a11y-101.com/development/svg">pasiekiamus SVG.</a>',
+    SUMMARY_EMPTY: "Elemente <code>&lt;details&gt;</code> esantis <code>&lt;summary&gt;</code> elementas neturi prieinamo pavadinimo. Į elemento <code>&lt;summary&gt;</code> vidų įtraukite aprašomąjį tekstą.",
     // Meta checks
     META_LANG: 'Puslapio kalba nedeklaruota! Prašome <a href="https://www.w3.org/International/questions/qa-html-language-declarations">deklaruoti kalbą HTML žymoje.</a>',
     META_TITLE: 'Trūksta puslapio pavadinimo! Pateikite <a href="https://developer.mozilla.org/lt/docs/Web/HTML/Element/title">puslapio pavadinimą.</a>',

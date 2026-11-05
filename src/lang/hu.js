@@ -383,6 +383,7 @@ const tooltip = {
   TABINDEX_ATTR: 'Az elemnek nem lehet <code>tabindex</code> attribútuma, amely nagyobb, mint 0.',
   SVG_NO_ACCESSIBLE_NAME:
     'Egyes képernyőolvasók címke nélküli képként jelentik be ezt az SVG-t, mivel nem rendelkezik hozzáférhető névvel, és nincs elrejtve. Adjon hozzá egy hozzáférhető címkét (vagy <code>&lt;title&gt;</code> elemet), ha jelentést hordoz, vagy rejtse el a képernyőolvasók elől, ha tisztán dekoratív (<code>aria-hidden="true"</code>). <hr> További információ a <a href="https://a11y-101.com/development/svg">hozzáférhető SVG-kről.</a>',
+  SUMMARY_EMPTY: 'A <code>&lt;details&gt;</code> elemen belüli <code>&lt;summary&gt;</code> elemnek nincs hozzáférhető neve. Adjon leíró szöveget a <code>&lt;summary&gt;</code> elemhez.',
 
   // Meta checks
   META_LANG:

@@ -264,6 +264,8 @@ const defaultOptions = {
     LINK_MAYBE_BUTTON: true,
     BTN_UNPRONOUNCEABLE: true,
     SVG_NO_ACCESSIBLE_NAME: true,
+    EMBED_VIDEO_AUTOPLAY: true,
+    SUMMARY_EMPTY: true,
 
     // Contrast checks
     CONTRAST_WARNING: {

@@ -290,6 +290,7 @@
     UNCONTAINED_LI: "Alle <code>&lt;li&gt;</code> listeelementer må plasseres inne i <code>&lt;ul&gt;</code> uordnede eller <code>&lt;ol&gt;</code> ordnede elementer. Denne strukturen hjelper skjermlesere med å annonsere listen og dens elementer nøyaktig.",
     TABINDEX_ATTR: "Elementet bør ikke ha et <code>tabindex</code>-attributt større enn 0.",
     SVG_NO_ACCESSIBLE_NAME: 'Enkelte skjermlesere vil lese opp denne SVG-en som et ubemerket bilde fordi den mangler et tilgjengelig navn og ikke er skjult. Legg til en tilgjengelig etikett (eller <code>&lt;title&gt;</code>) hvis den formidler en mening, eller skjul den for skjermlesere hvis den rent er dekorativ (<code>aria-hidden="true"</code>). <hr> Lær mer om <a href="https://a11y-101.com/development/svg">tilgjengelige SVG-er.</a>',
+    SUMMARY_EMPTY: "Summary-elementet i <code>&lt;details&gt;</code> har ikke noe tilgjengelig navn. Legg til beskrivende tekst i <code>&lt;summary&gt;</code>-elementet.",
     // Meta checks
     META_LANG: 'Sidens språk er ikke oppgitt! Vennligst <a href="https://www.w3.org/International/questions/qa-html-language-declarations">deklarer språk i HTML-taggen.</a>',
     META_TITLE: 'Manglende sidetittel! Vennligst oppgi en <a href="https://developer.mozilla.org/nb/docs/Web/HTML/Element/title">sidetittel.</a>',

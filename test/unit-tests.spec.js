@@ -335,9 +335,58 @@ test.describe('Sa11y Unit Tests', () => {
 
   test('Alt has placeholder text', async () => {
     const issue = await checkTooltip(
-      page, 'error-alt-text-has-placeholder-text', 'Non-descript or placeholder alt text found.',
+      page, 'error-alt-text-has-placeholder-text',
+      'Non-descript or placeholder alt text found.',
     );
     expect(issue).toBe(true);
+  });
+
+  test('Pass ALT_MAYBE_BAD, since 5.1.1', async () => {
+    const ids = [
+      'pass-alt-maybe-1',
+      'pass-alt-maybe-2',
+    ];
+    ids.forEach(async (id) => {
+      const issue = await checkTooltip(page, id, 'Good');
+      expect(issue).toBe(true);
+    });
+  });
+
+  test('Improving ALT_MAYBE_BAD_WARNING, since 5.1.1', async () => {
+    const ids = [
+      'warning-alt-maybe-1',
+      'warning-alt-maybe-2',
+      'warning-alt-maybe-3',
+      'warning-alt-maybe-4',
+    ];
+    ids.forEach(async (id) => {
+      const issue = await checkTooltip(page, id, 'Alt text may not provide useful information or contains non-descript text');
+      expect(issue).toBe(true);
+    });
+  });
+
+  test('Improving ALT_MAYBE_BAD (hyperlink), since 5.1.1', async () => {
+    const ids = [
+      'warning-alt-maybe-link',
+      'error-alt-maybe-link',
+    ];
+    ids.forEach(async (id) => {
+      const issue = await checkTooltip(page, id,
+        'Image link has alt text that may not provide useful information or contains non-descript text.');
+      expect(issue).toBe(true);
+    });
+  });
+
+  test('Improving ALT_MAYBE_BAD, since 5.1.1', async () => {
+    const ids = [
+      'error-alt-maybe-1',
+      'error-alt-maybe-2',
+    ];
+    ids.forEach(async (id) => {
+      const issue = await checkTooltip(page, id,
+        'Alt text may not provide useful information or contains non-descript text.');
+      expect(issue).toBe(true);
+    });
   });
 
   test('Linked decorative image with surrounding link text', async () => {
@@ -1472,6 +1521,19 @@ test.describe('Sa11y Unit Tests', () => {
   /* **************** */
   /* Developer checks */
   /* **************** */
+
+  test('Summary/details no accessible name', async () => {
+    const ids = [
+      'error-summary-empty-closed',
+      'error-summary-empty-open',
+    ];
+    ids.forEach(async (id) => {
+      const issue = await checkTooltip(
+        page, id, 'Error Summary element within the <details> has no accessible name.',
+      );
+      expect(issue).toBe(true);
+    });
+  });
 
   test('Positive tabindex attribute', async () => {
     const issue = await checkTooltip(

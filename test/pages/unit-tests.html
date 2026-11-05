@@ -555,6 +555,64 @@
         alt="截图展示三个期刊条目列表，每个条目右侧都有红色方框标注其对应的影响因子，位置一致且清晰可见。">
     </div>
 
+
+    <h3>Improvements to ALT_MAYBE_BAD check</h3>
+
+    <p>Since 5.1.1</p>
+
+    <h4>Pass</h4>
+
+    <div id="pass-alt-maybe-1">
+      <img src="../../docs/examples/assets/placeholder.svg" alt="Betty Smith-Leydon-Whopper-Beatrice">
+    </div>
+
+    <div id="pass-alt-maybe-2">
+      <img src="../../docs/examples/assets/placeholder.svg"
+        alt="Politician Richard Plunkett-Ernle-Erle-Drax served in the UK Parliament.">
+    </div>
+
+    <h4>Warning</h4>
+
+    <div id="warning-alt-maybe-1">
+      <img src="../../docs/examples/assets/placeholder.svg" loading="lazy"
+        alt="Oct 30 web story - tmu-celebrates-2026-alumni-achievement-awards-recipients-3">
+    </div>
+
+    <div id="warning-alt-maybe-2">
+      <img src="../../docs/examples/assets/placeholder.svg" alt="something-in-something-in-something assds">
+    </div>
+
+    <div id="warning-alt-maybe-3">
+      <img src="../../docs/examples/assets/placeholder.svg"
+        alt="She has an i-don't-care-what-anyone-thinks energy about her.">
+    </div>
+
+    <div id="warning-alt-maybe-4">
+      <img src="../../docs/examples/assets/placeholder.svg" alt="Betty Smith-Leydon-Whopper-Lord-of-the-Rings">
+    </div>
+
+    <div id="warning-alt-maybe-link">
+      <a href="https://www.example.com/sdasd12">
+        <img src="../../docs/examples/assets/placeholder.svg" alt="Betty Smith-Leydon-Whopper-Lord-of-the-Rings">
+      </a>
+    </div>
+
+    <h4>Error</h4>
+
+    <div id="error-alt-maybe-1">
+      <img src="../../docs/examples/assets/placeholder.svg" alt="202512111333499">
+    </div>
+
+    <div id="error-alt-maybe-2">
+      <img src="../../docs/examples/assets/placeholder.svg" alt="modeling-culture-gabi-claudia">
+    </div>
+
+    <div id="error-alt-maybe-link">
+      <a href="https://www.example.com/sdasd1229s2">
+        <img src="../../docs/examples/assets/placeholder.svg" alt="modeling-culture-gabi-claudia">
+      </a>
+    </div>
+
     <hr>
 
     <h2>Links</h2>
@@ -2225,6 +2283,20 @@
     <hr>
 
     <h2>Misc developer checks</h2>
+    <h3>Summary without an accessible name</h3>
+    <div id="error-summary-empty-closed">
+      <details>
+        <summary></summary>
+        <p>Closed disclosure content.</p>
+      </details>
+    </div>
+    <div id="error-summary-empty-open">
+      <details open>
+        <summary></summary>
+        <p>Open disclosure content.</p>
+      </details>
+    </div>
+
     <h3>Tabindex attribute greater than 0</h3>
     <div id="error-positive-tabindex">
       <p tabindex="1">[tabindex="1"]</p>

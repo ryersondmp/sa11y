@@ -285,6 +285,7 @@ const tooltip = {
   UNCONTAINED_LI: "所有 <code>&lt;li&gt;</code> 列表项必须放置在 <code>&lt;ul&gt;</code> 无序列表或 <code>&lt;ol&gt;</code> 有序列表元素内部。这个结构帮助屏幕阅读器准确地读取列表及其项。",
   TABINDEX_ATTR: "元素不应具有大于 0 的 <code>tabindex</code> 属性。",
   SVG_NO_ACCESSIBLE_NAME: '由于缺少可访问名称且未被隐藏，某些屏幕阅读器会将此 SVG 朗读为未标记的图像。如果它具有实际意义，请添加可访问标签（或 <code>&lt;title&gt;</code>）；如果纯粹用于装饰，请对屏幕阅读器隐藏（<code>aria-hidden="true"</code>）。<hr> 了解更多关于<a href="https://a11y-101.com/development/svg">无障碍 SVG</a>的信息。',
+  SUMMARY_EMPTY: "<code>&lt;details&gt;</code> 内的 <code>&lt;summary&gt;</code> 元素没有可访问名称。请在 <code>&lt;summary&gt;</code> 元素内添加描述性文本。",
   // Meta checks
   META_LANG: '页面语言未声明!请<a href="https://www.w3.org/International/questions/qa-html-language-declarations.zh-hans.html">在HTML标签上声明语言。</a>',
   META_TITLE: '缺少页面标题!请提供一个<a href="https://developer.mozilla.org/zh/docs/Web/HTML/Element/title">页面标题。</a>',

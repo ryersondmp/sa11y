@@ -152,6 +152,7 @@ const Elements = (function myElements() {
     // Initialize arrays.
     Found.Images = [];
     Found.Links = [];
+    Found.Summary = [];
     Found.Paragraphs = [];
     Found.Lists = [];
     Found.Blockquotes = [];
@@ -272,6 +273,9 @@ const Elements = (function myElements() {
             break;
           case 'svg':
             Found.Svg.push($el);
+            break;
+          case 'SUMMARY':
+            Found.Summary.push($el);
             break;
         }
       }

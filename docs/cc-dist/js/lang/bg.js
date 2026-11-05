@@ -287,6 +287,7 @@ const tooltip = {
   UNCONTAINED_LI: "Всички <code>&lt;li&gt;</code> елементи на списъка трябва да бъдат поставени вътре в <code>&lt;ul&gt;</code> неразредени или <code>&lt;ol&gt;</code> подредени елементи. Тази структура помага на четеците на екрана да обявят списъка и неговите елементи точно.",
   TABINDEX_ATTR: "Елементът не трябва да има атрибут <code>tabindex</code> по-голям от 0.",
   SVG_NO_ACCESSIBLE_NAME: 'Някои екранни четци ще съобщят това SVG като изображение без етикет, тъй като то няма достъпно име и не е скрито. Добавете достъпен етикет (или <code>&lt;title&gt;</code>), ако носи смисъл, или го скрийте от екранните четци, ако е чисто декоративно (<code>aria-hidden="true"</code>). <hr> Научете повече за <a href="https://a11y-101.com/development/svg">достъпните SVG файлове.</a>',
+  SUMMARY_EMPTY: "Елементът <code>&lt;summary&gt;</code> в <code>&lt;details&gt;</code> няма достъпно име. Добавете описателен текст в елемента <code>&lt;summary&gt;</code>.",
   // Meta checks
   META_LANG: 'Езикът на страницата не е обявен! Моля, <a href="https://www.w3.org/International/questions/qa-html-language-declarations">декларирайте езика в HTML тага.</a>',
   META_TITLE: 'Липсващо заглавие на страницата! Моля, посочете <a href="https://developer.mozilla.org/bg/docs/Web/HTML/Element/title">заглавие на страницата.</a>',
