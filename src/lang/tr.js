@@ -342,6 +342,8 @@ const tooltip = {
     'Gömülü içerik kontrol edilemiyor. Lütfen resimlerin alt metni, videoların altyazısı, metinlerin yeterli kontrastı ve etkileşimli bileşenlerin <a href="https://webaim.org/techniques/keyboard/">klavye ile erişilebilir olduğundan emin olun.</a>',
   EMBED_UNFOCUSABLE:
     'Odaklanılamayan öğeler içeren <code>&lt;iframe&gt;</code>, <code>tabindex="-1"</code> olmamalıdır. Gömülü içerik klavye ile erişilebilir olmayacak.',
+  EMBED_VIDEO_AUTOPLAY:
+    'Duraklatılamayan ve otomatik oynatılan videolar insanların dikkatini dağıtabilir ve ekran okuyucuların çalışmasını engelleyebilir. <code>controls</code> özniteliğini ekleyerek, görünür bir duraklatma düğmesi sağlayarak veya <code>autoplay</code> özniteliğini kaldırarak kullanıcıların videoyu durdurabilmesini sağlayın. <hr> <a href="https://www.w3.org/WAI/WCAG21/Understanding/pause-stop-hide.html">Duraklatma, Durdurma, Gizleme</a> hakkında daha fazla bilgi edinin.',
 
   // QA
   QA_BAD_LINK:

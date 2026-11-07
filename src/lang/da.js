@@ -333,6 +333,8 @@ const tooltip = {
     'Kan ikke kontrollere indlejret indhold. Sørg for, at billeder har alt-tekst, videoer har undertekster, tekst har tilstrækkelig kontrast, og interaktive komponenter er <a href="https://webaim.org/techniques/keyboard/">tilgængelige via tastaturet.</a>',
   EMBED_UNFOCUSABLE:
     '<code>&lt;iframe&gt;</code> med ikke-fokuserbare elementer bør ikke have <code>tabindex="-1"</code>. Det indlejrede indhold vil ikke være tilgængeligt med tastaturet.',
+  EMBED_VIDEO_AUTOPLAY:
+    'Videoer, der afspilles automatisk og ikke kan sættes på pause, kan distrahere folk og forstyrre skærmlæsere. Sørg for, at brugerne kan stoppe videoen ved at tilføje attributten <code>controls</code>, vise en synlig pauseknap eller fjerne attributten <code>autoplay</code>. <hr> Læs mere om <a href="https://www.w3.org/WAI/WCAG21/Understanding/pause-stop-hide.html">Pause, stop, skjul.</a>',
 
   // QA
   QA_BAD_LINK:

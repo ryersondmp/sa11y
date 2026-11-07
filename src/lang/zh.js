@@ -325,6 +325,8 @@ const tooltip = {
     '无法检查嵌入式内容。请确保图像有alt文本, 视频有标题, 文本有足够的对比度, 互动组件是<a href="https://webaim.org/techniques/keyboard/">键盘可访问的。</a>',
   EMBED_UNFOCUSABLE:
     '带有无法聚焦元素的 <code>&lt;iframe&gt;</code> 不应具有 <code>tabindex="-1"</code>。嵌入内容将无法通过键盘访问。',
+  EMBED_VIDEO_AUTOPLAY:
+    '无法暂停的自动播放视频可能会分散人们的注意力，并干扰屏幕阅读器的使用。请确保用户可以停止视频：添加 <code>controls</code> 属性、提供可见的暂停按钮，或移除 <code>autoplay</code> 属性。 <hr> 了解更多：<a href="https://www.w3.org/WAI/WCAG21/Understanding/pause-stop-hide.html">暂停、停止、隐藏。</a>',
 
   // QA
   QA_BAD_LINK: '发现坏的链接。链接似乎指向一个开发环境。<hr> {L} <strong {C}>%(LINK)</strong>',

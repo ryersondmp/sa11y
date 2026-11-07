@@ -343,6 +343,8 @@ const tooltip = {
     'Nu se poate verifica conținutul încorporat. Vă rugăm să vă asigurați că imaginile au text alt, videoclipurile au legende, textul are un contrast suficient, iar componentele interactive sunt <a href="https://webaim.org/techniques/keyboard/">accesibile la tastatură.</a>',
   EMBED_UNFOCUSABLE:
     '<code>&lt;iframe&gt;</code> cu elemente nefocalizabile nu ar trebui să aibă <code>tabindex="-1"</code>. Conținutul încorporat nu va fi accesibil prin tastatură.',
+  EMBED_VIDEO_AUTOPLAY:
+    'Videoclipurile care se redau automat și nu pot fi întrerupte pot distrage atenția oamenilor și pot interfera cu cititoarele de ecran. Asigurați-vă că utilizatorii pot opri videoclipul adăugând atributul <code>controls</code>, oferind un buton de pauză vizibil sau eliminând atributul <code>autoplay</code>. <hr> Aflați mai multe despre <a href="https://www.w3.org/WAI/WCAG21/Understanding/pause-stop-hide.html">Pauză, oprire și ascundere.</a>',
 
   // QA
   QA_BAD_LINK:

@@ -324,6 +324,8 @@ const tooltip = {
     '<code>&lt;iframe&gt;</code> with focusable elements should not have <code>tabindex="-1"</code>. The embedded content will not be keyboard accessible.',
   EMBED_UNFOCUSABLE:
     '<code>&lt;iframe&gt;</code> con elementos no enfocables no debe tener <code>tabindex="-1"</code>. El contenido incrustado no será accesible mediante el teclado.',
+  EMBED_VIDEO_AUTOPLAY:
+    'Los vídeos que se reproducen automáticamente y no se pueden pausar pueden distraer a las personas e interferir con los lectores de pantalla. Asegúrese de que los usuarios puedan detener el vídeo añadiendo el atributo <code>controls</code>, proporcionando un botón de pausa visible o eliminando el atributo <code>autoplay</code>. <hr> Más información sobre <a href="https://www.w3.org/WAI/WCAG21/Understanding/pause-stop-hide.html">Pausar, detener y ocultar.</a>',
 
   // Quality assurance
   QA_BAD_LINK:
@@ -459,4 +461,3 @@ export default {
   },
   ruleset: ruleset,
 };
-

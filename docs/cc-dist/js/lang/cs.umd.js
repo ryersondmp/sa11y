@@ -261,6 +261,7 @@
     EMBED_MISSING_TITLE: 'Vložený obsah vyžaduje přístupný název, který popisuje jeho obsah. Uveďte jedinečný atribut <code>title</code> nebo <code>aria-label</code> na elementu <code>&lt;%(ELEMENT)&gt;</code>. Další informace o <a href="https://web.dev/learn/accessibility/more-html#iframes">iFrame.</a>',
     EMBED_GENERAL: 'Nelze zkontrolovat vložený obsah. Ujistěte se prosím, že obrázky mají alt text, videa mají titulky, text je dostatečně kontrastní a interaktivní komponenty jsou <a href="https://webaim.org/techniques/keyboard/">přístupné z klávesnice.</a>',
     EMBED_UNFOCUSABLE: '<code>&lt;iframe&gt;</code> s nezaměřitelnými prvky by nemělo mít <code>tabindex="-1"</code>. Vložený obsah nebude přístupný klávesnicí.',
+    EMBED_VIDEO_AUTOPLAY: 'Automaticky přehrávaná videa, která nelze pozastavit, mohou lidi rozptylovat a narušovat práci čteček obrazovky. Zajistěte, aby uživatelé mohli video zastavit přidáním atributu <code>controls</code>, viditelného tlačítka pozastavení nebo odebráním atributu <code>autoplay</code>. <hr> Další informace o <a href="https://www.w3.org/WAI/WCAG21/Understanding/pause-stop-hide.html">pozastavení, zastavení a skrytí.</a>',
     // QA
     QA_BAD_LINK: "Nalezen špatný odkaz. Zdá se, že odkaz vede na vývojové prostředí. <hr> {L} <strong {C}>%(LINK)</strong>",
     QA_IN_PAGE_LINK: "Nefunkční odkaz na stejnou stránku. Tento odkaz se pokouší navigovat do sekce stránky, kterou nelze nalézt. Chcete-li to napravit, ujistěte se, že odkaz odpovídá <code>id</code> prvku, na který chcete přejít.",

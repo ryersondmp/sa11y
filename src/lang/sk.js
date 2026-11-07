@@ -350,6 +350,8 @@ const tooltip = {
     'Vložený obsah sa nedá skontrolovať. Uistite sa, že obrázky majú alternatívny text, videá majú titulky, text má dostatočný kontrast a interaktívne komponenty sú <a href="https://webaim.org/techniques/keyboard/">ovládateľné klávesnicou.</a>',
   EMBED_UNFOCUSABLE:
     'Prvok <code>&lt;iframe&gt;</code> so zameriavateľnými prvkami by nemal mať <code>tabindex="-1"</code>. Vložený obsah potom nebude ovládateľný klávesnicou.',
+  EMBED_VIDEO_AUTOPLAY:
+    'Automaticky prehrávané videá, ktoré nemožno pozastaviť, môžu ľudí rozptyľovať a narúšať fungovanie čítačiek obrazovky. Zabezpečte, aby používatelia mohli video zastaviť pridaním atribútu <code>controls</code>, poskytnutím viditeľného tlačidla pozastavenia alebo odstránením atribútu <code>autoplay</code>. <hr> Ďalšie informácie o <a href="https://www.w3.org/WAI/WCAG21/Understanding/pause-stop-hide.html">pozastavení, zastavení a skrytí.</a>',
 
   // Quality assurance
   QA_BAD_LINK:

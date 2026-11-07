@@ -327,6 +327,8 @@ const tooltip = {
     '삽입된 콘텐츠를 확인할 수 없습니다. 이미지에 대체 텍스트가 있는지, 동영상에 캡션이 있는지, 텍스트의 대비가 충분한지, 인터랙티브 구성 요소가 <a href="https://webaim.org/techniques/keyboard/">키보드로 접근 가능한지</a> 확인하세요.',
   EMBED_UNFOCUSABLE:
     '포커스할 수 없는 요소를 포함한 <code>&lt;iframe&gt;</code>은 <code>tabindex="-1"</code>을 가져서는 안 됩니다. 포함된 콘텐츠는 키보드로 접근할 수 없습니다.',
+  EMBED_VIDEO_AUTOPLAY:
+    '일시 정지할 수 없는 자동 재생 동영상은 사람들의 주의를 분산시키고 스크린 리더 사용을 방해할 수 있습니다. <code>controls</code> 속성을 추가하거나, 눈에 보이는 일시 정지 버튼을 제공하거나, <code>autoplay</code> 속성을 제거하여 사용자가 동영상을 멈출 수 있도록 하세요. <hr> <a href="https://www.w3.org/WAI/WCAG21/Understanding/pause-stop-hide.html">일시 정지, 중지, 숨기기</a>에 대해 자세히 알아보세요.',
 
   // QA
   QA_BAD_LINK:

@@ -341,6 +341,8 @@ const tooltip = {
     'Upotetun sisällön tarkistaminen ei onnistu. Varmista, että kuvissa on alt-teksti, videoissa on kuvateksti, tekstissä on riittävä kontrasti ja vuorovaikutteiset komponentit ovat <a href="https://webaim.org/techniques/keyboard/">näppäimistöllä käytettävissä.</a>',
   EMBED_UNFOCUSABLE:
     '<code>&lt;iframe&gt;</code> jossa ei ole fokusointikelpoisia elementtejä, ei pitäisi olla <code>tabindex="-1"</code>. Upotettu sisältö ei ole näppäimistöllä saavutettavissa.',
+  EMBED_VIDEO_AUTOPLAY:
+    'Automaattisesti toistuvat videot, joita ei voi keskeyttää, voivat häiritä ihmisiä ja ruudunlukijoiden toimintaa. Varmista, että käyttäjät voivat pysäyttää videon lisäämällä <code>controls</code>-attribuutin, tarjoamalla näkyvän taukopainikkeen tai poistamalla <code>autoplay</code>-attribuutin. <hr> Lue lisää aiheesta <a href="https://www.w3.org/WAI/WCAG21/Understanding/pause-stop-hide.html">Pysäytä, keskeytä, piilota.</a>',
 
   // QA
   QA_BAD_LINK:

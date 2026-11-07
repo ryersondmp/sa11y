@@ -1476,6 +1476,13 @@ test.describe('Sa11y Unit Tests', () => {
     expect(issue).toBe(true);
   });
 
+  test('Video autoplay warning', async () => {
+    const issue = await checkTooltip(
+      page, 'warning-autoplay', 'playing videos that cannot',
+    );
+    expect(issue).toBe(true);
+  });
+
   test('iFrame with audio source', async () => {
     const issue = await checkTooltip(
       page, 'warning-iframe-soundcloud', 'transcript for all podcasts',

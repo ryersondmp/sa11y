@@ -323,6 +323,8 @@ const tooltip = {
     'Impossible de vérifier le contenu intégré. Assurez-vous que les images ont du texte de remplacement, les vidéos ont des sous-titres, le texte est suffisamment contrasté et que les éléments interactifs sont <a href="https://webaim.org/techniques/keyboard/">accessibles par le clavier.</a>',
   EMBED_UNFOCUSABLE:
     'Les <code>&lt;iframe&gt;</code> avec des éléments non focusables ne doivent pas avoir de <code>tabindex="-1"</code>. Le contenu incorporé ne sera pas accessible au clavier.',
+  EMBED_VIDEO_AUTOPLAY:
+    'Les vidéos qui se lancent automatiquement et ne peuvent pas être mises en pause peuvent distraire les gens et interférer avec les lecteurs d’écran. Veuillez vous assurer que les utilisateurs peuvent arrêter la vidéo en ajoutant l’attribut <code>controls</code>, en fournissant un bouton de pause visible ou en supprimant l’attribut <code>autoplay</code>. <hr> En savoir plus sur <a href="https://www.w3.org/WAI/WCAG21/Understanding/pause-stop-hide.html">Pause, arrêt et masquage.</a>',
 
   // Quality assurance
   QA_BAD_LINK:

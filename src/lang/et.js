@@ -331,6 +331,8 @@ const tooltip = {
     'Manustatud sisu ei saa kontrollida. Palun veenduge, et piltidel on alt-tekst, videotel on subtiitrid, tekst on piisavalt kontrastne ja interaktiivsed komponendid on <a href="https://webaim.org/techniques/keyboard/">klaviatuuriga ligipääsetavad.</a>',
   EMBED_UNFOCUSABLE:
     '<code>&lt;iframe&gt;</code> koos fookustamata elementidega ei tohiks olla <code>tabindex="-1"</code>. Manustatud sisu ei ole klaviatuuriga juurdepääsetav.',
+  EMBED_VIDEO_AUTOPLAY:
+    'Automaatselt esitatavad videod, mida ei saa peatada, võivad inimesi häirida ja ekraanilugejate tööd segada. Veenduge, et kasutajad saaksid video peatada, lisades atribuudi <code>controls</code>, pakkudes nähtavat paus-nuppu või eemaldades atribuudi <code>autoplay</code>. <hr> Lisateave: <a href="https://www.w3.org/WAI/WCAG21/Understanding/pause-stop-hide.html">Peata, peida, lõpeta.</a>',
 
   // QA
   QA_BAD_LINK:

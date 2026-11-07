@@ -349,6 +349,8 @@ const tooltip = {
     'Det gick inte att kontrollera inbäddat innehåll. Se till att bilder har alt-text, videor har undertexter, text har tillräcklig kontrast och att interaktiva komponenter är <a href="https://webaim.org/techniques/keyboard/">tillgängliga för tangentbord.</a>',
   EMBED_UNFOCUSABLE:
     '<code>&lt;iframe&gt;</code> med fokuserbara element bör inte ha <code>tabindex="-1"</code>. Det inbäddade innehållet kommer inte att vara tillgängligt med tangentbordet.',
+  EMBED_VIDEO_AUTOPLAY:
+    'Videor som spelas upp automatiskt och inte kan pausas kan distrahera människor och störa skärmläsare. Se till att användarna kan stoppa videon genom att lägga till attributet <code>controls</code>, tillhandahålla en synlig pausknapp eller ta bort attributet <code>autoplay</code>. <hr> Läs mer om <a href="https://www.w3.org/WAI/WCAG21/Understanding/pause-stop-hide.html">Pausa, stoppa och dölj.</a>',
 
   // Quality assurance
   QA_BAD_LINK:

@@ -332,6 +332,8 @@ const tooltip = {
     'Ni mogoče preveriti vdelane vsebine. Prepričajte se, da imajo slike alternativno besedilo, videoposnetki podnapise, da je besedilo dovolj kontrastno in da so interaktivne komponente <a href="https://webaim.org/techniques/keyboard/">dostopne s tipkovnice.</a>',
   EMBED_UNFOCUSABLE:
     '<code>&lt;iframe&gt;</code> z elementi, ki se jim ni mogoče osredotočiti, ne sme imeti <code>tabindex="-1"</code>. Vgrajena vsebina ne bo dostopna prek tipkovnice.',
+  EMBED_VIDEO_AUTOPLAY:
+    'Videoposnetki, ki se predvajajo samodejno in jih ni mogoče začasno ustaviti, lahko ljudi motijo in ovirajo delovanje bralnikov zaslona. Poskrbite, da lahko uporabniki ustavijo videoposnetek tako, da dodate atribut <code>controls</code>, zagotovite viden gumb za premor ali odstranite atribut <code>autoplay</code>. <hr> Več o <a href="https://www.w3.org/WAI/WCAG21/Understanding/pause-stop-hide.html">začasni ustavitvi, ustavitvi in skrivanju.</a>',
 
   // QA
   QA_BAD_LINK:

@@ -194,6 +194,7 @@ const defaultOptions = {
     EMBED_VIDEO: {
       sources: '',
     },
+    EMBED_VIDEO_AUTOPLAY: true,
     EMBED_DATA_VIZ: {
       sources: '',
     },
@@ -264,7 +265,6 @@ const defaultOptions = {
     LINK_MAYBE_BUTTON: true,
     BTN_UNPRONOUNCEABLE: true,
     SVG_NO_ACCESSIBLE_NAME: true,
-    EMBED_VIDEO_AUTOPLAY: true,
     SUMMARY_EMPTY: true,
 
     // Contrast checks

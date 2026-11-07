@@ -196,6 +196,7 @@
       EMBED_VIDEO: {
         sources: ""
       },
+      EMBED_VIDEO_AUTOPLAY: true,
       EMBED_DATA_VIZ: {
         sources: ""
       },
@@ -263,7 +264,6 @@
       LINK_MAYBE_BUTTON: true,
       BTN_UNPRONOUNCEABLE: true,
       SVG_NO_ACCESSIBLE_NAME: true,
-      EMBED_VIDEO_AUTOPLAY: true,
       SUMMARY_EMPTY: true,
       // Contrast checks
       CONTRAST_WARNING: {
@@ -7707,6 +7707,38 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
           test: "EMBED_VIDEO",
           element: $el,
           type: "warning",
+          dismiss: src($el)
+        });
+      }
+      if (State.option.checks.EMBED_VIDEO_AUTOPLAY) {
+        let pauseControlFor = function(video) {
+          const root = video.getRootNode();
+          if (!root?.querySelectorAll) return null;
+          const selector = 'button[aria-controls], [role="button"][aria-controls], input[type="button"][aria-controls]';
+          const isVisible = (el2) => el2.checkVisibility ? el2.checkVisibility({ checkOpacity: true, checkVisibilityCSS: true }) : el2.offsetWidth > 0 || el2.offsetHeight > 0;
+          for (const control of root.querySelectorAll(selector)) {
+            if (control.disabled || control.getAttribute("aria-disabled") === "true" || !isVisible(control))
+              continue;
+            const ids = control.getAttribute("aria-controls").trim().split(/\s+/);
+            const hasTarget = ids.some((id) => {
+              const target = root.getElementById ? root.getElementById(id) : root.querySelector?.(`#${CSS.escape(id)}`);
+              return target?.contains(video);
+            });
+            if (hasTarget) return control;
+          }
+          return null;
+        };
+        if (!$el.autoplay && !$el.loop) return;
+        if ($el.controls) return;
+        const rect = $el.getBoundingClientRect();
+        if (rect.width < 64 && rect.height < 64) return;
+        if ($el.paused && $el.readyState >= 2) return;
+        if (pauseControlFor($el)) return;
+        pushResult({
+          element: $el,
+          test: "EMBED_VIDEO_AUTOPLAY",
+          type: "warning",
+          developer: true,
           dismiss: src($el)
         });
       }

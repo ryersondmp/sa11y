@@ -323,6 +323,8 @@ const tooltip = {
     'Nepavyksta patikrinti įterpto turinio. Įsitikinkite, kad paveikslėliuose yra "alt" tekstas, vaizdo įrašuose – titrai, tekstas pakankamai kontrastingas, o interaktyvūs komponentai yra <a href="https://webaim.org/techniques/keyboard/">prieinami klaviatūra.</a>',
   EMBED_UNFOCUSABLE:
     '<code>&lt;iframe&gt;</code> su elementais, į kuriuos negalima sutelkti dėmesio, neturėtų turėti <code>tabindex="-1"</code>. Įterptasis turinys nebus pasiekiamas naudojant klaviatūrą.',
+  EMBED_VIDEO_AUTOPLAY:
+    'Automatiškai paleidžiami vaizdo įrašai, kurių negalima pristabdyti, gali blaškyti žmones ir trukdyti ekrano skaitytuvams. Užtikrinkite, kad naudotojai galėtų sustabdyti vaizdo įrašą: pridėkite atributą <code>controls</code>, pateikite matomą pristabdymo mygtuką arba pašalinkite atributą <code>autoplay</code>. <hr> Sužinokite daugiau apie <a href="https://www.w3.org/WAI/WCAG21/Understanding/pause-stop-hide.html">pristabdymą, sustabdymą ir slėpimą.</a>',
 
   // QA
   QA_BAD_LINK:

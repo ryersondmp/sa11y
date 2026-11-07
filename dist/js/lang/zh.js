@@ -260,6 +260,7 @@ const tooltip = {
   EMBED_MISSING_TITLE: '嵌入式内容需要一个描述其内容的可访问名称。请在 <code>&lt;%(ELEMENT)&gt;</code> 元素上提供一个唯一的 <code>title</code> 或 <code>aria-label</code> 属性。了解更多关于 <a href="https://web.dev/learn/accessibility/more-html#iframes">iFrames。</a>',
   EMBED_GENERAL: '无法检查嵌入式内容。请确保图像有alt文本, 视频有标题, 文本有足够的对比度, 互动组件是<a href="https://webaim.org/techniques/keyboard/">键盘可访问的。</a>',
   EMBED_UNFOCUSABLE: '带有无法聚焦元素的 <code>&lt;iframe&gt;</code> 不应具有 <code>tabindex="-1"</code>。嵌入内容将无法通过键盘访问。',
+  EMBED_VIDEO_AUTOPLAY: '无法暂停的自动播放视频可能会分散人们的注意力，并干扰屏幕阅读器的使用。请确保用户可以停止视频：添加 <code>controls</code> 属性、提供可见的暂停按钮，或移除 <code>autoplay</code> 属性。 <hr> 了解更多：<a href="https://www.w3.org/WAI/WCAG21/Understanding/pause-stop-hide.html">暂停、停止、隐藏。</a>',
   // QA
   QA_BAD_LINK: "发现坏的链接。链接似乎指向一个开发环境。<hr> {L} <strong {C}>%(LINK)</strong>",
   QA_IN_PAGE_LINK: "无效的同页面链接。此链接尝试跳转到页面中找不到的部分。要修复此问题，请确保链接与您要跳转的元素的 <code>id</code> 相匹配。",

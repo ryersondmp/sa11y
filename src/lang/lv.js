@@ -334,6 +334,8 @@ const tooltip = {
     'Nevar pārbaudīt iegulto saturu. Lūdzu, pārliecinieties, ka attēliem ir alt teksts, videoklipiem ir subtitri, tekstam ir pietiekams kontrasts un interaktīvie komponenti ir <a href="https://webaim.org/techniques/keyboard/">pieejami no tastatūras.</a>',
   EMBED_UNFOCUSABLE:
     '<code>&lt;iframe&gt;</code> ar elementiem, kurus nevar fokusēt, nevajadzētu būt <code>tabindex="-1"</code>. Iegultais saturs nebūs pieejams ar tastatūru.',
+  EMBED_VIDEO_AUTOPLAY:
+    'Automātiski atskaņoti videoklipi, kurus nevar apturēt, var novērst cilvēku uzmanību un traucēt ekrāna lasītāju darbību. Pārliecinieties, ka lietotāji var apturēt videoklipu, pievienojot atribūtu <code>controls</code>, nodrošinot redzamu pauzes pogu vai noņemot atribūtu <code>autoplay</code>. <hr> Uzziniet vairāk par <a href="https://www.w3.org/WAI/WCAG21/Understanding/pause-stop-hide.html">pauzi, apturēšanu un slēpšanu.</a>',
 
   // QA
   QA_BAD_LINK:

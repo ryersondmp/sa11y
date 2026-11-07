@@ -320,6 +320,8 @@ const tooltip = {
     'Nie można sprawdzić treści osadzonej. Upewnij się, że obrazy mają tekst alt, filmy mają napisy rozszerzone, tekst ma odpowiedni kontrast, a elementy interaktywne są <a href="https://webaim.org/techniques/keyboard/">dostępne z klawiatury.</a>',
   EMBED_UNFOCUSABLE:
     '&lt;code&gt;&lt;iframe&gt;&lt;/code&gt; z elementami, które można wybrać, nie powinno mieć <code>tabindex="-1"</code>. Osadzona zawartość nie będzie dostępna za pomocą klawiatury.',
+  EMBED_VIDEO_AUTOPLAY:
+    'Filmy odtwarzane automatycznie, których nie można wstrzymać, mogą rozpraszać ludzi i zakłócać działanie czytników ekranu. Upewnij się, że użytkownicy mogą zatrzymać film, dodając atrybut <code>controls</code>, zapewniając widoczny przycisk pauzy lub usuwając atrybut <code>autoplay</code>. <hr> Dowiedz się więcej o <a href="https://www.w3.org/WAI/WCAG21/Understanding/pause-stop-hide.html">wstrzymywaniu, zatrzymywaniu i ukrywaniu.</a>',
 
   // Quality assurance
   QA_BAD_LINK:

@@ -347,6 +347,8 @@ const tooltip = {
     '埋め込みコンテンツを確認できません。画像にはaltテキスト、動画には字幕、テキストには十分なコントラスト、対話型コンポーネントには<a href="https://webaim.org/techniques/keyboard/">キーボードアクセス可能性</a>があることを確認してください。',
   EMBED_UNFOCUSABLE:
     '<code>&lt;iframe&gt;</code>にフォーカス可能な要素が含まれている場合、<code>tabindex="-1"</code>を持つべきではありません。埋め込みコンテンツはキーボードでアクセスできません。',
+  EMBED_VIDEO_AUTOPLAY:
+    '一時停止できない自動再生動画は、利用者の注意をそらし、スクリーンリーダーの使用を妨げることがあります。<code>controls</code> 属性を追加する、視認できる一時停止ボタンを用意する、または <code>autoplay</code> 属性を削除して、利用者が動画を停止できるようにしてください。 <hr> <a href="https://www.w3.org/WAI/WCAG21/Understanding/pause-stop-hide.html">一時停止、停止、非表示</a>について詳しくはこちら。',
 
   // QA
   QA_BAD_LINK:

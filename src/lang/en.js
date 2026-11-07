@@ -322,6 +322,8 @@ const tooltip = {
     'Unable to check embedded content. Please make sure that images have alt text, videos have captions, text has sufficient contrast, and interactive components are <a href="https://webaim.org/techniques/keyboard/">keyboard accessible.</a>',
   EMBED_UNFOCUSABLE:
     '<code>&lt;iframe&gt;</code> with focusable elements should not have <code>tabindex="-1"</code>. The embedded content will not be keyboard accessible.',
+  EMBED_VIDEO_AUTOPLAY:
+    'Auto-playing videos that cannot be paused can distract people and interfere with screen readers. Please ensure users can stop the video by adding the <code>controls</code> attribute, providing a visible pause button, or removing the <code>autoplay</code> attribute. <hr> Learn more about <a href="https://www.w3.org/WAI/WCAG21/Understanding/pause-stop-hide.html">Pause, Stop, Hide.</a>',
 
   // Quality assurance
   QA_BAD_LINK:

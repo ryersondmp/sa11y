@@ -265,6 +265,7 @@
     EMBED_MISSING_TITLE: 'Innebygd innhold krever et tilgjengelig navn som beskriver innholdet. Oppgi et unikt <code>title</code> eller <code>aria-label</code>-attributt på <code>&lt;%(ELEMENT)&gt;</code>-elementet. Finn ut mer om <a href="https://web.dev/learn/accessibility/more-html#iframes">iFrames.</a>',
     EMBED_GENERAL: 'Kunne ikke sjekke innebygd innhold. Kontroller at bilder har alt-tekst, videoer har bildetekster, tekst har tilstrekkelig kontrast og interaktive komponenter er <a href="https://webaim.org/techniques/keyboard/">tilgjengelige via tastaturet.</a>',
     EMBED_UNFOCUSABLE: '<code>&lt;iframe&gt;</code> med ikke-fokuserbare elementer bør ikke ha <code>tabindex="-1"</code>. Det innebygde innholdet vil ikke være tilgjengelig med tastaturet.',
+    EMBED_VIDEO_AUTOPLAY: 'Videoer som spilles av automatisk og ikke kan settes på pause, kan distrahere folk og forstyrre skjermlesere. Sørg for at brukerne kan stoppe videoen ved å legge til attributtet <code>controls</code>, tilby en synlig pauseknapp eller fjerne attributtet <code>autoplay</code>. <hr> Les mer om <a href="https://www.w3.org/WAI/WCAG21/Understanding/pause-stop-hide.html">Pause, stopp, skjul.</a>',
     // QA
     QA_BAD_LINK: "Feil lenke funnet. Lenken ser ut til å peke til et utviklingsmiljø. <hr> {L} <strong {C}>%(LINK)</strong>",
     QA_IN_PAGE_LINK: "Ødelagt lenke til samme side. Denne lenken prøver å navigere til en seksjon på siden som ikke finnes. For å fikse dette, sørg for at lenken samsvarer med <code>id</code>-en til elementet du vil hoppe til.",

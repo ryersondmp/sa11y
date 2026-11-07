@@ -37,6 +37,58 @@ export default function checkEmbeddedContent() {
         dismiss: src($el),
       });
     }
+
+    // Check for autoplay. Adapted from https://github.com/pourdev/pour-engine/blob/main/engine/rules/wcag/2.2.2-video-loop-motion.js
+    if (State.option.checks.EMBED_VIDEO_AUTOPLAY) {
+      if (!$el.autoplay && !$el.loop) return;
+      if ($el.controls) return;
+
+      // Skip small icon-scale / spinner-class video previews
+      const rect = $el.getBoundingClientRect();
+      if (rect.width < 64 && rect.height < 64) return;
+
+      // Skip videos not playing (autoplay blocked or paused by existing control)
+      if ($el.paused && $el.readyState >= 2) return;
+
+      // Skip if a valid pause button is linked via aria-controls
+      // Find pause control.
+      function pauseControlFor(video) {
+        const root = video.getRootNode();
+        if (!root?.querySelectorAll) return null;
+        const selector =
+          'button[aria-controls], [role="button"][aria-controls], input[type="button"][aria-controls]';
+        const isVisible = (el) =>
+          el.checkVisibility
+            ? el.checkVisibility({ checkOpacity: true, checkVisibilityCSS: true })
+            : el.offsetWidth > 0 || el.offsetHeight > 0;
+        for (const control of root.querySelectorAll(selector)) {
+          if (
+            control.disabled ||
+            control.getAttribute('aria-disabled') === 'true' ||
+            !isVisible(control)
+          )
+            continue;
+          const ids = control.getAttribute('aria-controls').trim().split(/\s+/);
+          const hasTarget = ids.some((id) => {
+            const target = root.getElementById
+              ? root.getElementById(id)
+              : root.querySelector?.(`#${CSS.escape(id)}`);
+            return target?.contains(video);
+          });
+          if (hasTarget) return control;
+        }
+        return null;
+      }
+      if (pauseControlFor($el)) return;
+
+      pushResult({
+        element: $el,
+        test: 'EMBED_VIDEO_AUTOPLAY',
+        type: 'warning',
+        // developer: true,
+        dismiss: src($el),
+      });
+    }
   });
 
   // Data visualizations.

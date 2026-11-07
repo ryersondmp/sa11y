@@ -333,6 +333,8 @@ const tooltip = {
     'Kan ingesloten inhoud niet controleren. Controleer of afbeeldingen alt-tekst hebben, video\'s bijschriften, tekst voldoende contrast en interactieve onderdelen <a href="https://webaim.org/techniques/keyboard/">toetsenbordtoegankelijk zijn.</a>',
   EMBED_UNFOCUSABLE:
     '<code>&lt;iframe&gt;</code> met niet-focusbare elementen mag geen <code>tabindex="-1"</code> hebben. De ingesloten inhoud zal niet toegankelijk zijn met het toetsenbord.',
+  EMBED_VIDEO_AUTOPLAY:
+    'Video’s die automatisch worden afgespeeld en niet kunnen worden gepauzeerd, kunnen mensen afleiden en schermlezers hinderen. Zorg ervoor dat gebruikers de video kunnen stoppen door het kenmerk <code>controls</code> toe te voegen, een zichtbare pauzeknop aan te bieden of het kenmerk <code>autoplay</code> te verwijderen. <hr> Lees meer over <a href="https://www.w3.org/WAI/WCAG21/Understanding/pause-stop-hide.html">Pauzeren, stoppen en verbergen.</a>',
 
   // QA
   QA_BAD_LINK:

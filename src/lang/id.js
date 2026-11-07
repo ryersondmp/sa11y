@@ -325,6 +325,8 @@ const tooltip = {
     'Tidak dapat memeriksa konten yang disematkan. Pastikan gambar memiliki teks alt, video memiliki keterangan, teks memiliki kontras yang cukup, dan komponen interaktif dapat diakses menggunakan keyboard. Pelajari lebih lanjut tentang <a href="https://webaim.org/techniques/keyboard/">aksesibilitas keyboard.</a>',
   EMBED_UNFOCUSABLE:
     '<code>&lt;iframe&gt;</code> dengan elemen yang tidak dapat difokuskan seharusnya tidak memiliki <code>tabindex="-1"</code>. Konten yang disematkan tidak akan dapat diakses menggunakan keyboard.',
+  EMBED_VIDEO_AUTOPLAY:
+    'Video yang diputar otomatis dan tidak dapat dijeda dapat mengganggu orang dan menghambat penggunaan pembaca layar. Pastikan pengguna dapat menghentikan video dengan menambahkan atribut <code>controls</code>, menyediakan tombol jeda yang terlihat, atau menghapus atribut <code>autoplay</code>. <hr> Pelajari lebih lanjut tentang <a href="https://www.w3.org/WAI/WCAG21/Understanding/pause-stop-hide.html">Jeda, Hentikan, Sembunyikan.</a>',
 
   // QA
   QA_BAD_LINK:

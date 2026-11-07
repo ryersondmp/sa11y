@@ -273,6 +273,7 @@ const tooltip = {
   EMBED_MISSING_TITLE: '埋め込みコンテンツには、その内容を説明するアクセス可能な名前が必要です。 <code>&lt;%(ELEMENT)&gt;</code>要素にユニークな<code>title</code>または<code>aria-label</code>属性を提供してください。<a href="https://web.dev/learn/accessibility/more-html#iframes">iFrames</a>について詳しくはこちら。',
   EMBED_GENERAL: '埋め込みコンテンツを確認できません。画像にはaltテキスト、動画には字幕、テキストには十分なコントラスト、対話型コンポーネントには<a href="https://webaim.org/techniques/keyboard/">キーボードアクセス可能性</a>があることを確認してください。',
   EMBED_UNFOCUSABLE: '<code>&lt;iframe&gt;</code>にフォーカス可能な要素が含まれている場合、<code>tabindex="-1"</code>を持つべきではありません。埋め込みコンテンツはキーボードでアクセスできません。',
+  EMBED_VIDEO_AUTOPLAY: '一時停止できない自動再生動画は、利用者の注意をそらし、スクリーンリーダーの使用を妨げることがあります。<code>controls</code> 属性を追加する、視認できる一時停止ボタンを用意する、または <code>autoplay</code> 属性を削除して、利用者が動画を停止できるようにしてください。 <hr> <a href="https://www.w3.org/WAI/WCAG21/Understanding/pause-stop-hide.html">一時停止、停止、非表示</a>について詳しくはこちら。',
   // QA
   QA_BAD_LINK: "悪いリンクが見つかりました。リンクは開発環境を指しているようです。<hr> {L} <strong {C}>%(LINK)</strong>",
   QA_STRONG_ITALICS: "太字および斜体タグには意味があり、段落全体を強調表示するために使用してはいけません。<strong>強調</strong>するためには、太字が使用されるべきです。斜体は固有名詞（つまり、書籍や記事のタイトル）、外国語、引用を強調するために使用されるべきです。長い引用は引用ブロックとしてフォーマットする必要があります。",

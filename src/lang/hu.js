@@ -339,6 +339,8 @@ const tooltip = {
     'Beágyazott tartalom ellenőrzése nem lehetséges. Kérjük, győződjön meg róla, hogy a képek alt szöveggel, a videók felirattal, a szöveg megfelelő kontraszttal és az interaktív komponensek <a href="https://webaim.org/techniques/keyboard/">billentyűzettel elérhetőek.</a>',
   EMBED_UNFOCUSABLE:
     'Azoknak a <code>&lt;iframe&gt;</code>-nek, amelyek nem fókuszálható elemekkel rendelkeznek, nem kell <code>tabindex="-1"</code> tulajdonságot rendelni. A beágyazott tartalom nem lesz billentyűzettel elérhető.',
+  EMBED_VIDEO_AUTOPLAY:
+    'A nem szüneteltethető, automatikusan lejátszott videók elvonhatják az emberek figyelmét, és zavarhatják a képernyőolvasók működését. Gondoskodjon arról, hogy a felhasználók le tudják állítani a videót a <code>controls</code> attribútum hozzáadásával, egy látható szüneteltető gomb biztosításával vagy az <code>autoplay</code> attribútum eltávolításával. <hr> További információ: <a href="https://www.w3.org/WAI/WCAG21/Understanding/pause-stop-hide.html">Szüneteltetés, leállítás és elrejtés.</a>',
 
   // QA
   QA_BAD_LINK:

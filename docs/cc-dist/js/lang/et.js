@@ -256,6 +256,7 @@ const tooltip = {
   EMBED_MISSING_TITLE: `Varjatud sisu vajab juurdepääsetavat nime, mis kirjeldab selle sisu. Andke <code>&lt;%(ELEMENT)&gt;</code> elemendile <code>title</code> või <code>aria-label</code> atribuut unikaalne <code>title</code> või <code>aria-label</code>. Lisateave <a href="https://web.dev/learn/accessibility/more-html#iframes">iFrame'i kohta.</a>`,
   EMBED_GENERAL: 'Manustatud sisu ei saa kontrollida. Palun veenduge, et piltidel on alt-tekst, videotel on subtiitrid, tekst on piisavalt kontrastne ja interaktiivsed komponendid on <a href="https://webaim.org/techniques/keyboard/">klaviatuuriga ligipääsetavad.</a>',
   EMBED_UNFOCUSABLE: '<code>&lt;iframe&gt;</code> koos fookustamata elementidega ei tohiks olla <code>tabindex="-1"</code>. Manustatud sisu ei ole klaviatuuriga juurdepääsetav.',
+  EMBED_VIDEO_AUTOPLAY: 'Automaatselt esitatavad videod, mida ei saa peatada, võivad inimesi häirida ja ekraanilugejate tööd segada. Veenduge, et kasutajad saaksid video peatada, lisades atribuudi <code>controls</code>, pakkudes nähtavat paus-nuppu või eemaldades atribuudi <code>autoplay</code>. <hr> Lisateave: <a href="https://www.w3.org/WAI/WCAG21/Understanding/pause-stop-hide.html">Peata, peida, lõpeta.</a>',
   // QA
   QA_BAD_LINK: "Leitud halb link. Link näib viitavat arenduskeskkonnale. <hr> {L} <strong {C}>%(LINK)</strong>",
   QA_IN_PAGE_LINK: "Katkine sama lehe link. See link üritab navigeerida lehe sektsiooni, mida ei leita. Parandamiseks veenduge, et link ühtiks selle elemendi <code>id</code>-ga, kuhu soovite hüpata.",
