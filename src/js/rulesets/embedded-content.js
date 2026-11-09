@@ -85,7 +85,7 @@ export default function checkEmbeddedContent() {
         element: $el,
         test: 'EMBED_VIDEO_AUTOPLAY',
         type: 'warning',
-        // developer: true,
+        developer: true,
         dismiss: src($el),
       });
     }
