@@ -874,9 +874,10 @@ function stripAllSpecialCharacters(string) {
   if (typeof string !== "string" && typeof string !== "number") return "";
   return String(string).replace(/[^\p{L}\p{M}\p{N}\s]/gu, "").replace(/\s+/g, " ").trim();
 }
+const arabicOptionalMarksRegex = /[ً-ْٖ-ٰٟـ]/g;
 function foldForMatching(string) {
   if (typeof string !== "string" && typeof string !== "number") return "";
-  return String(string).toLowerCase().normalize("NFD").replace(new RegExp("(\\p{Script=Greek})\\p{M}+", "gu"), "$1").replace(/i\u0307|\u0131/g, "i").normalize("NFC");
+  return String(string).toLowerCase().normalize("NFD").replace(new RegExp("(\\p{Script=Greek})\\p{M}+", "gu"), "$1").replace(/i\u0307|\u0131/g, "i").replace(arabicOptionalMarksRegex, "").normalize("NFC");
 }
 function normalizeStopWord(string) {
   return foldForMatching(string).replace(/[^\p{L}\p{M}\p{N}\s]/gu, "").replace(/\s+/g, " ").trim();
