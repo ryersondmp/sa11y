@@ -175,11 +175,16 @@ export function stripAllSpecialCharacters(string) {
  * phrases and UI words). Also folds the differences that come from text being written in
  * capitals, so "ΜΕΝΟΥ" matches "μενού" and "İNDİR" / "TIKLA" match "indir" / "tıkla":
  * Greek accents are removed, as is the combining dot that toLowerCase() leaves after the
- * "i" of Turkish "İ", and dotless "ı" is folded to "i". Other diacritics are kept.
- * Apply it to both the list entry and the page text.
+ * "i" of Turkish "İ", and dotless "ı" is folded to "i". Optional Arabic-script vowel marks
+ * (harakat, shadda, tanwin, superscript alef) and tatweel are removed, so "تعرّف" matches
+ * "تعرف". Other diacritics are kept. Apply it to both the list entry and the page text.
  * @param {string} string - The input text.
  * @returns {string} The folded, NFC-normalized string.
  */
+// U+064B–U+0652 tanwin, harakat, shadda, sukun; U+0656–U+065F rarer vowel marks; U+0670
+// superscript alef; U+0640 tatweel. U+0653–U+0655 (madda, hamza above/below) are left out:
+// NFD splits أ إ آ ؤ ئ into a base letter plus one of those, and they are distinct letters.
+const arabicOptionalMarksRegex = /[ً-ْٖ-ٰٟـ]/g;
 export function foldForMatching(string) {
   if (typeof string !== 'string' && typeof string !== 'number') return '';
   return (
@@ -189,6 +194,7 @@ export function foldForMatching(string) {
       .replace(/(\p{Script=Greek})\p{M}+/gu, '$1')
       // "i" + U+0307 COMBINING DOT ABOVE (from lowercasing Turkish "İ"), or dotless "ı".
       .replace(/i\u0307|\u0131/g, 'i')
+      .replace(arabicOptionalMarksRegex, '')
       .normalize('NFC')
   );
 }

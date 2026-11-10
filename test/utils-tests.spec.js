@@ -152,6 +152,24 @@ test.describe('Sa11y utils', () => {
       expect(result.tamil).toBe('படம்');
     });
 
+    test('folds optional Arabic harakat and tatweel, but keeps hamza and madda letters', async () => {
+      const result = await withUtils((u) => ({
+        shadda: u.normalizeStopWord('تعرّف على المزيد') === u.normalizeStopWord('تعرف على المزيد'),
+        tanwin: u.foldForMatching('يحدد لاحقًا') === u.foldForMatching('يحدد لاحقا'),
+        fullyVowelled: u.foldForMatching('اِقْرَأْ المَزِيدَ'),
+        tatweel: u.foldForMatching('المـــزيد'),
+        superscriptAlef: u.foldForMatching('هٰذا'),
+        hamzaLetters: u.foldForMatching('أكمل إلى آخر مؤقت قائمة'),
+      }));
+      expect(result.shadda).toBe(true);
+      expect(result.tanwin).toBe(true);
+      expect(result.fullyVowelled).toBe('اقرأ المزيد');
+      expect(result.tatweel).toBe('المزيد');
+      expect(result.superscriptAlef).toBe('هذا');
+      // أ إ آ ؤ ئ decompose under NFD into a base letter + U+0653–U+0655; those must survive.
+      expect(result.hamzaLetters).toBe('أكمل إلى آخر مؤقت قائمة');
+    });
+
     test('normalizeStopWord strips punctuation on both sides of a comparison', async () => {
       const result = await withUtils((u) => ({
         entry: u.normalizeStopWord('cliquer ici pour plus d’informations'),
