@@ -707,6 +707,31 @@ test.describe('Sa11y Unit Tests', () => {
     expect(issue).toBe(true);
   });
 
+  test('Link whose only text is the linkIgnoreSpan gets the stop word warning, not "empty link"', async () => {
+    const stopWord = await checkTooltip(
+      page, 'error-link-only-ignore-span', 'Link text may not be descriptive',
+    );
+    const empty = await checkTooltip(
+      page, 'error-link-only-ignore-span', 'Link does not have discernible text',
+    );
+    expect({ stopWord, empty }).toEqual({ stopWord: true, empty: false });
+  });
+
+  test('Dismiss digests are seeded with the pepper option (hostname by default)', async () => {
+    const mismatches = await page.evaluate(async () => {
+      const sha256 = async (text) => {
+        const hash = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
+        return Array.from(new Uint8Array(hash), (b) => b.toString(16).padStart(2, '0')).join('');
+      };
+      const withKeys = window.sa11yCheckComplete.results.filter((r) => r.dismiss).slice(0, 5);
+      const checks = await Promise.all(withKeys.map(async (r) =>
+        r.dismissDigest === (await sha256(window.location.hostname + r.dismiss)) ? null : r.dismiss));
+      return { count: withKeys.length, bad: checks.filter((c) => c !== null) };
+    });
+    expect(mismatches.count).toBeGreaterThan(0);
+    expect(mismatches.bad).toEqual([]);
+  });
+
   test('Link pointing to a dev environment via linksToFlag prop', async () => {
     const issue = await checkTooltip(
       page, 'error-custom-error-links', 'Bad link found.',

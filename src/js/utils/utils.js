@@ -156,14 +156,16 @@ export function isElementVisuallyHiddenOrHidden(element) {
 }
 
 /**
- * Removes ALL non-alphanumeric characters and normalizes whitespace. Accounts for non-Latin characters.
+ * Removes ALL punctuation and symbols and normalizes whitespace. Accounts for non-Latin characters:
+ * combining marks (\p{M}) are kept, because in scripts such as Devanagari and Tamil they are part
+ * of the word ("कि" and "के" must stay different).
  * @param {string} string - The input text to be sanitized.
  * @returns {string} The sanitized and trimmed string.
  */
 export function stripAllSpecialCharacters(string) {
   if (typeof string !== 'string' && typeof string !== 'number') return '';
   return String(string)
-    .replace(/[^\p{L}\p{N}\s]/gu, '')
+    .replace(/[^\p{L}\p{M}\p{N}\s]/gu, '')
     .replace(/\s+/g, ' ')
     .trim();
 }
@@ -180,13 +182,15 @@ export function stripAllSpecialCharacters(string) {
  */
 export function foldForMatching(string) {
   if (typeof string !== 'string' && typeof string !== 'number') return '';
-  return String(string)
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/(\p{Script=Greek})\p{M}+/gu, '$1')
-    .replace(/i̇/g, 'i')
-    .replace(/ı/g, 'i')
-    .normalize('NFC');
+  return (
+    String(string)
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/(\p{Script=Greek})\p{M}+/gu, '$1')
+      // "i" + U+0307 COMBINING DOT ABOVE (from lowercasing Turkish "İ"), or dotless "ı".
+      .replace(/i\u0307|\u0131/g, 'i')
+      .normalize('NFC')
+  );
 }
 
 /**
@@ -233,16 +237,26 @@ export function containsWord(text, word) {
 }
 
 /**
- * Sanitize URLs.
+ * Sanitize URLs. Adapted from braintree/sanitize-url (see sanitizeURL below).
+ *
+ * The `g` regexes below are shared module state. They are only used with String#replace and
+ * String#match, which reset `lastIndex`; do not call .test() or .exec() on them, or results will
+ * alternate between calls.
  */
-const invalidProtocolRegex = /^([^\w]*)(javascript|data|vbscript)/im;
-const htmlEntitiesRegex = /&#(\w+)(^\w|;)?/g;
+// `i` is kept as a safeguard even though the scheme is lowercased before this test.
+const invalidProtocolRegex = /^\W*(javascript|data|vbscript)/i;
+// Numeric character references, decimal or hex, with or without the closing semicolon
+// (browsers decode both forms inside attribute values).
+const htmlEntitiesRegex = /&#(?:x([0-9a-f]+)|(\d+));?/gi;
 const htmlCtrlEntityRegex = /&(newline|tab);/gi;
 const ctrlCharactersRegex =
-  // biome-ignore lint/suspicious/noControlCharactersInRegex: original lib.
-  /[\u0000-\u001F\u007F-\u009F\u2000-\u200D\uFEFF]/gim;
-const urlSchemeRegex = /^.+(:|&colon;)/gim;
+  // biome-ignore lint/suspicious/noControlCharactersInRegex: Matching control characters is the purpose.
+  /[\u0000-\u001F\u007F-\u009F\u2000-\u200D\uFEFF]/g;
+// Lazy, so the scheme ends at the FIRST colon: "https://host:8080/a:b" yields "https:".
+const urlSchemeRegex = /^.+?(:|&colon;)/i;
 const whitespaceEscapeCharsRegex = /(\\|%5[cC])((%(6[eE]|72|74))|[nrt])/g;
+// Base64 image data URIs that may skip sanitizing. SVG is excluded because it can carry script.
+const base64ImageRegex = /^data:image\/(?:png|gif|jpe?g|webp|avif|bmp|x-icon);base64,/i;
 const relativeFirstCharacters = ['.', '/'];
 const BLANK_URL = 'about:blank';
 
@@ -250,12 +264,29 @@ function isRelativeUrlWithoutProtocol(url) {
   return relativeFirstCharacters.indexOf(url[0]) > -1;
 }
 
+/**
+ * Decodes one numeric character reference the way browsers do: out-of-range values, surrogates
+ * and NUL become U+FFFD instead of throwing (String.fromCodePoint) or silently wrapping
+ * (String.fromCharCode).
+ * @param {string|undefined} hex - Hex digits, if the reference was &#x...;
+ * @param {string|undefined} dec - Decimal digits, if the reference was &#...;
+ * @returns {string} The decoded character.
+ */
+function decodeCharacterReference(hex, dec) {
+  const codePoint = hex !== undefined ? Number.parseInt(hex, 16) : Number.parseInt(dec, 10);
+  const isInvalid =
+    !Number.isFinite(codePoint) ||
+    codePoint === 0 ||
+    codePoint > 0x10ffff ||
+    (codePoint >= 0xd800 && codePoint <= 0xdfff);
+  return isInvalid ? '\uFFFD' : String.fromCodePoint(codePoint);
+}
+
 function decodeHtmlCharacters(str) {
   const removedNullByte = str.replace(ctrlCharactersRegex, '');
-  // biome-ignore lint/correctness/noUnusedFunctionParameters: original lib
-  return removedNullByte.replace(htmlEntitiesRegex, (match, dec) => {
-    return String.fromCharCode(dec);
-  });
+  return removedNullByte.replace(htmlEntitiesRegex, (_match, hex, dec) =>
+    decodeCharacterReference(hex, dec),
+  );
 }
 
 function isValidUrl(url) {
@@ -308,12 +339,14 @@ export function escapeHTML(input) {
 export function sanitizeURL(url) {
   if (!url || typeof url !== 'string') return BLANK_URL;
 
-  // Quick bypass for legitimate base64 data URIs
-  const isBase64Data = /^data:([a-z]+\/[a-z0-9-+.]+)?;base64,/i.test(url.trim());
-  if (isBase64Data) return url.trim();
+  const trimmedInput = url.trim();
+
+  // Quick bypass for legitimate base64 image data URIs. Any other data: URI (text/html,
+  // image/svg+xml...) goes through the checks below and is rejected.
+  if (base64ImageRegex.test(trimmedInput)) return trimmedInput;
 
   let charsToDecode;
-  let decodedUrl = decodeURIs(url.trim());
+  let decodedUrl = decodeURIs(trimmedInput);
   do {
     decodedUrl = decodeHtmlCharacters(decodedUrl)
       .replace(htmlCtrlEntityRegex, '')
@@ -558,10 +591,8 @@ export function getText(element) {
     return gotText.get(element);
   }
   const ignore = fnIgnore(element);
-  const text = ignore.textContent
-    .replace(/[\r\n]+/g, '')
-    .replace(/\s+/g, ' ')
-    .trim();
+  // Line breaks render as spaces, so they must become spaces ("Click\nhere" is "Click here").
+  const text = removeWhitespace(ignore.textContent);
   gotText.set(element, text);
   return text;
 }
@@ -655,14 +686,17 @@ export function removeWhitespace(string) {
 }
 
 /**
- * Removes non-printable ASCII control characters and junk icons from a string, and removes extra whitespace.
+ * Removes non-printable control characters and icon-font glyphs (Private Use Area) from a string,
+ * and collapses whitespace. Whitespace controls (tab, line feed, vertical tab, form feed, carriage
+ * return) are left for removeWhitespace() to turn into spaces, so words are not joined together.
  * @param {string} string - The input string to clean.
  * @returns {string} The string with control characters removed.
  */
+// biome-ignore lint/suspicious/noControlCharactersInRegex: Matching control characters is the purpose.
+const junkCharactersRegex = /[\u0000-\u0008\u000E-\u001F\u007F-\u009F\uE000-\uF8FF]/g;
 export function normalizeString(string) {
   if (typeof string !== 'string' && typeof string !== 'number') return '';
-  // biome-ignore lint/suspicious/noControlCharactersInRegex: Strip junk icons/PUA characters.
-  return removeWhitespace(String(string).replace(/[\u0000-\u001F\u007F-\u009F]/g, ''));
+  return removeWhitespace(String(string).replace(junkCharactersRegex, ''));
 }
 
 /**
@@ -793,13 +827,15 @@ export function getNextSibling(element, selector) {
 }
 
 /**
- * Generates a unique key for dismissing items.
- * @param {string} string The string to be prepared for dismissal (without special chars).
+ * Generates a unique key for dismissing items. Letters and digits are kept in every script;
+ * whitespace, punctuation and symbols are removed. (An ASCII-only filter would reduce all
+ * Arabic, Cyrillic, CJK etc. text to an empty string, so unrelated issues would share a key.)
+ * @param {string} string The string to be prepared for dismissal.
  * @returns {string} The truncated string with a maximum of 256 characters.
  */
 export function prepareDismissal(string) {
   return String(string)
-    .replace(/([^0-9a-zA-Z])/g, '')
+    .replace(/[^\p{L}\p{N}]/gu, '')
     .substring(0, 256);
 }
 
@@ -815,17 +851,17 @@ export function generateSelectorPath(element) {
   let currentElement = element;
   while (currentElement) {
     let selector = currentElement.localName;
+    // Ids and classes are escaped so that e.g. Tailwind's "md:flex" or "w-1/2", or an id that
+    // starts with a digit, still produce a valid selector for querySelector().
     if (currentElement.id) {
-      selector += `#${currentElement.id}`;
+      selector += `#${CSS.escape(currentElement.id)}`;
       path.unshift(selector);
       break;
     } else {
       const classAttr = currentElement.getAttribute ? currentElement.getAttribute('class') : null;
-      if (classAttr) {
-        const classSelector = classAttr.trim().replace(/\s+/g, '.');
-        if (classSelector) {
-          selector += `.${classSelector}`;
-        }
+      const classNames = classAttr?.trim();
+      if (classNames) {
+        selector += `.${classNames.split(/\s+/).map(CSS.escape).join('.')}`;
       }
     }
 
@@ -928,25 +964,99 @@ export function isScrollable(scrollArea, container, ariaLabel) {
 }
 
 /**
- * Get the best image source from an element, considering data-src, srcset, and src attributes.
+ * Parses a srcset (or a single URL, e.g. data-src) into candidates, following the HTML spec's
+ * tokenizing rules: a URL is a run of non-whitespace characters, so commas INSIDE a URL (as in
+ * CDN transforms like "w_300,h_200") are kept; trailing commas end the candidate; otherwise the
+ * descriptors run to the next comma that is not inside parentheses.
+ * @link https://html.spec.whatwg.org/multipage/images.html#parse-a-srcset-attribute
+ * @param {string|null|undefined} srcset - The attribute value.
+ * @returns {{url: string, width: number|null, density: number}[]} Candidates; density defaults to 1.
+ */
+export function parseSrcset(srcset) {
+  if (typeof srcset !== 'string') return [];
+  const candidates = [];
+  const length = srcset.length;
+  let position = 0;
+  while (position < length) {
+    // Skip whitespace and stray commas between candidates.
+    while (position < length && /[\s,]/.test(srcset[position])) position += 1;
+    if (position >= length) break;
+
+    // URL: run of non-whitespace characters.
+    const urlStart = position;
+    while (position < length && !/\s/.test(srcset[position])) position += 1;
+    let url = srcset.slice(urlStart, position);
+
+    // Descriptors: only present if the URL did not end the candidate with a comma.
+    let descriptors = '';
+    if (url.endsWith(',')) {
+      url = url.replace(/,+$/, '');
+    } else {
+      const descriptorStart = position;
+      let inParens = false;
+      while (position < length) {
+        const char = srcset[position];
+        if (char === '(') inParens = true;
+        else if (char === ')') inParens = false;
+        else if (char === ',' && !inParens) break;
+        position += 1;
+      }
+      descriptors = srcset.slice(descriptorStart, position).trim();
+      position += 1; // Step over the comma.
+    }
+    if (!url) continue;
+
+    // Width ("300w") or pixel density ("1.5x"); "h" descriptors and invalid tokens are ignored.
+    let width = null;
+    let density = 1;
+    for (const descriptor of descriptors.split(/\s+/)) {
+      const match = /^(\d+(?:\.\d+)?)([wx])$/i.exec(descriptor);
+      if (!match) continue;
+      const value = Number.parseFloat(match[1]);
+      if (match[2].toLowerCase() === 'w') width = value;
+      else density = value;
+    }
+    candidates.push({ url, width, density });
+  }
+  return candidates;
+}
+
+/**
+ * Picks the smallest candidate from a srcset, since the result is only used for a thumbnail.
+ * Width descriptors take precedence over density (a srcset should not mix them).
+ * @param {string|null|undefined} srcset - The attribute value.
+ * @returns {string|undefined} The URL of the smallest candidate.
+ */
+function getSmallestSrc(srcset) {
+  const candidates = parseSrcset(srcset);
+  if (!candidates.length) return undefined;
+  const withWidth = candidates.filter((c) => c.width !== null);
+  const pool = withWidth.length ? withWidth : candidates;
+  const size = (c) => (withWidth.length ? c.width : c.density);
+  return pool.reduce((smallest, c) => (size(c) < size(smallest) ? c : smallest)).url;
+}
+
+/**
+ * Get the best image source for a thumbnail, considering data-src, srcset, <picture> sources and
+ * src. From a srcset, the smallest candidate is used.
  * @param {HTMLElement} element - The image element to extract the source from.
- * @returns {string} - The best available source URL.
+ * @returns {string|null} - The best available source URL, resolved to an absolute URL.
  */
 export function getBestImageSource(element) {
-  const getLastSrc = (src) => src?.split(/,\s+/).pop()?.trim()?.split(/\s+/)[0];
-
   // Return absolute URLs. Necessary for HTML export.
   const resolveUrl = (src) => (src ? new URL(src, window.location.href).href : null);
 
   // Check data-src or srcset.
-  const dataSrc = getLastSrc(element.getAttribute('data-src') || element.getAttribute('srcset'));
+  const dataSrc = getSmallestSrc(
+    element.getAttribute('data-src') || element.getAttribute('srcset'),
+  );
   if (dataSrc) return resolveUrl(dataSrc);
 
   // Check <picture> sources.
   const pictureSrcset = getCachedClosest(element, 'picture')
     ?.querySelector('source[srcset]')
     ?.getAttribute('srcset');
-  const pictureSrc = getLastSrc(pictureSrcset);
+  const pictureSrc = getSmallestSrc(pictureSrcset);
   if (pictureSrc) return resolveUrl(pictureSrc);
 
   return resolveUrl(element.getAttribute('src'));
@@ -1044,6 +1154,14 @@ export function generateElementPreview(issueObject, convertBase64 = false) {
 }
 
 /**
+ * Emoji, plus the code points that only exist inside emoji sequences and render nothing on their
+ * own: skin-tone modifiers, ZWJ (U+200D), text/emoji variation selectors (U+FE0E/FE0F) and the
+ * combining keycap (U+20E3). Without them, "❤️" leaves a lone U+FE0F behind.
+ */
+const emojiRegex =
+  /[\p{Emoji_Presentation}\p{Extended_Pictographic}\p{Emoji_Modifier}]|\u200D|\uFE0E|\uFE0F|\u20E3/gu;
+
+/**
  * Check if an element's visible text is included in the accessible name.
  * To minimize false positives: iterate through all child nodes of the element, checking for visibility.
  * @param {element} $el The element to test.
@@ -1082,15 +1200,14 @@ export function isVisibleTextInAccName($el, accName, exclusions = [], linkIgnore
     }
   });
 
-  // Ignore emojis.
-  const emojiRegex = /[\p{Emoji_Presentation}\p{Extended_Pictographic}]/gu;
+  // Ignore emojis, including the invisible parts of emoji sequences.
   let visibleText = text.replace(emojiRegex, '');
 
   // Final visible text.
   visibleText = removeWhitespace(visibleText).toLowerCase();
 
-  // If visible text is just an x character, ignore.
-  if (/^[x×✕✖✗✘]$/i.test(visibleText)) {
+  // If visible text is just an x character, ignore. (Already lowercased, so no `i` flag.)
+  if (/^[x×✕✖✗✘]$/.test(visibleText)) {
     return false;
   }
 
@@ -1117,6 +1234,15 @@ export function standardizeHref($el) {
 
   // Remove common file extensions at the end.
   href = href.replace(/\.(html|php|htm|asp|aspx)$/i, '');
+
+  // TODO: Proposed, on hold. The result is also the fallback dismiss key in link-text.js
+  // (QA_PDF, QA_DOCUMENT, QA_IN_PAGE_LINK and the PUA link check), which Editoria11y syncs
+  // server-side, so changing it re-shows those dismissals. Corrected values:
+  //   href.replace(/^(?:https?:)?\/\/(?:www\.)?/, '')       // also strip protocol-relative "//www."
+  //   href.replace(/\.(?:html?|php|aspx?)(?=[?#]|$)/, '')   // also strip before "?query" / "#hash"
+  // What changes: "//www.example.com/a" → "example.com/a"; "about.html#team" → "about#team";
+  // "page.php?id=1" → "page?id=1". Links that differ only in these ways then compare as the same
+  // destination, and their dismiss keys change. The `i` flag is redundant (already lowercased).
 
   return href;
 }
