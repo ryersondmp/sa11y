@@ -161,4 +161,46 @@ test.describe('Sa11y utils', () => {
       expect(result.text).toBe(result.entry);
     });
   });
+
+  test.describe('containsWord', () => {
+    test('matches whole words in any script, ignoring case', async () => {
+      const mismatches = await withUtils((u) => {
+        // [text, word, expected]
+        const cases = [
+          ['Submit button', 'button', true],
+          ['Submit Button', 'button', true],
+          ['Unbutton the coat', 'button', false],
+          ['Κουμπί αναζήτησης', 'κουμπί', true],
+          ['Botón de búsqueda', 'botón', true],
+          ['زر البحث', 'زر', true], // "search button"
+          ['السماء الزرقاء', 'زر', false], // "the blue sky"
+          ['زيارة المزرعة', 'زر', false], // "visit the farm"
+          ['搜索按钮', '按钮', true],
+          ['検索ボタン', 'ボタン', true],
+          ['검색 버튼', '버튼', true],
+          ['button', '', false],
+        ];
+        return cases.filter(([text, word, expected]) => u.containsWord(text, word) !== expected);
+      });
+      expect(mismatches).toEqual([]);
+    });
+
+    test('without Intl.Segmenter, still matches whole words in spaced scripts', async () => {
+      const result = await withUtils((u) => {
+        const { Segmenter } = Intl;
+        Intl.Segmenter = undefined;
+        try {
+          return {
+            spaced: u.containsWord('Submit Button', 'button'),
+            arabic: u.containsWord('زر البحث', 'زر'),
+            inWord: u.containsWord('Unbutton the coat', 'button'),
+            arabicInWord: u.containsWord('السماء الزرقاء', 'زر'),
+          };
+        } finally {
+          Intl.Segmenter = Segmenter;
+        }
+      });
+      expect(result).toEqual({ spaced: true, arabic: true, inWord: false, arabicInWord: false });
+    });
+  });
 });

@@ -214,7 +214,7 @@ export default function checkDeveloper() {
     }
 
     // Has "button" in the accessible name.
-    if (accName.includes(Lang._('BTN'))) {
+    if (Utils.containsWord(accName, Lang._('BTN'))) {
       pushResult({
         test: 'BTN_ROLE_IN_NAME',
         element: $el,

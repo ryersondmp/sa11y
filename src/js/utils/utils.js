@@ -205,6 +205,33 @@ export function normalizeStopWord(string) {
     .trim();
 }
 
+let wordSegmenter;
+
+/**
+ * Intl.Segmenter splits languages written without spaces, such as Chinese and Japanese.
+ * The fallback only requires that no letter, mark or digit touches the word on either
+ * side, so in those languages it misses rather than over-matches.
+ * @param {string} text - The text to search.
+ * @param {string} word - A single word, e.g. the localized "button".
+ * @returns {boolean} True if the word appears on its own.
+ */
+export function containsWord(text, word) {
+  const haystack = foldForMatching(text);
+  const needle = foldForMatching(word);
+  if (!needle) return false;
+  if (typeof Intl !== 'undefined' && Intl.Segmenter) {
+    wordSegmenter ??= new Intl.Segmenter(undefined, { granularity: 'word' });
+    for (const { segment, isWordLike } of wordSegmenter.segment(haystack)) {
+      if (isWordLike && segment === needle) return true;
+    }
+    return false;
+  }
+  const escaped = needle.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return new RegExp(`(?<![\\p{L}\\p{M}\\p{N}])${escaped}(?![\\p{L}\\p{M}\\p{N}])`, 'u').test(
+    haystack,
+  );
+}
+
 /**
  * Sanitize URLs.
  */

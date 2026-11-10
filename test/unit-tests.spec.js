@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { checkTooltip, noAnnotation } from './unit-test-utils';
+import { checkTooltip, noAnnotation, waitForCheckComplete } from './unit-test-utils';
 
 test.describe.configure({ mode: 'serial' });
 
@@ -21,89 +21,46 @@ test.describe('Sa11y Unit Tests', () => {
     await page.close();
   });
 
+  // Locators pierce Sa11y's open shadow roots, and expect(locator) retries
+  // until the assertion passes or times out, so no fixed sleeps are needed.
+  const panel = (selector) => page.locator(`sa11y-control-panel ${selector}`);
+
   test('Navigate to unit test page and toggle Sa11y', async () => {
     // Navigate to unit tests page.
     await page.goto('http://localhost:8080/test/pages/unit-tests.html');
-    // Toggle main toggle.
-    await page.evaluate(async () => {
-      await new Promise((resolve) => {
-        setTimeout(() => {
-          const panel = document.querySelector('sa11y-control-panel').shadowRoot;
-          const toggle = panel.querySelector('#toggle');
-          toggle.click();
-          resolve();
-        }, 100);
-      });
-    });
+    // Toggle main toggle. click() waits for the toggle to become enabled.
+    await panel('#toggle').click();
+    await waitForCheckComplete(page);
   });
 
   test('Open status panel', async () => {
-    const panel = page.locator('sa11y-control-panel #panel');
-    await expect(panel).toHaveClass(/active/);
+    await expect(panel('#panel')).toHaveClass(/active/);
   });
 
   test('Open Page Outline', async () => {
-    // Click on the outline toggle.
-    const outlinePanelActive = await page.evaluate(() => {
-      const panel = document.querySelector('sa11y-control-panel').shadowRoot;
-      const toggle = panel.getElementById('outline-toggle');
-      toggle.click();
-
-      return new Promise((resolve) => {
-        setTimeout(() => {
-          const outlinePanel = panel.getElementById('outline-panel');
-          const isActive = outlinePanel.classList.contains('active');
-          resolve(isActive);
-        }, 100);
-      });
-    });
-    expect(outlinePanelActive).toBe(true);
+    await panel('#outline-toggle').click();
+    await expect(panel('#outline-panel')).toHaveClass(/active/);
   });
 
   test('Open Settings', async () => {
-    // Click on the outline toggle.
-    const settingsPanelActive = await page.evaluate(() => {
-      const panel = document.querySelector('sa11y-control-panel').shadowRoot;
-      const toggle = panel.getElementById('settings-toggle');
-      toggle.click();
-
-      return new Promise((resolve) => {
-        setTimeout(() => {
-          const settingsPanel = panel.getElementById('settings-panel');
-          const isActive = settingsPanel.classList.contains('active');
-          resolve(isActive);
-        }, 100);
-      });
-    });
-    expect(settingsPanelActive).toBe(true);
+    await panel('#settings-toggle').click();
+    await expect(panel('#settings-panel')).toHaveClass(/active/);
   });
 
   /* Toggle all toggleable buttons. Needed for other unit tests! */
   test('Toggle setting buttons', async () => {
-    const toggleSettings = await page.evaluate(async () => {
-      const panel = document.querySelector('sa11y-control-panel').shadowRoot;
-      const settings = [
-        'readability-toggle',
-        'theme-toggle',
-      ];
-
-      const isActivePromises = settings.map((setting) => {
-        const toggle = panel.getElementById(setting);
-        toggle.click();
-
-        return new Promise((resolve) => {
-          setTimeout(() => {
-            const isActive = toggle.getAttribute('aria-pressed') === 'true';
-            resolve(isActive);
-          }, 100);
-        });
-      });
-
-      return Promise.all(isActivePromises);
-    });
-
-    const allTogglesActive = toggleSettings.every((isActive) => isActive === true);
-    expect(allTogglesActive).toBeTruthy();
+    const settings = [
+      'readability-toggle',
+      'theme-toggle',
+    ];
+    for (const setting of settings) {
+      const toggle = panel(`#${setting}`);
+      await toggle.click();
+      await expect(toggle, setting).toHaveAttribute('aria-pressed', 'true');
+    }
+    // The readability toggle re-runs all checks; the tooltip tests below
+    // read annotations once, so they must not start mid-check.
+    await waitForCheckComplete(page);
   });
 
   /* **************** */
@@ -126,10 +83,10 @@ test.describe('Sa11y Unit Tests', () => {
       'error-heading-unpronounceable-5',
       'error-heading-unpronounceable-6',
     ];
-    ids.forEach(async (id) => {
+    for (const id of ids) {
       const issue = await checkTooltip(page, id, 'Heading text only contains symbols or unpronounceable characters.');
-      expect(issue).toBe(true);
-    });
+      expect.soft(issue, id).toBe(true);
+    }
   });
 
   test('Skipped heading', async () => {
@@ -346,10 +303,10 @@ test.describe('Sa11y Unit Tests', () => {
       'pass-alt-maybe-1',
       'pass-alt-maybe-2',
     ];
-    ids.forEach(async (id) => {
+    for (const id of ids) {
       const issue = await checkTooltip(page, id, 'Good');
-      expect(issue).toBe(true);
-    });
+      expect.soft(issue, id).toBe(true);
+    }
   });
 
   test('Improving ALT_MAYBE_BAD_WARNING, since 5.1.1', async () => {
@@ -359,10 +316,10 @@ test.describe('Sa11y Unit Tests', () => {
       'warning-alt-maybe-3',
       'warning-alt-maybe-4',
     ];
-    ids.forEach(async (id) => {
+    for (const id of ids) {
       const issue = await checkTooltip(page, id, 'Alt text may not provide useful information or contains non-descript text');
-      expect(issue).toBe(true);
-    });
+      expect.soft(issue, id).toBe(true);
+    }
   });
 
   test('Improving ALT_MAYBE_BAD (hyperlink), since 5.1.1', async () => {
@@ -370,11 +327,11 @@ test.describe('Sa11y Unit Tests', () => {
       'warning-alt-maybe-link',
       'error-alt-maybe-link',
     ];
-    ids.forEach(async (id) => {
+    for (const id of ids) {
       const issue = await checkTooltip(page, id,
         'Image link has alt text that may not provide useful information or contains non-descript text.');
-      expect(issue).toBe(true);
-    });
+      expect.soft(issue, id).toBe(true);
+    }
   });
 
   test('Improving ALT_MAYBE_BAD, since 5.1.1', async () => {
@@ -382,11 +339,11 @@ test.describe('Sa11y Unit Tests', () => {
       'error-alt-maybe-1',
       'error-alt-maybe-2',
     ];
-    ids.forEach(async (id) => {
+    for (const id of ids) {
       const issue = await checkTooltip(page, id,
         'Alt text may not provide useful information or contains non-descript text.');
-      expect(issue).toBe(true);
-    });
+      expect.soft(issue, id).toBe(true);
+    }
   });
 
   test('Linked decorative image with surrounding link text', async () => {
@@ -707,20 +664,20 @@ test.describe('Sa11y Unit Tests', () => {
       'error-non-descript-link-2',
       'error-non-descript-link-3',
     ];
-    ids.forEach(async (id) => {
+    for (const id of ids) {
       const issue = await checkTooltip(page, id, 'Link text may not be descriptive enough out of context');
-      expect(issue).toBe(true);
-    });
+      expect.soft(issue, id).toBe(true);
+    }
   });
 
   test('Non descript link text - i18n (non-Latin characters)', async () => {
     const ids = [
       'error-non-descript-cyrillic',
     ];
-    ids.forEach(async (id) => {
+    for (const id of ids) {
       const issue = await checkTooltip(page, id, 'Link text may not be descriptive enough out of context');
-      expect(issue).toBe(true);
-    });
+      expect.soft(issue, id).toBe(true);
+    }
   });
 
   test('Non descript link text based on "new tab" or option.linkIgnoreString phrases', async () => {
@@ -730,10 +687,10 @@ test.describe('Sa11y Unit Tests', () => {
       'error-new-tab-link-text-3',
       'error-new-tab-link-text-4',
     ];
-    ids.forEach(async (id) => {
+    for (const id of ids) {
       const issue = await checkTooltip(page, id, 'Link text may not be descriptive enough out of context');
-      expect(issue).toBe(true);
-    });
+      expect.soft(issue, id).toBe(true);
+    }
   });
 
   test('Descriptive link text', async () => {
@@ -811,10 +768,10 @@ test.describe('Sa11y Unit Tests', () => {
       'error-empty-icon-link-3',
       'error-empty-icon-link-4',
     ];
-    ids.forEach(async (id) => {
+    for (const id of ids) {
       const issue = await checkTooltip(page, id, 'icon link');
-      expect(issue).toBe(true);
-    });
+      expect.soft(issue, id).toBe(true);
+    }
   });
 
   test('Empty hyperlinks with accessible name via title attribute', async () => {
@@ -827,20 +784,20 @@ test.describe('Sa11y Unit Tests', () => {
       'nothing-link-title-6',
       'nothing-link-title-7',
     ];
-    ids.forEach(async (id) => {
+    for (const id of ids) {
       const issue = await noAnnotation(page, id);
-      expect(issue).toBe(true);
-    });
+      expect.soft(issue, id).toBe(true);
+    }
   });
 
   test('Link text contains click here text', async () => {
     const ids = [
       'warning-link-word-1',
     ];
-    ids.forEach(async (id) => {
+    for (const id of ids) {
       const issue = await checkTooltip(page, id, 'focus on mouse mechanics');
-      expect(issue).toBe(true);
-    });
+      expect.soft(issue, id).toBe(true);
+    }
   });
 
   test('Link text contains symbol', async () => {
@@ -849,10 +806,10 @@ test.describe('Sa11y Unit Tests', () => {
       'warning-link-word-3',
       'warning-link-word-4',
     ];
-    ids.forEach(async (id) => {
+    for (const id of ids) {
       const issue = await checkTooltip(page, id, 'Avoid using symbols');
-      expect(issue).toBe(true);
-    });
+      expect.soft(issue, id).toBe(true);
+    }
   });
 
   test('Long URLs used as link text', async () => {
@@ -999,10 +956,10 @@ test.describe('Sa11y Unit Tests', () => {
       'nothing-table-2',
       'nothing-table-3',
     ];
-    ids.forEach(async (id) => {
+    for (const id of ids) {
       const issue = await noAnnotation(page, id);
-      expect(issue).toBe(true);
-    });
+      expect.soft(issue, id).toBe(true);
+    }
   });
 
   test('Missing table headers, but focusable', async () => {
@@ -1087,10 +1044,10 @@ test.describe('Sa11y Unit Tests', () => {
       'nothing-small-text-1',
       'nothing-small-text-2',
     ];
-    ids.forEach(async (id) => {
+    for (const id of ids) {
       const issue = await noAnnotation(page, id);
-      expect(issue).toBe(true);
-    });
+      expect.soft(issue, id).toBe(true);
+    }
   });
 
   test('Small text size warning', async () => {
@@ -1098,10 +1055,10 @@ test.describe('Sa11y Unit Tests', () => {
       'warning-small-text-1',
       'warning-small-text-1',
     ];
-    ids.forEach(async (id) => {
+    for (const id of ids) {
       const issue = await checkTooltip(page, id, 'Small text is harder to read');
-      expect(issue).toBe(true);
-    });
+      expect.soft(issue, id).toBe(true);
+    }
   });
 
   test('Small text size warning (no annotation', async () => {
@@ -1118,10 +1075,10 @@ test.describe('Sa11y Unit Tests', () => {
       'warning-allcaps-3',
       'warning-allcaps-4',
     ];
-    ids.forEach(async (id) => {
+    for (const id of ids) {
       const issue = await checkTooltip(page, id, 'Found all caps');
-      expect(issue).toBe(true);
-    });
+      expect.soft(issue, id).toBe(true);
+    }
   });
 
   test('Inconsistent all caps (no annotation)', async () => {
@@ -1139,10 +1096,10 @@ test.describe('Sa11y Unit Tests', () => {
       'warning-underline-4',
       'warning-underline-5',
     ];
-    ids.forEach(async (id) => {
+    for (const id of ids) {
       const issue = await checkTooltip(page, id, 'Underlined text can be confused');
-      expect(issue).toBe(true);
-    });
+      expect.soft(issue, id).toBe(true);
+    }
   });
 
   test('Fake lists', async () => {
@@ -1157,10 +1114,10 @@ test.describe('Sa11y Unit Tests', () => {
       'warning-list-8',
       'warning-list-9',
     ];
-    ids.forEach(async (id) => {
+    for (const id of ids) {
       const issue = await checkTooltip(page, id, 'trying to create a list?');
-      expect(issue).toBe(true);
-    });
+      expect.soft(issue, id).toBe(true);
+    }
   });
 
   test('Uncontained list items', async () => {
@@ -1212,10 +1169,10 @@ test.describe('Sa11y Unit Tests', () => {
       'nothing-same-page-ariacontrols',
       'nothing-same-page-name-attr',
     ];
-    ids.forEach(async (id) => {
+    for (const id of ids) {
       const issue = await noAnnotation(page, id);
-      expect(issue).toBe(true);
-    });
+      expect.soft(issue, id).toBe(true);
+    }
   });
 
   test('Valid in-page links with various encoded or decoded href and id', async () => {
@@ -1227,10 +1184,10 @@ test.describe('Sa11y Unit Tests', () => {
       'nothing-encoded-emoji-href-id',
       'nothing-encoded-emoji-href-decoded-id',
     ];
-    ids.forEach(async (id) => {
+    for (const id of ids) {
       const issue = await noAnnotation(page, id);
-      expect(issue).toBe(true);
-    });
+      expect.soft(issue, id).toBe(true);
+    }
   });
 
   test('Interactive element using aria-labelledby referencing duplicate IDs', async () => {
@@ -1262,10 +1219,10 @@ test.describe('Sa11y Unit Tests', () => {
       'warning-supsub-1',
       'warning-supsub-2',
     ];
-    ids.forEach(async (id) => {
+    for (const id of ids) {
       const issue = await checkTooltip(page, id, 'subscript');
-      expect(issue).toBe(true);
-    });
+      expect.soft(issue, id).toBe(true);
+    }
   });
 
   test('Nested layout components', async () => {
@@ -1273,10 +1230,10 @@ test.describe('Sa11y Unit Tests', () => {
       'warning-nested-1',
       'warning-nested-2',
     ];
-    ids.forEach(async (id) => {
+    for (const id of ids) {
       const issue = await checkTooltip(page, id, 'Avoid nesting interactive layout');
-      expect(issue).toBe(true);
-    });
+      expect.soft(issue, id).toBe(true);
+    }
   });
 
   test('Contrast issues', async () => {
@@ -1289,10 +1246,10 @@ test.describe('Sa11y Unit Tests', () => {
       'error-contrast-6',
       'error-contrast-7',
     ];
-    ids.forEach(async (id) => {
+    for (const id of ids) {
       const issue = await checkTooltip(page, id, 'enough contrast');
-      expect(issue).toBe(true);
-    });
+      expect.soft(issue, id).toBe(true);
+    }
   });
 
   test('Contrast warning', async () => {
@@ -1301,10 +1258,10 @@ test.describe('Sa11y Unit Tests', () => {
       'warning-contrast-2',
       'warning-contrast-3',
     ];
-    ids.forEach(async (id) => {
+    for (const id of ids) {
       const issue = await checkTooltip(page, id, 'contrast of this text is unknown');
-      expect(issue).toBe(true);
-    });
+      expect.soft(issue, id).toBe(true);
+    }
   });
 
   test('Contrast passes', async () => {
@@ -1317,10 +1274,10 @@ test.describe('Sa11y Unit Tests', () => {
       'nothing-contrast-8',
       'nothing-contrast-9'
     ];
-    ids.forEach(async (id) => {
+    for (const id of ids) {
       const issue = await noAnnotation(page, id);
-      expect(issue).toBe(true);
-    });
+      expect.soft(issue, id).toBe(true);
+    }
   });
 
   test('SVG contrast passes', async () => {
@@ -1331,10 +1288,10 @@ test.describe('Sa11y Unit Tests', () => {
       'nothing-svg-4',
       'nothing-svg-5',
     ];
-    ids.forEach(async (id) => {
+    for (const id of ids) {
       const issue = await noAnnotation(page, id);
-      expect(issue).toBe(true);
-    });
+      expect.soft(issue, id).toBe(true);
+    }
   });
 
   test('SVG contrast fails', async () => {
@@ -1345,10 +1302,10 @@ test.describe('Sa11y Unit Tests', () => {
       'error-svg-4',
       'error-svg-5',
     ];
-    ids.forEach(async (id) => {
+    for (const id of ids) {
       const issue = await checkTooltip(page, id, 'Graphic does not have enough contrast');
-      expect(issue).toBe(true);
-    });
+      expect.soft(issue, id).toBe(true);
+    }
   });
 
   test('SVG general warnings', async () => {
@@ -1370,10 +1327,10 @@ test.describe('Sa11y Unit Tests', () => {
       'warning-svg-15',
       'warning-svg-16',
     ];
-    ids.forEach(async (id) => {
+    for (const id of ids) {
       const issue = await checkTooltip(page, id, 'contrast of this graphic is unknown');
-      expect(issue).toBe(true);
-    });
+      expect.soft(issue, id).toBe(true);
+    }
   });
 
   /* **************** */
@@ -1390,10 +1347,10 @@ test.describe('Sa11y Unit Tests', () => {
       'nothing-input-6',
       'nothing-input-7'
     ];
-    ids.forEach(async (id) => {
+    for (const id of ids) {
       const issue = await noAnnotation(page, id);
-      expect(issue).toBe(true);
-    });
+      expect.soft(issue, id).toBe(true);
+    }
   });
 
   test('Inputs with missing labels', async () => {
@@ -1404,10 +1361,10 @@ test.describe('Sa11y Unit Tests', () => {
       'error-input-4',
       'error-input-5',
     ];
-    ids.forEach(async (id) => {
+    for (const id of ids) {
       const issue = await checkTooltip(page, id, 'no label associated with this input');
-      expect(issue).toBe(true);
-    });
+      expect.soft(issue, id).toBe(true);
+    }
 
     const issue2 = await checkTooltip(
       page, 'error-input-has-id', 'a for attribute to the label that matches',
@@ -1426,10 +1383,10 @@ test.describe('Sa11y Unit Tests', () => {
       'warning-input-2',
       'warning-input-3',
     ];
-    ids.forEach(async (id) => {
+    for (const id of ids) {
       const issue = await checkTooltip(page, id, 'Input has an accessible name');
-      expect(issue).toBe(true);
-    });
+      expect.soft(issue, id).toBe(true);
+    }
 
     const issue2 = await checkTooltip(
       page, 'warning-input-reset', 'Reset buttons',
@@ -1534,12 +1491,12 @@ test.describe('Sa11y Unit Tests', () => {
       'error-summary-empty-closed',
       'error-summary-empty-open',
     ];
-    ids.forEach(async (id) => {
+    for (const id of ids) {
       const issue = await checkTooltip(
         page, id, 'Error Summary element within the <details> has no accessible name.',
       );
-      expect(issue).toBe(true);
-    });
+      expect.soft(issue, id).toBe(true);
+    }
   });
 
   test('Positive tabindex attribute', async () => {
@@ -1554,10 +1511,10 @@ test.describe('Sa11y Unit Tests', () => {
       'nothing-tabindex-0',
       'nothing-negative-tabindex',
     ];
-    ids.forEach(async (id) => {
+    for (const id of ids) {
       const issue = await noAnnotation(page, id);
-      expect(issue).toBe(true);
-    });
+      expect.soft(issue, id).toBe(true);
+    }
   });
 
   /* **************** */
@@ -1569,10 +1526,10 @@ test.describe('Sa11y Unit Tests', () => {
       'error-button-empty-1',
       'error-button-empty-2',
     ];
-    ids.forEach(async (id) => {
+    for (const id of ids) {
       const issue = await checkTooltip(page, id, 'Button is missing an accessible name');
-      expect(issue).toBe(true);
-    });
+      expect.soft(issue, id).toBe(true);
+    }
 
     const issue2 = await checkTooltip(
       page, 'error-button-arialabelledby', 'Button has an aria-labelledby',
@@ -1598,10 +1555,10 @@ test.describe('Sa11y Unit Tests', () => {
       'nothing-button-7',
       'nothing-button-8',
     ];
-    ids.forEach(async (id) => {
+    for (const id of ids) {
       const issue = await noAnnotation(page, id);
-      expect(issue).toBe(true);
-    });
+      expect.soft(issue, id).toBe(true);
+    }
   });
 
   test('Buttons with word "button" in acc name', async () => {
@@ -1609,10 +1566,17 @@ test.describe('Sa11y Unit Tests', () => {
       'warning-button-with-button-text-1',
       'warning-button-with-button-text-2',
     ];
-    ids.forEach(async (id) => {
+    for (const id of ids) {
       const issue = await checkTooltip(page, id, 'Do not include the word "button"');
-      expect(issue).toBe(true);
-    });
+      expect.soft(issue, id).toBe(true);
+    }
+  });
+
+  test('Word "button" is matched as a whole word, ignoring case', async () => {
+    expect(
+      await checkTooltip(page, 'warning-button-with-button-text-3', 'Do not include the word "button"'),
+    ).toBe(true);
+    expect(await noAnnotation(page, 'nothing-button-9')).toBe(true);
   });
 
   test('Buttons with visible name not in accessible name', async () => {
@@ -1622,10 +1586,10 @@ test.describe('Sa11y Unit Tests', () => {
       'warning-label-in-name-3',
       'warning-label-in-name-4',
     ];
-    ids.forEach(async (id) => {
+    for (const id of ids) {
       const issue = await checkTooltip(page, id, 'The visible text for this element appears to be different than the accessible name');
-      expect(issue).toBe(true);
-    });
+      expect.soft(issue, id).toBe(true);
+    }
   });
 
   // New SVG warning
@@ -1643,10 +1607,10 @@ test.describe('Sa11y Unit Tests', () => {
       'nothing-svg-name-presentational',
       'nothing-svg-name-hidden-parent',
     ];
-    ids.forEach(async (id) => {
+    for (const id of ids) {
       const issue = await noAnnotation(page, id);
-      expect(issue).toBe(true);
-    });
+      expect.soft(issue, id).toBe(true);
+    }
   });
 
   // End of tests.
