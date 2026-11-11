@@ -1,0 +1,119 @@
+name: "Tests"
+
+on:
+  push:
+    branches: ["master", "dev-*"]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# Cancel superseded runs on the same branch/PR.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24.x
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Read-only check (no --write); the GitHub reporter annotates PR diffs inline.
+      - name: Biome
+        run: npm run lint -- --reporter=github
+
+      # Clear error if the test job's container tag drifts from package-lock.json.
+      - name: Playwright image pin matches lockfile
+        run: node build/check-playwright-image.js --strict
+
+  build-check:
+    name: Build is up to date
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24.x
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Pin the banner's copyright year to the commit date so older commits rebuild identically.
+      - name: Build
+        run: |
+          export SOURCE_DATE_EPOCH="$(git log -1 --format=%ct)"
+          npm run build
+
+      # `npm run build` runs lint:fix, rebuilds dist/ and copies to docs/. Any change
+      # (including new untracked files) means the committed output is stale.
+      - name: Verify committed build matches source
+        run: |
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "::error title=Stale build::Committed build output does not match a fresh build. Run 'npm run build' and commit the results."
+            git status --porcelain
+            git --no-pager diff --stat
+            exit 1
+          fi
+          echo "Build output is up to date."
+
+  test:
+    name: Playwright (${{ matrix.browser }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    # Official image with browsers and their OS libraries preinstalled, so the job never
+    # hits apt mirrors or the browser CDN. The tag MUST match the installed Playwright
+    # version (package-lock.json); bump it whenever @playwright/test is upgraded.
+    # On a mismatch Playwright fails fast with "Executable doesn't exist".
+    container:
+      image: mcr.microsoft.com/playwright:v1.64.0-noble
+      # Run as the runner's uid (not root), per Playwright's CI docs; Firefox refuses a
+      # root-owned HOME under a non-root user and vice versa.
+      options: --user 1001
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: [chromium, firefox, webkit]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24.x
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: npx playwright test --project=${{ matrix.browser }}
+
+      - name: Upload report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-${{ matrix.browser }}
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 14

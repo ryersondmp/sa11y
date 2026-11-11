@@ -217,10 +217,10 @@ export default function checkLinkText() {
           if (State.option.linkIgnoreSpan) {
             const spanEl = $el.querySelector(State.option.linkIgnoreSpan);
             if (spanEl) {
-              const spanText = Utils.stripAllSpecialCharacters(spanEl.textContent)
-                .trim()
-                .toLowerCase();
-              if (spanText === textContent) {
+              // Normalize both sides the same way; textContent keeps punctuation such as the
+              // parentheses in "(opens in new window)", so a stripped span text never matched it.
+              const spanText = Utils.normalizeStopWord(spanEl.textContent);
+              if (spanText && spanText === Utils.normalizeStopWord(rawTextContent)) {
                 triggerStopWord();
                 hasStopWordWarning = true;
               }

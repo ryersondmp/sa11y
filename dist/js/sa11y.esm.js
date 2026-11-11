@@ -872,34 +872,72 @@ function isElementVisuallyHiddenOrHidden(element) {
 }
 function stripAllSpecialCharacters(string) {
   if (typeof string !== "string" && typeof string !== "number") return "";
-  return String(string).replace(/[^\p{L}\p{N}\s]/gu, "").replace(/\s+/g, " ").trim();
+  return String(string).replace(/[^\p{L}\p{M}\p{N}\s]/gu, "").replace(/\s+/g, " ").trim();
 }
+const arabicOptionalMarksRegex = /[ً-ْٖ-ٰٟـ]/g;
 function foldForMatching(string) {
   if (typeof string !== "string" && typeof string !== "number") return "";
-  return String(string).toLowerCase().normalize("NFD").replace(new RegExp("(\\p{Script=Greek})\\p{M}+", "gu"), "$1").replace(/i̇/g, "i").replace(/ı/g, "i").normalize("NFC");
+  return String(string).toLowerCase().normalize("NFD").replace(new RegExp("(\\p{Script=Greek})\\p{M}+", "gu"), "$1").replace(/i\u0307|\u0131/g, "i").replace(arabicOptionalMarksRegex, "").normalize("NFC");
 }
 function normalizeStopWord(string) {
   return foldForMatching(string).replace(/[^\p{L}\p{M}\p{N}\s]/gu, "").replace(/\s+/g, " ").trim();
 }
-const invalidProtocolRegex = /^([^\w]*)(javascript|data|vbscript)/im;
-const htmlEntitiesRegex = /&#(\w+)(^\w|;)?/g;
+const wordSegmenters = /* @__PURE__ */ new Map();
+function getWordSegmenter(locale) {
+  if (typeof Intl === "undefined" || typeof Intl.Segmenter !== "function") return null;
+  const key = typeof locale === "string" ? locale : "";
+  let segmenter = wordSegmenters.get(key);
+  if (!segmenter) {
+    try {
+      segmenter = new Intl.Segmenter(key || void 0, { granularity: "word" });
+    } catch {
+      segmenter = new Intl.Segmenter(void 0, { granularity: "word" });
+    }
+    wordSegmenters.set(key, segmenter);
+  }
+  return segmenter;
+}
+function containsWord(text, word, segmenter = getWordSegmenter(Lang._("LANG_CODE"))) {
+  const haystack = foldForMatching(text);
+  const needle = foldForMatching(word);
+  if (!needle) return false;
+  if (segmenter) {
+    for (const { segment, isWordLike } of segmenter.segment(haystack)) {
+      if (isWordLike && segment === needle) return true;
+    }
+    return false;
+  }
+  const escaped = needle.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  return new RegExp(`(?:^|[^\\p{L}\\p{M}\\p{N}])${escaped}(?![\\p{L}\\p{M}\\p{N}])`, "u").test(
+    haystack
+  );
+}
+const invalidProtocolRegex = /^\W*(javascript|data|vbscript)/i;
+const htmlEntitiesRegex = /&#(?:x([0-9a-f]+)|(\d+));?/gi;
 const htmlCtrlEntityRegex = /&(newline|tab);/gi;
 const ctrlCharactersRegex = (
-  // biome-ignore lint/suspicious/noControlCharactersInRegex: original lib.
-  /[\u0000-\u001F\u007F-\u009F\u2000-\u200D\uFEFF]/gim
+  // biome-ignore lint/suspicious/noControlCharactersInRegex: Matching control characters is the purpose.
+  /[\u0000-\u001F\u007F-\u009F\u2000-\u200D\uFEFF]/g
 );
-const urlSchemeRegex = /^.+(:|&colon;)/gim;
+const urlSchemeRegex = /^.+?(:|&colon;)/i;
 const whitespaceEscapeCharsRegex = /(\\|%5[cC])((%(6[eE]|72|74))|[nrt])/g;
+const base64ImageRegex = /^data:image\/(?:png|gif|jpe?g|webp|avif|bmp|x-icon);base64,[a-z0-9+/=\t\n\f\r ]*$/i;
 const relativeFirstCharacters = [".", "/"];
 const BLANK_URL = "about:blank";
 function isRelativeUrlWithoutProtocol(url2) {
   return relativeFirstCharacters.indexOf(url2[0]) > -1;
 }
+function decodeCharacterReference(hex, dec) {
+  const codePoint = hex !== void 0 ? Number.parseInt(hex, 16) : Number.parseInt(dec, 10);
+  const isInvalid = !Number.isFinite(codePoint) || codePoint === 0 || codePoint > 1114111 || codePoint >= 55296 && codePoint <= 57343;
+  return isInvalid ? "�" : String.fromCodePoint(codePoint);
+}
 function decodeHtmlCharacters(str) {
   const removedNullByte = str.replace(ctrlCharactersRegex, "");
-  return removedNullByte.replace(htmlEntitiesRegex, (match, dec) => {
-    return String.fromCharCode(dec);
-  });
+  return removedNullByte.replace(
+    htmlEntitiesRegex,
+    (_match, hex, dec) => decodeCharacterReference(hex, dec)
+  );
 }
 function isValidUrl(url2) {
   if (typeof URL.canParse === "function") {
@@ -933,10 +971,10 @@ function escapeHTML(input) {
 }
 function sanitizeURL(url2) {
   if (!url2 || typeof url2 !== "string") return BLANK_URL;
-  const isBase64Data = /^data:([a-z]+\/[a-z0-9-+.]+)?;base64,/i.test(url2.trim());
-  if (isBase64Data) return url2.trim();
+  const trimmedInput = url2.trim();
+  if (base64ImageRegex.test(trimmedInput)) return trimmedInput;
   let charsToDecode;
-  let decodedUrl = decodeURIs(url2.trim());
+  let decodedUrl = decodeURIs(trimmedInput);
   do {
     decodedUrl = decodeHtmlCharacters(decodedUrl).replace(htmlCtrlEntityRegex, "").replace(ctrlCharactersRegex, "").replace(whitespaceEscapeCharsRegex, "").trim();
     decodedUrl = decodeURIs(decodedUrl);
@@ -1135,7 +1173,7 @@ function getText(element) {
     return gotText.get(element);
   }
   const ignore = fnIgnore(element);
-  const text = ignore.textContent.replace(/[\r\n]+/g, "").replace(/\s+/g, " ").trim();
+  const text = removeWhitespace(ignore.textContent);
   gotText.set(element, text);
   return text;
 }
@@ -1184,9 +1222,10 @@ function removeWhitespace(string) {
   if (typeof string !== "string" && typeof string !== "number") return "";
   return String(string).replace(/\s+/g, " ").trim();
 }
+const junkCharactersRegex = /[\u0000-\u0008\u000E-\u001F\u007F-\u009F\uE000-\uF8FF]/g;
 function normalizeString(string) {
   if (typeof string !== "string" && typeof string !== "number") return "";
-  return removeWhitespace(String(string).replace(/[\u0000-\u001F\u007F-\u009F]/g, ""));
+  return removeWhitespace(String(string).replace(junkCharactersRegex, ""));
 }
 function truncateString(string, maxLength) {
   if (typeof string !== "string" && typeof string !== "number") return "";
@@ -1266,7 +1305,7 @@ function getNextSibling(element, selector) {
   return "";
 }
 function prepareDismissal(string) {
-  return String(string).replace(/([^0-9a-zA-Z])/g, "").substring(0, 256);
+  return String(string).replace(/[^\p{L}\p{N}]/gu, "").substring(0, 256);
 }
 function generateSelectorPath(element) {
   const path = [];
@@ -1274,16 +1313,14 @@ function generateSelectorPath(element) {
   while (currentElement) {
     let selector = currentElement.localName;
     if (currentElement.id) {
-      selector += `#${currentElement.id}`;
+      selector += `#${CSS.escape(currentElement.id)}`;
       path.unshift(selector);
       break;
     } else {
       const classAttr = currentElement.getAttribute ? currentElement.getAttribute("class") : null;
-      if (classAttr) {
-        const classSelector = classAttr.trim().replace(/\s+/g, ".");
-        if (classSelector) {
-          selector += `.${classSelector}`;
-        }
+      const classNames = classAttr?.trim();
+      if (classNames) {
+        selector += `.${classNames.split(/\s+/).map(CSS.escape).join(".")}`;
       }
     }
     const parentElement = currentElement.parentNode;
@@ -1352,15 +1389,87 @@ function isScrollable(scrollArea, container, ariaLabel) {
     }
   }, 50);
 }
+const srcsetIntegerRegex = /^\d+$/;
+const srcsetFloatRegex = /^-?(?:\d+(?:\.\d+)?|\.\d+)(?:[eE][-+]?\d+)?$/;
+function parseSrcsetDescriptors(descriptors) {
+  let width = null;
+  let density = null;
+  let height = null;
+  for (const descriptor of descriptors.split(/\s+/)) {
+    if (!descriptor) continue;
+    const value = descriptor.slice(0, -1);
+    const type = descriptor.slice(-1);
+    if (type === "w" && srcsetIntegerRegex.test(value)) {
+      if (width !== null || density !== null) return null;
+      width = Number(value);
+      if (width === 0) return null;
+    } else if (type === "x" && srcsetFloatRegex.test(value)) {
+      if (width !== null || density !== null || height !== null) return null;
+      density = Number(value);
+      if (!Number.isFinite(density) || density <= 0) return null;
+    } else if (type === "h" && srcsetIntegerRegex.test(value)) {
+      if (height !== null || density !== null) return null;
+      height = Number(value);
+      if (height === 0) return null;
+    } else {
+      return null;
+    }
+  }
+  if (height !== null && width === null) return null;
+  return { width, density: density ?? 1 };
+}
+function parseSrcset(srcset) {
+  if (typeof srcset !== "string") return [];
+  const candidates = [];
+  const length = srcset.length;
+  let position = 0;
+  while (position < length) {
+    while (position < length && /[\s,]/.test(srcset[position])) position += 1;
+    if (position >= length) break;
+    const urlStart = position;
+    while (position < length && !/\s/.test(srcset[position])) position += 1;
+    let url2 = srcset.slice(urlStart, position);
+    let descriptors = "";
+    if (url2.endsWith(",")) {
+      url2 = url2.replace(/,+$/, "");
+    } else {
+      const descriptorStart = position;
+      let inParens = false;
+      while (position < length) {
+        const char = srcset[position];
+        if (char === "(") inParens = true;
+        else if (char === ")") inParens = false;
+        else if (char === "," && !inParens) break;
+        position += 1;
+      }
+      descriptors = srcset.slice(descriptorStart, position).trim();
+      position += 1;
+    }
+    if (!url2) continue;
+    const parsed = parseSrcsetDescriptors(descriptors);
+    if (parsed) candidates.push({ url: url2, ...parsed });
+  }
+  return candidates;
+}
+function getSmallestSrc(srcset) {
+  const candidates = parseSrcset(srcset);
+  if (!candidates.length) return void 0;
+  const withWidth = candidates.filter((c) => c.width !== null);
+  const pool = withWidth.length ? withWidth : candidates;
+  const size = (c) => withWidth.length ? c.width : c.density;
+  return pool.reduce((smallest, c) => size(c) < size(smallest) ? c : smallest).url;
+}
 function getBestImageSource(element) {
-  const getLastSrc = (src) => src?.split(/,\s+/).pop()?.trim()?.split(/\s+/)[0];
-  const resolveUrl = (src) => src ? new URL(src, window.location.href).href : null;
-  const dataSrc = getLastSrc(element.getAttribute("data-src") || element.getAttribute("srcset"));
-  if (dataSrc) return resolveUrl(dataSrc);
-  const pictureSrcset = getCachedClosest(element, "picture")?.querySelector("source[srcset]")?.getAttribute("srcset");
-  const pictureSrc = getLastSrc(pictureSrcset);
-  if (pictureSrc) return resolveUrl(pictureSrc);
-  return resolveUrl(element.getAttribute("src"));
+  const resolveUrl = (src) => {
+    if (!src) return null;
+    try {
+      return new URL(src, window.location.href).href;
+    } catch {
+      return null;
+    }
+  };
+  const pictureSrcset = () => getCachedClosest(element, "picture")?.querySelector("source[srcset]")?.getAttribute("srcset");
+  return resolveUrl(element.getAttribute("data-src")?.trim()) || resolveUrl(getSmallestSrc(element.getAttribute("data-srcset"))) || resolveUrl(getSmallestSrc(element.getAttribute("srcset"))) || resolveUrl(getSmallestSrc(pictureSrcset())) || resolveUrl(element.getAttribute("src"));
 }
 const blobToBase64 = (blob) => new Promise((resolve, reject) => {
   const reader = new FileReader();
@@ -1430,6 +1539,7 @@ function generateElementPreview(issueObject, convertBase64 = false) {
   const handler = tagHandlers[issueElement.tagName];
   return handler ? handler(issueElement) : createCodeFallback();
 }
+const emojiRegex = /[\p{Emoji_Presentation}\p{Extended_Pictographic}\p{Emoji_Modifier}]|\u200D|\uFE0E|\uFE0F|\u20E3/gu;
 function isVisibleTextInAccName($el, accName, exclusions = [], linkIgnoreStrings) {
   let text = "";
   const excludeSelector = exclusions?.length ? exclusions.join(",") : "";
@@ -1449,10 +1559,9 @@ function isVisibleTextInAccName($el, accName, exclusions = [], linkIgnoreStrings
       text += stripIgnored(getText(node));
     }
   });
-  const emojiRegex = /[\p{Emoji_Presentation}\p{Extended_Pictographic}]/gu;
   let visibleText = text.replace(emojiRegex, "");
   visibleText = removeWhitespace(visibleText).toLowerCase();
-  if (/^[x×✕✖✗✘]$/i.test(visibleText)) {
+  if (/^[x×✕✖✗✘]$/.test(visibleText)) {
     return false;
   }
   return visibleText.length !== 0 && !accName.toLowerCase().includes(visibleText);
@@ -1592,6 +1701,7 @@ const Utils = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.definePropert
   __proto__: null,
   addPulse,
   blobToBase64,
+  containsWord,
   debounce,
   dismissDigest,
   documentLoadingCheck,
@@ -1607,6 +1717,7 @@ const Utils = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.definePropert
   getCachedStyle,
   getNextSibling,
   getText,
+  getWordSegmenter,
   hasAriaHiddenAncestor,
   initRovingTabindex,
   isAriaHidden,
@@ -1622,6 +1733,7 @@ const Utils = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.definePropert
   normalizeStopWord,
   normalizeString,
   offsetTop,
+  parseSrcset,
   prepareDismissal,
   remove,
   removeWhitespace,
@@ -6275,7 +6387,9 @@ async function updateResults() {
       item.id = id;
       item.cssPath = option.selectorPath ? generateSelectorPath(item.element) : "";
       item.htmlPath = item.element?.outerHTML.replace(/\s{2,}/g, " ").trim() || "";
-      if (item.dismiss) item.dismissDigest = await dismissDigest(item.dismiss);
+      if (item.dismiss) {
+        item.dismissDigest = await dismissDigest(option.pepper ?? "", item.dismiss);
+      }
       if (typeof item.content === "string") {
         const wrapper = document.createElement("div");
         wrapper.innerHTML = sanitizeHTML(item.content);
@@ -6398,16 +6512,12 @@ const containsAltTextStopWords = (alt) => {
     const match = altLowerCase.match(/\b\d{2,6}\s*x\s*\d{2,6}\b/);
     if (match) hit[0] = match[0];
   }
-  let wordsToCheck = [];
-  if (typeof Intl !== "undefined" && Intl.Segmenter) {
-    const segmenter = new Intl.Segmenter(void 0, { granularity: "word" });
-    const allWords = [...segmenter.segment(altLowerCase)].filter((segment) => segment.isWordLike).map((segment) => segment.segment);
-    wordsToCheck = [...allWords.slice(0, 2), ...allWords.slice(-1)];
-  } else {
-    const altOnlyLetters2 = removeWhitespace(altLowerCase.replace(/[^\p{L}\p{M}\s]/gu, ""));
-    const allWords = altOnlyLetters2.split(/\s+/).filter(Boolean);
-    wordsToCheck = [...allWords.slice(0, 2), ...allWords.slice(-1)];
-  }
+  const segmenter = getWordSegmenter(Lang._("LANG_CODE"));
+  const allWords = segmenter ? [...segmenter.segment(altLowerCase)].filter((segment) => segment.isWordLike).map((segment) => segment.segment) : (
+    // Fallback for browsers without Intl.Segmenter.
+    altOnlyLetters.split(/\s+/).filter(Boolean)
+  );
+  const wordsToCheck = [...allWords.slice(0, 2), ...allWords.slice(-1)];
   const altNoSpaces = altOnlyLetters.replace(/\s/g, "");
   for (const word of Constants.Global.susAltWords) {
     const foldedWord = foldForMatching(word);
@@ -6889,8 +6999,8 @@ function checkLinkText() {
           if (State.option.linkIgnoreSpan) {
             const spanEl = $el.querySelector(State.option.linkIgnoreSpan);
             if (spanEl) {
-              const spanText = stripAllSpecialCharacters(spanEl.textContent).trim().toLowerCase();
-              if (spanText === textContent) {
+              const spanText = normalizeStopWord(spanEl.textContent);
+              if (spanText && spanText === normalizeStopWord(rawTextContent)) {
                 triggerStopWord();
                 hasStopWordWarning = true;
               }
@@ -8296,7 +8406,7 @@ function checkDeveloper() {
         developer: true
       });
     }
-    if (accName.includes(Lang._("BTN"))) {
+    if (containsWord(accName, Lang._("BTN"))) {
       pushResult({
         test: "BTN_ROLE_IN_NAME",
         element: $el,

@@ -6,20 +6,32 @@
  * @returns {Promise<boolean>} True if the tooltip text matches, false otherwise.
  */
 export async function checkTooltip(page, elementId, expectedText) {
-  const tooltipMatches = await page.evaluate(({ id, text }) => {
-    const element = document.getElementById(id);
-    if (!element) return false;
-    const annotations = element.querySelectorAll('sa11y-annotation');
-    let foundMatch = false;
-    annotations.forEach((annotation) => {
-      const message = annotation?.getAttribute('data-content');
-      if (message && message.includes(text)) {
-        foundMatch = true;
-      }
-    });
-    return foundMatch;
-  }, { id: elementId, text: expectedText });
+  const tooltipMatches = await page.evaluate(
+    ({ id, text }) => {
+      const element = document.getElementById(id);
+      if (!element) return false;
+      const annotations = element.querySelectorAll('sa11y-annotation');
+      return Array.from(annotations).some((annotation) =>
+        annotation.getAttribute('data-content')?.includes(text),
+      );
+    },
+    { id: elementId, text: expectedText },
+  );
   return tooltipMatches;
+}
+
+/**
+ * Wait until Sa11y has finished its current check and painted the results.
+ *
+ * resetAll() sets window.sa11yCheckComplete to null when a check starts, and
+ * updateResults() sets it again once results, annotations and panel counts
+ * are in place. Call this after page.goto(), or after a click that re-runs the
+ * checks (main toggle, dismiss, restore, readability/developer toggles).
+ * After a click that does not re-run checks it simply resolves immediately.
+ * @param {page} page Page provides methods to interact with a single tab.
+ */
+export async function waitForCheckComplete(page) {
+  await page.waitForFunction(() => Boolean(window.sa11yCheckComplete));
 }
 
 /**

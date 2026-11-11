@@ -85,12 +85,9 @@ test.describe('Sa11y i18n tests', () => {
         }
       });
 
-      if (issues.length > 0) {
-        console.log(issues.join('\n'));
-        expect(issues).toHaveLength(0);
-      } else {
-        console.log(`✅ All ${languageFiles.length} language files have ${enKeys.length} keys. `);
-      }
+      // The custom message puts the missing keys in the failure report.
+      expect(issues, issues.join('\n')).toHaveLength(0);
+      console.info(`✅ All ${languageFiles.length} language files have ${enKeys.length} keys.`);
     }
     compareLanguageFilesWithEn(languages);
   });

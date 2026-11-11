@@ -647,6 +647,11 @@
           ignored)</span></a>
     </div>
 
+    <h3>Link text is only the linkIgnoreSpan, including its punctuation</h3>
+    <div id="error-link-only-ignore-span">
+      <a href="https://www.example.com?=onlyignorespan"><span class="sr-only-example">(Visually hidden note)</span></a>
+    </div>
+
     <h3>Non descript link uses string ignore prop</h3>
     <div id="error-non-descript-string-exclusions-prop">
       <a href="https://www.example.com?=learnmore">learn more (External link)</a>
@@ -2361,6 +2366,10 @@
         Delete <span aria-label="button"></span>
       </button>
     </div>
+    <p>Capitalized "Button".</p>
+    <div id="warning-button-with-button-text-3">
+      <button class="btn-primary">Submit Button</button>
+    </div>
 
     <h3>Button has accessible name</h3>
 
@@ -2442,6 +2451,11 @@
       <button type="button" aria-label="Close">
         X
       </button>
+    </div>
+
+    <h4>Button name contains "button" only inside another word</h4>
+    <div id="nothing-button-9">
+      <button type="button">Unbutton the coat</button>
     </div>
 
     <h2>SVG - Accessible names</h2>

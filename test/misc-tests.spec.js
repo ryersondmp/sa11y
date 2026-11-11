@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { checkTooltip, noAnnotation } from './unit-test-utils';
+import { checkTooltip, waitForCheckComplete } from './unit-test-utils';
 
 test.describe.configure({ mode: 'serial' });
 
@@ -18,325 +18,166 @@ test.describe('Sa11y miscellaneous tests', () => {
     await page.close();
   });
 
+  // Locators pierce Sa11y's open shadow roots, and expect(locator) retries
+  // until the assertion passes or times out, so no fixed sleeps are needed.
+  const panel = (selector) => page.locator(`sa11y-control-panel ${selector}`);
+
   test('Navigate to page with no errors and toggle Sa11y', async () => {
     // Navigate to unit tests page.
-    await page.goto('http://localhost:8080/test/pages/no-errors.html');
+    await page.goto('/test/pages/no-errors.html');
 
-    // Toggle main toggle.
-    await page.evaluate(async () => {
-      await new Promise((resolve) => {
-        setTimeout(() => {
-          const panel = document.querySelector('sa11y-control-panel').shadowRoot;
-          const toggle = panel.querySelector('#toggle');
-          toggle.click();
-          resolve();
-        }, 100);
-      });
-    });
+    // Toggle main toggle. click() waits for the toggle to become enabled.
+    await panel('#toggle').click();
+    await waitForCheckComplete(page);
   });
 
   test('Open status panel', async () => {
-    const panelOpen = await page.evaluate(() => {
-      const panel = document.querySelector('sa11y-control-panel').shadowRoot;
-      const item = panel.getElementById('panel');
-      return item.classList.contains('active');
-    });
-    expect(panelOpen).toBe(true);
+    await expect(panel('#panel')).toHaveClass(/active/);
   });
 
   test('Open Settings', async () => {
-    // Click on the outline toggle.
-    const settingsPanelActive = await page.evaluate(() => {
-      const panel = document.querySelector('sa11y-control-panel').shadowRoot;
-      const toggle = panel.getElementById('settings-toggle');
-      toggle.click();
-
-      return new Promise((resolve) => {
-        setTimeout(() => {
-          const settingsPanel = panel.getElementById('settings-panel');
-          const isActive = settingsPanel.classList.contains('active');
-          resolve(isActive);
-        }, 100);
-      });
-    });
-    expect(settingsPanelActive).toBe(true);
+    await panel('#settings-toggle').click();
+    await expect(panel('#settings-panel')).toHaveClass(/active/);
   });
 
   /* Toggle all toggleable buttons. Needed for other unit tests! */
   test('Toggle setting buttons', async () => {
-    const toggleSettings = await page.evaluate(async () => {
-      const panel = document.querySelector('sa11y-control-panel').shadowRoot;
-      const settings = [
-        'readability-toggle',
-        'theme-toggle',
-      ];
-
-      const isActivePromises = settings.map((setting) => {
-        const toggle = panel.getElementById(setting);
-        toggle.click();
-
-        return new Promise((resolve) => {
-          setTimeout(() => {
-            const isActive = toggle.getAttribute('aria-pressed') === 'true';
-            resolve(isActive);
-          }, 100);
-        });
-      });
-
-      return Promise.all(isActivePromises);
-    });
-
-    const allTogglesActive = toggleSettings.every((isActive) => isActive === true);
-    expect(allTogglesActive).toBeTruthy();
+    const settings = ['readability-toggle', 'theme-toggle'];
+    for (const setting of settings) {
+      const toggle = panel(`#${setting}`);
+      await toggle.click();
+      await expect(toggle, setting).toHaveAttribute('aria-pressed', 'true');
+    }
+    // The readability toggle re-runs all checks.
+    await waitForCheckComplete(page);
   });
 
   test('Open Page Outline', async () => {
-    // Click on the outline toggle.
-    const outlinePanelActive = await page.evaluate(() => {
-      const panel = document.querySelector('sa11y-control-panel').shadowRoot;
-      const toggle = panel.getElementById('outline-toggle');
-      toggle.click();
-
-      return new Promise((resolve) => {
-        setTimeout(() => {
-          const outlinePanel = panel.getElementById('outline-panel');
-          const isActive = outlinePanel.classList.contains('active');
-          resolve(isActive);
-        }, 100);
-      });
-    });
-    expect(outlinePanelActive).toBe(true);
+    await panel('#outline-toggle').click();
+    await expect(panel('#outline-panel')).toHaveClass(/active/);
   });
 
   test('No errors found', async () => {
-    const readability = await page.evaluate(() => {
-      const control = document.querySelector('sa11y-control-panel').shadowRoot;
-      const panel = control.getElementById('readability-info').textContent;
-      const textHas = panel.match(/enough content to calculate readability/g);
-      return textHas;
-    });
-    expect(readability).toBeTruthy();
-
-    const status = await page.evaluate(() => {
-      const control = document.querySelector('sa11y-control-panel').shadowRoot;
-      const panel = control.getElementById('status').textContent;
-      const textHas = panel.match(/No errors found/g);
-      return textHas;
-    });
-    expect(status).toBeTruthy();
+    await expect(panel('#readability-info')).toContainText(
+      'enough content to calculate readability',
+    );
+    await expect(panel('#status')).toContainText('No errors found');
   });
 
   /* Navigate to Warnings page. */
   test('Navigate to warnings page (Count: 4)', async () => {
-    await page.goto('http://localhost:8080/test/pages/warnings.html');
-    await page.waitForFunction(() => {
-      const host = document.querySelector('sa11y-control-panel');
-      if (!host || !host.shadowRoot) return false;
-      return !!host.shadowRoot.getElementById('warning-count');
-    });
-    const warningStatus = await page.evaluate(() => {
-      const host = document.querySelector('sa11y-control-panel');
-      const panel = host.shadowRoot;
-      const el = panel.getElementById('warning-count');
-      return el && el.textContent === '4';
-    });
-    expect(warningStatus).toBe(true);
+    await page.goto('/test/pages/warnings.html');
+    await waitForCheckComplete(page);
+    await expect(panel('#warning-count')).toHaveText('4');
   });
 
   test('Dismiss page issue (Count: 3)', async () => {
-    const warningStatus = await page.evaluate(async () => {
-      const panel = document.querySelector('sa11y-control-panel').shadowRoot;
-      const pageIssues = panel.getElementById('page-issues-list');
-      const dismiss = pageIssues.querySelector('button[data-sa11y-dismiss]');
-      dismiss.click();
-
-      return new Promise((resolve) => {
-        setTimeout(() => {
-          const status = panel.getElementById('warning-count').textContent === '3';
-          resolve(status);
-        }, 100);
-      });
-    });
-    expect(warningStatus).toBe(true);
+    await panel('#page-issues-list button[data-sa11y-dismiss]').first().click();
+    await expect(panel('#warning-count')).toHaveText('3');
   });
 
   test('Dismiss annotation (Count: 2)', async () => {
-    const warningStatus = await page.evaluate(async () => {
-      const panel = document.querySelector('sa11y-control-panel').shadowRoot;
-      const annotation = document.querySelector('sa11y-annotation').shadowRoot;
-      const button = annotation.querySelector('button');
-      button.click();
-
-      const tooltips = document.querySelector('sa11y-tooltips').shadowRoot;
-      const dismiss = tooltips.querySelector('button[data-sa11y-dismiss]');
-      dismiss.click();
-
-      return new Promise((resolve) => {
-        setTimeout(() => {
-          const status = panel.getElementById('warning-count').textContent === '2';
-          resolve(status);
-        }, 100);
-      });
-    });
-    expect(warningStatus).toBe(true);
+    // Synthetic clicks, as before: the first annotation on this page belongs to
+    // a hidden iframe, so a real (visibility-checked) click would never fire.
+    await page.locator('sa11y-annotation').first().locator('button').first().dispatchEvent('click');
+    await page.locator('sa11y-tooltips button[data-sa11y-dismiss]').first().dispatchEvent('click');
+    await expect(panel('#warning-count')).toHaveText('2');
   });
 
   test('Restore all dismissed (Count: 4)', async () => {
-    const warningStatus = await page.evaluate(async () => {
-      const panel = document.querySelector('sa11y-control-panel').shadowRoot;
-      const restore = panel.getElementById('dismiss-button');
-      restore.click();
-
-      return new Promise((resolve) => {
-        setTimeout(() => {
-          const status = panel.getElementById('warning-count').textContent === '4';
-          resolve(status);
-        }, 100);
-      });
-    });
-    expect(warningStatus).toBe(true);
+    await panel('#dismiss-button').click();
+    await expect(panel('#warning-count')).toHaveText('4');
   });
 
   test('Skip-to-issue toggle', async () => {
-    const status = await page.evaluate(async () => {
-      const panel = document.querySelector('sa11y-control-panel').shadowRoot;
-      const skip = panel.getElementById('skip-button');
-      skip.click();
-
-      return new Promise((resolve) => {
-        setTimeout(() => {
-          const alert = panel.getElementById('panel-alert-text').textContent.includes('Item is not visible');
-          resolve(alert);
-        }, 100);
-      });
-    });
-    expect(status).toBe(true);
+    await panel('#skip-button').click();
+    await expect(panel('#panel-alert-text')).toContainText('Item is not visible');
   });
 
   /* Navigate to Warnings page. */
   test('Navigate to page with no props configured', async () => {
-    await page.goto('http://localhost:8080/test/pages/no-props.html');
-    await page.waitForFunction(() => {
-      const host = document.querySelector('sa11y-control-panel');
-      if (!host || !host.shadowRoot) return false;
-      return !!host.shadowRoot.getElementById('notification-count');
-    });
-    const warningStatus = await page.evaluate(() => {
-      const host = document.querySelector('sa11y-control-panel');
-      const panel = host.shadowRoot;
-      const el = panel.getElementById('notification-count');
-      return el && el.textContent === '3';
-    });
-    expect(warningStatus).toBe(true);
+    await page.goto('/test/pages/no-props.html');
+    await waitForCheckComplete(page);
+    await expect(panel('#notification-count')).toHaveText('3');
   });
 
   test('Check for page issue on No Props page', async () => {
-    const status = await page.evaluate(async () => {
-      const panel = document.querySelector('sa11y-control-panel').shadowRoot;
-      return new Promise((resolve) => {
-        setTimeout(() => {
-          const issue = panel.getElementById('page-issues-list').textContent.includes('The language code for this element is not valid. To fix, replace the lang attribute with a valid language code.');
-          resolve(issue);
-        }, 100);
-      });
-    });
-    expect(status).toBe(true);
+    await expect(panel('#page-issues-list')).toContainText(
+      'The language code for this element is not valid. To fix, replace the lang attribute with a valid language code.',
+    );
   });
 
   test('Check that i18n page loaded with Spanish language pack. ', async () => {
-    await page.goto('http://localhost:8080/test/pages/i18n.html');
-    const status = await page.evaluate(() => {
-      const control = document.querySelector('sa11y-control-panel').shadowRoot;
-      const panel = control.getElementById('outline-toggle').textContent;
-      const textHas = panel.match(/Esquema/g);
-      return textHas;
-    });
-    expect(status).toBeTruthy();
-
-    const warningStatus = await page.evaluate(() => {
-      const host = document.querySelector('sa11y-control-panel');
-      const panel = host.shadowRoot;
-      const el = panel.getElementById('notification-count');
-      return el && el.textContent === '2';
-    });
-    expect(warningStatus).toBe(true);
+    await page.goto('/test/pages/i18n.html');
+    await waitForCheckComplete(page);
+    await expect(panel('#outline-toggle')).toContainText('Esquema');
+    await expect(panel('#notification-count')).toHaveText('2');
   });
 
   test('Spanish language file check for alt placeholder stopword', async () => {
     const issue = await checkTooltip(
-      page, 'error-image', 'Error Se encontró texto alternativo no descriptivo o de marcador de posición.',
+      page,
+      'error-image',
+      'Error Se encontró texto alternativo no descriptivo o de marcador de posición.',
     );
     expect(issue).toBe(true);
   });
 
   test('Spanish language file check for non-descript link text', async () => {
     const issue = await checkTooltip(
-      page, 'error-link-test', 'El texto del enlace puede no ser lo suficientemente descriptivo fuera de contexto: leer más',
+      page,
+      'error-link-test',
+      'El texto del enlace puede no ser lo suficientemente descriptivo fuera de contexto: leer más',
     );
     expect(issue).toBe(true);
   });
 
   test('Check that i18n (Cyrillic) page loaded Ukrainian language pack', async () => {
-    await page.goto('http://localhost:8080/test/pages/i18n-cyrillic.html');
-    const status = await page.evaluate(() => {
-      const control = document.querySelector('sa11y-control-panel').shadowRoot;
-      const panel = control.getElementById('outline-toggle').textContent;
-      const textHas = panel.match(/Структура/g);
-      return textHas;
-    });
-    expect(status).toBeTruthy();
-
-    const warningStatus = await page.evaluate(() => {
-      const host = document.querySelector('sa11y-control-panel');
-      const panel = host.shadowRoot;
-      const el = panel.getElementById('notification-count');
-      return el && el.textContent === '2';
-    });
-    expect(warningStatus).toBe(true);
+    await page.goto('/test/pages/i18n-cyrillic.html');
+    await waitForCheckComplete(page);
+    await expect(panel('#outline-toggle')).toContainText('Структура');
+    await expect(panel('#notification-count')).toHaveText('2');
 
     // Readability shouldn't appear at all.
-    const noReadability = await page.evaluate(() => {
-      const host = document.querySelector('sa11y-control-panel');
-      const panel = host.shadowRoot;
-      const el = panel.getElementById('readability-item');
-      return el === null;
-    });
-    expect(noReadability).toBe(true);
+    await expect(panel('#readability-item')).toHaveCount(0);
   });
 
   test('Ukrainian language file check for alt placeholder stopword', async () => {
     const issue = await checkTooltip(
-      page, 'error-image', 'Помилка Виявлено не описовий або заповнюючий текст заміщення. Замініть наступний текст заміщення чимось більш значущим.  АЛЬТ фото',
+      page,
+      'error-image',
+      'Помилка Виявлено не описовий або заповнюючий текст заміщення. Замініть наступний текст заміщення чимось більш значущим.  АЛЬТ фото',
     );
     expect(issue).toBe(true);
   });
 
   test('Ukrainian language file check for non-descript link text', async () => {
     const issue = await checkTooltip(
-      page, 'error-link-test', 'Помилка Текст посилання може бути недостатньо описовим без контексту: дізнатися більше  Порада! Використовуйте чіткий і унікальний текст посилання, що описує призначення посилання, зазвичай заголовок сторінки або документа.',
+      page,
+      'error-link-test',
+      'Помилка Текст посилання може бути недостатньо описовим без контексту: дізнатися більше  Порада! Використовуйте чіткий і унікальний текст посилання, що описує призначення посилання, зазвичай заголовок сторінки або документа.',
     );
     expect(issue).toBe(true);
   });
 
   test('Check that i18n (Multi) page loaded English UI with Ukrainian ruleset strings', async () => {
-    await page.goto('http://localhost:8080/test/pages/i18n-multi.html');
-    const status = await page.evaluate(() => {
-      const control = document.querySelector('sa11y-control-panel').shadowRoot;
-      const panel = control.getElementById('outline-toggle').textContent;
-      const textHas = panel.match(/Outline/g);
-      return textHas;
-    });
-    expect(status).toBeTruthy();
+    await page.goto('/test/pages/i18n-multi.html');
+    await waitForCheckComplete(page);
+    await expect(panel('#outline-toggle')).toContainText('Outline');
   });
 
   test('i18n (Multi) alt placeholder stopword. Mixed English and Ukrainian.', async () => {
     const issue = await checkTooltip(
-      page, 'error-image', 'Error Non-descript or placeholder alt text found. Replace the following alt text with something more meaningful.  ALT фото',
+      page,
+      'error-image',
+      'Error Non-descript or placeholder alt text found. Replace the following alt text with something more meaningful.  ALT фото',
     );
     expect(issue).toBe(true);
 
     const issue2 = await checkTooltip(
-      page, 'error-image-2', 'Error Non-descript or placeholder alt text found. Replace the following alt text with something more meaningful.  ALT photo',
+      page,
+      'error-image-2',
+      'Error Non-descript or placeholder alt text found. Replace the following alt text with something more meaningful.  ALT photo',
     );
     expect(issue2).toBe(true);
   });
