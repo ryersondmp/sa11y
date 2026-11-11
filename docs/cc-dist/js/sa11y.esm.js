@@ -882,20 +882,33 @@ function foldForMatching(string) {
 function normalizeStopWord(string) {
   return foldForMatching(string).replace(/[^\p{L}\p{M}\p{N}\s]/gu, "").replace(/\s+/g, " ").trim();
 }
-let wordSegmenter;
-function containsWord(text, word) {
+const wordSegmenters = /* @__PURE__ */ new Map();
+function getWordSegmenter(locale) {
+  if (typeof Intl === "undefined" || typeof Intl.Segmenter !== "function") return null;
+  const key = typeof locale === "string" ? locale : "";
+  let segmenter = wordSegmenters.get(key);
+  if (!segmenter) {
+    try {
+      segmenter = new Intl.Segmenter(key || void 0, { granularity: "word" });
+    } catch {
+      segmenter = new Intl.Segmenter(void 0, { granularity: "word" });
+    }
+    wordSegmenters.set(key, segmenter);
+  }
+  return segmenter;
+}
+function containsWord(text, word, segmenter = getWordSegmenter(Lang._("LANG_CODE"))) {
   const haystack = foldForMatching(text);
   const needle = foldForMatching(word);
   if (!needle) return false;
-  if (typeof Intl !== "undefined" && Intl.Segmenter) {
-    wordSegmenter ??= new Intl.Segmenter(void 0, { granularity: "word" });
-    for (const { segment, isWordLike } of wordSegmenter.segment(haystack)) {
+  if (segmenter) {
+    for (const { segment, isWordLike } of segmenter.segment(haystack)) {
       if (isWordLike && segment === needle) return true;
     }
     return false;
   }
   const escaped = needle.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-  return new RegExp(`(?<![\\p{L}\\p{M}\\p{N}])${escaped}(?![\\p{L}\\p{M}\\p{N}])`, "u").test(
+  return new RegExp(`(?:^|[^\\p{L}\\p{M}\\p{N}])${escaped}(?![\\p{L}\\p{M}\\p{N}])`, "u").test(
     haystack
   );
 }
@@ -908,7 +921,7 @@ const ctrlCharactersRegex = (
 );
 const urlSchemeRegex = /^.+?(:|&colon;)/i;
 const whitespaceEscapeCharsRegex = /(\\|%5[cC])((%(6[eE]|72|74))|[nrt])/g;
-const base64ImageRegex = /^data:image\/(?:png|gif|jpe?g|webp|avif|bmp|x-icon);base64,/i;
+const base64ImageRegex = /^data:image\/(?:png|gif|jpe?g|webp|avif|bmp|x-icon);base64,[a-z0-9+/=\t\n\f\r ]*$/i;
 const relativeFirstCharacters = [".", "/"];
 const BLANK_URL = "about:blank";
 function isRelativeUrlWithoutProtocol(url2) {
@@ -1376,6 +1389,35 @@ function isScrollable(scrollArea, container, ariaLabel) {
     }
   }, 50);
 }
+const srcsetIntegerRegex = /^\d+$/;
+const srcsetFloatRegex = /^-?(?:\d+(?:\.\d+)?|\.\d+)(?:[eE][-+]?\d+)?$/;
+function parseSrcsetDescriptors(descriptors) {
+  let width = null;
+  let density = null;
+  let height = null;
+  for (const descriptor of descriptors.split(/\s+/)) {
+    if (!descriptor) continue;
+    const value = descriptor.slice(0, -1);
+    const type = descriptor.slice(-1);
+    if (type === "w" && srcsetIntegerRegex.test(value)) {
+      if (width !== null || density !== null) return null;
+      width = Number(value);
+      if (width === 0) return null;
+    } else if (type === "x" && srcsetFloatRegex.test(value)) {
+      if (width !== null || density !== null || height !== null) return null;
+      density = Number(value);
+      if (!Number.isFinite(density) || density <= 0) return null;
+    } else if (type === "h" && srcsetIntegerRegex.test(value)) {
+      if (height !== null || density !== null) return null;
+      height = Number(value);
+      if (height === 0) return null;
+    } else {
+      return null;
+    }
+  }
+  if (height !== null && width === null) return null;
+  return { width, density: density ?? 1 };
+}
 function parseSrcset(srcset) {
   if (typeof srcset !== "string") return [];
   const candidates = [];
@@ -1404,16 +1446,8 @@ function parseSrcset(srcset) {
       position += 1;
     }
     if (!url2) continue;
-    let width = null;
-    let density = 1;
-    for (const descriptor of descriptors.split(/\s+/)) {
-      const match = /^(\d+(?:\.\d+)?)([wx])$/i.exec(descriptor);
-      if (!match) continue;
-      const value = Number.parseFloat(match[1]);
-      if (match[2].toLowerCase() === "w") width = value;
-      else density = value;
-    }
-    candidates.push({ url: url2, width, density });
+    const parsed = parseSrcsetDescriptors(descriptors);
+    if (parsed) candidates.push({ url: url2, ...parsed });
   }
   return candidates;
 }
@@ -1426,15 +1460,16 @@ function getSmallestSrc(srcset) {
   return pool.reduce((smallest, c) => size(c) < size(smallest) ? c : smallest).url;
 }
 function getBestImageSource(element) {
-  const resolveUrl = (src) => src ? new URL(src, window.location.href).href : null;
-  const dataSrc = getSmallestSrc(
-    element.getAttribute("data-src") || element.getAttribute("srcset")
-  );
-  if (dataSrc) return resolveUrl(dataSrc);
-  const pictureSrcset = getCachedClosest(element, "picture")?.querySelector("source[srcset]")?.getAttribute("srcset");
-  const pictureSrc = getSmallestSrc(pictureSrcset);
-  if (pictureSrc) return resolveUrl(pictureSrc);
-  return resolveUrl(element.getAttribute("src"));
+  const resolveUrl = (src) => {
+    if (!src) return null;
+    try {
+      return new URL(src, window.location.href).href;
+    } catch {
+      return null;
+    }
+  };
+  const pictureSrcset = () => getCachedClosest(element, "picture")?.querySelector("source[srcset]")?.getAttribute("srcset");
+  return resolveUrl(element.getAttribute("data-src")?.trim()) || resolveUrl(getSmallestSrc(element.getAttribute("data-srcset"))) || resolveUrl(getSmallestSrc(element.getAttribute("srcset"))) || resolveUrl(getSmallestSrc(pictureSrcset())) || resolveUrl(element.getAttribute("src"));
 }
 const blobToBase64 = (blob) => new Promise((resolve, reject) => {
   const reader = new FileReader();
@@ -1682,6 +1717,7 @@ const Utils = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.definePropert
   getCachedStyle,
   getNextSibling,
   getText,
+  getWordSegmenter,
   hasAriaHiddenAncestor,
   initRovingTabindex,
   isAriaHidden,
@@ -6476,16 +6512,12 @@ const containsAltTextStopWords = (alt) => {
     const match = altLowerCase.match(/\b\d{2,6}\s*x\s*\d{2,6}\b/);
     if (match) hit[0] = match[0];
   }
-  let wordsToCheck = [];
-  if (typeof Intl !== "undefined" && Intl.Segmenter) {
-    const segmenter = new Intl.Segmenter(void 0, { granularity: "word" });
-    const allWords = [...segmenter.segment(altLowerCase)].filter((segment) => segment.isWordLike).map((segment) => segment.segment);
-    wordsToCheck = [...allWords.slice(0, 2), ...allWords.slice(-1)];
-  } else {
-    const altOnlyLetters2 = removeWhitespace(altLowerCase.replace(/[^\p{L}\p{M}\s]/gu, ""));
-    const allWords = altOnlyLetters2.split(/\s+/).filter(Boolean);
-    wordsToCheck = [...allWords.slice(0, 2), ...allWords.slice(-1)];
-  }
+  const segmenter = getWordSegmenter(Lang._("LANG_CODE"));
+  const allWords = segmenter ? [...segmenter.segment(altLowerCase)].filter((segment) => segment.isWordLike).map((segment) => segment.segment) : (
+    // Fallback for browsers without Intl.Segmenter.
+    altOnlyLetters.split(/\s+/).filter(Boolean)
+  );
+  const wordsToCheck = [...allWords.slice(0, 2), ...allWords.slice(-1)];
   const altNoSpaces = altOnlyLetters.replace(/\s/g, "");
   for (const word of Constants.Global.susAltWords) {
     const foldedWord = foldForMatching(word);
@@ -6967,8 +6999,8 @@ function checkLinkText() {
           if (State.option.linkIgnoreSpan) {
             const spanEl = $el.querySelector(State.option.linkIgnoreSpan);
             if (spanEl) {
-              const spanText = stripAllSpecialCharacters(spanEl.textContent).toLowerCase();
-              if (spanText && spanText === stripAllSpecialCharacters(textContent)) {
+              const spanText = normalizeStopWord(spanEl.textContent);
+              if (spanText && spanText === normalizeStopWord(rawTextContent)) {
                 triggerStopWord();
                 hasStopWordWarning = true;
               }
