@@ -24,7 +24,7 @@ test.describe('Sa11y miscellaneous tests', () => {
 
   test('Navigate to page with no errors and toggle Sa11y', async () => {
     // Navigate to unit tests page.
-    await page.goto('http://localhost:8080/test/pages/no-errors.html');
+    await page.goto('/test/pages/no-errors.html');
 
     // Toggle main toggle. click() waits for the toggle to become enabled.
     await panel('#toggle').click();
@@ -67,7 +67,7 @@ test.describe('Sa11y miscellaneous tests', () => {
 
   /* Navigate to Warnings page. */
   test('Navigate to warnings page (Count: 4)', async () => {
-    await page.goto('http://localhost:8080/test/pages/warnings.html');
+    await page.goto('/test/pages/warnings.html');
     await waitForCheckComplete(page);
     await expect(panel('#warning-count')).toHaveText('4');
   });
@@ -97,7 +97,7 @@ test.describe('Sa11y miscellaneous tests', () => {
 
   /* Navigate to Warnings page. */
   test('Navigate to page with no props configured', async () => {
-    await page.goto('http://localhost:8080/test/pages/no-props.html');
+    await page.goto('/test/pages/no-props.html');
     await waitForCheckComplete(page);
     await expect(panel('#notification-count')).toHaveText('3');
   });
@@ -109,7 +109,7 @@ test.describe('Sa11y miscellaneous tests', () => {
   });
 
   test('Check that i18n page loaded with Spanish language pack. ', async () => {
-    await page.goto('http://localhost:8080/test/pages/i18n.html');
+    await page.goto('/test/pages/i18n.html');
     await waitForCheckComplete(page);
     await expect(panel('#outline-toggle')).toContainText('Esquema');
     await expect(panel('#notification-count')).toHaveText('2');
@@ -130,7 +130,7 @@ test.describe('Sa11y miscellaneous tests', () => {
   });
 
   test('Check that i18n (Cyrillic) page loaded Ukrainian language pack', async () => {
-    await page.goto('http://localhost:8080/test/pages/i18n-cyrillic.html');
+    await page.goto('/test/pages/i18n-cyrillic.html');
     await waitForCheckComplete(page);
     await expect(panel('#outline-toggle')).toContainText('Структура');
     await expect(panel('#notification-count')).toHaveText('2');
@@ -154,7 +154,7 @@ test.describe('Sa11y miscellaneous tests', () => {
   });
 
   test('Check that i18n (Multi) page loaded English UI with Ukrainian ruleset strings', async () => {
-    await page.goto('http://localhost:8080/test/pages/i18n-multi.html');
+    await page.goto('/test/pages/i18n-multi.html');
     await waitForCheckComplete(page);
     await expect(panel('#outline-toggle')).toContainText('Outline');
   });

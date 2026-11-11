@@ -5,7 +5,7 @@ let page;
 test.describe('Sa11y utils', () => {
   test.beforeAll(async ({ browser }) => {
     page = await browser.newPage();
-    await page.goto('http://localhost:8080/test/pages/no-props.html');
+    await page.goto('/test/pages/no-props.html');
   });
 
   test.afterAll(async () => {
