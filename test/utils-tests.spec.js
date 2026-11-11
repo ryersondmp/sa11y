@@ -203,22 +203,42 @@ test.describe('Sa11y utils', () => {
       expect(mismatches).toEqual([]);
     });
 
-    test('without Intl.Segmenter, still matches whole words in spaced scripts', async () => {
+    test('getWordSegmenter caches per locale and survives invalid language tags', async () => {
       const result = await withUtils((u) => {
-        const { Segmenter } = Intl;
-        Intl.Segmenter = undefined;
-        try {
-          return {
-            spaced: u.containsWord('Submit Button', 'button'),
-            arabic: u.containsWord('زر البحث', 'زر'),
-            inWord: u.containsWord('Unbutton the coat', 'button'),
-            arabicInWord: u.containsWord('السماء الزرقاء', 'زر'),
-          };
-        } finally {
-          Intl.Segmenter = Segmenter;
-        }
+        const ar = u.getWordSegmenter('ar');
+        return {
+          cached: ar === u.getWordSegmenter('ar'),
+          perLocale: ar !== u.getWordSegmenter('ja'),
+          locale: ar.resolvedOptions().locale,
+          // Lang._() returns the key itself when strings are not loaded.
+          invalid: u.getWordSegmenter('LANG_CODE') instanceof Intl.Segmenter,
+          missing: u.getWordSegmenter() instanceof Intl.Segmenter,
+        };
       });
-      expect(result).toEqual({ spaced: true, arabic: true, inWord: false, arabicInWord: false });
+      expect(result).toEqual({ cached: true, perLocale: true, locale: 'ar', invalid: true, missing: true });
+    });
+
+    // The fallback is reached by passing a null segmenter, so the built-in Intl is never mutated.
+    test('regex fallback (no Intl.Segmenter) matches whole words in spaced scripts', async () => {
+      const mismatches = await withUtils((u) => {
+        // [text, word, expected]
+        const cases = [
+          ['Submit Button', 'button', true],
+          ['button', 'button', true],
+          ['(button)', 'button', true],
+          ['Unbutton the coat', 'button', false],
+          ['buttons', 'button', false],
+          ['button2', 'button', false],
+          ['زر البحث', 'زر', true],
+          ['البحث زر', 'زر', true],
+          ['السماء الزرقاء', 'زر', false],
+          ['a.b c', 'a.b', true], // Regex metacharacters in the word are escaped.
+          ['axb c', 'a.b', false],
+          ['button', '', false],
+        ];
+        return cases.filter(([text, word, expected]) => u.containsWord(text, word, null) !== expected);
+      });
+      expect(mismatches).toEqual([]);
     });
   });
 
@@ -362,6 +382,66 @@ test.describe('Sa11y utils', () => {
         outOfRange: 'https://example.com/%EF%BF%BD',
       });
     });
+
+    test('data: URI security cases', async () => {
+      const mismatches = await withUtils((u) => {
+        const png = 'data:image/png;base64,iVBORw0KGgo=';
+        // [input, expected]
+        const cases = [
+          // Allowed: raster MIME types, any casing, surrounding whitespace, wrapped base64.
+          [png, png],
+          [`  ${png}\n`, png],
+          ['DATA:IMAGE/PNG;BASE64,iVBORw0KGgo=', 'DATA:IMAGE/PNG;BASE64,iVBORw0KGgo='],
+          ['data:image/jpg;base64,/9j/4AAQ', 'data:image/jpg;base64,/9j/4AAQ'],
+          ['data:image/png;base64,iVBO\nRw0K\nGgo=', 'data:image/png;base64,iVBO\nRw0K\nGgo='],
+          // Rejected: payload is not base64 (would otherwise be returned verbatim).
+          ['data:image/png;base64,AAAA"><script>alert(1)</script>', 'about:blank'],
+          ['data:image/png;base64,AAAA%22%3E%3Cscript%3E', 'about:blank'],
+          // Rejected: malformed or non-allowlisted data URIs.
+          ['data:image/png,iVBORw0KGgo=', 'about:blank'],
+          ['data:image/png;charset=utf-8;base64,iVBORw0KGgo=', 'about:blank'],
+          ['data: image/png;base64,iVBORw0KGgo=', 'about:blank'],
+          ['data:image/pngx;base64,iVBORw0KGgo=', 'about:blank'],
+          ['data:image/svg+xml;base64,PHN2Zz48L3N2Zz4=', 'about:blank'],
+          ['data:image/svg+xml,<svg onload=alert(1)>', 'about:blank'],
+          ['data:image/svg+xml;utf8,%3Csvg%20onload%3Dalert(1)%3E', 'about:blank'],
+          ['data:text/html,<script>alert(1)</script>', 'about:blank'],
+          ['data:text/html;base64,PHNjcmlwdD5hbGVydCgxKTwvc2NyaXB0Pg==', 'about:blank'],
+          // Rejected: obfuscated "data:" schemes.
+          ['%64ata:text/html,<script>alert(1)</script>', 'about:blank'],
+          ['&#100;ata:text/html,<script>alert(1)</script>', 'about:blank'],
+          ['&#x64;ata:text/html,x', 'about:blank'],
+          ['da\tta:text/html,x', 'about:blank'],
+          ['data&colon;text/html,x', 'about:blank'],
+          ['\u0000data:text/html,x', 'about:blank'],
+          ['\u200Bdata:text/html,x', 'about:blank'],
+        ];
+        return cases
+          .map(([input, expected]) => [input, u.sanitizeURL(input), expected])
+          .filter(([, actual, expected]) => actual !== expected);
+      });
+      expect(mismatches).toEqual([]);
+    });
+
+    test('rejects obfuscated javascript: and vbscript: schemes', async () => {
+      const mismatches = await withUtils((u) => {
+        const inputs = [
+          'JaVaScRiPt:alert(1)',
+          ' javascript:alert(1)',
+          'java\nscript:alert(1)',
+          'java&Tab;script:alert(1)',
+          'java&NewLine;script:alert(1)',
+          'java%0Ascript:alert(1)',
+          'java%5Ctscript:alert(1)',
+          '&#0000106;avascript:alert(1)',
+          '&#X6A;avascript:alert(1)',
+          '%26%23x6A%3Bavascript:alert(1)', // URL-encoded character reference.
+          'vbscript:msgbox(1)',
+        ];
+        return inputs.filter((input) => u.sanitizeURL(input) !== 'about:blank');
+      });
+      expect(mismatches).toEqual([]);
+    });
   });
 
   // Pins current output: it is also a dismiss key that Editoria11y syncs, so a change must be deliberate.
@@ -431,6 +511,56 @@ test.describe('Sa11y utils', () => {
       );
       expect(await pick({ src: 'fallback.jpg' })).toBe('/test/pages/fallback.jpg');
       expect(await pick({ src: 'fallback.jpg', srcset: ' , ' })).toBe('/test/pages/fallback.jpg');
+    });
+
+    test('drops srcset candidates with invalid descriptors, as browsers do', async () => {
+      // Each invalid candidate is listed with the smallest size, so picking it would be visible.
+      const valid = 'ok.jpg 500w';
+      const invalid = [
+        'zero.jpg 0w',
+        'fraction.jpg 1.5w',
+        'mixed.jpg 100w 2x',
+        'duplicate.jpg 100w 200w',
+        'unknown.jpg 100w 50q',
+        'uppercase.jpg 100W',
+        'negative.jpg -100w',
+        'heightOnly.jpg 100h',
+        'zeroHeight.jpg 100w 0h',
+      ];
+      for (const candidate of invalid) {
+        expect(await pick({ srcset: `${candidate}, ${valid}` }), candidate).toBe('/test/pages/ok.jpg');
+      }
+      // Density: zero, negative, duplicate and density with height are invalid.
+      for (const candidate of ['zero.jpg 0x', 'neg.jpg -1x', 'dup.jpg 0.5x 0.5x', 'h.jpg 0.5x 10h']) {
+        expect(await pick({ srcset: `${candidate}, ok.jpg 2x` }), candidate).toBe('/test/pages/ok.jpg');
+      }
+      // Valid forms: width with height, float densities with exponent or leading dot.
+      expect(await pick({ srcset: 'a.jpg 600w 400h, b.jpg 300w 200h' })).toBe('/test/pages/b.jpg');
+      expect(await pick({ srcset: 'a.jpg 2x, b.jpg .5x' })).toBe('/test/pages/b.jpg');
+      expect(await pick({ srcset: 'a.jpg 2x, b.jpg 5e-1x' })).toBe('/test/pages/b.jpg');
+      // Every candidate invalid: fall back to src.
+      expect(await pick({ src: 'fallback.jpg', srcset: 'a.jpg 0w, b.jpg 1x 1x' })).toBe(
+        '/test/pages/fallback.jpg',
+      );
+    });
+
+    test('treats data-src as a single URL, not a srcset', async () => {
+      // A srcset parser would split this at the space and return "a".
+      expect(await pick({ 'data-src': 'a b.jpg', srcset: 'c.jpg 1x' })).toBe('/test/pages/a%20b.jpg');
+      expect(await pick({ 'data-src': '  a.jpg  ' })).toBe('/test/pages/a.jpg');
+      // data-srcset (lazy loading) wins over the placeholder srcset and src.
+      expect(
+        await pick({ 'data-srcset': 'big.jpg 800w, small.jpg 200w', srcset: 'ph.gif 1x', src: 'ph.gif' }),
+      ).toBe('/test/pages/small.jpg');
+      expect(await pick({ 'data-src': 'lazy.jpg', 'data-srcset': 'small.jpg 200w' })).toBe(
+        '/test/pages/lazy.jpg',
+      );
+      // Empty data-src falls through to srcset.
+      expect(await pick({ 'data-src': '  ', srcset: 'c.jpg 1x' })).toBe('/test/pages/c.jpg');
+      // An unparseable URL falls through instead of throwing.
+      expect(await pick({ 'data-src': 'http://[bad', src: 'fallback.jpg' })).toBe(
+        '/test/pages/fallback.jpg',
+      );
     });
   });
 });

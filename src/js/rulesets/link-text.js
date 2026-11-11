@@ -219,8 +219,8 @@ export default function checkLinkText() {
             if (spanEl) {
               // Normalize both sides the same way; textContent keeps punctuation such as the
               // parentheses in "(opens in new window)", so a stripped span text never matched it.
-              const spanText = Utils.stripAllSpecialCharacters(spanEl.textContent).toLowerCase();
-              if (spanText && spanText === Utils.stripAllSpecialCharacters(textContent)) {
+              const spanText = Utils.normalizeStopWord(spanEl.textContent);
+              if (spanText && spanText === Utils.normalizeStopWord(rawTextContent)) {
                 triggerStopWord();
                 hasStopWordWarning = true;
               }

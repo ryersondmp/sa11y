@@ -46,21 +46,16 @@ const containsAltTextStopWords = (alt) => {
   }
 
   // 3) Suspicious alt words checking the first two and the last word.
-  let wordsToCheck = [];
-  // Check if the modern Segmenter API is supported in this environment.
-  if (typeof Intl !== 'undefined' && Intl.Segmenter) {
-    const segmenter = new Intl.Segmenter(undefined, { granularity: 'word' });
-    const allWords = [...segmenter.segment(altLowerCase)]
-      .filter((segment) => segment.isWordLike)
-      .map((segment) => segment.segment);
-    // We want to check the first two words, and the very last word in the string.
-    wordsToCheck = [...allWords.slice(0, 2), ...allWords.slice(-1)];
-  } else {
-    // Fallback for older browsers that do not support Segmenter API.
-    const altOnlyLetters = Utils.removeWhitespace(altLowerCase.replace(/[^\p{L}\p{M}\s]/gu, ''));
-    const allWords = altOnlyLetters.split(/\s+/).filter(Boolean);
-    wordsToCheck = [...allWords.slice(0, 2), ...allWords.slice(-1)];
-  }
+  // Segmented in the ruleset language, which the stop word lists are written in.
+  const segmenter = Utils.getWordSegmenter(Lang._('LANG_CODE'));
+  const allWords = segmenter
+    ? [...segmenter.segment(altLowerCase)]
+        .filter((segment) => segment.isWordLike)
+        .map((segment) => segment.segment)
+    : // Fallback for browsers without Intl.Segmenter.
+      altOnlyLetters.split(/\s+/).filter(Boolean);
+  // We want to check the first two words, and the very last word in the string.
+  const wordsToCheck = [...allWords.slice(0, 2), ...allWords.slice(-1)];
   // Chinese and Japanese have no spaces, and Intl.Segmenter may split a stop word such as
   // 缩略图 or アイコン into smaller words. For those, also check the start and end of the alt.
   const altNoSpaces = altOnlyLetters.replace(/\s/g, '');

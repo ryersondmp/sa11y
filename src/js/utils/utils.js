@@ -1,4 +1,5 @@
 import find from './find';
+import Lang from './lang';
 
 /**
  * Checks if the document has finished loading, and if so, immediately calls the provided callback function. Otherwise, waits for the 'load' event to fire and then calls the callback function.
@@ -215,29 +216,54 @@ export function normalizeStopWord(string) {
     .trim();
 }
 
-let wordSegmenter;
+// One word segmenter per locale; creating one is relatively expensive.
+const wordSegmenters = new Map();
+
+/**
+ * Returns a cached word Intl.Segmenter for a locale, or null where the API is unavailable.
+ * Pass the ruleset language (Lang._('LANG_CODE')), the language of the word lists being
+ * matched, so results do not depend on the visitor's browser locale. An invalid or missing tag
+ * (e.g. the untranslated key "LANG_CODE") falls back to the browser default instead of throwing.
+ * @param {string} [locale] - BCP 47 language tag.
+ * @returns {Intl.Segmenter|null}
+ */
+export function getWordSegmenter(locale) {
+  if (typeof Intl === 'undefined' || typeof Intl.Segmenter !== 'function') return null;
+  const key = typeof locale === 'string' ? locale : '';
+  let segmenter = wordSegmenters.get(key);
+  if (!segmenter) {
+    try {
+      segmenter = new Intl.Segmenter(key || undefined, { granularity: 'word' });
+    } catch {
+      segmenter = new Intl.Segmenter(undefined, { granularity: 'word' });
+    }
+    wordSegmenters.set(key, segmenter);
+  }
+  return segmenter;
+}
 
 /**
  * Intl.Segmenter splits languages written without spaces, such as Chinese and Japanese.
  * The fallback only requires that no letter, mark or digit touches the word on either
- * side, so in those languages it misses rather than over-matches.
+ * side, so in those languages it misses rather than over-matches. The fallback avoids
+ * lookbehind (Safari < 16.4) so it also works in browsers that predate Intl.Segmenter.
  * @param {string} text - The text to search.
  * @param {string} word - A single word, e.g. the localized "button".
+ * @param {Intl.Segmenter|null} [segmenter] - Word segmenter to use; null forces the fallback.
  * @returns {boolean} True if the word appears on its own.
  */
-export function containsWord(text, word) {
+export function containsWord(text, word, segmenter = getWordSegmenter(Lang._('LANG_CODE'))) {
   const haystack = foldForMatching(text);
   const needle = foldForMatching(word);
   if (!needle) return false;
-  if (typeof Intl !== 'undefined' && Intl.Segmenter) {
-    wordSegmenter ??= new Intl.Segmenter(undefined, { granularity: 'word' });
-    for (const { segment, isWordLike } of wordSegmenter.segment(haystack)) {
+  if (segmenter) {
+    for (const { segment, isWordLike } of segmenter.segment(haystack)) {
       if (isWordLike && segment === needle) return true;
     }
     return false;
   }
   const escaped = needle.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  return new RegExp(`(?<![\\p{L}\\p{M}\\p{N}])${escaped}(?![\\p{L}\\p{M}\\p{N}])`, 'u').test(
+  return new RegExp(`(?:^|[^\\p{L}\\p{M}\\p{N}])${escaped}(?![\\p{L}\\p{M}\\p{N}])`, 'u').test(
     haystack,
   );
 }
@@ -252,7 +278,7 @@ export function containsWord(text, word) {
 // `i` is kept as a safeguard even though the scheme is lowercased before this test.
 const invalidProtocolRegex = /^\W*(javascript|data|vbscript)/i;
 // Numeric character references, decimal or hex, with or without the closing semicolon
-// (browsers decode both forms inside attribute values).
+// (the HTML parser decodes both forms inside attribute values).
 const htmlEntitiesRegex = /&#(?:x([0-9a-f]+)|(\d+));?/gi;
 const htmlCtrlEntityRegex = /&(newline|tab);/gi;
 const ctrlCharactersRegex =
@@ -261,8 +287,12 @@ const ctrlCharactersRegex =
 // Lazy, so the scheme ends at the FIRST colon: "https://host:8080/a:b" yields "https:".
 const urlSchemeRegex = /^.+?(:|&colon;)/i;
 const whitespaceEscapeCharsRegex = /(\\|%5[cC])((%(6[eE]|72|74))|[nrt])/g;
-// Base64 image data URIs that may skip sanitizing. SVG is excluded because it can carry script.
-const base64ImageRegex = /^data:image\/(?:png|gif|jpe?g|webp|avif|bmp|x-icon);base64,/i;
+// Base64 raster image data URIs that may skip sanitizing. SVG is excluded because it can carry
+// script. This is a MIME allowlist plus a check that the payload contains only base64
+// characters (browsers ignore ASCII whitespace in it); it does not prove the bytes are a valid
+// image. Anything else falls through to the checks in sanitizeURL and is rejected as data:.
+const base64ImageRegex =
+  /^data:image\/(?:png|gif|jpe?g|webp|avif|bmp|x-icon);base64,[a-z0-9+/=\t\n\f\r ]*$/i;
 const relativeFirstCharacters = ['.', '/'];
 const BLANK_URL = 'about:blank';
 
@@ -271,9 +301,11 @@ function isRelativeUrlWithoutProtocol(url) {
 }
 
 /**
- * Decodes one numeric character reference the way browsers do: out-of-range values, surrogates
- * and NUL become U+FFFD instead of throwing (String.fromCodePoint) or silently wrapping
- * (String.fromCharCode).
+ * Decodes one numeric character reference. Follows the HTML spec's handling of invalid values
+ * (out-of-range values, surrogates and NUL become U+FFFD) instead of throwing
+ * (String.fromCodePoint) or silently wrapping (String.fromCharCode). It is not a full
+ * implementation: the spec's windows-1252 remapping of 0x80–0x9F is skipped, as those C1
+ * controls are stripped by ctrlCharactersRegex anyway.
  * @param {string|undefined} hex - Hex digits, if the reference was &#x...;
  * @param {string|undefined} dec - Decimal digits, if the reference was &#...;
  * @returns {string} The decoded character.
@@ -969,11 +1001,53 @@ export function isScrollable(scrollArea, container, ariaLabel) {
   }, 50);
 }
 
+// Spec "valid non-negative integer" and "valid floating-point number" (descriptor values).
+const srcsetIntegerRegex = /^\d+$/;
+const srcsetFloatRegex = /^-?(?:\d+(?:\.\d+)?|\.\d+)(?:[eE][-+]?\d+)?$/;
+
 /**
- * Parses a srcset (or a single URL, e.g. data-src) into candidates, following the HTML spec's
- * tokenizing rules: a URL is a run of non-whitespace characters, so commas INSIDE a URL (as in
- * CDN transforms like "w_300,h_200") are kept; trailing commas end the candidate; otherwise the
- * descriptors run to the next comma that is not inside parentheses.
+ * Parses one candidate's descriptors following the HTML spec: at most one of "w" or "x", an
+ * optional "h" only alongside "w", no duplicates, no unknown descriptors, and no zero widths or
+ * heights. Any error drops the whole candidate, as browsers do. One deliberate deviation: the
+ * spec's parser accepts "0x" (only authoring rules forbid it); it is rejected here so that a
+ * zero density is never picked as the smallest candidate.
+ * @param {string} descriptors - Whitespace-separated descriptors, already trimmed.
+ * @returns {{width: number|null, density: number}|null} Null if the candidate is invalid.
+ */
+function parseSrcsetDescriptors(descriptors) {
+  let width = null;
+  let density = null;
+  let height = null;
+  for (const descriptor of descriptors.split(/\s+/)) {
+    if (!descriptor) continue;
+    const value = descriptor.slice(0, -1);
+    const type = descriptor.slice(-1);
+    if (type === 'w' && srcsetIntegerRegex.test(value)) {
+      if (width !== null || density !== null) return null;
+      width = Number(value);
+      if (width === 0) return null;
+    } else if (type === 'x' && srcsetFloatRegex.test(value)) {
+      if (width !== null || density !== null || height !== null) return null;
+      density = Number(value);
+      if (!Number.isFinite(density) || density <= 0) return null;
+    } else if (type === 'h' && srcsetIntegerRegex.test(value)) {
+      if (height !== null || density !== null) return null;
+      height = Number(value);
+      if (height === 0) return null;
+    } else {
+      return null;
+    }
+  }
+  if (height !== null && width === null) return null;
+  return { width, density: density ?? 1 };
+}
+
+/**
+ * Parses a srcset into candidates, following the HTML spec's tokenizing rules: a URL is a run
+ * of non-whitespace characters, so commas INSIDE a URL (as in CDN transforms like
+ * "w_300,h_200") are kept; trailing commas end the candidate; otherwise the descriptors run to
+ * the next comma that is not inside parentheses. Candidates with invalid descriptors are
+ * dropped (see parseSrcsetDescriptors).
  * @link https://html.spec.whatwg.org/multipage/images.html#parse-a-srcset-attribute
  * @param {string|null|undefined} srcset - The attribute value.
  * @returns {{url: string, width: number|null, density: number}[]} Candidates; density defaults to 1.
@@ -1012,17 +1086,8 @@ export function parseSrcset(srcset) {
     }
     if (!url) continue;
 
-    // Width ("300w") or pixel density ("1.5x"); "h" descriptors and invalid tokens are ignored.
-    let width = null;
-    let density = 1;
-    for (const descriptor of descriptors.split(/\s+/)) {
-      const match = /^(\d+(?:\.\d+)?)([wx])$/i.exec(descriptor);
-      if (!match) continue;
-      const value = Number.parseFloat(match[1]);
-      if (match[2].toLowerCase() === 'w') width = value;
-      else density = value;
-    }
-    candidates.push({ url, width, density });
+    const parsed = parseSrcsetDescriptors(descriptors);
+    if (parsed) candidates.push({ url, ...parsed });
   }
   return candidates;
 }
@@ -1049,23 +1114,28 @@ function getSmallestSrc(srcset) {
  * @returns {string|null} - The best available source URL, resolved to an absolute URL.
  */
 export function getBestImageSource(element) {
-  // Return absolute URLs. Necessary for HTML export.
-  const resolveUrl = (src) => (src ? new URL(src, window.location.href).href : null);
+  // Return absolute URLs. Necessary for HTML export. Unparseable URLs yield null so the next
+  // source is tried instead of throwing.
+  const resolveUrl = (src) => {
+    if (!src) return null;
+    try {
+      return new URL(src, window.location.href).href;
+    } catch {
+      return null;
+    }
+  };
 
-  // Check data-src or srcset.
-  const dataSrc = getSmallestSrc(
-    element.getAttribute('data-src') || element.getAttribute('srcset'),
+  // Lazy-loading attributes first: until the image loads, srcset/src are often placeholders.
+  // data-src holds a single URL; data-srcset is a srcset.
+  const pictureSrcset = () =>
+    getCachedClosest(element, 'picture')?.querySelector('source[srcset]')?.getAttribute('srcset');
+  return (
+    resolveUrl(element.getAttribute('data-src')?.trim()) ||
+    resolveUrl(getSmallestSrc(element.getAttribute('data-srcset'))) ||
+    resolveUrl(getSmallestSrc(element.getAttribute('srcset'))) ||
+    resolveUrl(getSmallestSrc(pictureSrcset())) ||
+    resolveUrl(element.getAttribute('src'))
   );
-  if (dataSrc) return resolveUrl(dataSrc);
-
-  // Check <picture> sources.
-  const pictureSrcset = getCachedClosest(element, 'picture')
-    ?.querySelector('source[srcset]')
-    ?.getAttribute('srcset');
-  const pictureSrc = getSmallestSrc(pictureSrcset);
-  if (pictureSrc) return resolveUrl(pictureSrc);
-
-  return resolveUrl(element.getAttribute('src'));
 }
 
 /**
@@ -1125,6 +1195,9 @@ export function generateElementPreview(issueObject, convertBase64 = false) {
 
       const buildImgElement = (url) => {
         const img = document.createElement('img');
+        // Every data:image/ URI is allowed here, including SVG, which sanitizeURL rejects:
+        // <img> renders SVG in secure static mode (no script, no external loads), and SVG
+        // thumbnails converted to base64 for the HTML export would otherwise break.
         img.src = url.startsWith('data:image/') ? url : sanitizeURL(url);
         if (element.alt) img.alt = element.alt;
 
