@@ -6,19 +6,17 @@
  * @returns {Promise<boolean>} True if the tooltip text matches, false otherwise.
  */
 export async function checkTooltip(page, elementId, expectedText) {
-  const tooltipMatches = await page.evaluate(({ id, text }) => {
-    const element = document.getElementById(id);
-    if (!element) return false;
-    const annotations = element.querySelectorAll('sa11y-annotation');
-    let foundMatch = false;
-    annotations.forEach((annotation) => {
-      const message = annotation?.getAttribute('data-content');
-      if (message && message.includes(text)) {
-        foundMatch = true;
-      }
-    });
-    return foundMatch;
-  }, { id: elementId, text: expectedText });
+  const tooltipMatches = await page.evaluate(
+    ({ id, text }) => {
+      const element = document.getElementById(id);
+      if (!element) return false;
+      const annotations = element.querySelectorAll('sa11y-annotation');
+      return Array.from(annotations).some((annotation) =>
+        annotation.getAttribute('data-content')?.includes(text),
+      );
+    },
+    { id: elementId, text: expectedText },
+  );
   return tooltipMatches;
 }
 

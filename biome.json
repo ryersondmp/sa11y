@@ -6,7 +6,7 @@
     "useIgnoreFile": true
   },
   "files": {
-    "includes": ["src/css/**/*", "src/js/**/*", "tests/**/*.js"]
+    "includes": ["src/css/**/*", "src/js/**/*", "test/**/*.js"]
   },
   "assist": {
     "actions": {

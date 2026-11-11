@@ -13,11 +13,15 @@ test.describe('Sa11y utils', () => {
   });
 
   // Runs `fn(utils, arg)` in the page against the live ES modules. `arg` must be serializable.
-  const withUtils = (fn, arg) => page.evaluate(async ({ source, arg }) => {
-    const utils = await import('/src/js/utils/utils.js');
-    // eslint-disable-next-line no-new-func
-    return new Function('utils', 'arg', `return (${source})(utils, arg);`)(utils, arg);
-  }, { source: fn.toString(), arg });
+  const withUtils = (fn, arg) =>
+    page.evaluate(
+      async ({ source, arg }) => {
+        const utils = await import('/src/js/utils/utils.js');
+        // eslint-disable-next-line no-new-func
+        return new Function('utils', 'arg', `return (${source})(utils, arg);`)(utils, arg);
+      },
+      { source: fn.toString(), arg },
+    );
 
   test('hasAriaHiddenAncestor checks the element itself and its ancestors', async () => {
     const result = await withUtils((u) => {
@@ -141,7 +145,9 @@ test.describe('Sa11y utils', () => {
   test.describe('foldForMatching and normalizeStopWord', () => {
     test('folds Turkish and Greek capitals to their stop-word entries', async () => {
       const result = await withUtils((u) => ({
-        tr: u.foldForMatching('DAHA FAZLA BİLGİ İÇİN TIKLAYIN') === u.foldForMatching('daha fazla bilgi için tıklayın'),
+        tr:
+          u.foldForMatching('DAHA FAZLA BİLGİ İÇİN TIKLAYIN') ===
+          u.foldForMatching('daha fazla bilgi için tıklayın'),
         el: u.foldForMatching('ΚΆΝΤΕ ΚΛΙΚ ΕΔΏ') === u.foldForMatching('κάντε κλικ εδώ'),
         keepsDiacritics: u.foldForMatching('Résumé'),
         tamil: u.normalizeStopWord('படம்'),
@@ -215,7 +221,13 @@ test.describe('Sa11y utils', () => {
           missing: u.getWordSegmenter() instanceof Intl.Segmenter,
         };
       });
-      expect(result).toEqual({ cached: true, perLocale: true, locale: 'ar', invalid: true, missing: true });
+      expect(result).toEqual({
+        cached: true,
+        perLocale: true,
+        locale: 'ar',
+        invalid: true,
+        missing: true,
+      });
     });
 
     // The fallback is reached by passing a null segmenter, so the built-in Intl is never mutated.
@@ -236,7 +248,9 @@ test.describe('Sa11y utils', () => {
           ['axb c', 'a.b', false],
           ['button', '', false],
         ];
-        return cases.filter(([text, word, expected]) => u.containsWord(text, word, null) !== expected);
+        return cases.filter(
+          ([text, word, expected]) => u.containsWord(text, word, null) !== expected,
+        );
       });
       expect(mismatches).toEqual([]);
     });
@@ -292,7 +306,10 @@ test.describe('Sa11y utils', () => {
     });
 
     test('foldForMatching folds Turkish dotted and dotless i in one pass', async () => {
-      const result = await withUtils((u) => [u.foldForMatching('İNDİR'), u.foldForMatching('tıkla')]);
+      const result = await withUtils((u) => [
+        u.foldForMatching('İNDİR'),
+        u.foldForMatching('tıkla'),
+      ]);
       expect(result).toEqual(['indir', 'tikla']);
     });
   });
@@ -308,7 +325,12 @@ test.describe('Sa11y utils', () => {
           button.remove();
           return mismatch;
         };
-        return { heart: make('❤️'), family: make('👨‍👩‍👧'), thumb: make('👍🏽'), text: make('Share') };
+        return {
+          heart: make('❤️'),
+          family: make('👨‍👩‍👧'),
+          thumb: make('👍🏽'),
+          text: make('Share'),
+        };
       });
       expect(result).toEqual({ heart: false, family: false, thumb: false, text: true });
     });
@@ -473,24 +495,30 @@ test.describe('Sa11y utils', () => {
 
   test.describe('getBestImageSource', () => {
     // Builds an <img> (optionally inside <picture>) and returns the resolved thumbnail URL.
-    const pick = (attrs, pictureSrcset) => withUtils((u, [a, p]) => {
-      const img = document.createElement('img');
-      for (const [name, value] of Object.entries(a)) img.setAttribute(name, value);
-      let root = img;
-      if (p) {
-        root = document.createElement('picture');
-        const source = document.createElement('source');
-        source.setAttribute('srcset', p);
-        root.append(source, img);
-      }
-      document.body.append(root);
-      const src = u.getBestImageSource(img);
-      root.remove();
-      return src.replace(location.origin, '');
-    }, [attrs, pictureSrcset ?? null]);
+    const pick = (attrs, pictureSrcset) =>
+      withUtils(
+        (u, [a, p]) => {
+          const img = document.createElement('img');
+          for (const [name, value] of Object.entries(a)) img.setAttribute(name, value);
+          let root = img;
+          if (p) {
+            root = document.createElement('picture');
+            const source = document.createElement('source');
+            source.setAttribute('srcset', p);
+            root.append(source, img);
+          }
+          document.body.append(root);
+          const src = u.getBestImageSource(img);
+          root.remove();
+          return src.replace(location.origin, '');
+        },
+        [attrs, pictureSrcset ?? null],
+      );
 
     test('picks the smallest candidate by width or density', async () => {
-      expect(await pick({ srcset: 'a.jpg 600w, b.jpg 300w, c.jpg 900w' })).toBe('/test/pages/b.jpg');
+      expect(await pick({ srcset: 'a.jpg 600w, b.jpg 300w, c.jpg 900w' })).toBe(
+        '/test/pages/b.jpg',
+      );
       expect(await pick({ srcset: 'a.jpg 2x,b.jpg 1.5x' })).toBe('/test/pages/b.jpg');
       expect(await pick({ srcset: 'a.jpg, b.jpg 2x' })).toBe('/test/pages/a.jpg');
       expect(await pick({ srcset: 'a.jpg 0.5x, b.jpg' })).toBe('/test/pages/a.jpg');
@@ -528,11 +556,20 @@ test.describe('Sa11y utils', () => {
         'zeroHeight.jpg 100w 0h',
       ];
       for (const candidate of invalid) {
-        expect(await pick({ srcset: `${candidate}, ${valid}` }), candidate).toBe('/test/pages/ok.jpg');
+        expect(await pick({ srcset: `${candidate}, ${valid}` }), candidate).toBe(
+          '/test/pages/ok.jpg',
+        );
       }
       // Density: zero, negative, duplicate and density with height are invalid.
-      for (const candidate of ['zero.jpg 0x', 'neg.jpg -1x', 'dup.jpg 0.5x 0.5x', 'h.jpg 0.5x 10h']) {
-        expect(await pick({ srcset: `${candidate}, ok.jpg 2x` }), candidate).toBe('/test/pages/ok.jpg');
+      for (const candidate of [
+        'zero.jpg 0x',
+        'neg.jpg -1x',
+        'dup.jpg 0.5x 0.5x',
+        'h.jpg 0.5x 10h',
+      ]) {
+        expect(await pick({ srcset: `${candidate}, ok.jpg 2x` }), candidate).toBe(
+          '/test/pages/ok.jpg',
+        );
       }
       // Valid forms: width with height, float densities with exponent or leading dot.
       expect(await pick({ srcset: 'a.jpg 600w 400h, b.jpg 300w 200h' })).toBe('/test/pages/b.jpg');
@@ -546,11 +583,17 @@ test.describe('Sa11y utils', () => {
 
     test('treats data-src as a single URL, not a srcset', async () => {
       // A srcset parser would split this at the space and return "a".
-      expect(await pick({ 'data-src': 'a b.jpg', srcset: 'c.jpg 1x' })).toBe('/test/pages/a%20b.jpg');
+      expect(await pick({ 'data-src': 'a b.jpg', srcset: 'c.jpg 1x' })).toBe(
+        '/test/pages/a%20b.jpg',
+      );
       expect(await pick({ 'data-src': '  a.jpg  ' })).toBe('/test/pages/a.jpg');
       // data-srcset (lazy loading) wins over the placeholder srcset and src.
       expect(
-        await pick({ 'data-srcset': 'big.jpg 800w, small.jpg 200w', srcset: 'ph.gif 1x', src: 'ph.gif' }),
+        await pick({
+          'data-srcset': 'big.jpg 800w, small.jpg 200w',
+          srcset: 'ph.gif 1x',
+          src: 'ph.gif',
+        }),
       ).toBe('/test/pages/small.jpg');
       expect(await pick({ 'data-src': 'lazy.jpg', 'data-srcset': 'small.jpg 200w' })).toBe(
         '/test/pages/lazy.jpg',

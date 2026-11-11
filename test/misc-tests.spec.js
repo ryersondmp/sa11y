@@ -42,10 +42,7 @@ test.describe('Sa11y miscellaneous tests', () => {
 
   /* Toggle all toggleable buttons. Needed for other unit tests! */
   test('Toggle setting buttons', async () => {
-    const settings = [
-      'readability-toggle',
-      'theme-toggle',
-    ];
+    const settings = ['readability-toggle', 'theme-toggle'];
     for (const setting of settings) {
       const toggle = panel(`#${setting}`);
       await toggle.click();
@@ -61,7 +58,9 @@ test.describe('Sa11y miscellaneous tests', () => {
   });
 
   test('No errors found', async () => {
-    await expect(panel('#readability-info')).toContainText('enough content to calculate readability');
+    await expect(panel('#readability-info')).toContainText(
+      'enough content to calculate readability',
+    );
     await expect(panel('#status')).toContainText('No errors found');
   });
 
@@ -117,14 +116,18 @@ test.describe('Sa11y miscellaneous tests', () => {
 
   test('Spanish language file check for alt placeholder stopword', async () => {
     const issue = await checkTooltip(
-      page, 'error-image', 'Error Se encontró texto alternativo no descriptivo o de marcador de posición.',
+      page,
+      'error-image',
+      'Error Se encontró texto alternativo no descriptivo o de marcador de posición.',
     );
     expect(issue).toBe(true);
   });
 
   test('Spanish language file check for non-descript link text', async () => {
     const issue = await checkTooltip(
-      page, 'error-link-test', 'El texto del enlace puede no ser lo suficientemente descriptivo fuera de contexto: leer más',
+      page,
+      'error-link-test',
+      'El texto del enlace puede no ser lo suficientemente descriptivo fuera de contexto: leer más',
     );
     expect(issue).toBe(true);
   });
@@ -141,14 +144,18 @@ test.describe('Sa11y miscellaneous tests', () => {
 
   test('Ukrainian language file check for alt placeholder stopword', async () => {
     const issue = await checkTooltip(
-      page, 'error-image', 'Помилка Виявлено не описовий або заповнюючий текст заміщення. Замініть наступний текст заміщення чимось більш значущим.  АЛЬТ фото',
+      page,
+      'error-image',
+      'Помилка Виявлено не описовий або заповнюючий текст заміщення. Замініть наступний текст заміщення чимось більш значущим.  АЛЬТ фото',
     );
     expect(issue).toBe(true);
   });
 
   test('Ukrainian language file check for non-descript link text', async () => {
     const issue = await checkTooltip(
-      page, 'error-link-test', 'Помилка Текст посилання може бути недостатньо описовим без контексту: дізнатися більше  Порада! Використовуйте чіткий і унікальний текст посилання, що описує призначення посилання, зазвичай заголовок сторінки або документа.',
+      page,
+      'error-link-test',
+      'Помилка Текст посилання може бути недостатньо описовим без контексту: дізнатися більше  Порада! Використовуйте чіткий і унікальний текст посилання, що описує призначення посилання, зазвичай заголовок сторінки або документа.',
     );
     expect(issue).toBe(true);
   });
@@ -161,12 +168,16 @@ test.describe('Sa11y miscellaneous tests', () => {
 
   test('i18n (Multi) alt placeholder stopword. Mixed English and Ukrainian.', async () => {
     const issue = await checkTooltip(
-      page, 'error-image', 'Error Non-descript or placeholder alt text found. Replace the following alt text with something more meaningful.  ALT фото',
+      page,
+      'error-image',
+      'Error Non-descript or placeholder alt text found. Replace the following alt text with something more meaningful.  ALT фото',
     );
     expect(issue).toBe(true);
 
     const issue2 = await checkTooltip(
-      page, 'error-image-2', 'Error Non-descript or placeholder alt text found. Replace the following alt text with something more meaningful.  ALT photo',
+      page,
+      'error-image-2',
+      'Error Non-descript or placeholder alt text found. Replace the following alt text with something more meaningful.  ALT photo',
     );
     expect(issue2).toBe(true);
   });

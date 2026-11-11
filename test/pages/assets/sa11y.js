@@ -4,13 +4,13 @@ import Sa11yLangEn from '../../../src/lang/en.js';
 const isWarningsPage = window.location.pathname.includes('warnings.html');
 const warningsPageChecks = isWarningsPage
   ? {
-    HEADING_SKIPPED_LEVEL: {
-      type: 'warning',
-    },
-    TABLES_EMPTY_HEADING: {
-      type: 'warning',
-    },
-  }
+      HEADING_SKIPPED_LEVEL: {
+        type: 'warning',
+      },
+      TABLES_EMPTY_HEADING: {
+        type: 'warning',
+      },
+    }
   : {};
 
 // Instantiate
@@ -44,10 +44,9 @@ let total = 0;
 document.addEventListener('sa11y-check-complete', (e) => {
   count++;
   total += parseFloat(e.detail.time);
-  console.log(e.detail);
-  console.log(`Running Average (${count} samples): ${(total / count).toFixed(2)}ms`);
+  console.info(e.detail);
+  console.info(`Running Average (${count} samples): ${(total / count).toFixed(2)}ms`);
 });
-
 
 /**
  * Custom checks via event listeners.
@@ -71,11 +70,12 @@ document.addEventListener('sa11y-custom-checks', () => {
   const $checkAccordions = sa11y.find('.sa11y-accordion-example', 'root');
   $checkAccordions.forEach(($el) => {
     const checkForm = $el.querySelector('form');
-    if (!!checkForm && checkForm.length) {
+    if (checkForm?.length) {
       sa11y.results.push({
         element: $el,
         type: 'error',
-        content: 'Do <strong>not nest forms</strong> within the Accordion component. If the form contains validation issues, a person may not see the form feedback since the accordion panel goes back to its original closed state.',
+        content:
+          'Do <strong>not nest forms</strong> within the Accordion component. If the form contains validation issues, a person may not see the form feedback since the accordion panel goes back to its original closed state.',
         inline: false,
         position: 'beforebegin',
       });
