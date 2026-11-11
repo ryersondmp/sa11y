@@ -258,7 +258,7 @@ const ui = {
   SHORTCUT_SR: "問題へスキップ。キーボードショートカット：Alt S",
   SKIP_TO_ISSUE: "問題へスキップ",
   NEW_TAB: "新しいタブで開きます",
-  LINKED: "リンク済み",
+  LINKED: "リンクあり",
   PANEL_HEADING: "アクセシビリティチェック",
   NO_ERRORS_FOUND: "エラーは見つかりませんでした。",
   WARNINGS_FOUND: "件の警告が見つかりました。",
