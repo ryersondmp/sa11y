@@ -31,6 +31,7 @@
     "lint:fix": "biome check --write src test",
     "serve": "vite",
     "dev": "npm run serve",
+    "pretest": "node build/check-playwright-image.js",
     "test": "npx playwright test",
     "conformance:download": "node conformance/scripts/download-testcases.js",
     "conformance:discover": "node conformance/scripts/discover-mappings.js",
