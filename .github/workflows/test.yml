@@ -15,6 +15,62 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24.x
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Read-only check (no --write); the GitHub reporter annotates PR diffs inline.
+      - name: Biome
+        run: npm run lint -- --reporter=github
+
+  build-check:
+    name: Build is up to date
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24.x
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Pin the banner's copyright year to the commit date so older commits rebuild identically.
+      - name: Build
+        run: |
+          export SOURCE_DATE_EPOCH="$(git log -1 --format=%ct)"
+          npm run build
+
+      # `npm run build` runs lint:fix, rebuilds dist/ and copies to docs/. Any change
+      # (including new untracked files) means the committed output is stale.
+      - name: Verify committed build matches source
+        run: |
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "::error title=Stale build::Committed build output does not match a fresh build. Run 'npm run build' and commit the results."
+            git status --porcelain
+            git --no-pager diff --stat
+            exit 1
+          fi
+          echo "Build output is up to date."
+
   test:
     name: Playwright (${{ matrix.browser }})
     runs-on: ubuntu-latest

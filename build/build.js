@@ -8,6 +8,13 @@ const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
 const pkg = JSON.parse(fs.readFileSync(path.resolve(dirname, '../package.json'), 'utf-8'));
 
+/* Copyright year. Honors SOURCE_DATE_EPOCH (https://reproducible-builds.org/specs/source-date-epoch/)
+   so CI can rebuild an older commit and get byte-identical output; otherwise uses the current year. */
+const buildYear = (() => {
+  const epoch = Number.parseInt(process.env.SOURCE_DATE_EPOCH ?? '', 10);
+  return Number.isNaN(epoch) ? new Date().getFullYear() : new Date(epoch * 1000).getUTCFullYear();
+})();
+
 /* Adds copyright banner AFTER minification. */
 const addBanner = () => {
   const banner = `
@@ -16,7 +23,7 @@ const addBanner = () => {
       * @version ${pkg.version}
       * @author ${pkg.author}
       * @license ${pkg.license}
-      * @copyright © 2020 - ${new Date().getFullYear()} Toronto Metropolitan University.
+      * @copyright © 2020 - ${buildYear} Toronto Metropolitan University.
       * @contact ${pkg.email}
       * GitHub: ${pkg.repository.url} | Website: https://sa11y.netlify.app
       * The above copyright notice shall be included in all copies or substantial portions of the Software.
