@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>No Errors - Sa11y Unit Tests (Arabic)</title>
+  <link rel="stylesheet" href="../../docs/examples/assets/main.css">
+  <script src="assets/nav.js"></script>
+</head>
+
+<body>
+  <header>
+    <h1>اختبارات وحدة Sa11y</h1>
+    <p>اختبار حزمة اللغة العربية.</p>
+  </header>
+  <main>
+
+    <h2>كلمة توقف عنصر نائب (Placeholder stop word)</h2>
+    <div id="error-image">
+      <img src="../../docs/examples/assets/placeholder.svg" alt="صورة" width="100">
+    </div>
+
+    <h2>اختبار <code>linkIgnoreStrings</code></h2>
+    <div id="error-link-test">
+      <a href="https://www.example.com">اقرأ المزيد (ignore this English text)</a>
+    </div>
+
+  </main>
+  <footer>
+
+  </footer>
+  <!-- Sa11y -->
+  <link rel="stylesheet" href="../../src/css/sa11y.css" />
+  <script type="module">
+    import { Sa11y, Lang } from '../../src/js/sa11y.js';
+    import Sa11yLangAr from '../../src/lang/ar.js';
+
+    // Instantiate
+    Lang.addI18n(Sa11yLangAr.strings);
+    const sa11y = new Sa11y({
+      unitTestMode: true,
+      linkIgnoreStrings: ['(ignore this English text)']
+    });
+  </script>
+</body>
+
+</html>

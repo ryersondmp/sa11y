@@ -322,7 +322,7 @@
     // Meta checks
     META_LANG: 'Езикът на страницата не е обявен! Моля, <a href="https://www.w3.org/International/questions/qa-html-language-declarations">декларирайте езика в HTML тага.</a>',
     META_TITLE: 'Липсващо заглавие на страницата! Моля, посочете <a href="https://developer.mozilla.org/bg/docs/Web/HTML/Element/title">заглавие на страницата.</a>',
-    META_TITLE_UNDESCRIPTIVE: 'Заглавието на страницата "<em>%(TEXT)</em>" може да не е описателна или може да не предава темата или целта на страницата. Заглавията на страниците трябва да бъдат уникални, лаконични и ясно описват съдържанието на страницата. Научете повече за <a href="https://www.w3.org/WAI/tutorials/page-structure/title/">значими заглавия на страниците.</a>',
+    META_TITLE_UNDESCRIPTIVE: 'Заглавието на страницата "<em>%(TEXT)</em>" може да не е описателна или може да не предава темата или целта на страницата. Заглавията на страниците трябва да бъдат уникални, лаконични и ясно описват съдържанието на страницата. Научете повече за <a href="https://www.w3.org/WAI/WCAG22/Understanding/page-titled.html">значими заглавия на страниците.</a>',
     META_SCALABLE: 'Премахнете параметъра <code>user-scalable="no"</code> в <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">meta таг на изгледа</a>, за да позволите увеличаване.',
     META_MAX: 'Уверете се, че параметърът <code>maximum-scale</code> в <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">meta таг на изгледа</a> не е по-малък от 2.',
     META_REFRESH: "Страницата не трябва да се обновява автоматично с помощта на meta таг.",

@@ -181,4 +181,24 @@ test.describe('Sa11y miscellaneous tests', () => {
     );
     expect(issue2).toBe(true);
   });
+
+  test('Check that i18n (Arabic) page loaded Arabic ruleset strings', async () => {
+    await page.goto('/test/pages/i18n-ar.html');
+    await waitForCheckComplete(page);
+    await expect(panel('#outline-toggle')).toContainText('الهيكل');
+  });
+
+  test('i18n (Arabic) alt placeholder stopword.', async () => {
+    const issue = await checkTooltip(page, 'error-image', 'وصفي');
+    expect(issue).toBe(true);
+  });
+
+  test('i18n (Arabic) link ignore strings', async () => {
+    const issue2 = await checkTooltip(
+      page,
+      'error-link-test',
+      'قد لا يكون نص الرابط وصفيًا بما يكفي خارج سياقه.',
+    );
+    expect(issue2).toBe(true);
+  });
 });

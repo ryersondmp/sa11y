@@ -302,7 +302,7 @@ const tooltip = {
   // Meta checks
   META_LANG: 'Język strony nie zadeklarowany! <a href="https://www.w3.org/International/questions/qa-html-language-declarations">Zadeklaruj język w znaczniku HTML.</a>',
   META_TITLE: 'Brak tytułu strony! Podaj <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/title">tytuł strony.</a>',
-  META_TITLE_UNDESCRIPTIVE: 'Tytuł strony "<em>%(TEXT)</em>" może nie być opisowy lub może nie oddawać tematu lub celu strony. Tytuły stron powinny być unikalne, zwięzłe i wyraźnie opisywać zawartość strony. Dowiedz się więcej o <a href="https://www.w3.org/WAI/tutorials/page-structure/title/">znaczących tytułach stron.</a>',
+  META_TITLE_UNDESCRIPTIVE: 'Tytuł strony "<em>%(TEXT)</em>" może nie być opisowy lub może nie oddawać tematu lub celu strony. Tytuły stron powinny być unikalne, zwięzłe i wyraźnie opisywać zawartość strony. Dowiedz się więcej o <a href="https://www.w3.org/WAI/WCAG22/Understanding/page-titled.html">znaczących tytułach stron.</a>',
   META_SCALABLE: 'Usuń parametr <code>user-scalable="no"</code> w <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">meta tagu widoku</a>, aby umożliwić powiększanie.',
   META_MAX: 'Upewnij się, że parametr <code>maximum-scale</code> w <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">meta tagu widoku</a> nie jest mniejszy niż 2.',
   META_REFRESH: "Strona nie powinna automatycznie odświeżać się przy użyciu meta tagu.",

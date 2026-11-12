@@ -307,7 +307,7 @@ const tooltip = {
   // Meta checks
   META_LANG: 'Bahasa halaman tidak dideklarasikan! Silakan <a href="https://www.w3.org/International/questions/qa-html-language-declarations">deklarasikan bahasa pada tag HTML.</a>',
   META_TITLE: 'Judul halaman tidak ada! Harap berikan <a href="https://developer.mozilla.org/id/docs/Web/HTML/Element/title">judul halaman.</a>',
-  META_TITLE_UNDESCRIPTIVE: 'Judul halaman "<em>%(TEXT)</em>" mungkin tidak deskriptif atau tidak menyampaikan subjek atau tujuan halaman. Judul halaman harus unik, ringkas, dan jelas menggambarkan konten halaman. Pelajari lebih lanjut tentang <a href="https://www.w3.org/WAI/tutorials/page-structure/title/">judul halaman yang bermakna.</a>',
+  META_TITLE_UNDESCRIPTIVE: 'Judul halaman "<em>%(TEXT)</em>" mungkin tidak deskriptif atau tidak menyampaikan subjek atau tujuan halaman. Judul halaman harus unik, ringkas, dan jelas menggambarkan konten halaman. Pelajari lebih lanjut tentang <a href="https://www.w3.org/WAI/WCAG22/Understanding/page-titled.html">judul halaman yang bermakna.</a>',
   META_SCALABLE: 'Hapus parameter <code>user-scalable="no"</code> dalam <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">tag meta viewport</a> untuk memungkinkan zoom.',
   META_MAX: 'Pastikan parameter <code>maximum-scale</code> dalam <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">tag meta viewport</a> tidak kurang dari 2.',
   META_REFRESH: "Halaman seharusnya tidak menyegarkan secara otomatis menggunakan tag meta.",

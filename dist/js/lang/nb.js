@@ -317,7 +317,7 @@ const tooltip = {
   // Meta checks
   META_LANG: 'Sidens språk er ikke oppgitt! Vennligst <a href="https://www.w3.org/International/questions/qa-html-language-declarations">deklarer språk i HTML-taggen.</a>',
   META_TITLE: 'Manglende sidetittel! Vennligst oppgi en <a href="https://developer.mozilla.org/nb/docs/Web/HTML/Element/title">sidetittel.</a>',
-  META_TITLE_UNDESCRIPTIVE: 'Sidetittelen "<em>%(TEXT)</em>" er kanskje ikke beskrivende eller formidler ikke emnet eller formålet med siden. Sidetitler bør være unike, konsise og tydelig beskrive sideinnholdet. Finn ut mer om <a href="https://www.w3.org/WAI/tutorials/page-structure/title/">meningsfulle sidetitler.</a>',
+  META_TITLE_UNDESCRIPTIVE: 'Sidetittelen "<em>%(TEXT)</em>" er kanskje ikke beskrivende eller formidler ikke emnet eller formålet med siden. Sidetitler bør være unike, konsise og tydelig beskrive sideinnholdet. Finn ut mer om <a href="https://www.w3.org/WAI/WCAG22/Understanding/page-titled.html">meningsfulle sidetitler.</a>',
   META_SCALABLE: 'Fjern parameteren <code>user-scalable="no"</code> i <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">meta-taggen for visningsområde</a> for å tillate zooming.',
   META_MAX: 'Sørg for at parameteren <code>maximum-scale</code> i <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">meta-taggen for visningsområde</a> ikke er mindre enn 2.',
   META_REFRESH: "Siden bør ikke automatisk oppdateres ved hjelp av en meta-tag.",

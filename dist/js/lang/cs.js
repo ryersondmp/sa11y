@@ -312,7 +312,7 @@ const tooltip = {
   // Meta checks
   META_LANG: 'Jazyk stránky není deklarován! Prosím <a href="https://www.w3.org/International/questions/qa-html-language-declarations">deklarujte jazyk v tagu HTML.</a>',
   META_TITLE: 'Chybí název stránky! Uveďte prosím <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/title">název stránky.</a>',
-  META_TITLE_UNDESCRIPTIVE: 'Název stránky "<em>%(TEXT)</em>" nemusí být deskriptivní nebo nemusí vyjadřovat předmět nebo účel stránky. Názvy stránek by měly být jedinečné, stručné a jasně popisovat obsah stránky. Další informace o <a href="https://www.w3.org/WAI/tutorials/page-structure/title/">smysluplných názvech stránek.</a>',
+  META_TITLE_UNDESCRIPTIVE: 'Název stránky "<em>%(TEXT)</em>" nemusí být deskriptivní nebo nemusí vyjadřovat předmět nebo účel stránky. Názvy stránek by měly být jedinečné, stručné a jasně popisovat obsah stránky. Další informace o <a href="https://www.w3.org/WAI/WCAG22/Understanding/page-titled.html">smysluplných názvech stránek.</a>',
   META_SCALABLE: 'Odstraňte parametr <code>user-scalable="no"</code> v <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">meta tagu pro viewport</a>, abyste umožnili přibližování.',
   META_MAX: 'Ujistěte se, že parametr <code>maximum-scale</code> v <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">meta tagu pro viewport</a> není menší než 2.',
   META_REFRESH: "Stránka by se neměla automaticky obnovovat pomocí meta tagu.",

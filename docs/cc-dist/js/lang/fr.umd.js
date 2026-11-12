@@ -306,7 +306,7 @@
     // Meta checks
     META_LANG: 'La langue de la page n’est pas indiquée ! Veuillez <a href="https://www.w3.org/International/questions/qa-html-language-declarations.fr.html">indiquer la langue sur la balise HTML.</a>',
     META_TITLE: 'Titre de la page manquant ! Veuillez fournir un <a href="https://developer.mozilla.org/fr/docs/Web/HTML/Element/title">titre de page.</a>',
-    META_TITLE_UNDESCRIPTIVE: `Le titre de la page "<em>%(TEXT)</em>" peut ne pas être descriptif ou ne pas transmettre le sujet ou l'objectif de la page. Les titres de page doivent être uniques, concis et décrire clairement le contenu de la page. En savoir plus sur <a href="https://www.w3.org/WAI/tutorials/page-structure/title/">les titres de page significatifs.</a>`,
+    META_TITLE_UNDESCRIPTIVE: `Le titre de la page "<em>%(TEXT)</em>" peut ne pas être descriptif ou ne pas transmettre le sujet ou l'objectif de la page. Les titres de page doivent être uniques, concis et décrire clairement le contenu de la page. En savoir plus sur <a href="https://www.w3.org/WAI/WCAG22/Understanding/page-titled.html">les titres de page significatifs.</a>`,
     META_SCALABLE: 'Supprimez le paramètre <code>user-scalable="no"</code> dans la <a href="https://developer.mozilla.org/fr/docs/Web/HTML/Viewport_meta_tag">balise meta viewport</a> pour permettre le zoom.',
     META_MAX: 'Assurez-vous que le paramètre <code>maximum-scale</code> dans la <a href="https://developer.mozilla.org/fr/docs/Web/HTML/Viewport_meta_tag">balise meta viewport</a> n’est pas inférieur à 2.',
     META_REFRESH: "La page ne doit pas se rafraîchir automatiquement en utilisant une balise meta.",

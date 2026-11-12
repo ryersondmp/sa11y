@@ -316,7 +316,7 @@ const tooltip = {
   // Meta checks
   META_LANG: 'Мова сторінки не вказана! Будь ласка, <a href="https://www.w3.org/International/questions/qa-html-language-declarations">вкажіть мову в тезі HTML.</a>',
   META_TITLE: 'Відсутня назва сторінки! <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/title">Укажіть назву сторінки.</a>',
-  META_TITLE_UNDESCRIPTIVE: 'Заголовок сторінки "<em>%(TEXT)</em>" може бути недостатньо інформативним або не передавати тему чи мету сторінки. Заголовки сторінок повинні бути унікальними, стислими та чітко описувати вміст сторінки. Дізнайтеся більше про <a href="https://www.w3.org/WAI/tutorials/page-structure/title/">значущі заголовки сторінок.</a>',
+  META_TITLE_UNDESCRIPTIVE: 'Заголовок сторінки "<em>%(TEXT)</em>" може бути недостатньо інформативним або не передавати тему чи мету сторінки. Заголовки сторінок повинні бути унікальними, стислими та чітко описувати вміст сторінки. Дізнайтеся більше про <a href="https://www.w3.org/WAI/WCAG22/Understanding/page-titled.html">значущі заголовки сторінок.</a>',
   META_SCALABLE: 'Видаліть параметр <code>user-scalable="no"</code> у <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">мета-тезі перегляду</a>, щоб дозволити масштабування.',
   META_MAX: 'Переконайтеся, що параметр <code>maximum-scale</code> у <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">мета-тезі перегляду</a> не менший за 2.',
   META_REFRESH: "Сторінка не повинна автоматично оновлюватися за допомогою мета-тегу.",

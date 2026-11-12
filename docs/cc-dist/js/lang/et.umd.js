@@ -316,7 +316,7 @@
     // Meta checks
     META_LANG: 'Lehekülje keel ei ole deklareeritud! Palun <a href="https://www.w3.org/International/questions/qa-html-language-declarations">deklareerige keel HTML-sildil.</a>',
     META_TITLE: 'Puudub lehekülje pealkiri! Palun sisestage <a href="https://developer.mozilla.org/et/docs/Web/HTML/Element/title">lehe pealkiri.</a>',
-    META_TITLE_UNDESCRIPTIVE: 'Lehe pealkiri "<em>%(TEXT)</em>" võib olla ebakirjeldav või ei pruugi edastada lehe teemat ega eesmärki. Lehe pealkirjad peaksid olema ainulaadsed, lühikesed ja selgelt kirjeldama lehe sisu. Lisateavet <a href="https://www.w3.org/WAI/tutorials/page-structure/title/">tähenduslike lehe pealkirjade kohta.</a>',
+    META_TITLE_UNDESCRIPTIVE: 'Lehe pealkiri "<em>%(TEXT)</em>" võib olla ebakirjeldav või ei pruugi edastada lehe teemat ega eesmärki. Lehe pealkirjad peaksid olema ainulaadsed, lühikesed ja selgelt kirjeldama lehe sisu. Lisateavet <a href="https://www.w3.org/WAI/WCAG22/Understanding/page-titled.html">tähenduslike lehe pealkirjade kohta.</a>',
     META_SCALABLE: 'Eemaldage parameeter <code>user-scalable="no"</code> <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">meta sildi vaatest</a>, et lubada suumimist.',
     META_MAX: 'Veenduge, et parameeter <code>maximum-scale</code> <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">meta sildi vaatest</a> ei oleks väiksem kui 2.',
     META_REFRESH: "Lehte ei tohiks automaatselt värskendada, kasutades meta-silti.",

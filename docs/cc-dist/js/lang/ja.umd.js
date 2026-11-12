@@ -435,7 +435,7 @@
     // Meta checks
     META_LANG: 'ページ言語が宣言されていません！<a href="https://www.w3.org/International/questions/qa-html-language-declarations">HTMLタグで言語を宣言してください。</a>',
     META_TITLE: 'ページタイトルがありません！<a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/title">ページタイトルを入力してください。</a>',
-    META_TITLE_UNDESCRIPTIVE: 'ページタイトル「<em>%(TEXT)</em>」は説明的でないか、ページの主題または目的を伝えていない可能性があります。ページタイトルは一意で簡潔であり、ページのコンテンツを明確に説明する必要があります。<a href="https://www.w3.org/WAI/tutorials/page-structure/title/">意味のあるページタイトル</a>について詳しく学んでください。',
+    META_TITLE_UNDESCRIPTIVE: 'ページタイトル「<em>%(TEXT)</em>」は説明的でないか、ページの主題または目的を伝えていない可能性があります。ページタイトルは一意で簡潔であり、ページのコンテンツを明確に説明する必要があります。<a href="https://www.w3.org/WAI/WCAG22/Understanding/page-titled.html">意味のあるページタイトル</a>について詳しく学んでください。',
     META_SCALABLE: '<a href="https://developer.mozilla.org/ja/docs/Web/HTML/Viewport_meta_tag">ビューポートのメタタグ</a>にある <code>user-scalable="no"</code> パラメータを削除して、ズームを許可してください。',
     META_MAX: '<a href="https://developer.mozilla.org/ja/docs/Web/HTML/Viewport_meta_tag">ビューポートのメタタグ</a>の <code>maximum-scale</code> パラメータが 2 未満でないことを確認してください。',
     META_REFRESH: "ページはメタタグを使用して自動的に更新されるべきではありません。",

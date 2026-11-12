@@ -318,7 +318,7 @@
     // Meta checks
     META_LANG: 'Sidens sprog er ikke angivet! Venligst <a href="https://www.w3.org/International/questions/qa-html-language-declarations">deklarer sprog på HTML-tag.</a>',
     META_TITLE: 'Manglende sidetitel! Angiv venligst en <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/title">sidetitel.</a>',
-    META_TITLE_UNDESCRIPTIVE: 'Sidetitlen "<em>%(TEXT)</em>" er muligvis ikke beskrivende eller formidler ikke sidens emne eller formål. Sidetitler bør være unikke, kortfattede og klart beskrive sideindholdet. Få mere at vide om <a href="https://www.w3.org/WAI/tutorials/page-structure/title/">meningsfulde sidetitler.</a>',
+    META_TITLE_UNDESCRIPTIVE: 'Sidetitlen "<em>%(TEXT)</em>" er muligvis ikke beskrivende eller formidler ikke sidens emne eller formål. Sidetitler bør være unikke, kortfattede og klart beskrive sideindholdet. Få mere at vide om <a href="https://www.w3.org/WAI/WCAG22/Understanding/page-titled.html">meningsfulde sidetitler.</a>',
     META_SCALABLE: 'Fjern parameteren <code>user-scalable="no"</code> i <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">viewport meta-taggen</a> for at tillade zoomning.',
     META_MAX: 'Sørg for, at parameteren <code>maximum-scale</code> i <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">viewport meta-taggen</a> ikke er mindre end 2.',
     META_REFRESH: "Siden bør ikke automatisk opdatere ved hjælp af et meta-tag.",
