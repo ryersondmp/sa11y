@@ -446,7 +446,7 @@ const tooltip = {
   META_TITLE:
     'Seitentitel fehlt! Bitte gib einen <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/title">Seitentitel</a> an.',
   META_TITLE_UNDESCRIPTIVE:
-    'Der Seitentitel "<em>%(TEXT)</em>" ist möglicherweise nicht aussagekräftig oder gibt das Thema oder den Zweck der Seite nicht wieder. Seitentitel sollten eindeutig, prägnant und eine klare Beschreibung des Seiteninhalts sein. Weitere Informationen über <a href="https://www.w3.org/WAI/tutorials/page-structure/title/">aussagekräftige Seitentitel.</a>',
+    'Der Seitentitel "<em>%(TEXT)</em>" ist möglicherweise nicht aussagekräftig oder gibt das Thema oder den Zweck der Seite nicht wieder. Seitentitel sollten eindeutig, prägnant und eine klare Beschreibung des Seiteninhalts sein. Weitere Informationen über <a href="https://www.w3.org/WAI/WCAG22/Understanding/page-titled.html">aussagekräftige Seitentitel.</a>',
   META_SCALABLE:
     'Entfernen Sie den Parameter <code>user-scalable="no"</code> im <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">Viewport-Meta-Tag</a>, um das Zoomen zu ermöglichen.',
   META_MAX:

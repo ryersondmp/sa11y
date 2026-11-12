@@ -414,7 +414,7 @@ const tooltip = {
   META_TITLE:
     'Відсутня назва сторінки! <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/title">Укажіть назву сторінки.</a>',
   META_TITLE_UNDESCRIPTIVE:
-    'Заголовок сторінки "<em>%(TEXT)</em>" може бути недостатньо інформативним або не передавати тему чи мету сторінки. Заголовки сторінок повинні бути унікальними, стислими та чітко описувати вміст сторінки. Дізнайтеся більше про <a href="https://www.w3.org/WAI/tutorials/page-structure/title/">значущі заголовки сторінок.</a>',
+    'Заголовок сторінки "<em>%(TEXT)</em>" може бути недостатньо інформативним або не передавати тему чи мету сторінки. Заголовки сторінок повинні бути унікальними, стислими та чітко описувати вміст сторінки. Дізнайтеся більше про <a href="https://www.w3.org/WAI/WCAG22/Understanding/page-titled.html">значущі заголовки сторінок.</a>',
   META_SCALABLE:
     'Видаліть параметр <code>user-scalable="no"</code> у <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">мета-тезі перегляду</a>, щоб дозволити масштабування.',
   META_MAX:

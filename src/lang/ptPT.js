@@ -423,7 +423,7 @@ const tooltip = {
   META_TITLE:
     'Título da página em falta! Forneça um <a href="https://developer.mozilla.org/pt-pt/docs/Web/HTML/Element/title">título da página.</a>',
   META_TITLE_UNDESCRIPTIVE:
-    'O título da página "<em>%(TEXT)</em>" pode não ser descritivo ou pode não comunicar o assunto ou o propósito da página. Os títulos da página devem ser únicos, concisos e descrever claramente o conteúdo da página. Saiba mais sobre <a href="https://www.w3.org/WAI/tutorials/page-structure/title/">títulos de página significativos.</a>',
+    'O título da página "<em>%(TEXT)</em>" pode não ser descritivo ou pode não comunicar o assunto ou o propósito da página. Os títulos da página devem ser únicos, concisos e descrever claramente o conteúdo da página. Saiba mais sobre <a href="https://www.w3.org/WAI/WCAG22/Understanding/page-titled.html">títulos de página significativos.</a>',
   META_SCALABLE:
     'Remova o parâmetro <code>user-scalable="no"</code> na <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">meta tag do viewport</a> para permitir o zoom.',
   META_MAX:

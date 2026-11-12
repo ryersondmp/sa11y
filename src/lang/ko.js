@@ -407,7 +407,7 @@ const tooltip = {
   META_TITLE:
     '페이지 제목이 누락되었습니다! <a href="https://developer.mozilla.org/ko/docs/Web/HTML/Element/title">페이지 제목을 입력하세요.</a>',
   META_TITLE_UNDESCRIPTIVE:
-    '페이지 제목 "<em>%(TEXT)</em>"는 설명적이지 않거나 페이지의 주제 또는 목적을 전달하지 않을 수 있습니다. 페이지 제목은 고유하고 간결하며 페이지 콘텐츠를 명확하게 설명해야 합니다. <a href="https://www.w3.org/WAI/tutorials/page-structure/title/">의미 있는 페이지 제목</a>에 대해 자세히 알아보세요.',
+    '페이지 제목 "<em>%(TEXT)</em>"는 설명적이지 않거나 페이지의 주제 또는 목적을 전달하지 않을 수 있습니다. 페이지 제목은 고유하고 간결하며 페이지 콘텐츠를 명확하게 설명해야 합니다. <a href="https://www.w3.org/WAI/WCAG22/Understanding/page-titled.html">의미 있는 페이지 제목</a>에 대해 자세히 알아보세요.',
   META_SCALABLE:
     '확대를 허용하기 위해 <a href="https://developer.mozilla.org/ko/docs/Web/HTML/Viewport_meta_tag">뷰포트 메타 태그</a>에서 <code>user-scalable="no"</code> 매개변수를 제거하십시오.',
   META_MAX:

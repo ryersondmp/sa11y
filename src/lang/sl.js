@@ -412,7 +412,7 @@ const tooltip = {
   META_TITLE:
     'Manjka naslov strani! Navedite <a href="https://developer.mozilla.org/sl/docs/Web/HTML/Element/title">naslov strani.</a>',
   META_TITLE_UNDESCRIPTIVE:
-    'Naslov strani "<em>%(TEXT)</em>" morda ni primeren ali ne prenaša teme ali namena strani. Naslovi strani morajo biti edinstveni, jedrnat in jasno opisati vsebino strani. Preverite več o <a href="https://www.w3.org/WAI/tutorials/page-structure/title/">smislenih naslovih strani.</a>',
+    'Naslov strani "<em>%(TEXT)</em>" morda ni primeren ali ne prenaša teme ali namena strani. Naslovi strani morajo biti edinstveni, jedrnat in jasno opisati vsebino strani. Preverite več o <a href="https://www.w3.org/WAI/WCAG22/Understanding/page-titled.html">smislenih naslovih strani.</a>',
   META_SCALABLE:
     'Odstranite parameter <code>user-scalable="no"</code> v <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">meta oznaki pogleda</a>, da omogočite povečavo.',
   META_MAX:

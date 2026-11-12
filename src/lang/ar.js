@@ -481,7 +481,7 @@ const tooltip = {
   META_TITLE:
     'الصفحة بلا عنوان. يُرجى إضافة <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/title">عنوان للصفحة.</a>',
   META_TITLE_UNDESCRIPTIVE:
-    'قد لا يكون عنوان الصفحة "<em>%(TEXT)</em>" وصفياً أو قد لا ينقل الموضوع أو الغرض من الصفحة. يجب أن تكون عناوين الصفحات فريدة وموجزة وتصف بوضوح محتوى الصفحة. تعرف على المزيد حول <a href="https://www.w3.org/WAI/tutorials/page-structure/title/">عناوين الصفحات ذات المعنى.</a>',
+    'قد لا يكون عنوان الصفحة "<em>%(TEXT)</em>" وصفياً أو قد لا ينقل الموضوع أو الغرض من الصفحة. يجب أن تكون عناوين الصفحات فريدة وموجزة وتصف بوضوح محتوى الصفحة. تعرف على المزيد حول <a href="https://www.w3.org/WAI/WCAG22/Understanding/page-titled.html">عناوين الصفحات ذات المعنى.</a>',
   META_SCALABLE:
     'احذف المعامل <code>user-scalable="no"</code> من <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">وسم meta الخاص بإطار العرض (viewport)</a> للسماح بالتكبير.',
   META_MAX:

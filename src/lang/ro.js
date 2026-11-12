@@ -421,7 +421,7 @@ const tooltip = {
   META_TITLE:
     'Lipsește titlul paginii! Vă rugăm să furnizați un <a href="https://developer.mozilla.org/ro/docs/Web/HTML/Element/title">titlu pagină.</a>',
   META_TITLE_UNDESCRIPTIVE:
-    'Titlul paginii "<em>%(TEXT)</em>" poate să nu fie descriptiv sau să nu comunice subiectul sau scopul paginii. Titlurile paginilor trebuie să fie unice, concise și să descrie clar conținutul paginii. Aflați mai multe despre <a href="https://www.w3.org/WAI/tutorials/page-structure/title/">titluri de pagină semnificative.</a>',
+    'Titlul paginii "<em>%(TEXT)</em>" poate să nu fie descriptiv sau să nu comunice subiectul sau scopul paginii. Titlurile paginilor trebuie să fie unice, concise și să descrie clar conținutul paginii. Aflați mai multe despre <a href="https://www.w3.org/WAI/WCAG22/Understanding/page-titled.html">titluri de pagină semnificative.</a>',
   META_SCALABLE:
     'Eliminați parametrul <code>user-scalable="no"</code> din <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">meta tag-ul viewport</a> pentru a permite mărirea.',
   META_MAX:

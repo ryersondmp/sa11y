@@ -415,7 +415,7 @@ const tooltip = {
   META_TITLE:
     'Trūkst lapas nosaukuma! Lūdzu, norādiet <a href="https://developer.mozilla.org/lv/docs/Web/HTML/Element/title">lapas nosaukumu.</a>',
   META_TITLE_UNDESCRIPTIVE:
-    'Lapas virsraksts "<em>%(TEXT)</em>" var nebūt aprakstošs vai nevar pārraidīt lapas tēmu vai mērķi. Lapu virsrakstiem jābūt unikāliem, kodolīgiem un skaidri jāapraksta lapas saturs. Uzziniet vairāk par <a href="https://www.w3.org/WAI/tutorials/page-structure/title/">nozīmīgiem lapu virsrakstiem.</a>',
+    'Lapas virsraksts "<em>%(TEXT)</em>" var nebūt aprakstošs vai nevar pārraidīt lapas tēmu vai mērķi. Lapu virsrakstiem jābūt unikāliem, kodolīgiem un skaidri jāapraksta lapas saturs. Uzziniet vairāk par <a href="https://www.w3.org/WAI/WCAG22/Understanding/page-titled.html">nozīmīgiem lapu virsrakstiem.</a>',
   META_SCALABLE:
     'Noņemiet parametru <code>user-scalable="no"</code> <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">skatvietas (viewport) meta tagā</a>, lai atļautu tālummaiņu.',
   META_MAX:

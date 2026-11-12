@@ -422,7 +422,7 @@ const tooltip = {
   META_TITLE:
     'Sivun otsikko puuttuu! Anna <a href="https://developer.mozilla.org/fi/docs/Web/HTML/Element/title">sivun otsikko.</a>',
   META_TITLE_UNDESCRIPTIVE:
-    'Sivun otsikko "<em>%(TEXT)</em>" ei välttämättä ole kuvaava eikä välitä sivun aiheita tai tarkoitusta. Sivujen otsikoiden tulee olla ainutlaatuisia, ytimekkäitä ja selkeästi kuvata sivun sisältöä. Lisätietoa <a href="https://www.w3.org/WAI/tutorials/page-structure/title/">merkityksellisistä sivujen otsikoista.</a>',
+    'Sivun otsikko "<em>%(TEXT)</em>" ei välttämättä ole kuvaava eikä välitä sivun aiheita tai tarkoitusta. Sivujen otsikoiden tulee olla ainutlaatuisia, ytimekkäitä ja selkeästi kuvata sivun sisältöä. Lisätietoa <a href="https://www.w3.org/WAI/WCAG22/Understanding/page-titled.html">merkityksellisistä sivujen otsikoista.</a>',
   META_SCALABLE:
     'Poista parametri <code>user-scalable="no"</code> <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">meta tagista</a> zoomauksen mahdollistamiseksi.',
   META_MAX:

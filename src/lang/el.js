@@ -411,7 +411,7 @@ const tooltip = {
   META_TITLE:
     'Λείπει ο τίτλος της σελίδας! Παρακαλούμε δώστε έναν <a href="https://developer.mozilla.org/el/docs/Web/HTML/Element/title">τίτλο σελίδας.</a>',
   META_TITLE_UNDESCRIPTIVE:
-    'Ο τίτλος της σελίδας "<em>%(TEXT)</em>" μπορεί να μην είναι περιγραφικός ή μπορεί να μην μεταφέρει το θέμα ή τον σκοπό της σελίδας. Οι τίτλοι σελίδας θα πρέπει να είναι μοναδικοί, συνοπτικοί και να περιγράφουν σαφώς το περιεχόμενο της σελίδας. Μάθετε περισσότερα σχετικά με <a href="https://www.w3.org/WAI/tutorials/page-structure/title/">σημαντικοί τίτλοι σελίδας.</a>',
+    'Ο τίτλος της σελίδας "<em>%(TEXT)</em>" μπορεί να μην είναι περιγραφικός ή μπορεί να μην μεταφέρει το θέμα ή τον σκοπό της σελίδας. Οι τίτλοι σελίδας θα πρέπει να είναι μοναδικοί, συνοπτικοί και να περιγράφουν σαφώς το περιεχόμενο της σελίδας. Μάθετε περισσότερα σχετικά με <a href="https://www.w3.org/WAI/WCAG22/Understanding/page-titled.html">σημαντικοί τίτλοι σελίδας.</a>',
   META_SCALABLE:
     'Καταργήστε την παράμετρο <code>user-scalable="no"</code> στην <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">ετικέτα meta του viewport</a> για να επιτρέψετε την μεγέθυνση.',
   META_MAX:

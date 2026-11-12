@@ -411,7 +411,7 @@ const tooltip = {
   META_TITLE:
     'Er ontbreekt een paginatitel! Geef een <a href="https://developer.mozilla.org/nl/docs/Web/HTML/Element/title">paginatitel.</a>',
   META_TITLE_UNDESCRIPTIVE:
-    'De paginatitel "<em>%(TEXT)</em>" is mogelijk niet beschrijvend of geeft het onderwerp of doel van de pagina niet weer. Paginatitels moeten uniek, beknopt zijn en de pagina-inhoud duidelijk beschrijven. Meer informatie over <a href="https://www.w3.org/WAI/tutorials/page-structure/title/">betekenisvolle paginatitels.</a>',
+    'De paginatitel "<em>%(TEXT)</em>" is mogelijk niet beschrijvend of geeft het onderwerp of doel van de pagina niet weer. Paginatitels moeten uniek, beknopt zijn en de pagina-inhoud duidelijk beschrijven. Meer informatie over <a href="https://www.w3.org/WAI/WCAG22/Understanding/page-titled.html">betekenisvolle paginatitels.</a>',
   META_SCALABLE:
     'Verwijder de parameter <code>user-scalable="no"</code> in de <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">meta-tag van het viewport</a> om inzoomen toe te staan.',
   META_MAX:

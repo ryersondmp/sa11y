@@ -418,7 +418,7 @@ const tooltip = {
   META_TITLE:
     'Hiányzik az oldal címe! Kérjük, adjon meg egy <a href="https://developer.mozilla.org/hu/docs/Web/HTML/Element/title">oldal címet.</a>',
   META_TITLE_UNDESCRIPTIVE:
-    'Az oldal címe "<em>%(TEXT)</em>" lehet, hogy nem leíró, vagy nem közvetíti az oldal tárgyát vagy célját. Az oldal címeinek egyedieknek, tömörnek kell lenniük, és egyértelműen le kell írniuk az oldal tartalmát. Tudjon meg többet az <a href="https://www.w3.org/WAI/tutorials/page-structure/title/">értelmes oldal címekről.</a>',
+    'Az oldal címe "<em>%(TEXT)</em>" lehet, hogy nem leíró, vagy nem közvetíti az oldal tárgyát vagy célját. Az oldal címeinek egyedieknek, tömörnek kell lenniük, és egyértelműen le kell írniuk az oldal tartalmát. Tudjon meg többet az <a href="https://www.w3.org/WAI/WCAG22/Understanding/page-titled.html">értelmes oldal címekről.</a>',
   META_SCALABLE:
     'Távolítsa el a <code>user-scalable="no"</code> paramétert a <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">nézet meta tagjében</a> a nagyítás engedélyezése érdekében.',
   META_MAX:

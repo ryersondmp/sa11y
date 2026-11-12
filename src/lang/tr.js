@@ -422,7 +422,7 @@ const tooltip = {
   META_TITLE:
     'Sayfa başlığı eksik! Lütfen bir <a href="https://developer.mozilla.org/tr/docs/Web/HTML/Element/title">sayfa başlığı sağlayın.</a>',
   META_TITLE_UNDESCRIPTIVE:
-    'Sayfa başlığı "<em>%(TEXT)</em>" açıklayıcı olmayabilir veya sayfanın konusunu veya amacını iletmeyebilir. Sayfa başlıkları benzersiz, kısa ve sayfa içeriğini açıkça tanımlamalıdır. <a href="https://www.w3.org/WAI/tutorials/page-structure/title/">anlamlı sayfa başlıkları</a> hakkında daha fazla bilgi edinin.',
+    'Sayfa başlığı "<em>%(TEXT)</em>" açıklayıcı olmayabilir veya sayfanın konusunu veya amacını iletmeyebilir. Sayfa başlıkları benzersiz, kısa ve sayfa içeriğini açıkça tanımlamalıdır. <a href="https://www.w3.org/WAI/WCAG22/Understanding/page-titled.html">anlamlı sayfa başlıkları</a> hakkında daha fazla bilgi edinin.',
   META_SCALABLE:
     '<a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">Görünüm meta etiketi</a> içindeki <code>user-scalable="no"</code> parametresini kaldırarak büyütmeye izin verin.',
   META_MAX:
