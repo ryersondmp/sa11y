@@ -121,6 +121,32 @@ const ruleset = {
     'pdf',
   ],
   POTENTIAL_UI_ELEMENTS: ['valikko', 'sulje', 'vaihda', 'avaa', 'laajenna', 'supista', 'seuraava', 'edellinen', 'toista', 'tauko', 'alavalikko', 'näytä', 'piilota', 'pudotusvalikko', 'takaisin', 'eteenpäin', 'ohita', 'lähetä', 'peruuta', 'tallenna', 'muokkaa', 'poista', 'etsi', 'hae', 'haku', 'suodata', 'lajittele', 'pysäytä', 'vaimenna', 'hiljennä', 'poista vaimennus', 'koko näyttö', 'kokonäyttö', 'minimoi', 'pienennä', 'maksimoi', 'suurenna'],
+  META_TITLE_UNDESCRIPTIVE_STRINGS: [
+    'nimetön',
+    'asiakirja',
+    'sivu',
+    'otsikko',
+    'oletus',
+    'indeksi',
+    'uusi',
+    'paikkamerkki',
+    'verkkosivusto',
+    'ei otsikkoa',
+    'syötä otsikko tähän',
+    'hei maailma',
+    'sovellukseni',
+    'sivustoni',
+    'verkkosivustoni',
+    'sivuston otsikko',
+    'sivuston otsikkosi',
+    'esimerkkitunnus',
+    'untitled',
+    'undefined',
+    'title',
+    'document',
+    'index',
+    'placeholder',
+  ],
 };
 
 const ui = {
@@ -395,6 +421,8 @@ const tooltip = {
     'Sivun kieltä ei ole ilmoitettu! Ole hyvä ja <a href="https://www.w3.org/International/questions/qa-html-language-declarations">ilmoita kieli HTML-tagissa.</a>',
   META_TITLE:
     'Sivun otsikko puuttuu! Anna <a href="https://developer.mozilla.org/fi/docs/Web/HTML/Element/title">sivun otsikko.</a>',
+  META_TITLE_UNDESCRIPTIVE:
+    'Sivun otsikko "<em>%(TEXT)</em>" ei välttämättä ole kuvaava eikä välitä sivun aiheita tai tarkoitusta. Sivujen otsikoiden tulee olla ainutlaatuisia, ytimekkäitä ja selkeästi kuvata sivun sisältöä. Lisätietoa <a href="https://www.w3.org/WAI/tutorials/page-structure/title/">merkityksellisistä sivujen otsikoista.</a>',
   META_SCALABLE:
     'Poista parametri <code>user-scalable="no"</code> <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">meta tagista</a> zoomauksen mahdollistamiseksi.',
   META_MAX:

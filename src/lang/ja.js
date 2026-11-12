@@ -229,6 +229,32 @@ const ruleset = {
     'pdf',
   ],
   POTENTIAL_UI_ELEMENTS: ['メニュー', '閉じる', '切り替え', '開く', '展開', '折りたたみ', '次へ', '前へ', '再生', '一時停止', 'サブメニュー', '表示', '非表示', 'ドロップダウン', '戻る', '進む', 'スキップ', '送信', 'キャンセル', '保存', '編集', '削除', '検索', 'フィルター', '並べ替え', '停止', 'ミュート', 'ミュート解除', '全画面', '最小化', '最大化', 'スライド', 'モーダル'],
+  META_TITLE_UNDESCRIPTIVE_STRINGS: [
+    'タイトルなし',
+    'ドキュメント',
+    'ページ',
+    'タイトル',
+    'デフォルト',
+    'インデックス',
+    '新しい',
+    'プレースホルダー',
+    'ウェブページ',
+    'タイトルなし',
+    'ここにタイトルを挿入',
+    'こんにちは世界',
+    'マイアプリ',
+    'マイサイト',
+    'マイウェブサイト',
+    'サイトタイトル',
+    'あなたのサイトタイトル',
+    'サンプルドメイン',
+    'untitled',
+    'undefined',
+    'title',
+    'document',
+    'index',
+    'placeholder',
+  ],
 };
 
 const ui = {
@@ -502,6 +528,8 @@ const tooltip = {
     'ページ言語が宣言されていません！<a href="https://www.w3.org/International/questions/qa-html-language-declarations">HTMLタグで言語を宣言してください。</a>',
   META_TITLE:
     'ページタイトルがありません！<a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/title">ページタイトルを入力してください。</a>',
+  META_TITLE_UNDESCRIPTIVE:
+    'ページタイトル「<em>%(TEXT)</em>」は説明的でないか、ページの主題または目的を伝えていない可能性があります。ページタイトルは一意で簡潔であり、ページのコンテンツを明確に説明する必要があります。<a href="https://www.w3.org/WAI/tutorials/page-structure/title/">意味のあるページタイトル</a>について詳しく学んでください。',
   META_SCALABLE:
     '<a href="https://developer.mozilla.org/ja/docs/Web/HTML/Viewport_meta_tag">ビューポートのメタタグ</a>にある <code>user-scalable="no"</code> パラメータを削除して、ズームを許可してください。',
   META_MAX:

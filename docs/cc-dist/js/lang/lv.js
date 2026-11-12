@@ -109,7 +109,33 @@ const ruleset = {
     "audio",
     "pdf"
   ],
-  POTENTIAL_UI_ELEMENTS: ["izvēlne", "aizvērt", "pārslēgt", "atvērt", "izvērst", "sakļaut", "samazināt", "nākamais", "iepriekšējais", "atskaņot", "pauze", "apakšizvēlne", "rādīt", "paslēpt", "nolaižamā izvēlne", "atpakaļ", "uz priekšu", "izlaist", "iesniegt", "atcelt", "saglabāt", "rediģēt", "dzēst", "noņemt", "meklēt", "filtrs", "kārtot", "stop", "apturēt", "izslēgt skaņu", "ieslēgt skaņu", "pilnekrāna režīms", "minimizēt", "maksimizēt"]
+  POTENTIAL_UI_ELEMENTS: ["izvēlne", "aizvērt", "pārslēgt", "atvērt", "izvērst", "sakļaut", "samazināt", "nākamais", "iepriekšējais", "atskaņot", "pauze", "apakšizvēlne", "rādīt", "paslēpt", "nolaižamā izvēlne", "atpakaļ", "uz priekšu", "izlaist", "iesniegt", "atcelt", "saglabāt", "rediģēt", "dzēst", "noņemt", "meklēt", "filtrs", "kārtot", "stop", "apturēt", "izslēgt skaņu", "ieslēgt skaņu", "pilnekrāna režīms", "minimizēt", "maksimizēt"],
+  META_TITLE_UNDESCRIPTIVE_STRINGS: [
+    "bez virsraksta",
+    "dokuments",
+    "lapa",
+    "virsraksts",
+    "noklusējums",
+    "indekss",
+    "jauns",
+    "vietturis",
+    "tīmekļa lapa",
+    "bez virsraksta",
+    "ievietojiet virsrakstu šeit",
+    "sveiki pasauli",
+    "mana lietotne",
+    "mana vieta",
+    "mana tīmekļa vieta",
+    "vietas virsraksts",
+    "jūsu vietas virsraksts",
+    "piemēra domēns",
+    "untitled",
+    "undefined",
+    "title",
+    "document",
+    "index",
+    "placeholder"
+  ]
 };
 const ui = {
   LANG_CODE: "lv",
@@ -289,6 +315,7 @@ const tooltip = {
   // Meta
   META_LANG: 'Lapas valoda nav deklarēta! Lūdzu, <a href="https://www.w3.org/International/questions/qa-html-language-declarations">deklarējiet valodu HTML tagā.</a>',
   META_TITLE: 'Trūkst lapas nosaukuma! Lūdzu, norādiet <a href="https://developer.mozilla.org/lv/docs/Web/HTML/Element/title">lapas nosaukumu.</a>',
+  META_TITLE_UNDESCRIPTIVE: 'Lapas virsraksts "<em>%(TEXT)</em>" var nebūt aprakstošs vai nevar pārraidīt lapas tēmu vai mērķi. Lapu virsrakstiem jābūt unikāliem, kodolīgiem un skaidri jāapraksta lapas saturs. Uzziniet vairāk par <a href="https://www.w3.org/WAI/tutorials/page-structure/title/">nozīmīgiem lapu virsrakstiem.</a>',
   META_SCALABLE: 'Noņemiet parametru <code>user-scalable="no"</code> <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">skatvietas (viewport) meta tagā</a>, lai atļautu tālummaiņu.',
   META_MAX: 'Pārliecinieties, ka parametrs <code>maximum-scale</code> <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">skatvietas (viewport) meta tagā</a> nav mazāks par 2.',
   META_REFRESH: "Lapa nedrīkst automātiski atsvaidzināties, izmantojot meta tagu.",

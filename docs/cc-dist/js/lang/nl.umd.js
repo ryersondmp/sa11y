@@ -112,7 +112,31 @@
       "audio",
       "pdf"
     ],
-    POTENTIAL_UI_ELEMENTS: ["menu", "sluiten", "schakelen", "openen", "uitvouwen", "samenvouwen", "volgende", "vorige", "afspelen", "pauzeren", "submenu", "tonen", "verbergen", "dropdown", "terug", "vooruit", "overslaan", "verzenden", "annuleren", "opslaan", "bewerken", "verwijderen", "zoeken", "filteren", "sorteren", "stoppen", "dempen", "dempen opheffen", "volledig scherm", "minimaliseren", "maximaliseren"]
+    POTENTIAL_UI_ELEMENTS: ["menu", "sluiten", "schakelen", "openen", "uitvouwen", "samenvouwen", "volgende", "vorige", "afspelen", "pauzeren", "submenu", "tonen", "verbergen", "dropdown", "terug", "vooruit", "overslaan", "verzenden", "annuleren", "opslaan", "bewerken", "verwijderen", "zoeken", "filteren", "sorteren", "stoppen", "dempen", "dempen opheffen", "volledig scherm", "minimaliseren", "maximaliseren"],
+    META_TITLE_UNDESCRIPTIVE_STRINGS: [
+      "geen titel",
+      "document",
+      "pagina",
+      "titel",
+      "standaard",
+      "index",
+      "nieuw",
+      "tijdelijke aanduiding",
+      "webpagina",
+      "geen titel",
+      "voeg hier titel in",
+      "hallo wereld",
+      "mijn app",
+      "mijn site",
+      "mijn website",
+      "sitetitel",
+      "uw sitetitel",
+      "voorbeeld domein",
+      "untitled",
+      "undefined",
+      "title",
+      "placeholder"
+    ]
   };
   const ui = {
     LANG_CODE: "nl",
@@ -292,6 +316,7 @@
     // Meta checks
     META_LANG: 'Paginataal niet opgegeven! <a href="https://www.w3.org/International/questions/qa-html-language-declarations">Geef de taal op in de HTML-tag.</a>',
     META_TITLE: 'Er ontbreekt een paginatitel! Geef een <a href="https://developer.mozilla.org/nl/docs/Web/HTML/Element/title">paginatitel.</a>',
+    META_TITLE_UNDESCRIPTIVE: 'De paginatitel "<em>%(TEXT)</em>" is mogelijk niet beschrijvend of geeft het onderwerp of doel van de pagina niet weer. Paginatitels moeten uniek, beknopt zijn en de pagina-inhoud duidelijk beschrijven. Meer informatie over <a href="https://www.w3.org/WAI/tutorials/page-structure/title/">betekenisvolle paginatitels.</a>',
     META_SCALABLE: 'Verwijder de parameter <code>user-scalable="no"</code> in de <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">meta-tag van het viewport</a> om inzoomen toe te staan.',
     META_MAX: 'Zorg ervoor dat de parameter <code>maximum-scale</code> in de <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">meta-tag van het viewport</a> niet kleiner is dan 2.',
     META_REFRESH: "De pagina mag niet automatisch verversen met behulp van een meta-tag.",

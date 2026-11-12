@@ -101,6 +101,30 @@ const ruleset = {
     'pdf',
   ],
   POTENTIAL_UI_ELEMENTS: ['menu', 'fermer', 'basculer', 'ouvrir', 'développer', 'réduire', 'suivant', 'précédent', 'lire', 'pause', 'sous-menu', 'afficher', 'masquer', 'déroulant', 'retour', 'avancer', 'ignorer', 'envoyer', 'annuler', 'enregistrer', 'modifier', 'supprimer', 'retirer', 'rechercher', 'filtrer', 'trier', 'arrêter', 'muet', 'réactiver le son', 'plein écran', 'minimiser', 'maximiser'],
+  META_TITLE_UNDESCRIPTIVE_STRINGS: [
+    'sans titre',
+    'document',
+    'page',
+    'titre',
+    'par défaut',
+    'index',
+    'nouveau',
+    'espace réservé',
+    'page web',
+    'pas de titre',
+    'insérer le titre ici',
+    'bonjour le monde',
+    'mon application',
+    'mon site',
+    'mon site web',
+    'titre du site',
+    'le titre de votre site',
+    'domaine d\'exemple',
+    'untitled',
+    'undefined',
+    'title',
+    'placeholder',
+  ],
 };
 
 const ui = {
@@ -308,7 +332,8 @@ const tooltip = {
     'Il n’y a pas d’étiquette associée à cette entrée. Veuillez ajouter un attribut <code>id</code> à cette entrée, et ajouter un attribut <code>for</code> correspondant à l’étiquette.',
   LABELS_PLACEHOLDER:
     'Le texte de remplacement qui disparaît rend difficile pour les gens de se souvenir de quelle information appartient à un champ et d’identifier et de corriger les problèmes de validation. En revanche, envisagez d’utiliser un indice visible en permanence avant le champ du formulaire. <hr> En savoir plus: <a href="https://www.nngroup.com/articles/form-design-placeholders/">Les espaces réservés dans les champs de formulaire sont nuisibles.</a>',
-  ARIA_INPUT_FIELD_NAME: 'Le champ de saisie ou d’activation ARIA n’a pas de nom accessible. Pour corriger cela, fournissez un attribut <code>aria-labelledby</code>, <code>aria-label</code> ou <code>title</code> valide. Si l’entrée est commutable (ex: case à cocher, interrupteur, bouton radio), l’ajout d’un texte interne visible résoudra également ce problème. <hr> <strong {B}>Élément</strong> <pre><code>%(EL)</code></pre>',
+  ARIA_INPUT_FIELD_NAME:
+    'Le champ de saisie ou d’activation ARIA n’a pas de nom accessible. Pour corriger cela, fournissez un attribut <code>aria-labelledby</code>, <code>aria-label</code> ou <code>title</code> valide. Si l’entrée est commutable (ex: case à cocher, interrupteur, bouton radio), l’ajout d’un texte interne visible résoudra également ce problème. <hr> <strong {B}>Élément</strong> <pre><code>%(EL)</code></pre>',
 
   // Embedded content
   EMBED_VIDEO:
@@ -376,6 +401,8 @@ const tooltip = {
     'La langue de la page n’est pas indiquée ! Veuillez <a href="https://www.w3.org/International/questions/qa-html-language-declarations.fr.html">indiquer la langue sur la balise HTML.</a>',
   META_TITLE:
     'Titre de la page manquant ! Veuillez fournir un <a href="https://developer.mozilla.org/fr/docs/Web/HTML/Element/title">titre de page.</a>',
+  META_TITLE_UNDESCRIPTIVE:
+    'Le titre de la page "<em>%(TEXT)</em>" peut ne pas être descriptif ou ne pas transmettre le sujet ou l\'objectif de la page. Les titres de page doivent être uniques, concis et décrire clairement le contenu de la page. En savoir plus sur <a href="https://www.w3.org/WAI/tutorials/page-structure/title/">les titres de page significatifs.</a>',
   META_SCALABLE:
     'Supprimez le paramètre <code>user-scalable="no"</code> dans la <a href="https://developer.mozilla.org/fr/docs/Web/HTML/Viewport_meta_tag">balise meta viewport</a> pour permettre le zoom.',
   META_MAX:

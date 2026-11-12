@@ -255,6 +255,7 @@ const defaultOptions = {
     // Developer checks
     DUPLICATE_ID: true,
     META_TITLE: true,
+    META_TITLE_UNDESCRIPTIVE: true,
     UNCONTAINED_LI: true,
     TABINDEX_ATTR: true,
     HIDDEN_FOCUSABLE: true,

@@ -103,7 +103,33 @@ const ruleset = {
     "오디오",
     "pdf"
   ],
-  POTENTIAL_UI_ELEMENTS: ["메뉴", "닫기", "토글", "열기", "확장", "축소", "다음", "이전", "재생", "일시 중지", "일시정지", "하위 메뉴", "표시", "숨기기", "드롭다운", "뒤로", "앞으로", "건너뛰기", "제출", "취소", "저장", "편집", "삭제", "제거", "검색", "필터", "정렬", "중지", "음소거", "음소거 해제", "전체 화면", "최소화", "최대화"]
+  POTENTIAL_UI_ELEMENTS: ["메뉴", "닫기", "토글", "열기", "확장", "축소", "다음", "이전", "재생", "일시 중지", "일시정지", "하위 메뉴", "표시", "숨기기", "드롭다운", "뒤로", "앞으로", "건너뛰기", "제출", "취소", "저장", "편집", "삭제", "제거", "검색", "필터", "정렬", "중지", "음소거", "음소거 해제", "전체 화면", "최소화", "최대화"],
+  META_TITLE_UNDESCRIPTIVE_STRINGS: [
+    "제목 없음",
+    "문서",
+    "페이지",
+    "제목",
+    "기본값",
+    "인덱스",
+    "새로운",
+    "플레이스홀더",
+    "웹페이지",
+    "제목 없음",
+    "여기에 제목을 삽입하세요",
+    "안녕하세요 세계",
+    "내 앱",
+    "내 사이트",
+    "내 웹사이트",
+    "사이트 제목",
+    "사이트 제목",
+    "예시 도메인",
+    "untitled",
+    "undefined",
+    "title",
+    "document",
+    "index",
+    "placeholder"
+  ]
 };
 const ui = {
   LANG_CODE: "ko",
@@ -283,6 +309,7 @@ const tooltip = {
   // Meta checks
   META_LANG: '페이지 언어가 선언되지 않았습니다! <a href="https://www.w3.org/International/questions/qa-html-language-declarations">HTML 태그에 언어를 선언하세요.</a>',
   META_TITLE: '페이지 제목이 누락되었습니다! <a href="https://developer.mozilla.org/ko/docs/Web/HTML/Element/title">페이지 제목을 입력하세요.</a>',
+  META_TITLE_UNDESCRIPTIVE: '페이지 제목 "<em>%(TEXT)</em>"는 설명적이지 않거나 페이지의 주제 또는 목적을 전달하지 않을 수 있습니다. 페이지 제목은 고유하고 간결하며 페이지 콘텐츠를 명확하게 설명해야 합니다. <a href="https://www.w3.org/WAI/tutorials/page-structure/title/">의미 있는 페이지 제목</a>에 대해 자세히 알아보세요.',
   META_SCALABLE: '확대를 허용하기 위해 <a href="https://developer.mozilla.org/ko/docs/Web/HTML/Viewport_meta_tag">뷰포트 메타 태그</a>에서 <code>user-scalable="no"</code> 매개변수를 제거하십시오.',
   META_MAX: '<a href="https://developer.mozilla.org/ko/docs/Web/HTML/Viewport_meta_tag">뷰포트 메타 태그</a>에서 <code>maximum-scale</code> 매개변수가 2보다 작지 않도록 하십시오.',
   META_REFRESH: "페이지는 메타 태그를 사용하여 자동으로 새로고침되지 않아야 합니다.",

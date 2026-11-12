@@ -127,7 +127,32 @@
       "avi",
       "zip"
     ],
-    POTENTIAL_UI_ELEMENTS: ["meny", "stäng", "växla", "öppna", "expandera", "fäll ut", "fäll ihop", "nästa", "föregående", "spela upp", "paus", "undermeny", "visa", "dölj", "rullgardinsmeny", "bakåt", "framåt", "hoppa över", "skicka", "avbryt", "spara", "redigera", "radera", "ta bort", "sök", "filter", "filtrera", "sortera", "stopp", "ljud av", "ljud på", "helskärm", "minimera", "maximera"]
+    POTENTIAL_UI_ELEMENTS: ["meny", "stäng", "växla", "öppna", "expandera", "fäll ut", "fäll ihop", "nästa", "föregående", "spela upp", "paus", "undermeny", "visa", "dölj", "rullgardinsmeny", "bakåt", "framåt", "hoppa över", "skicka", "avbryt", "spara", "redigera", "radera", "ta bort", "sök", "filter", "filtrera", "sortera", "stopp", "ljud av", "ljud på", "helskärm", "minimera", "maximera"],
+    META_TITLE_UNDESCRIPTIVE_STRINGS: [
+      "utan titel",
+      "dokument",
+      "sida",
+      "titel",
+      "standard",
+      "index",
+      "nytt",
+      "platshållare",
+      "webbsida",
+      "ingen titel",
+      "infoga titel här",
+      "hej världen",
+      "min app",
+      "min webbplats",
+      "min webbplats",
+      "webbplatstitel",
+      "din webbplatstitel",
+      "exempeldomän",
+      "untitled",
+      "undefined",
+      "title",
+      "document",
+      "placeholder"
+    ]
   };
   const ui = {
     LANG_CODE: "sv",
@@ -307,6 +332,7 @@
     // Meta checks
     META_LANG: 'Sidspråk är inte inställt! Vänligen <a href="https://www.w3.org/International/questions/qa-html-language-declarations">ställ in språk på HTML-taggen.</a>',
     META_TITLE: 'Sidtitel saknas! Ange en <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/title">sidtitel.</a>',
+    META_TITLE_UNDESCRIPTIVE: 'Sidtiteln "<em>%(TEXT)</em>" är möjligen inte beskrivande eller förmedlar inte sidans ämne eller syfte. Sidtitlar bör vara unika, kortfattade och tydligt beskriva sidans innehål. Läs mer om <a href="https://www.w3.org/WAI/tutorials/page-structure/title/">meningsfulla sidtitlar.</a>',
     META_SCALABLE: 'Ta bort parametern <code>user-scalable="no"</code> i <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">meta-taggen för vyport</a> för att tillåta zoomning.',
     META_MAX: 'Se till att parametern <code>maximum-scale</code> i <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">meta-taggen för vyport</a> inte är mindre än 2.',
     META_REFRESH: "Sidan ska inte automatiskt uppdateras med hjälp av en meta-tagg.",

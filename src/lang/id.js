@@ -105,6 +105,32 @@ const ruleset = {
     'pdf',
   ],
   POTENTIAL_UI_ELEMENTS: ['menu', 'tutup', 'alihkan', 'buka', 'perluas', 'ciutkan', 'berikutnya', 'sebelumnya', 'putar', 'jeda', 'submenu', 'tampilkan', 'sembunyikan', 'dropdown', 'kembali', 'maju', 'lewati', 'kirim', 'batal', 'simpan', 'edit', 'sunting', 'hapus', 'cari', 'filter', 'urutkan', 'berhenti', 'hentikan', 'bisukan', 'bunyikan', 'layar penuh', 'minimalkan', 'maksimalkan'],
+  META_TITLE_UNDESCRIPTIVE_STRINGS: [
+    'tanpa judul',
+    'dokumen',
+    'halaman',
+    'judul',
+    'bawaan',
+    'indeks',
+    'baru',
+    'penampung',
+    'halaman web',
+    'tidak ada judul',
+    'masukkan judul di sini',
+    'halo dunia',
+    'aplikasi saya',
+    'situs saya',
+    'situs web saya',
+    'judul situs',
+    'judul situs anda',
+    'domain contoh',
+    'untitled',
+    'undefined',
+    'title',
+    'document',
+    'index',
+    'placeholder',
+  ],
 };
 
 const ui = {
@@ -379,6 +405,8 @@ const tooltip = {
     'Bahasa halaman tidak dideklarasikan! Silakan <a href="https://www.w3.org/International/questions/qa-html-language-declarations">deklarasikan bahasa pada tag HTML.</a>',
   META_TITLE:
     'Judul halaman tidak ada! Harap berikan <a href="https://developer.mozilla.org/id/docs/Web/HTML/Element/title">judul halaman.</a>',
+  META_TITLE_UNDESCRIPTIVE:
+    'Judul halaman "<em>%(TEXT)</em>" mungkin tidak deskriptif atau tidak menyampaikan subjek atau tujuan halaman. Judul halaman harus unik, ringkas, dan jelas menggambarkan konten halaman. Pelajari lebih lanjut tentang <a href="https://www.w3.org/WAI/tutorials/page-structure/title/">judul halaman yang bermakna.</a>',
   META_SCALABLE:
     'Hapus parameter <code>user-scalable="no"</code> dalam <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">tag meta viewport</a> untuk memungkinkan zoom.',
   META_MAX:

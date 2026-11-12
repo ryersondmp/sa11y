@@ -65,28 +65,28 @@ test.describe('Sa11y miscellaneous tests', () => {
   });
 
   /* Navigate to Warnings page. */
-  test('Navigate to warnings page (Count: 4)', async () => {
+  test('Navigate to warnings page (Count: 5)', async () => {
     await page.goto('/test/pages/warnings.html');
     await waitForCheckComplete(page);
+    await expect(panel('#warning-count')).toHaveText('5');
+  });
+
+  test('Dismiss page issue (Count: 4)', async () => {
+    await panel('#page-issues-list button[data-sa11y-dismiss]').first().click();
     await expect(panel('#warning-count')).toHaveText('4');
   });
 
-  test('Dismiss page issue (Count: 3)', async () => {
-    await panel('#page-issues-list button[data-sa11y-dismiss]').first().click();
-    await expect(panel('#warning-count')).toHaveText('3');
-  });
-
-  test('Dismiss annotation (Count: 2)', async () => {
+  test('Dismiss annotation (Count: 3)', async () => {
     // Synthetic clicks, as before: the first annotation on this page belongs to
     // a hidden iframe, so a real (visibility-checked) click would never fire.
     await page.locator('sa11y-annotation').first().locator('button').first().dispatchEvent('click');
     await page.locator('sa11y-tooltips button[data-sa11y-dismiss]').first().dispatchEvent('click');
-    await expect(panel('#warning-count')).toHaveText('2');
+    await expect(panel('#warning-count')).toHaveText('3');
   });
 
-  test('Restore all dismissed (Count: 4)', async () => {
+  test('Restore all dismissed (Count: 5)', async () => {
     await panel('#dismiss-button').click();
-    await expect(panel('#warning-count')).toHaveText('4');
+    await expect(panel('#warning-count')).toHaveText('5');
   });
 
   test('Skip-to-issue toggle', async () => {

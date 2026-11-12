@@ -112,6 +112,32 @@ const ruleset = {
     'pdf',
   ],
   POTENTIAL_UI_ELEMENTS: ['meni', 'zapri', 'preklopi', 'odpri', 'razširi', 'strni', 'naslednj', 'prejšnj', 'predvajaj', 'premor', 'podmeni', 'pokaži', 'prikaži', 'skrij', 'spustni meni', 'nazaj', 'naprej', 'preskoči', 'pošlji', 'prekliči', 'shrani', 'uredi', 'izbriši', 'odstrani', 'išči', 'iskanje', 'filter', 'filtriraj', 'razvrsti', 'ustavi', 'utišaj', 'vklopi zvok', 'celozaslonski način', 'pomanjšaj', 'povečaj'],
+  META_TITLE_UNDESCRIPTIVE_STRINGS: [
+    'brez naslova',
+    'dokument',
+    'stran',
+    'naslov',
+    'privzeto',
+    'kazalo',
+    'novo',
+    'rezervirano mesto',
+    'spletna stran',
+    'brez naslova',
+    'vnesite naslov tukaj',
+    'zdravo svet',
+    'moja aplikacija',
+    'moje spletno mesto',
+    'moje spletno mesto',
+    'naslov spletnega mesta',
+    'vaš naslov spletnega mesta',
+    'primer domene',
+    'untitled',
+    'undefined',
+    'title',
+    'document',
+    'index',
+    'placeholder',
+  ],
 };
 
 const ui = {
@@ -385,6 +411,8 @@ const tooltip = {
     'Jezik strani ni prijavljen! Prosimo, da <a href="https://www.w3.org/International/questions/qa-html-language-declarations">deklarirate jezik na oznaki HTML.</a>',
   META_TITLE:
     'Manjka naslov strani! Navedite <a href="https://developer.mozilla.org/sl/docs/Web/HTML/Element/title">naslov strani.</a>',
+  META_TITLE_UNDESCRIPTIVE:
+    'Naslov strani "<em>%(TEXT)</em>" morda ni primeren ali ne prenaša teme ali namena strani. Naslovi strani morajo biti edinstveni, jedrnat in jasno opisati vsebino strani. Preverite več o <a href="https://www.w3.org/WAI/tutorials/page-structure/title/">smislenih naslovih strani.</a>',
   META_SCALABLE:
     'Odstranite parameter <code>user-scalable="no"</code> v <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">meta oznaki pogleda</a>, da omogočite povečavo.',
   META_MAX:

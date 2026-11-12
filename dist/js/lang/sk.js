@@ -157,6 +157,31 @@ const ruleset = {
     "maximalizovať",
     "snímka",
     "modálne okno"
+  ],
+  META_TITLE_UNDESCRIPTIVE_STRINGS: [
+    "bez názvu",
+    "dokument",
+    "stránka",
+    "názov",
+    "predvolený",
+    "index",
+    "nový",
+    "zástupný text",
+    "webová stránka",
+    "bez názvu",
+    "vložte názov sem",
+    "ahoj svet",
+    "moja aplikácia",
+    "moja stránka",
+    "moja webová stránka",
+    "názov stránky",
+    "váš názov stránky",
+    "príklad domény",
+    "untitled",
+    "undefined",
+    "title",
+    "document",
+    "placeholder"
   ]
 };
 const ui = {
@@ -337,6 +362,7 @@ const tooltip = {
   SUMMARY_EMPTY: "Prvok <code>&lt;summary&gt;</code> vnútri <code>&lt;details&gt;</code> nemá prístupný názov. Pridajte opisný text do prvku <code>&lt;summary&gt;</code>.",
   // Meta checks
   META_TITLE: 'Chýba názov stránky! Uveďte prosím <a href="https://developer.mozilla.org/sk/docs/Web/HTML/Element/title">názov stránky.</a>',
+  META_TITLE_UNDESCRIPTIVE: 'Názov stránky "<em>%(TEXT)</em>" nemusí byť popisný alebo nemusí obsahovať predmet alebo účel stránky. Názvy stránok by mali byť jedinečné, stručné a jasne popisovať obsah stránky. Zistite viac o <a href="https://www.w3.org/WAI/tutorials/page-structure/title/">zmysluplných názvoch stránok.</a>',
   META_SCALABLE: 'Odstráňte parameter <code>user-scalable="no"</code> v <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">meta značke viewport</a>, aby ste umožnili priblíženie.',
   META_MAX: 'Uistite sa, že parameter <code>maximum-scale</code> v <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">meta značke viewport</a> nie je menší ako 2.',
   META_LANG: 'Jazyk stránky nie je deklarovaný! Prosím <a href="https://www.w3.org/International/questions/qa-html-language-declarations">deklarujte jazyk v značke HTML.</a>',

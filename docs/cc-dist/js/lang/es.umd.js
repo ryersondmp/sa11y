@@ -101,7 +101,33 @@
       "audio",
       "pdf"
     ],
-    POTENTIAL_UI_ELEMENTS: ["menú", "cerrar", "alternar", "abrir", "expandir", "contraer", "siguiente", "anterior", "reproducir", "pausar", "submenú", "mostrar", "ocultar", "desplegable", "atrás", "adelante", "omitir", "enviar", "cancelar", "guardar", "editar", "eliminar", "quitar", "buscar", "filtrar", "ordenar", "detener", "silenciar", "activar sonido", "pantalla completa", "minimizar", "maximizar"]
+    POTENTIAL_UI_ELEMENTS: ["menú", "cerrar", "alternar", "abrir", "expandir", "contraer", "siguiente", "anterior", "reproducir", "pausar", "submenú", "mostrar", "ocultar", "desplegable", "atrás", "adelante", "omitir", "enviar", "cancelar", "guardar", "editar", "eliminar", "quitar", "buscar", "filtrar", "ordenar", "detener", "silenciar", "activar sonido", "pantalla completa", "minimizar", "maximizar"],
+    META_TITLE_UNDESCRIPTIVE_STRINGS: [
+      "sin título",
+      "documento",
+      "página",
+      "título",
+      "predeterminado",
+      "índice",
+      "nuevo",
+      "marcador de posición",
+      "página web",
+      "sin título",
+      "inserta el título aquí",
+      "hola mundo",
+      "mi aplicación",
+      "mi sitio",
+      "mi sitio web",
+      "título del sitio",
+      "tu título de sitio",
+      "dominio de ejemplo",
+      "untitled",
+      "undefined",
+      "title",
+      "document",
+      "index",
+      "placeholder"
+    ]
   };
   const ui = {
     LANG_CODE: "es",
@@ -282,6 +308,7 @@
     // Meta checks
     META_LANG: '¡Idioma de la página no declarado! <a href="https://www.w3.org/International/questions/qa-html-language-declarations.es.html">Declare el idioma en la etiqueta HTML.</a>',
     META_TITLE: '¡Falta el título de la página! Proporcione un <a href="https://developer.mozilla.org/es/docs/Web/HTML/Element/title">título de página.</a>',
+    META_TITLE_UNDESCRIPTIVE: 'El título de la página "<em>%(TEXT)</em>" puede no ser descriptivo ni transmitir el tema o propósito de la página. Los títulos de página deben ser únicos, concisos y describir claramente el contenido de la página. Obtenga más información sobre <a href="https://www.w3.org/WAI/tutorials/page-structure/title/">títulos de página significativos.</a>',
     META_SCALABLE: 'Elimine el parámetro <code>user-scalable="no"</code> en la <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">meta etiqueta del viewport</a> para permitir el zoom.',
     META_MAX: 'Asegúrese de que el parámetro <code>maximum-scale</code> en la <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">meta etiqueta del viewport</a> no sea inferior a 2.',
     META_REFRESH: "La página no debería actualizarse automáticamente utilizando una etiqueta meta.",

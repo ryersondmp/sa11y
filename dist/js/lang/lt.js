@@ -98,7 +98,33 @@ const ruleset = {
     "garsas",
     "pdf"
   ],
-  POTENTIAL_UI_ELEMENTS: ["meniu", "uždaryti", "perjungti", "atidaryti", "išskleisti", "suskleisti", "kitas", "ankstesnis", "leisti", "groti", "pauzė", "papildomas meniu", "rodyti", "slėpti", "išskleidžiamasis meniu", "atgal", "pirmyn", "praleisti", "pateikti", "atšaukti", "išsaugoti", "redaguoti", "ištrinti", "pašalinti", "ieškoti", "paieška", "filtras", "rūšiuoti", "sustabdyti", "nutildyti", "atitildyti", "visas ekranas", "sumažinti", "padidinti"]
+  POTENTIAL_UI_ELEMENTS: ["meniu", "uždaryti", "perjungti", "atidaryti", "išskleisti", "suskleisti", "kitas", "ankstesnis", "leisti", "groti", "pauzė", "papildomas meniu", "rodyti", "slėpti", "išskleidžiamasis meniu", "atgal", "pirmyn", "praleisti", "pateikti", "atšaukti", "išsaugoti", "redaguoti", "ištrinti", "pašalinti", "ieškoti", "paieška", "filtras", "rūšiuoti", "sustabdyti", "nutildyti", "atitildyti", "visas ekranas", "sumažinti", "padidinti"],
+  META_TITLE_UNDESCRIPTIVE_STRINGS: [
+    "be pavadinimo",
+    "dokumentas",
+    "puslapis",
+    "pavadinimas",
+    "numatytas",
+    "indeksas",
+    "naujas",
+    "vietos rezervavimas",
+    "interneto puslapis",
+    "be pavadinimo",
+    "čia įterpkite pavadinimą",
+    "sveikas pasauli",
+    "mano programėle",
+    "mano svetainė",
+    "mano interneto svetainė",
+    "svetainės pavadinimas",
+    "jūsų svetainės pavadinimas",
+    "pavyzdžio domena",
+    "untitled",
+    "undefined",
+    "title",
+    "document",
+    "index",
+    "placeholder"
+  ]
 };
 const ui = {
   LANG_CODE: "lt",
@@ -278,6 +304,7 @@ const tooltip = {
   // Meta checks
   META_LANG: 'Puslapio kalba nedeklaruota! Prašome <a href="https://www.w3.org/International/questions/qa-html-language-declarations">deklaruoti kalbą HTML žymoje.</a>',
   META_TITLE: 'Trūksta puslapio pavadinimo! Pateikite <a href="https://developer.mozilla.org/lt/docs/Web/HTML/Element/title">puslapio pavadinimą.</a>',
+  META_TITLE_UNDESCRIPTIVE: 'Puslapio pavadinimas "<em>%(TEXT)</em>" gali būti neinformatyvus arba neperteikti puslapio temos ar tikslo. Puslapių pavadinimai turėtų būti unikalūs, glaustai suformuluoti ir aiškiai aprašyti puslapio turinį. Sužinokite daugiau apie <a href="https://www.w3.org/WAI/tutorials/page-structure/title/">reikšmingus puslapių pavadinimus.</a>',
   META_SCALABLE: 'Pašalinkite <code>user-scalable="no"</code> parametrą iš <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">peržiūros srities (viewport) meta žymos</a>, kad būtų galima keisti mastelį.',
   META_MAX: 'Įsitikinkite, kad <code>maximum-scale</code> parametras <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">peržiūros srities (viewport) meta žymoje</a> nėra mažesnis nei 2.',
   META_REFRESH: "Puslapis neturėtų automatiškai atsinaujinti naudojant meta žymą.",

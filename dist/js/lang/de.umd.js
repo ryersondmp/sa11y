@@ -147,7 +147,32 @@
       "pdf",
       "zip"
     ],
-    POTENTIAL_UI_ELEMENTS: ["menü", "schließen", "umschalten", "öffnen", "erweitern", "reduzieren", "weiter", "zurück", "abspielen", "pause", "untermenü", "anzeigen", "ausblenden", "dropdown", "vorwärts", "überspringen", "absenden", "abbrechen", "speichern", "bearbeiten", "löschen", "entfernen", "suche", "filter", "sortieren", "stopp", "stummschalten", "ton an", "vollbild", "minimieren", "maximieren"]
+    POTENTIAL_UI_ELEMENTS: ["menü", "schließen", "umschalten", "öffnen", "erweitern", "reduzieren", "weiter", "zurück", "abspielen", "pause", "untermenü", "anzeigen", "ausblenden", "dropdown", "vorwärts", "überspringen", "absenden", "abbrechen", "speichern", "bearbeiten", "löschen", "entfernen", "suche", "filter", "sortieren", "stopp", "stummschalten", "ton an", "vollbild", "minimieren", "maximieren"],
+    META_TITLE_UNDESCRIPTIVE_STRINGS: [
+      "Ohne Titel",
+      "Dokument",
+      "Seite",
+      "Titel",
+      "Standard",
+      "Index",
+      "Neu",
+      "Platzhalter",
+      "Webseite",
+      "Kein Titel",
+      "Titel hier einfügen",
+      "Hallo Welt",
+      "Meine App",
+      "Meine Website",
+      "Meine Website",
+      "Website-Titel",
+      "Ihr Website-Titel",
+      "Beispieldomäne",
+      "untitled",
+      "undefined",
+      "title",
+      "document",
+      "placeholder"
+    ]
   };
   const ui = {
     LANG_CODE: "de",
@@ -327,6 +352,7 @@
     // Meta checks
     META_LANG: 'Seitensprache nicht angegeben! Bitte <a href="https://www.w3.org/International/questions/qa-html-language-declarations.de.html">deklariere die Sprache im HTML-Tag.</a>',
     META_TITLE: 'Seitentitel fehlt! Bitte gib einen <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/title">Seitentitel</a> an.',
+    META_TITLE_UNDESCRIPTIVE: 'Der Seitentitel "<em>%(TEXT)</em>" ist möglicherweise nicht aussagekräftig oder gibt das Thema oder den Zweck der Seite nicht wieder. Seitentitel sollten eindeutig, prägnant und eine klare Beschreibung des Seiteninhalts sein. Weitere Informationen über <a href="https://www.w3.org/WAI/tutorials/page-structure/title/">aussagekräftige Seitentitel.</a>',
     META_SCALABLE: 'Entfernen Sie den Parameter <code>user-scalable="no"</code> im <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">Viewport-Meta-Tag</a>, um das Zoomen zu ermöglichen.',
     META_MAX: 'Stellen Sie sicher, dass der Parameter <code>maximum-scale</code> im <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">Viewport-Meta-Tag</a> nicht kleiner als 2 ist.',
     META_REFRESH: "Die Seite sollte nicht automatisch mithilfe eines Meta-Tags aktualisiert werden.",

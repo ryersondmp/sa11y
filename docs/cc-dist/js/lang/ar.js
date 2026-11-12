@@ -251,6 +251,32 @@ const ruleset = {
     "maximize",
     "slide",
     "modal"
+  ],
+  META_TITLE_UNDESCRIPTIVE_STRINGS: [
+    "بدون عنوان",
+    "وثيقة",
+    "صفحة",
+    "عنوان",
+    "افتراضي",
+    "فهرس",
+    "جديد",
+    "عنصر نائب",
+    "صفحة ويب",
+    "بدون عنوان",
+    "أدرج العنوان هنا",
+    "مرحبا بالعالم",
+    "تطبيقي",
+    "موقعي",
+    "موقع الويب الخاص بي",
+    "عنوان الموقع",
+    "عنوان موقعك",
+    "مجال مثال",
+    "untitled",
+    "undefined",
+    "title",
+    "document",
+    "index",
+    "placeholder"
   ]
 };
 const ui = {
@@ -428,6 +454,7 @@ const tooltip = {
   TABINDEX_ATTR: "يجب ألا يحمل العنصر سمة <code>tabindex</code> بقيمة أكبر من 0.",
   // Meta checks
   META_TITLE: 'الصفحة بلا عنوان. يُرجى إضافة <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/title">عنوان للصفحة.</a>',
+  META_TITLE_UNDESCRIPTIVE: 'قد لا يكون عنوان الصفحة "<em>%(TEXT)</em>" وصفياً أو قد لا ينقل الموضوع أو الغرض من الصفحة. يجب أن تكون عناوين الصفحات فريدة وموجزة وتصف بوضوح محتوى الصفحة. تعرف على المزيد حول <a href="https://www.w3.org/WAI/tutorials/page-structure/title/">عناوين الصفحات ذات المعنى.</a>',
   META_SCALABLE: 'احذف المعامل <code>user-scalable="no"</code> من <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">وسم meta الخاص بإطار العرض (viewport)</a> للسماح بالتكبير.',
   META_MAX: 'تأكد من أن قيمة المعامل <code>maximum-scale</code> في <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">وسم meta الخاص بإطار العرض (viewport)</a> لا تقل عن 2.',
   META_LANG: 'لغة الصفحة غير محددة. يُرجى <a href="https://www.w3.org/International/questions/qa-html-language-declarations">تحديد اللغة في وسم HTML.</a>',

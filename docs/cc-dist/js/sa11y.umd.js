@@ -254,6 +254,7 @@
       // Developer checks
       DUPLICATE_ID: true,
       META_TITLE: true,
+      META_TITLE_UNDESCRIPTIVE: true,
       UNCONTAINED_LI: true,
       TABINDEX_ATTR: true,
       HIDDEN_FOCUSABLE: true,
@@ -8305,8 +8306,28 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
       });
     }
     const metaTitle = document.querySelector("title:not(svg title)");
-    if (!metaTitle || getText(metaTitle).length === 0) {
+    const title = metaTitle ? getText(metaTitle).trim() : "";
+    if (!title) {
       pushResult({ test: "META_TITLE", developer: true });
+    } else {
+      const normalizedTitle = title.replace(/\s+/g, " ").toLowerCase();
+      const undescriptive = new Set(Lang._("META_TITLE_UNDESCRIPTIVE_STRINGS"));
+      const startingWord = normalizedTitle.split(/[\s-]+/)[0];
+      let flag = null;
+      if (undescriptive.has(normalizedTitle)) {
+        flag = "error";
+      } else if (undescriptive.has(startingWord)) {
+        flag = /[\s-]*\d+$/.test(normalizedTitle.slice(startingWord.length)) ? "error" : "warning";
+      }
+      if (flag) {
+        pushResult({
+          test: "META_TITLE_UNDESCRIPTIVE",
+          type: flag,
+          args: [title],
+          developer: true,
+          dismiss: title
+        });
+      }
     }
     const content = document.querySelector('meta[name="viewport"]')?.getAttribute("content");
     if (content) {

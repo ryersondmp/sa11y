@@ -126,6 +126,31 @@ const ruleset = {
   POTENTIAL_UI_ELEMENTS: [
     'menu', 'zatvoriť', 'prepnúť', 'otvoriť', 'rozbaliť', 'zbaliť', 'ďalší', 'predchádzajúci', 'predošlý', 'prehrať', 'pozastaviť', 'podponuka', 'zobraziť', 'skryť', 'rozbaľovacia ponuka', 'späť', 'vpred', 'preskočiť', 'odoslať', 'zrušiť', 'uložiť', 'upraviť', 'vymazať', 'odstrániť', 'hľadať', 'filter', 'zoradiť', 'zastaviť', 'stlmiť', 'zrušiť stlmenie', 'celá obrazovka', 'minimalizovať', 'maximalizovať', 'snímka', 'modálne okno',
   ],
+  META_TITLE_UNDESCRIPTIVE_STRINGS: [
+    'bez názvu',
+    'dokument',
+    'stránka',
+    'názov',
+    'predvolený',
+    'index',
+    'nový',
+    'zástupný text',
+    'webová stránka',
+    'bez názvu',
+    'vložte názov sem',
+    'ahoj svet',
+    'moja aplikácia',
+    'moja stránka',
+    'moja webová stránka',
+    'názov stránky',
+    'váš názov stránky',
+    'príklad domény',
+    'untitled',
+    'undefined',
+    'title',
+    'document',
+    'placeholder',
+  ],
 };
 
 const ui = {
@@ -403,6 +428,8 @@ const tooltip = {
   // Meta checks
   META_TITLE:
     'Chýba názov stránky! Uveďte prosím <a href="https://developer.mozilla.org/sk/docs/Web/HTML/Element/title">názov stránky.</a>',
+  META_TITLE_UNDESCRIPTIVE:
+    'Názov stránky "<em>%(TEXT)</em>" nemusí byť popisný alebo nemusí obsahovať predmet alebo účel stránky. Názvy stránok by mali byť jedinečné, stručné a jasne popisovať obsah stránky. Zistite viac o <a href="https://www.w3.org/WAI/tutorials/page-structure/title/">zmysluplných názvoch stránok.</a>',
   META_SCALABLE:
     'Odstráňte parameter <code>user-scalable="no"</code> v <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">meta značke viewport</a>, aby ste umožnili priblíženie.',
   META_MAX:

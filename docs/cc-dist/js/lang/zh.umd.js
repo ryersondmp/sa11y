@@ -114,7 +114,33 @@
       "音频",
       "pdf"
     ],
-    POTENTIAL_UI_ELEMENTS: ["菜单", "关闭", "切换", "打开", "展开", "折叠", "下一步", "下一个", "上一步", "上一个", "播放", "暂停", "子菜单", "显示", "隐藏", "下拉", "返回", "前进", "跳过", "提交", "取消", "保存", "编辑", "删除", "移除", "搜索", "筛选", "排序", "停止", "静音", "取消静音", "全屏", "最小化", "最大化"]
+    POTENTIAL_UI_ELEMENTS: ["菜单", "关闭", "切换", "打开", "展开", "折叠", "下一步", "下一个", "上一步", "上一个", "播放", "暂停", "子菜单", "显示", "隐藏", "下拉", "返回", "前进", "跳过", "提交", "取消", "保存", "编辑", "删除", "移除", "搜索", "筛选", "排序", "停止", "静音", "取消静音", "全屏", "最小化", "最大化"],
+    META_TITLE_UNDESCRIPTIVE_STRINGS: [
+      "无标题",
+      "文档",
+      "页面",
+      "标题",
+      "默认",
+      "索引",
+      "新建",
+      "占位符",
+      "网页",
+      "无标题",
+      "在此插入标题",
+      "你好世界",
+      "我的应用",
+      "我的网站",
+      "我的网站",
+      "网站标题",
+      "您的网站标题",
+      "示例域",
+      "untitled",
+      "undefined",
+      "title",
+      "document",
+      "index",
+      "placeholder"
+    ]
   };
   const ui = {
     LANG_CODE: "zh",
@@ -294,6 +320,7 @@
     // Meta checks
     META_LANG: '页面语言未声明!请<a href="https://www.w3.org/International/questions/qa-html-language-declarations.zh-hans.html">在HTML标签上声明语言。</a>',
     META_TITLE: '缺少页面标题!请提供一个<a href="https://developer.mozilla.org/zh/docs/Web/HTML/Element/title">页面标题。</a>',
+    META_TITLE_UNDESCRIPTIVE: '页面标题"<em>%(TEXT)</em>"可能不够具有描述性，或未能传达页面的主题或用途。页面标题应该是唯一的、简洁的，并清楚地描述页面内容。详细了解<a href="https://www.w3.org/WAI/tutorials/page-structure/title/">有意义的页面标题。</a>',
     META_SCALABLE: '删除<a href="https://developer.mozilla.org/zh-CN/docs/Web/HTML/Viewport_meta_tag">视口元标签</a>中的 <code>user-scalable="no"</code> 参数，以允许缩放。',
     META_MAX: '确保<a href="https://developer.mozilla.org/zh-CN/docs/Web/HTML/Viewport_meta_tag">视口元标签</a>中的 <code>maximum-scale</code> 参数不少于 2。',
     META_REFRESH: "页面不应使用 meta 标签自动刷新。",

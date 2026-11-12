@@ -130,6 +130,26 @@ const ruleset = {
     "maximize",
     "slide",
     "modal"
+  ],
+  META_TITLE_UNDESCRIPTIVE_STRINGS: [
+    "untitled",
+    "document",
+    "page",
+    "title",
+    "default",
+    "undefined",
+    "index",
+    "new",
+    "placeholder",
+    "webpage",
+    "no title",
+    "insert title here",
+    "hello world",
+    "my app",
+    "my site",
+    "my website",
+    "site title",
+    "your site title"
   ]
 };
 const ui = {
@@ -310,6 +330,7 @@ const tooltip = {
   SUMMARY_EMPTY: "Summary element within the <code>&lt;details&gt;</code> has no accessible name. Add descriptive text inside the <code>&lt;summary&gt;</code> element.",
   // Meta checks
   META_TITLE: 'Missing page title! Please provide a <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/title">page title.</a>',
+  META_TITLE_UNDESCRIPTIVE: 'The page title "<em>%(TEXT)</em>" may not be descriptive or convey the subject or purpose of the page. Page titles should be unique, concise, and clearly describe the page content. Learn more about <a href="https://www.w3.org/WAI/tutorials/page-structure/title/">meaningful page titles.</a>',
   META_SCALABLE: 'Remove the <code>user-scalable="no"</code> parameter in the <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">viewport meta tag</a> in order to allow zooming.',
   META_MAX: 'Ensure the <code>maximum-scale</code> parameter in the <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">viewport meta tag</a> is not less than 2.',
   META_LANG: 'Page language not declared! Please <a href="https://www.w3.org/International/questions/qa-html-language-declarations">declare language on the HTML tag.</a>',

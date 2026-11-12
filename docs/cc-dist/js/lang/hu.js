@@ -114,7 +114,32 @@ const ruleset = {
     "audio",
     "pdf"
   ],
-  POTENTIAL_UI_ELEMENTS: ["menü", "bezárás", "váltás", "megnyitás", "kibontás", "összecsukás", "következő", "előző", "lejátszás", "szünet", "almenü", "megjelenítés", "elrejtés", "legördülő", "vissza", "előre", "kihagyás", "beküldés", "mégse", "mentés", "szerkesztés", "törlés", "eltávolítás", "keresés", "szűrés", "rendezés", "leállítás", "némítás", "visszahangosítás", "teljes képernyő", "minimalizálás", "maximalizálás"]
+  POTENTIAL_UI_ELEMENTS: ["menü", "bezárás", "váltás", "megnyitás", "kibontás", "összecsukás", "következő", "előző", "lejátszás", "szünet", "almenü", "megjelenítés", "elrejtés", "legördülő", "vissza", "előre", "kihagyás", "beküldés", "mégse", "mentés", "szerkesztés", "törlés", "eltávolítás", "keresés", "szűrés", "rendezés", "leállítás", "némítás", "visszahangosítás", "teljes képernyő", "minimalizálás", "maximalizálás"],
+  META_TITLE_UNDESCRIPTIVE_STRINGS: [
+    "cím nélkül",
+    "dokumentum",
+    "oldal",
+    "cím",
+    "alapértelmezett",
+    "index",
+    "új",
+    "helyőrző",
+    "weboldal",
+    "nincs cím",
+    "szúrja be a címet itt",
+    "halló világ",
+    "az én alkalmazásom",
+    "az én webhelyem",
+    "az én webhelyem",
+    "webhely címe",
+    "a webhely címe",
+    "példa tartomány",
+    "untitled",
+    "undefined",
+    "title",
+    "document",
+    "placeholder"
+  ]
 };
 const ui = {
   LANG_CODE: "hu",
@@ -294,6 +319,7 @@ const tooltip = {
   // Meta checks
   META_LANG: 'Az oldal nyelve nincs megadva! Kérjük, <a href="https://www.w3.org/International/questions/qa-html-language-declarations">adja meg a nyelvet a HTML-címkén.</a>',
   META_TITLE: 'Hiányzik az oldal címe! Kérjük, adjon meg egy <a href="https://developer.mozilla.org/hu/docs/Web/HTML/Element/title">oldal címet.</a>',
+  META_TITLE_UNDESCRIPTIVE: 'Az oldal címe "<em>%(TEXT)</em>" lehet, hogy nem leíró, vagy nem közvetíti az oldal tárgyát vagy célját. Az oldal címeinek egyedieknek, tömörnek kell lenniük, és egyértelműen le kell írniuk az oldal tartalmát. Tudjon meg többet az <a href="https://www.w3.org/WAI/tutorials/page-structure/title/">értelmes oldal címekről.</a>',
   META_SCALABLE: 'Távolítsa el a <code>user-scalable="no"</code> paramétert a <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">nézet meta tagjében</a> a nagyítás engedélyezése érdekében.',
   META_MAX: 'Győződjön meg arról, hogy a <code>maximum-scale</code> paraméter a <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">nézet meta tagjében</a> nem kisebb, mint 2.',
   META_REFRESH: "Az oldalnak nem szabad automatikusan frissülnie meta címke segítségével.",
