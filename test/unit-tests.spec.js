@@ -28,7 +28,7 @@ test.describe('Sa11y Unit Tests', () => {
   test('Navigate to unit test page and toggle Sa11y', async () => {
     // Navigate to unit tests page.
     await page.goto('/test/pages/unit-tests.html');
-    // Toggle main toggle. click() waits for the toggle to become enabled.
+    await page.locator('#warning-autoplay video').evaluate((video) => video.play());
     await panel('#toggle').click();
     await waitForCheckComplete(page);
   });
@@ -1530,12 +1530,10 @@ test.describe('Sa11y Unit Tests', () => {
     expect(issue).toBe(true);
   });
 
-  /*
   test('Video autoplay warning', async () => {
     const issue = await checkTooltip(page, 'warning-autoplay', 'playing videos that cannot');
     expect(issue).toBe(true);
   });
-  */
 
   test('iFrame with audio source', async () => {
     const issue = await checkTooltip(
