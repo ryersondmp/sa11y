@@ -5,6 +5,7 @@ import Constants from '../utils/constants';
 import Elements from '../utils/elements';
 import ConsoleErrors from '../interface/console-error';
 import updateResults from './updateResults';
+import resetCaches from './reset-caches';
 
 // Checks/rulesets
 import checkImages from '../rulesets/images';
@@ -29,6 +30,10 @@ export default async function checkAll(
 ) {
   try {
     State.start = performance.now();
+
+    // Start from empty caches. Not every caller runs resetAll first (headless re-checks, SPA
+    // route changes with the panel closed), and cached results go stale when the page changes.
+    resetCaches();
 
     // Initialize root areas to check.
     Constants.initializeRoot(desiredRoot, desiredReadabilityRoot, fixedRoots);

@@ -840,13 +840,19 @@ export const resetStyleCache = () => {
   styleCaches = {};
 };
 
-let parentCache = new WeakMap();
+// selector => WeakMap(element => closest match or null).
+let parentCache = new Map();
 /**
- * Get cached parent element matching selector.
- * Reduces DOM traversal by caching closest() results.
+ * Cached equivalent of `element.closest(selector)`.
+ *
+ * Every element passed on the way up is cached too, not just the starting element: an element
+ * that does not match has the same answer as its parent. Later calls from siblings and
+ * descendants stop at the first ancestor already resolved, so checking every element on the page
+ * costs about one `matches()` per element instead of one per element per ancestor. Like
+ * `closest()`, the search stops at a shadow root.
  * @param {Element} element - The element to search from.
  * @param {string} selector - CSS selector to match.
- * @returns {Element|null} The matching parent or null.
+ * @returns {Element|null} The element itself or nearest ancestor matching the selector, or null.
  */
 export function getCachedClosest(element, selector) {
   // Note: `instanceof Element` is unavailable across frames.
@@ -855,30 +861,45 @@ export function getCachedClosest(element, selector) {
   // Validate selector.
   if (typeof selector !== 'string' || selector.trim() === '') return null;
 
-  try {
-    // Initialize the per-element cache if missing.
-    if (!parentCache.has(element)) {
-      parentCache.set(element, new Map());
+  let cache = parentCache.get(selector);
+  if (!cache) {
+    // Throws on an invalid selector, before anything is cached for it.
+    try {
+      element.matches(selector);
+    } catch {
+      return null;
     }
-
-    const elementCache = parentCache.get(element);
-    // Return cached result (including nulls, as they are valid results).
-    if (elementCache.has(selector)) {
-      return elementCache.get(selector);
-    }
-
-    // Execute and cache.
-    const result = element.closest(selector);
-    elementCache.set(selector, result);
-    return result;
-  } catch {
-    return null;
+    cache = new WeakMap();
+    parentCache.set(selector, cache);
   }
+
+  // Walk up until a match, an already resolved ancestor, or the top of the tree.
+  const path = [];
+  let current = element;
+  let result = null;
+  while (current) {
+    const cached = cache.get(current);
+    // Cached nulls are valid results; only `undefined` means not resolved yet.
+    if (cached !== undefined) {
+      result = cached;
+      break;
+    }
+    if (current.matches(selector)) {
+      result = current;
+      break;
+    }
+    path.push(current);
+    current = current.parentElement;
+  }
+
+  if (result) cache.set(result, result);
+  for (let i = 0; i < path.length; i++) cache.set(path[i], result);
+  return result;
 }
 
 // Garbage collection.
 export function resetParentCache() {
-  parentCache = new WeakMap();
+  parentCache = new Map();
 }
 
 /**

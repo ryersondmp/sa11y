@@ -1300,11 +1300,22 @@ test.describe('Sa11y Unit Tests', () => {
       'nothing-emoji-href',
       'nothing-encoded-emoji-href-id',
       'nothing-encoded-emoji-href-decoded-id',
+      'nothing-malformed-escape-name-attr',
     ];
     for (const id of ids) {
       const issue = await noAnnotation(page, id);
       expect.soft(issue, id).toBe(true);
     }
+  });
+
+  test('Broken in-page link with a malformed percent escape is flagged', async () => {
+    // decodeURIComponent throws on "%of"; the check must flag the link rather than crash.
+    const issue = await checkTooltip(
+      page,
+      'warning-malformed-escape-broken',
+      'Broken same-page link',
+    );
+    expect(issue).toBe(true);
   });
 
   test('Interactive element using aria-labelledby referencing duplicate IDs', async () => {

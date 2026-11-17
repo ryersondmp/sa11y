@@ -168,6 +168,12 @@ export function getBackground($el, shadowDetection) {
   let targetEl = $el;
   let finalBackground = [255, 255, 255]; // Default fallback to white
 
+  // Elements passed on the way up. Each one's background is the same as the element the walk
+  // stops at (they are transparent, or it is the element itself), so all of them are cached
+  // below. Later walks from siblings and descendants stop at the first cached ancestor instead
+  // of climbing to the page background again.
+  const path = [];
+
   // Allow Node.ELEMENT_NODE (1) and Node.DOCUMENT_FRAGMENT_NODE / ShadowRoot (11).
   while (targetEl && (targetEl.nodeType === 1 || targetEl.nodeType === 11)) {
     // If we land exactly on a ShadowRoot, skip computing styles and jump to its host.
@@ -176,6 +182,14 @@ export function getBackground($el, shadowDetection) {
       targetEl = targetEl.host;
       continue;
     }
+
+    // An ancestor was already resolved by an earlier walk.
+    const cached = backgroundCache.get(targetEl);
+    if (cached !== undefined) {
+      finalBackground = cached;
+      break;
+    }
+    path.push(targetEl);
 
     const styles = Utils.getCachedStyle(targetEl);
 
@@ -211,8 +225,8 @@ export function getBackground($el, shadowDetection) {
     targetEl = getVisualParent(targetEl);
   }
 
-  // 2. Save the calculated result to our WeakMap cache before returning
-  backgroundCache.set($el, finalBackground);
+  // 2. Cache the result for the element and every element passed on the way up.
+  for (let i = 0; i < path.length; i++) backgroundCache.set(path[i], finalBackground);
   return finalBackground;
 }
 

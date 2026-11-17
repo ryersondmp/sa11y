@@ -1307,27 +1307,42 @@ const getCachedStyle = (node, pseudoElt = null) => {
 const resetStyleCache = () => {
   styleCaches = {};
 };
-let parentCache = /* @__PURE__ */ new WeakMap();
+let parentCache = /* @__PURE__ */ new Map();
 function getCachedClosest(element, selector) {
   if (element?.nodeType !== 1) return null;
   if (typeof selector !== "string" || selector.trim() === "") return null;
-  try {
-    if (!parentCache.has(element)) {
-      parentCache.set(element, /* @__PURE__ */ new Map());
+  let cache = parentCache.get(selector);
+  if (!cache) {
+    try {
+      element.matches(selector);
+    } catch {
+      return null;
     }
-    const elementCache = parentCache.get(element);
-    if (elementCache.has(selector)) {
-      return elementCache.get(selector);
-    }
-    const result = element.closest(selector);
-    elementCache.set(selector, result);
-    return result;
-  } catch {
-    return null;
+    cache = /* @__PURE__ */ new WeakMap();
+    parentCache.set(selector, cache);
   }
+  const path = [];
+  let current = element;
+  let result = null;
+  while (current) {
+    const cached = cache.get(current);
+    if (cached !== void 0) {
+      result = cached;
+      break;
+    }
+    if (current.matches(selector)) {
+      result = current;
+      break;
+    }
+    path.push(current);
+    current = current.parentElement;
+  }
+  if (result) cache.set(result, result);
+  for (let i = 0; i < path.length; i++) cache.set(path[i], result);
+  return result;
 }
 function resetParentCache() {
-  parentCache = /* @__PURE__ */ new WeakMap();
+  parentCache = /* @__PURE__ */ new Map();
 }
 function removeWhitespace(string) {
   if (typeof string !== "string" && typeof string !== "number") return "";
@@ -3182,11 +3197,18 @@ function getBackground($el, shadowDetection) {
   };
   let targetEl = $el;
   let finalBackground = [255, 255, 255];
+  const path = [];
   while (targetEl && (targetEl.nodeType === 1 || targetEl.nodeType === 11)) {
     if (targetEl.nodeType === 11 && targetEl.host) {
       targetEl = targetEl.host;
       continue;
     }
+    const cached = backgroundCache.get(targetEl);
+    if (cached !== void 0) {
+      finalBackground = cached;
+      break;
+    }
+    path.push(targetEl);
     const styles2 = getCachedStyle(targetEl);
     const bgImage = styles2.backgroundImage;
     if (bgImage && bgImage !== "none") {
@@ -3208,7 +3230,7 @@ function getBackground($el, shadowDetection) {
     }
     targetEl = getVisualParent(targetEl);
   }
-  backgroundCache.set($el, finalBackground);
+  for (let i = 0; i < path.length; i++) backgroundCache.set(path[i], finalBackground);
   return finalBackground;
 }
 function clearBackgroundCache() {
@@ -3487,11 +3509,14 @@ const extractColorFromString = memoize(
   },
   (cssValue) => cssValue
 );
-async function resetAll(restartPanel = true) {
+function resetCaches() {
   resetGetText();
   resetStyleCache();
   resetParentCache();
   resetContrastCaches();
+}
+async function resetAll(restartPanel = true) {
+  resetCaches();
   resetState();
   window.sa11yCheckComplete = null;
   if (State.option.headless) return;
@@ -6991,6 +7016,21 @@ const checkStopWords = (textContent, stopWordsSet, stripStrings) => {
 };
 function checkLinkText() {
   const seen = {};
+  let anchorNames = null;
+  const hasNamedAnchor = (name) => {
+    if (!anchorNames) {
+      anchorNames = /* @__PURE__ */ new Set();
+      for (const a of document.querySelectorAll("a[name]")) anchorNames.add(a.getAttribute("name"));
+    }
+    return anchorNames.has(name);
+  };
+  const safeDecode = (value) => {
+    try {
+      return decodeURIComponent(value);
+    } catch {
+      return value;
+    }
+  };
   Elements.Found.Links.forEach(($el) => {
     let hasIssue = false;
     let deferGoodLabel = null;
@@ -7244,8 +7284,10 @@ function checkLinkText() {
       if ((!rawHref || rawHref.startsWith("#")) && getText($el).length !== 0 && !isHiddenAndUnfocusable($el) && !hasAttributes) {
         const targetId = rawHref?.substring(1);
         const ariaControls = $el.getAttribute("aria-controls");
-        const targetElement = targetId && (document.getElementById(targetId) || ariaControls && document.getElementById(ariaControls) || decodeURIComponent(targetId) !== targetId && document.getElementById(decodeURIComponent(targetId)) || encodeURIComponent(targetId) !== targetId && document.getElementById(encodeURIComponent(targetId)) || document.querySelector(`a[name="${CSS.escape(targetId)}"]`));
-        if (!targetElement) {
+        const decodedId = targetId && safeDecode(targetId);
+        const encodedId = targetId && encodeURIComponent(targetId);
+        const targetExists = targetId && (document.getElementById(targetId) || ariaControls && document.getElementById(ariaControls) || decodedId !== targetId && document.getElementById(decodedId) || encodedId !== targetId && document.getElementById(encodedId) || hasNamedAnchor(targetId));
+        if (!targetExists) {
           let isFauxButton = false;
           const foldedAccName = foldForMatching(accName);
           const matchedKeyword = Lang.list("POTENTIAL_UI_ELEMENTS").find(
@@ -8643,6 +8685,7 @@ function checkCustom(results) {
 async function checkAll(desiredRoot = State.option.checkRoot, desiredReadabilityRoot = State.option.readabilityRoot, fixedRoots = State.option.fixedRoots) {
   try {
     State.start = performance.now();
+    resetCaches();
     Constants.initializeRoot(desiredRoot, desiredReadabilityRoot, fixedRoots);
     findShadowComponents();
     Elements.initializeElements();
