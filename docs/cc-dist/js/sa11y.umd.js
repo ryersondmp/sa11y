@@ -8311,7 +8311,10 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
       pushResult({ test: "META_TITLE", developer: true });
     } else {
       const normalizedTitle = title.replace(/\s+/g, " ").toLowerCase();
-      const undescriptive = new Set(Lang._("META_TITLE_UNDESCRIPTIVE_STRINGS"));
+      const undescriptiveStrings = Lang._("META_TITLE_UNDESCRIPTIVE_STRINGS");
+      const undescriptive = new Set(
+        Array.isArray(undescriptiveStrings) ? undescriptiveStrings.map((string) => string.toLowerCase()) : []
+      );
       const startingWord = normalizedTitle.split(/[\s-]+/)[0];
       let flag = null;
       if (undescriptive.has(normalizedTitle)) {

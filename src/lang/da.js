@@ -404,7 +404,7 @@ const tooltip = {
     'Alle <code>&lt;li&gt;</code> listeelementer skal placeres inde i <code>&lt;ul&gt;</code> uordnede eller <code>&lt;ol&gt;</code> ordnede elementer. Denne struktur hjælper skærmlæsere med at annoncere listen og dens elementer nøjagtigt.',
   TABINDEX_ATTR: 'Elementet bør ikke have et <code>tabindex</code>-attribut større end 0.',
   SVG_NO_ACCESSIBLE_NAME:
-    'Nogle skærmlæsere vil oplæse dette SVG som et ubemærket billede, fordi det mangler et tilgængeligt navn og ikke er skjult. Tilføj en tilgængelig etiket (eller <code>&lt;title&gt;</code>), hvis det har en betydning, eller skjul det for skærmlæsere, hvis det rent er dekorativt (<code>aria-hidden="true"</code>). <hr> Lær mere om <a href="https://a11y-101.com/development/svg">tilgængelige SVG\'er.</a>',
+    'Nogle skærmlæsere vil oplæse denne SVG som et billede uden etiket, fordi den mangler et tilgængeligt navn og ikke er skjult. Tilføj en tilgængelig etiket (eller <code>&lt;title&gt;</code>), hvis den formidler betydning, eller skjul den for skærmlæsere, hvis den er rent dekorativ (<code>aria-hidden="true"</code>). <hr> Lær mere om <a href="https://a11y-101.com/development/svg">tilgængelige SVG\'er.</a>',
   SUMMARY_EMPTY: 'Summary-elementet i <code>&lt;details&gt;</code> har ikke noget tilgængeligt navn. Tilføj beskrivende tekst i <code>&lt;summary&gt;</code>-elementet.',
 
   // Meta checks
@@ -413,7 +413,7 @@ const tooltip = {
   META_TITLE:
     'Manglende sidetitel! Angiv venligst en <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/title">sidetitel.</a>',
   META_TITLE_UNDESCRIPTIVE:
-    'Sidetitlen "<em>%(TEXT)</em>" er muligvis ikke beskrivende eller formidler ikke sidens emne eller formål. Sidetitler bør være unikke, kortfattede og klart beskrive sideindholdet. Få mere at vide om <a href="https://www.w3.org/WAI/WCAG22/Understanding/page-titled.html">meningsfulde sidetitler.</a>',
+    'Sidetitlen "<em>%(TEXT)</em>" er muligvis ikke beskrivende eller formidler ikke sidens emne eller formål. Sidetitler bør være unikke, kortfattede og beskrive sideindholdet klart. Få mere at vide om <a href="https://www.w3.org/WAI/WCAG22/Understanding/page-titled.html">meningsfulde sidetitler.</a>',
   META_SCALABLE:
     'Fjern parameteren <code>user-scalable="no"</code> i <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">viewport meta-taggen</a> for at tillade zoomning.',
   META_MAX:
