@@ -1321,6 +1321,19 @@ test.describe('Sa11y Unit Tests', () => {
     expect(issue).toBe(true);
   });
 
+  test('Duplicate IDs are not "referenced" by attributes that merely contain them', async () => {
+    const issue = await noAnnotation(page, 'nothing-duplicate-id-substring-reference');
+    expect(issue).toBe(true);
+  });
+
+  test('Duplicate IDs referenced by aria-describedby, or containing a quote', async () => {
+    const ids = ['error-duplicate-id-describedby', 'error-duplicate-id-with-quote'];
+    for (const id of ids) {
+      const issue = await checkTooltip(page, id, 'Duplicate ID');
+      expect.soft(issue, id).toBe(true);
+    }
+  });
+
   test('Duplicate ID within the Shadow DOM', async () => {
     const shadow = await page.evaluate(async () => {
       const shadowTest = document.querySelector('shadow-test-duplicate-id').shadowRoot;
@@ -1535,6 +1548,29 @@ test.describe('Sa11y Unit Tests', () => {
     expect(issue).toBe(true);
   });
 
+  test('Video autoplay warning does not depend on playback state', async () => {
+    // Autoplay attribute, but not playing: the warning follows the markup, not whether
+    // this browser blocked autoplay or had loaded the video.
+    const issue = await checkTooltip(
+      page,
+      'warning-autoplay-not-started',
+      'playing videos that cannot',
+    );
+    expect(issue).toBe(true);
+  });
+
+  test('Video autoplay: no warning for loop-only, native controls or linked pause button', async () => {
+    const ids = [
+      'nothing-autoplay-loop-paused',
+      'nothing-autoplay-controls',
+      'nothing-autoplay-pause-button',
+    ];
+    for (const id of ids) {
+      const issue = await noAnnotation(page, id);
+      expect.soft(issue, id).toBe(true);
+    }
+  });
+
   test('iFrame with audio source', async () => {
     const issue = await checkTooltip(
       page,
@@ -1593,6 +1629,19 @@ test.describe('Sa11y Unit Tests', () => {
         id,
         'Error Summary element within the <details> has no accessible name.',
       );
+      expect.soft(issue, id).toBe(true);
+    }
+  });
+
+  test('Content inside an inert container is ignored', async () => {
+    const ids = [
+      'nothing-inert-button',
+      'nothing-inert-input',
+      'nothing-inert-link',
+      'nothing-inert-iframe',
+    ];
+    for (const id of ids) {
+      const issue = await noAnnotation(page, id);
       expect.soft(issue, id).toBe(true);
     }
   });
@@ -1717,6 +1766,23 @@ test.describe('Sa11y Unit Tests', () => {
     for (const id of ids) {
       const issue = await noAnnotation(page, id);
       expect.soft(issue, id).toBe(true);
+    }
+  });
+
+  test('SVG without a name: no warning inside controls, image roles, other SVGs, or for sprites', async () => {
+    // Other checks may annotate these containers, so only the SVG warning is checked.
+    const ids = [
+      'nothing-svg-in-label',
+      'nothing-svg-in-summary',
+      'nothing-svg-in-tab',
+      'nothing-svg-in-image-role',
+      'nothing-svg-nested',
+      'nothing-svg-sprite-zero-size',
+      'nothing-svg-sprite-defs-only',
+    ];
+    for (const id of ids) {
+      const issue = await checkTooltip(page, id, 'announce this SVG as an unlabeled image');
+      expect.soft(issue, id).toBe(false);
     }
   });
 

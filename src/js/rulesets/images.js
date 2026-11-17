@@ -20,9 +20,6 @@ const url = [
   'http',
 ];
 
-// Scripts written without spaces between words.
-const noSpaceScript = /[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}]/u;
-
 // Utility function to process alt text for stop words.
 const containsAltTextStopWords = (alt) => {
   // Folded like the localized stop word lists (see Utils.foldForMatching).
@@ -59,11 +56,10 @@ const containsAltTextStopWords = (alt) => {
   // Chinese and Japanese have no spaces, and Intl.Segmenter may split a stop word such as
   // 缩略图 or アイコン into smaller words. For those, also check the start and end of the alt.
   const altNoSpaces = altOnlyLetters.replace(/\s/g, '');
-  for (const word of Constants.Global.susAltWords) {
-    const foldedWord = Utils.foldForMatching(word);
+  for (const [foldedWord, word] of Constants.Global.susAltWords) {
     if (
       wordsToCheck.includes(foldedWord) ||
-      (noSpaceScript.test(foldedWord) &&
+      (Utils.noSpaceScriptRegex.test(foldedWord) &&
         (altNoSpaces.startsWith(foldedWord) || altNoSpaces.endsWith(foldedWord)))
     ) {
       hit[1] = word;
@@ -294,7 +290,8 @@ export default function checkImages() {
       // 1. Numeric ID check (Catches: "1 2 3 4 5")
       const isNumberString = /^(?:\s*\d){5,}\s*$/.test(altText);
 
-      // 2. Pure filename check (Catches: "hero-image-final")
+      // 2. Pure filename check (Catches: "IMG_2024_hero_final_v2"). Four or more delimiters in
+      // at most two words; three are allowed for hyphenated names ("Betty Smith-Leydon-Whopper").
       const isPureFilename = totalDelimiterCount >= 4 && wordCount <= 2;
 
       // 3. The "Slug" Check (Catches: e.g. "Oct 30 web story tmu-celebrates-2026-...")

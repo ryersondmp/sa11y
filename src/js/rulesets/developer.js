@@ -73,21 +73,11 @@ export default function checkDeveloper() {
   if (!title) {
     pushResult({ test: 'META_TITLE', developer: true });
   } else {
-    const normalizedTitle = title.replace(/\s+/g, ' ').toLowerCase();
-    // Compare case-insensitively. Lang._() returns the key itself when a language file lacks the list.
-    const undescriptiveStrings = Lang._('META_TITLE_UNDESCRIPTIVE_STRINGS');
-    const undescriptive = new Set(
-      Array.isArray(undescriptiveStrings)
-        ? undescriptiveStrings.map((string) => string.toLowerCase())
-        : [],
+    const flag = Utils.getUndescriptiveTitleType(
+      title,
+      Lang.list('META_TITLE_UNDESCRIPTIVE_STRINGS'),
+      Lang.list('META_TITLE_UNDESCRIPTIVE_PREFIXES'),
     );
-    const startingWord = normalizedTitle.split(/[\s-]+/)[0];
-    let flag = null;
-    if (undescriptive.has(normalizedTitle)) {
-      flag = 'error';
-    } else if (undescriptive.has(startingWord)) {
-      flag = /[\s-]*\d+$/.test(normalizedTitle.slice(startingWord.length)) ? 'error' : 'warning';
-    }
     if (flag) {
       pushResult({
         test: 'META_TITLE_UNDESCRIPTIVE',
@@ -137,43 +127,26 @@ export default function checkDeveloper() {
   /*  Check for duplicate IDs that are referenced by other elements. */
   /* *************************************************************** */
   if (State.option.checks.DUPLICATE_ID) {
-    document.querySelectorAll('body, [data-sa11y-has-shadow-root]').forEach((dom) => {
-      const allIds = new Set();
-      const findDuplicateIds = (ids, withinDOM) => {
-        ids.forEach(($el) => {
-          const { id } = $el;
-          if (typeof id !== 'string' || id.trim().length === 0) return;
-          if (!allIds.has(id)) {
-            allIds.add(id);
-          } else {
-            const ariaReference = Array.from(
-              withinDOM.querySelectorAll(
-                `a[href*="${id}"], label[for*="${id}"], [aria-labelledby*="${id}"], [aria-controls*="${id}"], [aria-owns*="${id}"]`,
-              ),
-            );
-            if (ariaReference.length > 0) {
-              pushResult({
-                test: 'DUPLICATE_ID',
-                element: $el,
-                args: [id],
-                dismiss: `${id}${$el.textContent}`,
-                developer: true,
-              });
-            }
-          }
+    // Ids are unique per tree: check the document, then each detected shadow root on its own.
+    // (A host's light-DOM children belong to the document tree and are checked there.)
+    const scopes = [
+      document.body,
+      ...Array.from(
+        document.querySelectorAll('[data-sa11y-has-shadow-root]'),
+        (host) => host.shadowRoot,
+      ),
+    ];
+    const exclude = Constants.Exclusions.Container.join(', ');
+    scopes.forEach((scope) => {
+      Utils.getReferencedDuplicateIds(scope, exclude).forEach(($el) => {
+        pushResult({
+          test: 'DUPLICATE_ID',
+          element: $el,
+          args: [$el.id],
+          dismiss: `${$el.id}${$el.textContent}`,
+          developer: true,
         });
-      };
-
-      if (dom.shadowRoot) {
-        const shadowRootIds = Array.from(
-          dom.shadowRoot.querySelectorAll(`[id]:not(${Constants.Exclusions.Container})`),
-        );
-        findDuplicateIds(shadowRootIds, dom.shadowRoot);
-      }
-      const regularIds = Array.from(
-        dom.querySelectorAll(`[id]:not(${Constants.Exclusions.Container})`),
-      );
-      findDuplicateIds(regularIds, dom);
+      });
     });
   }
 
@@ -185,7 +158,7 @@ export default function checkDeveloper() {
     const presentation = Utils.isPresentational($el) && Utils.isDisabled($el);
     if (
       presentation ||
-      $el.hasAttribute('inert') ||
+      Utils.isInert($el) ||
       Utils.isHiddenAndUnfocusable($el) ||
       Utils.isElementHidden($el)
     )
@@ -338,13 +311,55 @@ export default function checkDeveloper() {
   /*  Warning: SVGs without an accessible name.                  */
   /* *********************************************************** */
   if (State.option.checks.SVG_NO_ACCESSIBLE_NAME) {
+    // An SVG inside one of these is not announced as an image of its own: controls take their
+    // name from their content or label (or make their children presentational), an image role
+    // makes its children presentational, and a nested <svg> is part of the outer one.
+    const svgContainerSelector = [
+      'a[href]',
+      'button',
+      'label',
+      'summary',
+      'select',
+      'option',
+      'svg',
+      ...[
+        'link',
+        'button',
+        'tab',
+        'menuitem',
+        'menuitemcheckbox',
+        'menuitemradio',
+        'option',
+        'switch',
+        'checkbox',
+        'radio',
+        'treeitem',
+        'img',
+        'graphics-document',
+        'graphics-object',
+        'graphics-symbol',
+      ].map((role) => `[role="${role}"]`),
+    ].join(', ');
+
+    // Sprite sheets and other SVGs that draw nothing: no rendered size (including those hidden
+    // with width="0" height="0" rather than display: none), or only definitions as children.
+    const drawsNothing = (svg) => {
+      const { width, height } = svg.getBoundingClientRect();
+      return (
+        width === 0 ||
+        height === 0 ||
+        !svg.querySelector(':scope > :not(defs, symbol, title, desc, style, script, metadata)')
+      );
+    };
+
     Elements.Found.Svg.forEach((element) => {
       if (
         Utils.isPresentational(element) ||
         Utils.hasAriaHiddenAncestor(element) ||
         Utils.isElementHidden(element) ||
-        computeAccessibleName(element).trim() ||
-        Utils.getCachedClosest(element, 'a[href], button, [role="link"], [role="button"]')
+        Utils.getCachedClosest(element.parentElement, svgContainerSelector) ||
+        drawsNothing(element) ||
+        computeAccessibleName(element).trim()
       ) {
         return;
       }

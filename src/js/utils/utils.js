@@ -94,6 +94,133 @@ export function hasAriaHiddenAncestor(element) {
 }
 
 /**
+ * Checks whether an element is inert: it or an ancestor has the `inert` attribute. `inert` is
+ * normally set on a container (a page behind a modal, an off-screen carousel slide), so checking
+ * only the element itself misses almost every case. The search continues from a shadow root to
+ * its host, since an inert host makes its shadow tree inert too.
+ * @param {Element|null} element The element to check.
+ * @returns {boolean} True if the element is inside an inert subtree.
+ */
+export function isInert(element) {
+  let current = element;
+  while (current?.nodeType === 1) {
+    if (getCachedClosest(current, '[inert]')) return true;
+    // Document and detached fragments have no host, which ends the loop.
+    current = current.getRootNode().host;
+  }
+  return false;
+}
+
+// Attributes holding a space-separated list of ids, resolved like getElementById (first match).
+const idReferenceListAttributes = [
+  'aria-labelledby',
+  'aria-describedby',
+  'aria-controls',
+  'aria-owns',
+  'aria-activedescendant',
+  'aria-details',
+  'aria-errormessage',
+  'aria-flowto',
+];
+
+/**
+ * Returns the ids a same-page link points to: the fragment, plus its percent-decoded form (the
+ * browser tries both). Links to another page, and empty fragments, return no ids.
+ * @param {Element} link - An <a> or <area> element with an href.
+ * @param {URL} pageUrl - The current page URL.
+ * @returns {string[]} Candidate ids.
+ */
+function getFragmentIds(link, pageUrl) {
+  const href = link.getAttribute('href')?.trim();
+  if (!href?.includes('#')) return [];
+  let fragment;
+  if (href.startsWith('#')) {
+    fragment = href.slice(1);
+  } else {
+    let url;
+    try {
+      url = new URL(href, document.baseURI);
+    } catch {
+      return [];
+    }
+    const samePage =
+      url.origin === pageUrl.origin &&
+      url.pathname === pageUrl.pathname &&
+      url.search === pageUrl.search;
+    if (!samePage) return [];
+    fragment = url.hash.slice(1);
+  }
+  if (!fragment) return [];
+  try {
+    const decoded = decodeURIComponent(fragment);
+    return decoded === fragment ? [fragment] : [fragment, decoded];
+  } catch {
+    return [fragment];
+  }
+}
+
+/**
+ * Finds duplicate ids that something refers to, where the reference may resolve to the wrong
+ * element: label[for], ARIA id references (aria-labelledby, aria-describedby, etc.) and same-page
+ * links. References are matched exactly, never as substrings, so id="play" is not considered
+ * referenced by aria-controls="autoplay-video".
+ *
+ * An id is only unique within its tree, so call this once per scope: the document body, and each
+ * shadow root separately. A scope does not include the contents of shadow roots inside it.
+ * @param {Element|ShadowRoot} scope - The tree to check.
+ * @param {string} [exclude] - Selector for elements whose ids are ignored.
+ * @returns {Element[]} The second and later elements with each referenced duplicate id, in
+ *   document order (the first one is the element references resolve to).
+ */
+export function getReferencedDuplicateIds(scope, exclude = '') {
+  if (!scope?.querySelectorAll) return [];
+
+  // Group elements by id.
+  const elementsById = new Map();
+  const idSelector = exclude ? `[id]:not(${exclude})` : '[id]';
+  for (const element of scope.querySelectorAll(idSelector)) {
+    const { id } = element;
+    if (!id?.trim()) continue;
+    const group = elementsById.get(id);
+    if (group) group.push(element);
+    else elementsById.set(id, [element]);
+  }
+  const duplicates = [...elementsById].filter(([, group]) => group.length > 1);
+  if (!duplicates.length) return [];
+
+  // Collect every id that is referenced in this scope.
+  const referenced = new Set();
+  const pageUrl = new URL(document.URL);
+  const referenceSelector = [
+    'label[for]',
+    'a[href]',
+    'area[href]',
+    ...idReferenceListAttributes.map((attribute) => `[${attribute}]`),
+  ].join(', ');
+  for (const element of scope.querySelectorAll(referenceSelector)) {
+    // label[for] holds a single id, which is used as is.
+    if (element.localName === 'label' && element.hasAttribute('for')) {
+      referenced.add(element.getAttribute('for'));
+    }
+    if (
+      (element.localName === 'a' || element.localName === 'area') &&
+      element.hasAttribute('href')
+    ) {
+      for (const id of getFragmentIds(element, pageUrl)) referenced.add(id);
+    }
+    for (const attribute of idReferenceListAttributes) {
+      const value = element.getAttribute(attribute);
+      if (value) for (const id of value.trim().split(/\s+/)) referenced.add(id);
+    }
+  }
+
+  return duplicates
+    .filter(([id]) => referenced.has(id))
+    .flatMap(([, group]) => group.slice(1))
+    .sort((a, b) => (a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1));
+}
+
+/**
  * Checks if an element's semantics have been neutralized.
  * Handles space-separated role lists (e.g., role="none presentation").
  * @param {HTMLElement|Element} $el - The DOM element to evaluate.
@@ -185,7 +312,7 @@ export function stripAllSpecialCharacters(string) {
 // U+064B–U+0652 tanwin, harakat, shadda, sukun; U+0656–U+065F rarer vowel marks; U+0670
 // superscript alef; U+0640 tatweel. U+0653–U+0655 (madda, hamza above/below) are left out:
 // NFD splits أ إ آ ؤ ئ into a base letter plus one of those, and they are distinct letters.
-const arabicOptionalMarksRegex = /[ً-ْٖ-ٰٟـ]/g;
+const arabicOptionalMarksRegex = /[\u064B-\u0652\u0656-\u065F\u0670\u0640]/g;
 export function foldForMatching(string) {
   if (typeof string !== 'string' && typeof string !== 'number') return '';
   return (
@@ -266,6 +393,49 @@ export function containsWord(text, word, segmenter = getWordSegmenter(Lang._('LA
   return new RegExp(`(?:^|[^\\p{L}\\p{M}\\p{N}])${escaped}(?![\\p{L}\\p{M}\\p{N}])`, 'u').test(
     haystack,
   );
+}
+
+/** Scripts written without spaces between words, where a word boundary cannot be detected. */
+export const noSpaceScriptRegex = /[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}]/u;
+
+/**
+ * Classifies a page title against the localized lists of non-descriptive titles.
+ * - "error": the title is an entry of either list, optionally followed by a number, e.g.
+ *   "Untitled", "Page 2", "Untitled-1", "Document (3)".
+ * - "warning": the title starts with an entry of the prefix list and continues with other text,
+ *   e.g. "Untitled document | Acme". Only the prefix list is matched this way: generic words in
+ *   the main list, such as "new" or "index", begin many good titles ("New York Times").
+ * Matching is folded (see foldForMatching). A prefix must end at a word boundary, except when it
+ * ends in a script written without spaces.
+ * @param {string} title - The page title.
+ * @param {string[]} [entries] - Titles that are non-descriptive on their own.
+ * @param {string[]} [prefixes] - Titles that are non-descriptive at the start of any title.
+ * @returns {'error'|'warning'|null} The result type, or null if the title looks descriptive.
+ */
+export function getUndescriptiveTitleType(title, entries = [], prefixes = []) {
+  const text = foldForMatching(removeWhitespace(title));
+  if (!text) return null;
+  const prepare = (list) =>
+    (Array.isArray(list) ? list : [])
+      .map((entry) => foldForMatching(removeWhitespace(entry)))
+      .filter(Boolean);
+  const prefixList = prepare(prefixes);
+  const allEntries = [...prepare(entries), ...prefixList];
+
+  // An entry followed only by separators and/or a number: "", "-1", " 2", " (3)", " #4".
+  const isNumbered = (rest) => {
+    const stripped = rest.replace(/[\s\p{P}\p{S}]/gu, '');
+    return stripped === '' || /^\p{Nd}+$/u.test(stripped);
+  };
+  if (allEntries.some((entry) => text.startsWith(entry) && isNumbered(text.slice(entry.length)))) {
+    return 'error';
+  }
+
+  const isPrefix = (prefix) =>
+    text.startsWith(prefix) &&
+    (noSpaceScriptRegex.test(prefix.slice(-1)) ||
+      /^[^\p{L}\p{M}\p{N}]/u.test(text.slice(prefix.length)));
+  return prefixList.some(isPrefix) ? 'warning' : null;
 }
 
 /**
@@ -411,10 +581,8 @@ export function sanitizeURL(url) {
   if (invalidProtocolRegex.test(urlScheme)) return BLANK_URL;
   const backSanitized = trimmedUrl.replace(/\\/g, '/');
 
-  // Handle special cases for mailto: and custom deep-link protocols.
-  if (urlScheme === 'mailto:' || urlScheme.includes('://')) return backSanitized;
-
-  // For http and https URLs, perform additional validation.
+  // For http and https URLs, perform additional validation. Other schemes (mailto:, tel:,
+  // custom deep links) are returned as they are below.
   if (urlScheme === 'http:' || urlScheme === 'https:') {
     if (!isValidUrl(backSanitized)) return BLANK_URL;
     const url = new URL(backSanitized);

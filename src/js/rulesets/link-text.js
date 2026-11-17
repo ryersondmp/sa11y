@@ -431,7 +431,7 @@ export default function checkLinkText() {
         if (!targetElement) {
           let isFauxButton = false;
           const foldedAccName = Utils.foldForMatching(accName);
-          const matchedKeyword = Lang._('POTENTIAL_UI_ELEMENTS').find((word) =>
+          const matchedKeyword = Lang.list('POTENTIAL_UI_ELEMENTS').find((word) =>
             foldedAccName.includes(Utils.foldForMatching(word)),
           );
           const isSlide = Object.keys($el.dataset).some((key) =>

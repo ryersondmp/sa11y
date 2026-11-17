@@ -16,7 +16,7 @@ export default function checkLabels() {
       Utils.isElementHidden($el) ||
       Utils.isHiddenAndUnfocusable($el) ||
       presentation ||
-      $el.hasAttribute('inert')
+      Utils.isInert($el)
     )
       return;
 

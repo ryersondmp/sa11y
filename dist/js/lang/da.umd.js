@@ -138,6 +138,17 @@
       "document",
       "index",
       "placeholder"
+    ],
+    // Titles that are non-descriptive at the START of a title ("Untitled document").
+    // Keep these specific: the list above is only matched as a whole title or with a number.
+    META_TITLE_UNDESCRIPTIVE_PREFIXES: [
+      "uden titel",
+      "ingen titel",
+      "indsæt titel her",
+      "untitled",
+      "no title",
+      "undefined",
+      "placeholder"
     ]
   };
   const ui = {

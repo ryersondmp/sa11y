@@ -108,6 +108,17 @@ const ruleset = {
     "document",
     "index",
     "placeholder"
+  ],
+  // Titles that are non-descriptive at the START of a title ("Untitled document").
+  // Keep these specific: the list above is only matched as a whole title or with a number.
+  META_TITLE_UNDESCRIPTIVE_PREFIXES: [
+    "தலைப்பு இல்லை",
+    "தலைப்பிடப்படாதது",
+    "தலைப்பை இங்கே உள்ளிடவும்",
+    "untitled",
+    "no title",
+    "undefined",
+    "placeholder"
   ]
 };
 const ui = {
