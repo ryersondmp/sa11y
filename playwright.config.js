@@ -6,6 +6,13 @@ import { defineConfig, devices } from '@playwright/test';
 const PORT = 54114;
 const BASE_URL = `http://localhost:${PORT}`;
 
+const performanceSpec = '**/performance.spec.js';
+const performanceDevices = {
+  chromium: 'Desktop Chrome',
+  firefox: 'Desktop Firefox',
+  webkit: 'Desktop Safari',
+};
+
 /**
  * @see https://playwright.dev/docs/test-configuration
  */
@@ -46,14 +53,26 @@ export default defineConfig({
     {
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
+      testIgnore: performanceSpec,
     },
     {
       name: 'firefox',
       use: { ...devices['Desktop Firefox'] },
+      testIgnore: performanceSpec,
     },
     {
       name: 'webkit',
       use: { ...devices['Desktop Safari'] },
+      testIgnore: performanceSpec,
     },
+
+    /* Performance benchmark (test/performance.spec.js). Runs after the unit tests so they do not
+       compete for CPU. Run alone with: npx playwright test --project="perf-*" --no-deps */
+    ...['chromium', 'firefox', 'webkit'].map((browser) => ({
+      name: `perf-${browser}`,
+      use: { ...devices[performanceDevices[browser]] },
+      testMatch: performanceSpec,
+      dependencies: ['chromium', 'firefox', 'webkit'],
+    })),
   ],
 });

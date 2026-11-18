@@ -1543,6 +1543,17 @@
       <span id="🤠">🤠🤠🤠</span>
     </div>
 
+    <h4>Malformed percent escape in <kbd>href</kbd>, matching <code>name</code> attribute</h4>
+    <div id="nothing-malformed-escape-name-attr">
+      <a href="#save-50%">Jump to the sale</a>
+      <p><a name="save-50%"></a>Sale section.</p>
+    </div>
+
+    <h4>Malformed percent escape in <kbd>href</kbd>, no target</h4>
+    <div id="warning-malformed-escape-broken">
+      <a href="#100%off">Jump to the offer</a>
+    </div>
+
     <h2>Duplicate IDs</h2>
     <h3>Elements with duplicate IDs but not referenced by anything</h3>
     <div id="nothing-duplicate-id">
