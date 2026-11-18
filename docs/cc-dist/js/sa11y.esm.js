@@ -348,6 +348,17 @@ const Lang = {
   translate(string) {
     return this.langStrings[string] || string;
   },
+  /**
+   * Returns a word list (e.g. 'CLICK', 'LINK_STOPWORDS') from the language file. For a missing or
+   * malformed entry it returns an empty array, so a custom or outdated language object disables
+   * that matching instead of crashing: translate() would return the key itself, a string.
+   * @param {string} key - The language file key of an array of strings.
+   * @returns {string[]} The list, without non-string entries.
+   */
+  list(key) {
+    const value = this.langStrings[key];
+    return Array.isArray(value) ? value.filter((entry) => typeof entry === "string") : [];
+  },
   prepHTML($el) {
     return $el.replaceAll(/<hr>/g, '<hr aria-hidden="true">').replaceAll(/<a[\s]href=/g, '<a target="_blank" rel="noopener noreferrer" href=').replaceAll(/<\/a>/g, `<span class="visually-hidden"> (${Lang._("NEW_TAB")})</span></a>`).replaceAll(/{C}/g, 'class="colour"').replaceAll(/{B}/g, 'class="badge"').replaceAll(/{ALT}/g, `<strong class="badge">${Lang._("ALT")}</strong>`).replaceAll(
       /{L}/g,
@@ -467,8 +478,11 @@ const Constants = /* @__PURE__ */ (function myConstants() {
     } else {
       Global.pdfSources = false;
     }
-    Global.susAltWords = State.option.susAltStopWords ? State.option.susAltStopWords.split(",").map((word) => word.trim().toLowerCase()).filter(Boolean) : Lang._("SUS_ALT_STOPWORDS");
-    Global.placeholderAltSet = new Set(Lang._("PLACEHOLDER_ALT_STOPWORDS").map(foldForMatching));
+    const susAltWords = State.option.susAltStopWords ? State.option.susAltStopWords.split(",").map((word) => word.trim()).filter(Boolean) : Lang.list("SUS_ALT_STOPWORDS");
+    Global.susAltWords = new Map(
+      susAltWords.map((word) => [foldForMatching(word), word]).filter(([folded]) => folded)
+    );
+    Global.placeholderAltSet = new Set(Lang.list("PLACEHOLDER_ALT_STOPWORDS").map(foldForMatching));
     const altPlaceholder = Array.isArray(State.option.altPlaceholder) ? State.option.altPlaceholder.map(stripBidiControls) : stripBidiControls(State.option.altPlaceholder);
     Global.altPlaceholderPattern = generateRegexString(altPlaceholder, true);
     Global.linkIgnoreStringPattern = generateRegexString(State.option.linkIgnoreStrings);
@@ -477,13 +491,15 @@ const Constants = /* @__PURE__ */ (function myConstants() {
     Global.headerStringExclusionPattern = generateRegexString(State.option.headerIgnoreStrings);
     const customStopWords = State.option.linkStopWords ? State.option.linkStopWords.split(",").map((word) => word.toLowerCase().trim()) : [];
     Global.linkStopWords = new Set(
-      [...Lang._("LINK_STOPWORDS"), ...customStopWords].map(normalizeStopWord).filter(Boolean)
+      [...Lang.list("LINK_STOPWORDS"), ...customStopWords].map(normalizeStopWord).filter(Boolean)
     );
     Global.linkIgnoreStrings = new Set(
       State.option.linkIgnoreStrings.map((word) => word.toLowerCase())
     );
-    Global.clickRegex = generateRegexString(Lang._("CLICK").map(foldForMatching));
-    Global.newWindowRegex = generateRegexString(Lang._("NEW_WINDOW_PHRASES").map(foldForMatching));
+    Global.clickRegex = generateRegexString(Lang.list("CLICK").map(foldForMatching));
+    Global.newWindowRegex = generateRegexString(
+      Lang.list("NEW_WINDOW_PHRASES").map(foldForMatching)
+    );
     const defaultFileTypes = [
       "pdf",
       "doc",
@@ -740,7 +756,7 @@ const Constants = /* @__PURE__ */ (function myConstants() {
     if (State.option.imageIgnore) {
       Exclusions.Images = State.option.imageIgnore.split(",").map(($el) => $el.trim()).concat(Exclusions.Images);
     }
-    Exclusions.Links = [".anchorjs-link", '[aria-hidden="true"][tabindex^="-"], [inert]'];
+    Exclusions.Links = [".anchorjs-link", '[aria-hidden="true"][tabindex^="-"]'];
     if (State.option.linkIgnore) {
       Exclusions.Links = State.option.linkIgnore.split(",").map(($el) => $el.trim()).concat(Exclusions.Links);
     }
@@ -847,6 +863,84 @@ function hasAriaHiddenAncestor(element) {
   }
   return false;
 }
+function isInert(element) {
+  let current = element;
+  while (current?.nodeType === 1) {
+    if (getCachedClosest(current, "[inert]")) return true;
+    current = current.getRootNode().host;
+  }
+  return false;
+}
+const idReferenceListAttributes = [
+  "aria-labelledby",
+  "aria-describedby",
+  "aria-controls",
+  "aria-owns",
+  "aria-activedescendant",
+  "aria-details",
+  "aria-errormessage",
+  "aria-flowto"
+];
+function getFragmentIds(link, pageUrl) {
+  const href = link.getAttribute("href")?.trim();
+  if (!href?.includes("#")) return [];
+  let fragment;
+  if (href.startsWith("#")) {
+    fragment = href.slice(1);
+  } else {
+    let url2;
+    try {
+      url2 = new URL(href, document.baseURI);
+    } catch {
+      return [];
+    }
+    const samePage = url2.origin === pageUrl.origin && url2.pathname === pageUrl.pathname && url2.search === pageUrl.search;
+    if (!samePage) return [];
+    fragment = url2.hash.slice(1);
+  }
+  if (!fragment) return [];
+  try {
+    const decoded = decodeURIComponent(fragment);
+    return decoded === fragment ? [fragment] : [fragment, decoded];
+  } catch {
+    return [fragment];
+  }
+}
+function getReferencedDuplicateIds(scope, exclude = "") {
+  if (!scope?.querySelectorAll) return [];
+  const elementsById = /* @__PURE__ */ new Map();
+  const idSelector = exclude ? `[id]:not(${exclude})` : "[id]";
+  for (const element of scope.querySelectorAll(idSelector)) {
+    const { id } = element;
+    if (!id?.trim()) continue;
+    const group = elementsById.get(id);
+    if (group) group.push(element);
+    else elementsById.set(id, [element]);
+  }
+  const duplicates = [...elementsById].filter(([, group]) => group.length > 1);
+  if (!duplicates.length) return [];
+  const referenced = /* @__PURE__ */ new Set();
+  const pageUrl = new URL(document.URL);
+  const referenceSelector = [
+    "label[for]",
+    "a[href]",
+    "area[href]",
+    ...idReferenceListAttributes.map((attribute) => `[${attribute}]`)
+  ].join(", ");
+  for (const element of scope.querySelectorAll(referenceSelector)) {
+    if (element.localName === "label" && element.hasAttribute("for")) {
+      referenced.add(element.getAttribute("for"));
+    }
+    if ((element.localName === "a" || element.localName === "area") && element.hasAttribute("href")) {
+      for (const id of getFragmentIds(element, pageUrl)) referenced.add(id);
+    }
+    for (const attribute of idReferenceListAttributes) {
+      const value = element.getAttribute(attribute);
+      if (value) for (const id of value.trim().split(/\s+/)) referenced.add(id);
+    }
+  }
+  return duplicates.filter(([id]) => referenced.has(id)).flatMap(([, group]) => group.slice(1)).sort((a, b) => a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1);
+}
 function isPresentational($el) {
   if (!$el || typeof $el.getAttribute !== "function") return false;
   const roleAttr = $el.getAttribute("role");
@@ -875,7 +969,7 @@ function stripAllSpecialCharacters(string) {
   if (typeof string !== "string" && typeof string !== "number") return "";
   return String(string).replace(/[^\p{L}\p{M}\p{N}\s]/gu, "").replace(/\s+/g, " ").trim();
 }
-const arabicOptionalMarksRegex = /[ً-ْٖ-ٰٟـ]/g;
+const arabicOptionalMarksRegex = /[\u064B-\u0652\u0656-\u065F\u0670\u0640]/g;
 function foldForMatching(string) {
   if (typeof string !== "string" && typeof string !== "number") return "";
   return String(string).toLowerCase().normalize("NFD").replace(new RegExp("(\\p{Script=Greek})\\p{M}+", "gu"), "$1").replace(/i\u0307|\u0131/g, "i").replace(arabicOptionalMarksRegex, "").normalize("NFC");
@@ -912,6 +1006,23 @@ function containsWord(text, word, segmenter = getWordSegmenter(Lang._("LANG_CODE
   return new RegExp(`(?:^|[^\\p{L}\\p{M}\\p{N}])${escaped}(?![\\p{L}\\p{M}\\p{N}])`, "u").test(
     haystack
   );
+}
+const noSpaceScriptRegex = /[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}]/u;
+function getUndescriptiveTitleType(title, entries = [], prefixes = []) {
+  const text = foldForMatching(removeWhitespace(title));
+  if (!text) return null;
+  const prepare = (list) => (Array.isArray(list) ? list : []).map((entry) => foldForMatching(removeWhitespace(entry))).filter(Boolean);
+  const prefixList = prepare(prefixes);
+  const allEntries = [...prepare(entries), ...prefixList];
+  const isNumbered = (rest) => {
+    const stripped = rest.replace(/[\s\p{P}\p{S}]/gu, "");
+    return stripped === "" || new RegExp("^\\p{Nd}+$", "u").test(stripped);
+  };
+  if (allEntries.some((entry) => text.startsWith(entry) && isNumbered(text.slice(entry.length)))) {
+    return "error";
+  }
+  const isPrefix = (prefix) => text.startsWith(prefix) && (noSpaceScriptRegex.test(prefix.slice(-1)) || /^[^\p{L}\p{M}\p{N}]/u.test(text.slice(prefix.length)));
+  return prefixList.some(isPrefix) ? "warning" : null;
 }
 const invalidProtocolRegex = /^\W*(javascript|data|vbscript)/i;
 const htmlEntitiesRegex = /&#(?:x([0-9a-f]+)|(\d+));?/gi;
@@ -990,7 +1101,6 @@ function sanitizeURL(url2) {
   const urlScheme = urlSchemeParseResults[0].toLowerCase().trim();
   if (invalidProtocolRegex.test(urlScheme)) return BLANK_URL;
   const backSanitized = trimmedUrl.replace(/\\/g, "/");
-  if (urlScheme === "mailto:" || urlScheme.includes("://")) return backSanitized;
   if (urlScheme === "http:" || urlScheme === "https:") {
     if (!isValidUrl(backSanitized)) return BLANK_URL;
     const url3 = new URL(backSanitized);
@@ -1197,27 +1307,42 @@ const getCachedStyle = (node, pseudoElt = null) => {
 const resetStyleCache = () => {
   styleCaches = {};
 };
-let parentCache = /* @__PURE__ */ new WeakMap();
+let parentCache = /* @__PURE__ */ new Map();
 function getCachedClosest(element, selector) {
   if (element?.nodeType !== 1) return null;
   if (typeof selector !== "string" || selector.trim() === "") return null;
-  try {
-    if (!parentCache.has(element)) {
-      parentCache.set(element, /* @__PURE__ */ new Map());
+  let cache = parentCache.get(selector);
+  if (!cache) {
+    try {
+      element.matches(selector);
+    } catch {
+      return null;
     }
-    const elementCache = parentCache.get(element);
-    if (elementCache.has(selector)) {
-      return elementCache.get(selector);
-    }
-    const result = element.closest(selector);
-    elementCache.set(selector, result);
-    return result;
-  } catch {
-    return null;
+    cache = /* @__PURE__ */ new WeakMap();
+    parentCache.set(selector, cache);
   }
+  const path = [];
+  let current = element;
+  let result = null;
+  while (current) {
+    const cached = cache.get(current);
+    if (cached !== void 0) {
+      result = cached;
+      break;
+    }
+    if (current.matches(selector)) {
+      result = current;
+      break;
+    }
+    path.push(current);
+    current = current.parentElement;
+  }
+  if (result) cache.set(result, result);
+  for (let i = 0; i < path.length; i++) cache.set(path[i], result);
+  return result;
 }
 function resetParentCache() {
-  parentCache = /* @__PURE__ */ new WeakMap();
+  parentCache = /* @__PURE__ */ new Map();
 }
 function removeWhitespace(string) {
   if (typeof string !== "string" && typeof string !== "number") return "";
@@ -1717,7 +1842,9 @@ const Utils = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.definePropert
   getCachedClosest,
   getCachedStyle,
   getNextSibling,
+  getReferencedDuplicateIds,
   getText,
+  getUndescriptiveTitleType,
   getWordSegmenter,
   hasAriaHiddenAncestor,
   initRovingTabindex,
@@ -1726,11 +1853,13 @@ const Utils = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.definePropert
   isElementHidden,
   isElementVisuallyHiddenOrHidden,
   isHiddenAndUnfocusable,
+  isInert,
   isNegativeTabindex,
   isPresentational,
   isScreenReaderOnly,
   isScrollable,
   isVisibleTextInAccName,
+  noSpaceScriptRegex,
   normalizeStopWord,
   normalizeString,
   offsetTop,
@@ -1784,6 +1913,7 @@ function findShadowComponents() {
 }
 const Elements = (function myElements() {
   const Found = {};
+  const isExcludedLink = ($el) => isInert($el) || Constants.Exclusions.Links.some((s) => $el.matches(s));
   const contrastExcludedTags = /* @__PURE__ */ new Set([
     "AUDIO",
     "VIDEO",
@@ -1936,7 +2066,7 @@ const Elements = (function myElements() {
         if (imageRoles.has(role) && !Constants.Exclusions.Images.some((s) => $el.matches(s))) {
           Found.Images.push($el);
           handledByRole = true;
-        } else if (role === "link" && !Constants.Exclusions.Links.some((s) => $el.matches(s))) {
+        } else if (role === "link" && !isExcludedLink($el)) {
           Found.Links.push($el);
           handledByRole = true;
         } else if (role === "button") {
@@ -1955,7 +2085,7 @@ const Elements = (function myElements() {
           case "A":
           // HTML anchor
           case "a":
-            if ($el.hasAttribute("href") && !$el.matches('[role="button"]') && !Constants.Exclusions.Links.some((s) => $el.matches(s))) {
+            if ($el.hasAttribute("href") && !$el.matches('[role="button"]') && !isExcludedLink($el)) {
               Found.Links.push($el);
               if (badLinkSelectors.length > 0 && badLinkSelectors.some((s) => $el.matches(s))) {
                 Found.CustomErrorLinks.push($el);
@@ -2103,7 +2233,7 @@ const Elements = (function myElements() {
           break;
         case "A":
         case "a":
-          if ($el.hasAttribute("href") && !$el.matches('[role="button"]') && !Constants.Exclusions.Links.some((s) => $el.matches(s))) {
+          if ($el.hasAttribute("href") && !$el.matches('[role="button"]') && !isExcludedLink($el)) {
             Found.Links.push($el);
           }
           break;
@@ -3067,11 +3197,18 @@ function getBackground($el, shadowDetection) {
   };
   let targetEl = $el;
   let finalBackground = [255, 255, 255];
+  const path = [];
   while (targetEl && (targetEl.nodeType === 1 || targetEl.nodeType === 11)) {
     if (targetEl.nodeType === 11 && targetEl.host) {
       targetEl = targetEl.host;
       continue;
     }
+    const cached = backgroundCache.get(targetEl);
+    if (cached !== void 0) {
+      finalBackground = cached;
+      break;
+    }
+    path.push(targetEl);
     const styles2 = getCachedStyle(targetEl);
     const bgImage = styles2.backgroundImage;
     if (bgImage && bgImage !== "none") {
@@ -3093,7 +3230,7 @@ function getBackground($el, shadowDetection) {
     }
     targetEl = getVisualParent(targetEl);
   }
-  backgroundCache.set($el, finalBackground);
+  for (let i = 0; i < path.length; i++) backgroundCache.set(path[i], finalBackground);
   return finalBackground;
 }
 function clearBackgroundCache() {
@@ -3372,11 +3509,14 @@ const extractColorFromString = memoize(
   },
   (cssValue) => cssValue
 );
-async function resetAll(restartPanel = true) {
+function resetCaches() {
   resetGetText();
   resetStyleCache();
   resetParentCache();
   resetContrastCaches();
+}
+async function resetAll(restartPanel = true) {
+  resetCaches();
   resetState();
   window.sa11yCheckComplete = null;
   if (State.option.headless) return;
@@ -6498,7 +6638,6 @@ const url = [
   ".heic",
   "http"
 ];
-const noSpaceScript = /[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}]/u;
 const containsAltTextStopWords = (alt) => {
   const altLowerCase = foldForMatching(removeWhitespace(alt));
   const altOnlyLetters = removeWhitespace(altLowerCase.replace(/[^\p{L}\p{M}\s]/gu, ""));
@@ -6520,9 +6659,8 @@ const containsAltTextStopWords = (alt) => {
   );
   const wordsToCheck = [...allWords.slice(0, 2), ...allWords.slice(-1)];
   const altNoSpaces = altOnlyLetters.replace(/\s/g, "");
-  for (const word of Constants.Global.susAltWords) {
-    const foldedWord = foldForMatching(word);
-    if (wordsToCheck.includes(foldedWord) || noSpaceScript.test(foldedWord) && (altNoSpaces.startsWith(foldedWord) || altNoSpaces.endsWith(foldedWord))) {
+  for (const [foldedWord, word] of Constants.Global.susAltWords) {
+    if (wordsToCheck.includes(foldedWord) || noSpaceScriptRegex.test(foldedWord) && (altNoSpaces.startsWith(foldedWord) || altNoSpaces.endsWith(foldedWord))) {
       hit[1] = word;
       break;
     }
@@ -6878,6 +7016,21 @@ const checkStopWords = (textContent, stopWordsSet, stripStrings) => {
 };
 function checkLinkText() {
   const seen = {};
+  let anchorNames = null;
+  const hasNamedAnchor = (name) => {
+    if (!anchorNames) {
+      anchorNames = /* @__PURE__ */ new Set();
+      for (const a of document.querySelectorAll("a[name]")) anchorNames.add(a.getAttribute("name"));
+    }
+    return anchorNames.has(name);
+  };
+  const safeDecode = (value) => {
+    try {
+      return decodeURIComponent(value);
+    } catch {
+      return value;
+    }
+  };
   Elements.Found.Links.forEach(($el) => {
     let hasIssue = false;
     let deferGoodLabel = null;
@@ -7131,11 +7284,13 @@ function checkLinkText() {
       if ((!rawHref || rawHref.startsWith("#")) && getText($el).length !== 0 && !isHiddenAndUnfocusable($el) && !hasAttributes) {
         const targetId = rawHref?.substring(1);
         const ariaControls = $el.getAttribute("aria-controls");
-        const targetElement = targetId && (document.getElementById(targetId) || ariaControls && document.getElementById(ariaControls) || decodeURIComponent(targetId) !== targetId && document.getElementById(decodeURIComponent(targetId)) || encodeURIComponent(targetId) !== targetId && document.getElementById(encodeURIComponent(targetId)) || document.querySelector(`a[name="${CSS.escape(targetId)}"]`));
-        if (!targetElement) {
+        const decodedId = targetId && safeDecode(targetId);
+        const encodedId = targetId && encodeURIComponent(targetId);
+        const targetExists = targetId && (document.getElementById(targetId) || ariaControls && document.getElementById(ariaControls) || decodedId !== targetId && document.getElementById(decodedId) || encodedId !== targetId && document.getElementById(encodedId) || hasNamedAnchor(targetId));
+        if (!targetExists) {
           let isFauxButton = false;
           const foldedAccName = foldForMatching(accName);
-          const matchedKeyword = Lang._("POTENTIAL_UI_ELEMENTS").find(
+          const matchedKeyword = Lang.list("POTENTIAL_UI_ELEMENTS").find(
             (word) => foldedAccName.includes(foldForMatching(word))
           );
           const isSlide = Object.keys($el.dataset).some(
@@ -7539,7 +7694,7 @@ function checkLabels() {
   if (!State.option.formLabelsPlugin) return;
   Elements.Found.Inputs.forEach(($el) => {
     const presentation = isPresentational($el) && isDisabled($el);
-    if (isElementHidden($el) || isHiddenAndUnfocusable($el) || presentation || $el.hasAttribute("inert"))
+    if (isElementHidden($el) || isHiddenAndUnfocusable($el) || presentation || isInert($el))
       return;
     const computeName = computeAccessibleName($el);
     const inputName = removeWhitespace(computeName);
@@ -7795,6 +7950,33 @@ function checkReadability() {
     Constants.Panel.readabilityInfo.innerHTML = `<br>${Lang._("READABILITY_NOT_ENOUGH")}`;
   }
 }
+function pauseControlFor(video) {
+  const root = video.getRootNode();
+  if (!root?.querySelectorAll) return null;
+  const selector = 'button[aria-controls], [role="button"][aria-controls], input[type="button"][aria-controls]';
+  const isVisible = (el2) => el2.checkVisibility ? el2.checkVisibility({ checkOpacity: true, checkVisibilityCSS: true }) : el2.offsetWidth > 0 || el2.offsetHeight > 0;
+  for (const control of root.querySelectorAll(selector)) {
+    if (control.disabled || control.getAttribute("aria-disabled") === "true" || !isVisible(control)) {
+      continue;
+    }
+    const ids = control.getAttribute("aria-controls").trim().split(/\s+/);
+    const hasTarget = ids.some((id) => {
+      const target = root.getElementById ? root.getElementById(id) : root.querySelector?.(`#${CSS.escape(id)}`);
+      return target?.contains(video);
+    });
+    if (hasTarget) return control;
+  }
+  return null;
+}
+function isUnpausableAutoplay($el) {
+  if ($el.tagName !== "VIDEO") return false;
+  if (!$el.autoplay && $el.paused) return false;
+  if ($el.controls) return false;
+  if (!$el.loop && Number.isFinite($el.duration) && $el.duration <= 5) return false;
+  const rect = $el.getBoundingClientRect();
+  if (rect.width < 64 && rect.height < 64) return false;
+  return !pauseControlFor($el);
+}
 function checkEmbeddedContent() {
   if (!State.option.embeddedContentPlugin) return;
   const src = ($el) => $el.getAttribute("src") || $el.querySelector("source[src]")?.getAttribute("src") || $el.querySelector("[src]")?.getAttribute("src") || null;
@@ -7817,30 +7999,7 @@ function checkEmbeddedContent() {
         dismiss: src($el)
       });
     }
-    if (State.option.checks.EMBED_VIDEO_AUTOPLAY) {
-      let pauseControlFor = function(video) {
-        const root = video.getRootNode();
-        if (!root?.querySelectorAll) return null;
-        const selector = 'button[aria-controls], [role="button"][aria-controls], input[type="button"][aria-controls]';
-        const isVisible = (el2) => el2.checkVisibility ? el2.checkVisibility({ checkOpacity: true, checkVisibilityCSS: true }) : el2.offsetWidth > 0 || el2.offsetHeight > 0;
-        for (const control of root.querySelectorAll(selector)) {
-          if (control.disabled || control.getAttribute("aria-disabled") === "true" || !isVisible(control))
-            continue;
-          const ids = control.getAttribute("aria-controls").trim().split(/\s+/);
-          const hasTarget = ids.some((id) => {
-            const target = root.getElementById ? root.getElementById(id) : root.querySelector?.(`#${CSS.escape(id)}`);
-            return target?.contains(video);
-          });
-          if (hasTarget) return control;
-        }
-        return null;
-      };
-      if (!$el.autoplay && !$el.loop) return;
-      if ($el.controls) return;
-      const rect = $el.getBoundingClientRect();
-      if (rect.width < 64 && rect.height < 64) return;
-      if ($el.paused && $el.readyState >= 2) return;
-      if (pauseControlFor($el)) return;
+    if (State.option.checks.EMBED_VIDEO_AUTOPLAY && isUnpausableAutoplay($el)) {
       pushResult({
         element: $el,
         test: "EMBED_VIDEO_AUTOPLAY",
@@ -7859,7 +8018,7 @@ function checkEmbeddedContent() {
     });
   });
   Elements.Found.iframes.forEach(($el) => {
-    if (isElementHidden($el) || isHiddenAndUnfocusable($el) || isPresentational($el) || $el.hasAttribute("inert") || ["VIDEO", "AUDIO"].includes($el.tagName)) {
+    if (isElementHidden($el) || isHiddenAndUnfocusable($el) || isPresentational($el) || isInert($el) || ["VIDEO", "AUDIO"].includes($el.tagName)) {
       return;
     }
     if (isNegativeTabindex($el)) {
@@ -7888,7 +8047,7 @@ function checkEmbeddedContent() {
     }
   });
   Elements.Found.EmbeddedContent.forEach(($el) => {
-    if (isElementHidden($el) || isHiddenAndUnfocusable($el) || $el.hasAttribute("inert") || ["VIDEO", "AUDIO"].includes($el.tagName)) {
+    if (isElementHidden($el) || isHiddenAndUnfocusable($el) || isInert($el) || ["VIDEO", "AUDIO"].includes($el.tagName)) {
       return;
     }
     pushResult({
@@ -8306,15 +8465,11 @@ function checkDeveloper() {
   if (!title) {
     pushResult({ test: "META_TITLE", developer: true });
   } else {
-    const normalizedTitle = title.replace(/\s+/g, " ").toLowerCase();
-    const undescriptive = new Set(Lang._("META_TITLE_UNDESCRIPTIVE_STRINGS"));
-    const startingWord = normalizedTitle.split(/[\s-]+/)[0];
-    let flag = null;
-    if (undescriptive.has(normalizedTitle)) {
-      flag = "error";
-    } else if (undescriptive.has(startingWord)) {
-      flag = /[\s-]*\d+$/.test(normalizedTitle.slice(startingWord.length)) ? "error" : "warning";
-    }
+    const flag = getUndescriptiveTitleType(
+      title,
+      Lang.list("META_TITLE_UNDESCRIPTIVE_STRINGS"),
+      Lang.list("META_TITLE_UNDESCRIPTIVE_PREFIXES")
+    );
     if (flag) {
       pushResult({
         test: "META_TITLE_UNDESCRIPTIVE",
@@ -8347,47 +8502,29 @@ function checkDeveloper() {
     pushResult({ test: "META_REFRESH", developer: true });
   }
   if (State.option.checks.DUPLICATE_ID) {
-    document.querySelectorAll("body, [data-sa11y-has-shadow-root]").forEach((dom) => {
-      const allIds = /* @__PURE__ */ new Set();
-      const findDuplicateIds = (ids, withinDOM) => {
-        ids.forEach(($el) => {
-          const { id } = $el;
-          if (typeof id !== "string" || id.trim().length === 0) return;
-          if (!allIds.has(id)) {
-            allIds.add(id);
-          } else {
-            const ariaReference = Array.from(
-              withinDOM.querySelectorAll(
-                `a[href*="${id}"], label[for*="${id}"], [aria-labelledby*="${id}"], [aria-controls*="${id}"], [aria-owns*="${id}"]`
-              )
-            );
-            if (ariaReference.length > 0) {
-              pushResult({
-                test: "DUPLICATE_ID",
-                element: $el,
-                args: [id],
-                dismiss: `${id}${$el.textContent}`,
-                developer: true
-              });
-            }
-          }
+    const scopes = [
+      document.body,
+      ...Array.from(
+        document.querySelectorAll("[data-sa11y-has-shadow-root]"),
+        (host) => host.shadowRoot
+      )
+    ];
+    const exclude = Constants.Exclusions.Container.join(", ");
+    scopes.forEach((scope) => {
+      getReferencedDuplicateIds(scope, exclude).forEach(($el) => {
+        pushResult({
+          test: "DUPLICATE_ID",
+          element: $el,
+          args: [$el.id],
+          dismiss: `${$el.id}${$el.textContent}`,
+          developer: true
         });
-      };
-      if (dom.shadowRoot) {
-        const shadowRootIds = Array.from(
-          dom.shadowRoot.querySelectorAll(`[id]:not(${Constants.Exclusions.Container})`)
-        );
-        findDuplicateIds(shadowRootIds, dom.shadowRoot);
-      }
-      const regularIds = Array.from(
-        dom.querySelectorAll(`[id]:not(${Constants.Exclusions.Container})`)
-      );
-      findDuplicateIds(regularIds, dom);
+      });
     });
   }
   Elements.Found.Buttons.forEach(($el) => {
     const presentation = isPresentational($el) && isDisabled($el);
-    if (presentation || $el.hasAttribute("inert") || isHiddenAndUnfocusable($el) || isElementHidden($el))
+    if (presentation || isInert($el) || isHiddenAndUnfocusable($el) || isElementHidden($el))
       return;
     const accName = computeAccessibleName($el);
     const buttonText = accName.replace(/['"-\.\s]+/g, "").toLowerCase();
@@ -8497,8 +8634,38 @@ function checkDeveloper() {
     }
   });
   if (State.option.checks.SVG_NO_ACCESSIBLE_NAME) {
+    const svgContainerSelector = [
+      "a[href]",
+      "button",
+      "label",
+      "summary",
+      "select",
+      "option",
+      "svg",
+      ...[
+        "link",
+        "button",
+        "tab",
+        "menuitem",
+        "menuitemcheckbox",
+        "menuitemradio",
+        "option",
+        "switch",
+        "checkbox",
+        "radio",
+        "treeitem",
+        "img",
+        "graphics-document",
+        "graphics-object",
+        "graphics-symbol"
+      ].map((role) => `[role="${role}"]`)
+    ].join(", ");
+    const drawsNothing = (svg) => {
+      const { width, height } = svg.getBoundingClientRect();
+      return width === 0 || height === 0 || !svg.querySelector(":scope > :not(defs, symbol, title, desc, style, script, metadata)");
+    };
     Elements.Found.Svg.forEach((element) => {
-      if (isPresentational(element) || hasAriaHiddenAncestor(element) || isElementHidden(element) || computeAccessibleName(element).trim() || getCachedClosest(element, 'a[href], button, [role="link"], [role="button"]')) {
+      if (isPresentational(element) || hasAriaHiddenAncestor(element) || isElementHidden(element) || getCachedClosest(element.parentElement, svgContainerSelector) || drawsNothing(element) || computeAccessibleName(element).trim()) {
         return;
       }
       pushResult({
@@ -8518,6 +8685,7 @@ function checkCustom(results) {
 async function checkAll(desiredRoot = State.option.checkRoot, desiredReadabilityRoot = State.option.readabilityRoot, fixedRoots = State.option.fixedRoots) {
   try {
     State.start = performance.now();
+    resetCaches();
     Constants.initializeRoot(desiredRoot, desiredReadabilityRoot, fixedRoots);
     findShadowComponents();
     Elements.initializeElements();

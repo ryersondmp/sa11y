@@ -46,6 +46,275 @@ test.describe('Sa11y utils', () => {
     });
   });
 
+  test('isInert checks ancestors and continues from a shadow root to its host', async () => {
+    const result = await withUtils((u) => {
+      // Separate elements per case: getCachedClosest caches its result per element for the
+      // duration of a check, so toggling inert on the same element would read the cache.
+      const plain = document.createElement('div');
+      const plainChild = document.createElement('button');
+      plain.append(plainChild);
+      const container = document.createElement('div');
+      container.setAttribute('inert', '');
+      const child = document.createElement('button');
+      container.append(child);
+      document.body.append(plain, container);
+      const notInert = u.isInert(plainChild);
+      const inertAncestor = u.isInert(child);
+      const inertSelf = u.isInert(container);
+
+      const host = document.createElement('div');
+      const shadowButton = document.createElement('button');
+      host.attachShadow({ mode: 'open' }).append(shadowButton);
+      document.body.append(host);
+      const shadowNotInert = u.isInert(shadowButton);
+      const inertHost = document.createElement('div');
+      const inertShadowButton = document.createElement('button');
+      inertHost.attachShadow({ mode: 'open' }).append(inertShadowButton);
+      inertHost.setAttribute('inert', '');
+      document.body.append(inertHost);
+      const shadowInert = u.isInert(inertShadowButton);
+
+      plain.remove();
+      container.remove();
+      host.remove();
+      inertHost.remove();
+      return {
+        notInert,
+        inertAncestor,
+        inertSelf,
+        shadowNotInert,
+        shadowInert,
+        nullSafe: u.isInert(null),
+      };
+    });
+    expect(result).toEqual({
+      notInert: false,
+      inertAncestor: true,
+      inertSelf: true,
+      shadowNotInert: false,
+      shadowInert: true,
+      nullSafe: false,
+    });
+  });
+
+  test.describe('getReferencedDuplicateIds', () => {
+    // Builds `html` in a fresh container and returns the flagged ids (2nd+ occurrences).
+    const flagged = (html, exclude) =>
+      withUtils(
+        (u, { html, exclude }) => {
+          const container = document.createElement('div');
+          container.innerHTML = html;
+          document.body.append(container);
+          try {
+            return u.getReferencedDuplicateIds(container, exclude).map((el) => el.id);
+          } finally {
+            container.remove();
+          }
+        },
+        { html, exclude },
+      );
+
+    test('references must match the id exactly, not as a substring', async () => {
+      const result = await flagged(`
+        <button id="play">Play</button><button id="play">Play</button>
+        <button aria-controls="autoplay-video">Pause</button>
+        <span id="name"></span><span id="name"></span>
+        <label for="username">User</label>
+        <p id="team"></p><p id="team"></p>
+        <a href="/about/team">Team</a>`);
+      expect(result).toEqual([]);
+    });
+
+    test('label[for], every ARIA id reference, and same-page links count as references', async () => {
+      const result = await flagged(`
+        <label for="a">A</label><input id="a"><input id="a">
+        <button aria-labelledby="x b">B</button><span id="b"></span><span id="b"></span>
+        <button aria-describedby="c">C</button><span id="c"></span><span id="c"></span>
+        <div role="listbox" aria-activedescendant="d"></div><span id="d"></span><span id="d"></span>
+        <a href="#e">E</a><span id="e"></span><span id="e"></span><span id="e"></span>
+        <span id="unreferenced"></span><span id="unreferenced"></span>`);
+      expect(result).toEqual(['a', 'b', 'c', 'd', 'e', 'e']);
+    });
+
+    test('links: same-page absolute URLs and encoded fragments count; other pages do not', async () => {
+      const result = await withUtils((u) => {
+        const container = document.createElement('div');
+        const here = document.URL.split('#')[0];
+        container.innerHTML = `
+          <a href="${here}#same">Same page</a><i id="same"></i><i id="same"></i>
+          <a href="#caf%C3%A9">Encoded</a><i id="café"></i><i id="café"></i>
+          <a href="/another-page.html#other">Other page</a><i id="other"></i><i id="other"></i>
+          <a href="#">Top</a>`;
+        document.body.append(container);
+        try {
+          return u.getReferencedDuplicateIds(container).map((el) => el.id);
+        } finally {
+          container.remove();
+        }
+      });
+      expect(result).toEqual(['same', 'café']);
+    });
+
+    test('ids with quotes or backslashes do not throw', async () => {
+      const result = await withUtils((u) => {
+        const container = document.createElement('div');
+        for (const id of ['say-"hi"', 'back\\slash']) {
+          const button = document.createElement('button');
+          button.setAttribute('aria-describedby', id);
+          container.append(button);
+          for (let i = 0; i < 2; i++) {
+            const span = document.createElement('span');
+            span.id = id;
+            container.append(span);
+          }
+        }
+        document.body.append(container);
+        try {
+          return u.getReferencedDuplicateIds(container).map((el) => el.id);
+        } finally {
+          container.remove();
+        }
+      });
+      expect(result).toEqual(['say-"hi"', 'back\\slash']);
+    });
+
+    test('ignores ids in excluded containers; shadow roots are separate scopes', async () => {
+      const excluded = await flagged(
+        `<label for="z">Z</label><input id="z"><div class="skip"><input id="z"></div>`,
+        '.skip, .skip *',
+      );
+      const shadow = await withUtils((u) => {
+        const host = document.createElement('div');
+        host.innerHTML = '<span id="s"></span>';
+        host.attachShadow({ mode: 'open' }).innerHTML =
+          '<slot></slot><label for="s">S</label><input id="s">';
+        document.body.append(host);
+        try {
+          // Light DOM and shadow root each have one "s": not duplicates of each other.
+          return [
+            ...u.getReferencedDuplicateIds(host),
+            ...u.getReferencedDuplicateIds(host.shadowRoot),
+          ].length;
+        } finally {
+          host.remove();
+        }
+      });
+      expect({ excluded, shadow }).toEqual({ excluded: [], shadow: 0 });
+    });
+  });
+
+  test.describe('getUndescriptiveTitleType', () => {
+    // Runs against the real word lists of a language file.
+    const classify = (code, titles) =>
+      page.evaluate(
+        async ({ code, titles }) => {
+          const utils = await import('/src/js/utils/utils.js');
+          const { strings } = (await import(`/src/lang/${code}.js`)).default;
+          return Object.fromEntries(
+            titles.map((title) => [
+              title,
+              utils.getUndescriptiveTitleType(
+                title,
+                strings.META_TITLE_UNDESCRIPTIVE_STRINGS,
+                strings.META_TITLE_UNDESCRIPTIVE_PREFIXES,
+              ),
+            ]),
+          );
+        },
+        { code, titles },
+      );
+
+    test('a list entry alone or with a number is an error', async () => {
+      const titles = [
+        'Untitled',
+        'PAGE',
+        'Page 2',
+        'Untitled-1',
+        'Document (3)',
+        'My  Site',
+        'New',
+      ];
+      const result = await classify('en', titles);
+      for (const title of titles) expect.soft(result[title], title).toBe('error');
+    });
+
+    test('only the prefix list is matched at the start of a longer title', async () => {
+      const result = await classify('en', [
+        'Untitled document | Acme',
+        'Placeholder page',
+        'Insert title here - WordPress',
+        'Untitledness',
+      ]);
+      expect(result).toEqual({
+        'Untitled document | Acme': 'warning',
+        'Placeholder page': 'warning',
+        'Insert title here - WordPress': 'warning',
+        // A prefix must end at a word boundary.
+        Untitledness: null,
+      });
+    });
+
+    test('generic words at the start of descriptive titles are not flagged', async () => {
+      const titles = [
+        'New York Times',
+        'New Student Orientation 2026',
+        'New-Hire Guide v2',
+        'Title IX Office',
+        'Index of Publications',
+        'Document Library',
+        'Default Settings | Acme',
+        'Pages of History',
+        'Newsletter 5',
+      ];
+      const result = await classify('en', titles);
+      for (const title of titles) expect.soft(result[title], title).toBeNull();
+    });
+
+    test('scripts without spaces match prefixes without a word boundary', async () => {
+      const result = await classify('ja', ['無題のドキュメント', 'ページ2', 'ページの歴史']);
+      expect(result).toEqual({
+        無題のドキュメント: 'warning',
+        ページ2: 'error',
+        ページの歴史: null,
+      });
+    });
+
+    test('folds case and accents like the other word lists', async () => {
+      const result = await classify('el', ['ΧΩΡΙΣ ΤΙΤΛΟ', 'Χωρίς τίτλο - Εταιρεία']);
+      expect(result).toEqual({
+        'ΧΩΡΙΣ ΤΙΤΛΟ': 'error',
+        'Χωρίς τίτλο - Εταιρεία': 'warning',
+      });
+    });
+
+    test('missing lists and empty titles are not flagged', async () => {
+      const result = await withUtils((u) => ({
+        noLists: u.getUndescriptiveTitleType('Untitled'),
+        notArrays: u.getUndescriptiveTitleType('Untitled', 'META_TITLE_UNDESCRIPTIVE_STRINGS'),
+        empty: u.getUndescriptiveTitleType('  ', ['untitled'], ['untitled']),
+      }));
+      expect(result).toEqual({ noLists: null, notArrays: null, empty: null });
+    });
+  });
+
+  test('Lang.list returns an empty array for a missing or malformed word list', async () => {
+    const result = await page.evaluate(async () => {
+      const { default: Lang } = await import('/src/js/utils/lang.js');
+      const saved = Lang.langStrings;
+      try {
+        Lang.langStrings = { LIST: ['a', 1, 'b'], STRING: 'not a list' };
+        return {
+          list: Lang.list('LIST'),
+          string: Lang.list('STRING'),
+          missing: Lang.list('MISSING'),
+        };
+      } finally {
+        Lang.langStrings = saved;
+      }
+    });
+    expect(result).toEqual({ list: ['a', 'b'], string: [], missing: [] });
+  });
+
   test.describe('generateRegexString', () => {
     test('a standalone RegExp matches the same way as that RegExp inside an array', async () => {
       const result = await withUtils((u) => {

@@ -59,16 +59,20 @@ const Constants = (function myConstants() {
     /* ********************** */
     /*  Alt text module       */
     /* ********************** */
-    // Generate suspicious alt stop words list.
-    Global.susAltWords = State.option.susAltStopWords
+    // Generate suspicious alt stop words list: folded word (matched against the folded alt text,
+    // see images.js) => word as written (shown in the tooltip). Folded once here, not per image.
+    const susAltWords = State.option.susAltStopWords
       ? State.option.susAltStopWords
           .split(',')
-          .map((word) => word.trim().toLowerCase())
+          .map((word) => word.trim())
           .filter(Boolean)
-      : Lang._('SUS_ALT_STOPWORDS');
+      : Lang.list('SUS_ALT_STOPWORDS');
+    Global.susAltWords = new Map(
+      susAltWords.map((word) => [foldForMatching(word), word]).filter(([folded]) => folded),
+    );
 
     // Generate placeholder stop words set. Folded to match the folded alt text (see images.js).
-    Global.placeholderAltSet = new Set(Lang._('PLACEHOLDER_ALT_STOPWORDS').map(foldForMatching));
+    Global.placeholderAltSet = new Set(Lang.list('PLACEHOLDER_ALT_STOPWORDS').map(foldForMatching));
 
     // Generate placeholder stop words that are that the START of an alt string.
     // String entries lose bidi controls to match the alt cleaned the same way
@@ -102,7 +106,7 @@ const Constants = (function myConstants() {
     // Normalized exactly like the link text they are compared with (see link-text.js), so that
     // entries containing capitals or punctuation (e.g. "d’informations") can still match.
     Global.linkStopWords = new Set(
-      [...Lang._('LINK_STOPWORDS'), ...customStopWords].map(normalizeStopWord).filter(Boolean),
+      [...Lang.list('LINK_STOPWORDS'), ...customStopWords].map(normalizeStopWord).filter(Boolean),
     );
     Global.linkIgnoreStrings = new Set(
       State.option.linkIgnoreStrings.map((word) => word.toLowerCase()),
@@ -110,8 +114,10 @@ const Constants = (function myConstants() {
 
     // Generate regex patterns from arrays.
     // Folded to match the folded link text they are tested against.
-    Global.clickRegex = generateRegexString(Lang._('CLICK').map(foldForMatching));
-    Global.newWindowRegex = generateRegexString(Lang._('NEW_WINDOW_PHRASES').map(foldForMatching));
+    Global.clickRegex = generateRegexString(Lang.list('CLICK').map(foldForMatching));
+    Global.newWindowRegex = generateRegexString(
+      Lang.list('NEW_WINDOW_PHRASES').map(foldForMatching),
+    );
     const defaultFileTypes = [
       'pdf',
       'doc',
@@ -479,7 +485,9 @@ const Constants = (function myConstants() {
     }
 
     // Ignore specific links
-    Exclusions.Links = ['.anchorjs-link', '[aria-hidden="true"][tabindex^="-"], [inert]'];
+    // Links inside an inert subtree are excluded in elements.js (Utils.isInert), which also
+    // covers inert ancestors and shadow hosts; a selector here would only match the link itself.
+    Exclusions.Links = ['.anchorjs-link', '[aria-hidden="true"][tabindex^="-"]'];
     if (State.option.linkIgnore) {
       Exclusions.Links = State.option.linkIgnore
         .split(',')

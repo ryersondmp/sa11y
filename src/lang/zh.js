@@ -140,6 +140,17 @@ const ruleset = {
     'index',
     'placeholder',
   ],
+  // Titles that are non-descriptive at the START of a title ("Untitled document").
+  // Keep these specific: the list above is only matched as a whole title or with a number.
+  META_TITLE_UNDESCRIPTIVE_PREFIXES: [
+    '无标题',
+    '未命名',
+    '在此插入标题',
+    'untitled',
+    'no title',
+    'undefined',
+    'placeholder',
+  ],
 };
 
 const ui = {

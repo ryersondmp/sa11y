@@ -8,17 +8,14 @@ import { removeDismissListeners } from '../features/dismissals';
 import { resetColourFilters } from '../features/colour-filters';
 import { State, resetState } from './state';
 import { annotationButtons } from '../interface/annotations';
-import { resetContrastCaches } from '../contrast/utils';
+import resetCaches from './reset-caches';
 
 /* *********************************************************** */
 /*  Reset all: Clears everything and resets the panel.         */
 /* *********************************************************** */
 export async function resetAll(restartPanel = true) {
-  // Reset various caches.
-  Utils.resetGetText();
-  Utils.resetStyleCache();
-  Utils.resetParentCache();
-  resetContrastCaches();
+  // Reset per-check caches (also done by checkAll; here it frees memory when Sa11y is closed).
+  resetCaches();
 
   // Reset state.
   resetState();

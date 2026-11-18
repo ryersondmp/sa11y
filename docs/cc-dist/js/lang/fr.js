@@ -122,6 +122,17 @@ const ruleset = {
     "undefined",
     "title",
     "placeholder"
+  ],
+  // Titles that are non-descriptive at the START of a title ("Untitled document").
+  // Keep these specific: the list above is only matched as a whole title or with a number.
+  META_TITLE_UNDESCRIPTIVE_PREFIXES: [
+    "sans titre",
+    "pas de titre",
+    "insérer le titre ici",
+    "untitled",
+    "no title",
+    "undefined",
+    "placeholder"
   ]
 };
 const ui = {

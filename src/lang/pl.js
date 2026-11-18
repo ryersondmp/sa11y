@@ -219,6 +219,16 @@ const ui = {
     'index',
     'placeholder',
   ],
+  // Titles that are non-descriptive at the START of a title ("Untitled document").
+  // Keep these specific: the list above is only matched as a whole title or with a number.
+  META_TITLE_UNDESCRIPTIVE_PREFIXES: [
+    'bez tytułu',
+    'wstaw tytuł tutaj',
+    'untitled',
+    'no title',
+    'undefined',
+    'placeholder',
+  ],
 };
 
 const tooltip = {
@@ -391,7 +401,7 @@ const tooltip = {
     'Wszystkie elementy listy <code>&lt;li&gt;</code> muszą być umieszczone wewnątrz elementów <code>&lt;ul&gt;</code> nieuporządkowanych lub <code>&lt;ol&gt;</code> uporządkowanych. Ta struktura pomaga czytnikom ekranu dokładnie ogłaszać listę i jej elementy.',
   TABINDEX_ATTR: 'Element nie powinien mieć atrybutu <code>tabindex</code> większego niż 0.',
   SVG_NO_ACCESSIBLE_NAME:
-    'Niektóre czytniki ekranu ogłoszą ten элемент SVG jako obraz bez etykiety, ponieważ brakuje mu dostępnej nazwy i nie jest ukryty. Dodaj dostępną etykietę (lub <code>&lt;title&gt;</code>), jeśli przekazuje ona znaczenie, lub ukryj go przed czytnikami ekranu, jeśli pełni funkcję wyłącznie dekoracyjną (<code>aria-hidden="true"</code>). <hr> Dowiedz się więcej o <a href="https://a11y-101.com/development/svg">dostępnych plikach SVG.</a>',
+    'Niektóre czytniki ekranu ogłoszą ten element SVG jako obraz bez etykiety, ponieważ brakuje mu dostępnej nazwy i nie jest ukryty. Dodaj dostępną etykietę (lub <code>&lt;title&gt;</code>), jeśli przekazuje ona znaczenie, lub ukryj go przed czytnikami ekranu, jeśli pełni funkcję wyłącznie dekoracyjną (<code>aria-hidden="true"</code>). <hr> Dowiedz się więcej o <a href="https://a11y-101.com/development/svg">dostępnych plikach SVG.</a>',
   SUMMARY_EMPTY: 'Element <code>&lt;summary&gt;</code> wewnątrz <code>&lt;details&gt;</code> nie ma dostępnej nazwy. Dodaj opisowy tekst wewnątrz elementu <code>&lt;summary&gt;</code>.',
 
   // Meta checks

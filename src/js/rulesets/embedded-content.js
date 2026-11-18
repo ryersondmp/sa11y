@@ -5,6 +5,72 @@ import Lang from '../utils/lang';
 import { State } from '../core/state';
 import { pushResult } from '../utils/pushResult';
 
+/**
+ * Finds a visible, enabled control that names the video (or a container of it) in aria-controls,
+ * which is taken to be its pause control.
+ * @param {HTMLVideoElement} video - The video.
+ * @returns {Element|null} The control, or null if none is found.
+ */
+function pauseControlFor(video) {
+  const root = video.getRootNode();
+  if (!root?.querySelectorAll) return null;
+  const selector =
+    'button[aria-controls], [role="button"][aria-controls], input[type="button"][aria-controls]';
+  const isVisible = (el) =>
+    el.checkVisibility
+      ? el.checkVisibility({ checkOpacity: true, checkVisibilityCSS: true })
+      : el.offsetWidth > 0 || el.offsetHeight > 0;
+  for (const control of root.querySelectorAll(selector)) {
+    if (
+      control.disabled ||
+      control.getAttribute('aria-disabled') === 'true' ||
+      !isVisible(control)
+    ) {
+      continue;
+    }
+    const ids = control.getAttribute('aria-controls').trim().split(/\s+/);
+    const hasTarget = ids.some((id) => {
+      const target = root.getElementById
+        ? root.getElementById(id)
+        : root.querySelector?.(`#${CSS.escape(id)}`);
+      return target?.contains(video);
+    });
+    if (hasTarget) return control;
+  }
+  return null;
+}
+
+/**
+ * Checks whether a video plays on its own for more than five seconds with no way to pause it.
+ * Adapted from https://github.com/pourdev/pour-engine/blob/main/engine/rules/wcag/2.2.2-video-loop-motion.js
+ *
+ * Decided from the markup where possible (the autoplay attribute rather than the playback state),
+ * so the result does not depend on whether this browser blocked autoplay or how far the video
+ * had loaded when the check ran. A custom pause button is only recognized when it is linked to
+ * the video with aria-controls.
+ * @param {Element} $el - A video source from Elements.Found.Videos (may be an iframe).
+ * @returns {boolean} True if the video should be flagged.
+ */
+function isUnpausableAutoplay($el) {
+  if ($el.tagName !== 'VIDEO') return false;
+
+  // Starts on its own: the autoplay attribute, or already started by a script.
+  if (!$el.autoplay && $el.paused) return false;
+
+  // The browser's own controls include pause.
+  if ($el.controls) return false;
+
+  // WCAG 2.2.2 exempts motion that lasts five seconds or less. The duration is only known once
+  // metadata has loaded (NaN before, Infinity for streams); a looping video never ends.
+  if (!$el.loop && Number.isFinite($el.duration) && $el.duration <= 5) return false;
+
+  // Skip small icon-scale / spinner-class video previews.
+  const rect = $el.getBoundingClientRect();
+  if (rect.width < 64 && rect.height < 64) return false;
+
+  return !pauseControlFor($el);
+}
+
 export default function checkEmbeddedContent() {
   if (!State.option.embeddedContentPlugin) return;
 
@@ -38,49 +104,8 @@ export default function checkEmbeddedContent() {
       });
     }
 
-    // Check for autoplay. Adapted from https://github.com/pourdev/pour-engine/blob/main/engine/rules/wcag/2.2.2-video-loop-motion.js
-    if (State.option.checks.EMBED_VIDEO_AUTOPLAY) {
-      if (!$el.autoplay && !$el.loop) return;
-      if ($el.controls) return;
-
-      // Skip small icon-scale / spinner-class video previews
-      const rect = $el.getBoundingClientRect();
-      if (rect.width < 64 && rect.height < 64) return;
-
-      // Skip videos not playing (autoplay blocked or paused by existing control)
-      if ($el.paused && $el.readyState >= 2) return;
-
-      // Skip if a valid pause button is linked via aria-controls
-      // Find pause control.
-      function pauseControlFor(video) {
-        const root = video.getRootNode();
-        if (!root?.querySelectorAll) return null;
-        const selector =
-          'button[aria-controls], [role="button"][aria-controls], input[type="button"][aria-controls]';
-        const isVisible = (el) =>
-          el.checkVisibility
-            ? el.checkVisibility({ checkOpacity: true, checkVisibilityCSS: true })
-            : el.offsetWidth > 0 || el.offsetHeight > 0;
-        for (const control of root.querySelectorAll(selector)) {
-          if (
-            control.disabled ||
-            control.getAttribute('aria-disabled') === 'true' ||
-            !isVisible(control)
-          )
-            continue;
-          const ids = control.getAttribute('aria-controls').trim().split(/\s+/);
-          const hasTarget = ids.some((id) => {
-            const target = root.getElementById
-              ? root.getElementById(id)
-              : root.querySelector?.(`#${CSS.escape(id)}`);
-            return target?.contains(video);
-          });
-          if (hasTarget) return control;
-        }
-        return null;
-      }
-      if (pauseControlFor($el)) return;
-
+    // Videos that move on their own and cannot be paused (WCAG 2.2.2).
+    if (State.option.checks.EMBED_VIDEO_AUTOPLAY && isUnpausableAutoplay($el)) {
       pushResult({
         element: $el,
         test: 'EMBED_VIDEO_AUTOPLAY',
@@ -108,7 +133,7 @@ export default function checkEmbeddedContent() {
       Utils.isElementHidden($el) ||
       Utils.isHiddenAndUnfocusable($el) ||
       Utils.isPresentational($el) ||
-      $el.hasAttribute('inert') ||
+      Utils.isInert($el) ||
       ['VIDEO', 'AUDIO'].includes($el.tagName)
     ) {
       return;
@@ -147,7 +172,7 @@ export default function checkEmbeddedContent() {
     if (
       Utils.isElementHidden($el) ||
       Utils.isHiddenAndUnfocusable($el) ||
-      $el.hasAttribute('inert') ||
+      Utils.isInert($el) ||
       ['VIDEO', 'AUDIO'].includes($el.tagName)
     ) {
       return;

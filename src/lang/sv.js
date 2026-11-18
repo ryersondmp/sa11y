@@ -153,6 +153,18 @@ const ruleset = {
     'document',
     'placeholder',
   ],
+  // Titles that are non-descriptive at the START of a title ("Untitled document").
+  // Keep these specific: the list above is only matched as a whole title or with a number.
+  META_TITLE_UNDESCRIPTIVE_PREFIXES: [
+    'utan titel',
+    'namnlös',
+    'ingen titel',
+    'infoga titel här',
+    'untitled',
+    'no title',
+    'undefined',
+    'placeholder',
+  ],
 };
 
 const ui = {
@@ -419,7 +431,7 @@ const tooltip = {
     'Alla <code>&lt;li&gt;</code> listobjekt måste placeras inuti <code>&lt;ul&gt;</code> oordnade eller <code>&lt;ol&gt;</code> ordnade element. Denna struktur hjälper skärmläsare att korrekt tillkännage listan och dess objekt.',
   TABINDEX_ATTR: 'Elementet bör inte ha ett <code>tabindex</code>-attribut större än 0.',
   SVG_NO_ACCESSIBLE_NAME:
-    'Vissa skärmläsare kommer att meddela denna SVG som en omärkt bild eftersom den saknar ett tillgängligt namn och inte är dold. Lägg till en tillgänglig etikett (eller <code>&lt;title&gt;</code>) om den förmedlar en mening, eller dölj den för skärmläsare om den rent är dekorativ (<code>aria-hidden="true"</code>). <hr> Läs mer om <a href="https://a11y-101.com/development/svg">tillgängliga SVG: er.</a>',
+    'Vissa skärmläsare kommer att meddela denna SVG som en omärkt bild eftersom den saknar ett tillgängligt namn och inte är dold. Lägg till en tillgänglig etikett (eller <code>&lt;title&gt;</code>) om den förmedlar en mening, eller dölj den för skärmläsare om den är rent dekorativ (<code>aria-hidden="true"</code>). <hr> Läs mer om <a href="https://a11y-101.com/development/svg">tillgängliga SVG:er.</a>',
   SUMMARY_EMPTY: 'Summary-elementet i <code>&lt;details&gt;</code> saknar ett tillgängligt namn. Lägg till beskrivande text i <code>&lt;summary&gt;</code>-elementet.',
 
   // Meta checks
@@ -428,7 +440,7 @@ const tooltip = {
   META_TITLE:
     'Sidtitel saknas! Ange en <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/title">sidtitel.</a>',
   META_TITLE_UNDESCRIPTIVE:
-    'Sidtiteln "<em>%(TEXT)</em>" är möjligen inte beskrivande eller förmedlar inte sidans ämne eller syfte. Sidtitlar bör vara unika, kortfattade och tydligt beskriva sidans innehål. Läs mer om <a href="https://www.w3.org/WAI/WCAG22/Understanding/page-titled.html">meningsfulla sidtitlar.</a>',
+    'Sidtiteln "<em>%(TEXT)</em>" är möjligen inte beskrivande eller förmedlar inte sidans ämne eller syfte. Sidtitlar bör vara unika, kortfattade och beskriva sidans innehåll tydligt. Läs mer om <a href="https://www.w3.org/WAI/WCAG22/Understanding/page-titled.html">meningsfulla sidtitlar.</a>',
   META_SCALABLE:
     'Ta bort parametern <code>user-scalable="no"</code> i <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">meta-taggen för vyport</a> för att tillåta zoomning.',
   META_MAX:

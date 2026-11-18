@@ -133,6 +133,16 @@ const ruleset = {
     'index',
     'placeholder',
   ],
+  // Titles that are non-descriptive at the START of a title ("Untitled document").
+  // Keep these specific: the list above is only matched as a whole title or with a number.
+  META_TITLE_UNDESCRIPTIVE_PREFIXES: [
+    'χωρίς τίτλο',
+    'εισαγάγετε τίτλο εδώ',
+    'untitled',
+    'no title',
+    'undefined',
+    'placeholder',
+  ],
 };
 
 const ui = {
@@ -402,7 +412,7 @@ const tooltip = {
   TABINDEX_ATTR:
     'Το στοιχείο δεν πρέπει να έχει μια ιδιότητα <code>tabindex</code> μεγαλύτερη από το 0.',
   SVG_NO_ACCESSIBLE_NAME:
-    'Ορισμένοι αναγνώστες οθόνης θα ανακοινώσουν αυτό το SVG ως εικόνα χωρίς ετικέτα, επειδή δεν διαθέτει προσβάσιμο όνομα και δεν είναι κρυμμένο. Προσθέστε μια προσβάσιμη ετικέτα (ή <code>&lt;title&gt;</code>) εάν μεταφέρει κάποιο смысл, ή αποκρύψτε το από τους αναγνώστες οθόνης εάν είναι αμιγώς διακοσμητικό (<code>aria-hidden="true"</code>). <hr> Μάθετε περισσότερα για τα <a href="https://a11y-101.com/development/svg">προσβάσιμα SVG.</a>',
+    'Ορισμένοι αναγνώστες οθόνης θα ανακοινώσουν αυτό το SVG ως εικόνα χωρίς ετικέτα, επειδή δεν διαθέτει προσβάσιμο όνομα και δεν είναι κρυμμένο. Προσθέστε μια προσβάσιμη ετικέτα (ή <code>&lt;title&gt;</code>) εάν μεταφέρει κάποιο νόημα, ή αποκρύψτε το από τους αναγνώστες οθόνης εάν είναι αμιγώς διακοσμητικό (<code>aria-hidden="true"</code>). <hr> Μάθετε περισσότερα για τα <a href="https://a11y-101.com/development/svg">προσβάσιμα SVG.</a>',
   SUMMARY_EMPTY: 'Το στοιχείο <code>&lt;summary&gt;</code> μέσα στο <code>&lt;details&gt;</code> δεν έχει προσβάσιμο όνομα. Προσθέστε περιγραφικό κείμενο μέσα στο στοιχείο <code>&lt;summary&gt;</code>.',
 
   // Meta checks
@@ -411,7 +421,7 @@ const tooltip = {
   META_TITLE:
     'Λείπει ο τίτλος της σελίδας! Παρακαλούμε δώστε έναν <a href="https://developer.mozilla.org/el/docs/Web/HTML/Element/title">τίτλο σελίδας.</a>',
   META_TITLE_UNDESCRIPTIVE:
-    'Ο τίτλος της σελίδας "<em>%(TEXT)</em>" μπορεί να μην είναι περιγραφικός ή μπορεί να μην μεταφέρει το θέμα ή τον σκοπό της σελίδας. Οι τίτλοι σελίδας θα πρέπει να είναι μοναδικοί, συνοπτικοί και να περιγράφουν σαφώς το περιεχόμενο της σελίδας. Μάθετε περισσότερα σχετικά με <a href="https://www.w3.org/WAI/WCAG22/Understanding/page-titled.html">σημαντικοί τίτλοι σελίδας.</a>',
+    'Ο τίτλος της σελίδας "<em>%(TEXT)</em>" μπορεί να μην είναι περιγραφικός ή μπορεί να μην μεταφέρει το θέμα ή τον σκοπό της σελίδας. Οι τίτλοι σελίδας θα πρέπει να είναι μοναδικοί, συνοπτικοί και να περιγράφουν σαφώς το περιεχόμενο της σελίδας. Μάθετε περισσότερα σχετικά με <a href="https://www.w3.org/WAI/WCAG22/Understanding/page-titled.html">ουσιαστικούς τίτλους σελίδας.</a>',
   META_SCALABLE:
     'Καταργήστε την παράμετρο <code>user-scalable="no"</code> στην <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">ετικέτα meta του viewport</a> για να επιτρέψετε την μεγέθυνση.',
   META_MAX:

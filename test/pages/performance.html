@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Sa11y performance benchmark</title>
+  <!--
+    Synthetic page for test/performance.spec.js. Changing what this page generates changes the
+    timings, so re-record the baselines afterwards (see the spec file).
+  -->
+  <style>
+    .card { background: #fff; padding: 4px; }
+    .tint { background: rgba(0, 0, 0, 0.03); }
+    .dark { background: #222; color: #eee; }
+    .hero { background-image: linear-gradient(#003, #006); color: #fff; }
+  </style>
+</head>
+<body>
+  <main id="root"></main>
+  <script type="module">
+    // Deterministic page: deep wrapper nesting, where most elements are negative for every
+    // ancestor test (no inert, aria-hidden, label, fieldset...). Seeded RNG, so every run builds
+    // the same DOM. ?sections=N changes the size, ?inert=1 adds inert containers.
+    const params = new URLSearchParams(location.search);
+    const SECTIONS = Number(params.get('sections') || 150);
+    const WITH_INERT = params.get('inert') === '1';
+    let seed = 42;
+    const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+    const words =
+      'lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore'.split(' ');
+    const sentence = (n) =>
+      Array.from({ length: n }, () => words[Math.floor(rnd() * words.length)]).join(' ');
+
+    // Web component with an open shadow root, to cover shadow DOM traversal.
+    customElements.define(
+      'perf-card',
+      class extends HTMLElement {
+        connectedCallback() {
+          if (this.shadowRoot) return;
+          this.attachShadow({ mode: 'open' }).innerHTML =
+            `<div class="w"><div><p>${this.dataset.text} <a href="/shadow">${this.dataset.link}</a></p><slot></slot></div></div>`;
+        }
+      },
+    );
+
+    const html = [];
+    for (let s = 0; s < SECTIONS; s++) {
+      const depth = 6 + Math.floor(rnd() * 10);
+      let cls = '';
+      if (s % 9 === 0) cls = 'dark';
+      else if (s % 7 === 0) cls = 'tint';
+      else if (s % 13 === 0) cls = 'hero';
+      const inert = WITH_INERT && s % 25 === 0 ? ' inert' : '';
+      html.push(`<section class="${cls}"${inert}><h2>Section ${s} ${sentence(3)}</h2>`);
+      for (let d = 0; d < depth; d++) {
+        html.push(`<div class="w${d}${d === 3 && s % 4 === 0 ? ' card' : ''}">`);
+      }
+      for (let p = 0; p < 6; p++) {
+        html.push(
+          `<p>${sentence(8)} <a href="/page-${s}-${p}">${sentence(3)}</a> <strong>${sentence(2)}</strong> <span>${sentence(4)}</span> <em>${sentence(2)}</em></p>`,
+        );
+      }
+      // Same-page links with no target: exercises the broken in-page link lookup.
+      html.push(
+        `<ul>${Array.from({ length: 5 }, (_, i) => `<li><a href="#s${s}i${i}">${sentence(2)}</a> <span>${sentence(3)}</span></li>`).join('')}</ul>`,
+      );
+      html.push(
+        `<img src="data:image/gif;base64,R0lGODlhAQABAAAAACw=" alt="${sentence(4)}" width="1" height="1">`,
+      );
+      if (s % 5 === 0) {
+        html.push(
+          `<form><fieldset><legend>${sentence(2)}</legend><label for="f${s}">${sentence(2)}</label><input id="f${s}" type="text"><div role="group"><button type="button">${sentence(2)}</button></div></fieldset></form>`,
+        );
+      }
+      if (s % 10 === 0) {
+        html.push(
+          `<table><tr><th>${sentence(1)}</th><th>${sentence(1)}</th></tr>${Array.from({ length: 5 }, () => `<tr><td>${sentence(2)}</td><td>${sentence(2)}</td></tr>`).join('')}</table>`,
+        );
+        html.push(
+          '<svg width="20" height="20" aria-hidden="true"><circle cx="10" cy="10" r="8" fill="#777"/></svg>',
+        );
+      }
+      if (s % 15 === 0) {
+        html.push(
+          `<perf-card data-text="${sentence(6)}" data-link="${sentence(2)}"><span>${sentence(3)}</span></perf-card>`,
+        );
+      }
+      for (let d = 0; d < depth; d++) html.push('</div>');
+      html.push('</section>');
+    }
+    document.getElementById('root').innerHTML = html.join('');
+    window.benchElementCount = document.querySelectorAll('*').length;
+  </script>
+  <script type="module" src="./assets/performance.js"></script>
+</body>
+</html>

@@ -31,6 +31,17 @@ const Lang = {
   translate(string) {
     return this.langStrings[string] || string;
   },
+  /**
+   * Returns a word list (e.g. 'CLICK', 'LINK_STOPWORDS') from the language file. For a missing or
+   * malformed entry it returns an empty array, so a custom or outdated language object disables
+   * that matching instead of crashing: translate() would return the key itself, a string.
+   * @param {string} key - The language file key of an array of strings.
+   * @returns {string[]} The list, without non-string entries.
+   */
+  list(key) {
+    const value = this.langStrings[key];
+    return Array.isArray(value) ? value.filter((entry) => typeof entry === 'string') : [];
+  },
   prepHTML($el) {
     return $el
       .replaceAll(/<hr>/g, '<hr aria-hidden="true">')

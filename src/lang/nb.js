@@ -141,6 +141,17 @@ const ruleset = {
     'index',
     'placeholder',
   ],
+  // Titles that are non-descriptive at the START of a title ("Untitled document").
+  // Keep these specific: the list above is only matched as a whole title or with a number.
+  META_TITLE_UNDESCRIPTIVE_PREFIXES: [
+    'uten tittel',
+    'ingen tittel',
+    'sett inn tittel her',
+    'untitled',
+    'no title',
+    'undefined',
+    'placeholder',
+  ],
 };
 
 const ui = {
@@ -407,7 +418,7 @@ const tooltip = {
     'Alle <code>&lt;li&gt;</code> listeelementer må plasseres inne i <code>&lt;ul&gt;</code> uordnede eller <code>&lt;ol&gt;</code> ordnede elementer. Denne strukturen hjelper skjermlesere med å annonsere listen og dens elementer nøyaktig.',
   TABINDEX_ATTR: 'Elementet bør ikke ha et <code>tabindex</code>-attributt større enn 0.',
   SVG_NO_ACCESSIBLE_NAME:
-    'Enkelte skjermlesere vil lese opp denne SVG-en som et ubemerket bilde fordi den mangler et tilgjengelig navn og ikke er skjult. Legg til en tilgjengelig etikett (eller <code>&lt;title&gt;</code>) hvis den formidler en mening, eller skjul den for skjermlesere hvis den rent er dekorativ (<code>aria-hidden="true"</code>). <hr> Lær mer om <a href="https://a11y-101.com/development/svg">tilgjengelige SVG-er.</a>',
+    'Enkelte skjermlesere vil lese opp denne SVG-en som et bilde uten etikett fordi den mangler et tilgjengelig navn og ikke er skjult. Legg til en tilgjengelig etikett (eller <code>&lt;title&gt;</code>) hvis den formidler en mening, eller skjul den for skjermlesere hvis den er rent dekorativ (<code>aria-hidden="true"</code>). <hr> Lær mer om <a href="https://a11y-101.com/development/svg">tilgjengelige SVG-er.</a>',
   SUMMARY_EMPTY: 'Summary-elementet i <code>&lt;details&gt;</code> har ikke noe tilgjengelig navn. Legg til beskrivende tekst i <code>&lt;summary&gt;</code>-elementet.',
 
   // Meta checks
@@ -416,7 +427,7 @@ const tooltip = {
   META_TITLE:
     'Manglende sidetittel! Vennligst oppgi en <a href="https://developer.mozilla.org/nb/docs/Web/HTML/Element/title">sidetittel.</a>',
   META_TITLE_UNDESCRIPTIVE:
-    'Sidetittelen "<em>%(TEXT)</em>" er kanskje ikke beskrivende eller formidler ikke emnet eller formålet med siden. Sidetitler bør være unike, konsise og tydelig beskrive sideinnholdet. Finn ut mer om <a href="https://www.w3.org/WAI/WCAG22/Understanding/page-titled.html">meningsfulle sidetitler.</a>',
+    'Sidetittelen "<em>%(TEXT)</em>" er kanskje ikke beskrivende eller formidler ikke emnet eller formålet med siden. Sidetitler bør være unike, konsise og beskrive sideinnholdet tydelig. Finn ut mer om <a href="https://www.w3.org/WAI/WCAG22/Understanding/page-titled.html">meningsfulle sidetitler.</a>',
   META_SCALABLE:
     'Fjern parameteren <code>user-scalable="no"</code> i <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">meta-taggen for visningsområde</a> for å tillate zooming.',
   META_MAX:

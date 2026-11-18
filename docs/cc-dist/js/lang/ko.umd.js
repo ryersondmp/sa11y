@@ -133,6 +133,16 @@
       "document",
       "index",
       "placeholder"
+    ],
+    // Titles that are non-descriptive at the START of a title ("Untitled document").
+    // Keep these specific: the list above is only matched as a whole title or with a number.
+    META_TITLE_UNDESCRIPTIVE_PREFIXES: [
+      "제목 없음",
+      "여기에 제목을 삽입하세요",
+      "untitled",
+      "no title",
+      "undefined",
+      "placeholder"
     ]
   };
   const ui = {

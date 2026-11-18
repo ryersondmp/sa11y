@@ -1543,6 +1543,17 @@
       <span id="🤠">🤠🤠🤠</span>
     </div>
 
+    <h4>Malformed percent escape in <kbd>href</kbd>, matching <code>name</code> attribute</h4>
+    <div id="nothing-malformed-escape-name-attr">
+      <a href="#save-50%">Jump to the sale</a>
+      <p><a name="save-50%"></a>Sale section.</p>
+    </div>
+
+    <h4>Malformed percent escape in <kbd>href</kbd>, no target</h4>
+    <div id="warning-malformed-escape-broken">
+      <a href="#100%off">Jump to the offer</a>
+    </div>
+
     <h2>Duplicate IDs</h2>
     <h3>Elements with duplicate IDs but not referenced by anything</h3>
     <div id="nothing-duplicate-id">
@@ -1573,6 +1584,28 @@
     <div id="nothing-duplicate-button-ids">
       <button id="play">Play</button>
       <button id="play">Play</button>
+    </div>
+
+    <h3>Duplicate IDs whose names only appear inside other references</h3>
+    <div id="nothing-duplicate-id-substring-reference">
+      <p><span id="team">Team A</span> and <span id="team">Team B</span></p>
+      <a href="/about/team">About the team</a>
+      <button type="button" aria-controls="teamwork-panel">Teamwork</button>
+      <label for="team-lead">Team lead <input id="team-lead" type="text"></label>
+    </div>
+
+    <h3>aria-describedby referencing duplicate IDs</h3>
+    <div id="error-duplicate-id-describedby">
+      <input type="text" aria-label="Postcode" aria-describedby="postcode-hint">
+      <p id="postcode-hint">Use the format A1A 1A1.</p>
+      <p id="postcode-hint">Shipping is free.</p>
+    </div>
+
+    <h3>Referenced duplicate ID containing a quotation mark</h3>
+    <div id="error-duplicate-id-with-quote">
+      <button type="button" aria-describedby='say-"hi"'>Greet</button>
+      <span id='say-"hi"'>Says hi.</span>
+      <span id='say-"hi"'>Says hello.</span>
     </div>
 
     <h3>Duplicate ID within the Shadow DOM</h3>
@@ -2287,6 +2320,35 @@
       </video>
     </div>
 
+    <h3>Looping video that does not autoplay and is not playing</h3>
+    <div id="nothing-autoplay-loop-paused">
+      <video width="320" height="240" loop muted>
+        <track default kind="captions" srclang="en" label="English" src="/fake.vtt" />
+      </video>
+    </div>
+
+    <h3>Autoplay video with native controls</h3>
+    <div id="nothing-autoplay-controls">
+      <video width="320" height="240" autoplay muted loop controls>
+        <track default kind="captions" srclang="en" label="English" src="/fake.vtt" />
+      </video>
+    </div>
+
+    <h3>Autoplay video with a pause button linked by aria-controls</h3>
+    <div id="nothing-autoplay-pause-button">
+      <video id="hero-video-with-pause" width="320" height="240" autoplay muted loop>
+        <track default kind="captions" srclang="en" label="English" src="/fake.vtt" />
+      </video>
+      <button type="button" aria-controls="hero-video-with-pause">Pause</button>
+    </div>
+
+    <h3>Autoplay video that has not started (e.g. autoplay blocked or not loaded yet)</h3>
+    <div id="warning-autoplay-not-started">
+      <video width="320" height="240" autoplay muted loop>
+        <track default kind="captions" srclang="en" label="English" src="/fake.vtt" />
+      </video>
+    </div>
+
     <h3>Audio</h3>
     <div id="warning-audio">
       <audio controls="">
@@ -2324,6 +2386,23 @@
     </div>
 
     <hr>
+
+    <h2>Inert content</h2>
+    <p>Everything below is inside a container with the <code>inert</code> attribute.</p>
+    <div inert>
+      <div id="nothing-inert-button">
+        <button type="button"></button>
+      </div>
+      <div id="nothing-inert-input">
+        <input type="text">
+      </div>
+      <div id="nothing-inert-link">
+        <a href="https://example.com/inert">click here</a>
+      </div>
+      <div id="nothing-inert-iframe">
+        <iframe src="about:blank"></iframe>
+      </div>
+    </div>
 
     <h2>Buttons</h2>
 
@@ -2514,6 +2593,49 @@
       <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 16 16">
         <path
           d="M.5 1a.5.5 0 0 0 0 1h1.11l.401 1.607 1.498 7.985A.5.5 0 0 0 4 12h1a2 2 0 1 0 0 4 2 2 0 0 0 0-4h7a2 2 0 1 0 0 4 2 2 0 0 0 0-4h1a.5.5 0 0 0 .491-.408l1.5-8A.5.5 0 0 0 14.5 3H2.89l-.405-1.621A.5.5 0 0 0 2 1zM6 14a1 1 0 1 1-2 0 1 1 0 0 1 2 0m7 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0M6.5 7h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1 0-1" />
+      </svg>
+    </div>
+
+
+    <h3>SVG inside a label</h3>
+    <div id="nothing-svg-in-label">
+      <label><svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 16 16"><path d="M.5 1a.5.5 0 0 0 0 1h1.11l.401 1.607 1.498 7.985A.5.5 0 0 0 4 12h1a2 2 0 1 0 0 4 2 2 0 0 0 0-4h7a2 2 0 1 0 0 4 2 2 0 0 0 0-4h1a.5.5 0 0 0 .491-.408l1.5-8A.5.5 0 0 0 14.5 3H2.89l-.405-1.621A.5.5 0 0 0 2 1z" /></svg> Search <input type="search"></label>
+    </div>
+
+    <h3>SVG inside a summary</h3>
+    <div id="nothing-svg-in-summary">
+      <details><summary><svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 16 16"><path d="M.5 1a.5.5 0 0 0 0 1h1.11l.401 1.607 1.498 7.985A.5.5 0 0 0 4 12h1a2 2 0 1 0 0 4 2 2 0 0 0 0-4h7a2 2 0 1 0 0 4 2 2 0 0 0 0-4h1a.5.5 0 0 0 .491-.408l1.5-8A.5.5 0 0 0 14.5 3H2.89l-.405-1.621A.5.5 0 0 0 2 1z" /></svg> More information</summary><p>Details.</p></details>
+    </div>
+
+    <h3>SVG inside a tab</h3>
+    <div id="nothing-svg-in-tab" role="tablist">
+      <div role="tab" tabindex="0" aria-selected="true"><svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 16 16"><path d="M.5 1a.5.5 0 0 0 0 1h1.11l.401 1.607 1.498 7.985A.5.5 0 0 0 4 12h1a2 2 0 1 0 0 4 2 2 0 0 0 0-4h7a2 2 0 1 0 0 4 2 2 0 0 0 0-4h1a.5.5 0 0 0 .491-.408l1.5-8A.5.5 0 0 0 14.5 3H2.89l-.405-1.621A.5.5 0 0 0 2 1z" /></svg> Overview</div>
+    </div>
+
+    <h3>SVG inside a named role="img" container</h3>
+    <div id="nothing-svg-in-image-role">
+      <span role="img" aria-label="Four out of five stars"><svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 16 16"><path d="M.5 1a.5.5 0 0 0 0 1h1.11l.401 1.607 1.498 7.985A.5.5 0 0 0 4 12h1a2 2 0 1 0 0 4 2 2 0 0 0 0-4h7a2 2 0 1 0 0 4 2 2 0 0 0 0-4h1a.5.5 0 0 0 .491-.408l1.5-8A.5.5 0 0 0 14.5 3H2.89l-.405-1.621A.5.5 0 0 0 2 1z" /></svg><svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 16 16"><path d="M.5 1a.5.5 0 0 0 0 1h1.11l.401 1.607 1.498 7.985A.5.5 0 0 0 4 12h1a2 2 0 1 0 0 4 2 2 0 0 0 0-4h7a2 2 0 1 0 0 4 2 2 0 0 0 0-4h1a.5.5 0 0 0 .491-.408l1.5-8A.5.5 0 0 0 14.5 3H2.89l-.405-1.621A.5.5 0 0 0 2 1z" /></svg></span>
+    </div>
+
+    <h3>Nested SVG</h3>
+    <div id="nothing-svg-nested">
+      <svg xmlns="http://www.w3.org/2000/svg" width="50" height="25" viewBox="0 0 32 16" aria-label="Two carts">
+        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 16 16"><path d="M.5 1a.5.5 0 0 0 0 1h1.11l.401 1.607 1.498 7.985A.5.5 0 0 0 4 12h1a2 2 0 1 0 0 4 2 2 0 0 0 0-4h7a2 2 0 1 0 0 4 2 2 0 0 0 0-4h1a.5.5 0 0 0 .491-.408l1.5-8A.5.5 0 0 0 14.5 3H2.89l-.405-1.621A.5.5 0 0 0 2 1z" /></svg>
+        <svg x="16" width="16" height="16" viewBox="0 0 16 16"><path d="M.5 1a.5.5 0 0 0 0 1h1.11l.401 1.607 1.498 7.985A.5.5 0 0 0 4 12h1a2 2 0 1 0 0 4 2 2 0 0 0 0-4h7a2 2 0 1 0 0 4 2 2 0 0 0 0-4h1a.5.5 0 0 0 .491-.408l1.5-8A.5.5 0 0 0 14.5 3H2.89l-.405-1.621A.5.5 0 0 0 2 1z" /></svg>
+      </svg>
+    </div>
+
+    <h3>Zero-size sprite sheet (not display: none)</h3>
+    <div id="nothing-svg-sprite-zero-size">
+      <svg xmlns="http://www.w3.org/2000/svg" width="0" height="0" style="position: absolute">
+        <symbol id="sprite-cart" viewBox="0 0 16 16"><path d="M.5 1a.5.5 0 0 0 0 1h1.11l.401 1.607 1.498 7.985A.5.5 0 0 0 4 12h1a2 2 0 1 0 0 4 2 2 0 0 0 0-4h7a2 2 0 1 0 0 4 2 2 0 0 0 0-4h1a.5.5 0 0 0 .491-.408l1.5-8A.5.5 0 0 0 14.5 3H2.89l-.405-1.621A.5.5 0 0 0 2 1z" /></symbol>
+      </svg>
+    </div>
+
+    <h3>Sprite sheet with only definitions</h3>
+    <div id="nothing-svg-sprite-defs-only">
+      <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25">
+        <defs><symbol id="sprite-cart-2" viewBox="0 0 16 16"><path d="M.5 1a.5.5 0 0 0 0 1h1.11l.401 1.607 1.498 7.985A.5.5 0 0 0 4 12h1a2 2 0 1 0 0 4 2 2 0 0 0 0-4h7a2 2 0 1 0 0 4 2 2 0 0 0 0-4h1a.5.5 0 0 0 .491-.408l1.5-8A.5.5 0 0 0 14.5 3H2.89l-.405-1.621A.5.5 0 0 0 2 1z" /></symbol></defs>
       </svg>
     </div>
 
