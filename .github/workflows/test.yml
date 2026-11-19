@@ -84,7 +84,7 @@ jobs:
     # version (package-lock.json); bump it whenever @playwright/test is upgraded.
     # On a mismatch Playwright fails fast with "Executable doesn't exist".
     container:
-      image: mcr.microsoft.com/playwright:v1.64.0-noble
+      image: mcr.microsoft.com/playwright:v1.65.1-noble
       # Run as the runner's uid (not root), per Playwright's CI docs; Firefox refuses a
       # root-owned HOME under a non-root user and vice versa.
       options: --user 1001
