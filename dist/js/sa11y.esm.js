@@ -3266,7 +3266,7 @@ function brighten(color, amount) {
   return color.map((value, index2) => {
     if (index2 < 3) {
       const newValue = Math.ceil(value + (255 - value) * amount);
-      return newValue >= 255 ? 255 : newValue;
+      return Math.min(newValue, 255);
     }
     return value;
   });
@@ -3275,7 +3275,7 @@ function darken(color, amount) {
   return color.map((value, index2) => {
     if (index2 < 3) {
       const newValue = Math.floor(value * (1 - amount));
-      return newValue <= 0 ? 0 : newValue;
+      return Math.max(0, newValue);
     }
     return value;
   });
@@ -4212,17 +4212,17 @@ function updatePanel() {
 function updateBadge() {
   const totalCount = State.counts.error + State.counts.warning;
   if (totalCount === 0) {
-    Constants.Panel.notifCount.innerText = "";
-    Constants.Panel.notifText.innerText = "";
+    Constants.Panel.notifCount.textContent = "";
+    Constants.Panel.notifText.textContent = "";
     Constants.Panel.notifBadge.style.display = "none";
   } else if (State.counts.warning > 0 && State.counts.error === 0) {
     Constants.Panel.notifBadge.classList.add("notification-badge-warning");
-    Constants.Panel.notifCount.innerText = `${State.counts.warning}`;
-    Constants.Panel.notifText.innerText = `${Lang._("WARNINGS_FOUND")}`;
+    Constants.Panel.notifCount.textContent = State.counts.warning;
+    Constants.Panel.notifText.textContent = Lang._("WARNINGS_FOUND");
   } else {
     Constants.Panel.notifBadge.classList.remove("notification-badge-warning");
-    Constants.Panel.notifCount.innerText = `${totalCount}`;
-    Constants.Panel.notifText.innerText = Lang._("TOTAL_FOUND");
+    Constants.Panel.notifCount.textContent = totalCount;
+    Constants.Panel.notifText.textContent = Lang._("TOTAL_FOUND");
   }
   if (store.getItem("sa11y-panel") === "Opened" || totalCount === 0) {
     Constants.Panel.notifBadge.style.display = "none";

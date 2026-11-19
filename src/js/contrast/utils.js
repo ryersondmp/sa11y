@@ -294,7 +294,7 @@ export function brighten(color, amount) {
     if (index < 3) {
       // Only brighten [R,G,B]
       const newValue = Math.ceil(value + (255 - value) * amount);
-      return newValue >= 255 ? 255 : newValue;
+      return Math.min(newValue, 255);
     }
     return value;
   });
@@ -311,7 +311,7 @@ export function darken(color, amount) {
     if (index < 3) {
       // Only darken [R,G,B]
       const newValue = Math.floor(value * (1 - amount));
-      return newValue <= 0 ? 0 : newValue;
+      return Math.max(0, newValue);
     }
     return value;
   });
