@@ -69,6 +69,7 @@ const ruleset = {
     'article',
     'go',
     'workshop',
+    'follow us on',
   ],
   CLICK: ['click'],
   NEW_WINDOW_PHRASES: [

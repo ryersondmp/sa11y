@@ -94,6 +94,7 @@ const ruleset = {
     'verkkosivusto',
     'artikkeli',
     'siirry',
+    'seuraa meitä',
   ],
   CLICK: ['click', 'napsaut', 'klikk'],
   NEW_WINDOW_PHRASES: [

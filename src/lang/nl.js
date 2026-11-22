@@ -94,6 +94,7 @@ const ruleset = {
     'bekijk onze',
     'website',
     'artikel',
+    'volg ons op',
   ],
   CLICK: ['click', 'klik'],
   NEW_WINDOW_PHRASES: ['extern', 'nieuw tabblad', 'nieuwe tab', 'nieuw venster', 'pop-up', 'popup'],

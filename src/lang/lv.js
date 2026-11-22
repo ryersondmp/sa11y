@@ -86,6 +86,7 @@ const ruleset = {
     'tīmekļa vietne',
     'raksts',
     'rakstu',
+    'sekojiet mums',
   ],
   CLICK: ['click', 'klikšķis', 'klikšķin'],
   NEW_WINDOW_PHRASES: [

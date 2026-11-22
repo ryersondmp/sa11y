@@ -109,6 +109,9 @@ const ruleset = {
     'this form',
     'go',
     'workshop',
+    'folgen sie uns auf',
+    'folge uns auf',
+    'follow us on',
   ],
   CLICK: ['click', 'klicken'],
   NEW_WINDOW_PHRASES: [

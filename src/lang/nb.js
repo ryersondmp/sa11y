@@ -98,6 +98,7 @@ const ruleset = {
     'nettsted',
     'nettside',
     'artikkel',
+    'følg oss på',
   ],
   CLICK: ['click', 'klikk'],
   NEW_WINDOW_PHRASES: ['ekstern', 'ny fane', 'nytt vindu', 'pop-up', 'popup', 'dukker opp'],

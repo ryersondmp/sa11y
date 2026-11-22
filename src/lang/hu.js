@@ -100,6 +100,8 @@ const ruleset = {
     'megtekintés',
     'weboldal',
     'cikk',
+    'kövess minket',
+    'kövessen minket',
   ],
   CLICK: ['click', 'kattint', 'klikk'],
   NEW_WINDOW_PHRASES: ['külső', 'új lap', 'új fül', 'új ablak', 'pop-up', 'felugró', 'felbukkan'],

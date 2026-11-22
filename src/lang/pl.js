@@ -81,6 +81,8 @@ const ruleset = {
     'stronę',
     'witrynę',
     'artykuł',
+    'obserwuj nas na',
+    'śledź nas na',
   ],
   CLICK: ['click', 'kliknięcie', 'klikn'],
   NEW_WINDOW_PHRASES: ['zewnętrzny', 'nowa karta', 'nowej karcie', 'nowe okno', 'nowym oknie', 'pop-up', 'pop up'],

@@ -87,6 +87,7 @@ const ruleset = {
     'situs web ini',
     'situs web',
     'artikel',
+    'ikuti kami di',
   ],
   CLICK: ['click', 'klik'],
   NEW_WINDOW_PHRASES: ['eksternal', 'tab baru', 'jendela baru', 'pop-up', 'pop up'],
