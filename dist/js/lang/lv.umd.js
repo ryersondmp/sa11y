@@ -86,7 +86,8 @@
       "apskatīt mūsu",
       "tīmekļa vietne",
       "raksts",
-      "rakstu"
+      "rakstu",
+      "sekojiet mums"
     ],
     CLICK: ["click", "klikšķis", "klikšķin"],
     NEW_WINDOW_PHRASES: [

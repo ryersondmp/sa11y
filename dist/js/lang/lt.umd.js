@@ -85,7 +85,8 @@
       "peržiūrėti",
       "peržiūrėti mūsų",
       "svetainė",
-      "straipsnis"
+      "straipsnis",
+      "sekite mus"
     ],
     CLICK: ["click", "spustelėkite", "spausk"],
     NEW_WINDOW_PHRASES: ["išorinis", "išorinė", "naujas skirtukas", "naujame skirtuke", "naujas langas", "naujame lange", "iššokantis", "iššokti"],

@@ -110,7 +110,10 @@
       "this link",
       "this form",
       "go",
-      "workshop"
+      "workshop",
+      "folgen sie uns auf",
+      "folge uns auf",
+      "follow us on"
     ],
     CLICK: ["click", "klicken"],
     NEW_WINDOW_PHRASES: [

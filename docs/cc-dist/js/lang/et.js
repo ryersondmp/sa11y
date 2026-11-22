@@ -88,7 +88,9 @@ const ruleset = {
     "see veebileht",
     "vaata",
     "veebileht",
-    "artikkel"
+    "artikkel",
+    "jälgi meid",
+    "jälgige meid"
   ],
   CLICK: ["click", "klõps", "kliki"],
   NEW_WINDOW_PHRASES: ["väline", "uus vahekaart", "uuel vahekaardil", "uues vahekaardis", "uues sakis", "uus aken", "uues aknas", "pop-up", "hüpikaken"],

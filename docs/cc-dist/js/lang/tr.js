@@ -99,7 +99,8 @@ const ruleset = {
     "görüntüle",
     "web sitesi",
     "makale",
-    "git"
+    "git",
+    "bizi takip edin"
   ],
   CLICK: ["click", "tıkla"],
   NEW_WINDOW_PHRASES: ["dış", "yeni sekme", "yeni pencere", "açılır pencere"],

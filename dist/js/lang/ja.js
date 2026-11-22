@@ -155,7 +155,8 @@ const ruleset = {
     "view all",
     "detail",
     "details",
-    "link"
+    "link",
+    "follow us on"
   ],
   CLICK: ["click", "クリック"],
   // Matched anywhere in the link text, and removed before the LINK_STOPWORDS check. Japanese

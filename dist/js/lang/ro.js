@@ -100,7 +100,9 @@ const ruleset = {
     "vizualizați pagina noastră",
     "site",
     "site web",
-    "articol"
+    "articol",
+    "urmărește-ne pe",
+    "urmăriți-ne pe"
   ],
   CLICK: ["click", "clic"],
   NEW_WINDOW_PHRASES: ["extern", "filă nouă", "tab nou", "fereastră nouă", "pop-up", "pop up"],

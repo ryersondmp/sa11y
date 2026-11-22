@@ -94,7 +94,8 @@ const ruleset = {
     "se våre",
     "nettsted",
     "nettside",
-    "artikkel"
+    "artikkel",
+    "følg oss på"
   ],
   CLICK: ["click", "klikk"],
   NEW_WINDOW_PHRASES: ["ekstern", "ny fane", "nytt vindu", "pop-up", "popup", "dukker opp"],

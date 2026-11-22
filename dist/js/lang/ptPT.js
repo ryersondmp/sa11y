@@ -101,7 +101,9 @@ const ruleset = {
     "ver a nossa",
     "sítio web",
     "site",
-    "artigo"
+    "artigo",
+    "siga-nos no",
+    "siga-nos na"
   ],
   CLICK: ["click", "clique", "clica"],
   NEW_WINDOW_PHRASES: ["externo", "externa", "novo separador", "nova janela", "pop-up", "pop up"],
