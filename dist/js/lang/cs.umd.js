@@ -92,7 +92,8 @@
       "zobrazit",
       "prohlédněte si naše",
       "webové stránky",
-      "článek"
+      "článek",
+      "sledujte nás na"
     ],
     CLICK: ["click", "klikn", "klepn"],
     NEW_WINDOW_PHRASES: ["externí", "nová karta", "nové kartě", "nová záložka", "nové záložce", "nové okno", "novém okně", "pop-up", "vyskakovací"],

@@ -74,7 +74,8 @@ const ruleset = {
     "consulter",
     "consulter notre",
     "site web",
-    "article"
+    "article",
+    "suivez-nous sur"
   ],
   CLICK: ["click", "cliquer", "cliquez"],
   NEW_WINDOW_PHRASES: [

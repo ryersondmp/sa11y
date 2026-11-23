@@ -80,7 +80,9 @@ const ruleset = {
     "vista",
     "ver nuestro",
     "sitio web",
-    "artículo"
+    "artículo",
+    "síguenos en",
+    "síganos en"
   ],
   CLICK: ["click", "clic"],
   NEW_WINDOW_PHRASES: ["externo", "nueva página", "nueva pestaña", "pestaña nueva", "nueva ventana", "ventana emergente"],

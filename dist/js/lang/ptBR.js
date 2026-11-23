@@ -94,7 +94,9 @@ const ruleset = {
     "veja nossa",
     "veja nosso",
     "site",
-    "artigo"
+    "artigo",
+    "siga-nos no",
+    "siga-nos na"
   ],
   CLICK: ["click", "clique", "clica"],
   NEW_WINDOW_PHRASES: ["externo", "externa", "nova guia", "nova aba", "nova janela", "pop-up", "pop up"],

@@ -733,6 +733,7 @@ test.describe('Sa11y Unit Tests', () => {
       'error-non-descript-link-1',
       'error-non-descript-link-2',
       'error-non-descript-link-3',
+      'error-non-descript-link-4',
     ];
     for (const id of ids) {
       const issue = await checkTooltip(

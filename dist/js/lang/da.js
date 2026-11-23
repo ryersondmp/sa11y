@@ -90,7 +90,8 @@ const ruleset = {
     "se her",
     "se vores",
     "hjemmeside",
-    "artikel"
+    "artikel",
+    "følg os på"
   ],
   CLICK: ["click", "klik"],
   NEW_WINDOW_PHRASES: ["ekstern", "ny fane", "nyt faneblad", "nyt vindue", "pop-up", "popup", "dukker op"],

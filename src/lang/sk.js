@@ -96,6 +96,7 @@ const ruleset = {
     'článok',
     'ísť',
     'workshop',
+    'sledujte nás na',
   ],
   CLICK: ['kliknúť', 'kliknite', 'kliknutie', 'click'],
   NEW_WINDOW_PHRASES: [

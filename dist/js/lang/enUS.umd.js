@@ -71,7 +71,8 @@
       "website",
       "article",
       "go",
-      "workshop"
+      "workshop",
+      "follow us on"
     ],
     CLICK: ["click"],
     NEW_WINDOW_PHRASES: [

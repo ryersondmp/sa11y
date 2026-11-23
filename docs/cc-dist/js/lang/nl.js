@@ -90,7 +90,8 @@ const ruleset = {
     "bekijk",
     "bekijk onze",
     "website",
-    "artikel"
+    "artikel",
+    "volg ons op"
   ],
   CLICK: ["click", "klik"],
   NEW_WINDOW_PHRASES: ["extern", "nieuw tabblad", "nieuwe tab", "nieuw venster", "pop-up", "popup"],

@@ -90,7 +90,8 @@ const ruleset = {
     "ogled",
     "si oglejte naš",
     "spletna stran",
-    "članek"
+    "članek",
+    "sledite nam na"
   ],
   CLICK: ["click", "klik"],
   NEW_WINDOW_PHRASES: ["zunanj", "nov zavihek", "novem zavihku", "novo okno", "novem oknu", "pop-up", "pojavno okno"],
