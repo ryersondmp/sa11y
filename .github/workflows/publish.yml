@@ -1,25 +1,26 @@
-name: "Deploy to NPM"
+name: Publish NPM Package
 
 on:
   release:
-    types: [created]
+    types: [published]
 
 permissions:
+  id-token: write # Required for npm OIDC authentication
   contents: read
 
 jobs:
-    release:
-        name: release
-        runs-on: ubuntu-latest
-        steps:
-            - name: Checkout
-              uses: actions/checkout@v4
-            - name: Setup node
-              uses: actions/setup-node@v4
-              with:
-                  node-version: 24.x
-                  registry-url: https://registry.npmjs.org
-            - name: Publish to NPM 📦
-              run: npm publish --access public
-              env:
-                  NODE_AUTH_TOKEN: ${{secrets.NPM_AUTH_TOKEN}}
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          registry-url: 'https://registry.npmjs.org'
+          package-manager-cache: false # Never use caching in release builds
+
+      - run: npm ci
+      - run: npm run build --if-present
+      - run: npm test
+      - run: npm stage publish
