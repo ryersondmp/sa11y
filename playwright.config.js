@@ -2,6 +2,17 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { defineConfig, devices } from '@playwright/test';
 
+// Must match server.port in vite.config.js.
+const PORT = 54114;
+const BASE_URL = `http://localhost:${PORT}`;
+
+const performanceSpec = '**/performance.spec.js';
+const performanceDevices = {
+  chromium: 'Desktop Chrome',
+  firefox: 'Desktop Firefox',
+  webkit: 'Desktop Safari',
+};
+
 /**
  * @see https://playwright.dev/docs/test-configuration
  */
@@ -17,8 +28,19 @@ export default defineConfig({
   workers: process.env.CI ? 1 : undefined,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   // reporter: [['html', { open: 'on-failure' }]],
+  /* On CI: inline annotations on the PR plus an HTML report to upload as an artifact. */
+  reporter: process.env.CI ? [['github'], ['html', { open: 'never' }]] : 'list',
+  /* Start the Vite dev server for the test pages. Locally, an already-running
+     `npm run serve` is reused. BROWSER=none stops Vite from opening a browser. */
+  webServer: {
+    command: 'npm run serve',
+    url: `${BASE_URL}/test/pages/unit-tests.html`,
+    reuseExistingServer: !process.env.CI,
+    timeout: 60_000,
+    env: { BROWSER: 'none' },
+  },
   use: {
-    baseURL: 'http://localhost:8080',
+    baseURL: BASE_URL,
     trace: 'on-first-retry',
     // headless: false,
   },
@@ -31,14 +53,26 @@ export default defineConfig({
     {
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
+      testIgnore: performanceSpec,
     },
     {
       name: 'firefox',
       use: { ...devices['Desktop Firefox'] },
+      testIgnore: performanceSpec,
     },
     {
       name: 'webkit',
       use: { ...devices['Desktop Safari'] },
+      testIgnore: performanceSpec,
     },
+
+    /* Performance benchmark (test/performance.spec.js). Runs after the unit tests so they do not
+       compete for CPU. Run alone with: npx playwright test --project="perf-*" --no-deps */
+    ...['chromium', 'firefox', 'webkit'].map((browser) => ({
+      name: `perf-${browser}`,
+      use: { ...devices[performanceDevices[browser]] },
+      testMatch: performanceSpec,
+      dependencies: ['chromium', 'firefox', 'webkit'],
+    })),
   ],
 });

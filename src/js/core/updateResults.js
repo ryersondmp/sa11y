@@ -85,7 +85,9 @@ export default async function updateResults() {
       item.id = id;
       item.cssPath = option.selectorPath ? Utils.generateSelectorPath(item.element) : '';
       item.htmlPath = item.element?.outerHTML.replace(/\s{2,}/g, ' ').trim() || '';
-      if (item.dismiss) item.dismissDigest = await Utils.dismissDigest(item.dismiss);
+      if (item.dismiss) {
+        item.dismissDigest = await Utils.dismissDigest(option.pepper ?? '', item.dismiss);
+      }
 
       // Convert content passed in via string (custom checks) into a DOM node.
       if (typeof item.content === 'string') {

@@ -6,6 +6,11 @@ import { State } from '../core/state';
 const Elements = (function myElements() {
   const Found = {};
 
+  // Links that are ignored: configured exclusions, and links inside an inert subtree (not
+  // focusable or clickable, so not presented as links).
+  const isExcludedLink = ($el) =>
+    Utils.isInert($el) || Constants.Exclusions.Links.some((s) => $el.matches(s));
+
   // Contrast exclusion tiers.
   const contrastExcludedTags = new Set([
     'AUDIO',
@@ -152,6 +157,7 @@ const Elements = (function myElements() {
     // Initialize arrays.
     Found.Images = [];
     Found.Links = [];
+    Found.Summary = [];
     Found.Paragraphs = [];
     Found.Lists = [];
     Found.Blockquotes = [];
@@ -198,7 +204,7 @@ const Elements = (function myElements() {
         if (imageRoles.has(role) && !Constants.Exclusions.Images.some((s) => $el.matches(s))) {
           Found.Images.push($el);
           handledByRole = true;
-        } else if (role === 'link' && !Constants.Exclusions.Links.some((s) => $el.matches(s))) {
+        } else if (role === 'link' && !isExcludedLink($el)) {
           Found.Links.push($el);
           handledByRole = true;
         } else if (role === 'button') {
@@ -220,7 +226,7 @@ const Elements = (function myElements() {
             if (
               $el.hasAttribute('href') &&
               !$el.matches('[role="button"]') &&
-              !Constants.Exclusions.Links.some((s) => $el.matches(s))
+              !isExcludedLink($el)
             ) {
               Found.Links.push($el);
               // Check custom error link sources while we have the link.
@@ -272,6 +278,9 @@ const Elements = (function myElements() {
             break;
           case 'svg':
             Found.Svg.push($el);
+            break;
+          case 'SUMMARY':
+            Found.Summary.push($el);
             break;
         }
       }
@@ -396,11 +405,7 @@ const Elements = (function myElements() {
           break;
         case 'A':
         case 'a':
-          if (
-            $el.hasAttribute('href') &&
-            !$el.matches('[role="button"]') &&
-            !Constants.Exclusions.Links.some((s) => $el.matches(s))
-          ) {
+          if ($el.hasAttribute('href') && !$el.matches('[role="button"]') && !isExcludedLink($el)) {
             Found.Links.push($el);
           }
           break;

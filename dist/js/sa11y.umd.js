@@ -91,6 +91,7 @@
     // e.g. '.inner-node-hidden-in-CSS'
     // Shared properties for some checks
     altPlaceholder: [],
+    // Strings (prefix match) and/or RegExp objects (as authored).
     susAltStopWords: "",
     linkStopWords: "",
     extraPlaceholderStopWords: "",
@@ -195,6 +196,7 @@
       EMBED_VIDEO: {
         sources: ""
       },
+      EMBED_VIDEO_AUTOPLAY: true,
       EMBED_DATA_VIZ: {
         sources: ""
       },
@@ -216,6 +218,8 @@
         dismissAll: true
       },
       QA_BLOCKQUOTE: true,
+      TABLES_SINGLE_COLUMN: true,
+      TABLES_SINGLE_CELL: true,
       TABLES_MISSING_HEADINGS: true,
       TABLES_SEMANTIC_HEADING: true,
       TABLES_EMPTY_HEADING: true,
@@ -250,6 +254,7 @@
       // Developer checks
       DUPLICATE_ID: true,
       META_TITLE: true,
+      META_TITLE_UNDESCRIPTIVE: true,
       UNCONTAINED_LI: true,
       TABINDEX_ATTR: true,
       HIDDEN_FOCUSABLE: true,
@@ -259,6 +264,8 @@
       BTN_ROLE_IN_NAME: true,
       LINK_MAYBE_BUTTON: true,
       BTN_UNPRONOUNCEABLE: true,
+      SVG_NO_ACCESSIBLE_NAME: true,
+      SUMMARY_EMPTY: true,
       // Contrast checks
       CONTRAST_WARNING: {
         dismissAll: true
@@ -344,6 +351,17 @@
     },
     translate(string) {
       return this.langStrings[string] || string;
+    },
+    /**
+     * Returns a word list (e.g. 'CLICK', 'LINK_STOPWORDS') from the language file. For a missing or
+     * malformed entry it returns an empty array, so a custom or outdated language object disables
+     * that matching instead of crashing: translate() would return the key itself, a string.
+     * @param {string} key - The language file key of an array of strings.
+     * @returns {string[]} The list, without non-string entries.
+     */
+    list(key) {
+      const value = this.langStrings[key];
+      return Array.isArray(value) ? value.filter((entry) => typeof entry === "string") : [];
     },
     prepHTML($el) {
       return $el.replaceAll(/<hr>/g, '<hr aria-hidden="true">').replaceAll(/<a[\s]href=/g, '<a target="_blank" rel="noopener noreferrer" href=').replaceAll(/<\/a>/g, `<span class="visually-hidden"> (${Lang._("NEW_TAB")})</span></a>`).replaceAll(/{C}/g, 'class="colour"').replaceAll(/{B}/g, 'class="badge"').replaceAll(/{ALT}/g, `<strong class="badge">${Lang._("ALT")}</strong>`).replaceAll(
@@ -464,20 +482,28 @@
       } else {
         Global.pdfSources = false;
       }
-      Global.susAltWords = State.option.susAltStopWords ? State.option.susAltStopWords.split(",").map((word) => word.trim().toLowerCase()).filter(Boolean) : Lang._("SUS_ALT_STOPWORDS");
-      Global.placeholderAltSet = new Set(Lang._("PLACEHOLDER_ALT_STOPWORDS"));
-      Global.altPlaceholderPattern = generateRegexString(State.option.altPlaceholder, true);
+      const susAltWords = State.option.susAltStopWords ? State.option.susAltStopWords.split(",").map((word) => word.trim()).filter(Boolean) : Lang.list("SUS_ALT_STOPWORDS");
+      Global.susAltWords = new Map(
+        susAltWords.map((word) => [foldForMatching(word), word]).filter(([folded]) => folded)
+      );
+      Global.placeholderAltSet = new Set(Lang.list("PLACEHOLDER_ALT_STOPWORDS").map(foldForMatching));
+      const altPlaceholder = Array.isArray(State.option.altPlaceholder) ? State.option.altPlaceholder.map(stripBidiControls) : stripBidiControls(State.option.altPlaceholder);
+      Global.altPlaceholderPattern = generateRegexString(altPlaceholder, true);
       Global.linkIgnoreStringPattern = generateRegexString(State.option.linkIgnoreStrings);
       Global.unpronounceablePattern = /[\p{L}\p{N}\p{Extended_Pictographic}]/u;
-      Global.extraPlaceholderStopWords = State.option.extraPlaceholderStopWords.split(",").map((word) => word.trim().toLowerCase()).filter(Boolean);
+      Global.extraPlaceholderStopWords = State.option.extraPlaceholderStopWords.split(",").map((word) => foldForMatching(word.trim())).filter(Boolean);
       Global.headerStringExclusionPattern = generateRegexString(State.option.headerIgnoreStrings);
       const customStopWords = State.option.linkStopWords ? State.option.linkStopWords.split(",").map((word) => word.toLowerCase().trim()) : [];
-      Global.linkStopWords = /* @__PURE__ */ new Set([...Lang._("LINK_STOPWORDS"), ...customStopWords]);
+      Global.linkStopWords = new Set(
+        [...Lang.list("LINK_STOPWORDS"), ...customStopWords].map(normalizeStopWord).filter(Boolean)
+      );
       Global.linkIgnoreStrings = new Set(
         State.option.linkIgnoreStrings.map((word) => word.toLowerCase())
       );
-      Global.clickRegex = generateRegexString(Lang._("CLICK"));
-      Global.newWindowRegex = generateRegexString(Lang._("NEW_WINDOW_PHRASES"));
+      Global.clickRegex = generateRegexString(Lang.list("CLICK").map(foldForMatching));
+      Global.newWindowRegex = generateRegexString(
+        Lang.list("NEW_WINDOW_PHRASES").map(foldForMatching)
+      );
       const defaultFileTypes = [
         "pdf",
         "doc",
@@ -764,7 +790,7 @@
     } else if (desiredRoot === "root") {
       root.push(Constants.Root.areaToCheck);
     } else {
-      root.push(document.querySelectorAll(desiredRoot));
+      root.push(...document.querySelectorAll(desiredRoot));
     }
     const exclusions = Constants.Exclusions.Container.join(", ");
     const additionalExclusions = exclude?.join(", ") || "";
@@ -833,6 +859,92 @@
     if (!$el || typeof $el.getAttribute !== "function") return false;
     return $el.getAttribute("aria-hidden")?.trim().toLowerCase() === "true";
   }
+  function hasAriaHiddenAncestor(element) {
+    let current = element;
+    while (current) {
+      if (isAriaHidden(current)) return true;
+      current = current.parentElement;
+    }
+    return false;
+  }
+  function isInert(element) {
+    let current = element;
+    while (current?.nodeType === 1) {
+      if (getCachedClosest(current, "[inert]")) return true;
+      current = current.getRootNode().host;
+    }
+    return false;
+  }
+  const idReferenceListAttributes = [
+    "aria-labelledby",
+    "aria-describedby",
+    "aria-controls",
+    "aria-owns",
+    "aria-activedescendant",
+    "aria-details",
+    "aria-errormessage",
+    "aria-flowto"
+  ];
+  function getFragmentIds(link, pageUrl) {
+    const href = link.getAttribute("href")?.trim();
+    if (!href?.includes("#")) return [];
+    let fragment;
+    if (href.startsWith("#")) {
+      fragment = href.slice(1);
+    } else {
+      let url2;
+      try {
+        url2 = new URL(href, document.baseURI);
+      } catch {
+        return [];
+      }
+      const samePage = url2.origin === pageUrl.origin && url2.pathname === pageUrl.pathname && url2.search === pageUrl.search;
+      if (!samePage) return [];
+      fragment = url2.hash.slice(1);
+    }
+    if (!fragment) return [];
+    try {
+      const decoded = decodeURIComponent(fragment);
+      return decoded === fragment ? [fragment] : [fragment, decoded];
+    } catch {
+      return [fragment];
+    }
+  }
+  function getReferencedDuplicateIds(scope, exclude = "") {
+    if (!scope?.querySelectorAll) return [];
+    const elementsById = /* @__PURE__ */ new Map();
+    const idSelector = exclude ? `[id]:not(${exclude})` : "[id]";
+    for (const element of scope.querySelectorAll(idSelector)) {
+      const { id } = element;
+      if (!id?.trim()) continue;
+      const group = elementsById.get(id);
+      if (group) group.push(element);
+      else elementsById.set(id, [element]);
+    }
+    const duplicates = [...elementsById].filter(([, group]) => group.length > 1);
+    if (!duplicates.length) return [];
+    const referenced = /* @__PURE__ */ new Set();
+    const pageUrl = new URL(document.URL);
+    const referenceSelector = [
+      "label[for]",
+      "a[href]",
+      "area[href]",
+      ...idReferenceListAttributes.map((attribute) => `[${attribute}]`)
+    ].join(", ");
+    for (const element of scope.querySelectorAll(referenceSelector)) {
+      if (element.localName === "label" && element.hasAttribute("for")) {
+        referenced.add(element.getAttribute("for"));
+      }
+      if ((element.localName === "a" || element.localName === "area") && element.hasAttribute("href")) {
+        for (const id of getFragmentIds(element, pageUrl)) referenced.add(id);
+      }
+      for (const attribute of idReferenceListAttributes) {
+        const value = element.getAttribute(attribute);
+        if (value) for (const id of value.trim().split(/\s+/)) referenced.add(id);
+      }
+    }
+    return duplicates.filter(([id]) => referenced.has(id)).flatMap(([, group]) => group.slice(1)).sort((a, b) => a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1);
+  }
   function isPresentational($el) {
     if (!$el || typeof $el.getAttribute !== "function") return false;
     const roleAttr = $el.getAttribute("role");
@@ -859,27 +971,89 @@
   }
   function stripAllSpecialCharacters(string) {
     if (typeof string !== "string" && typeof string !== "number") return "";
-    return String(string).replace(/[^\p{L}\p{N}\s]/gu, "").replace(/\s+/g, " ").trim();
+    return String(string).replace(/[^\p{L}\p{M}\p{N}\s]/gu, "").replace(/\s+/g, " ").trim();
   }
-  const invalidProtocolRegex = /^([^\w]*)(javascript|data|vbscript)/im;
-  const htmlEntitiesRegex = /&#(\w+)(^\w|;)?/g;
+  const arabicOptionalMarksRegex = /[\u064B-\u0652\u0656-\u065F\u0670\u0640]/g;
+  function foldForMatching(string) {
+    if (typeof string !== "string" && typeof string !== "number") return "";
+    return String(string).toLowerCase().normalize("NFD").replace(new RegExp("(\\p{Script=Greek})\\p{M}+", "gu"), "$1").replace(/i\u0307|\u0131/g, "i").replace(arabicOptionalMarksRegex, "").normalize("NFC");
+  }
+  function normalizeStopWord(string) {
+    return foldForMatching(string).replace(/[^\p{L}\p{M}\p{N}\s]/gu, "").replace(/\s+/g, " ").trim();
+  }
+  const wordSegmenters = /* @__PURE__ */ new Map();
+  function getWordSegmenter(locale) {
+    if (typeof Intl === "undefined" || typeof Intl.Segmenter !== "function") return null;
+    const key = typeof locale === "string" ? locale : "";
+    let segmenter = wordSegmenters.get(key);
+    if (!segmenter) {
+      try {
+        segmenter = new Intl.Segmenter(key || void 0, { granularity: "word" });
+      } catch {
+        segmenter = new Intl.Segmenter(void 0, { granularity: "word" });
+      }
+      wordSegmenters.set(key, segmenter);
+    }
+    return segmenter;
+  }
+  function containsWord(text, word, segmenter = getWordSegmenter(Lang._("LANG_CODE"))) {
+    const haystack = foldForMatching(text);
+    const needle = foldForMatching(word);
+    if (!needle) return false;
+    if (segmenter) {
+      for (const { segment, isWordLike } of segmenter.segment(haystack)) {
+        if (isWordLike && segment === needle) return true;
+      }
+      return false;
+    }
+    const escaped = needle.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    return new RegExp(`(?:^|[^\\p{L}\\p{M}\\p{N}])${escaped}(?![\\p{L}\\p{M}\\p{N}])`, "u").test(
+      haystack
+    );
+  }
+  const noSpaceScriptRegex = /[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}]/u;
+  function getUndescriptiveTitleType(title, entries = [], prefixes = []) {
+    const text = foldForMatching(removeWhitespace(title));
+    if (!text) return null;
+    const prepare = (list) => (Array.isArray(list) ? list : []).map((entry) => foldForMatching(removeWhitespace(entry))).filter(Boolean);
+    const prefixList = prepare(prefixes);
+    const allEntries = [...prepare(entries), ...prefixList];
+    const isNumbered = (rest) => {
+      const stripped = rest.replace(/[\s\p{P}\p{S}]/gu, "");
+      return stripped === "" || new RegExp("^\\p{Nd}+$", "u").test(stripped);
+    };
+    if (allEntries.some((entry) => text.startsWith(entry) && isNumbered(text.slice(entry.length)))) {
+      return "error";
+    }
+    const isPrefix = (prefix) => text.startsWith(prefix) && (noSpaceScriptRegex.test(prefix.slice(-1)) || /^[^\p{L}\p{M}\p{N}]/u.test(text.slice(prefix.length)));
+    return prefixList.some(isPrefix) ? "warning" : null;
+  }
+  const invalidProtocolRegex = /^\W*(javascript|data|vbscript)/i;
+  const htmlEntitiesRegex = /&#(?:x([0-9a-f]+)|(\d+));?/gi;
   const htmlCtrlEntityRegex = /&(newline|tab);/gi;
   const ctrlCharactersRegex = (
-    // biome-ignore lint/suspicious/noControlCharactersInRegex: original lib.
-    /[\u0000-\u001F\u007F-\u009F\u2000-\u200D\uFEFF]/gim
+    // biome-ignore lint/suspicious/noControlCharactersInRegex: Matching control characters is the purpose.
+    /[\u0000-\u001F\u007F-\u009F\u2000-\u200D\uFEFF]/g
   );
-  const urlSchemeRegex = /^.+(:|&colon;)/gim;
+  const urlSchemeRegex = /^.+?(:|&colon;)/i;
   const whitespaceEscapeCharsRegex = /(\\|%5[cC])((%(6[eE]|72|74))|[nrt])/g;
+  const base64ImageRegex = /^data:image\/(?:png|gif|jpe?g|webp|avif|bmp|x-icon);base64,[a-z0-9+/=\t\n\f\r ]*$/i;
   const relativeFirstCharacters = [".", "/"];
   const BLANK_URL = "about:blank";
   function isRelativeUrlWithoutProtocol(url2) {
     return relativeFirstCharacters.indexOf(url2[0]) > -1;
   }
+  function decodeCharacterReference(hex, dec) {
+    const codePoint = hex !== void 0 ? Number.parseInt(hex, 16) : Number.parseInt(dec, 10);
+    const isInvalid = !Number.isFinite(codePoint) || codePoint === 0 || codePoint > 1114111 || codePoint >= 55296 && codePoint <= 57343;
+    return isInvalid ? "�" : String.fromCodePoint(codePoint);
+  }
   function decodeHtmlCharacters(str) {
     const removedNullByte = str.replace(ctrlCharactersRegex, "");
-    return removedNullByte.replace(htmlEntitiesRegex, (match, dec) => {
-      return String.fromCharCode(dec);
-    });
+    return removedNullByte.replace(
+      htmlEntitiesRegex,
+      (_match, hex, dec) => decodeCharacterReference(hex, dec)
+    );
   }
   function isValidUrl(url2) {
     if (typeof URL.canParse === "function") {
@@ -913,10 +1087,10 @@
   }
   function sanitizeURL(url2) {
     if (!url2 || typeof url2 !== "string") return BLANK_URL;
-    const isBase64Data = /^data:([a-z]+\/[a-z0-9-+.]+)?;base64,/i.test(url2.trim());
-    if (isBase64Data) return url2.trim();
+    const trimmedInput = url2.trim();
+    if (base64ImageRegex.test(trimmedInput)) return trimmedInput;
     let charsToDecode;
-    let decodedUrl = decodeURIs(url2.trim());
+    let decodedUrl = decodeURIs(trimmedInput);
     do {
       decodedUrl = decodeHtmlCharacters(decodedUrl).replace(htmlCtrlEntityRegex, "").replace(ctrlCharactersRegex, "").replace(whitespaceEscapeCharsRegex, "").trim();
       decodedUrl = decodeURIs(decodedUrl);
@@ -931,7 +1105,6 @@
     const urlScheme = urlSchemeParseResults[0].toLowerCase().trim();
     if (invalidProtocolRegex.test(urlScheme)) return BLANK_URL;
     const backSanitized = trimmedUrl.replace(/\\/g, "/");
-    if (urlScheme === "mailto:" || urlScheme.includes("://")) return backSanitized;
     if (urlScheme === "http:" || urlScheme === "https:") {
       if (!isValidUrl(backSanitized)) return BLANK_URL;
       const url3 = new URL(backSanitized);
@@ -1115,7 +1288,7 @@
       return gotText.get(element);
     }
     const ignore = fnIgnore(element);
-    const text = ignore.textContent.replace(/[\r\n]+/g, "").replace(/\s+/g, " ").trim();
+    const text = removeWhitespace(ignore.textContent);
     gotText.set(element, text);
     return text;
   }
@@ -1138,35 +1311,51 @@
   const resetStyleCache = () => {
     styleCaches = {};
   };
-  let parentCache = /* @__PURE__ */ new WeakMap();
+  let parentCache = /* @__PURE__ */ new Map();
   function getCachedClosest(element, selector) {
     if (element?.nodeType !== 1) return null;
     if (typeof selector !== "string" || selector.trim() === "") return null;
-    try {
-      if (!parentCache.has(element)) {
-        parentCache.set(element, /* @__PURE__ */ new Map());
+    let cache = parentCache.get(selector);
+    if (!cache) {
+      try {
+        element.matches(selector);
+      } catch {
+        return null;
       }
-      const elementCache = parentCache.get(element);
-      if (elementCache.has(selector)) {
-        return elementCache.get(selector);
-      }
-      const result = element.closest(selector);
-      elementCache.set(selector, result);
-      return result;
-    } catch {
-      return null;
+      cache = /* @__PURE__ */ new WeakMap();
+      parentCache.set(selector, cache);
     }
+    const path = [];
+    let current = element;
+    let result = null;
+    while (current) {
+      const cached = cache.get(current);
+      if (cached !== void 0) {
+        result = cached;
+        break;
+      }
+      if (current.matches(selector)) {
+        result = current;
+        break;
+      }
+      path.push(current);
+      current = current.parentElement;
+    }
+    if (result) cache.set(result, result);
+    for (let i = 0; i < path.length; i++) cache.set(path[i], result);
+    return result;
   }
   function resetParentCache() {
-    parentCache = /* @__PURE__ */ new WeakMap();
+    parentCache = /* @__PURE__ */ new Map();
   }
   function removeWhitespace(string) {
     if (typeof string !== "string" && typeof string !== "number") return "";
     return String(string).replace(/\s+/g, " ").trim();
   }
+  const junkCharactersRegex = /[\u0000-\u0008\u000E-\u001F\u007F-\u009F\uE000-\uF8FF]/g;
   function normalizeString(string) {
     if (typeof string !== "string" && typeof string !== "number") return "";
-    return removeWhitespace(String(string).replace(/[\u0000-\u001F\u007F-\u009F]/g, ""));
+    return removeWhitespace(String(string).replace(junkCharactersRegex, ""));
   }
   function truncateString(string, maxLength) {
     if (typeof string !== "string" && typeof string !== "number") return "";
@@ -1246,7 +1435,7 @@
     return "";
   }
   function prepareDismissal(string) {
-    return String(string).replace(/([^0-9a-zA-Z])/g, "").substring(0, 256);
+    return String(string).replace(/[^\p{L}\p{N}]/gu, "").substring(0, 256);
   }
   function generateSelectorPath(element) {
     const path = [];
@@ -1254,16 +1443,14 @@
     while (currentElement) {
       let selector = currentElement.localName;
       if (currentElement.id) {
-        selector += `#${currentElement.id}`;
+        selector += `#${CSS.escape(currentElement.id)}`;
         path.unshift(selector);
         break;
       } else {
         const classAttr = currentElement.getAttribute ? currentElement.getAttribute("class") : null;
-        if (classAttr) {
-          const classSelector = classAttr.trim().replace(/\s+/g, ".");
-          if (classSelector) {
-            selector += `.${classSelector}`;
-          }
+        const classNames = classAttr?.trim();
+        if (classNames) {
+          selector += `.${classNames.split(/\s+/).map(CSS.escape).join(".")}`;
         }
       }
       const parentElement = currentElement.parentNode;
@@ -1332,15 +1519,87 @@
       }
     }, 50);
   }
+  const srcsetIntegerRegex = /^\d+$/;
+  const srcsetFloatRegex = /^-?(?:\d+(?:\.\d+)?|\.\d+)(?:[eE][-+]?\d+)?$/;
+  function parseSrcsetDescriptors(descriptors) {
+    let width = null;
+    let density = null;
+    let height = null;
+    for (const descriptor of descriptors.split(/\s+/)) {
+      if (!descriptor) continue;
+      const value = descriptor.slice(0, -1);
+      const type = descriptor.slice(-1);
+      if (type === "w" && srcsetIntegerRegex.test(value)) {
+        if (width !== null || density !== null) return null;
+        width = Number(value);
+        if (width === 0) return null;
+      } else if (type === "x" && srcsetFloatRegex.test(value)) {
+        if (width !== null || density !== null || height !== null) return null;
+        density = Number(value);
+        if (!Number.isFinite(density) || density <= 0) return null;
+      } else if (type === "h" && srcsetIntegerRegex.test(value)) {
+        if (height !== null || density !== null) return null;
+        height = Number(value);
+        if (height === 0) return null;
+      } else {
+        return null;
+      }
+    }
+    if (height !== null && width === null) return null;
+    return { width, density: density ?? 1 };
+  }
+  function parseSrcset(srcset) {
+    if (typeof srcset !== "string") return [];
+    const candidates = [];
+    const length = srcset.length;
+    let position = 0;
+    while (position < length) {
+      while (position < length && /[\s,]/.test(srcset[position])) position += 1;
+      if (position >= length) break;
+      const urlStart = position;
+      while (position < length && !/\s/.test(srcset[position])) position += 1;
+      let url2 = srcset.slice(urlStart, position);
+      let descriptors = "";
+      if (url2.endsWith(",")) {
+        url2 = url2.replace(/,+$/, "");
+      } else {
+        const descriptorStart = position;
+        let inParens = false;
+        while (position < length) {
+          const char = srcset[position];
+          if (char === "(") inParens = true;
+          else if (char === ")") inParens = false;
+          else if (char === "," && !inParens) break;
+          position += 1;
+        }
+        descriptors = srcset.slice(descriptorStart, position).trim();
+        position += 1;
+      }
+      if (!url2) continue;
+      const parsed = parseSrcsetDescriptors(descriptors);
+      if (parsed) candidates.push({ url: url2, ...parsed });
+    }
+    return candidates;
+  }
+  function getSmallestSrc(srcset) {
+    const candidates = parseSrcset(srcset);
+    if (!candidates.length) return void 0;
+    const withWidth = candidates.filter((c) => c.width !== null);
+    const pool = withWidth.length ? withWidth : candidates;
+    const size = (c) => withWidth.length ? c.width : c.density;
+    return pool.reduce((smallest, c) => size(c) < size(smallest) ? c : smallest).url;
+  }
   function getBestImageSource(element) {
-    const getLastSrc = (src) => src?.split(/,\s+/).pop()?.trim()?.split(/\s+/)[0];
-    const resolveUrl = (src) => src ? new URL(src, window.location.href).href : null;
-    const dataSrc = getLastSrc(element.getAttribute("data-src") || element.getAttribute("srcset"));
-    if (dataSrc) return resolveUrl(dataSrc);
-    const pictureSrcset = getCachedClosest(element, "picture")?.querySelector("source[srcset]")?.getAttribute("srcset");
-    const pictureSrc = getLastSrc(pictureSrcset);
-    if (pictureSrc) return resolveUrl(pictureSrc);
-    return resolveUrl(element.getAttribute("src"));
+    const resolveUrl = (src) => {
+      if (!src) return null;
+      try {
+        return new URL(src, window.location.href).href;
+      } catch {
+        return null;
+      }
+    };
+    const pictureSrcset = () => getCachedClosest(element, "picture")?.querySelector("source[srcset]")?.getAttribute("srcset");
+    return resolveUrl(element.getAttribute("data-src")?.trim()) || resolveUrl(getSmallestSrc(element.getAttribute("data-srcset"))) || resolveUrl(getSmallestSrc(element.getAttribute("srcset"))) || resolveUrl(getSmallestSrc(pictureSrcset())) || resolveUrl(element.getAttribute("src"));
   }
   const blobToBase64 = (blob) => new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -1410,6 +1669,7 @@
     const handler = tagHandlers[issueElement.tagName];
     return handler ? handler(issueElement) : createCodeFallback();
   }
+  const emojiRegex = /[\p{Emoji_Presentation}\p{Extended_Pictographic}\p{Emoji_Modifier}]|\u200D|\uFE0E|\uFE0F|\u20E3/gu;
   function isVisibleTextInAccName($el, accName, exclusions = [], linkIgnoreStrings) {
     let text = "";
     const excludeSelector = exclusions?.length ? exclusions.join(",") : "";
@@ -1429,10 +1689,9 @@
         text += stripIgnored(getText(node));
       }
     });
-    const emojiRegex = /[\p{Emoji_Presentation}\p{Extended_Pictographic}]/gu;
     let visibleText = text.replace(emojiRegex, "");
     visibleText = removeWhitespace(visibleText).toLowerCase();
-    if (/^[x×✕✖✗✘]$/i.test(visibleText)) {
+    if (/^[x×✕✖✗✘]$/.test(visibleText)) {
       return false;
     }
     return visibleText.length !== 0 && !accName.toLowerCase().includes(visibleText);
@@ -1494,23 +1753,46 @@
   }
   function generateRegexString(input, matchStart = false) {
     if (!input) return null;
-    if (input instanceof RegExp) return input;
     let patterns = [];
-    if (Array.isArray(input)) {
+    if (input instanceof RegExp) {
+      patterns = [input];
+    } else if (Array.isArray(input)) {
       patterns = input;
     } else if (typeof input === "string") {
       patterns = input.split(",").map((s) => s.trim());
     } else {
       return null;
     }
-    patterns = patterns.filter((p) => p && p.length > 0);
-    if (patterns.length === 0) return null;
+    const literals = patterns.filter((p) => typeof p === "string" && p.length > 0);
+    const regexes = patterns.filter((p) => p instanceof RegExp && p.source !== "(?:)");
+    if (literals.length === 0 && regexes.length === 0) return null;
     const escapeRegExp = (string) => {
       return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
     };
-    const joinedPatterns = patterns.map(escapeRegExp).join("|");
-    const finalPattern = matchStart ? `^(?:${joinedPatterns})` : joinedPatterns;
-    return new RegExp(finalPattern, "i");
+    const parts = [];
+    if (literals.length) {
+      const joinedPatterns = literals.map(escapeRegExp).join("|");
+      parts.push(matchStart ? `^(?:${joinedPatterns})` : `(?:${joinedPatterns})`);
+    }
+    regexes.forEach((regex) => {
+      if (regex.multiline || regex.dotAll) {
+        console.warn(
+          `Sa11y: the "m" and "s" flags are not supported when combining patterns; ignoring them on /${regex.source}/${regex.flags}.`
+        );
+      }
+      parts.push(`(?:${regex.source})`);
+    });
+    const finalPattern = parts.join("|");
+    const flags = regexes.some((regex) => regex.unicode) ? "iu" : "i";
+    try {
+      return new RegExp(finalPattern, flags);
+    } catch (error) {
+      console.warn("Sa11y: could not combine patterns into one RegExp.", input, error);
+      return null;
+    }
+  }
+  function stripBidiControls(text) {
+    return typeof text === "string" ? text.replace(/[\u061C\u200E\u200F\u202A-\u202E\u2066-\u2069]/g, "") : text;
   }
   async function dismissDigest(pepper, message) {
     const msgUint8 = new TextEncoder().encode(pepper + message);
@@ -1549,12 +1831,14 @@
     __proto__: null,
     addPulse,
     blobToBase64,
+    containsWord,
     debounce,
     dismissDigest,
     documentLoadingCheck,
     escapeHTML,
     findVisibleParent,
     fnIgnore,
+    foldForMatching,
     generateElementPreview,
     generateRegexString,
     generateSelectorPath,
@@ -1562,20 +1846,28 @@
     getCachedClosest,
     getCachedStyle,
     getNextSibling,
+    getReferencedDuplicateIds,
     getText,
+    getUndescriptiveTitleType,
+    getWordSegmenter,
+    hasAriaHiddenAncestor,
     initRovingTabindex,
     isAriaHidden,
     isDisabled,
     isElementHidden,
     isElementVisuallyHiddenOrHidden,
     isHiddenAndUnfocusable,
+    isInert,
     isNegativeTabindex,
     isPresentational,
     isScreenReaderOnly,
     isScrollable,
     isVisibleTextInAccName,
+    noSpaceScriptRegex,
+    normalizeStopWord,
     normalizeString,
     offsetTop,
+    parseSrcset,
     prepareDismissal,
     remove,
     removeWhitespace,
@@ -1588,6 +1880,7 @@
     standardizeHref,
     store,
     stripAllSpecialCharacters,
+    stripBidiControls,
     supportsAnchorPositioning,
     trapFocus,
     truncateString,
@@ -1624,6 +1917,7 @@
   }
   const Elements = (function myElements() {
     const Found = {};
+    const isExcludedLink = ($el) => isInert($el) || Constants.Exclusions.Links.some((s) => $el.matches(s));
     const contrastExcludedTags = /* @__PURE__ */ new Set([
       "AUDIO",
       "VIDEO",
@@ -1734,6 +2028,7 @@
       Found.Everything = find("*", "root", Constants.Exclusions.Sa11yElements);
       Found.Images = [];
       Found.Links = [];
+      Found.Summary = [];
       Found.Paragraphs = [];
       Found.Lists = [];
       Found.Blockquotes = [];
@@ -1775,7 +2070,7 @@
           if (imageRoles.has(role) && !Constants.Exclusions.Images.some((s) => $el.matches(s))) {
             Found.Images.push($el);
             handledByRole = true;
-          } else if (role === "link" && !Constants.Exclusions.Links.some((s) => $el.matches(s))) {
+          } else if (role === "link" && !isExcludedLink($el)) {
             Found.Links.push($el);
             handledByRole = true;
           } else if (role === "button") {
@@ -1794,7 +2089,7 @@
             case "A":
             // HTML anchor
             case "a":
-              if ($el.hasAttribute("href") && !$el.matches('[role="button"]') && !Constants.Exclusions.Links.some((s) => $el.matches(s))) {
+              if ($el.hasAttribute("href") && !$el.matches('[role="button"]') && !isExcludedLink($el)) {
                 Found.Links.push($el);
                 if (badLinkSelectors.length > 0 && badLinkSelectors.some((s) => $el.matches(s))) {
                   Found.CustomErrorLinks.push($el);
@@ -1844,6 +2139,9 @@
               break;
             case "svg":
               Found.Svg.push($el);
+              break;
+            case "SUMMARY":
+              Found.Summary.push($el);
               break;
           }
         }
@@ -1939,7 +2237,7 @@
             break;
           case "A":
           case "a":
-            if ($el.hasAttribute("href") && !$el.matches('[role="button"]') && !Constants.Exclusions.Links.some((s) => $el.matches(s))) {
+            if ($el.hasAttribute("href") && !$el.matches('[role="button"]') && !isExcludedLink($el)) {
               Found.Links.push($el);
             }
             break;
@@ -2194,7 +2492,7 @@ ${JSON.stringify(State.option)}
     document.removeEventListener("keydown", keyboardShortcutHandler);
     Constants.Panel.skipButton.removeEventListener("click", handleSkipButtonHandler);
   }
-  const exportResultsStyles = `:root{--font-primary:system-ui, "Segoe UI", roboto, helvetica, arial, sans-serif;--font-secondary:consolas, monaco, "Ubuntu Mono", "Liberation Mono", "Courier New", courier, monospace;--body-text:#333;--bg-primary:#fff;--bg-secondary:#f6f8fa;--bg-tertiary:#d7d7d7;--link-primary:#004c9b;--red-text:#d30017;--warning-text:#966f0d;--hr:#d7d7d74d;--sa11y-link-icon-svg:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 640 512'%3E%3Cpath d='M579.8 267.7c56.5-56.5 56.5-148 0-204.5c-50-50-128.8-56.5-186.3-15.4l-1.6 1.1c-14.4 10.3-17.7 30.3-7.4 44.6s30.3 17.7 44.6 7.4l1.6-1.1c32.1-22.9 76-19.3 103.8 8.6c31.5 31.5 31.5 82.5 0 114L422.3 334.8c-31.5 31.5-82.5 31.5-114 0c-27.9-27.9-31.5-71.8-8.6-103.8l1.1-1.6c10.3-14.4 6.9-34.4-7.4-44.6s-34.4-6.9-44.6 7.4l-1.1 1.6C206.5 251.2 213 330 263 380c56.5 56.5 148 56.5 204.5 0L579.8 267.7zM60.2 244.3c-56.5 56.5-56.5 148 0 204.5c50 50 128.8 56.5 186.3 15.4l1.6-1.1c14.4-10.3 17.7-30.3 7.4-44.6s-30.3-17.7-44.6-7.4l-1.6 1.1c-32.1 22.9-76 19.3-103.8-8.6C74 372 74 321 105.5 289.5L217.7 177.2c31.5-31.5 82.5-31.5 114 0c27.9 27.9 31.5 71.8 8.6 103.9l-1.1 1.6c-10.3 14.4-6.9 34.4 7.4 44.6s34.4 6.9 44.6-7.4l1.1-1.6C433.5 260.8 427 182 377 132c-56.5-56.5-148-56.5-204.5 0L60.2 244.3z'/%3E%3C/svg%3E")}@media (prefers-color-scheme:dark){:root{--body-text:#dde8ff;--bg-primary:#0a2051;--bg-secondary:#072c7c;--bg-tertiary:#0041c9;--link-primary:#64b2ff;--red-text:#ffa2a2;--warning-text:#ffdb59;--hr:#0041c94d}}*{margin:0;padding:0}article,aside,nav,ol,p,pre,section,ul{margin-bottom:1rem}body{max-width:70ch;font-family:var(--font-primary);color:var(--body-text);word-break:break-word;overflow-wrap:break-word;background:var(--bg-primary);margin:0 auto;padding:2rem;font-size:1rem;line-height:1.5;overflow-x:hidden}h1,h2,h3{color:var(--body-text);margin-bottom:8px;padding-top:.875rem;padding-bottom:2px;line-height:1}h1{font-size:2.25rem}h2{font-size:1.85rem}h3{font-size:1.55rem}a{color:var(--link-primary)}a:hover,a:focus{text-decoration:none}header,footer{background:var(--bg-secondary);padding:2rem calc(50vw - 50%)}header{border-bottom:1px solid var(--bg-tertiary);margin:-2rem calc(-50vw + 50%) 2rem}footer{text-align:center;border-top:1px solid var(--bg-tertiary);margin:3rem calc(-50vw + 50%) -2rem}header>:first-child{margin-top:0;padding-top:0}header>:last-child{margin-bottom:0}hr{background:var(--hr);opacity:1;border:none;height:1px;margin:10px 0;padding:0}code,samp,kbd,pre{font-family:var(--font-secondary);background:var(--bg-secondary);border:1px solid var(--bg-tertiary);border-radius:4px;padding:3px 6px;font-size:.9rem}pre{max-width:100%;padding:1rem 1.4rem;display:block;overflow:auto}pre code{font-size:inherit;color:inherit;background:inherit;border:0;margin:0;padding:0}code pre{font-size:inherit;color:inherit;background:inherit;border:0;margin:0;padding:0;display:inline}details{background:var(--bg-primary);border:2px solid var(--link-primary);border-radius:4px;padding:.6rem 1rem}summary{cursor:pointer;font-weight:700}summary div{display:inline-block}summary p{margin:0}details[open]{padding-bottom:.75rem}details[open] summary{margin-bottom:6px}details[open]>:last-child{margin-bottom:0}.two-columns{display:flex}.column{flex:1;margin-inline-end:20px}.count{max-width:220px}dl{padding-top:10px}.column dl{width:100%}dt{font-weight:700}dd{padding-bottom:10px}ol,ul{padding-left:2rem}ul ul,ol ul,ul ol,ol ol{margin-bottom:0}ul li{margin-bottom:.5rem}ol li:not(li li){margin-bottom:4rem}iframe,img{background:var(--bg-tertiary);border-radius:5px;max-width:50%;padding:5px;display:block}video,audio{border:0;display:block}.red-text{color:var(--red-text)}.visually-hidden{clip:rect(1px, 1px, 1px, 1px);white-space:nowrap;clip-path:inset(50%);border:0;width:1px;height:1px;padding:0;display:block;position:absolute;overflow:hidden}.badge{color:#fff;text-align:center;white-space:nowrap;vertical-align:baseline;border-radius:10px;outline:1px solid #0000;min-width:10px;padding:1px 5px 1.75px;font-size:14px;line-height:1;display:inline;font-weight:700!important}.error .colour{color:var(--red-text)}.error .badge{color:#fff;background:#d30017}.warning .colour{color:var(--warning-text)}.warning .badge{color:#fff;background:#966f0d}.link-icon{width:16px;height:16px;-webkit-mask:var(--sa11y-link-icon-svg) center no-repeat;mask:var(--sa11y-link-icon-svg) center no-repeat;background:#fff;margin-bottom:-3.5px;display:inline-block}li pre,li li pre,li li img,li li iframe,li li video,li li audio{margin-top:1rem}li li{margin-top:1rem;list-style:none}`;
+  const exportResultsStyles = `:root{--font-primary:system-ui, "Segoe UI", roboto, helvetica, arial, sans-serif;--font-secondary:consolas, monaco, "Ubuntu Mono", "Liberation Mono", "Courier New", courier, monospace;--body-text:#333;--bg-primary:#fff;--bg-secondary:#f6f8fa;--bg-tertiary:#d7d7d7;--link-primary:#004c9b;--red-text:#d30017;--warning-text:#966f0d;--hr:#d7d7d74d;--sa11y-link-icon-svg:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 640 512'%3E%3Cpath d='M579.8 267.7c56.5-56.5 56.5-148 0-204.5c-50-50-128.8-56.5-186.3-15.4l-1.6 1.1c-14.4 10.3-17.7 30.3-7.4 44.6s30.3 17.7 44.6 7.4l1.6-1.1c32.1-22.9 76-19.3 103.8 8.6c31.5 31.5 31.5 82.5 0 114L422.3 334.8c-31.5 31.5-82.5 31.5-114 0c-27.9-27.9-31.5-71.8-8.6-103.8l1.1-1.6c10.3-14.4 6.9-34.4-7.4-44.6s-34.4-6.9-44.6 7.4l-1.1 1.6C206.5 251.2 213 330 263 380c56.5 56.5 148 56.5 204.5 0L579.8 267.7zM60.2 244.3c-56.5 56.5-56.5 148 0 204.5c50 50 128.8 56.5 186.3 15.4l1.6-1.1c14.4-10.3 17.7-30.3 7.4-44.6s-30.3-17.7-44.6-7.4l-1.6 1.1c-32.1 22.9-76 19.3-103.8-8.6C74 372 74 321 105.5 289.5L217.7 177.2c31.5-31.5 82.5-31.5 114 0c27.9 27.9 31.5 71.8 8.6 103.9l-1.1 1.6c-10.3 14.4-6.9 34.4 7.4 44.6s34.4 6.9 44.6-7.4l1.1-1.6C433.5 260.8 427 182 377 132c-56.5-56.5-148-56.5-204.5 0L60.2 244.3z'/%3E%3C/svg%3E")}@media (prefers-color-scheme:dark){:root{--body-text:#dde8ff;--bg-primary:#0a2051;--bg-secondary:#072c7c;--bg-tertiary:#0041c9;--link-primary:#64b2ff;--red-text:#ffa2a2;--warning-text:#ffdb59;--hr:#0041c94d}}*{margin:0;padding:0}article,aside,nav,ol,p,pre,section,ul{margin-bottom:1rem}body{max-width:70ch;font-family:var(--font-primary);color:var(--body-text);word-break:break-word;overflow-wrap:break-word;background:var(--bg-primary);margin:0 auto;padding:2rem;font-size:1rem;line-height:1.5;overflow-x:hidden}h1,h2,h3{color:var(--body-text);margin-bottom:8px;padding-top:.875rem;padding-bottom:2px;line-height:1}h1{font-size:2.25rem}h2{font-size:1.85rem}h3{font-size:1.55rem}a{color:var(--link-primary)}a:hover,a:focus{text-decoration:none}header,footer{background:var(--bg-secondary);padding:2rem calc(50vw - 50%)}header{border-bottom:1px solid var(--bg-tertiary);margin:-2rem calc(-50vw + 50%) 2rem}footer{text-align:center;border-top:1px solid var(--bg-tertiary);margin:3rem calc(-50vw + 50%) -2rem}header>:first-child{margin-top:0;padding-top:0}header>:last-child{margin-bottom:0}hr{background:var(--hr);opacity:1;border:none;height:1px;margin:10px 0;padding:0}code,samp,kbd,pre{font-family:var(--font-secondary);background:var(--bg-secondary);border:1px solid var(--bg-tertiary);border-radius:4px;padding:3px 6px;font-size:.9rem}pre{max-width:100%;padding:1rem 1.4rem;display:block;overflow:auto}pre code{font-size:inherit;color:inherit;background:inherit;border:0;margin:0;padding:0}code pre{font-size:inherit;color:inherit;background:inherit;border:0;margin:0;padding:0;display:inline}details{background:var(--bg-primary);border:2px solid var(--link-primary);border-radius:4px;padding:.6rem 1rem}summary{cursor:pointer;font-weight:700}summary div{display:inline-block}summary p{margin:0}details[open]{padding-bottom:.75rem}details[open] summary{margin-bottom:6px}details[open]>:last-child{margin-bottom:0}.two-columns{display:flex}.column{flex:1;margin-inline-end:20px}.count{max-width:220px}dl{padding-top:10px}.column dl{width:100%}dt{font-weight:700}dd{padding-bottom:10px}ol,ul{padding-left:2rem}ul ul,ol ul,ul ol,ol ol{margin-bottom:0}ul li{margin-bottom:.5rem}ol li:not(li li){margin-bottom:4rem}iframe,img{background:var(--bg-tertiary);border-radius:5px;max-width:50%;padding:5px;display:block}video,audio{border:0;display:block}.red-text{color:var(--red-text)}.visually-hidden{clip:rect(1px, 1px, 1px, 1px);white-space:nowrap;clip-path:inset(50%);border:0;width:1px;height:1px;padding:0;display:block;position:absolute;overflow:hidden}.badge{color:#fff;text-align:center;white-space:nowrap;vertical-align:baseline;border-radius:10px;outline:1px solid #0000;min-width:10px;padding:1px 5px 1.75px;font-size:14px;line-height:1;display:inline;font-weight:700!important}.error .colour{color:var(--red-text)}.error .badge{color:#fff;background:#d30017}.warning .colour{color:var(--warning-text)}.warning .badge{color:#fff;background:#966f0d}.link-icon{width:16px;height:16px;-webkit-mask:var(--sa11y-link-icon-svg) center no-repeat;mask:var(--sa11y-link-icon-svg) center no-repeat;background:#fff;margin-bottom:-3.5px;display:inline-block}li li{margin-top:1rem;list-style:none}li pre,li li pre,li li img,li li iframe,li li video,li li audio{margin-top:1rem}`;
   function el(tagOrNode, props = {}, ...children) {
     const node = typeof tagOrNode === "string" ? document.createElement(tagOrNode) : tagOrNode;
     for (const [key, val] of Object.entries(props)) {
@@ -2903,11 +3201,18 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
     };
     let targetEl = $el;
     let finalBackground = [255, 255, 255];
+    const path = [];
     while (targetEl && (targetEl.nodeType === 1 || targetEl.nodeType === 11)) {
       if (targetEl.nodeType === 11 && targetEl.host) {
         targetEl = targetEl.host;
         continue;
       }
+      const cached = backgroundCache.get(targetEl);
+      if (cached !== void 0) {
+        finalBackground = cached;
+        break;
+      }
+      path.push(targetEl);
       const styles2 = getCachedStyle(targetEl);
       const bgImage = styles2.backgroundImage;
       if (bgImage && bgImage !== "none") {
@@ -2929,7 +3234,7 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
       }
       targetEl = getVisualParent(targetEl);
     }
-    backgroundCache.set($el, finalBackground);
+    for (let i = 0; i < path.length; i++) backgroundCache.set(path[i], finalBackground);
     return finalBackground;
   }
   function clearBackgroundCache() {
@@ -2965,7 +3270,7 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
     return color.map((value, index2) => {
       if (index2 < 3) {
         const newValue = Math.ceil(value + (255 - value) * amount);
-        return newValue >= 255 ? 255 : newValue;
+        return Math.min(newValue, 255);
       }
       return value;
     });
@@ -2974,7 +3279,7 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
     return color.map((value, index2) => {
       if (index2 < 3) {
         const newValue = Math.floor(value * (1 - amount));
-        return newValue <= 0 ? 0 : newValue;
+        return Math.max(0, newValue);
       }
       return value;
     });
@@ -3208,11 +3513,14 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
     },
     (cssValue) => cssValue
   );
-  async function resetAll(restartPanel = true) {
+  function resetCaches() {
     resetGetText();
     resetStyleCache();
     resetParentCache();
     resetContrastCaches();
+  }
+  async function resetAll(restartPanel = true) {
+    resetCaches();
     resetState();
     window.sa11yCheckComplete = null;
     if (State.option.headless) return;
@@ -3908,17 +4216,17 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
   function updateBadge() {
     const totalCount = State.counts.error + State.counts.warning;
     if (totalCount === 0) {
-      Constants.Panel.notifCount.innerText = "";
-      Constants.Panel.notifText.innerText = "";
+      Constants.Panel.notifCount.textContent = "";
+      Constants.Panel.notifText.textContent = "";
       Constants.Panel.notifBadge.style.display = "none";
     } else if (State.counts.warning > 0 && State.counts.error === 0) {
       Constants.Panel.notifBadge.classList.add("notification-badge-warning");
-      Constants.Panel.notifCount.innerText = `${State.counts.warning}`;
-      Constants.Panel.notifText.innerText = `${Lang._("WARNINGS_FOUND")}`;
+      Constants.Panel.notifCount.textContent = State.counts.warning;
+      Constants.Panel.notifText.textContent = Lang._("WARNINGS_FOUND");
     } else {
       Constants.Panel.notifBadge.classList.remove("notification-badge-warning");
-      Constants.Panel.notifCount.innerText = `${totalCount}`;
-      Constants.Panel.notifText.innerText = Lang._("TOTAL_FOUND");
+      Constants.Panel.notifCount.textContent = totalCount;
+      Constants.Panel.notifText.textContent = Lang._("TOTAL_FOUND");
     }
     if (store.getItem("sa11y-panel") === "Opened" || totalCount === 0) {
       Constants.Panel.notifBadge.style.display = "none";
@@ -6224,7 +6532,9 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
         item.id = id;
         item.cssPath = option.selectorPath ? generateSelectorPath(item.element) : "";
         item.htmlPath = item.element?.outerHTML.replace(/\s{2,}/g, " ").trim() || "";
-        if (item.dismiss) item.dismissDigest = await dismissDigest(item.dismiss);
+        if (item.dismiss) {
+          item.dismissDigest = await dismissDigest(option.pepper ?? "", item.dismiss);
+        }
         if (typeof item.content === "string") {
           const wrapper = document.createElement("div");
           wrapper.innerHTML = sanitizeHTML(item.content);
@@ -6333,8 +6643,8 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
     "http"
   ];
   const containsAltTextStopWords = (alt) => {
-    const altLowerCase = removeWhitespace(alt).toLowerCase();
-    const altOnlyLetters = removeWhitespace(altLowerCase.replace(/[^\p{L}\s]/gu, ""));
+    const altLowerCase = foldForMatching(removeWhitespace(alt));
+    const altOnlyLetters = removeWhitespace(altLowerCase.replace(/[^\p{L}\p{M}\s]/gu, ""));
     const hit = [null, null, null];
     for (const urlHit of url) {
       if (altLowerCase.includes(urlHit)) {
@@ -6346,18 +6656,15 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
       const match = altLowerCase.match(/\b\d{2,6}\s*x\s*\d{2,6}\b/);
       if (match) hit[0] = match[0];
     }
-    let wordsToCheck = [];
-    if (typeof Intl !== "undefined" && Intl.Segmenter) {
-      const segmenter = new Intl.Segmenter(void 0, { granularity: "word" });
-      const allWords = [...segmenter.segment(altLowerCase)].filter((segment) => segment.isWordLike).map((segment) => segment.segment);
-      wordsToCheck = [...allWords.slice(0, 2), ...allWords.slice(-1)];
-    } else {
-      const altOnlyLetters2 = removeWhitespace(altLowerCase.replace(/[^\p{L}\s]/gu, ""));
-      const allWords = altOnlyLetters2.split(/\s+/).filter(Boolean);
-      wordsToCheck = [...allWords.slice(0, 2), ...allWords.slice(-1)];
-    }
-    for (const word of Constants.Global.susAltWords) {
-      if (wordsToCheck.includes(word)) {
+    const segmenter = getWordSegmenter(Lang._("LANG_CODE"));
+    const allWords = segmenter ? [...segmenter.segment(altLowerCase)].filter((segment) => segment.isWordLike).map((segment) => segment.segment) : (
+      // Fallback for browsers without Intl.Segmenter.
+      altOnlyLetters.split(/\s+/).filter(Boolean)
+    );
+    const wordsToCheck = [...allWords.slice(0, 2), ...allWords.slice(-1)];
+    const altNoSpaces = altOnlyLetters.replace(/\s/g, "");
+    for (const [foldedWord, word] of Constants.Global.susAltWords) {
+      if (wordsToCheck.includes(foldedWord) || noSpaceScriptRegex.test(foldedWord) && (altNoSpaces.startsWith(foldedWord) || altNoSpaces.endsWith(foldedWord))) {
         hit[1] = word;
         break;
       }
@@ -6426,8 +6733,8 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
       const figcaption = figure?.querySelector("figcaption");
       const figcaptionText = figcaption ? getText(figcaption) : "";
       let decorative = alt === "";
-      if (!decorative && State.option.altPlaceholder.length) {
-        decorative = !!alt.match(Constants.Global.altPlaceholderPattern);
+      if (!decorative && Constants.Global.altPlaceholderPattern) {
+        decorative = !!stripBidiControls(alt).match(Constants.Global.altPlaceholderPattern);
       }
       if (decorative) {
         if (getCachedClosest($el, `button, [role='button']`)) return;
@@ -6523,9 +6830,13 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
       }
       const warningTest = link ? "LINK_ALT_MAYBE_BAD_WARNING" : "ALT_MAYBE_BAD_WARNING";
       if (State.option.checks[warningTest]) {
-        const wordCount = altText.trim().split(/\s+/).length;
-        const delimiterCount = (altText.match(/[_-]/g) || []).length;
-        const hasTooMuchNoise = /^(?:\s*\d){5,}\s*$/.test(altText) || delimiterCount >= 3 && wordCount <= 2;
+        const words = altText.trim().split(/\s+/);
+        const wordCount = words.length;
+        const totalDelimiterCount = (altText.match(/[_-]/g) || []).length;
+        const isNumberString = /^(?:\s*\d){5,}\s*$/.test(altText);
+        const isPureFilename = totalDelimiterCount >= 4 && wordCount <= 2;
+        const containsSlug = words.some((word) => (word.match(/[_-]/g) || []).length >= 4);
+        const hasTooMuchNoise = isNumberString || isPureFilename || containsSlug;
         if (hasTooMuchNoise) {
           logResult({
             test: warningTest,
@@ -6703,12 +7014,27 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
   const urlEndings = /\b(?:\.edu\/|\.gob\/|\.gov\/|\.app\/|\.com\/|\.net\/|\.org\/|\.us\/|\.ca\/|\.de\/|\.icu\/|\.uk\/|\.ru\/|\.info\/|\.top\/|\.xyz\/|\.tk\/|\.cn\/|\.ga\/|\.cf\/|\.nl\/|\.io\/|\.fr\/|\.pe\/|\.nz\/|\.pt\/|\.es\/|\.pl\/|\.ua\/)\b/i;
   const htmlSymbols = /([<>↣↳←→↓«»↴]+)/;
   const checkStopWords = (textContent, stopWordsSet, stripStrings) => {
-    const stripped = textContent.replace(stripStrings, "").trim();
+    const stripped = (stripStrings ? textContent.replace(stripStrings, "") : textContent).replace(/\s+/g, " ").trim();
     if (stopWordsSet.has(stripped)) return stripped;
     return null;
   };
   function checkLinkText() {
     const seen = {};
+    let anchorNames = null;
+    const hasNamedAnchor = (name) => {
+      if (!anchorNames) {
+        anchorNames = /* @__PURE__ */ new Set();
+        for (const a of document.querySelectorAll("a[name]")) anchorNames.add(a.getAttribute("name"));
+      }
+      return anchorNames.has(name);
+    };
+    const safeDecode = (value) => {
+      try {
+        return decodeURIComponent(value);
+      } catch {
+        return value;
+      }
+    };
     Elements.Found.Links.forEach(($el) => {
       let hasIssue = false;
       let deferGoodLabel = null;
@@ -6728,10 +7054,13 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
       const strippedLinkText = stripAllSpecialCharacters(lowercaseLinkText);
       const rawTextContent = getText($el);
       const textContent = rawTextContent.toLowerCase();
+      const foldedLinkText = foldForMatching(linkText);
+      const normalizedLinkText = normalizeStopWord(linkText);
+      const foldedTextContent = foldForMatching(rawTextContent);
       const textContentIgnoredStrings = getText(
         fnIgnore($el, Constants.Exclusions.LinkSpan)
       ).replace(Constants.Global.linkIgnorePattern, "");
-      const containsNewWindowPhrases = lowercaseLinkText.match(Constants.Global.newWindowRegex)?.[0] || textContent.match(Constants.Global.newWindowRegex)?.[0];
+      const containsNewWindowPhrases = foldedLinkText.match(Constants.Global.newWindowRegex)?.[0] || foldedTextContent.match(Constants.Global.newWindowRegex)?.[0];
       const containsFileTypePhrases = lowercaseLinkText.match(Constants.Global.fileTypeRegex)?.[0] || textContent.match(Constants.Global.fileTypeRegex)?.[0];
       const fileTypeMatch = $el.matches(cssFileTypeSelectors);
       const logResult = (params) => {
@@ -6755,7 +7084,7 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
             ""
           );
           const stopword = checkStopWords(
-            stripAllSpecialCharacters(visibleLinkText),
+            normalizeStopWord(visibleLinkText),
             Constants.Global.linkStopWords
           );
           const visibleTextInName = isVisibleTextInAccName(
@@ -6812,7 +7141,7 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
         const isLinkIgnoreStrings = checkStopWords(textContent, Constants.Global.linkIgnoreStrings);
         if (isLinkIgnoreStrings === textContent || isLinkIgnoreStrings === strippedLinkText) {
           triggerStopWord();
-        } else if (containsNewWindowPhrases === textContent || containsNewWindowPhrases === strippedLinkText) {
+        } else if (containsNewWindowPhrases === foldedTextContent || containsNewWindowPhrases === normalizedLinkText) {
           triggerStopWord();
         }
         if (linkText.length === 0) {
@@ -6828,8 +7157,8 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
             if (State.option.linkIgnoreSpan) {
               const spanEl = $el.querySelector(State.option.linkIgnoreSpan);
               if (spanEl) {
-                const spanText = stripAllSpecialCharacters(spanEl.textContent).trim().toLowerCase();
-                if (spanText === textContent) {
+                const spanText = normalizeStopWord(spanEl.textContent);
+                if (spanText && spanText === normalizeStopWord(rawTextContent)) {
                   triggerStopWord();
                   hasStopWordWarning = true;
                 }
@@ -6852,11 +7181,11 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
           return;
         }
         const isStopWord = checkStopWords(
-          strippedLinkText,
+          normalizedLinkText,
           Constants.Global.linkStopWords,
           Constants.Global.newWindowRegex
         );
-        const hasClickWord = strippedLinkText.match(Constants.Global.clickRegex)?.[0] || textContent.match(Constants.Global.clickRegex)?.[0];
+        const hasClickWord = normalizedLinkText.match(Constants.Global.clickRegex)?.[0] || foldedTextContent.match(Constants.Global.clickRegex)?.[0];
         const isCitation = lowercaseLinkText.match(citationPattern)?.[0];
         const isUrlFragment = lowercaseLinkText.startsWith("www.") || lowercaseLinkText.startsWith("http") || Boolean(lowercaseLinkText.match(urlEndings));
         const matchedSymbol = lowercaseLinkText.match(htmlSymbols)?.[0];
@@ -6959,11 +7288,14 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
         if ((!rawHref || rawHref.startsWith("#")) && getText($el).length !== 0 && !isHiddenAndUnfocusable($el) && !hasAttributes) {
           const targetId = rawHref?.substring(1);
           const ariaControls = $el.getAttribute("aria-controls");
-          const targetElement = targetId && (document.getElementById(targetId) || ariaControls && document.getElementById(ariaControls) || decodeURIComponent(targetId) !== targetId && document.getElementById(decodeURIComponent(targetId)) || encodeURIComponent(targetId) !== targetId && document.getElementById(encodeURIComponent(targetId)) || document.querySelector(`a[name="${CSS.escape(targetId)}"]`));
-          if (!targetElement) {
+          const decodedId = targetId && safeDecode(targetId);
+          const encodedId = targetId && encodeURIComponent(targetId);
+          const targetExists = targetId && (document.getElementById(targetId) || ariaControls && document.getElementById(ariaControls) || decodedId !== targetId && document.getElementById(decodedId) || encodedId !== targetId && document.getElementById(encodedId) || hasNamedAnchor(targetId));
+          if (!targetExists) {
             let isFauxButton = false;
-            const matchedKeyword = Lang._("POTENTIAL_UI_ELEMENTS").find(
-              (word) => accName.toLowerCase().includes(word)
+            const foldedAccName = foldForMatching(accName);
+            const matchedKeyword = Lang.list("POTENTIAL_UI_ELEMENTS").find(
+              (word) => foldedAccName.includes(foldForMatching(word))
             );
             const isSlide = Object.keys($el.dataset).some(
               (key) => key.toLowerCase().includes("slide")
@@ -7366,7 +7698,8 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
     if (!State.option.formLabelsPlugin) return;
     Elements.Found.Inputs.forEach(($el) => {
       const presentation = isPresentational($el) && isDisabled($el);
-      if (isElementHidden($el) || isHiddenAndUnfocusable($el) || presentation) return;
+      if (isElementHidden($el) || isHiddenAndUnfocusable($el) || presentation || isInert($el))
+        return;
       const computeName = computeAccessibleName($el);
       const inputName = removeWhitespace(computeName);
       const type = $el.getAttribute("type");
@@ -7621,6 +7954,33 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
       Constants.Panel.readabilityInfo.innerHTML = `<br>${Lang._("READABILITY_NOT_ENOUGH")}`;
     }
   }
+  function pauseControlFor(video) {
+    const root = video.getRootNode();
+    if (!root?.querySelectorAll) return null;
+    const selector = 'button[aria-controls], [role="button"][aria-controls], input[type="button"][aria-controls]';
+    const isVisible = (el2) => el2.checkVisibility ? el2.checkVisibility({ checkOpacity: true, checkVisibilityCSS: true }) : el2.offsetWidth > 0 || el2.offsetHeight > 0;
+    for (const control of root.querySelectorAll(selector)) {
+      if (control.disabled || control.getAttribute("aria-disabled") === "true" || !isVisible(control)) {
+        continue;
+      }
+      const ids = control.getAttribute("aria-controls").trim().split(/\s+/);
+      const hasTarget = ids.some((id) => {
+        const target = root.getElementById ? root.getElementById(id) : root.querySelector?.(`#${CSS.escape(id)}`);
+        return target?.contains(video);
+      });
+      if (hasTarget) return control;
+    }
+    return null;
+  }
+  function isUnpausableAutoplay($el) {
+    if ($el.tagName !== "VIDEO") return false;
+    if (!$el.autoplay && $el.paused) return false;
+    if ($el.controls) return false;
+    if (!$el.loop && Number.isFinite($el.duration) && $el.duration <= 5) return false;
+    const rect = $el.getBoundingClientRect();
+    if (rect.width < 64 && rect.height < 64) return false;
+    return !pauseControlFor($el);
+  }
   function checkEmbeddedContent() {
     if (!State.option.embeddedContentPlugin) return;
     const src = ($el) => $el.getAttribute("src") || $el.querySelector("source[src]")?.getAttribute("src") || $el.querySelector("[src]")?.getAttribute("src") || null;
@@ -7643,6 +8003,15 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
           dismiss: src($el)
         });
       }
+      if (State.option.checks.EMBED_VIDEO_AUTOPLAY && isUnpausableAutoplay($el)) {
+        pushResult({
+          element: $el,
+          test: "EMBED_VIDEO_AUTOPLAY",
+          type: "warning",
+          developer: true,
+          dismiss: src($el)
+        });
+      }
     });
     Elements.Found.Visualizations.forEach(($el) => {
       pushResult({
@@ -7653,7 +8022,7 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
       });
     });
     Elements.Found.iframes.forEach(($el) => {
-      if (isElementHidden($el) || isHiddenAndUnfocusable($el) || isPresentational($el) || ["VIDEO", "AUDIO"].includes($el.tagName)) {
+      if (isElementHidden($el) || isHiddenAndUnfocusable($el) || isPresentational($el) || isInert($el) || ["VIDEO", "AUDIO"].includes($el.tagName)) {
         return;
       }
       if (isNegativeTabindex($el)) {
@@ -7682,7 +8051,7 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
       }
     });
     Elements.Found.EmbeddedContent.forEach(($el) => {
-      if (isElementHidden($el) || isHiddenAndUnfocusable($el) || ["VIDEO", "AUDIO"].includes($el.tagName)) {
+      if (isElementHidden($el) || isHiddenAndUnfocusable($el) || isInert($el) || ["VIDEO", "AUDIO"].includes($el.tagName)) {
         return;
       }
       pushResult({
@@ -7764,7 +8133,33 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
           developer: true
         });
       }
-      if (tableHeaders.length === 0) {
+      const rows = Array.from($el.rows);
+      let rowGroup = null;
+      let remainingRowSpan = 0;
+      const singleColumn = rows.length > 0 && rows.every((row) => {
+        if (row.parentElement !== rowGroup) {
+          rowGroup = row.parentElement;
+          remainingRowSpan = 0;
+        }
+        if (remainingRowSpan > 0) {
+          remainingRowSpan -= 1;
+          return row.cells.length === 0;
+        }
+        if (row.cells.length !== 1 || row.cells[0].colSpan !== 1) return false;
+        remainingRowSpan = row.cells[0].rowSpan === 0 ? Infinity : row.cells[0].rowSpan - 1;
+        return true;
+      });
+      const layoutRule = singleColumn ? rows.length === 1 ? "TABLES_SINGLE_CELL" : "TABLES_SINGLE_COLUMN" : null;
+      const layoutWarningEnabled = layoutRule && State.option.checks[layoutRule];
+      if (layoutWarningEnabled) {
+        pushResult({
+          test: layoutRule,
+          element: $el,
+          type: "warning",
+          dismiss: firstRow
+        });
+      }
+      if (tableHeaders.length === 0 && !(layoutWarningEnabled && layoutRule === "TABLES_SINGLE_CELL")) {
         pushResult({
           test: "TABLES_MISSING_HEADINGS",
           element: $el,
@@ -8070,8 +8465,24 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
       });
     }
     const metaTitle = document.querySelector("title:not(svg title)");
-    if (!metaTitle || getText(metaTitle).length === 0) {
+    const title = metaTitle ? getText(metaTitle).trim() : "";
+    if (!title) {
       pushResult({ test: "META_TITLE", developer: true });
+    } else {
+      const flag = getUndescriptiveTitleType(
+        title,
+        Lang.list("META_TITLE_UNDESCRIPTIVE_STRINGS"),
+        Lang.list("META_TITLE_UNDESCRIPTIVE_PREFIXES")
+      );
+      if (flag) {
+        pushResult({
+          test: "META_TITLE_UNDESCRIPTIVE",
+          type: flag,
+          args: [title],
+          developer: true,
+          dismiss: title
+        });
+      }
     }
     const content = document.querySelector('meta[name="viewport"]')?.getAttribute("content");
     if (content) {
@@ -8095,47 +8506,30 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
       pushResult({ test: "META_REFRESH", developer: true });
     }
     if (State.option.checks.DUPLICATE_ID) {
-      document.querySelectorAll("body, [data-sa11y-has-shadow-root]").forEach((dom) => {
-        const allIds = /* @__PURE__ */ new Set();
-        const findDuplicateIds = (ids, withinDOM) => {
-          ids.forEach(($el) => {
-            const { id } = $el;
-            if (typeof id !== "string" || id.trim().length === 0) return;
-            if (!allIds.has(id)) {
-              allIds.add(id);
-            } else {
-              const ariaReference = Array.from(
-                withinDOM.querySelectorAll(
-                  `a[href*="${id}"], label[for*="${id}"], [aria-labelledby*="${id}"], [aria-controls*="${id}"], [aria-owns*="${id}"]`
-                )
-              );
-              if (ariaReference.length > 0) {
-                pushResult({
-                  test: "DUPLICATE_ID",
-                  element: $el,
-                  args: [id],
-                  dismiss: `${id}${$el.textContent}`,
-                  developer: true
-                });
-              }
-            }
+      const scopes = [
+        document.body,
+        ...Array.from(
+          document.querySelectorAll("[data-sa11y-has-shadow-root]"),
+          (host) => host.shadowRoot
+        )
+      ];
+      const exclude = Constants.Exclusions.Container.join(", ");
+      scopes.forEach((scope) => {
+        getReferencedDuplicateIds(scope, exclude).forEach(($el) => {
+          pushResult({
+            test: "DUPLICATE_ID",
+            element: $el,
+            args: [$el.id],
+            dismiss: `${$el.id}${$el.textContent}`,
+            developer: true
           });
-        };
-        if (dom.shadowRoot) {
-          const shadowRootIds = Array.from(
-            dom.shadowRoot.querySelectorAll(`[id]:not(${Constants.Exclusions.Container})`)
-          );
-          findDuplicateIds(shadowRootIds, dom.shadowRoot);
-        }
-        const regularIds = Array.from(
-          dom.querySelectorAll(`[id]:not(${Constants.Exclusions.Container})`)
-        );
-        findDuplicateIds(regularIds, dom);
+        });
       });
     }
     Elements.Found.Buttons.forEach(($el) => {
       const presentation = isPresentational($el) && isDisabled($el);
-      if (presentation || isHiddenAndUnfocusable($el) || isElementHidden($el)) return;
+      if (presentation || isInert($el) || isHiddenAndUnfocusable($el) || isElementHidden($el))
+        return;
       const accName = computeAccessibleName($el);
       const buttonText = accName.replace(/['"-\.\s]+/g, "").toLowerCase();
       const textContent = getText($el);
@@ -8174,7 +8568,7 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
           developer: true
         });
       }
-      if (accName.includes(Lang._("BTN"))) {
+      if (containsWord(accName, Lang._("BTN"))) {
         pushResult({
           test: "BTN_ROLE_IN_NAME",
           element: $el,
@@ -8197,6 +8591,19 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
           developer: true
         });
       }
+    });
+    Elements.Found.Summary.forEach(($el) => {
+      const details = $el.parentElement;
+      const isControl = details?.tagName === "DETAILS" && details.querySelector(":scope > summary") === $el;
+      if (!isControl || computeAccessibleName($el).trim()) return;
+      pushResult({
+        test: "SUMMARY_EMPTY",
+        element: details,
+        args: [details],
+        content: Lang._("SUMMARY_EMPTY") + Lang._("ACC_NAME_TIP"),
+        dismiss: $el.outerHTML,
+        developer: true
+      });
     });
     Elements.Found.TabIndex.forEach(($el) => {
       if ($el.tabIndex > 0) {
@@ -8230,6 +8637,51 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
         }
       }
     });
+    if (State.option.checks.SVG_NO_ACCESSIBLE_NAME) {
+      const svgContainerSelector = [
+        "a[href]",
+        "button",
+        "label",
+        "summary",
+        "select",
+        "option",
+        "svg",
+        ...[
+          "link",
+          "button",
+          "tab",
+          "menuitem",
+          "menuitemcheckbox",
+          "menuitemradio",
+          "option",
+          "switch",
+          "checkbox",
+          "radio",
+          "treeitem",
+          "img",
+          "graphics-document",
+          "graphics-object",
+          "graphics-symbol"
+        ].map((role) => `[role="${role}"]`)
+      ].join(", ");
+      const drawsNothing = (svg) => {
+        const { width, height } = svg.getBoundingClientRect();
+        return width === 0 || height === 0 || !svg.querySelector(":scope > :not(defs, symbol, title, desc, style, script, metadata)");
+      };
+      Elements.Found.Svg.forEach((element) => {
+        if (isPresentational(element) || hasAriaHiddenAncestor(element) || isElementHidden(element) || getCachedClosest(element.parentElement, svgContainerSelector) || drawsNothing(element) || computeAccessibleName(element).trim()) {
+          return;
+        }
+        pushResult({
+          test: "SVG_NO_ACCESSIBLE_NAME",
+          element,
+          type: "warning",
+          args: [element],
+          developer: true,
+          dismiss: element.outerHTML
+        });
+      });
+    }
   }
   function checkCustom(results) {
     return results;
@@ -8237,6 +8689,7 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
   async function checkAll(desiredRoot = State.option.checkRoot, desiredReadabilityRoot = State.option.readabilityRoot, fixedRoots = State.option.fixedRoots) {
     try {
       State.start = performance.now();
+      resetCaches();
       Constants.initializeRoot(desiredRoot, desiredReadabilityRoot, fixedRoots);
       findShadowComponents();
       Elements.initializeElements();

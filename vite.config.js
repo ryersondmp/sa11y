@@ -15,7 +15,8 @@ export default defineConfig({
     emptyOutDir: true,
   },
   server: {
-    port: 8080,
+    // Keep in sync with PORT in playwright.config.js.
+    port: 54114,
     open: '/sandbox/dev.html',
     strictPort: true,
   },

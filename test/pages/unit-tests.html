@@ -555,6 +555,64 @@
         alt="截图展示三个期刊条目列表，每个条目右侧都有红色方框标注其对应的影响因子，位置一致且清晰可见。">
     </div>
 
+
+    <h3>Improvements to ALT_MAYBE_BAD check</h3>
+
+    <p>Since 5.1.1</p>
+
+    <h4>Pass</h4>
+
+    <div id="pass-alt-maybe-1">
+      <img src="../../docs/examples/assets/placeholder.svg" alt="Betty Smith-Leydon-Whopper-Beatrice">
+    </div>
+
+    <div id="pass-alt-maybe-2">
+      <img src="../../docs/examples/assets/placeholder.svg"
+        alt="Politician Richard Plunkett-Ernle-Erle-Drax served in the UK Parliament.">
+    </div>
+
+    <h4>Warning</h4>
+
+    <div id="warning-alt-maybe-1">
+      <img src="../../docs/examples/assets/placeholder.svg" loading="lazy"
+        alt="Oct 30 web story - tmu-celebrates-2026-alumni-achievement-awards-recipients-3">
+    </div>
+
+    <div id="warning-alt-maybe-2">
+      <img src="../../docs/examples/assets/placeholder.svg" alt="something-in-something-in-something assds">
+    </div>
+
+    <div id="warning-alt-maybe-3">
+      <img src="../../docs/examples/assets/placeholder.svg"
+        alt="She has an i-don't-care-what-anyone-thinks energy about her.">
+    </div>
+
+    <div id="warning-alt-maybe-4">
+      <img src="../../docs/examples/assets/placeholder.svg" alt="Betty Smith-Leydon-Whopper-Lord-of-the-Rings">
+    </div>
+
+    <div id="warning-alt-maybe-link">
+      <a href="https://www.example.com/sdasd12">
+        <img src="../../docs/examples/assets/placeholder.svg" alt="Betty Smith-Leydon-Whopper-Lord-of-the-Rings">
+      </a>
+    </div>
+
+    <h4>Error</h4>
+
+    <div id="error-alt-maybe-1">
+      <img src="../../docs/examples/assets/placeholder.svg" alt="202512111333499">
+    </div>
+
+    <div id="error-alt-maybe-2">
+      <img src="../../docs/examples/assets/placeholder.svg" alt="modeling-culture-gabi-claudia">
+    </div>
+
+    <div id="error-alt-maybe-link">
+      <a href="https://www.example.com/sdasd1229s2">
+        <img src="../../docs/examples/assets/placeholder.svg" alt="modeling-culture-gabi-claudia">
+      </a>
+    </div>
+
     <hr>
 
     <h2>Links</h2>
@@ -572,6 +630,10 @@
       <a href="https://www.example.com?=22">This?</a>
     </div>
 
+    <div id="error-non-descript-link-4">
+      <a href="https://www.example.com?=followus">Follow us on <svg aria-hidden="true" width="16" height="16"><circle cx="8" cy="8" r="8"></circle></svg></a>
+    </div>
+
     <h3>Non descript link text (Cyrillic i18n test)</h3>
     <p>Ukrainian "learn more" string passed in via linkStopWord prop.</p>
     <div id="error-non-descript-cyrillic">
@@ -587,6 +649,11 @@
     <div id="error-non-descript-exclusions-prop">
       <a href="https://www.example.com?=learnmore">learn more <span class="sr-only-example">(This is
           ignored)</span></a>
+    </div>
+
+    <h3>Link text is only the linkIgnoreSpan, including its punctuation</h3>
+    <div id="error-link-only-ignore-span">
+      <a href="https://www.example.com?=onlyignorespan"><span class="sr-only-example">(Visually hidden note)</span></a>
     </div>
 
     <h3>Non descript link uses string ignore prop</h3>
@@ -998,6 +1065,45 @@
             <td>Metropolitan Room</td>
           </tr>
         </tbody>
+      </table>
+    </div>
+
+    <h3>Single cell table</h3>
+    <div id="warning-table-single-cell">
+      <table>
+        <tr>
+          <td>Single cell</td>
+        </tr>
+      </table>
+    </div>
+
+    <h3>Single column table without headers</h3>
+    <div id="error-table-single-column">
+      <table>
+        <tr>
+          <td>Name</td>
+        </tr>
+        <tr>
+          <td>Adam</td>
+        </tr>
+        <tr>
+          <td>John</td>
+        </tr>
+      </table>
+    </div>
+
+    <h3>Single column table with headers</h3>
+    <div id="warning-table-single-column">
+      <table>
+        <tr>
+          <th>Name</th>
+        </tr>
+        <tr>
+          <td>Adam</td>
+        </tr>
+        <tr>
+          <td>John</td>
+        </tr>
       </table>
     </div>
 
@@ -1441,6 +1547,17 @@
       <span id="🤠">🤠🤠🤠</span>
     </div>
 
+    <h4>Malformed percent escape in <kbd>href</kbd>, matching <code>name</code> attribute</h4>
+    <div id="nothing-malformed-escape-name-attr">
+      <a href="#save-50%">Jump to the sale</a>
+      <p><a name="save-50%"></a>Sale section.</p>
+    </div>
+
+    <h4>Malformed percent escape in <kbd>href</kbd>, no target</h4>
+    <div id="warning-malformed-escape-broken">
+      <a href="#100%off">Jump to the offer</a>
+    </div>
+
     <h2>Duplicate IDs</h2>
     <h3>Elements with duplicate IDs but not referenced by anything</h3>
     <div id="nothing-duplicate-id">
@@ -1471,6 +1588,28 @@
     <div id="nothing-duplicate-button-ids">
       <button id="play">Play</button>
       <button id="play">Play</button>
+    </div>
+
+    <h3>Duplicate IDs whose names only appear inside other references</h3>
+    <div id="nothing-duplicate-id-substring-reference">
+      <p><span id="team">Team A</span> and <span id="team">Team B</span></p>
+      <a href="/about/team">About the team</a>
+      <button type="button" aria-controls="teamwork-panel">Teamwork</button>
+      <label for="team-lead">Team lead <input id="team-lead" type="text"></label>
+    </div>
+
+    <h3>aria-describedby referencing duplicate IDs</h3>
+    <div id="error-duplicate-id-describedby">
+      <input type="text" aria-label="Postcode" aria-describedby="postcode-hint">
+      <p id="postcode-hint">Use the format A1A 1A1.</p>
+      <p id="postcode-hint">Shipping is free.</p>
+    </div>
+
+    <h3>Referenced duplicate ID containing a quotation mark</h3>
+    <div id="error-duplicate-id-with-quote">
+      <button type="button" aria-describedby='say-"hi"'>Greet</button>
+      <span id='say-"hi"'>Says hi.</span>
+      <span id='say-"hi"'>Says hello.</span>
     </div>
 
     <h3>Duplicate ID within the Shadow DOM</h3>
@@ -1645,14 +1784,14 @@
     <h3>Simple SVGs</h3>
     <h4>SVG with good contrast</h4>
     <div id="nothing-svg-1">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" width="50">
+      <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" width="50">
         <path fill="black"
           d="M320 576C461.4 576 576 461.4 576 320C576 178.6 461.4 64 320 64C178.6 64 64 178.6 64 320C64 461.4 178.6 576 320 576zM229.4 385.9C249.8 413.9 282.8 432 320 432C357.2 432 390.2 413.9 410.6 385.9C418.4 375.2 433.4 372.8 444.1 380.6C454.8 388.4 457.2 403.4 449.4 414.1C420.3 454 373.2 480 320 480C266.8 480 219.7 454 190.6 414.1C182.8 403.4 185.2 388.4 195.9 380.6C206.6 372.8 221.6 375.2 229.4 385.9zM208 272C208 254.3 222.3 240 240 240C257.7 240 272 254.3 272 272C272 289.7 257.7 304 240 304C222.3 304 208 289.7 208 272zM400 240C417.7 240 432 254.3 432 272C432 289.7 417.7 304 400 304C382.3 304 368 289.7 368 272C368 254.3 382.3 240 400 240z" />
       </svg>
     </div>
     <h4>SVG with bad fill but good stroke</h4>
     <div id="nothing-svg-2">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" width="50" stroke-width="5">
+      <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" width="50" stroke-width="5">
         <path fill="aliceblue" stroke="black"
           d="M320 576C461.4 576 576 461.4 576 320C576 178.6 461.4 64 320 64C178.6 64 64 178.6 64 320C64 461.4 178.6 576 320 576zM229.4 385.9C249.8 413.9 282.8 432 320 432C357.2 432 390.2 413.9 410.6 385.9C418.4 375.2 433.4 372.8 444.1 380.6C454.8 388.4 457.2 403.4 449.4 414.1C420.3 454 373.2 480 320 480C266.8 480 219.7 454 190.6 414.1C182.8 403.4 185.2 388.4 195.9 380.6C206.6 372.8 221.6 375.2 229.4 385.9zM208 272C208 254.3 222.3 240 240 240C257.7 240 272 254.3 272 272C272 289.7 257.7 304 240 304C222.3 304 208 289.7 208 272zM400 240C417.7 240 432 254.3 432 272C432 289.7 417.7 304 400 304C382.3 304 368 289.7 368 272C368 254.3 382.3 240 400 240z" />
       </svg>
@@ -1660,7 +1799,7 @@
 
     <h4>SVG with good fill but bad stroke</h4>
     <div id="nothing-svg-3">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" width="50" stroke-width="5">
+      <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" width="50" stroke-width="5">
         <path fill="black" stroke="lightblue"
           d="M320 576C461.4 576 576 461.4 576 320C576 178.6 461.4 64 320 64C178.6 64 64 178.6 64 320C64 461.4 178.6 576 320 576zM229.4 385.9C249.8 413.9 282.8 432 320 432C357.2 432 390.2 413.9 410.6 385.9C418.4 375.2 433.4 372.8 444.1 380.6C454.8 388.4 457.2 403.4 449.4 414.1C420.3 454 373.2 480 320 480C266.8 480 219.7 454 190.6 414.1C182.8 403.4 185.2 388.4 195.9 380.6C206.6 372.8 221.6 375.2 229.4 385.9zM208 272C208 254.3 222.3 240 240 240C257.7 240 272 254.3 272 272C272 289.7 257.7 304 240 304C222.3 304 208 289.7 208 272zM400 240C417.7 240 432 254.3 432 272C432 289.7 417.7 304 400 304C382.3 304 368 289.7 368 272C368 254.3 382.3 240 400 240z" />
       </svg>
@@ -1668,7 +1807,7 @@
 
     <h4>SVG foreground is same as background</h4>
     <div id="nothing-svg-4">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" width="50" stroke-width="5">
+      <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" width="50" stroke-width="5">
         <path fill="#ececec"
           d="M320 576C461.4 576 576 461.4 576 320C576 178.6 461.4 64 320 64C178.6 64 64 178.6 64 320C64 461.4 178.6 576 320 576zM229.4 385.9C249.8 413.9 282.8 432 320 432C357.2 432 390.2 413.9 410.6 385.9C418.4 375.2 433.4 372.8 444.1 380.6C454.8 388.4 457.2 403.4 449.4 414.1C420.3 454 373.2 480 320 480C266.8 480 219.7 454 190.6 414.1C182.8 403.4 185.2 388.4 195.9 380.6C206.6 372.8 221.6 375.2 229.4 385.9zM208 272C208 254.3 222.3 240 240 240C257.7 240 272 254.3 272 272C272 289.7 257.7 304 240 304C222.3 304 208 289.7 208 272zM400 240C417.7 240 432 254.3 432 272C432 289.7 417.7 304 400 304C382.3 304 368 289.7 368 272C368 254.3 382.3 240 400 240z" />
       </svg>
@@ -1676,7 +1815,7 @@
 
     <h4>Large SVG with bad fill but good stroke</h4>
     <div id="nothing-svg-5">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" width="100" stroke-width="4">
+      <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" width="100" stroke-width="4">
         <path fill="aliceblue" stroke="black"
           d="M320 576C461.4 576 576 461.4 576 320C576 178.6 461.4 64 320 64C178.6 64 64 178.6 64 320C64 461.4 178.6 576 320 576zM229.4 385.9C249.8 413.9 282.8 432 320 432C357.2 432 390.2 413.9 410.6 385.9C418.4 375.2 433.4 372.8 444.1 380.6C454.8 388.4 457.2 403.4 449.4 414.1C420.3 454 373.2 480 320 480C266.8 480 219.7 454 190.6 414.1C182.8 403.4 185.2 388.4 195.9 380.6C206.6 372.8 221.6 375.2 229.4 385.9zM208 272C208 254.3 222.3 240 240 240C257.7 240 272 254.3 272 272C272 289.7 257.7 304 240 304C222.3 304 208 289.7 208 272zM400 240C417.7 240 432 254.3 432 272C432 289.7 417.7 304 400 304C382.3 304 368 289.7 368 272C368 254.3 382.3 240 400 240z" />
       </svg>
@@ -1705,7 +1844,7 @@
 
     <h4>SVG with poor fill contrast (no stroke)</h4>
     <div id="error-svg-1">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" width="50">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" width="50" aria-hidden="true">
         <path fill="lightblue"
           d="M320 576C461.4 576 576 461.4 576 320C576 178.6 461.4 64 320 64C178.6 64 64 178.6 64 320C64 461.4 178.6 576 320 576zM229.4 385.9C249.8 413.9 282.8 432 320 432C357.2 432 390.2 413.9 410.6 385.9C418.4 375.2 433.4 372.8 444.1 380.6C454.8 388.4 457.2 403.4 449.4 414.1C420.3 454 373.2 480 320 480C266.8 480 219.7 454 190.6 414.1C182.8 403.4 185.2 388.4 195.9 380.6C206.6 372.8 221.6 375.2 229.4 385.9zM208 272C208 254.3 222.3 240 240 240C257.7 240 272 254.3 272 272C272 289.7 257.7 304 240 304C222.3 304 208 289.7 208 272zM400 240C417.7 240 432 254.3 432 272C432 289.7 417.7 304 400 304C382.3 304 368 289.7 368 272C368 254.3 382.3 240 400 240z" />
       </svg>
@@ -1713,7 +1852,7 @@
 
     <h4>SVG with poor fill contrast and poor stroke contrast</h4>
     <div id="error-svg-2">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" width="50">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" width="50" aria-hidden="true">
         <path stroke="lightblue" stroke-width="50" fill="aliceblue"
           d="M320 576C461.4 576 576 461.4 576 320C576 178.6 461.4 64 320 64C178.6 64 64 178.6 64 320C64 461.4 178.6 576 320 576zM229.4 385.9C249.8 413.9 282.8 432 320 432C357.2 432 390.2 413.9 410.6 385.9C418.4 375.2 433.4 372.8 444.1 380.6C454.8 388.4 457.2 403.4 449.4 414.1C420.3 454 373.2 480 320 480C266.8 480 219.7 454 190.6 414.1C182.8 403.4 185.2 388.4 195.9 380.6C206.6 372.8 221.6 375.2 229.4 385.9zM208 272C208 254.3 222.3 240 240 240C257.7 240 272 254.3 272 272C272 289.7 257.7 304 240 304C222.3 304 208 289.7 208 272zM400 240C417.7 240 432 254.3 432 272C432 289.7 417.7 304 400 304C382.3 304 368 289.7 368 272C368 254.3 382.3 240 400 240z" />
       </svg>
@@ -1721,7 +1860,7 @@
 
     <h4>SVG with poor fill contrast and skinny stroke (with good contrast)</h4>
     <div id="error-svg-3">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" width="100">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" width="100" aria-hidden="true">
         <path stroke="black" stroke-width="1" fill="aliceblue"
           d="M320 576C461.4 576 576 461.4 576 320C576 178.6 461.4 64 320 64C178.6 64 64 178.6 64 320C64 461.4 178.6 576 320 576zM229.4 385.9C249.8 413.9 282.8 432 320 432C357.2 432 390.2 413.9 410.6 385.9C418.4 375.2 433.4 372.8 444.1 380.6C454.8 388.4 457.2 403.4 449.4 414.1C420.3 454 373.2 480 320 480C266.8 480 219.7 454 190.6 414.1C182.8 403.4 185.2 388.4 195.9 380.6C206.6 372.8 221.6 375.2 229.4 385.9zM208 272C208 254.3 222.3 240 240 240C257.7 240 272 254.3 272 272C272 289.7 257.7 304 240 304C222.3 304 208 289.7 208 272zM400 240C417.7 240 432 254.3 432 272C432 289.7 417.7 304 400 304C382.3 304 368 289.7 368 272C368 254.3 382.3 240 400 240z" />
       </svg>
@@ -1762,7 +1901,7 @@
 
     <h4>SVG with unsupported colour space foreground</h4>
     <div id="warning-svg-1">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" width="50">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" width="50" aria-hidden="true">
         <path fill="color(rec2020 0.9 0.4 0.2)"
           d="M320 576C461.4 576 576 461.4 576 320C576 178.6 461.4 64 320 64C178.6 64 64 178.6 64 320C64 461.4 178.6 576 320 576zM229.4 385.9C249.8 413.9 282.8 432 320 432C357.2 432 390.2 413.9 410.6 385.9C418.4 375.2 433.4 372.8 444.1 380.6C454.8 388.4 457.2 403.4 449.4 414.1C420.3 454 373.2 480 320 480C266.8 480 219.7 454 190.6 414.1C182.8 403.4 185.2 388.4 195.9 380.6C206.6 372.8 221.6 375.2 229.4 385.9zM208 272C208 254.3 222.3 240 240 240C257.7 240 272 254.3 272 272C272 289.7 257.7 304 240 304C222.3 304 208 289.7 208 272zM400 240C417.7 240 432 254.3 432 272C432 289.7 417.7 304 400 304C382.3 304 368 289.7 368 272C368 254.3 382.3 240 400 240z" />
       </svg>
@@ -1771,7 +1910,7 @@
     <h4>SVG with unsupported colour space background</h4>
     <div id="warning-svg-2">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" width="50"
-        style="background: color(rec2020 0.9 0.4 0.2);">
+        style="background: color(rec2020 0.9 0.4 0.2);" aria-hidden="true">
         <path fill="red"
           d="M320 576C461.4 576 576 461.4 576 320C576 178.6 461.4 64 320 64C178.6 64 64 178.6 64 320C64 461.4 178.6 576 320 576zM229.4 385.9C249.8 413.9 282.8 432 320 432C357.2 432 390.2 413.9 410.6 385.9C418.4 375.2 433.4 372.8 444.1 380.6C454.8 388.4 457.2 403.4 449.4 414.1C420.3 454 373.2 480 320 480C266.8 480 219.7 454 190.6 414.1C182.8 403.4 185.2 388.4 195.9 380.6C206.6 372.8 221.6 375.2 229.4 385.9zM208 272C208 254.3 222.3 240 240 240C257.7 240 272 254.3 272 272C272 289.7 257.7 304 240 304C222.3 304 208 289.7 208 272zM400 240C417.7 240 432 254.3 432 272C432 289.7 417.7 304 400 304C382.3 304 368 289.7 368 272C368 254.3 382.3 240 400 240z" />
       </svg>
@@ -1780,7 +1919,8 @@
     <h4>SVG with background image</h4>
     <div id="warning-svg-3">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" width="50"
-        style="background: linear-gradient(to bottom, rgba(102, 102, 102, 0) 24%, #be0b0b 91%) #071e4e;">
+        style="background: linear-gradient(to bottom, rgba(102, 102, 102, 0) 24%, #be0b0b 91%) #071e4e;"
+        aria-hidden="true">
         <path fill="white"
           d="M320 576C461.4 576 576 461.4 576 320C576 178.6 461.4 64 320 64C178.6 64 64 178.6 64 320C64 461.4 178.6 576 320 576zM229.4 385.9C249.8 413.9 282.8 432 320 432C357.2 432 390.2 413.9 410.6 385.9C418.4 375.2 433.4 372.8 444.1 380.6C454.8 388.4 457.2 403.4 449.4 414.1C420.3 454 373.2 480 320 480C266.8 480 219.7 454 190.6 414.1C182.8 403.4 185.2 388.4 195.9 380.6C206.6 372.8 221.6 375.2 229.4 385.9zM208 272C208 254.3 222.3 240 240 240C257.7 240 272 254.3 272 272C272 289.7 257.7 304 240 304C222.3 304 208 289.7 208 272zM400 240C417.7 240 432 254.3 432 272C432 289.7 417.7 304 400 304C382.3 304 368 289.7 368 272C368 254.3 382.3 240 400 240z" />
       </svg>
@@ -1896,7 +2036,7 @@
 
     <h4>SVG with linear gradient for fill</h4>
     <div id="warning-svg-10">
-      <svg width="200" height="200">
+      <svg width="200" height="200" aria-hidden="true">
         <defs>
           <linearGradient id="linear-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
             <stop offset="0%" style="stop-color:blue;stop-opacity:1"></stop>
@@ -1934,7 +2074,7 @@
 
     <h4>Empty svg</h4>
     <div id="warning-svg-12">
-      <svg width="10" height="10" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"></svg>
+      <svg width="10" height="10" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" aria-hidden="true"></svg>
     </div>
 
     <h4>SVG with linear gradient background</h4>
@@ -1975,7 +2115,7 @@
     <h4>SVG with background: url()</h4>
     <div id="warning-svg-14"
       style="background: lightblue url('../../docs/examples/assets/aussie.avif') no-repeat fixed center;">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" width="50">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" width="50" aria-hidden="true">
         <path fill="darkgreen"
           d="M320 576C461.4 576 576 461.4 576 320C576 178.6 461.4 64 320 64C178.6 64 64 178.6 64 320C64 461.4 178.6 576 320 576zM229.4 385.9C249.8 413.9 282.8 432 320 432C357.2 432 390.2 413.9 410.6 385.9C418.4 375.2 433.4 372.8 444.1 380.6C454.8 388.4 457.2 403.4 449.4 414.1C420.3 454 373.2 480 320 480C266.8 480 219.7 454 190.6 414.1C182.8 403.4 185.2 388.4 195.9 380.6C206.6 372.8 221.6 375.2 229.4 385.9zM208 272C208 254.3 222.3 240 240 240C257.7 240 272 254.3 272 272C272 289.7 257.7 304 240 304C222.3 304 208 289.7 208 272zM400 240C417.7 240 432 254.3 432 272C432 289.7 417.7 304 400 304C382.3 304 368 289.7 368 272C368 254.3 382.3 240 400 240z" />
       </svg>
@@ -1983,7 +2123,7 @@
 
     <h4>Other SVGs, like filters</h4>
     <div id="warning-svg-15">
-      <svg width="230" height="120" xmlns="http://www.w3.org/2000/svg">
+      <svg width="230" height="120" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
         <filter id="blurMe">
           <feGaussianBlur stdDeviation="5" />
         </filter>
@@ -1993,7 +2133,7 @@
 
     <h4>Other SVGs, like animations</h4>
     <div id="warning-svg-16">
-      <svg width="100%" height="100" xmlns="http://www.w3.org/2000/svg">
+      <svg width="100%" height="100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
         <circle cx="50" cy="50" r="50" style="fill:red;">
           <animate attributeName="cx" begin="0s" dur="8s" from="50" to="90%" fill="freeze" />
         </circle>
@@ -2174,6 +2314,45 @@
       </video>
     </div>
 
+    <h3>Autoplay videos</h3>
+    <div id="warning-autoplay">
+      <video width="320" height="240" autoplay muted>
+        <source src="https://www.w3schools.com/html/movie.mp4" type="video/mp4" />
+        <source src="https://www.w3schools.com/html/movie.ogg" type="video/ogg" />
+        Your browser does not support the video tag.
+        <track default kind="captions" srclang="en" label="English" src="/fake.vtt" />
+      </video>
+    </div>
+
+    <h3>Looping video that does not autoplay and is not playing</h3>
+    <div id="nothing-autoplay-loop-paused">
+      <video width="320" height="240" loop muted>
+        <track default kind="captions" srclang="en" label="English" src="/fake.vtt" />
+      </video>
+    </div>
+
+    <h3>Autoplay video with native controls</h3>
+    <div id="nothing-autoplay-controls">
+      <video width="320" height="240" autoplay muted loop controls>
+        <track default kind="captions" srclang="en" label="English" src="/fake.vtt" />
+      </video>
+    </div>
+
+    <h3>Autoplay video with a pause button linked by aria-controls</h3>
+    <div id="nothing-autoplay-pause-button">
+      <video id="hero-video-with-pause" width="320" height="240" autoplay muted loop>
+        <track default kind="captions" srclang="en" label="English" src="/fake.vtt" />
+      </video>
+      <button type="button" aria-controls="hero-video-with-pause">Pause</button>
+    </div>
+
+    <h3>Autoplay video that has not started (e.g. autoplay blocked or not loaded yet)</h3>
+    <div id="warning-autoplay-not-started">
+      <video width="320" height="240" autoplay muted loop>
+        <track default kind="captions" srclang="en" label="English" src="/fake.vtt" />
+      </video>
+    </div>
+
     <h3>Audio</h3>
     <div id="warning-audio">
       <audio controls="">
@@ -2185,6 +2364,20 @@
     <hr>
 
     <h2>Misc developer checks</h2>
+    <h3>Summary without an accessible name</h3>
+    <div id="error-summary-empty-closed">
+      <details>
+        <summary></summary>
+        <p>Closed disclosure content.</p>
+      </details>
+    </div>
+    <div id="error-summary-empty-open">
+      <details open>
+        <summary></summary>
+        <p>Open disclosure content.</p>
+      </details>
+    </div>
+
     <h3>Tabindex attribute greater than 0</h3>
     <div id="error-positive-tabindex">
       <p tabindex="1">[tabindex="1"]</p>
@@ -2197,6 +2390,23 @@
     </div>
 
     <hr>
+
+    <h2>Inert content</h2>
+    <p>Everything below is inside a container with the <code>inert</code> attribute.</p>
+    <div inert>
+      <div id="nothing-inert-button">
+        <button type="button"></button>
+      </div>
+      <div id="nothing-inert-input">
+        <input type="text">
+      </div>
+      <div id="nothing-inert-link">
+        <a href="https://example.com/inert">click here</a>
+      </div>
+      <div id="nothing-inert-iframe">
+        <iframe src="about:blank"></iframe>
+      </div>
+    </div>
 
     <h2>Buttons</h2>
 
@@ -2238,6 +2448,10 @@
       <button class="btn-primary"><i class="bi bi-trash"></i>
         Delete <span aria-label="button"></span>
       </button>
+    </div>
+    <p>Capitalized "Button".</p>
+    <div id="warning-button-with-button-text-3">
+      <button class="btn-primary">Submit Button</button>
     </div>
 
     <h3>Button has accessible name</h3>
@@ -2320,6 +2534,113 @@
       <button type="button" aria-label="Close">
         X
       </button>
+    </div>
+
+    <h4>Button name contains "button" only inside another word</h4>
+    <div id="nothing-button-9">
+      <button type="button">Unbutton the coat</button>
+    </div>
+
+    <h2>SVG - Accessible names</h2>
+
+    <h3><kbd>role="img"</kbd> with no label</h3>
+    <div id="error-svg-name-image-role">
+      <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 16 16" role="img">
+        <path
+          d="M.5 1a.5.5 0 0 0 0 1h1.11l.401 1.607 1.498 7.985A.5.5 0 0 0 4 12h1a2 2 0 1 0 0 4 2 2 0 0 0 0-4h7a2 2 0 1 0 0 4 2 2 0 0 0 0-4h1a.5.5 0 0 0 .491-.408l1.5-8A.5.5 0 0 0 14.5 3H2.89l-.405-1.621A.5.5 0 0 0 2 1zM6 14a1 1 0 1 1-2 0 1 1 0 0 1 2 0m7 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0M6.5 7h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1 0-1" />
+      </svg>
+    </div>
+
+    <h3>No acc name</h3>
+    <div id="warning-svg-name-warning">
+      <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 16 16">
+        <path
+          d="M.5 1a.5.5 0 0 0 0 1h1.11l.401 1.607 1.498 7.985A.5.5 0 0 0 4 12h1a2 2 0 1 0 0 4 2 2 0 0 0 0-4h7a2 2 0 1 0 0 4 2 2 0 0 0 0-4h1a.5.5 0 0 0 .491-.408l1.5-8A.5.5 0 0 0 14.5 3H2.89l-.405-1.621A.5.5 0 0 0 2 1zM6 14a1 1 0 1 1-2 0 1 1 0 0 1 2 0m7 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0M6.5 7h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1 0-1" />
+      </svg>
+    </div>
+
+    <h3>Has accessible name but no role="image" attribute</h3>
+    <div id="nothing-svg-name-aria-label">
+      <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 16 16" aria-label="Accessible label">
+        <path
+          d="M.5 1a.5.5 0 0 0 0 1h1.11l.401 1.607 1.498 7.985A.5.5 0 0 0 4 12h1a2 2 0 1 0 0 4 2 2 0 0 0 0-4h7a2 2 0 1 0 0 4 2 2 0 0 0 0-4h1a.5.5 0 0 0 .491-.408l1.5-8A.5.5 0 0 0 14.5 3H2.89l-.405-1.621A.5.5 0 0 0 2 1zM6 14a1 1 0 1 1-2 0 1 1 0 0 1 2 0m7 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0M6.5 7h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1 0-1" />
+      </svg>
+    </div>
+
+    <h3>Has title attribute</h3>
+    <div id="nothing-svg-name-title">
+      <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 16 16">
+        <title>SVG with a title</title>
+        <path
+          d="M.5 1a.5.5 0 0 0 0 1h1.11l.401 1.607 1.498 7.985A.5.5 0 0 0 4 12h1a2 2 0 1 0 0 4 2 2 0 0 0 0-4h7a2 2 0 1 0 0 4 2 2 0 0 0 0-4h1a.5.5 0 0 0 .491-.408l1.5-8A.5.5 0 0 0 14.5 3H2.89l-.405-1.621A.5.5 0 0 0 2 1zM6 14a1 1 0 1 1-2 0 1 1 0 0 1 2 0m7 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0M6.5 7h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1 0-1" />
+      </svg>
+    </div>
+
+    <h3>aria-hidden</h3>
+    <div id="nothing-svg-name-aria-hidden">
+      <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 16 16" aria-hidden="true">
+        <path
+          d="M.5 1a.5.5 0 0 0 0 1h1.11l.401 1.607 1.498 7.985A.5.5 0 0 0 4 12h1a2 2 0 1 0 0 4 2 2 0 0 0 0-4h7a2 2 0 1 0 0 4 2 2 0 0 0 0-4h1a.5.5 0 0 0 .491-.408l1.5-8A.5.5 0 0 0 14.5 3H2.89l-.405-1.621A.5.5 0 0 0 2 1zM6 14a1 1 0 1 1-2 0 1 1 0 0 1 2 0m7 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0M6.5 7h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1 0-1" />
+      </svg>
+    </div>
+
+    <h3>role="presentation"</h3>
+    <div id="nothing-svg-name-presentational">
+      <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 16 16" role="presentation">
+        <path
+          d="M.5 1a.5.5 0 0 0 0 1h1.11l.401 1.607 1.498 7.985A.5.5 0 0 0 4 12h1a2 2 0 1 0 0 4 2 2 0 0 0 0-4h7a2 2 0 1 0 0 4 2 2 0 0 0 0-4h1a.5.5 0 0 0 .491-.408l1.5-8A.5.5 0 0 0 14.5 3H2.89l-.405-1.621A.5.5 0 0 0 2 1zM6 14a1 1 0 1 1-2 0 1 1 0 0 1 2 0m7 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0M6.5 7h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1 0-1" />
+      </svg>
+    </div>
+
+    <h3>aria-hidden="true" on parent</h3>
+    <div id="nothing-svg-name-hidden-parent" aria-hidden="true">
+      <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 16 16">
+        <path
+          d="M.5 1a.5.5 0 0 0 0 1h1.11l.401 1.607 1.498 7.985A.5.5 0 0 0 4 12h1a2 2 0 1 0 0 4 2 2 0 0 0 0-4h7a2 2 0 1 0 0 4 2 2 0 0 0 0-4h1a.5.5 0 0 0 .491-.408l1.5-8A.5.5 0 0 0 14.5 3H2.89l-.405-1.621A.5.5 0 0 0 2 1zM6 14a1 1 0 1 1-2 0 1 1 0 0 1 2 0m7 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0M6.5 7h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1 0-1" />
+      </svg>
+    </div>
+
+
+    <h3>SVG inside a label</h3>
+    <div id="nothing-svg-in-label">
+      <label><svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 16 16"><path d="M.5 1a.5.5 0 0 0 0 1h1.11l.401 1.607 1.498 7.985A.5.5 0 0 0 4 12h1a2 2 0 1 0 0 4 2 2 0 0 0 0-4h7a2 2 0 1 0 0 4 2 2 0 0 0 0-4h1a.5.5 0 0 0 .491-.408l1.5-8A.5.5 0 0 0 14.5 3H2.89l-.405-1.621A.5.5 0 0 0 2 1z" /></svg> Search <input type="search"></label>
+    </div>
+
+    <h3>SVG inside a summary</h3>
+    <div id="nothing-svg-in-summary">
+      <details><summary><svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 16 16"><path d="M.5 1a.5.5 0 0 0 0 1h1.11l.401 1.607 1.498 7.985A.5.5 0 0 0 4 12h1a2 2 0 1 0 0 4 2 2 0 0 0 0-4h7a2 2 0 1 0 0 4 2 2 0 0 0 0-4h1a.5.5 0 0 0 .491-.408l1.5-8A.5.5 0 0 0 14.5 3H2.89l-.405-1.621A.5.5 0 0 0 2 1z" /></svg> More information</summary><p>Details.</p></details>
+    </div>
+
+    <h3>SVG inside a tab</h3>
+    <div id="nothing-svg-in-tab" role="tablist">
+      <div role="tab" tabindex="0" aria-selected="true"><svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 16 16"><path d="M.5 1a.5.5 0 0 0 0 1h1.11l.401 1.607 1.498 7.985A.5.5 0 0 0 4 12h1a2 2 0 1 0 0 4 2 2 0 0 0 0-4h7a2 2 0 1 0 0 4 2 2 0 0 0 0-4h1a.5.5 0 0 0 .491-.408l1.5-8A.5.5 0 0 0 14.5 3H2.89l-.405-1.621A.5.5 0 0 0 2 1z" /></svg> Overview</div>
+    </div>
+
+    <h3>SVG inside a named role="img" container</h3>
+    <div id="nothing-svg-in-image-role">
+      <span role="img" aria-label="Four out of five stars"><svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 16 16"><path d="M.5 1a.5.5 0 0 0 0 1h1.11l.401 1.607 1.498 7.985A.5.5 0 0 0 4 12h1a2 2 0 1 0 0 4 2 2 0 0 0 0-4h7a2 2 0 1 0 0 4 2 2 0 0 0 0-4h1a.5.5 0 0 0 .491-.408l1.5-8A.5.5 0 0 0 14.5 3H2.89l-.405-1.621A.5.5 0 0 0 2 1z" /></svg><svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 16 16"><path d="M.5 1a.5.5 0 0 0 0 1h1.11l.401 1.607 1.498 7.985A.5.5 0 0 0 4 12h1a2 2 0 1 0 0 4 2 2 0 0 0 0-4h7a2 2 0 1 0 0 4 2 2 0 0 0 0-4h1a.5.5 0 0 0 .491-.408l1.5-8A.5.5 0 0 0 14.5 3H2.89l-.405-1.621A.5.5 0 0 0 2 1z" /></svg></span>
+    </div>
+
+    <h3>Nested SVG</h3>
+    <div id="nothing-svg-nested">
+      <svg xmlns="http://www.w3.org/2000/svg" width="50" height="25" viewBox="0 0 32 16" aria-label="Two carts">
+        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 16 16"><path d="M.5 1a.5.5 0 0 0 0 1h1.11l.401 1.607 1.498 7.985A.5.5 0 0 0 4 12h1a2 2 0 1 0 0 4 2 2 0 0 0 0-4h7a2 2 0 1 0 0 4 2 2 0 0 0 0-4h1a.5.5 0 0 0 .491-.408l1.5-8A.5.5 0 0 0 14.5 3H2.89l-.405-1.621A.5.5 0 0 0 2 1z" /></svg>
+        <svg x="16" width="16" height="16" viewBox="0 0 16 16"><path d="M.5 1a.5.5 0 0 0 0 1h1.11l.401 1.607 1.498 7.985A.5.5 0 0 0 4 12h1a2 2 0 1 0 0 4 2 2 0 0 0 0-4h7a2 2 0 1 0 0 4 2 2 0 0 0 0-4h1a.5.5 0 0 0 .491-.408l1.5-8A.5.5 0 0 0 14.5 3H2.89l-.405-1.621A.5.5 0 0 0 2 1z" /></svg>
+      </svg>
+    </div>
+
+    <h3>Zero-size sprite sheet (not display: none)</h3>
+    <div id="nothing-svg-sprite-zero-size">
+      <svg xmlns="http://www.w3.org/2000/svg" width="0" height="0" style="position: absolute">
+        <symbol id="sprite-cart" viewBox="0 0 16 16"><path d="M.5 1a.5.5 0 0 0 0 1h1.11l.401 1.607 1.498 7.985A.5.5 0 0 0 4 12h1a2 2 0 1 0 0 4 2 2 0 0 0 0-4h7a2 2 0 1 0 0 4 2 2 0 0 0 0-4h1a.5.5 0 0 0 .491-.408l1.5-8A.5.5 0 0 0 14.5 3H2.89l-.405-1.621A.5.5 0 0 0 2 1z" /></symbol>
+      </svg>
+    </div>
+
+    <h3>Sprite sheet with only definitions</h3>
+    <div id="nothing-svg-sprite-defs-only">
+      <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25">
+        <defs><symbol id="sprite-cart-2" viewBox="0 0 16 16"><path d="M.5 1a.5.5 0 0 0 0 1h1.11l.401 1.607 1.498 7.985A.5.5 0 0 0 4 12h1a2 2 0 1 0 0 4 2 2 0 0 0 0-4h7a2 2 0 1 0 0 4 2 2 0 0 0 0-4h1a.5.5 0 0 0 .491-.408l1.5-8A.5.5 0 0 0 14.5 3H2.89l-.405-1.621A.5.5 0 0 0 2 1z" /></symbol></defs>
+      </svg>
     </div>
 
   </main>

@@ -1,4 +1,5 @@
 import find from './find';
+import Lang from './lang';
 
 /**
  * Checks if the document has finished loading, and if so, immediately calls the provided callback function. Otherwise, waits for the 'load' event to fire and then calls the callback function.
@@ -79,6 +80,147 @@ export function isAriaHidden($el) {
 }
 
 /**
+ * Checks whether an element or any of its ancestors has `aria-hidden="true"`.
+ * @param {Element|null} element The element to check.
+ * @returns {boolean} True if the element or an ancestor is hidden from assistive technology.
+ */
+export function hasAriaHiddenAncestor(element) {
+  let current = element;
+  while (current) {
+    if (isAriaHidden(current)) return true;
+    current = current.parentElement;
+  }
+  return false;
+}
+
+/**
+ * Checks whether an element is inert: it or an ancestor has the `inert` attribute. `inert` is
+ * normally set on a container (a page behind a modal, an off-screen carousel slide), so checking
+ * only the element itself misses almost every case. The search continues from a shadow root to
+ * its host, since an inert host makes its shadow tree inert too.
+ * @param {Element|null} element The element to check.
+ * @returns {boolean} True if the element is inside an inert subtree.
+ */
+export function isInert(element) {
+  let current = element;
+  while (current?.nodeType === 1) {
+    if (getCachedClosest(current, '[inert]')) return true;
+    // Document and detached fragments have no host, which ends the loop.
+    current = current.getRootNode().host;
+  }
+  return false;
+}
+
+// Attributes holding a space-separated list of ids, resolved like getElementById (first match).
+const idReferenceListAttributes = [
+  'aria-labelledby',
+  'aria-describedby',
+  'aria-controls',
+  'aria-owns',
+  'aria-activedescendant',
+  'aria-details',
+  'aria-errormessage',
+  'aria-flowto',
+];
+
+/**
+ * Returns the ids a same-page link points to: the fragment, plus its percent-decoded form (the
+ * browser tries both). Links to another page, and empty fragments, return no ids.
+ * @param {Element} link - An <a> or <area> element with an href.
+ * @param {URL} pageUrl - The current page URL.
+ * @returns {string[]} Candidate ids.
+ */
+function getFragmentIds(link, pageUrl) {
+  const href = link.getAttribute('href')?.trim();
+  if (!href?.includes('#')) return [];
+  let fragment;
+  if (href.startsWith('#')) {
+    fragment = href.slice(1);
+  } else {
+    let url;
+    try {
+      url = new URL(href, document.baseURI);
+    } catch {
+      return [];
+    }
+    const samePage =
+      url.origin === pageUrl.origin &&
+      url.pathname === pageUrl.pathname &&
+      url.search === pageUrl.search;
+    if (!samePage) return [];
+    fragment = url.hash.slice(1);
+  }
+  if (!fragment) return [];
+  try {
+    const decoded = decodeURIComponent(fragment);
+    return decoded === fragment ? [fragment] : [fragment, decoded];
+  } catch {
+    return [fragment];
+  }
+}
+
+/**
+ * Finds duplicate ids that something refers to, where the reference may resolve to the wrong
+ * element: label[for], ARIA id references (aria-labelledby, aria-describedby, etc.) and same-page
+ * links. References are matched exactly, never as substrings, so id="play" is not considered
+ * referenced by aria-controls="autoplay-video".
+ *
+ * An id is only unique within its tree, so call this once per scope: the document body, and each
+ * shadow root separately. A scope does not include the contents of shadow roots inside it.
+ * @param {Element|ShadowRoot} scope - The tree to check.
+ * @param {string} [exclude] - Selector for elements whose ids are ignored.
+ * @returns {Element[]} The second and later elements with each referenced duplicate id, in
+ *   document order (the first one is the element references resolve to).
+ */
+export function getReferencedDuplicateIds(scope, exclude = '') {
+  if (!scope?.querySelectorAll) return [];
+
+  // Group elements by id.
+  const elementsById = new Map();
+  const idSelector = exclude ? `[id]:not(${exclude})` : '[id]';
+  for (const element of scope.querySelectorAll(idSelector)) {
+    const { id } = element;
+    if (!id?.trim()) continue;
+    const group = elementsById.get(id);
+    if (group) group.push(element);
+    else elementsById.set(id, [element]);
+  }
+  const duplicates = [...elementsById].filter(([, group]) => group.length > 1);
+  if (!duplicates.length) return [];
+
+  // Collect every id that is referenced in this scope.
+  const referenced = new Set();
+  const pageUrl = new URL(document.URL);
+  const referenceSelector = [
+    'label[for]',
+    'a[href]',
+    'area[href]',
+    ...idReferenceListAttributes.map((attribute) => `[${attribute}]`),
+  ].join(', ');
+  for (const element of scope.querySelectorAll(referenceSelector)) {
+    // label[for] holds a single id, which is used as is.
+    if (element.localName === 'label' && element.hasAttribute('for')) {
+      referenced.add(element.getAttribute('for'));
+    }
+    if (
+      (element.localName === 'a' || element.localName === 'area') &&
+      element.hasAttribute('href')
+    ) {
+      for (const id of getFragmentIds(element, pageUrl)) referenced.add(id);
+    }
+    for (const attribute of idReferenceListAttributes) {
+      const value = element.getAttribute(attribute);
+      if (value) for (const id of value.trim().split(/\s+/)) referenced.add(id);
+    }
+  }
+
+  return duplicates
+    .filter(([id]) => referenced.has(id))
+    .flatMap(([, group]) => group.slice(1))
+    .sort((a, b) => (a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1));
+}
+
+/**
  * Checks if an element's semantics have been neutralized.
  * Handles space-separated role lists (e.g., role="none presentation").
  * @param {HTMLElement|Element} $el - The DOM element to evaluate.
@@ -142,29 +284,185 @@ export function isElementVisuallyHiddenOrHidden(element) {
 }
 
 /**
- * Removes ALL non-alphanumeric characters and normalizes whitespace. Accounts for non-Latin characters.
+ * Removes ALL punctuation and symbols and normalizes whitespace. Accounts for non-Latin characters:
+ * combining marks (\p{M}) are kept, because in scripts such as Devanagari and Tamil they are part
+ * of the word ("कि" and "के" must stay different).
  * @param {string} string - The input text to be sanitized.
  * @returns {string} The sanitized and trimmed string.
  */
 export function stripAllSpecialCharacters(string) {
   if (typeof string !== 'string' && typeof string !== 'number') return '';
   return String(string)
-    .replace(/[^\p{L}\p{N}\s]/gu, '')
+    .replace(/[^\p{L}\p{M}\p{N}\s]/gu, '')
     .replace(/\s+/g, ' ')
     .trim();
 }
 
 /**
- * Sanitize URLs.
+ * Lowercases a string for comparison against the localized word lists (ruleset stop words,
+ * phrases and UI words). Also folds the differences that come from text being written in
+ * capitals, so "ΜΕΝΟΥ" matches "μενού" and "İNDİR" / "TIKLA" match "indir" / "tıkla":
+ * Greek accents are removed, as is the combining dot that toLowerCase() leaves after the
+ * "i" of Turkish "İ", and dotless "ı" is folded to "i". Optional Arabic-script vowel marks
+ * (harakat, shadda, tanwin, superscript alef) and tatweel are removed, so "تعرّف" matches
+ * "تعرف". Other diacritics are kept. Apply it to both the list entry and the page text.
+ * @param {string} string - The input text.
+ * @returns {string} The folded, NFC-normalized string.
  */
-const invalidProtocolRegex = /^([^\w]*)(javascript|data|vbscript)/im;
-const htmlEntitiesRegex = /&#(\w+)(^\w|;)?/g;
+// U+064B–U+0652 tanwin, harakat, shadda, sukun; U+0656–U+065F rarer vowel marks; U+0670
+// superscript alef; U+0640 tatweel. U+0653–U+0655 (madda, hamza above/below) are left out:
+// NFD splits أ إ آ ؤ ئ into a base letter plus one of those, and they are distinct letters.
+const arabicOptionalMarksRegex = /[\u064B-\u0652\u0656-\u065F\u0670\u0640]/g;
+export function foldForMatching(string) {
+  if (typeof string !== 'string' && typeof string !== 'number') return '';
+  return (
+    String(string)
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/(\p{Script=Greek})\p{M}+/gu, '$1')
+      // "i" + U+0307 COMBINING DOT ABOVE (from lowercasing Turkish "İ"), or dotless "ı".
+      .replace(/i\u0307|\u0131/g, 'i')
+      .replace(arabicOptionalMarksRegex, '')
+      .normalize('NFC')
+  );
+}
+
+/**
+ * Normalizes a string for an EXACT comparison against stop word lists: folds it (see
+ * foldForMatching), removes punctuation and symbols, and collapses whitespace. Unlike
+ * stripAllSpecialCharacters, combining marks are kept, because in scripts such as Tamil they
+ * are part of the word. Apply it to both the list entries and the page text so that an entry
+ * containing punctuation (e.g. French "d’informations") still matches.
+ * @param {string} string - The input text.
+ * @returns {string} The normalized string.
+ */
+export function normalizeStopWord(string) {
+  return foldForMatching(string)
+    .replace(/[^\p{L}\p{M}\p{N}\s]/gu, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+// One word segmenter per locale; creating one is relatively expensive.
+const wordSegmenters = new Map();
+
+/**
+ * Returns a cached word Intl.Segmenter for a locale, or null where the API is unavailable.
+ * Pass the ruleset language (Lang._('LANG_CODE')), the language of the word lists being
+ * matched, so results do not depend on the visitor's browser locale. An invalid or missing tag
+ * (e.g. the untranslated key "LANG_CODE") falls back to the browser default instead of throwing.
+ * @param {string} [locale] - BCP 47 language tag.
+ * @returns {Intl.Segmenter|null}
+ */
+export function getWordSegmenter(locale) {
+  if (typeof Intl === 'undefined' || typeof Intl.Segmenter !== 'function') return null;
+  const key = typeof locale === 'string' ? locale : '';
+  let segmenter = wordSegmenters.get(key);
+  if (!segmenter) {
+    try {
+      segmenter = new Intl.Segmenter(key || undefined, { granularity: 'word' });
+    } catch {
+      segmenter = new Intl.Segmenter(undefined, { granularity: 'word' });
+    }
+    wordSegmenters.set(key, segmenter);
+  }
+  return segmenter;
+}
+
+/**
+ * Intl.Segmenter splits languages written without spaces, such as Chinese and Japanese.
+ * The fallback only requires that no letter, mark or digit touches the word on either
+ * side, so in those languages it misses rather than over-matches. The fallback avoids
+ * lookbehind (Safari < 16.4) so it also works in browsers that predate Intl.Segmenter.
+ * @param {string} text - The text to search.
+ * @param {string} word - A single word, e.g. the localized "button".
+ * @param {Intl.Segmenter|null} [segmenter] - Word segmenter to use; null forces the fallback.
+ * @returns {boolean} True if the word appears on its own.
+ */
+export function containsWord(text, word, segmenter = getWordSegmenter(Lang._('LANG_CODE'))) {
+  const haystack = foldForMatching(text);
+  const needle = foldForMatching(word);
+  if (!needle) return false;
+  if (segmenter) {
+    for (const { segment, isWordLike } of segmenter.segment(haystack)) {
+      if (isWordLike && segment === needle) return true;
+    }
+    return false;
+  }
+  const escaped = needle.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return new RegExp(`(?:^|[^\\p{L}\\p{M}\\p{N}])${escaped}(?![\\p{L}\\p{M}\\p{N}])`, 'u').test(
+    haystack,
+  );
+}
+
+/** Scripts written without spaces between words, where a word boundary cannot be detected. */
+export const noSpaceScriptRegex = /[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}]/u;
+
+/**
+ * Classifies a page title against the localized lists of non-descriptive titles.
+ * - "error": the title is an entry of either list, optionally followed by a number, e.g.
+ *   "Untitled", "Page 2", "Untitled-1", "Document (3)".
+ * - "warning": the title starts with an entry of the prefix list and continues with other text,
+ *   e.g. "Untitled document | Acme". Only the prefix list is matched this way: generic words in
+ *   the main list, such as "new" or "index", begin many good titles ("New York Times").
+ * Matching is folded (see foldForMatching). A prefix must end at a word boundary, except when it
+ * ends in a script written without spaces.
+ * @param {string} title - The page title.
+ * @param {string[]} [entries] - Titles that are non-descriptive on their own.
+ * @param {string[]} [prefixes] - Titles that are non-descriptive at the start of any title.
+ * @returns {'error'|'warning'|null} The result type, or null if the title looks descriptive.
+ */
+export function getUndescriptiveTitleType(title, entries = [], prefixes = []) {
+  const text = foldForMatching(removeWhitespace(title));
+  if (!text) return null;
+  const prepare = (list) =>
+    (Array.isArray(list) ? list : [])
+      .map((entry) => foldForMatching(removeWhitespace(entry)))
+      .filter(Boolean);
+  const prefixList = prepare(prefixes);
+  const allEntries = [...prepare(entries), ...prefixList];
+
+  // An entry followed only by separators and/or a number: "", "-1", " 2", " (3)", " #4".
+  const isNumbered = (rest) => {
+    const stripped = rest.replace(/[\s\p{P}\p{S}]/gu, '');
+    return stripped === '' || /^\p{Nd}+$/u.test(stripped);
+  };
+  if (allEntries.some((entry) => text.startsWith(entry) && isNumbered(text.slice(entry.length)))) {
+    return 'error';
+  }
+
+  const isPrefix = (prefix) =>
+    text.startsWith(prefix) &&
+    (noSpaceScriptRegex.test(prefix.slice(-1)) ||
+      /^[^\p{L}\p{M}\p{N}]/u.test(text.slice(prefix.length)));
+  return prefixList.some(isPrefix) ? 'warning' : null;
+}
+
+/**
+ * Sanitize URLs. Adapted from braintree/sanitize-url (see sanitizeURL below).
+ *
+ * The `g` regexes below are shared module state. They are only used with String#replace and
+ * String#match, which reset `lastIndex`; do not call .test() or .exec() on them, or results will
+ * alternate between calls.
+ */
+// `i` is kept as a safeguard even though the scheme is lowercased before this test.
+const invalidProtocolRegex = /^\W*(javascript|data|vbscript)/i;
+// Numeric character references, decimal or hex, with or without the closing semicolon
+// (the HTML parser decodes both forms inside attribute values).
+const htmlEntitiesRegex = /&#(?:x([0-9a-f]+)|(\d+));?/gi;
 const htmlCtrlEntityRegex = /&(newline|tab);/gi;
 const ctrlCharactersRegex =
-  // biome-ignore lint/suspicious/noControlCharactersInRegex: original lib.
-  /[\u0000-\u001F\u007F-\u009F\u2000-\u200D\uFEFF]/gim;
-const urlSchemeRegex = /^.+(:|&colon;)/gim;
+  // biome-ignore lint/suspicious/noControlCharactersInRegex: Matching control characters is the purpose.
+  /[\u0000-\u001F\u007F-\u009F\u2000-\u200D\uFEFF]/g;
+// Lazy, so the scheme ends at the FIRST colon: "https://host:8080/a:b" yields "https:".
+const urlSchemeRegex = /^.+?(:|&colon;)/i;
 const whitespaceEscapeCharsRegex = /(\\|%5[cC])((%(6[eE]|72|74))|[nrt])/g;
+// Base64 raster image data URIs that may skip sanitizing. SVG is excluded because it can carry
+// script. This is a MIME allowlist plus a check that the payload contains only base64
+// characters (browsers ignore ASCII whitespace in it); it does not prove the bytes are a valid
+// image. Anything else falls through to the checks in sanitizeURL and is rejected as data:.
+const base64ImageRegex =
+  /^data:image\/(?:png|gif|jpe?g|webp|avif|bmp|x-icon);base64,[a-z0-9+/=\t\n\f\r ]*$/i;
 const relativeFirstCharacters = ['.', '/'];
 const BLANK_URL = 'about:blank';
 
@@ -172,12 +470,31 @@ function isRelativeUrlWithoutProtocol(url) {
   return relativeFirstCharacters.indexOf(url[0]) > -1;
 }
 
+/**
+ * Decodes one numeric character reference. Follows the HTML spec's handling of invalid values
+ * (out-of-range values, surrogates and NUL become U+FFFD) instead of throwing
+ * (String.fromCodePoint) or silently wrapping (String.fromCharCode). It is not a full
+ * implementation: the spec's windows-1252 remapping of 0x80–0x9F is skipped, as those C1
+ * controls are stripped by ctrlCharactersRegex anyway.
+ * @param {string|undefined} hex - Hex digits, if the reference was &#x...;
+ * @param {string|undefined} dec - Decimal digits, if the reference was &#...;
+ * @returns {string} The decoded character.
+ */
+function decodeCharacterReference(hex, dec) {
+  const codePoint = hex !== undefined ? Number.parseInt(hex, 16) : Number.parseInt(dec, 10);
+  const isInvalid =
+    !Number.isFinite(codePoint) ||
+    codePoint === 0 ||
+    codePoint > 0x10ffff ||
+    (codePoint >= 0xd800 && codePoint <= 0xdfff);
+  return isInvalid ? '\uFFFD' : String.fromCodePoint(codePoint);
+}
+
 function decodeHtmlCharacters(str) {
   const removedNullByte = str.replace(ctrlCharactersRegex, '');
-  // biome-ignore lint/correctness/noUnusedFunctionParameters: original lib
-  return removedNullByte.replace(htmlEntitiesRegex, (match, dec) => {
-    return String.fromCharCode(dec);
-  });
+  return removedNullByte.replace(htmlEntitiesRegex, (_match, hex, dec) =>
+    decodeCharacterReference(hex, dec),
+  );
 }
 
 function isValidUrl(url) {
@@ -230,12 +547,14 @@ export function escapeHTML(input) {
 export function sanitizeURL(url) {
   if (!url || typeof url !== 'string') return BLANK_URL;
 
-  // Quick bypass for legitimate base64 data URIs
-  const isBase64Data = /^data:([a-z]+\/[a-z0-9-+.]+)?;base64,/i.test(url.trim());
-  if (isBase64Data) return url.trim();
+  const trimmedInput = url.trim();
+
+  // Quick bypass for legitimate base64 image data URIs. Any other data: URI (text/html,
+  // image/svg+xml...) goes through the checks below and is rejected.
+  if (base64ImageRegex.test(trimmedInput)) return trimmedInput;
 
   let charsToDecode;
-  let decodedUrl = decodeURIs(url.trim());
+  let decodedUrl = decodeURIs(trimmedInput);
   do {
     decodedUrl = decodeHtmlCharacters(decodedUrl)
       .replace(htmlCtrlEntityRegex, '')
@@ -262,10 +581,8 @@ export function sanitizeURL(url) {
   if (invalidProtocolRegex.test(urlScheme)) return BLANK_URL;
   const backSanitized = trimmedUrl.replace(/\\/g, '/');
 
-  // Handle special cases for mailto: and custom deep-link protocols.
-  if (urlScheme === 'mailto:' || urlScheme.includes('://')) return backSanitized;
-
-  // For http and https URLs, perform additional validation.
+  // For http and https URLs, perform additional validation. Other schemes (mailto:, tel:,
+  // custom deep links) are returned as they are below.
   if (urlScheme === 'http:' || urlScheme === 'https:') {
     if (!isValidUrl(backSanitized)) return BLANK_URL;
     const url = new URL(backSanitized);
@@ -480,10 +797,8 @@ export function getText(element) {
     return gotText.get(element);
   }
   const ignore = fnIgnore(element);
-  const text = ignore.textContent
-    .replace(/[\r\n]+/g, '')
-    .replace(/\s+/g, ' ')
-    .trim();
+  // Line breaks render as spaces, so they must become spaces ("Click\nhere" is "Click here").
+  const text = removeWhitespace(ignore.textContent);
   gotText.set(element, text);
   return text;
 }
@@ -525,13 +840,19 @@ export const resetStyleCache = () => {
   styleCaches = {};
 };
 
-let parentCache = new WeakMap();
+// selector => WeakMap(element => closest match or null).
+let parentCache = new Map();
 /**
- * Get cached parent element matching selector.
- * Reduces DOM traversal by caching closest() results.
+ * Cached equivalent of `element.closest(selector)`.
+ *
+ * Every element passed on the way up is cached too, not just the starting element: an element
+ * that does not match has the same answer as its parent. Later calls from siblings and
+ * descendants stop at the first ancestor already resolved, so checking every element on the page
+ * costs about one `matches()` per element instead of one per element per ancestor. Like
+ * `closest()`, the search stops at a shadow root.
  * @param {Element} element - The element to search from.
  * @param {string} selector - CSS selector to match.
- * @returns {Element|null} The matching parent or null.
+ * @returns {Element|null} The element itself or nearest ancestor matching the selector, or null.
  */
 export function getCachedClosest(element, selector) {
   // Note: `instanceof Element` is unavailable across frames.
@@ -540,30 +861,45 @@ export function getCachedClosest(element, selector) {
   // Validate selector.
   if (typeof selector !== 'string' || selector.trim() === '') return null;
 
-  try {
-    // Initialize the per-element cache if missing.
-    if (!parentCache.has(element)) {
-      parentCache.set(element, new Map());
+  let cache = parentCache.get(selector);
+  if (!cache) {
+    // Throws on an invalid selector, before anything is cached for it.
+    try {
+      element.matches(selector);
+    } catch {
+      return null;
     }
-
-    const elementCache = parentCache.get(element);
-    // Return cached result (including nulls, as they are valid results).
-    if (elementCache.has(selector)) {
-      return elementCache.get(selector);
-    }
-
-    // Execute and cache.
-    const result = element.closest(selector);
-    elementCache.set(selector, result);
-    return result;
-  } catch {
-    return null;
+    cache = new WeakMap();
+    parentCache.set(selector, cache);
   }
+
+  // Walk up until a match, an already resolved ancestor, or the top of the tree.
+  const path = [];
+  let current = element;
+  let result = null;
+  while (current) {
+    const cached = cache.get(current);
+    // Cached nulls are valid results; only `undefined` means not resolved yet.
+    if (cached !== undefined) {
+      result = cached;
+      break;
+    }
+    if (current.matches(selector)) {
+      result = current;
+      break;
+    }
+    path.push(current);
+    current = current.parentElement;
+  }
+
+  if (result) cache.set(result, result);
+  for (let i = 0; i < path.length; i++) cache.set(path[i], result);
+  return result;
 }
 
 // Garbage collection.
 export function resetParentCache() {
-  parentCache = new WeakMap();
+  parentCache = new Map();
 }
 
 /**
@@ -577,14 +913,17 @@ export function removeWhitespace(string) {
 }
 
 /**
- * Removes non-printable ASCII control characters and junk icons from a string, and removes extra whitespace.
+ * Removes non-printable control characters and icon-font glyphs (Private Use Area) from a string,
+ * and collapses whitespace. Whitespace controls (tab, line feed, vertical tab, form feed, carriage
+ * return) are left for removeWhitespace() to turn into spaces, so words are not joined together.
  * @param {string} string - The input string to clean.
  * @returns {string} The string with control characters removed.
  */
+// biome-ignore lint/suspicious/noControlCharactersInRegex: Matching control characters is the purpose.
+const junkCharactersRegex = /[\u0000-\u0008\u000E-\u001F\u007F-\u009F\uE000-\uF8FF]/g;
 export function normalizeString(string) {
   if (typeof string !== 'string' && typeof string !== 'number') return '';
-  // biome-ignore lint/suspicious/noControlCharactersInRegex: Strip junk icons/PUA characters.
-  return removeWhitespace(String(string).replace(/[\u0000-\u001F\u007F-\u009F]/g, ''));
+  return removeWhitespace(String(string).replace(junkCharactersRegex, ''));
 }
 
 /**
@@ -715,13 +1054,15 @@ export function getNextSibling(element, selector) {
 }
 
 /**
- * Generates a unique key for dismissing items.
- * @param {string} string The string to be prepared for dismissal (without special chars).
+ * Generates a unique key for dismissing items. Letters and digits are kept in every script;
+ * whitespace, punctuation and symbols are removed. (An ASCII-only filter would reduce all
+ * Arabic, Cyrillic, CJK etc. text to an empty string, so unrelated issues would share a key.)
+ * @param {string} string The string to be prepared for dismissal.
  * @returns {string} The truncated string with a maximum of 256 characters.
  */
 export function prepareDismissal(string) {
   return String(string)
-    .replace(/([^0-9a-zA-Z])/g, '')
+    .replace(/[^\p{L}\p{N}]/gu, '')
     .substring(0, 256);
 }
 
@@ -737,17 +1078,17 @@ export function generateSelectorPath(element) {
   let currentElement = element;
   while (currentElement) {
     let selector = currentElement.localName;
+    // Ids and classes are escaped so that e.g. Tailwind's "md:flex" or "w-1/2", or an id that
+    // starts with a digit, still produce a valid selector for querySelector().
     if (currentElement.id) {
-      selector += `#${currentElement.id}`;
+      selector += `#${CSS.escape(currentElement.id)}`;
       path.unshift(selector);
       break;
     } else {
       const classAttr = currentElement.getAttribute ? currentElement.getAttribute('class') : null;
-      if (classAttr) {
-        const classSelector = classAttr.trim().replace(/\s+/g, '.');
-        if (classSelector) {
-          selector += `.${classSelector}`;
-        }
+      const classNames = classAttr?.trim();
+      if (classNames) {
+        selector += `.${classNames.split(/\s+/).map(CSS.escape).join('.')}`;
       }
     }
 
@@ -849,29 +1190,141 @@ export function isScrollable(scrollArea, container, ariaLabel) {
   }, 50);
 }
 
+// Spec "valid non-negative integer" and "valid floating-point number" (descriptor values).
+const srcsetIntegerRegex = /^\d+$/;
+const srcsetFloatRegex = /^-?(?:\d+(?:\.\d+)?|\.\d+)(?:[eE][-+]?\d+)?$/;
+
 /**
- * Get the best image source from an element, considering data-src, srcset, and src attributes.
+ * Parses one candidate's descriptors following the HTML spec: at most one of "w" or "x", an
+ * optional "h" only alongside "w", no duplicates, no unknown descriptors, and no zero widths or
+ * heights. Any error drops the whole candidate, as browsers do. One deliberate deviation: the
+ * spec's parser accepts "0x" (only authoring rules forbid it); it is rejected here so that a
+ * zero density is never picked as the smallest candidate.
+ * @param {string} descriptors - Whitespace-separated descriptors, already trimmed.
+ * @returns {{width: number|null, density: number}|null} Null if the candidate is invalid.
+ */
+function parseSrcsetDescriptors(descriptors) {
+  let width = null;
+  let density = null;
+  let height = null;
+  for (const descriptor of descriptors.split(/\s+/)) {
+    if (!descriptor) continue;
+    const value = descriptor.slice(0, -1);
+    const type = descriptor.slice(-1);
+    if (type === 'w' && srcsetIntegerRegex.test(value)) {
+      if (width !== null || density !== null) return null;
+      width = Number(value);
+      if (width === 0) return null;
+    } else if (type === 'x' && srcsetFloatRegex.test(value)) {
+      if (width !== null || density !== null || height !== null) return null;
+      density = Number(value);
+      if (!Number.isFinite(density) || density <= 0) return null;
+    } else if (type === 'h' && srcsetIntegerRegex.test(value)) {
+      if (height !== null || density !== null) return null;
+      height = Number(value);
+      if (height === 0) return null;
+    } else {
+      return null;
+    }
+  }
+  if (height !== null && width === null) return null;
+  return { width, density: density ?? 1 };
+}
+
+/**
+ * Parses a srcset into candidates, following the HTML spec's tokenizing rules: a URL is a run
+ * of non-whitespace characters, so commas INSIDE a URL (as in CDN transforms like
+ * "w_300,h_200") are kept; trailing commas end the candidate; otherwise the descriptors run to
+ * the next comma that is not inside parentheses. Candidates with invalid descriptors are
+ * dropped (see parseSrcsetDescriptors).
+ * @link https://html.spec.whatwg.org/multipage/images.html#parse-a-srcset-attribute
+ * @param {string|null|undefined} srcset - The attribute value.
+ * @returns {{url: string, width: number|null, density: number}[]} Candidates; density defaults to 1.
+ */
+export function parseSrcset(srcset) {
+  if (typeof srcset !== 'string') return [];
+  const candidates = [];
+  const length = srcset.length;
+  let position = 0;
+  while (position < length) {
+    // Skip whitespace and stray commas between candidates.
+    while (position < length && /[\s,]/.test(srcset[position])) position += 1;
+    if (position >= length) break;
+
+    // URL: run of non-whitespace characters.
+    const urlStart = position;
+    while (position < length && !/\s/.test(srcset[position])) position += 1;
+    let url = srcset.slice(urlStart, position);
+
+    // Descriptors: only present if the URL did not end the candidate with a comma.
+    let descriptors = '';
+    if (url.endsWith(',')) {
+      url = url.replace(/,+$/, '');
+    } else {
+      const descriptorStart = position;
+      let inParens = false;
+      while (position < length) {
+        const char = srcset[position];
+        if (char === '(') inParens = true;
+        else if (char === ')') inParens = false;
+        else if (char === ',' && !inParens) break;
+        position += 1;
+      }
+      descriptors = srcset.slice(descriptorStart, position).trim();
+      position += 1; // Step over the comma.
+    }
+    if (!url) continue;
+
+    const parsed = parseSrcsetDescriptors(descriptors);
+    if (parsed) candidates.push({ url, ...parsed });
+  }
+  return candidates;
+}
+
+/**
+ * Picks the smallest candidate from a srcset, since the result is only used for a thumbnail.
+ * Width descriptors take precedence over density (a srcset should not mix them).
+ * @param {string|null|undefined} srcset - The attribute value.
+ * @returns {string|undefined} The URL of the smallest candidate.
+ */
+function getSmallestSrc(srcset) {
+  const candidates = parseSrcset(srcset);
+  if (!candidates.length) return undefined;
+  const withWidth = candidates.filter((c) => c.width !== null);
+  const pool = withWidth.length ? withWidth : candidates;
+  const size = (c) => (withWidth.length ? c.width : c.density);
+  return pool.reduce((smallest, c) => (size(c) < size(smallest) ? c : smallest)).url;
+}
+
+/**
+ * Get the best image source for a thumbnail, considering data-src, srcset, <picture> sources and
+ * src. From a srcset, the smallest candidate is used.
  * @param {HTMLElement} element - The image element to extract the source from.
- * @returns {string} - The best available source URL.
+ * @returns {string|null} - The best available source URL, resolved to an absolute URL.
  */
 export function getBestImageSource(element) {
-  const getLastSrc = (src) => src?.split(/,\s+/).pop()?.trim()?.split(/\s+/)[0];
+  // Return absolute URLs. Necessary for HTML export. Unparseable URLs yield null so the next
+  // source is tried instead of throwing.
+  const resolveUrl = (src) => {
+    if (!src) return null;
+    try {
+      return new URL(src, window.location.href).href;
+    } catch {
+      return null;
+    }
+  };
 
-  // Return absolute URLs. Necessary for HTML export.
-  const resolveUrl = (src) => (src ? new URL(src, window.location.href).href : null);
-
-  // Check data-src or srcset.
-  const dataSrc = getLastSrc(element.getAttribute('data-src') || element.getAttribute('srcset'));
-  if (dataSrc) return resolveUrl(dataSrc);
-
-  // Check <picture> sources.
-  const pictureSrcset = getCachedClosest(element, 'picture')
-    ?.querySelector('source[srcset]')
-    ?.getAttribute('srcset');
-  const pictureSrc = getLastSrc(pictureSrcset);
-  if (pictureSrc) return resolveUrl(pictureSrc);
-
-  return resolveUrl(element.getAttribute('src'));
+  // Lazy-loading attributes first: until the image loads, srcset/src are often placeholders.
+  // data-src holds a single URL; data-srcset is a srcset.
+  const pictureSrcset = () =>
+    getCachedClosest(element, 'picture')?.querySelector('source[srcset]')?.getAttribute('srcset');
+  return (
+    resolveUrl(element.getAttribute('data-src')?.trim()) ||
+    resolveUrl(getSmallestSrc(element.getAttribute('data-srcset'))) ||
+    resolveUrl(getSmallestSrc(element.getAttribute('srcset'))) ||
+    resolveUrl(getSmallestSrc(pictureSrcset())) ||
+    resolveUrl(element.getAttribute('src'))
+  );
 }
 
 /**
@@ -931,6 +1384,9 @@ export function generateElementPreview(issueObject, convertBase64 = false) {
 
       const buildImgElement = (url) => {
         const img = document.createElement('img');
+        // Every data:image/ URI is allowed here, including SVG, which sanitizeURL rejects:
+        // <img> renders SVG in secure static mode (no script, no external loads), and SVG
+        // thumbnails converted to base64 for the HTML export would otherwise break.
         img.src = url.startsWith('data:image/') ? url : sanitizeURL(url);
         if (element.alt) img.alt = element.alt;
 
@@ -964,6 +1420,14 @@ export function generateElementPreview(issueObject, convertBase64 = false) {
   const handler = tagHandlers[issueElement.tagName];
   return handler ? handler(issueElement) : createCodeFallback();
 }
+
+/**
+ * Emoji, plus the code points that only exist inside emoji sequences and render nothing on their
+ * own: skin-tone modifiers, ZWJ (U+200D), text/emoji variation selectors (U+FE0E/FE0F) and the
+ * combining keycap (U+20E3). Without them, "❤️" leaves a lone U+FE0F behind.
+ */
+const emojiRegex =
+  /[\p{Emoji_Presentation}\p{Extended_Pictographic}\p{Emoji_Modifier}]|\u200D|\uFE0E|\uFE0F|\u20E3/gu;
 
 /**
  * Check if an element's visible text is included in the accessible name.
@@ -1004,15 +1468,14 @@ export function isVisibleTextInAccName($el, accName, exclusions = [], linkIgnore
     }
   });
 
-  // Ignore emojis.
-  const emojiRegex = /[\p{Emoji_Presentation}\p{Extended_Pictographic}]/gu;
+  // Ignore emojis, including the invisible parts of emoji sequences.
   let visibleText = text.replace(emojiRegex, '');
 
   // Final visible text.
   visibleText = removeWhitespace(visibleText).toLowerCase();
 
-  // If visible text is just an x character, ignore.
-  if (/^[x×✕✖✗✘]$/i.test(visibleText)) {
+  // If visible text is just an x character, ignore. (Already lowercased, so no `i` flag.)
+  if (/^[x×✕✖✗✘]$/.test(visibleText)) {
     return false;
   }
 
@@ -1039,6 +1502,15 @@ export function standardizeHref($el) {
 
   // Remove common file extensions at the end.
   href = href.replace(/\.(html|php|htm|asp|aspx)$/i, '');
+
+  // TODO: Proposed, on hold. The result is also the fallback dismiss key in link-text.js
+  // (QA_PDF, QA_DOCUMENT, QA_IN_PAGE_LINK and the PUA link check), which Editoria11y syncs
+  // server-side, so changing it re-shows those dismissals. Corrected values:
+  //   href.replace(/^(?:https?:)?\/\/(?:www\.)?/, '')       // also strip protocol-relative "//www."
+  //   href.replace(/\.(?:html?|php|aspx?)(?=[?#]|$)/, '')   // also strip before "?query" / "#hash"
+  // What changes: "//www.example.com/a" → "example.com/a"; "about.html#team" → "about#team";
+  // "page.php?id=1" → "page?id=1". Links that differ only in these ways then compare as the same
+  // destination, and their dismiss keys change. The `i` flag is redundant (already lowercased).
 
   return href;
 }
@@ -1104,19 +1576,27 @@ export function supportsAnchorPositioning() {
 
 /**
  * Generates a Regex pattern from an array OR a comma-separated string. Safely escapes all special characters.
- * @param {string[]|string} input - Array of strings (e.g. ['(External)']) OR string (e.g. "(External), [draft]").
- * @param {boolean} [exactMatch=false] - If true, wraps each pattern in word boundaries (\b) for whole-word matching.
+ * Arrays may mix strings and RegExp objects: strings are escaped literals (anchored to the start when
+ * matchStart is true); RegExp entries are used as authored, with their own anchors, for patterns a literal
+ * prefix cannot express (e.g. a CMS placeholder whose variable part comes first in some translations).
+ * A single RegExp is treated like a one-entry array, so it matches the same way it would inside one.
+ *
+ * Flags: the result is always case-insensitive (`i`). Of the RegExp entries' own flags, only `u` is
+ * carried over (it upgrades the whole pattern). `g` and `y` are dropped on purpose, because their
+ * lastIndex state would make repeated tests flaky. `m` and `s` are not supported: they are dropped
+ * with a console warning, because they would change the meaning of the other entries.
+ * @param {(string|RegExp)[]|string|RegExp} input - Array (e.g. ['(External)', /^Image \d+$/]), comma-separated string (e.g. "(External), [draft]"), or a single RegExp.
+ * @param {boolean} [matchStart=false] - If true, anchors the string entries to the start of the tested text.
  * @returns {RegExp|null} The compiled Regex object, or null if input is empty/invalid.
  */
 export function generateRegexString(input, matchStart = false) {
   if (!input) return null;
 
-  // Return RegExp directly.
-  if (input instanceof RegExp) return input;
-
   // Normalize input.
   let patterns = [];
-  if (Array.isArray(input)) {
+  if (input instanceof RegExp) {
+    patterns = [input];
+  } else if (Array.isArray(input)) {
     patterns = input;
   } else if (typeof input === 'string') {
     patterns = input.split(',').map((s) => s.trim());
@@ -1125,8 +1605,9 @@ export function generateRegexString(input, matchStart = false) {
   }
 
   // Filter out empty entries to prevent matching 'everything' (empty regex issue).
-  patterns = patterns.filter((p) => p && p.length > 0);
-  if (patterns.length === 0) return null;
+  const literals = patterns.filter((p) => typeof p === 'string' && p.length > 0);
+  const regexes = patterns.filter((p) => p instanceof RegExp && p.source !== '(?:)');
+  if (literals.length === 0 && regexes.length === 0) return null;
 
   // Helper to escape special regex characters.
   const escapeRegExp = (string) => {
@@ -1134,13 +1615,47 @@ export function generateRegexString(input, matchStart = false) {
   };
 
   // Build the pattern string.
-  const joinedPatterns = patterns.map(escapeRegExp).join('|');
+  const parts = [];
+  if (literals.length) {
+    const joinedPatterns = literals.map(escapeRegExp).join('|');
+    // If matchStart is true, wrap in ^(?: ... ) to anchor the literal group to the start.
+    parts.push(matchStart ? `^(?:${joinedPatterns})` : `(?:${joinedPatterns})`);
+  }
+  regexes.forEach((regex) => {
+    if (regex.multiline || regex.dotAll) {
+      console.warn(
+        `Sa11y: the "m" and "s" flags are not supported when combining patterns; ignoring them on /${regex.source}/${regex.flags}.`,
+      );
+    }
+    parts.push(`(?:${regex.source})`);
+  });
+  const finalPattern = parts.join('|');
 
-  // If matchStart is true, wrap in ^(?: ... ) to anchor the entire group to the start.
-  const finalPattern = matchStart ? `^(?:${joinedPatterns})` : joinedPatterns;
+  // Compile final case-insensitive regex. A `u` entry may rely on \p{...} or
+  // code-point semantics, so it upgrades the whole pattern; a non-`u` entry
+  // that is invalid in unicode mode then fails to compile, which is reported
+  // rather than allowed to abort the caller's initialization.
+  const flags = regexes.some((regex) => regex.unicode) ? 'iu' : 'i';
+  try {
+    return new RegExp(finalPattern, flags);
+  } catch (error) {
+    console.warn('Sa11y: could not combine patterns into one RegExp.', input, error);
+    return null;
+  }
+}
 
-  // Compile final case-insensitive regex.
-  return new RegExp(finalPattern, 'i');
+/**
+ * Removes Unicode bidirectional formatting characters (LRM, RLM, ALM, embeddings, overrides, isolates).
+ * Translators and CMSes insert these around placeholders in right-to-left strings; they are invisible,
+ * so comparisons against configured text should ignore them. ZWJ/ZWNJ are kept: they are orthographic
+ * (e.g. Persian) and change the word.
+ * @param {string} text - Text to clean.
+ * @returns {string} The text without bidi control characters.
+ */
+export function stripBidiControls(text) {
+  return typeof text === 'string'
+    ? text.replace(/[\u061C\u200E\u200F\u202A-\u202E\u2066-\u2069]/g, '')
+    : text;
 }
 
 /**

@@ -69,6 +69,7 @@ const ruleset = {
     'article',
     'go',
     'workshop',
+    'follow us on',
   ],
   CLICK: ['click'],
   NEW_WINDOW_PHRASES: [
@@ -98,6 +99,35 @@ const ruleset = {
   ],
   POTENTIAL_UI_ELEMENTS: [
     'menu', 'close', 'toggle', 'open', 'expand', 'collapse', 'next', 'prev', 'previous', 'play', 'pause', 'submenu', 'show', 'hide', 'dropdown', 'back', 'forward', 'skip', 'submit', 'cancel', 'save', 'edit', 'delete', 'remove', 'search', 'filter', 'sort', 'stop', 'mute', 'unmute', 'fullscreen', 'minimize', 'maximize', 'slide', 'modal',
+  ],
+  META_TITLE_UNDESCRIPTIVE_STRINGS: [
+    'untitled',
+    'document',
+    'page',
+    'title',
+    'default',
+    'undefined',
+    'index',
+    'new',
+    'placeholder',
+    'webpage',
+    'no title',
+    'insert title here',
+    'hello world',
+    'my app',
+    'my site',
+    'my website',
+    'site title',
+    'your site title',
+  ],
+  // Titles that are non-descriptive at the START of a title ("Untitled document").
+  // Keep these specific: the list above is only matched as a whole title or with a number.
+  META_TITLE_UNDESCRIPTIVE_PREFIXES: [
+    'untitled',
+    'no title',
+    'undefined',
+    'placeholder',
+    'insert title here',
   ],
 };
 
@@ -322,6 +352,8 @@ const tooltip = {
     'Unable to check embedded content. Please make sure that images have alt text, videos have captions, text has sufficient contrast, and interactive components are <a href="https://webaim.org/techniques/keyboard/">keyboard accessible.</a>',
   EMBED_UNFOCUSABLE:
     '<code>&lt;iframe&gt;</code> with focusable elements should not have <code>tabindex="-1"</code>. The embedded content will not be keyboard accessible.',
+  EMBED_VIDEO_AUTOPLAY:
+    'Auto-playing videos that cannot be paused can distract people and interfere with screen readers. Please ensure users can stop the video by adding the <code>controls</code> attribute, providing a visible pause button, or removing the <code>autoplay</code> attribute. <hr> Learn more about <a href="https://www.w3.org/WAI/WCAG21/Understanding/pause-stop-hide.html">Pause, Stop, Hide.</a>',
 
   // Quality assurance
   QA_BAD_LINK:
@@ -366,10 +398,15 @@ const tooltip = {
   UNCONTAINED_LI:
     'All <code>&lt;li&gt;</code> list items must be placed inside <code>&lt;ul&gt;</code> unordered or <code>&lt;ol&gt;</code> ordered elements. This structure helps screen readers announce the list and its items accurately. <hr> <strong {B}>List item</strong> <strong {C}>%(TEXT)</strong>',
   TABINDEX_ATTR: 'Element should not have a <code>tabindex</code> attribute greater than 0.',
+  SVG_NO_ACCESSIBLE_NAME:
+    'Some screen readers will announce this SVG as an unlabeled image because it lacks an accessible name and is not hidden. Add an accessible label (or <code>&lt;title&gt;</code>) if it conveys meaning, or hide it from screen readers if it\'s purely decorative (<code>aria-hidden="true"</code>). <hr> Learn more about <a href="https://a11y-101.com/development/svg">accessible SVGs.</a>',
+  SUMMARY_EMPTY: 'Summary element within the <code>&lt;details&gt;</code> has no accessible name. Add descriptive text inside the <code>&lt;summary&gt;</code> element.',
 
   // Meta checks
   META_TITLE:
     'Missing page title! Please provide a <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/title">page title.</a>',
+  META_TITLE_UNDESCRIPTIVE:
+    'The page title "<em>%(TEXT)</em>" may not be descriptive or convey the subject or purpose of the page. Page titles should be unique, concise, and clearly describe the page content. Learn more about <a href="https://www.w3.org/WAI/WCAG22/Understanding/page-titled.html">meaningful page titles.</a>',
   META_SCALABLE:
     'Remove the <code>user-scalable="no"</code> parameter in the <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">viewport meta tag</a> in order to allow zooming.',
   META_MAX:
@@ -394,6 +431,10 @@ const tooltip = {
   LINK_MAYBE_BUTTON: 'This link has an invalid target. Although the accessible name or its attributes suggests that this might not be a link at all, and instead controls some scripted behaviour on the page. To fix, replace the link with an <a href="https://www.w3.org/WAI/ARIA/apg/patterns/button/">accessible button</a>, or correct the link\'s destination. <hr> <strong {B}>Accessible Name</strong> <strong {C}>%(TEXT)</strong> <hr> <strong>Tip!</strong> Assistive technologies treat buttons and links differently. Using the correct HTML element ensures users know which keyboard shortcuts to use and what action will trigger.',
 
   // Tables
+  TABLES_SINGLE_COLUMN:
+    'Is this a table? Single-column tables are often used for layout or lists rather than tabular data. This may be confusing for people using screen readers, who have to stop and listen to structural descriptions intended for data grids, for example <em>"table, 5 rows, 1 column"</em>. Remove the table and use a list instead.',
+  TABLES_SINGLE_CELL:
+    'Is this a table? Single-cell tables are often used for visual borders or callout containers rather than tabular data. This may be confusing for people using screen readers, who have to stop and listen to structural descriptions intended for data grids: <em>"Table, 1 row, 1 column, Row 1 Column 1."</em> Remove the table and use other styling options to bring attention to this content.',
   TABLES_MISSING_HEADINGS:
     'Missing table headers! Accessible tables need HTML markup that indicates header cells and data cells which defines their relationship. This information provides context to people who use assistive technology. Tables should be used for tabular data only. <hr> Learn more about <a href="https://www.w3.org/WAI/tutorials/tables/">accessible tables.</a>',
   TABLES_SEMANTIC_HEADING:

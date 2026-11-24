@@ -10,6 +10,7 @@ const ruleset = {
     'bild',
     'thumbnail',
     'icon',
+    'portrait',
   ],
   PLACEHOLDER_ALT_STOPWORDS: [
     'alt',
@@ -28,24 +29,23 @@ const ruleset = {
     'abstand',
     'test',
     'chart',
-    'decorative',
-    'image',
     'graphic',
-    'photo',
-    'placeholder',
-    'placeholder image',
-    'spacer',
     'tbd',
     'todo',
     'to do',
     'thumbnail',
     'icon',
-    'test',
     'hero image',
     'hero slide',
     'homepage feature image',
     'featured image',
     'untitled',
+    'portrait',
+    'slide image',
+    'untitled image',
+    'unnamed',
+    'copy',
+    'undefined',
   ],
   LINK_STOPWORDS: [
     'click',
@@ -102,6 +102,16 @@ const ruleset = {
     'website',
     'article',
     'artikel',
+    'discover',
+    'explore',
+    'read',
+    'this link',
+    'this form',
+    'go',
+    'workshop',
+    'folgen sie uns auf',
+    'folge uns auf',
+    'follow us on',
   ],
   CLICK: ['click', 'klicken'],
   NEW_WINDOW_PHRASES: [
@@ -129,8 +139,7 @@ const ruleset = {
     'berechnungstabelle',
     'komprimierte datei',
     'dateiarchiv',
-    'archivierte Datei',
-    'arbeitsblatt',
+    'archivierte datei',
     'powerpoint',
     'präsentation',
     'installieren',
@@ -139,7 +148,44 @@ const ruleset = {
     'pdf',
     'zip',
   ],
-  POTENTIAL_UI_ELEMENTS: ['menü', 'schließen', 'umschalten', 'öffnen', 'erweitern', 'reduzieren', 'weiter', 'zurück', 'abspielen', 'pause', 'untermenü', 'anzeigen', 'ausblenden', 'dropdown', 'zurück', 'vorwärts', 'überspringen', 'absenden', 'abbrechen', 'speichern', 'bearbeiten', 'löschen', 'entfernen', 'suche', 'filter', 'sortieren', 'stopp', 'stummschalten', 'ton an', 'vollbild', 'minimieren', 'maximieren'],
+  POTENTIAL_UI_ELEMENTS: ['menü', 'schließen', 'umschalten', 'öffnen', 'erweitern', 'reduzieren', 'weiter', 'zurück', 'abspielen', 'pause', 'untermenü', 'anzeigen', 'ausblenden', 'dropdown', 'vorwärts', 'überspringen', 'absenden', 'abbrechen', 'speichern', 'bearbeiten', 'löschen', 'entfernen', 'suche', 'filter', 'sortieren', 'stopp', 'stummschalten', 'ton an', 'vollbild', 'minimieren', 'maximieren'],
+  META_TITLE_UNDESCRIPTIVE_STRINGS: [
+    'ohne titel',
+    'dokument',
+    'seite',
+    'titel',
+    'standard',
+    'index',
+    'neu',
+    'platzhalter',
+    'webseite',
+    'kein titel',
+    'titel hier einfügen',
+    'hallo welt',
+    'meine app',
+    'meine website',
+    'meine website',
+    'website-titel',
+    'ihr website-titel',
+    'beispieldomäne',
+    'untitled',
+    'undefined',
+    'title',
+    'document',
+    'placeholder',
+  ],
+  // Titles that are non-descriptive at the START of a title ("Untitled document").
+  // Keep these specific: the list above is only matched as a whole title or with a number.
+  META_TITLE_UNDESCRIPTIVE_PREFIXES: [
+    'ohne titel',
+    'unbenannt',
+    'kein titel',
+    'titel hier einfügen',
+    'untitled',
+    'no title',
+    'undefined',
+    'placeholder',
+  ],
 };
 
 const ui = {
@@ -154,7 +200,7 @@ const ui = {
   REVIEW: 'Überprüfung',
   ON: 'An',
   OFF: 'Aus',
-  ALERT_TEXT: 'Alarm',
+  ALERT_TEXT: 'Hinweis',
   ALERT_CLOSE: 'Schließen',
   OUTLINE: 'Gliederung',
   READABILITY_DESC:
@@ -171,8 +217,8 @@ const ui = {
   DEVELOPER_CHECKS: 'Entwicklerprüfungen',
   DEVELOPER_DESC:
     'Überprüft Probleme, deren Behebung Programmierkenntnisse erfordern kann, wie HTML-Attribute, Formulare und mehr.',
-  DARK_MODE: 'Dark mode',
-  SHORTCUT_SR: 'Zum Eintrag springen. Keyboard shortcut: Alt Punkt',
+  DARK_MODE: 'Dunkler Modus',
+  SHORTCUT_SR: 'Zum Eintrag springen. Tastenkombination: Alt Punkt',
   SKIP_TO_ISSUE: 'Zum Eintrag springen',
   NEW_TAB: 'Öffnet neuen Tab',
   LINKED: 'Verknüpft',
@@ -292,7 +338,7 @@ const tooltip = {
   MISSING_ALT_LINK_HAS_TEXT:
     'Das Bild wird als Link mit umliegendem Text verwendet, obwohl das alt-Attribut als dekorativ oder null markiert sein sollte.',
   MISSING_ALT_LINK:
-    'Das Bild wird als Link verwendet, aber es fehlt der Alt-Text! Bitte stellen Sie sicher, dass der Alt-Text beschreibt, wohin der Link Dich führt.',
+    'Das Bild wird als Link verwendet, aber es fehlt der Alt-Text! Bitte stelle sicher, dass der Alt-Text beschreibt, wohin der Link dich führt.',
   MISSING_ALT:
     'Fehlender Alt text! Wenn das Bild eine Geschichte, eine Stimmung oder eine wichtige Information vermittelt - beschreibe das Bild unbedingt.',
   LINK_ALT_FILE_EXT:
@@ -346,7 +392,7 @@ const tooltip = {
     'Dieser Eingabe ist kein Label zugeordnet. Bitte füge dieser Eingabe eine <code>id</code> hinzu und füge dem Label ein passendes <code>for</code>-Attribut hinzu.',
   LABELS_PLACEHOLDER:
     'Verschwindender Platzhaltertext erschwert es den Menschen, sich daran zu erinnern, welche Informationen in ein Feld gehören, und Probleme mit der Validierung zu identifizieren und zu beheben. Erwägen Sie stattdessen, einen dauerhaft sichtbaren Hinweis vor dem Formularfeld zu verwenden. <hr> Erfahren Sie mehr: <a href="https://www.nngroup.com/articles/form-design-placeholders/">Platzhalter in Formularfeldern sind schädlich.</a>',
-  ARIA_INPUT_FIELD_NAME: 'Dem ARIA-Eingabe- oder Umschaltfeld fehlt ein barrierefreier Name. Um dies zu beheben, geben Sie ein gültiges Attribut <code>aria-labelledby</code>, <code>aria-label</code> oder <code>title</code> an. Wenn die Eingabe umschaltbar е (z. B. Checkbox, Switch, Radiobutton), löst das Hinzufügen von sichtbarem innerem Text dieses Problem ebenfalls. <hr> <strong {B}>Element</strong> <pre><code>%(EL)</code></pre>',
+  ARIA_INPUT_FIELD_NAME: 'Dem ARIA-Eingabe- oder Umschaltfeld fehlt ein barrierefreier Name. Um dies zu beheben, geben Sie ein gültiges Attribut <code>aria-labelledby</code>, <code>aria-label</code> oder <code>title</code> an. Wenn die Eingabe umschaltbar ist (z. B. Checkbox, Switch, Radiobutton), löst das Hinzufügen von sichtbarem innerem Text dieses Problem ebenfalls. <hr> <strong {B}>Element</strong> <pre><code>%(EL)</code></pre>',
 
   // Embedded content
   EMBED_VIDEO:
@@ -361,6 +407,8 @@ const tooltip = {
     'Eingebetteter Inhalt kann nicht überprüft werden. Bitte stelle sicher, dass Bilder Alt-Text haben, Videos Untertitel haben, Text einen ausreichenden Kontrast hat und interaktive Komponenten <a href="https://webaim.org/techniques/keyboard/">mit der Tastatur zugänglich sind.</a>',
   EMBED_UNFOCUSABLE:
     '<code>&lt;iframe&gt;</code> mit nicht fokussierbaren Elementen sollte kein <code>tabindex="-1"</code> haben. Der eingebettete Inhalt wird nicht mit der Tastatur erreichbar sein.',
+  EMBED_VIDEO_AUTOPLAY:
+    'Automatisch abgespielte Videos, die nicht angehalten werden können, können Menschen ablenken und Screenreader beeinträchtigen. Stellen Sie sicher, dass Nutzer das Video stoppen können, indem Sie das Attribut <code>controls</code> hinzufügen, eine sichtbare Pausentaste bereitstellen oder das Attribut <code>autoplay</code> entfernen. <hr> Erfahren Sie mehr über <a href="https://www.w3.org/WAI/WCAG21/Understanding/pause-stop-hide.html">Pausieren, Stoppen und Ausblenden.</a>',
 
   // Quality assurance
   QA_BAD_LINK:
@@ -377,13 +425,13 @@ const tooltip = {
   QA_FAKE_HEADING:
     'Ist das eine Überschrift? <strong {C}>%(TEXT)</strong> <hr> Eine Zeile mit fettem Text mag wie eine Überschrift aussehen, aber jemand, der einen Bildschirmleser verwendet, kann nicht erkennen, dass sie wichtig ist, oder zu ihrem Inhalt springen. Fettgedruckter Text sollte niemals semantische Überschriften ersetzen (Überschrift 2 bis Überschrift 6).',
   QA_FAKE_LIST:
-    'Versuchst Du, eine Liste zu erstellen? Mögliches gefundenes Listenelement: <strong {C}>%(firstPrefix)</strong> <hr> Stelle sicher, dass Du semantische Listen verwendest, indem Du stattdessen eine Aufzählungsliste formatierst (Zahlen oder Bullet-Points). Bei der Verwendung einer semantischen Liste sind Hilfstechnologien in der Lage, Informationen wie die Gesamtzahl der Elemente und die relative Position jedes Elements in der Liste zu übermitteln. Erfahre mehr über <a href="https://www.w3.org/WAI/tutorials/page-structure/content/#lists">semantische Listen.</a>',
+    'Versuchst Du, eine Liste zu erstellen? Mögliches gefundenes Listenelement: <strong {C}>%(PREFIX)</strong> <hr> Stelle sicher, dass Du semantische Listen verwendest, indem Du stattdessen eine Aufzählungsliste formatierst (Zahlen oder Bullet-Points). Bei der Verwendung einer semantischen Liste sind Hilfstechnologien in der Lage, Informationen wie die Gesamtzahl der Elemente und die relative Position jedes Elements in der Liste zu übermitteln. Erfahre mehr über <a href="https://www.w3.org/WAI/tutorials/page-structure/content/#lists">semantische Listen.</a>',
   QA_UPPERCASE:
-    'Text in Großbuchstaben gefunden. Einige Screenreader interpretieren Text in Großbuchstaben möglicherweise als Akronym und lesen jeden Buchstaben einzeln. Außerdem finden manche Leute, dass Großbuchstaben schwieriger zu lesen sind, und es kann den Anschein erwecken, als würden man SCHREIEN.',
+    'Text in Großbuchstaben gefunden. Einige Screenreader interpretieren Text in Großbuchstaben möglicherweise als Akronym und lesen jeden Buchstaben einzeln. Außerdem finden manche Leute, dass Großbuchstaben schwieriger zu lesen sind, und es kann den Anschein erwecken, als würde man SCHREIEN.',
   QA_UNDERLINE:
     'Unterstrichener Text kann mit Links verwechselt werden. Erwäge die Verwendung eines anderen Stils wie <code>&lt;strong&gt;</code><strong>starke Wichtigkeit</strong><code>&lt;/strong&gt;</code> oder <code>&lt;em&gt;</code><em>Hervorhebung</em><code>&lt;/em&gt;</code>.',
   QA_SUBSCRIPT:
-    'Die Formatierungsoptionen für tiefgestellten und hochgestellten Text sollten nur verwendet werden, um die Textposition für typografische Konventionen oder Standards zu ändern. Es sollte <strong>nicht</strong> ausschließlich zu Präsentations- oder Erscheinungszwecken verwendet werden. Das Formatieren ganzer Sätze wirft Lesbarkeitsprobleme auf. Geeignete Anwendungsfälle wären die Anzeige von Exponenten, Ordnungszahlen wie 4<sup>th</sup> anstelle von 4 und chemischen Formeln (z. B. H<sub>2</sub>O).',
+    'Die Formatierungsoptionen für tiefgestellten und hochgestellten Text sollten nur verwendet werden, um die Textposition für typografische Konventionen oder Standards zu ändern. Es sollte <strong>nicht</strong> ausschließlich zu Präsentations- oder Erscheinungszwecken verwendet werden. Das Formatieren ganzer Sätze wirft Lesbarkeitsprobleme auf. Geeignete Anwendungsfälle wären die Anzeige von Exponenten, Einheiten wie m<sup>2</sup> und chemischen Formeln (z. B. H<sub>2</sub>O).',
   QA_NESTED_COMPONENTS:
     'Vermeiden Sie das Verschachteln interaktiver Layoutkomponenten, wie das Platzieren von Akkordeons in Tabs oder Tabs in Akkordeons. Dies kann die Navigation komplizieren, die kognitive Belastung erhöhen und dazu führen, dass Inhalte übersehen werden.',
   QA_JUSTIFY:
@@ -403,12 +451,17 @@ const tooltip = {
   UNCONTAINED_LI:
     'Alle <code>&lt;li&gt;</code> Listenelemente müssen innerhalb von <code>&lt;ul&gt;</code> ungeordneten oder <code>&lt;ol&gt;</code> geordneten Elementen platziert werden. Diese Struktur hilft Bildschirmlesern, die Liste und ihre Elemente genau anzukündigen.',
   TABINDEX_ATTR: 'Das Element sollte kein <code>tabindex</code>-Attribut größer als 0 haben.',
+  SVG_NO_ACCESSIBLE_NAME:
+    'Einige Screenreader sagen dieses SVG als unbeschriftetes Bild an, da ihm ein zugänglicher Name fehlt und es nicht verborgen ist. Fügen Sie ein zugängliches Label (oder <code>&lt;title&gt;</code>) hinzu, wenn es eine Bedeutung vermittelt, oder verbergen Sie es vor Screenreadern, wenn es rein dekorativ ist (<code>aria-hidden="true"</code>). <hr> Erfahren Sie mehr über <a href="https://a11y-101.com/development/svg">barrierefreie SVGs.</a>',
+  SUMMARY_EMPTY: 'Das summary-Element innerhalb von <code>&lt;details&gt;</code> hat keinen zugänglichen Namen. Fügen Sie beschreibenden Text in das <code>&lt;summary&gt;</code>-Element ein.',
 
   // Meta checks
   META_LANG:
     'Seitensprache nicht angegeben! Bitte <a href="https://www.w3.org/International/questions/qa-html-language-declarations.de.html">deklariere die Sprache im HTML-Tag.</a>',
   META_TITLE:
     'Seitentitel fehlt! Bitte gib einen <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/title">Seitentitel</a> an.',
+  META_TITLE_UNDESCRIPTIVE:
+    'Der Seitentitel "<em>%(TEXT)</em>" ist möglicherweise nicht aussagekräftig oder gibt das Thema oder den Zweck der Seite nicht wieder. Seitentitel sollten eindeutig, prägnant und eine klare Beschreibung des Seiteninhalts sein. Weitere Informationen über <a href="https://www.w3.org/WAI/WCAG22/Understanding/page-titled.html">aussagekräftige Seitentitel.</a>',
   META_SCALABLE:
     'Entfernen Sie den Parameter <code>user-scalable="no"</code> im <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">Viewport-Meta-Tag</a>, um das Zoomen zu ermöglichen.',
   META_MAX:
@@ -432,12 +485,16 @@ const tooltip = {
   LINK_MAYBE_BUTTON: 'Dieser Link hat ein ungültiges Ziel. Der barrierefreie Name oder die Attribute deuten darauf hin, dass es sich möglicherweise gar nicht um einen Link handelt, sondern stattdessen ein skriptgesteuertes Verhalten auf der Seite steuert. Um dies zu beheben, ersetzen Sie den Link durch eine <a href="https://www.w3.org/WAI/ARIA/apg/patterns/button/">barrierefreie Schaltfläche</a> oder korrigieren Sie das Ziel des Links. <hr> <strong {B}>Barrierefreier Name</strong> <strong {C}>%(TEXT)</strong> <hr> <strong>Tipp!</strong> Unterstützende Technologien behandeln Schaltflächen und Links unterschiedlich. Die Verwendung des richtigen HTML-Elements stellt sicher, dass die Benutzer wissen, welche Tastaturkürzel sie verwenden müssen und welche Aktion ausgelöst wird.',
 
   // Tables
+  TABLES_SINGLE_COLUMN:
+    'Ist das eine Tabelle? Einspaltige Tabellen werden häufig für Layouts oder Listen statt für Tabellendaten verwendet. Dies kann für Personen verwirrend sein, die Screenreader nutzen und anhalten müssen, um sich strukturelle Beschreibungen anzuhören, die für Datengitter gedacht sind, wie zum Beispiel <em>"Tabelle, 5 Zeilen, 1 Spalte"</em>. Entfernen Sie die Tabelle und verwenden Sie stattdessen eine Liste.',
+  TABLES_SINGLE_CELL:
+    'Ist das eine Tabelle? Einzelne Zelltabellen werden häufig für visuelle Rahmen oder Hervorhebungs-Container anstelle von Tabellendaten verwendet. Dies kann für Personen, die Screenreader nutzen, verwirrend sein, da sie anhalten und strukturelle Beschreibungen für Datengitter anhören müssen: <em>"Tabelle, 1 Zeile, 1 Spalte, Zeile 1 Spalte 1."</em> Entfernen Sie die Tabelle und nutzen Sie andere Formatierungsoptionen, um die Aufmerksamkeit auf diesen Inhalt zu lenken.',
   TABLES_MISSING_HEADINGS:
-    'Fehlende Tabellenüberschriften! Barrierefreie Tabellen benötigen eine HTML-Auszeichnung, die Kopfzellen und Datenzellen kennzeichnet und ihre Beziehung zueinander definiert. Diese Informationen liefern den Kontext für Menschen, die Hilfsmittel verwenden. Tabellen sollten nur für tabellarische Daten verwendet werden. <hr> Erfahre mehr über <a href="https://www.w3.org/WAI/tutorials/tables/">barrierefreie Tabellen.</a>',
+    'Fehlende Tabellenköpfe! Barrierefreie Tabellen benötigen eine HTML-Auszeichnung, die Kopfzellen und Datenzellen kennzeichnet und ihre Beziehung zueinander definiert. Diese Informationen liefern den Kontext für Menschen, die Hilfsmittel verwenden. Tabellen sollten nur für tabellarische Daten verwendet werden. <hr> Erfahre mehr über <a href="https://www.w3.org/WAI/tutorials/tables/">barrierefreie Tabellen.</a>',
   TABLES_SEMANTIC_HEADING:
-    'Semantische Überschriften wie Überschrift 2 oder Überschrift 3 sollten nur für Abschnitte des Inhalts verwendet werden; <strong>not</strong> in HTML-Tabellen. Gebe Tabellenüberschriften stattdessen mit dem <code>&lt;th&gt;</code> Element an. <hr> Erfahre mehr über <a href="https://www.w3.org/WAI/tutorials/tables/">barrierefreie Tabellen.</a>',
+    'Semantische Überschriften wie Überschrift 2 oder Überschrift 3 sollten nur für Abschnitte des Inhalts verwendet werden; <strong>nicht</strong> in HTML-Tabellen. Gib Kopfzellen stattdessen mit dem <code>&lt;th&gt;</code>-Element an. <hr> Erfahre mehr über <a href="https://www.w3.org/WAI/tutorials/tables/">barrierefreie Tabellen.</a>',
   TABLES_EMPTY_HEADING:
-    'Leerer Tabellenkopf gefunden! Tabellenüberschriften sollten <strong>niemals</strong> leer sein. Es ist wichtig, Zeilen- und/oder Spaltenüberschriften zu benennen, um ihre Beziehung zu verdeutlichen. Diese Informationen bieten Menschen, die Hilfsmittel verwenden, einen Kontext. Bitte beachte, dass Tabellen nur für tabellarische Daten verwendet werden sollten. <hr> Erfahre mehr über <a href="https://www.w3.org/WAI/tutorials/tables/">barrierefreie Tabellen.</a>',
+    'Leerer Tabellenkopf gefunden! Kopfzellen sollten <strong>niemals</strong> leer sein. Es ist wichtig, Zeilen- und/oder Spaltenköpfe zu benennen, um ihre Beziehung zu verdeutlichen. Diese Informationen bieten Menschen, die Hilfsmittel verwenden, einen Kontext. Bitte beachte, dass Tabellen nur für tabellarische Daten verwendet werden sollten. <hr> Erfahre mehr über <a href="https://www.w3.org/WAI/tutorials/tables/">barrierefreie Tabellen.</a>',
   TABLES_INVALID_HEADERS_REF: 'Diese Tabelle versucht, eine bestimmte Datenzelle mit einer bestimmten Kopfzeilenzelle zu verknüpfen, aber die Kopfzeilen-ID kann nicht gefunden werden. Stellen Sie sicher, dass jedes <code>headers</code>-Attribut mit der ID einer Kopfzeilenzelle in derselben Tabelle übereinstimmt. <hr> <strong {B}>Kopfzeilen</strong> <code>%(VALUE)</code> <hr> <strong>Tipp!</strong> Die <a href="https://www.w3.org/WAI/WCAG22/Techniques/html/H43">Verwendung manueller ID-Referenzen</a> zur Verknüpfung von Datenzellen mit Kopfzeilenzellen ist kompliziert und fehleranfällig. Wenn möglich, unterteilen Sie komplexe Daten in kleinere Tabellen mit einfachen Kopfzeilen und -spalten.',
 
   // Contrast

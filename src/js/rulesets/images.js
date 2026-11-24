@@ -22,8 +22,10 @@ const url = [
 
 // Utility function to process alt text for stop words.
 const containsAltTextStopWords = (alt) => {
-  const altLowerCase = Utils.removeWhitespace(alt).toLowerCase();
-  const altOnlyLetters = Utils.removeWhitespace(altLowerCase.replace(/[^\p{L}\s]/gu, ''));
+  // Folded like the localized stop word lists (see Utils.foldForMatching).
+  const altLowerCase = Utils.foldForMatching(Utils.removeWhitespace(alt));
+  // Keep combining marks (\p{M}): in scripts such as Tamil they are part of the letters.
+  const altOnlyLetters = Utils.removeWhitespace(altLowerCase.replace(/[^\p{L}\p{M}\s]/gu, ''));
   const hit = [null, null, null];
 
   // 1) URL hit.
@@ -41,23 +43,25 @@ const containsAltTextStopWords = (alt) => {
   }
 
   // 3) Suspicious alt words checking the first two and the last word.
-  let wordsToCheck = [];
-  // Check if the modern Segmenter API is supported in this environment.
-  if (typeof Intl !== 'undefined' && Intl.Segmenter) {
-    const segmenter = new Intl.Segmenter(undefined, { granularity: 'word' });
-    const allWords = [...segmenter.segment(altLowerCase)]
-      .filter((segment) => segment.isWordLike)
-      .map((segment) => segment.segment);
-    // We want to check the first two words, and the very last word in the string.
-    wordsToCheck = [...allWords.slice(0, 2), ...allWords.slice(-1)];
-  } else {
-    // Fallback for older browsers that do not support Segmenter API.
-    const altOnlyLetters = Utils.removeWhitespace(altLowerCase.replace(/[^\p{L}\s]/gu, ''));
-    const allWords = altOnlyLetters.split(/\s+/).filter(Boolean);
-    wordsToCheck = [...allWords.slice(0, 2), ...allWords.slice(-1)];
-  }
-  for (const word of Constants.Global.susAltWords) {
-    if (wordsToCheck.includes(word)) {
+  // Segmented in the ruleset language, which the stop word lists are written in.
+  const segmenter = Utils.getWordSegmenter(Lang._('LANG_CODE'));
+  const allWords = segmenter
+    ? [...segmenter.segment(altLowerCase)]
+        .filter((segment) => segment.isWordLike)
+        .map((segment) => segment.segment)
+    : // Fallback for browsers without Intl.Segmenter.
+      altOnlyLetters.split(/\s+/).filter(Boolean);
+  // We want to check the first two words, and the very last word in the string.
+  const wordsToCheck = [...allWords.slice(0, 2), ...allWords.slice(-1)];
+  // Chinese and Japanese have no spaces, and Intl.Segmenter may split a stop word such as
+  // 缩略图 or アイコン into smaller words. For those, also check the start and end of the alt.
+  const altNoSpaces = altOnlyLetters.replace(/\s/g, '');
+  for (const [foldedWord, word] of Constants.Global.susAltWords) {
+    if (
+      wordsToCheck.includes(foldedWord) ||
+      (Utils.noSpaceScriptRegex.test(foldedWord) &&
+        (altNoSpaces.startsWith(foldedWord) || altNoSpaces.endsWith(foldedWord)))
+    ) {
       hit[1] = word;
       break;
     }
@@ -161,8 +165,8 @@ export default function checkImages() {
 
     // Decorative images.
     let decorative = alt === '';
-    if (!decorative && State.option.altPlaceholder.length) {
-      decorative = !!alt.match(Constants.Global.altPlaceholderPattern);
+    if (!decorative && Constants.Global.altPlaceholderPattern) {
+      decorative = !!Utils.stripBidiControls(alt).match(Constants.Global.altPlaceholderPattern);
     }
     if (decorative) {
       if (Utils.getCachedClosest($el, `button, [role='button']`)) return;
@@ -279,10 +283,23 @@ export default function checkImages() {
     // Warning check for potentially bad alt text (lower confidence).
     const warningTest = link ? 'LINK_ALT_MAYBE_BAD_WARNING' : 'ALT_MAYBE_BAD_WARNING';
     if (State.option.checks[warningTest]) {
-      const wordCount = altText.trim().split(/\s+/).length;
-      const delimiterCount = (altText.match(/[_-]/g) || []).length;
-      const hasTooMuchNoise =
-        /^(?:\s*\d){5,}\s*$/.test(altText) || (delimiterCount >= 3 && wordCount <= 2);
+      const words = altText.trim().split(/\s+/);
+      const wordCount = words.length;
+      const totalDelimiterCount = (altText.match(/[_-]/g) || []).length;
+
+      // 1. Numeric ID check (Catches: "1 2 3 4 5")
+      const isNumberString = /^(?:\s*\d){5,}\s*$/.test(altText);
+
+      // 2. Pure filename check (Catches: "IMG_2024_hero_final_v2"). Four or more delimiters in
+      // at most two words; three are allowed for hyphenated names ("Betty Smith-Leydon-Whopper").
+      const isPureFilename = totalDelimiterCount >= 4 && wordCount <= 2;
+
+      // 3. The "Slug" Check (Catches: e.g. "Oct 30 web story tmu-celebrates-2026-...")
+      // Flags if any single unbroken word contains 4 or more delimiters,
+      // safely ignoring standard hyphenated words like "state-of-the-art".
+      const containsSlug = words.some((word) => (word.match(/[_-]/g) || []).length >= 4);
+
+      const hasTooMuchNoise = isNumberString || isPureFilename || containsSlug;
       if (hasTooMuchNoise) {
         logResult({
           test: warningTest,

@@ -321,6 +321,11 @@ audio {
   mask: var(--sa11y-link-icon-svg) center no-repeat;
 }
 
+li li {
+  margin-top: 1rem;
+  list-style: none;
+}
+
 li pre,
 li li pre,
 li li img,
@@ -328,9 +333,4 @@ li li iframe,
 li li video,
 li li audio {
   margin-top: 1rem;
-}
-
-li li {
-  margin-top: 1rem;
-  list-style: none;
 }

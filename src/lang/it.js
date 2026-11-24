@@ -5,14 +5,17 @@ const ruleset = {
   SUS_ALT_STOPWORDS: [
     'immagine',
     'grafico',
-    'immagine',
     'foto',
+    'fotografia',
+    'miniatura',
+    'icona',
     'image',
     'graphic',
     'picture',
     'photo',
     'thumbnail',
     'icon',
+    'portrait',
   ],
   PLACEHOLDER_ALT_STOPWORDS: [
     'alt',
@@ -22,6 +25,7 @@ const ruleset = {
     'image',
     'graphic',
     'decorativo',
+    'decorativa',
     'segnaposto',
     'immagine segnaposto',
     'distanziatore',
@@ -35,50 +39,69 @@ const ruleset = {
     'todo',
     'to do',
     'thumbnail',
+    'miniatura',
     'icon',
+    'icona',
     'hero image',
     'hero slide',
     'homepage feature image',
     'featured image',
+    'immagine in evidenza',
     'untitled',
+    'senza titolo',
+    'portrait',
+    'slide image',
+    'untitled image',
+    'unnamed',
+    'copy',
+    'undefined',
   ],
   LINK_STOPWORDS: [
     'clicca',
     'clicca qui',
     'clicca qui per saperne di più',
     'cliccando qui',
-    'controllare',
-    'qui dettagliato',
+    'scopri',
+    'dettagli',
     'qui',
-    'scaricare',
+    'scarica',
+    'download',
     'scarica qui',
-    'scaricare qui',
-    'scoprirlo',
+    'scopri di più',
     'per saperne di più',
-    'forma',
+    'modulo',
     'info',
     'informazioni',
+    'maggiori informazioni',
+    'ulteriori informazioni',
     'link',
-    'imparare',
-    'imparare a',
+    'approfondisci',
     'di più',
+    'altro',
     'pagina',
-    'carta',
-    'leggere',
-    'leggere questo',
+    'documento',
+    'leggi di più',
+    'leggi tutto',
+    'continua a leggere',
+    'leggi',
     'questo',
     'questa pagina',
+    'questo link',
     'questo sito web',
-    'vista',
-    'vedere il nostro',
+    'questo modulo',
+    'visualizza',
+    'vedi',
+    'vedi il nostro',
     'sito web',
+    'sito',
     'articolo',
+    'vai',
+    'seguici su',
   ],
   CLICK: ['click', 'clic'],
-  NEW_WINDOW_PHRASES: ['esterno', 'nuova scheda', 'nuova finestra', 'pop-up', 'pop up'],
+  NEW_WINDOW_PHRASES: ['esterno', 'esterna', 'nuova scheda', 'nuova finestra', 'pop-up', 'pop up'],
   FILE_TYPE_PHRASES: [
     'documento',
-    'foglio di calcolo',
     'foglio di calcolo',
     'file compresso',
     'file archiviato',
@@ -90,23 +113,60 @@ const ruleset = {
     'audio',
     'pdf',
   ],
-  POTENTIAL_UI_ELEMENTS: ['menu', 'chiudi', 'attiva/disattiva', 'apri', 'espandi', 'comprimi', 'successivo', 'precedente', 'riproduci', 'pausa', 'sottomenu', 'mostra', 'nascondi', 'menu a discesa', 'indietro', 'avanti', 'salta', 'invia', 'annulla', 'salva', 'modifica', 'elimina', 'rimuovi', 'cerca', 'filtra', 'ordina', 'stop', 'muto', 'riattiva audio', 'schermo intero', 'minimizza', 'massimizza'],
+  POTENTIAL_UI_ELEMENTS: ['menu', 'chiudi', 'attiva/disattiva', 'apri', 'espandi', 'comprimi', 'successivo', 'successiva', 'precedente', 'riproduci', 'pausa', 'sottomenu', 'mostra', 'nascondi', 'menu a discesa', 'indietro', 'avanti', 'salta', 'invia', 'annulla', 'salva', 'modifica', 'elimina', 'rimuovi', 'cerca', 'filtra', 'ordina', 'stop', 'muto', 'riattiva audio', 'schermo intero', 'minimizza', 'massimizza'],
+  META_TITLE_UNDESCRIPTIVE_STRINGS: [
+    'senza titolo',
+    'documento',
+    'pagina',
+    'titolo',
+    'predefinito',
+    'indice',
+    'nuovo',
+    'segnaposto',
+    'pagina web',
+    'nessun titolo',
+    'inserisci il titolo qui',
+    'ciao mondo',
+    'la mia app',
+    'il mio sito',
+    'il mio sito web',
+    'titolo del sito',
+    'il titolo del tuo sito',
+    'dominio di esempio',
+    'untitled',
+    'undefined',
+    'title',
+    'document',
+    'index',
+    'placeholder',
+  ],
+  // Titles that are non-descriptive at the START of a title ("Untitled document").
+  // Keep these specific: the list above is only matched as a whole title or with a number.
+  META_TITLE_UNDESCRIPTIVE_PREFIXES: [
+    'senza titolo',
+    'nessun titolo',
+    'inserisci il titolo qui',
+    'untitled',
+    'no title',
+    'undefined',
+    'placeholder',
+  ],
 };
 
 const ui = {
   LANG_CODE: 'it',
-  MAIN_TOGGLE_LABEL: "Controllare l’accessibilità",
+  MAIN_TOGGLE_LABEL: "Verifica l’accessibilità",
   CONTAINER_LABEL: "Controllo dell’accessibilità",
   ERROR: 'Errore',
   ERRORS: 'Errori',
-  WARNING: 'Avvertenze',
+  WARNING: 'Avvertenza',
   WARNINGS: 'Avvertenze',
   GOOD: 'Buono',
-  REVIEW: 'Revisione',
-  ON: 'Acceso',
-  OFF: 'Spento',
-  ALERT_TEXT: 'Allarme',
-  ALERT_CLOSE: 'Chiudere',
+  REVIEW: 'Da verificare',
+  ON: 'Attivato',
+  OFF: 'Disattivato',
+  ALERT_TEXT: 'Avviso',
+  ALERT_CLOSE: 'Chiudi',
   OUTLINE: 'Struttura',
   READABILITY_DESC:
     'Mostra il punteggio di leggibilità nella scheda <strong>Struttura</strong> per aiutare a valutare la difficoltà di lettura.',
@@ -117,40 +177,40 @@ const ui = {
   NO_IMAGES: 'Nessuna immagine trovata.',
   DECORATIVE: 'Decorativo',
   MISSING: 'Mancante',
-  PAGE_ISSUES: 'Problemi di pagina',
+  PAGE_ISSUES: 'Problemi della pagina',
   SETTINGS: 'Impostazioni',
-  DEVELOPER_CHECKS: 'Controlli sviluppatore',
+  DEVELOPER_CHECKS: 'Controlli per sviluppatori',
   DEVELOPER_DESC:
-    'Controlla i problemi che potrebbero richiedere conoscenze di codifica per essere risolti, come attributi HTML, moduli e altro.',
+    'Controlla i problemi che potrebbero richiedere conoscenze di programmazione per essere risolti, come attributi HTML, moduli e altro.',
   DARK_MODE: 'Modalità scura',
-  SHORTCUT_SR: 'Passa al problema. Scorciatoia da tastiera: Alt S',
-  SKIP_TO_ISSUE: 'Passa al numero',
-  NEW_TAB: 'Apre una nuova scheda',
+  SHORTCUT_SR: 'Vai al problema. Scorciatoia da tastiera: Alt S',
+  SKIP_TO_ISSUE: 'Vai al problema',
+  NEW_TAB: 'Si apre in una nuova scheda',
   LINKED: 'Collegato',
   PANEL_HEADING: "Controllo dell’accessibilità",
-  NO_ERRORS_FOUND: 'Non sono stati riscontrati errori.',
-  WARNINGS_FOUND: 'avvisi riscontrati.',
-  TOTAL_FOUND: 'totale dei problemi riscontrati.',
+  NO_ERRORS_FOUND: 'Nessun errore trovato.',
+  WARNINGS_FOUND: 'avvertenze trovate.',
+  TOTAL_FOUND: 'problemi trovati in totale.',
   NOT_VISIBLE:
-    "L’elemento che si sta cercando di visualizzare non è visibile; potrebbe essere nascosto o all’interno di un componente fisarmonica o scheda.",
+    "L’elemento non è visibile; potrebbe essere nascosto o all’interno di un componente a fisarmonica o a schede.",
   MISSING_ROOT:
-    "La pagina completa è stata controllata per l’accessibilità perché l’area di destinazione <code>%(root)</code> non esiste.",
+    "È stata verificata l’accessibilità dell’intera pagina perché l’area di destinazione <code>%(root)</code> non esiste.",
   MISSING_READABILITY_ROOT:
     'Il punteggio di leggibilità si basa sull’area di contenuto <code>%(fallback)</code>, perché l’area di destinazione <code>%(root)</code> non esiste.',
-  SKIP_TO_PAGE_ISSUES: 'Vai alla pagina Problemi',
+  SKIP_TO_PAGE_ISSUES: 'Vai ai problemi della pagina',
   CONSOLE_ERROR:
-    'Siamo spiacenti, ma c’è un problema con il verificatore di accessibilità di questa pagina. Puoi per favore <a href="https://forms.gle/sjzK9XykETaoqZv99">riportarlo attraverso questo modulo</a> o su <a href="https://github.com/ryersondmp/sa11y/issues/new?title=Bug%20report">GitHub</a>?',
+    'Siamo spiacenti, si è verificato un problema con lo strumento di verifica dell’accessibilità in questa pagina. Puoi <a href="https://forms.gle/sjzK9XykETaoqZv99">segnalarlo tramite questo modulo</a> o su <a href="https://github.com/ryersondmp/sa11y/issues/new?title=Bug%20report">GitHub</a>?',
   APPEARANCE: 'Aspetto',
   MOVE_PANEL: 'Sposta pannello',
   HIDDEN: 'Nascosto',
 
   // Dismiss
-  PANEL_DISMISS_BUTTON: 'Mostra %(dismissCount) scartati',
-  DISMISS: 'Scarta',
-  DISMISS_ALL: 'Scarta tutto',
-  DISMISSED: 'Scartato',
+  PANEL_DISMISS_BUTTON: 'Mostra ignorati (%(dismissCount))',
+  DISMISS: 'Ignora',
+  DISMISS_ALL: 'Ignora tutto',
+  DISMISSED: 'Ignorati',
   DISMISS_REMINDER:
-    'Si prega di notare che gli avvisi sono solo <strong>temporaneamente</strong> scartati. La cancellazione della cronologia del browser e dei cookie ripristinerà tutti gli avvisi precedentemente scartati su tutte le pagine.',
+    'Nota: le avvertenze vengono ignorate solo <strong>temporaneamente</strong>. Cancellando la cronologia e i cookie del browser, tutte le avvertenze ignorate in precedenza verranno ripristinate su tutte le pagine.',
 
   // Export
   DATE: 'Data',
@@ -167,13 +227,13 @@ const ui = {
   PROTANOPIA: 'Protanopia',
   DEUTERANOPIA: 'Deuteranopia',
   TRITANOPIA: 'Tritanopia',
-  MONOCHROMACY: 'Monocromia',
+  MONOCHROMACY: 'Monocromatismo',
   COLOUR_FILTER_MESSAGE:
-    'Verificare la presenza di elementi difficili da percepire o da distinguere rispetto ad altri colori.',
-  RED_EYE: 'Rosso cieco.',
-  GREEN_EYE: 'Cieco verde.',
-  BLUE_EYE: 'Cieco blu.',
-  MONO_EYE: 'Cieco rosso, blu e verde.',
+    'Verifica la presenza di elementi difficili da percepire o da distinguere rispetto ad altri colori.',
+  RED_EYE: 'Cecità al rosso.',
+  GREEN_EYE: 'Cecità al verde.',
+  BLUE_EYE: 'Cecità al blu.',
+  MONO_EYE: 'Cecità al rosso, al blu e al verde.',
   COLOUR_FILTER_HIGH_CONTRAST: 'I filtri colore non funzionano in modalità alto contrasto.',
 
   // Readability
@@ -191,20 +251,20 @@ const ui = {
 const tooltip = {
   // Headings
   HEADING_SKIPPED_LEVEL:
-    "I titoli non dovrebbero saltare livelli o passare da <strong>Titolo %(PREV_LEVEL)</strong> a <strong {C}>Titolo %(LEVEL)</strong>, poiché ciò interrompe l’ordine e la gerarchia del contenuto, rendendolo più difficile da seguire. <hr> Se <strong {C}>%(HEADING)</strong> ricade sotto la sezione <strong>%(PREV_HEADING)</strong>, considera di formattarlo come <strong>Titolo %(LEVEL)</strong>.",
+    "Le intestazioni non dovrebbero saltare livelli o passare da <strong>Intestazione %(PREV_LEVEL)</strong> a <strong {C}>Intestazione %(LEVEL)</strong>, poiché ciò interrompe l’ordine e la gerarchia del contenuto, rendendolo più difficile da seguire. <hr> Se <strong {C}>%(HEADING)</strong> ricade sotto la sezione <strong>%(PREV_HEADING)</strong>, considera di formattarlo come <strong>Intestazione %(LEVEL)</strong>.",
   HEADING_EMPTY:
-    'Titolo vuoto trovato! Per risolvere il problema, eliminare questa riga o cambiare il suo formato da <strong {C}>Intonazione %(level)</strong> a <strong>Normale</strong> o <strong>Paragrafo</strong>.',
+    'Intestazione vuota trovata! Per risolvere il problema, eliminare questa riga o cambiarne il formato da <strong {C}>Intestazione %(level)</strong> a <strong>Normale</strong> o <strong>Paragrafo</strong>.',
   HEADING_LONG:
-    "L’intestazione è lunga! I titoli devono essere utilizzati per organizzare il contenuto e trasmettere la struttura. Devono essere brevi, informativi e unici. I titoli devono essere inferiori a %(MAX_LENGTH) caratteri (non più di una frase). <hr> <strong {B}>%(HEADING_LENGTH) Caratteri</strong>",
+    "L’intestazione è lunga! Le intestazioni devono essere utilizzate per organizzare il contenuto e trasmettere la struttura. Devono essere brevi, informative e uniche. Le intestazioni devono essere inferiori a %(MAX_LENGTH) caratteri (non più di una frase). <hr> <strong {B}>%(HEADING_LENGTH) Caratteri</strong>",
   HEADING_FIRST:
-    "La prima intestazione di una pagina dovrebbe essere di solito un’intestazione 1 o un’intestazione 2. L’intestazione 1 dovrebbe essere l’inizio della sezione principale del contenuto ed è l’intestazione principale che descrive lo scopo generale della pagina. Per saperne di più <a href=\"https://www.w3.org/WAI/tutorials/page-structure/headings/\">Struttura delle intestazioni.</a>",
+    "La prima intestazione di una pagina dovrebbe essere di solito un’Intestazione 1 o un’Intestazione 2. L’Intestazione 1 dovrebbe essere l’inizio della sezione principale del contenuto ed è l’intestazione principale che descrive lo scopo generale della pagina. Per saperne di più <a href=\"https://www.w3.org/WAI/tutorials/page-structure/headings/\">Struttura delle intestazioni.</a>",
   HEADING_MISSING_ONE:
-    "Manca l’intestazione 1. L’intestazione 1 dovrebbe essere l’inizio dell’area di contenuto principale ed è l’intestazione principale che descrive lo scopo generale della pagina. Per saperne di più <a href=\"https://www.w3.org/WAI/tutorials/page-structure/headings/\">Struttura delle intestazioni.</a>",
+    "Manca l’Intestazione 1. L’Intestazione 1 dovrebbe essere l’inizio dell’area di contenuto principale ed è l’intestazione principale che descrive lo scopo generale della pagina. Per saperne di più <a href=\"https://www.w3.org/WAI/tutorials/page-structure/headings/\">Struttura delle intestazioni.</a>",
   HEADING_EMPTY_WITH_IMAGE:
-    "L’intestazione non ha testo, ma contiene un’immagine. Se non si tratta di un titolo, cambiarne il formato da <strong {C}>Testamento %(level)</strong> a <strong>Normale</strong> o <strong>Paragrafo</strong>. Altrimenti, aggiungere un testo alt all’immagine, se non è decorativo.",
-  HEADING_UNPRONOUNCEABLE: 'Il testo dell’intestazione contiene solo simboli o caratteri non pronunciabili. Se ritieni que si tratti di un errore dovuto a un problema di copia/incolla, valuta di eliminarlo. <hr> <strong {B}>Testo dell’intestazione</strong> <strong {C}>%(TEXT)</strong>',
-  PANEL_HEADING_MISSING_ONE: "Manca l’intestazione 1!",
-  PANEL_NO_HEADINGS: 'Nessun titolo trovato.',
+    "L’intestazione non ha testo, ma contiene un’immagine. Se non si tratta di un’intestazione, cambiarne il formato da <strong {C}>Intestazione %(level)</strong> a <strong>Normale</strong> o <strong>Paragrafo</strong>. Altrimenti, aggiungere un testo alt all’immagine, se non è decorativa.",
+  HEADING_UNPRONOUNCEABLE: 'Il testo dell’intestazione contiene solo simboli o caratteri non pronunciabili. Se ritieni che si tratti di un errore dovuto a un problema di copia/incolla, valuta di eliminarlo. <hr> <strong {B}>Testo dell’intestazione</strong> <strong {C}>%(TEXT)</strong>',
+  PANEL_HEADING_MISSING_ONE: "Manca l’Intestazione 1!",
+  PANEL_NO_HEADINGS: 'Nessuna intestazione trovata.',
 
   // Links
   LINK_EMPTY: 'Rimuovere i link vuoti senza testo.',
@@ -229,7 +289,7 @@ const tooltip = {
   LINK_DOI:
     "Per le pagine web o le risorse solo online, la <a href=\"https://apastyle.apa.org/style-grammar-guidelines/paper-format/accessibility/urls#:~:text=descriptive%20links\">guida di stile dell’APA</a> raccomanda di utilizzare link descrittivi avvolgendo l’URL o il DOI dell’opera intorno al suo titolo. URL più lunghi e meno comprensibili utilizzati come testo di collegamento potrebbero essere difficili da comprendere quando si accede con tecnologie assistive.",
   LINK_NEW_TAB:
-    'Il link si apre in una nuova scheda o finestra senza preavviso. Ciò può disorientare, soprattutto le persone che hanno difficoltà a percepire i contenuti visivi. In secondo luogo, non è sempre una buona pratica controllare l’esperienza di una persona o prendere decisioni al posto suo. Indicate che il link si apre in una nuova finestra all’interno del testo del link. <hr> <strong>Tip!</strong> Imparate le migliori pratiche: <a href="https://www.nngroup.com/articles/new-browser-windows-and-tabs/">aprire i link in nuove finestre e schede del browser.</a>',
+    'Il link si apre in una nuova scheda o finestra senza preavviso. Ciò può disorientare, soprattutto le persone che hanno difficoltà a percepire i contenuti visivi. In secondo luogo, non è sempre una buona pratica controllare l’esperienza di una persona o prendere decisioni al posto suo. Indicate che il link si apre in una nuova finestra all’interno del testo del link. <hr> <strong>Suggerimento!</strong> Imparate le migliori pratiche: <a href="https://www.nngroup.com/articles/new-browser-windows-and-tabs/">aprire i link in nuove finestre e schede del browser.</a>',
   LINK_FILE_EXT:
     'Il link punta a un PDF o a un file scaricabile (ad es. MP3, Zip, Word Doc) senza alcun avviso. Indicate il tipo di file nel testo del link. Se si tratta di un file di grandi dimensioni, considerate la possibilità di includere la dimensione del file. <hr> <strong>Esempio:</strong> Relazione esecutiva (PDF, 3MB)',
   LINK_IDENTICAL_NAME: 'Più link in questa pagina utilizzano lo stesso testo ma puntano a destinazioni diverse. Ciò può causare confusione agli utenti di tecnologie assistive. Per risolvere il problema, rendi il testo del link più descrittivo.',
@@ -270,7 +330,7 @@ const tooltip = {
   LINK_IMAGE_ALT_AND_TEXT:
     "Il link all’immagine contiene <strong>sia il testo alt che il testo del link circostante.</strong> Se l’immagine è decorativa e viene utilizzata come link funzionale a un’altra pagina, si consideri di contrassegnare l’immagine come decorativa o nulla - il testo del link circostante dovrebbe essere sufficiente. <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong> <hr> <strong {B}>Nome accessibile</strong> {L} <strong {C}>%(TEXT)</strong>",
   IMAGE_FIGURE_DECORATIVE:
-    "L’immagine è contrassegnata come <strong>decorativa</strong> e sarà ignorata dalle tecnologie assistive. <hr> Sebbene sia stata fornita una <strong>caption</strong>, nella maggior parte dei casi l’immagine dovrebbe avere anche un testo alt. <ul><li>Il testo alt dovrebbe fornire una descrizione concisa di ciò che è contenuto nell’immagine.</li><li>La didascalia dovrebbe solitamente fornire un contesto per mettere in relazione l’immagine con il contenuto circostante, o dare attenzione a un particolare pezzo di informazione.</li></ul> Per saperne di più: <a href=\"https://thoughtbot.com/blog/alt-vs-figcaption#the-figcaption-element\">alt contro figcaption.</a>",
+    "L’immagine è contrassegnata come <strong>decorativa</strong> e sarà ignorata dalle tecnologie assistive. <hr> Sebbene sia stata fornita una <strong>didascalia</strong>, nella maggior parte dei casi l’immagine dovrebbe avere anche un testo alt. <ul><li>Il testo alt dovrebbe fornire una descrizione concisa di ciò che è contenuto nell’immagine.</li><li>La didascalia dovrebbe solitamente fornire un contesto per mettere in relazione l’immagine con il contenuto circostante, o dare attenzione a un particolare pezzo di informazione.</li></ul> Per saperne di più: <a href=\"https://thoughtbot.com/blog/alt-vs-figcaption#the-figcaption-element\">alt contro figcaption.</a>",
   IMAGE_FIGURE_DUPLICATE_ALT:
     'Non utilizzare le stesse parole sia per il testo alt che per la didascalia. Gli screen reader annunceranno le informazioni due volte. <ul><li>Il testo alt dovrebbe fornire una descrizione concisa di ciò che è presente nell’immagine.</li><li>La didascalia dovrebbe solitamente fornire un contesto per ricollegare l’immagine al contenuto circostante, o dare attenzione a un particolare pezzo di informazione.</li></ul> Per saperne di più: <a href="https://thoughtbot.com/blog/alt-vs-figcaption#the-figcaption-element">alt contro figcaption.</a> <hr> {ALT} <strong {C}>%(ALT_TEXT)</strong>',
   IMAGE_DECORATIVE:
@@ -289,7 +349,7 @@ const tooltip = {
   LABELS_MISSING_IMAGE_INPUT:
     "Il pulsante dell’immagine manca del testo alt. Aggiungere il testo alt per fornire un nome accessibile. Ad esempio: <em>Cerca</em> o <em>Invio</em>.",
   LABELS_INPUT_RESET:
-    'I pulsanti di reset non dovrebbero essere utilizzati se non specificamente necessari, perché è facile che si attivino per errore. <hr> <strong>Tip!</strong> Scoprite perché <a href="https://www.nngroup.com/articles/reset-and-cancel-buttons/">i pulsanti Reset e Cancel pongono problemi di usabilità.</a>',
+    'I pulsanti di reset non dovrebbero essere utilizzati se non specificamente necessari, perché è facile che si attivino per errore. <hr> <strong>Suggerimento!</strong> Scoprite perché <a href="https://www.nngroup.com/articles/reset-and-cancel-buttons/">i pulsanti Reset e Cancel pongono problemi di usabilità.</a>',
   LABELS_ARIA_LABEL_INPUT:
     "L’input ha un nome accessibile, anche se bisogna assicurarsi che ci sia anche un’etichetta visibile. <hr> <strong {B}>Nome accessibile</strong> <strong {C}>%(TEXT)</strong>",
   LABELS_NO_FOR_ATTRIBUTE:
@@ -313,6 +373,8 @@ const tooltip = {
     'Impossibile controllare il contenuto incorporato. Assicuratevi che le immagini abbiano un testo alt, che i video abbiano didascalie, che il testo abbia un contrasto sufficiente e che i componenti interattivi siano <a href="https://webaim.org/techniques/keyboard/">accessibili alla tastiera.</a>',
   EMBED_UNFOCUSABLE:
     'Gli <code>&lt;iframe&gt;</code> con elementi non focalizzabili non devono avere <code>tabindex="-1"</code>. Il contenuto incorporato non sarà accessibile tramite tastiera.',
+  EMBED_VIDEO_AUTOPLAY:
+    'I video che si avviano automaticamente e non possono essere messi in pausa possono distrarre le persone e interferire con gli screen reader. Assicurati che gli utenti possano interrompere il video aggiungendo l’attributo <code>controls</code>, fornendo un pulsante di pausa visibile o rimuovendo l’attributo <code>autoplay</code>. <hr> Scopri di più su <a href="https://www.w3.org/WAI/WCAG21/Understanding/pause-stop-hide.html">Pausa, interruzione e occultamento.</a>',
 
   // QA
   QA_BAD_LINK:
@@ -325,17 +387,17 @@ const tooltip = {
   QA_DOCUMENT:
     'Impossibile verificare l’accessibilità del documento. I documenti collegati sono considerati contenuti web e devono essere resi accessibili. Esaminare manualmente il documento. <ul><li>Rendi più accessibile il tuo <a href="https://support.google.com/docs/answer/6199477?hl=en">documento o presentazione di Google Workspace.</a></li><li>Rendi più accessibili i tuoi <a href="https://support.microsoft.com/en-us/office/create-accessible-office-documents-868ecfcd-4f00-4224-b881-a65537a7c155">documenti di Office.</a></li></ul>',
   QA_BLOCKQUOTE:
-    "È un titolo? <strong {C}>%(TEXT)</strong> <hr> Le virgolette dovrebbero essere usate solo per le citazioni. Se si tratta di un’intestazione, cambiare questo blockquote in un’intestazione semantica (per esempio, Intestazione 2 o Intestazione 3).",
+    "È un’intestazione? <strong {C}>%(TEXT)</strong> <hr> I blocchi di citazione dovrebbero essere usati solo per le citazioni. Se si tratta di un’intestazione, cambiare questo blockquote in un’intestazione semantica (per esempio, Intestazione 2 o Intestazione 3).",
   QA_FAKE_HEADING:
-    'È un titolo? <strong {C}>%(TEXT)</strong> <hr> Una riga di testo in grassetto o grande può sembrare un titolo, ma chi usa uno screen reader non può capire che è importante o saltare al suo contenuto. Il testo in grassetto o grande non dovrebbe mai sostituire le intestazioni semantiche (da Titolo 2 a Titolo 6).',
+    'È un’intestazione? <strong {C}>%(TEXT)</strong> <hr> Una riga di testo in grassetto o grande può sembrare un’intestazione, ma chi usa uno screen reader non può capire che è importante o saltare al suo contenuto. Il testo in grassetto o grande non dovrebbe mai sostituire le intestazioni semantiche (da Intestazione 2 a Intestazione 6).',
   QA_FAKE_LIST:
-    'Stai cercando di creare un elenco? Possibile elemento di elenco trovato: <strong {C}>%(firstPrefix)</strong> <hr> Assicurarsi di utilizzare gli elenchi semantici utilizzando invece i pulsanti di formattazione dei punti o dei numeri. Quando si utilizza un elenco semantico, le tecnologie assistive sono in grado di trasmettere informazioni come il numero totale di elementi e la posizione relativa di ciascun elemento nell’elenco. Per saperne di più su <a href="https://www.w3.org/WAI/tutorials/page-structure/content/#lists">elenchi semantici.</a>',
+    'Stai cercando di creare un elenco? Possibile elemento di elenco trovato: <strong {C}>%(PREFIX)</strong> <hr> Assicurarsi di utilizzare gli elenchi semantici utilizzando invece i pulsanti di formattazione dei punti o dei numeri. Quando si utilizza un elenco semantico, le tecnologie assistive sono in grado di trasmettere informazioni come il numero totale di elementi e la posizione relativa di ciascun elemento nell’elenco. Per saperne di più su <a href="https://www.w3.org/WAI/tutorials/page-structure/content/#lists">elenchi semantici.</a>',
   QA_UPPERCASE:
     "Trovato tutto maiuscolo. Alcuni screen reader possono interpretare il testo tutto maiuscolo come un acronimo e leggono ogni lettera singolarmente. Inoltre, per alcune persone il testo tutto maiuscolo è più difficile da leggere e può dare l’impressione di urlare.",
   QA_UNDERLINE:
-    'Il testo sottolineato può essere confuso con i link. Considerate di usare uno stile diverso, come <code>&lt;strong&gt;</code><strong>forte importanza</strong><code>&lt;/strong&gt;</code> o <code>&lt;em&gt;</code><em>emphasis</em><code>&lt;/em&gt;</code>.',
+    'Il testo sottolineato può essere confuso con i link. Considerate di usare uno stile diverso, come <code>&lt;strong&gt;</code><strong>forte importanza</strong><code>&lt;/strong&gt;</code> o <code>&lt;em&gt;</code><em>enfasi</em><code>&lt;/em&gt;</code>.',
   QA_SUBSCRIPT:
-    "Le opzioni di formattazione pedice e apice devono essere utilizzate solo per modificare la posizione del testo per convenzioni o standard tipografici. Non devono essere utilizzate esclusivamente per scopi di presentazione o di aspetto. La formattazione di intere frasi pone problemi di leggibilità. I casi d’uso appropriati includono la visualizzazione di esponenti, numeri ordinali come 4<sup>th</sup> invece di fourth, e formule chimiche (ad esempio H<sub>2</sub>O).",
+    "Le opzioni di formattazione pedice e apice devono essere utilizzate solo per modificare la posizione del testo per convenzioni o standard tipografici. Non devono essere utilizzate esclusivamente per scopi di presentazione o di aspetto. La formattazione di intere frasi pone problemi di leggibilità. I casi d’uso appropriati includono la visualizzazione di esponenti, numeri ordinali come 4<sup>o</sup> invece di quarto, e formule chimiche (ad esempio H<sub>2</sub>O).",
   QA_NESTED_COMPONENTS:
     "Evita di annidare componenti di layout interattivi, come inserire gli accordioni all’interno delle schede o le schede all’interno degli accordioni. Questo può complicare la navigazione, aumentare il carico cognitivo e portare le persone a trascurare i contenuti.",
   QA_JUSTIFY:
@@ -355,12 +417,17 @@ const tooltip = {
   UNCONTAINED_LI:
     "Tutti gli elementi di elenco <code>&lt;li&gt;</code> devono essere inseriti all’interno di elementi <code>&lt;ul&gt;</code> non ordinati o <code>&lt;ol&gt;</code> ordinati. Questa struttura aiuta i lettori di schermo ad annunciare l’elenco e i suoi elementi con precisione.",
   TABINDEX_ATTR: "L’elemento non deve avere un attributo <code>tabindex</code> maggiore di 0.",
+  SVG_NO_ACCESSIBLE_NAME:
+    'Alcuni screen reader annunceranno questo SVG come un\'immagine senza etichetta perché manca di un nome accessibile e non è nascosto. Aggiungi un\'etichetta accessibile (o <code>&lt;title&gt;</code>) se trasmette un significato, oppure nascondilo agli screen reader se è puramente decorativo (<code>aria-hidden="true"</code>). <hr> Scopri di più sugli <a href="https://a11y-101.com/development/svg">SVG accessibili.</a>',
+  SUMMARY_EMPTY: 'L’elemento <code>&lt;summary&gt;</code> all’interno di <code>&lt;details&gt;</code> non ha un nome accessibile. Aggiungi un testo descrittivo all’interno dell’elemento <code>&lt;summary&gt;</code>.',
 
   // Meta checks
   META_LANG:
     'Lingua della pagina non dichiarata! Si prega di <a href="https://www.w3.org/International/questions/qa-html-language-declarations.it.html">dichiarare la lingua nel tag HTML.</a>',
   META_TITLE:
     'Titolo della pagina mancante! Si prega di fornire un <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/title">titolo della pagina.</a>',
+  META_TITLE_UNDESCRIPTIVE:
+    'Il titolo della pagina "<em>%(TEXT)</em>" potrebbe non essere descrittivo o non trasmettere l\'argomento o lo scopo della pagina. I titoli delle pagine devono essere univoci, concisi e descrivere chiaramente il contenuto della pagina. Scopri di più sui <a href="https://www.w3.org/WAI/WCAG22/Understanding/page-titled.html">titoli di pagina significativi.</a>',
   META_SCALABLE:
     'Rimuovi il parametro <code>user-scalable="no"</code> nel <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">meta tag del viewport</a> per consentire lo zoom.',
   META_MAX:
@@ -383,13 +450,17 @@ const tooltip = {
   LINK_MAYBE_BUTTON: 'Questo link ha una destinazione non valida. Sebbene il nome accessibile o i suoi attributi suggeriscano che questo potrebbe non essere affatto un link, ma controlli invece un comportamento programmato sulla pagina. Per risolvere il problema, sostituisci il link con un <a href="https://www.w3.org/WAI/ARIA/apg/patterns/button/">pulsante accessibile</a> o correggi la destinazione del link. <hr> <strong {B}>Nome accessibile</strong> <strong {C}>%(TEXT)</strong> <hr> <strong>Suggerimento!</strong> Le tecnologie assistive trattano i pulsanti e i link in modo diverso. L’uso dell’elemento HTML corretto assicura che gli utenti sappiano quali scorciatoie da tastiera usare e quale azione verrà attivata.',
 
   // Tables
+  TABLES_SINGLE_COLUMN:
+    'È una tabella? Le tabelle a singola colonna sono spesso utilizzate per il layout o per gli elenchi anziché per i dati tabellari. Questo può essere fuorviante per le persone che utilizzano gli screen reader, che devono fermarsi ad ascoltare descrizioni strutturali destinate alle griglie di dati, ad esempio <em>"tabella, 5 righe, 1 colonna"</em>. Rimuovi la tabella e usa invece un elenco.',
+  TABLES_SINGLE_CELL:
+    'È una tabella? Le tabelle con una sola cella vengono spesso utilizzate per bordi visivi o contenitori in evidenza anziché per dati tabellari. Questo può essere fuorviante per chi usa uno screen reader, poiché deve fermarsi ad ascoltare descrizioni strutturali destinate alle griglie di dati: <em>"Tabella, 1 riga, 1 colonna, Riga 1 Colonna 1."</em> Rimuovi la tabella e usa altre opzioni di stile per mettere in risalto questo contenuto.',
   TABLES_MISSING_HEADINGS:
     'Intestazioni di tabella mancanti! Le tabelle accessibili necessitano di un markup HTML che indichi le celle di intestazione e le celle di dati e che definisca la loro relazione. Queste informazioni forniscono un contesto alle persone che utilizzano tecnologie assistive. Le tabelle devono essere utilizzate solo per i dati tabellari. <hr> Per saperne di più su <a href="https://www.w3.org/WAI/tutorials/tables/">tabelle accessibili.</a>',
   TABLES_SEMANTIC_HEADING:
-    'Le intestazioni semantiche come Heading 2 o Heading 3 devono essere utilizzate solo per le sezioni di contenuto; <strong>non</strong> nelle tabelle HTML. Indicare le intestazioni delle tabelle utilizzando invece l’elemento <code>&lt;th&gt;</code>. <hr> Per saperne di più su <a href="https://www.w3.org/WAI/tutorials/tables/">tabelle accessibili.</a>',
+    'Le intestazioni semantiche come Intestazione 2 o Intestazione 3 devono essere utilizzate solo per le sezioni di contenuto; <strong>non</strong> nelle tabelle HTML. Indicare invece le intestazioni di tabella utilizzando l’elemento <code>&lt;th&gt;</code>. <hr> Per saperne di più su <a href="https://www.w3.org/WAI/tutorials/tables/">tabelle accessibili.</a>',
   TABLES_EMPTY_HEADING:
-    'Trovato un’intestazione di tabella vuota! Le intestazioni delle tabelle non devono mai essere vuote. È importante designare le intestazioni di riga e/o di colonna per indicare la loro relazione. Queste informazioni forniscono un contesto alle persone che utilizzano tecnologie assistive. Tenete presente che le tabelle devono essere utilizzate solo per i dati tabellari. <hr> Per saperne di più su <a href="https://www.w3.org/WAI/tutorials/tables/">tabelle accessibili.</a>',
-  TABLES_INVALID_HEADERS_REF: 'Questa tabella sta tentando di etichettare una specifica cella di dati con una specifica cella di intestazione, ma l’ID dell’intestazione non è stato trovato. Assicurati che ogni attributo <code>headers</code> corrisponda all’ID di una cella di intestazione nella stessa tabella. <hr> <strong {B}>Intestazioni</strong> <code>%(VALUE)</code> <hr> <strong>Suggerimento!</strong> L\'<a href="https://www.w3.org/WAI/WCAG22/Techniques/html/H43">uso di riferimenti ID manuali</a> per associare le celle di dati alle celle di intestazione è complicato e fragile. Quando possibile, suddividi i dati complessi in tabelle più piccole con righe e colonne di intestazione semplici.',
+    'Trovata un’intestazione di tabella vuota! Le intestazioni di tabella non devono mai essere vuote. È importante designare le intestazioni di riga e/o di colonna per indicare la loro relazione. Queste informazioni forniscono un contesto alle persone che utilizzano tecnologie assistive. Tenete presente che le tabelle devono essere utilizzate solo per i dati tabellari. <hr> Per saperne di più su <a href="https://www.w3.org/WAI/tutorials/tables/">tabelle accessibili.</a>',
+  TABLES_INVALID_HEADERS_REF: 'Questa tabella sta tentando di etichettare una specifica cella di dati con una specifica cella di intestazione, ma l’ID dell’intestazione non è stato trovato. Assicurati che ogni attributo <code>headers</code> corrisponda all’ID di una cella di intestazione nella stessa tabella. <hr> <strong {B}>Celle di intestazione</strong> <code>%(VALUE)</code> <hr> <strong>Suggerimento!</strong> L\'<a href="https://www.w3.org/WAI/WCAG22/Techniques/html/H43">uso di riferimenti ID manuali</a> per associare le celle di dati alle celle di intestazione è complicato e fragile. Quando possibile, suddividi i dati complessi in tabelle più piccole con righe e colonne di intestazione semplici.',
 
   // Contrast
   CONTRAST_NORMAL:

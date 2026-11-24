@@ -1,0 +1,20 @@
+{
+  "recorded": "2026-11-17",
+  "elements": 9494,
+  "results": 1847,
+  "fingerprint": -1096246814,
+  "medians": {
+    "findShadowComponents": 2.7,
+    "initializeElements": 14.3,
+    "checkHeaders": 0.5,
+    "checkLinkText": 48.6,
+    "checkImages": 2.7,
+    "checkLabels": 0.3,
+    "checkQA": 19.8,
+    "checkDeveloper": 2.4,
+    "checkEmbeddedContent": 0,
+    "checkContrast": 42.2,
+    "checkReadability": 17.1,
+    "total": 150.8
+  }
+}

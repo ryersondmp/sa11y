@@ -14,6 +14,7 @@ const ruleset = {
     'photo',
     'thumbnail',
     'icon',
+    'portrait',
   ],
   PLACEHOLDER_ALT_STOPWORDS: [
     'alt',
@@ -30,10 +31,6 @@ const ruleset = {
     'placeholder image',
     'spacer',
     'chart',
-    'decorative',
-    'placeholder',
-    'placeholder image',
-    'spacer',
     'tbd',
     'todo',
     'to do',
@@ -44,13 +41,21 @@ const ruleset = {
     'homepage feature image',
     'featured image',
     'untitled',
+    'graphic',
+    'portrait',
+    'test',
+    'slide image',
+    'untitled image',
+    'unnamed',
+    'copy',
+    'undefined',
   ],
   LINK_STOPWORDS: [
     'kliknij',
     'kliknij tutaj',
     'kliknij tu',
-    'kliknij tutaj, aby dowiedzieć się więcej',
-    'kliknij tu, aby dowiedzieć się więcej',
+    'kliknij tutaj aby dowiedzieć się więcej',
+    'kliknij tu aby dowiedzieć się więcej',
     'check out',
     'pobierz',
     'pobierz tutaj',
@@ -64,7 +69,7 @@ const ruleset = {
     'czytaj',
     'czytaj więcej',
     'czytaj to',
-    'wiecej',
+    'więcej',
     'czytaj tu',
     'to',
     'tę stronę',
@@ -76,9 +81,11 @@ const ruleset = {
     'stronę',
     'witrynę',
     'artykuł',
+    'obserwuj nas na',
+    'śledź nas na',
   ],
-  CLICK: ['click', 'kliknięcie'],
-  NEW_WINDOW_PHRASES: ['zewnętrzny', 'nowa karta', 'nowe okno', 'pop-up', 'pop up'],
+  CLICK: ['click', 'kliknięcie', 'klikn'],
+  NEW_WINDOW_PHRASES: ['zewnętrzny', 'nowa karta', 'nowej karcie', 'nowe okno', 'nowym oknie', 'pop-up', 'pop up'],
   FILE_TYPE_PHRASES: [
     'dokument',
     'arkusz kalkulacyjny',
@@ -93,7 +100,7 @@ const ruleset = {
     'audio',
     'pdf',
   ],
-  POTENTIAL_UI_ELEMENTS: ['menu', 'zamknij', 'przełącz', 'otwórz', 'rozwiń', 'zwiń', 'następny', 'poprzedni', 'odtwórz', 'pauza', 'podmenu', 'pokaż', 'ukryj', 'rozwijane', 'wstecz', 'dalej', 'pomiń', 'wyślij', 'anuluj', 'zapisz', 'edytuj', 'usuń', 'usuń', 'szukaj', 'filtr', 'sortuj', 'stop', 'wycisz', 'wyłącz wyciszenie', 'pełny ekran', 'minimalizuj', 'maksymalizuj'],
+  POTENTIAL_UI_ELEMENTS: ['menu', 'zamknij', 'przełącz', 'otwórz', 'rozwiń', 'zwiń', 'następny', 'poprzedni', 'odtwórz', 'pauza', 'podmenu', 'pokaż', 'ukryj', 'rozwijane', 'wstecz', 'dalej', 'pomiń', 'wyślij', 'anuluj', 'zapisz', 'edytuj', 'usuń', 'szukaj', 'filtr', 'sortuj', 'stop', 'wycisz', 'wyłącz wyciszenie', 'pełny ekran', 'minimalizuj', 'maksymalizuj'],
 }
 
 const ui = {
@@ -126,14 +133,14 @@ const ui = {
   DEVELOPER_DESC:
     'Sprawdza problemy, których naprawa może wymagać znajomości kodowania, takie jak atrybuty HTML, formularze i inne.',
   DARK_MODE: 'Tryb ciemny',
-  SHORTCUT_SR: 'Przejdź do problemu. Klawisze skrótu: lewy Option',
+  SHORTCUT_SR: 'Przejdź do problemu. Skrót klawiaturowy: Alt S',
   SKIP_TO_ISSUE: 'Przejdź do problemu',
   NEW_TAB: 'Otwórz na nowej karcie',
   LINKED: 'Połączony',
   PANEL_HEADING: 'Testuj dostępność',
   NO_ERRORS_FOUND: 'Nie znaleziono błędów.',
-  WARNINGS_FOUND: 'ostrzeżeń do przeglądu.',
-  TOTAL_FOUND: 'ogółem wykrytych problemów.',
+  WARNINGS_FOUND: '– liczba ostrzeżeń do przeglądu.',
+  TOTAL_FOUND: '– łączna liczba wykrytych problemów.',
   NOT_VISIBLE:
     'Element, który próbujesz wyświetlić, nie jest widoczny; może być ukryty lub znajdować się wewnątrz akordeonu lub karty.',
   MISSING_ROOT:
@@ -148,7 +155,7 @@ const ui = {
   HIDDEN: 'Ukryty',
 
   // Dismiss
-  PANEL_DISMISS_BUTTON: 'Pokaż %(dismissCount) odrzucone',
+  PANEL_DISMISS_BUTTON: 'Pokaż odrzucone (%(dismissCount))',
   DISMISS: 'Odrzuć',
   DISMISS_ALL: 'Odrzuć wszystko',
   DISMISSED: 'Odrzucone',
@@ -188,6 +195,42 @@ const ui = {
   DIFFICULT: 'Trudne',
   FAIRLY_DIFFICULT: 'Dość trudne',
   READABILITY_NOT_ENOUGH: 'Za mało treści, aby ocenić czytelność.',
+  META_TITLE_UNDESCRIPTIVE_STRINGS: [
+    'bez tytułu',
+    'dokument',
+    'strona',
+    'tytuł',
+    'domyślny',
+    'indeks',
+    'nowy',
+    'symbol zastępczy',
+    'strona internetowa',
+    'bez tytułu',
+    'wstaw tytuł tutaj',
+    'cześć świecie',
+    'moja aplikacja',
+    'moja strona',
+    'moja strona internetowa',
+    'tytuł witryny',
+    'tytuł twojej witryny',
+    'przykładowa domena',
+    'untitled',
+    'undefined',
+    'title',
+    'document',
+    'index',
+    'placeholder',
+  ],
+  // Titles that are non-descriptive at the START of a title ("Untitled document").
+  // Keep these specific: the list above is only matched as a whole title or with a number.
+  META_TITLE_UNDESCRIPTIVE_PREFIXES: [
+    'bez tytułu',
+    'wstaw tytuł tutaj',
+    'untitled',
+    'no title',
+    'undefined',
+    'placeholder',
+  ],
 };
 
 const tooltip = {
@@ -315,6 +358,8 @@ const tooltip = {
     'Nie można sprawdzić treści osadzonej. Upewnij się, że obrazy mają tekst alt, filmy mają napisy rozszerzone, tekst ma odpowiedni kontrast, a elementy interaktywne są <a href="https://webaim.org/techniques/keyboard/">dostępne z klawiatury.</a>',
   EMBED_UNFOCUSABLE:
     '&lt;code&gt;&lt;iframe&gt;&lt;/code&gt; z elementami, które można wybrać, nie powinno mieć <code>tabindex="-1"</code>. Osadzona zawartość nie będzie dostępna za pomocą klawiatury.',
+  EMBED_VIDEO_AUTOPLAY:
+    'Filmy odtwarzane automatycznie, których nie można wstrzymać, mogą rozpraszać ludzi i zakłócać działanie czytników ekranu. Upewnij się, że użytkownicy mogą zatrzymać film, dodając atrybut <code>controls</code>, zapewniając widoczny przycisk pauzy lub usuwając atrybut <code>autoplay</code>. <hr> Dowiedz się więcej o <a href="https://www.w3.org/WAI/WCAG21/Understanding/pause-stop-hide.html">wstrzymywaniu, zatrzymywaniu i ukrywaniu.</a>',
 
   // Quality assurance
   QA_BAD_LINK:
@@ -331,13 +376,13 @@ const tooltip = {
   QA_FAKE_HEADING:
     'Czy to jest nagłówek? <strong {C}>%(TEXT)</strong> <hr> Wiersz pogrubionego lub dużego tekstu może wyglądać jak nagłówek, ale osoba korzystająca z czytnika ekranu nie może stwierdzić, że jest on istotny lub przejść do jego treści. Pogrubiony lub duży tekst nigdy nie powinien zastępować nagłówków semantycznych (od Nagłówka H2 do Nagłówka H6).',
   QA_FAKE_LIST:
-    'Czy próbujesz utworzyć listę? Wykryto możliwe elementy listy: <strong {C}>%(firstPrefix)</strong> <hr> Upewnij się, że używasz list semantycznych, zamiast stosowania znaków punktowania (np. myślników) lub liczb. Podczas korzystania z list semantycznych technologie wspomagające są w stanie przekazać takie informacje, jak ogólna liczba elementów i względna pozycja każdego elementu na liście. Dowiedz się więcej o <a href="https://www.w3.org/WAI/tutorials/page-structure/content/#lists">semantycznych listach.</a>',
+    'Czy próbujesz utworzyć listę? Wykryto możliwe elementy listy: <strong {C}>%(PREFIX)</strong> <hr> Upewnij się, że używasz list semantycznych, zamiast stosowania znaków punktowania (np. myślników) lub liczb. Podczas korzystania z list semantycznych technologie wspomagające są w stanie przekazać takie informacje, jak ogólna liczba elementów i względna pozycja każdego elementu na liście. Dowiedz się więcej o <a href="https://www.w3.org/WAI/tutorials/page-structure/content/#lists">semantycznych listach.</a>',
   QA_UPPERCASE:
     'Wykryto WSZYSTKIE WIELKIE LITERY. Niektóre czytniki ekranu interpretują cały tekst wielkimi literami jako akronim i będą czytać każdą literę odrębnie. Ponadto, wszystkie wielkie litery są trudniejsze do odczytania i sprawiają wrażenie KRZYKU.',
   QA_UNDERLINE:
     'Podkreślony tekst można pomylić z linkami. Rozważ użycie innego stylu, takiego jak &lt;strong&gt;<strong>silne znaczenie</strong>&lt;/strong&gt; lub &lt;em&gt;<em>nacisk</em>&lt;/em&gt;.',
   QA_SUBSCRIPT:
-    'Opcji formatowania indeksu dolnego i indeksu górnego należy używać wyłącznie do zmiany pozycji tekstu w celu dostosowania do konwencji lub standardów typograficznych. Powinna <strong>nie</strong> być używana wyłącznie do celów prezentacji lub wyglądu. Formatowanie całych zdań stwarza problemy z czytelnością. Odpowiednie przypadki użycia obejmują wyświetlanie wykładników, liczb porządkowych, takich jak 4<sup>th</sup> zamiast czwartej, oraz wzorów chemicznych (H<sub>2</sub>O).',
+    'Opcji formatowania indeksu dolnego i indeksu górnego należy używać wyłącznie do zmiany pozycji tekstu w celu dostosowania do konwencji lub standardów typograficznych. <strong>Nie</strong> należy ich używać wyłącznie do celów prezentacji lub wyglądu. Formatowanie całych zdań stwarza problemy z czytelnością. Odpowiednie przypadki użycia obejmują wyświetlanie wykładników, jednostek, takich jak m<sup>2</sup>, oraz wzorów chemicznych (H<sub>2</sub>O).',
   QA_NESTED_COMPONENTS:
     'Unikaj zagnieżdżania interaktywnych komponentów układu, takich jak umieszczanie akordeonów w zakładkach lub zakładek w akordeonach. Może to skomplikować nawigację, zwiększyć obciążenie poznawcze i prowadzić do pomijania treści.',
   QA_JUSTIFY:
@@ -357,12 +402,17 @@ const tooltip = {
   UNCONTAINED_LI:
     'Wszystkie elementy listy <code>&lt;li&gt;</code> muszą być umieszczone wewnątrz elementów <code>&lt;ul&gt;</code> nieuporządkowanych lub <code>&lt;ol&gt;</code> uporządkowanych. Ta struktura pomaga czytnikom ekranu dokładnie ogłaszać listę i jej elementy.',
   TABINDEX_ATTR: 'Element nie powinien mieć atrybutu <code>tabindex</code> większego niż 0.',
+  SVG_NO_ACCESSIBLE_NAME:
+    'Niektóre czytniki ekranu ogłoszą ten element SVG jako obraz bez etykiety, ponieważ brakuje mu dostępnej nazwy i nie jest ukryty. Dodaj dostępną etykietę (lub <code>&lt;title&gt;</code>), jeśli przekazuje ona znaczenie, lub ukryj go przed czytnikami ekranu, jeśli pełni funkcję wyłącznie dekoracyjną (<code>aria-hidden="true"</code>). <hr> Dowiedz się więcej o <a href="https://a11y-101.com/development/svg">dostępnych plikach SVG.</a>',
+  SUMMARY_EMPTY: 'Element <code>&lt;summary&gt;</code> wewnątrz <code>&lt;details&gt;</code> nie ma dostępnej nazwy. Dodaj opisowy tekst wewnątrz elementu <code>&lt;summary&gt;</code>.',
 
   // Meta checks
   META_LANG:
     'Język strony nie zadeklarowany! <a href="https://www.w3.org/International/questions/qa-html-language-declarations">Zadeklaruj język w znaczniku HTML.</a>',
   META_TITLE:
     'Brak tytułu strony! Podaj <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/title">tytuł strony.</a>',
+  META_TITLE_UNDESCRIPTIVE:
+    'Tytuł strony "<em>%(TEXT)</em>" może nie być opisowy lub może nie oddawać tematu lub celu strony. Tytuły stron powinny być unikalne, zwięzłe i wyraźnie opisywać zawartość strony. Dowiedz się więcej o <a href="https://www.w3.org/WAI/WCAG22/Understanding/page-titled.html">znaczących tytułach stron.</a>',
   META_SCALABLE:
     'Usuń parametr <code>user-scalable="no"</code> w <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Viewport_meta_tag">meta tagu widoku</a>, aby umożliwić powiększanie.',
   META_MAX:
@@ -385,13 +435,17 @@ const tooltip = {
   LINK_MAYBE_BUTTON: 'Ten link ma nieprawidłowy cel. Chociaż nazwa dostępna lub jej atrybuty sugerują, że może to w ogóle nie być link, a zamiast tego kontroluje on pewne zachowanie skryptowe na stronie. Aby to naprawić, zastąp link <a href="https://www.w3.org/WAI/ARIA/apg/patterns/button/">dostępnym przyciskiem</a> lub popraw cel linku. <hr> <strong {B}>Nazwa dostępna</strong> <strong {C}>%(TEXT)</strong> <hr> <strong>Wskazówka!</strong> Technologie wspomagające traktują przyciski i linki w różny sposób. Użycie właściwego elementu HTML gwarantuje, że użytkownicy będą wiedzieć, jakich skrótów klawiaturowych użyć i jakie działanie zostanie wywołane.',
 
   // Tables
+  TABLES_SINGLE_COLUMN:
+    'Czy to jest tabela? Tabele jednokolumnowe są często używane do układu strony lub list, a nie do danych tabelarycznych. Może to być mylące dla osób korzystających z czytników ekranu, które muszą zatrzymać się i wysłuchać opisów strukturalnych przeznaczonych dla siatek danych, na przykład <em>"tabela, 5 wierszy, 1 kolumna"</em>. Usuń tabelę i zamiast niej użyj listy.',
+  TABLES_SINGLE_CELL:
+    'Czy to jest tabela? Tabele jednokomórkowe są często używane do tworzenia wizualnych obramowań lub kontenerów wyróżniających, a nie do prezentacji danych tabelarycznych. Może to być mylące dla osób korzystających z czytników ekranu, które muszą zatrzymać się i wysłuchać opisu struktury przeznaczonego dla siatek danych: <em>"Tabela, 1 wiersz, 1 kolumna, Wiersz 1 Kolumna 1."</em> Usuń tabelę i użyj innych opcji stylizacji, aby zwrócić uwagę na tę treść.',
   TABLES_MISSING_HEADINGS:
     'Brak nagłówków tabeli! Dostępne tabele wymagają znaczników HTML, które wskazują komórki nagłówków i komórki danych, które definiują ich relację. Informacje te zapewniają kontekst osobom korzystającym z technologii wspomagających. Tabele powinny być używane tylko dla danych tabelarycznych.<hr>Dowiedz się więcej o <a href="https://www.w3.org/WAI/tutorials/tables/">dostępnych tabelach.</a>',
   TABLES_SEMANTIC_HEADING:
     'Nagłówki semantyczne, takie jak nagłówek H2 lub nagłówek H3, powinny być używane tylko w odniesieniu do sekcji treści; <strong>nie</strong> w tabelach HTML. Zamiast tego należy wskazać nagłówki tabeli przy użyciu elementu <strong>th</strong>. <hr> Dowiedz się więcej o <a href="https://www.w3.org/WAI/tutorials/tables/">dostępnych tabelach.</a>',
   TABLES_EMPTY_HEADING:
     'Wykryto pusty nagłówek tabeli! Nagłówki tabel <em>nigdy</em> nie powinny być puste. Ważne jest, aby wyznaczyć nagłówki wierszy i/lub kolumn, aby przekazać ich relację. Informacje te zapewniają kontekst osobom korzystającym z technologii wspomagających. Należy pamiętać, że tabele powinny być używane tylko dla danych tabelarycznych. <hr> Dowiedz się więcej o <a href="https://www.w3.org/WAI/tutorials/tables/">dostępnych tabelach.</a>',
-  TABLES_INVALID_HEADERS_REF: 'Ta tabela próbuje powiązać konkretną komórkę danych z konkretną komórką nagłówka, ale nie można odnaleźć identyfikatora ID nagłówka. Upewnij się, że każdy atrybut <code>headers</code> odpowiada identyfikatorowi ID komórki nagłówka w tej samej tabeli. <hr> <strong {B}>Nagłówki</strong> <code>%(VALUE)</code> <hr> <strong>Wskazówka!</strong> <a href="https://www.w3.org/WAI/WCAG22/Techniques/html/H43">Ręczne używanie odwołań ID</a> do kojarzenia komórek danych z komórkami nagłówka jest skomplikowane i zawodne. Jeśli to możliwe, dziel złożone dane na mniejsze tabele z prostymi wierszami i kolumnami nagłówkowymi.',
+  TABLES_INVALID_HEADERS_REF: 'Ta tabela próbuje powiązać konkretną komórkę danych z konkretną komórką nagłówka, ale nie można odnaleźć identyfikatora ID komórki nagłówka. Upewnij się, że każdy atrybut <code>headers</code> odpowiada identyfikatorowi ID komórki nagłówka w tej samej tabeli. <hr> <strong {B}>Komórki nagłówka</strong> <code>%(VALUE)</code> <hr> <strong>Wskazówka!</strong> <a href="https://www.w3.org/WAI/WCAG22/Techniques/html/H43">Ręczne używanie odwołań ID</a> do kojarzenia komórek danych z komórkami nagłówka jest skomplikowane i zawodne. Jeśli to możliwe, dziel złożone dane na mniejsze tabele z prostymi wierszami i kolumnami nagłówkowymi.',
 
   // Contrast
   CONTRAST_NORMAL:

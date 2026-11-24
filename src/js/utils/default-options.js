@@ -83,7 +83,7 @@ const defaultOptions = {
   ignoreTextInElements: false, // e.g. '.inner-node-hidden-in-CSS'
 
   // Shared properties for some checks
-  altPlaceholder: [],
+  altPlaceholder: [], // Strings (prefix match) and/or RegExp objects (as authored).
   susAltStopWords: '',
   linkStopWords: '',
   extraPlaceholderStopWords: '',
@@ -194,6 +194,7 @@ const defaultOptions = {
     EMBED_VIDEO: {
       sources: '',
     },
+    EMBED_VIDEO_AUTOPLAY: true,
     EMBED_DATA_VIZ: {
       sources: '',
     },
@@ -216,6 +217,8 @@ const defaultOptions = {
       dismissAll: true,
     },
     QA_BLOCKQUOTE: true,
+    TABLES_SINGLE_COLUMN: true,
+    TABLES_SINGLE_CELL: true,
     TABLES_MISSING_HEADINGS: true,
     TABLES_SEMANTIC_HEADING: true,
     TABLES_EMPTY_HEADING: true,
@@ -252,6 +255,7 @@ const defaultOptions = {
     // Developer checks
     DUPLICATE_ID: true,
     META_TITLE: true,
+    META_TITLE_UNDESCRIPTIVE: true,
     UNCONTAINED_LI: true,
     TABINDEX_ATTR: true,
     HIDDEN_FOCUSABLE: true,
@@ -261,6 +265,8 @@ const defaultOptions = {
     BTN_ROLE_IN_NAME: true,
     LINK_MAYBE_BUTTON: true,
     BTN_UNPRONOUNCEABLE: true,
+    SVG_NO_ACCESSIBLE_NAME: true,
+    SUMMARY_EMPTY: true,
 
     // Contrast checks
     CONTRAST_WARNING: {

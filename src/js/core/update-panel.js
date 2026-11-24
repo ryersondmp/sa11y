@@ -42,17 +42,17 @@ export function updatePanel() {
 export function updateBadge() {
   const totalCount = State.counts.error + State.counts.warning;
   if (totalCount === 0) {
-    Constants.Panel.notifCount.innerText = '';
-    Constants.Panel.notifText.innerText = '';
+    Constants.Panel.notifCount.textContent = '';
+    Constants.Panel.notifText.textContent = '';
     Constants.Panel.notifBadge.style.display = 'none';
   } else if (State.counts.warning > 0 && State.counts.error === 0) {
     Constants.Panel.notifBadge.classList.add('notification-badge-warning');
-    Constants.Panel.notifCount.innerText = `${State.counts.warning}`;
-    Constants.Panel.notifText.innerText = `${Lang._('WARNINGS_FOUND')}`;
+    Constants.Panel.notifCount.textContent = State.counts.warning;
+    Constants.Panel.notifText.textContent = Lang._('WARNINGS_FOUND');
   } else {
     Constants.Panel.notifBadge.classList.remove('notification-badge-warning');
-    Constants.Panel.notifCount.innerText = `${totalCount}`;
-    Constants.Panel.notifText.innerText = Lang._('TOTAL_FOUND');
+    Constants.Panel.notifCount.textContent = totalCount;
+    Constants.Panel.notifText.textContent = Lang._('TOTAL_FOUND');
   }
 
   // Don't show badge when panel is opened.
