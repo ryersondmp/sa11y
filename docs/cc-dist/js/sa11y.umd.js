@@ -7763,7 +7763,7 @@ ${filteredObjects.map((obj) => headers.map((header) => obj[header] ?? '""').join
           if (ariaLabelledBy) {
             const ids = ariaLabelledBy.trim().split(/\s+/);
             if (ids.length === 1) {
-              const target = find(`#${ids[0]}`, "root")?.[0];
+              const target = find(`#${CSS.escape(ids[0])}`, "root")?.[0];
               if (target && !isElementHidden(target)) return;
             }
           }
